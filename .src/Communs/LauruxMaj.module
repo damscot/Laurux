@@ -4377,6 +4377,13 @@ Public Sub Maj356()
 
   Tab = "Fiches_Parametres"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD PRIMARY KEY (ind)")
+  
+  Tab = "Fiches_EntTicketz"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (suppr TINYINT(1))")
+  Try Utils.db.Exec("update " & Tab & " set suppr = &1", False)
+  Tab = "Fiches_HisEntTickets"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (suppr TINYINT(1))")
+  Try Utils.db.Exec("update " & Tab & " set suppr = &1", False)
 
   'rResult = Utils.db.Exec("SELECT * from Fiches_Mvt where compte = &1 and montantd < &2", "401000", 0)
   ' If rResult.Available Then
