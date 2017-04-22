@@ -34,6 +34,7 @@ Public Version As String
 Public PsX As Integer
 Public PsY As Integer
 
+
 Public Sub _new()
 
   Dim WidthME As String
@@ -51,6 +52,7 @@ End
 
 Public Sub Form_Open()
 
+  Dim str As String
   Dim Exprt As String
   Dim Btq As String
   Dim Mat As String
@@ -184,6 +186,7 @@ Public Sub Form_Open()
     Menu42_Click()
     Me.Close
   Endif
+
 Catch
   If Error.text = "Connection is not opened" Then
     Message.Warning("Attention, la base Laurux " & Settings["/Soc"] & " n 'existe pas !\n Veuillez remplir le fichier de configuration SVP !")
@@ -2208,5 +2211,15 @@ End
 Public Sub Menu321_Click()
 
   BordereauxC.showmodal()
+
+End
+
+
+
+Public Sub PluginsGestion_Click()
+
+  Dim hForm As PluginsGestion
+  hForm = New PluginsGestion(MenuPlugins)
+  hForm.Showmodal()
 
 End

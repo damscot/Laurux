@@ -921,6 +921,14 @@
     { Menu201 Menu
     }
   }
+  { MenuPlugins Menu
+    Text = Shortcut(("Plugins"), "P")
+    { PluginsGestion Menu
+      Text = ("Gestion")
+    }
+    { Menu323 Menu
+    }
+  }
   { Menu10 Menu
     Text = Shortcut(("?"), "?")
     { Menu62 Menu
@@ -1436,6 +1444,14 @@
       }
     }
   }
+  { Timer1 #Timer
+    #MoveScaled(2,9)
+    Enabled = True
+    Delay = 60000
+  }
+  { FtpClient1 #FtpClient
+    #MoveScaled(2,16)
+  }
   { TextLabel1 TextLabel
     MoveScaled(9,65,71,7)
     Visible = False
@@ -1445,13 +1461,5 @@
     Text = ("Bienvenue dans Laurux 3.39")
     Alignment = Align.Center
     Border = Border.Plain
-  }
-  { Timer1 #Timer
-    #MoveScaled(2,9)
-    Enabled = True
-    Delay = 60000
-  }
-  { FtpClient1 #FtpClient
-    #MoveScaled(2,16)
   }
 }

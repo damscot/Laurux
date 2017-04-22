@@ -1,0 +1,19 @@
+' Gambas class file
+
+''' This class contains information passed to loaded plugins. They may read and
+''' modify variables in here, create observers for objects and so forth.
+
+Export
+
+Property Read MyMenu As Menu
+
+Private $hMyMenu As Menu
+
+
+Public Sub _new(MyMenu As Menu)
+  $hMyMenu = MyMenu
+End
+
+Private Function MyMenu_Read() As Menu
+  Return $hMyMenu
+End

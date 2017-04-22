@@ -1,0 +1,236 @@
+' Gambas module file
+
+' (C) 2015 Tobias Boege <tobias@gambas-buch.de>, GPLv2+
+
+''' This module enables loading standalone Gambas source files or whole source
+''' archives and integrating them into the process. This can be used to implement
+''' plugins, scripts, event hooks, etc..
+
+Public PlugArray As Object[] = New Object[]
+
+Public Struct Plugin
+  Name As String
+  Path As String
+  Startup As Class
+End Struct
+
+Property Read Name As String
+Property Read List As String[]
+
+Private $sPluginPath As String
+
+Private $cPlugins As New Collection
+Private $sName As String
+Private $aList As String[]
+
+Public Sub _init()
+  $sPluginPath = Temp$("plugins")
+  Mkdir $sPluginPath
+End
+
+'' Add a plugin to the process. This means to load the plugin and create an object
+'' of the contained class.
+Public Sub Add(PluginFile As String, TheContext As Object) As Plugin
+  Dim Plug As Plugin
+  
+  Plug = Load(PluginFile)
+  If Plug <> Null
+    'No reason To pass twice the context....bug In Gambas
+    $cPlugins[Plug.Name] = Plug.Startup.New([Null, TheContext])
+    PlugArray.Push(Plug)
+  Endif
+  
+  Return Plug
+End
+
+'' Load a plugin from Gambas code in a string or from a source archive.
+Public Function Load(PluginFile As String) As Plugin
+  ' Source files never end in ".tar.gz" and project archives always do.
+  If PluginFile Ends ".tar.gz"
+    Return LoadProject(PluginFile)
+  Else
+    If PluginFile Ends ".gambas"
+      Return LoadBinary(PluginFile)
+    Else 
+      Return LoadFile(PluginFile)
+    Endif
+  Endif
+End
+
+'' Take simple Gambas source code and create a component project from it. Load
+'' that component and return the class object of the given source file's code.
+Public Function LoadFile(SourcePath As String) As Plugin
+  Dim iStart As Integer
+  Dim sName, sPath, sArchive As String
+  Dim aComp As New String[]
+  Dim sTempl, sRes, SourceFile As String
+  Dim iInd As Integer
+  Dim hRes As New Plugin
+  
+  If Not Exist(SourcePath)
+    Message.Warning("Plugin class not found here: " & SourcePath)
+    Return Null
+  Endif
+
+  SourceFile = File.Load(SourcePath)
+
+  iStart = String.InStr(SourceFile, "''' Name: ")
+  ' Extract plugin name
+  If Not iStart Then Error.Raise(("File is not a plugin"))
+  iStart += Len("''' Name: ")
+  While String.Mid$(SourceFile, iStart, 1) Like "[a-zA-Z]"
+    sName &= String.Mid$(SourceFile, iStart, 1)
+    Inc iStart
+  Wend
+  If Not sName Then Error.Raise(("Invalid plugin name"))
+  If $cPlugins.Exist(sName)
+    Message.Warning(("Plugin " & sName & " already exists"))
+    Return Null
+  Endif
+
+  ' Create component
+  sPath = $sPluginPath &/ sName
+  Mkdir sPath
+  Mkdir sPath &/ ".src"
+  sTempl = File.Load(Application.Path & "/.src/Plugins/dotproject")
+  sTempl = Replace$(sTempl, "$NAME", sName)
+  ' Add all dependencies of this project to not have compilations problems
+  ' when classes like Button from gb.qt4 are used in the plugin.
+  With Split(File.Load(".project"), "\n")
+    For iInd = 0 To .Max
+      If .[iInd] Begins "Component=" Then aComp.Add(.[iInd])
+    Next
+  End With
+  ' Now add all "Use" lines from the source code
+  With Split(SourceFile, "\n", "", True)
+    For iInd = 0 To .Max
+      If .[iInd] Begins "Use \"" Then aComp.Add("Component=" & Split(.[iInd], "\"")[1])
+    Next
+  End With
+  sTempl = Replace(sTempl, "$COMPLIST", aComp.Join("\n"))
+  File.Save(sPath &/ ".project", sTempl)
+  ' XXX: This may override classes in the global symbol table when loaded
+  File.Save(sPath &/ ".src" &/ sName & ".class", SourceFile)
+
+  ' Compile, archive, load and finally get the plugin class
+  Shell Subst$("gbc3 -g &1 2>&&1", sPath) To sRes ' include the -g flag to have Debug enabled
+  If Process.LastValue Then Error.Raise(Subst$(("Compiler error:\n&1"), sRes))
+  sArchive = $sPluginPath &/ sName & ".gambas"
+  Shell Subst$("gba3 &1 -o &2 2>&&1", sPath, sArchive) To sRes
+  If Process.LastValue Then Error.Raise(Subst$(("Archiver error:\n&1"), sRes))
+  Component.Load(sArchive)
+
+  hRes.Name = sName
+  hRes.Path = SourcePath
+  hRes.Startup = Class.Load(sName)
+  Return hRes
+End
+
+'' Load an entire project as a plugin from its source archive. The Plugin
+'' object holds only the startup class of the project.
+Public Function LoadProject(ArchiveFile As String) As Plugin
+  Dim sPath, sRes, sName, sArchive As String
+  Dim sLine, sStartup As String
+  Dim hRes As New Plugin
+  
+  If Not Exist(ArchiveFile)
+    Message.Warning("Plugin archive not found here: " & ArchiveFile)
+    Return Null
+  Endif
+
+  sPath = $sPluginPath &/ File.Name(ArchiveFile)
+  Copy ArchiveFile To sPath
+  Exec ["tar", "-zxvf", sPath, "-C", $sPluginPath] To sRes
+  With Split(sRes, "\n")
+    sPath = $sPluginPath &/ .[0]
+    sName = Replace$(.[0], "/", "")
+  End With
+  
+  If $cPlugins.Exist(sName)
+    Message.Warning(("Plugin " & sName & " already exists"))
+    Return Null
+  Endif
+  
+  For Each sLine In Split(File.Load(sPath &/ ".project"), "\n")
+    If sLine Begins "Startup=" Then sStartup = Right$(sLine, - InStr(sLine, "="))
+  Next
+
+  Shell Subst$("gbc3 -g &1 2>&&1", sPath) To sRes ' include the -g flag to have Debug enabled
+  If Process.LastValue Then Error.Raise(Subst$(("Compiler error:\n&1"), sRes))
+  sArchive = $sPluginPath &/ sName & ".gambas"
+  Shell Subst$("gba3 &1 -o &2 2>&&1", sPath, sArchive) To sRes
+  If Process.LastValue Then Error.Raise(Subst$(("Archiver error:\n&1"), sRes))
+  Component.Load(sArchive)
+
+  hRes.Name = sName
+  hRes.Path = ArchiveFile
+  hRes.Startup = Class.Load(sStartup)
+  Return hRes
+End
+
+Public Function LoadBinary(SourcePath As String) As Plugin
+  Dim hRes As New Plugin
+  Dim sName As String
+  
+  sName = File.BaseName(SourcePath)
+  If $cPlugins.Exist(sName)
+    Message.Warning(("Plugin " & sName & " already exists"))
+    Return Null
+  Endif
+  
+  Component.Load(SourcePath)
+  hRes.Name = sName
+  hRes.Path = SourcePath
+  hRes.Startup = Class.Load(sName)
+  If Not hRes.Startup
+    Message.Warning("Unable to find " & sName & " in " & SourcePath)
+    Return Null
+  Endif
+
+  Return hRes
+  
+End
+
+
+Public Sub Clear()
+  Dim hPlugin As Object
+
+  For Each hPlugin In $cPlugins
+    Try Object.Call(hPlugin, "Unload")
+  Next
+  $cPlugins.Clear()
+End
+
+Public Sub _next() As Object
+  Dim iInd As Integer
+  Dim hRes As Object
+
+  If IsNull(Enum.Index) Then
+    $aList = List_Read() ' adding plugins in a For Each is not supported!
+    iInd = 0
+  Else
+    iInd = Enum.Index
+  Endif
+
+  If iInd > $aList.Max Then
+    Enum.Stop()
+    Return
+  Endif
+  $sName = $aList[iInd]
+  hRes = $cPlugins[$sName]
+  Enum.Index = iInd + 1
+  Return hRes
+End
+
+Private Function Name_Read() As String
+  Return $sName
+End
+
+Private Function List_Read() As String[]
+  Dim aList As New String[]
+
+  For Each $cPlugins
+    aList.Add($cPlugins.Key)
+  Next
+  Return aList
+End

@@ -1,0 +1,104 @@
+' Gambas class file
+
+Private $hFileChooser As FileChooser
+Private $MenuPlugins As Menu
+Private $hContext As Context
+Private $dbinstall As Boolean = False
+
+
+Public Sub _new(MenuPlugins As Menu)
+
+  $MenuPlugins = MenuPlugins
+  $hFileChooser = New FileChooser(Me) As "SelectPlugins"
+
+End
+
+Public Sub TablePlugins_Data(Row As Integer, Col As Integer)
+
+  'With Utils
+  '  CoTable[0] = "jour"
+  '  CoTable[1] = "compte"
+  '  CoTable[2] = "intitule"
+  '  CoTable[3] = "dte"
+  '  Try .rs1.MoveTo(Row)
+  '  If Error Then Print Error.text
+  '  TablePlugins.data.Text = "toto" 'Str(.rs1[CoTable[Col]])
+  'End With
+  If Col = 0
+    TablePlugins.data.Text = Plugins.PlugArray[Row].Name
+  Else If Col = 1
+    TablePlugins.data.Text = Plugins.PlugArray[Row].Path
+  Else If Col = 2
+    TablePlugins.data.Text = Plugins.PlugArray[Row].Startup.Name
+  Endif
+  
+End
+
+
+Public Sub Form_Open()
+  
+  $hFileChooser.W = Me.W
+  $hFileChooser.H = Me.H
+  $hFileChooser.X = Me.X
+  $hFileChooser.Y = Me.Y
+  $hFileChooser.Hide()
+  TablePlugins.Show()
+  Me.Center
+  
+  With TablePlugins
+    .Columns.Count = 3
+    .Columns[0].Title = Space$(8) & "Nom" & Space$(8)
+    .Columns[0].Width = Len(.Columns[0].Title) * 6
+    .Columns[1].Title = Space$(20) & "Path" & Space$(20)
+    .Columns[1].Width = Len(.Columns[1].Title) * 6
+    .Columns[2].Title = Space$(4) & "Start Class" & Space$(4)
+    .Columns[2].Width = Len(.Columns[2].Title) * 6
+  End With
+  
+  UpdatePlugins_List()
+  
+End
+
+
+
+Public Sub SelectPlugins_Activate()
+  Dim Path As String
+  Dim plug As String
+  
+  $hFileChooser.Hide()
+  TablePlugins.Show()
+  Path = $hFileChooser.FileView.Dir & "/" & $hFileChooser.FileView.Current
+  $hContext = New Context($MenuPlugins)
+  Plugins.Add(Path, $hContext)
+  If $dbinstall = True
+    'Publication dans la base de donnée
+  Endif
+  UpdatePlugins_List()
+  
+End
+
+Public Sub UpdatePlugins_List()
+  
+  TablePlugins.Rows.Count = Plugins.PlugArray.Count
+  TablePlugins.Refresh()
+  
+End
+
+
+
+Public Sub InstallLocal_Click()
+
+  $dbinstall = False
+  $hFileChooser.Show()
+  TablePlugins.Hide()
+
+End
+
+
+Public Sub InstallBase_Click()
+
+  $dbinstall = True
+  $hFileChooser.Show()
+  TablePlugins.Hide()
+
+End
