@@ -202,6 +202,7 @@ Public Sub CleanChamps()
   Dart.Clear
   Refourn.Clear
   Artstock.Clear
+  ArtstockF.Clear
   Txcnv.clear
   qtecom.Clear
   pbht.Clear
@@ -1111,11 +1112,16 @@ Public Sub art_man()
   Dim Rfours As Result
   Dim fourn As String
   Dim Tab3 As String
+  Dim Tab4 As String
+  Dim qteF As Float
+  Dim qteI As Float
+  Dim LigCom As Result
 
   Artcom.Text = "0"
   Tab = "Fiches_Art"
   Tab2 = "Fiches_Tvaav"
   Tab3 = "Fiches_Four"
+  Tab4 = "Fiches_Ligrecpt"
 
   With utils
     If four.Text And Ncom.Text Then
@@ -1186,7 +1192,21 @@ Public Sub art_man()
           If Error Then Cop = "0,00"
           Arr.Text = rarts!art_cdarr
           Decm = rarts!art_dec
-          Artstock.text = .cpoint(rarts!art_qte)
+          qteF = .cpoint(rarts!art_qte)
+          qteI = .cpoint(rarts!art_qte)
+          'Ici il peut il y avoir une partie des entrées déjà enregistré et d'autre non
+          Colrcp.MoveFirst
+          Repeat
+            LigCom = Utils.db.Exec("SELECT * From " & Tab4 & " where four = &1 and numrecpt = &2 and nligne = &3 and code = &4", four.text, Ncom.text, Colrcp.Item[0], rarts!art_code)
+            If LigCom.Available Then
+              qteI = qteI - Val(.cpoint(LigCom!qte))
+              qteF = qteF - Val(.cpoint(LigCom!qte)) + Val(.cpoint(Colrcp.Item[6]))
+            Else If Colrcp.Item[1] = rarts!art_code Then
+              qteF = qteF + Val(.cpoint(Colrcp.Item[6]))
+            Endif
+          Until Colrcp.Movenext()
+          Artstock.text = qteI
+          ArtstockF.text = qteF
           Artstockmax.Text = .cpoint(rarts!art_stkmax)
           Mcom = rarts!art_mincom
           If Not IsNull(Mcom) And If Val(Mcom) > 0 Then Balloon.Warning(("Ce produit est a commander par " & Mcom), Pdprod)
@@ -2094,13 +2114,17 @@ Public Sub bas_doc()
         TResult = Utils.db.Exec("SELECT * FROM " & Tb_conv & " where art_code = &1", Colrcp.Item[1])
         If Not TResult.Available Then TResult = Utils.db.Exec("SELECT * FROM " & Tb_conv & " where art_cfour = &1", Colrcp.Item[1])
         If Not TResult.Available Then TResult = Utils.db.Exec("SELECT * FROM " & Tb_conv & " where art_refcentrale = &1", Colrcp.Item[1])
-        Txconv = TResult!art_txconv
-        Tfrais.Text = Format$(Val(.cpoint(Tfrais.Text)) + (Val(.cpoint(Colrcp.Item[9])) * Val(.cpoint(Colrcp.Item[6])) * Txconv), "0.00")
-        Tcom.Text = Format$(Val(Totalrcpt.Text) + Val(Tfrais.Text), "0.00")
-        If Not IsNull(Colrcp.Item[13]) Then Pcom.text = Format$(Val(.cpoint(Pcom.text)) + Val(.cpoint(Colrcp.Item[13])), "0.000")
-        Rtva = Utils.db.Exec("select * from " & Tb_tvaac & " where code_tva = &1", TResult!art_tva)
-        Tva = Tva + (Val(.cpoint(Colrcp.Item[6])) * (Val(.cpoint(Colrcp.Item[5])) * Rtva!taux_tva / 100))
-        Thc = Thc + (Val(.cpoint(Colrcp.Item[6])) * Val(.cpoint(Colrcp.Item[5])))
+        If TResult.Available Then
+          Txconv = TResult!art_txconv
+          Tfrais.Text = Format$(Val(.cpoint(Tfrais.Text)) + (Val(.cpoint(Colrcp.Item[9])) * Val(.cpoint(Colrcp.Item[6])) * Txconv), "0.00")
+          Tcom.Text = Format$(Val(Totalrcpt.Text) + Val(Tfrais.Text), "0.00")
+          If Not IsNull(Colrcp.Item[13]) Then Pcom.text = Format$(Val(.cpoint(Pcom.text)) + Val(.cpoint(Colrcp.Item[13])), "0.000")
+          Rtva = Utils.db.Exec("select * from " & Tb_tvaac & " where code_tva = &1", TResult!art_tva)
+          Tva = Tva + (Val(.cpoint(Colrcp.Item[6])) * (Val(.cpoint(Colrcp.Item[5])) * Rtva!taux_tva / 100))
+          Thc = Thc + (Val(.cpoint(Colrcp.Item[6])) * Val(.cpoint(Colrcp.Item[5])))
+        Else
+          Message.Error("Impossible de trouver l'article " & Colrcp.Item[1] & "\nVeuillez verifier votre saisie!", "OK") 
+        Endif
       Loop Until Colrcp.MoveNext()
     Endif
     Totalttc.Text = Format$((Thc + Tva), "0.00")
@@ -2140,8 +2164,8 @@ Public Sub Colrcp_Activate()
         If Not IsNull(Colrcp.Current[8]) Then Prvt.text = Format$(Val(.cpoint(Colrcp.Current[8])), "0.00")
         Frais.text = Colrcp.Current[9]
         If Not IsNull(Colrcp.Current[10]) Then Coef.text = Colrcp.Current[10]
-        If Not IsNull(Colrcp.Current[11]) Then Pvht.text = Colrcp.Item[11]
-        If Not IsNull(Colrcp.Current[12]) Then Pvttc.text = Colrcp.Item[12]
+        If Not IsNull(Colrcp.Current[11]) Then Pvht.text = Colrcp.Current[11]
+        If Not IsNull(Colrcp.Current[12]) Then Pvttc.text = Colrcp.Current[12]
         If Settings["/Soc" & Start.Societe & "/Tmq"] Then
           Calc_Percent()
         Endif
@@ -2179,6 +2203,8 @@ End
 '**********************************************************
 Public Sub Colrcp_Keypress()
 
+  Dim LigCom As Result
+
   With Utils
     If Key.code = Key.Delete And Colrcp.Count <> 0 Then
       If Start.son Then
@@ -2186,7 +2212,11 @@ Public Sub Colrcp_Keypress()
       Endif
       If Message.Question("Etes-vous sur de vouloir supprimer cette ligne ?", "Oui", "Non") = 1 Then
         Tab = "Fiches_Ligrecpt"
-        Utils.db.Exec("delete from " & Tab & " WHERE code = &1 and numrecpt = &2 and four = &3 ", Colrcp.current[1], Ncom.Text, four.Text)
+        LigCom = Utils.db.Exec("SELECT * From " & Tab & " where four = &1 and numrecpt = &2 and nligne = &3", four.text, Ncom.text, Colrcp.current[0])
+        If LigCom.Available Then
+          Maj_Quantite(LigCom!code, - Val(.cpoint(LigCom!qte)))
+          Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and nligne = &3", Ncom.Text, four.Text, LigCom!nligne)
+        Endif
         CleanChamps()
         Colrcp.Current.Delete
         If Colrcp.Count > 0 Then
@@ -2217,70 +2247,29 @@ Public Sub Colrcp_Keypress()
 
 End
 
-'*****************************************
-'* Maj de la quantite en stock en moins  *
-'*****************************************
-Public Sub Maj_Quantite()
+'*******************************
+'* Maj de la quantite en stock *
+'*******************************
+Public Sub Maj_Quantite(ArtCode As String, ArtQte As Float)
 
   Dim rResult As Result
   Dim Qline As Float
-  Dim Qtec As Float
+  Dim QteS As Float
+  Dim Tab As String
 
   Tab = "Fiches_Art"
   Utils.db.Exec("LOCK TABLES " & Tab & " WRITE")
-  With utils
-    If Colrcp.Count <> 0 Then
-      Colrcp.MoveFirst
-      Repeat
-        Colrcp.Item.Selected = True
-        rResult = Utils.db.Exec("select * from " & Tab & " where art_code = &1", Colrcp.Item[1])
-        If rResult.Available Then
-          Try Qtec = rResult!art_qte
-          If Error Then Qtec = 0
-          If rResult!art_stocke = True Then
-            Qline = Val(Colrcp.Item[6])
-            Qtec = Qtec - (Qline * rResult!art_txconv)
-            Utils.db.Exec("UPDATE  " & tab & "  SET art_qte = &2 WHERE art_code = &1", Colrcp.Item[1], Qtec)
-          Endif
-        Endif
-      Until Colrcp.Movenext()
+
+  rResult = Utils.db.Exec("select * from " & Tab & " where art_code = &1", ArtCode)
+  If rResult.Available Then
+    Try QteS = rResult!art_qte
+    If Error Then QteS = 0
+    If rResult!art_stocke = True Then
+      QteS = QteS + (ArtQte * rResult!art_txconv)
+      Utils.db.Exec("UPDATE  " & tab & "  SET art_qte = &2 WHERE art_code = &1", ArtCode, QteS)
     Endif
-    Qtec = 0
-  End With
-  Utils.db.Exec("UNLOCK TABLES")
+  Endif
 
-End
-
-'*****************************************
-'* Maj de la quantite en stock en plus  *
-'*****************************************
-Public Sub Maj_Quantite2()
-
-  Dim rResult As Result
-  Dim Qline As Float
-  Dim Qtec As Float
-
-  Tab = "Fiches_Art"
-  Utils.db.Exec("LOCK TABLES " & Tab & " WRITE")
-  With utils
-    If Colrcp.Count <> 0 Then
-      Colrcp.MoveFirst
-      Repeat
-        Colrcp.Item.Selected = True
-        rResult = Utils.db.Exec("select * from " & Tab & " where art_code = &1", Colrcp.Item[1])
-        If rResult.Available Then
-          Try Qtec = rResult!art_qte
-          If Error Then Qtec = 0
-          If rResult!art_stocke = True Then
-            Qline = Val(Colrcp.Item[6])
-            Qtec = Qtec + (Qline * rResult!art_txconv)
-            Utils.db.Exec("UPDATE  " & tab & "  SET art_qte = &2 WHERE art_code = &1", Colrcp.Item[1], Qtec)
-          Endif
-        Endif
-      Until Colrcp.Movenext()
-    Endif
-    Qtec = 0
-  End With
   Utils.db.Exec("UNLOCK TABLES")
 
 End
@@ -2311,18 +2300,25 @@ Public Sub Enrgcom(valid As Boolean)
         Repeat
           Colrcp.Item.Selected = True
           Cart.text = Colrcp.Current[1]
-          LastLigne = Val(Colrcp.Item[0])
+          LastLigne = Max(Val(Colrcp.Item[0]), LastLigne) 
           LigCom = Utils.db.Exec("SELECT * From " & Tab & " where four = &1 and numrecpt = &2 and nligne = &3", four.text, Ncom.text, Colrcp.Item[0])
           If LigCom.Available Then
             Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and nligne = &3", Ncom.Text, four.Text, Colrcp.Item[0])
+            Maj_Quantite(LigCom!code, - Val(.cpoint(LigCom!qte)))
           Endif
           Utils.db.Exec("INSERT INTO " & Tab & "(code,design,numrecpt,four,pbht,rm,paht,qte,frais,prvt, daterecpt, nligne) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12})", Colrcp.Item[1], Colrcp.Item[2], Ncom.Text, four.Text, Colrcp.Item[3], Colrcp.Item[4], Colrcp.Item[5], Colrcp.Item[6], Colrcp.Item[9], Colrcp.Item[8], .Cdate_Dbase(datej.Text), Colrcp.Item[0])
+          Maj_Quantite(Colrcp.Item[1], Val(.cpoint(Colrcp.Item[6])))
         Until Colrcp.Movenext()
-        'supprime les lignes inutilisées
-        Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and nligne > &3", Ncom.Text, four.Text, LastLigne)
+        'supprime les lignes inutilisées et on ajuste le stock 
+        LigCom = Utils.db.Exec("SELECT * From " & Tab & " where four = &1 and numrecpt = &2 and nligne > &3", four.text, Ncom.text, LastLigne)
+        If LigCom.Available Then
+          Repeat
+            Maj_Quantite(LigCom!code, - Val(.cpoint(LigCom!qte)))
+            Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and nligne = &3", Ncom.Text, four.Text, LigCom!nligne)
+          Until LigCom.MoveNext()
+        Endif
         
       Endif
-      Maj_Quantite2()
       RazBl()
       four.Clear
       fournom.Clear
@@ -2515,7 +2511,6 @@ Public Sub Aff_br()
     Cart.SetFocus
     Cart.Select
     Nouveau = False
-    Maj_Quantite()
     Reaff_bl()
     'lcolrcp()
   Else
@@ -2540,13 +2535,21 @@ End
 '**************************************
 Public Sub Delcom()
 
+  Dim LigCom As Result
+
   With Utils
     If Colrcp.Count <> 0 Then
       If Start.son Then
         Music.Play
       Endif
       Tab = "Fiches_Ligrecpt"
-      Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and daterecpt = &3", Ncom.Text, four.Text, .Cdate_Dbase(datej.Text))
+      LigCom = Utils.db.Exec("SELECT * From " & Tab & " where four = &1 and numrecpt = &2 and daterecpt = &3", four.text, Ncom.text, .Cdate_Dbase(datej.Text))
+      If LigCom.Available Then
+        Repeat
+          Maj_Quantite(LigCom!code, - Val(.cpoint(LigCom!qte)))
+          Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and nligne = &3", Ncom.Text, four.Text, LigCom!nligne)
+        Until LigCom.MoveNext()
+      Endif
       Tab = "Fiches_Entrecpt"
       Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2", Ncom.Text, four.Text)
       RazBl()
@@ -2774,3 +2777,4 @@ Public Sub Comments_DblClick()
   Comments.visible = False
 
 End
+
