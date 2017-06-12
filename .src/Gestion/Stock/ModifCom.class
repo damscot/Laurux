@@ -110,7 +110,6 @@ Public Sub _New(Num As String, Four As String, sDate As String, anomalie As Bool
   codef = sfour
   dater = sdate
   Colrcp.Columns.count = 15
-  Colrcp.Columns[8].Alignment = 2
   Colrcp.Columns[0].Text = "Nlgn"
   Colrcp.Columns[1].Text = "Code"
   Colrcp.Columns[2].Text = "Désignation"
@@ -124,6 +123,20 @@ Public Sub _New(Num As String, Four As String, sDate As String, anomalie As Bool
   Colrcp.Columns[6].Alignment = 2
   Colrcp.Columns[7].Text = "Total ht"
   Colrcp.Columns[7].Alignment = 2
+  Colrcp.Columns[8].Text = "prvt"
+  Colrcp.Columns[8].Alignment = 2
+  Colrcp.Columns[9].Text = "frais"
+  Colrcp.Columns[9].Alignment = 2
+  Colrcp.Columns[10].Text = "coef"
+  Colrcp.Columns[10].Alignment = 2
+  Colrcp.Columns[11].Text = "pvht"
+  Colrcp.Columns[11].Alignment = 2
+  Colrcp.Columns[12].Text = "pvttc"
+  Colrcp.Columns[12].Alignment = 2
+  Colrcp.Columns[13].Text = "poids"
+  Colrcp.Columns[13].Alignment = 2
+  Colrcp.Columns[14].Text = "code"
+  Colrcp.Columns[14].Alignment = 2
   lcolrcp()
   Aff_br()
   If An.Value Then
@@ -164,6 +177,18 @@ Public Sub lcolrcp()
           Try Colrcp.Columns[7].Width = spl[1]
         Case "col8"
           Try Colrcp.Columns[8].Width = spl[1]
+        Case "col9"
+          Try Colrcp.Columns[9].Width = spl[1]
+        Case "col10"
+          Try Colrcp.Columns[10].Width = spl[1]
+        Case "col11"
+          Try Colrcp.Columns[11].Width = spl[1]
+        Case "col12"
+          Try Colrcp.Columns[12].Width = spl[1]
+        Case "col13"
+          Try Colrcp.Columns[13].Width = spl[1]
+        Case "col14"
+          Try Colrcp.Columns[14].Width = spl[1]
       End Select
     Next
   Else
@@ -176,6 +201,12 @@ Public Sub lcolrcp()
     Colrcp.Columns[6].Width = 60
     Colrcp.Columns[7].Width = 100
     Colrcp.Columns[8].Width = 30
+    Colrcp.Columns[9].Width = 30
+    Colrcp.Columns[10].Width = 30
+    Colrcp.Columns[11].Width = 30
+    Colrcp.Columns[12].Width = 30
+    Colrcp.Columns[13].Width = 30
+    Colrcp.Columns[14].Width = 100
   Endif
 
 End
@@ -798,7 +829,7 @@ Public Sub Btn_Click()
     Case 3
       If b <> 1 Then
         If Exist(filename) Then Try Kill filename
-        Settings["/Soc" & Start.Societe & "/Col/LcolC"] = "col0:" & Colrcp.Columns[0].Width & ";" & "col1:" & Colrcp.Columns[1].Width & ";" & "col2:" & Colrcp.Columns[2].Width & ";" & "col3:" & Colrcp.Columns[3].Width & ";" & "col4:" & Colrcp.Columns[4].Width & ";" & "col5:" & Colrcp.Columns[5].Width & ";" & "col6:" & Colrcp.Columns[6].Width & ";" & "col7:" & Colrcp.Columns[7].Width & ";" & "col8:" & Colrcp.Columns[8].Width
+        Settings["/Soc" & Start.Societe & "/Col/LcolC"] = "col0:" & Colrcp.Columns[0].Width & ";" & "col1:" & Colrcp.Columns[1].Width & ";" & "col2:" & Colrcp.Columns[2].Width & ";" & "col3:" & Colrcp.Columns[3].Width & ";" & "col4:" & Colrcp.Columns[4].Width & ";" & "col5:" & Colrcp.Columns[5].Width & ";" & "col6:" & Colrcp.Columns[6].Width & ";" & "col7:" & Colrcp.Columns[7].Width & ";" & "col8:" & Colrcp.Columns[8].Width & ";" & "col9:" & Colrcp.Columns[9].Width & ";" & "col10:" & Colrcp.Columns[10].Width & ";" & "col11:" & Colrcp.Columns[11].Width & ";" & "col12:" & Colrcp.Columns[12].Width & ";" & "col13:" & Colrcp.Columns[13].Width & ";" & "col14:" & Colrcp.Columns[14].Width
         Settings.Save
         Me.Close
       Endif
@@ -2480,9 +2511,8 @@ Public Sub Aff_br()
             Else
               Colrcp.Item[5] = LigResult!paht
             Endif
-            Try Txtva = "1," & Replace$(ArtResult!txtva_fam, ".", "")
-            If Error Then Txtva = "1," & ArtResult!txtva_fam
-            Try Colrcp.Item[12] = Val(Utils.cpoint(LigResult!paht)) * Val(Txtva)
+            Colrcp.Item[11] = Format$(Val(Utils.cpoint(ArtResult!art_pvht)), "0.00")
+            Colrcp.Item[12] = Format$(Val(Utils.cpoint(ArtResult!art_pvttc)), "0.00")
             Colrcp.Item[6] = LigResult!qte
             Try Colrcp.Item[13] = Format$(Val(LigResult!qte) * ArtResult!art_poids2, "0.000")
             Colrcp.Item[7] = Format$(Val(.cpoint(LigResult!paht)) * Val(.cpoint(LigResult!qte)), nbdec)
