@@ -61,6 +61,7 @@ Public Sub Aff_date()
     Quit
   Else
     Dpc = rResult!dtepc
+    dpc = Utils.Cdate_aff(dpc)
     dtepc = Left(Dpc, 2)
     dateprc.Text = "  " & Format$(Date(Right(dpc, 4), Left(dpc, 2), "01"), "mmmm  yyyy")
     'Aff_date()
