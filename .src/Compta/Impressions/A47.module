@@ -43,7 +43,7 @@ Public Sub GenA47()
       "db_cent FLOAT," &
       "crd_cent FLOAT," &
       "njournal Char(2)," &
-      "PRIMARY KEY (cd_cent))" & "ENGINE = MYISAM")
+      "PRIMARY KEY (cd_cent))" & Utils.db.Engine())
     filetxt = User.Home & "/tmp/journaux.txt"
     If Exist(filetxt) Then Kill filetxt
     hFile = Open filetxt For Write Create
