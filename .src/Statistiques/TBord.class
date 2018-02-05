@@ -68,7 +68,7 @@ Public Sub Traitement()
       "margepmo Decimal(12,2)," &
       "date Char(6)," &
       "nb integer , " &
-      "PRIMARY KEY (date))" & "ENGINE = MYISAM")
+      "PRIMARY KEY (date))" & Utils.db.Engine())
     If dte1 <> "" Or Left$(dte1, 2) = "00" Or dte2 <> "" Or Left$(dte2, 2) = "00" Then
       Dte = .Cdate_Dbase(dte1)
       Dte2 = .Cdate_Dbase(dte2)

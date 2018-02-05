@@ -822,18 +822,16 @@ End
 Public Sub Raz_Tables()
 
   Try Utils.db.EXEC("CREATE TABLE " & Cbase.Table("TabReglt") &
-    "(lInd INT NOT NULL AUTO_INCREMENT," &
-    "intitule Char(30)," &
+    "(intitule Char(30)," &
     "montant Char(12)," &
     "qte Char(12)," &
     "type Char(15)," &
     "caisse Char(2)," &
     "date Char(17)," &
-    "PRIMARY KEY (lInd))" & "ENGINE = MYISAM")
+    Utils.db.AutoIncrement("lind") & ")" & Utils.db.Engine())
 
   Try Utils.db.EXEC("CREATE TABLE " & Cbase.Table("TabEntTck") &
-    "(lInd INT NOT NULL AUTO_INCREMENT," &
-    "caisse Char(2)," &
+    "(caisse Char(2)," &
     "vendeur Char(35)," &
     "numero Char(7)," &
     "date Char(17)," &
@@ -867,11 +865,10 @@ Public Sub Raz_Tables()
     "points Decimal(12,3)," &
     "suppr TINYINT(1)," &
     "control VARCHAR(40), " &
-    "PRIMARY KEY (lInd))" & "ENGINE = MYISAM")
+    Utils.db.AutoIncrement("lInd") & ")" & Utils.db.Engine())
 
   Try Utils.db.EXEC("CREATE TABLE " & Cbase.Table("TabLigTck") &
-    "(lInd INT NOT NULL AUTO_INCREMENT," &
-    "numero Char(7)," &
+    "(numero Char(7)," &
     "numlig Char(3)," &
     "code Char(15)," &
     "intitule  Char(50)," &
@@ -882,7 +879,7 @@ Public Sub Raz_Tables()
     "mht Char(12)," &
     "mrem Char(12)," &
     "mtva Char(12)," &
-    "PRIMARY KEY (lInd))" & "ENGINE = MYISAM")
+    Utils.db.AutoIncrement("lInd") & ")" & Utils.db.Engine())
 
 End
 
@@ -1115,7 +1112,7 @@ Public Sub Ventilation()
     "totalttc Char(25)," &
     "totalht Char(25)," &
     "totaltva Char(25)," &
-    "PRIMARY KEY (compte))" & "ENGINE = MYISAM")
+    "PRIMARY KEY (compte))" & Utils.db.Engine())
 
 End
 
@@ -1130,7 +1127,7 @@ Public Sub Virements()
     "intitule Char(35)," &
     "type Char(1)," &
     "montant Decimal(12,2)," &
-    "PRIMARY KEY (compte, type))" & "ENGINE = MYISAM")
+    "PRIMARY KEY (compte, type))" & Utils.db.Engine())
 
 End
 
@@ -1777,8 +1774,7 @@ Private Sub creatmp()
 
   Try utils.db.Exec("DROP TABLE Tmp_Caisse")
   Utils.db.EXEC("CREATE TABLE Tmp_Caisse" &
-    "(lInd INT NOT NULL AUTO_INCREMENT," &
-    "code Char(15)," &
+    "(code Char(15)," &
     "pu Decimal(8,2) DEFAULT '0'," &
     "montant Decimal(8,2) DEFAULT '0', " &
     "remise Decimal(8,2) DEFAULT '0'," &
@@ -1786,7 +1782,7 @@ Private Sub creatmp()
     "tva Decimal(8,2) DEFAULT '0'," &
     "marge Decimal(8,2) DEFAULT '0'," &
     "fam Char(20)," &
-    "PRIMARY KEY (lInd))")
+    Utils.db.AutoIncrement("lInd") & ")")
 
 End
 
