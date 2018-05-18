@@ -1,7 +1,14 @@
 #!/bin/bash
 
+echo "Service Start"
 sudo service mysql start
 sudo service ssh start
 
-exec "$@"
+echo "User Remap"
+source /user-mapping.sh
 
+echo "User passwd"
+echo -e "${USER}\n${USER}" | passwd ${USER}
+
+echo "Running $@" 
+exec su - "${USER}" -c "$@"

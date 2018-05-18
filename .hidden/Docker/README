@@ -1,2 +1,17 @@
-docker run -i -t --rm -v /home/jeanne/.ssh:/home/Laurux/.ssh laurux xpra start :100 --start-child=/home/Laurux/Laurux/Laurux --daemon=no --exit-with-children --exit-with-client=yes
-xpra attach ssh/Laurux@172.17.0.2/100
+# you may use docker desktop (https://www.docker.com/products/docker-desktop/) package to ease docker usage
+
+# build image
+docker build . -t laurux_master
+
+# create named containers
+docker run --name laurux-master -p 13306:3306 -p 10022:22 -it -e HOST_USER_ID=$(id -u) -e HOST_USER_GID=$(id -g) laurux_master /bin/bash
+
+# cleanup ssh connection id to connect easily to containers when you alter docker image or start a fresh container
+ssh-keygen -f /home/$USER/.ssh/known_hosts -R '[localhost]:10022' 
+ssh-copy-id -p 10022 laurux@localhost
+
+#copy your own Laurux database to docker containers
+scp -P 10022 ~/BDD_Archive/Laurux* laurux@localhost:~/
+
+#run Laurux through SSH X11 forward access
+ssh -X -p 10022 laurux@localhost bash -c "/home/laurux/Laurux/Laurux"
