@@ -75,7 +75,6 @@ Coulfc As Integer
 Datetk As LDate
 Datetk2 As LDate
 Client As String
-Client2 As String
 Caissiere As String
 $Caissiere As String
 Pointille As String
@@ -633,6 +632,7 @@ Public Sub Art_man()
           LigTk.Item[2] = "*** Produit en promotion ***"
           LigTk.Item[8] = bloc
           Inc iNlg
+          Inc iligne
         Endif
         LigTk.Add(iligne, iligne)
         LigTk.Item[0] = iNlg
@@ -1316,8 +1316,18 @@ Public Sub Valid_Cart() As Boolean
   Dim Rarts As Result
   Dim cbarr As String
   Dim ret As Boolean
+  Dim i As Integer
 
   If Left$(Cart.Text, 1) = "*" Then
+    'on verifie que le code barre saisie est correct on autorise que les caractères de 0 à 9
+    i = 2
+    While i <= Len(Cart.Text)
+      If (String.Code(Cart.Text, i) < String.Code("0")) Or (String.Code(Cart.Text, i) > String.Code("9")) Then
+        Message.Error("Erreur sur la saisie du code bare " & Cart.Text & " à la position " & i)
+        Return False
+      Endif
+      Inc i
+    Wend
     If Len(Cart.Text) = 14 And Mid$(Cart.Text, 2, 6) = "299999" Then
       Cart.Text = Mid$(Cart.Text, 8, 6)
       Crt = True
@@ -2276,6 +2286,8 @@ Public Sub ColTka_Click()
   Dim Tab As String
   Dim Clitab As Result
   Dim Caisse As String
+  Dim s_l_block, s_l_block_orig As String
+  
 
   Caisse = ColTka.Item[0]
   Tab = "Fiches_EntTicketz"
@@ -2288,6 +2300,7 @@ Public Sub ColTka_Click()
   LigTk.Clear
   Init_LigTk()
   iNlg = 0
+  iligne = 0
   Totalht = 0
   Numtk = ColTka.Item[1]
   Datetk.L = ColTka.Item[2]
@@ -2295,10 +2308,11 @@ Public Sub ColTka_Click()
   ColTka.visible = False
   ColTka.clear
   RTck = Utils.db.Exec("SELECT * FROM " & Tab & " where numero = &1", Numtk)
-  Client2 = Rtck!client
-  $Cli = Rtck!nom
 
   Ent_tk(numtk)
+
+  Client = Rtck!client
+  $Cli = Rtck!nom
 
   TotalTk.Text = RTck!mttc
   If (RTck!type = 1) Then
@@ -2313,13 +2327,14 @@ Public Sub ColTka_Click()
   Endif
 
   Tab = "Fiches_LigTicketz"
-  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where numero = &1 order by cast(numlig as unsigned)", Numtk)
+  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where numero = &1 order by cast(numlig as unsigned), cast(block as unsigned)", Numtk)
   If rResult.Available Then
     Repeat
+      'on recree les lignes et block
       Inc iligne
       Inc iNlg
-      Try LigTk.Add(rResult!numlig, rResult!numlig)
-      LigTk.Item[0] = rResult!numlig
+      Try LigTk.Add(iligne, iligne)
+      LigTk.Item[0] = iNlg
       LigTk.Item[1] = rResult!code
       LigTk.Item[2] = rResult!intitule
       LigTk.Item[3] = rResult!montant
@@ -2327,7 +2342,11 @@ Public Sub ColTka_Click()
       LigTk.Item[5] = rResult!type
       LigTk.Item[6] = rResult!mht
       LigTk.Item[7] = rResult!mrem
-      LigTk.Item[8] = rResult!block
+      If (rResult!block <> s_l_block_orig) Then
+        s_l_block_orig = rResult!block
+        s_l_block = iligne
+      Endif
+      LigTk.Item[8] = s_l_block
       LigTk.Item[9] = rResult!mtva
       LigTk.Item[10] = rResult!tva
       LigTk.Item[11] = rResult!montant
@@ -2422,7 +2441,7 @@ Public Sub suppr_Tk()
       iAttente = 0
       iRattente = 0
       iAvoir = 0
-      inlg = 0
+      iNlg = 0
       iligne = 0
       Tottva = 0
       Totalht = 0
@@ -5778,6 +5797,11 @@ Public Sub Enrg_Tk(Supprime As Boolean)
       smttc = TotalTk.text
     Endif
 
+    If clicompte = 0 Then
+      'Si le règlement n'est pas un client compte on s'assure d'enregistrer le code du client caisse par defaut dans le ticket
+      clicode = CodeclientDefault
+    Endif
+    
     If IsNull(scartef) Then scartef = $Cli
     If Not IsNull($Nomd) Then $Cli = $Nomd
 
