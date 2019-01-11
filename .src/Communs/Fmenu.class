@@ -167,7 +167,8 @@ Public Sub Form_Open()
     'a n'utiliser que pour des tests
     Start.Restore_Args()
     
-    Try Utils.db.exec("SET NAMES 'latin1'")
+    Try Utils.db.exec("SET NAMES 'utf8'")
+    'Try Utils.db.exec("SET NAMES 'latin1'")
     If Not IsNull(Utils.db.Login) Then Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode=NO_ENGINE_SUBSTITUTION " & "; \"" Wait
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSoc") & " where cd_sc = &1", Soc)
     If rResult.Available Then Soc = Soc & " " & rResult!type_sc & " - " & rResult!int_sc
@@ -271,6 +272,7 @@ Catch
   Message.Warning(Application.Name & " va maintenant quitter! Merci de le relancer.")
   Start.NoTips = True
   Me.Close()
+  Quit
   
 End
 
@@ -2605,5 +2607,14 @@ Public Sub Menu332_Click()
     
     Object.Call(Menu, "Show")
   
+
+End
+
+Public Sub Menu300_Click()
+
+  Dim dbsan As DB_Sanity
+
+  dbsan = New DB_Sanity(Utils.db)
+  dbsan.showModal()
 
 End

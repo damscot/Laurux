@@ -1,0 +1,55 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,130,73)
+  Text = ("Contrôle de la base de donnée")
+  { GridView1 GridView
+    MoveScaled(1,1,128,53)
+  }
+  { Quitter Button
+    MoveScaled(117,68,10,4)
+    Text = Shortcut(("Quitter"), "Q")
+  }
+  { Export_CSV Button
+    MoveScaled(96,68,19,4)
+    Text = Shortcut(("Export CSV"), "E")
+  }
+  { Expected CheckBox
+    MoveScaled(1,54,24,4)
+    Text = ("Valeurs Attendues")
+  }
+  { Nettoyer Button
+    MoveScaled(13,68,11,4)
+    Visible = False
+    Text = Shortcut(("Nettoyer"), "N")
+  }
+  { Corriger Button
+    MoveScaled(1,68,10,4)
+    Visible = False
+    Text = Shortcut(("Corriger"), "r")
+  }
+  { Panel1 Panel
+    MoveScaled(28,56,68,13)
+    { AllTab RadioButton
+      MoveScaled(16,0,46,4)
+      Text = ("Voir tous les elements existants")
+      Value = True
+    }
+    { Controlled RadioButton
+      MoveScaled(16,3,46,4)
+      Text = ("Voir uniquement les elements contrôlés")
+    }
+    { Supplem RadioButton
+      MoveScaled(16,6,51,4)
+      Text = ("Voir uniquement les elements supplémentaires")
+    }
+    { Missing RadioButton
+      MoveScaled(16,9,43,4)
+      Text = ("Rechercher les éléments absents")
+    }
+    { Control Button
+      MoveScaled(2,4,13,4)
+      Text = Shortcut(("Contrôle"), "C")
+    }
+  }
+}

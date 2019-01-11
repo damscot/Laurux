@@ -272,7 +272,7 @@ Public Sub Button1_Click()
     If Start.LocalSettings["/dbase/type"] = "mysql"
       Utils.db.name = Prefixe.Text & Nbase.Text
       Utils.db.Open
-      Try Utils.db.exec("SET NAMES 'latin1'")
+      Try Utils.db.exec("SET NAMES 'utf8'")
       If Not IsNull(Utils.db.Login) Then Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode= NO_ENGINE_SUBSTITUTION " & "; \"" Wait
     Else 'sqlite3
       Utils.db.Host = Start.LocalSettings["/dbase/Host"]
@@ -391,7 +391,7 @@ Public Sub Createbase(Base As String, Optional AsCurrent As Boolean = True) As B
     Start.LocalSettings["/Soc" & Soc & "/bois"] = False
     Start.LocalSettings.Save
     
-    Utils.Fill_DataBase(Soc, "Laurux01.sql")
+    Utils.Fill_DataBase("Laurux" & Soc, "Laurux01.sql")
     'Cas special si la connection à la base a echouée car elle n'existait pas... maintenant c'est ok (si besoin le tunnel est déjà monté)
     If Not Utils.db.Opened Then Utils.db.Open()
     Tab = "Fiches_Societes"
@@ -454,8 +454,8 @@ Public Sub Form_Close()
     Start.UnLock()
     Utils.fermeTunnel()
     Utils.db.Close
-    Try Fmenu.Close
-    Try Fmenu.delete
+    Try Me.close
+    Try Start.MainWindow.Close()
     Start.Main()
   Endif
 

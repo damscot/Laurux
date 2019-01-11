@@ -564,12 +564,12 @@ Public Sub Button4_Click()
     Start.Societe = soc
     Utils.db.name = "Laurux" & code.Text
     Utils.db.Open
-    Utils.db.exec("SET NAMES 'latin1'")
+    Utils.db.exec("SET NAMES 'utf8'")
     If Not IsNull(Utils.db.Login) Then Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode= NO_ENGINE_SUBSTITUTION " & "; \"" Wait
     Fmenu.text = "Laurux : " & "Société " & Code.Text & " " & Civilite.text & " " & intitule.Text
     Start.UnLock()
-    Me.Close
-    Fmenu.Close
+    Try Me.Close
+    Try Start.MainWindow.Close()
   Else
     If son Then
       Music.Play
@@ -599,7 +599,7 @@ Public Sub Soclist_Click()
     Utils.db.Close
     Utils.db.name = Soclist.Item[2]
     Utils.db.Open
-    Utils.db.exec("SET NAMES 'latin1'")
+    Utils.db.exec("SET NAMES 'utf8'")
     cs = Soclist.Item[0]
     If Not IsNull(Utils.db.Login) Then Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode= NO_ENGINE_SUBSTITUTION " & "; \"" Wait
     Maj_Zones()
@@ -616,7 +616,7 @@ Public Sub Soclist_Click()
     Utils.fermeTunnel()
     Utils.db.Close
     Try Me.close
-    Try Fmenu.delete
+    Try Start.MainWindow.Close()
     Start.Main()
   Else
     Maj_Zones()
