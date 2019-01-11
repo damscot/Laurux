@@ -5130,6 +5130,7 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " change date date datetime")
   Tab = "Fiches_LigTicketz"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY intitule varchar(50)")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY numlig char(6)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (date DATETIME)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " drop marge")
   
@@ -5140,6 +5141,7 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (prev_numero CHAR(7))")
   Tab = "Fiches_HisLigTickets"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY intitule varchar(50)")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY numlig char(6)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mrem CHAR(12))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtva CHAR(12))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (block CHAR(4))")
