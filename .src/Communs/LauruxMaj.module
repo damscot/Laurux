@@ -3326,12 +3326,6 @@ Public Sub Maj311()
     "ncode char(8) NOT NULL," &
     "PRIMARY KEY (acode))" & Utils.db.Engine())
 
-  Tab = "Corjxs"
-  Try Utils.db.EXEC("CREATE TABLE " & Tab &
-    " (sage Char(3) NOT NULL," &
-    "laurux char(2) NOT NULL," &
-    "PRIMARY KEY (sage))" & Utils.db.Engine())
-
 End
 
 Public Sub Maj312()
@@ -3434,12 +3428,6 @@ Public Sub Maj315()
     " (acode Char(8) NOT NULL," &
     "ncode char(8) NOT NULL," &
     "PRIMARY KEY (acode))" & Utils.db.Engine())
-
-  Tab = "Corjxs"
-  Try Utils.db.EXEC("CREATE TABLE " & Tab &
-    " (sage Char(3) NOT NULL," &
-    "laurux char(2) NOT NULL," &
-    "PRIMARY KEY (sage))" & Utils.db.Engine())
 
 End
 
@@ -3749,12 +3737,6 @@ Public Sub Maj321()
     " (acode Char(8) NOT NULL," &
     "ncode char(8) NOT NULL," &
     "PRIMARY KEY (acode))" & Utils.db.Engine())
-
-  Tab = "Corjxs"
-  Try Utils.db.EXEC("CREATE TABLE " & Tab &
-    " (sage Char(3) NOT NULL," &
-    "laurux char(2) NOT NULL," &
-    "PRIMARY KEY (sage))" & Utils.db.Engine())
 
   Tab = "Fiches_Art"
   Utils.db.Exec("UPdate  " & tab & "  SET  art_stocke = &1 where art_stocke = &2", "1", "-1")
@@ -5041,9 +5023,78 @@ End
 Public Sub Maj369()
 
   Dim PB As ProgBar
+  Dim rReq As Result
   Dim txt As String
   Dim lasttk As String = "0000001"
   Dim res, respar As Result
+  Dim $i As Integer = 0
+  
+  'Modification charset to utf8
+  rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, t1.COLUMN_TYPE, t1.character_set_name from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.column_type like '%CHAR%' or t1.column_type like 'TEXT') and t1.character_set_name != 'utf8'", "Laurux" & Start.Societe)
+  If rReq.Count <> 0 Then
+    If Message.Warning("Il semble que la conversion UTF8 de la base de donnée n'a pas été effectué\n" & rReq.Count & " champ(s) non converti!\nVoulez-vous lancer la conversion", "Oui", "Non") = 2 Then
+      Goto end_utf8
+    Endif
+  Else
+    Goto end_utf8
+  Endif
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` ENGINE=InnoDB;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  If rReq.Available Then
+    PB = New ProgBar("Conversion MYISAM -> InnoDB Engine", rReq.Count)
+    PB.Show()
+    Repeat
+      PB.Avancement(rReq!req, 1)
+      Try Utils.db.Exec(rReq!req)
+    Until rReq.MoveNext()
+    PB.Close()
+  Endif
+  PB.Close()
+  
+  rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  If rReq.Available Then
+    PB = New ProgBar("Conversion UTF8 Schema", 1)
+    PB.Show()
+    Repeat
+      PB.Avancement(rReq!req, 1)
+      Try Utils.db.Exec(rReq!req)
+    Until rReq.MoveNext()
+    PB.Close()
+  Endif
+  
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  If rReq.Available Then
+    PB = New ProgBar("Conversion UTF8 Tables", rReq.Count)
+    PB.Show()
+    Repeat
+      PB.Avancement(rReq!req, 1)
+      Try Utils.db.Exec(rReq!req)
+    Until rReq.MoveNext()
+    PB.Close()
+  Endif
+
+  rReq = Utils.db.Exec("SELECT concat('UPDATE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` SET `', t1.column_name, '` = CONVERT(CAST(CONVERT(`',t1.column_name,'` USING LATIN1) AS BINARY) USING UTF8)') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.data_type like '%CHAR%' or t1.data_type = 'TEXT')", "Laurux" & Start.Societe)
+  If rReq.Available Then
+    PB = New ProgBar("Conversion UTF8 Field Content", rReq.Count)
+    PB.Show()
+    Repeat
+      PB.Avancement(rReq!req, 1)
+      Try Utils.db.Exec(rReq!req)
+    Until rReq.MoveNext()
+    PB.Close()
+  Endif
+
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` MODIFY `', t1.column_name, '` ', t1.data_type , '(' , t1.CHARACTER_MAXIMUM_LENGTH , ')' , ' CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.data_type like '%CHAR%' or t1.data_type = 'TEXT')", "Laurux" & Start.Societe)
+  If rReq.Available Then
+    PB = New ProgBar("Conversion UTF8 Field Type", rReq.Count)
+    PB.Show()
+    Repeat
+      PB.Avancement(rReq!req, 1)
+      Try Utils.db.Exec(rReq!req)
+    Until rReq.MoveNext()
+    PB.Close()
+  Endif
+  
+end_utf8:
   
   'Modification de la caisse
   PB = New ProgBar("Modification des caisses", 4)
@@ -5079,6 +5130,7 @@ Public Sub Maj369()
   Tab = "Fiches_EntTicketz"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " change date date datetime")
   Tab = "Fiches_LigTicketz"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY intitule varchar(50)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (date DATETIME)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " drop marge")
   
@@ -5088,6 +5140,7 @@ Public Sub Maj369()
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (retro TINYINT(1))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (prev_numero CHAR(7))")
   Tab = "Fiches_HisLigTickets"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY intitule varchar(50)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mrem CHAR(12))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtva CHAR(12))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (block CHAR(4))")
@@ -5185,8 +5238,8 @@ Public Sub Maj369()
   Tab = "Fiches_HisEntTickets"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (date2 datetime)")
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & " order by numero")
-  PB = New ProgBar("Conversion des dates des tickets caisse archivés", rResult.Count)
   If rResult.Available Then
+    PB = New ProgBar("Conversion des dates des tickets caisse archivés", rResult.Count)
     PB.Show()
     Repeat
       PB.Avancement("Tickets " & rResult!numero, 300)
@@ -5199,9 +5252,16 @@ Public Sub Maj369()
       lasttk = rResult!numero
     Until rResult.MoveNext()
     PB.Close()
-    Try Utils.db.Exec("ALTER TABLE " & Tab & " drop date")
-    Try Utils.db.Exec("ALTER TABLE " & Tab & " change date2 date datetime")
   Endif
+  
+  PB = New ProgBar("Modification autres Tables", 6)
+  PB.Show()
+  PB.Avancement("Table HisEntTickets", 1)
+  
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " drop date")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " change date2 date datetime")
+  
+  PB.Avancement("Table Parametres", 1)
   
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD dntk char(7)")
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD cutk char(7)")
@@ -5228,14 +5288,42 @@ Public Sub Maj369()
       Message.Warning("Il n'existe pas de journaux d'OD \n Veuillez completer les paramètres généreaux aprés la maj")
     Endif
   Endif
+  
+  PB.Avancement("Libelle / Intitule", 1)
+  'Compta intitule / libelle homogenisation
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY intitule varchar(40)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY libelle varchar(50)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY intitule varchar(40)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY libelle varchar(50)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY intitule varchar(40)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY libelle varchar(50)")
+  $i = 1
+  While $i < 6 ' iteration de 1 a 5
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY intitule varchar(40)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY intitule varchar(40)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY intitule varchar(40)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY libelle varchar(50)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY libelle varchar(50)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY libelle varchar(50)")
+    $i = $i + 1
+  Wend
+  
+  PB.Avancement("Contribution", 1)
   'contrib asirbu2002
   Tab = "Fiches_Ligabon"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (libelle VarChar(50))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (numDoc Char(10))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (numLot Char(10))")
   
+  PB.Avancement("Obsolete Table Cleanup", 1)
+  'Unused table
+  Try Utils.db.Exec("DROP TABLE Corjxs")
+  
+  PB.Avancement("Correction champ lettrage", 1)
   'Remettre le lettrage à vrais dans le fichier des codes comptables
   Utils.db.Exec("UPDATE Fiches_Comptes SET lettrable = True WHERE lettrable = '-1'")
+  
+  PB.Close()
  
   'il semblerait que ces colonnes manquent dans certaines bases
   Tab = "Fiches_HistoFacM"

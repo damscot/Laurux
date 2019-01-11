@@ -16,75 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `Art_Saisis`
---
-
-DROP TABLE IF EXISTS `Art_Saisis`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Art_Saisis` (
-  `code` char(15) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Art_Saisis`
---
-
-LOCK TABLES `Art_Saisis` WRITE;
-/*!40000 ALTER TABLE `Art_Saisis` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Art_Saisis` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Artsup`
---
-
-DROP TABLE IF EXISTS `Artsup`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Artsup` (
-  `art_code` char(15) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`art_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Artsup`
---
-
-LOCK TABLES `Artsup` WRITE;
-/*!40000 ALTER TABLE `Artsup` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Artsup` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Bl`
---
-
-DROP TABLE IF EXISTS `Bl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Bl` (
-  `num` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
-  `code` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `date` datetime DEFAULT NULL,
-  `ht` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Bl`
---
-
-LOCK TABLES `Bl` WRITE;
-/*!40000 ALTER TABLE `Bl` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Bl` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `Cli_Mailing`
 --
 
@@ -104,29 +35,6 @@ CREATE TABLE `Cli_Mailing` (
 LOCK TABLES `Cli_Mailing` WRITE;
 /*!40000 ALTER TABLE `Cli_Mailing` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Cli_Mailing` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Corjxs`
---
-
-DROP TABLE IF EXISTS `Corjxs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Corjxs` (
-  `sage` char(3) COLLATE utf8_unicode_ci NOT NULL,
-  `laurux` char(2) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`sage`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Corjxs`
---
-
-LOCK TABLES `Corjxs` WRITE;
-/*!40000 ALTER TABLE `Corjxs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Corjxs` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -150,63 +58,6 @@ CREATE TABLE `Corsage` (
 LOCK TABLES `Corsage` WRITE;
 /*!40000 ALTER TABLE `Corsage` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Corsage` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Ctrln`
---
-
-DROP TABLE IF EXISTS `Ctrln`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Ctrln` (
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `intitule` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `jour` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `mois` varchar(6) COLLATE utf8_unicode_ci NOT NULL,
-  `libelle` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` int(11) DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
-  PRIMARY KEY (`compte`,`mois`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Ctrln`
---
-
-LOCK TABLES `Ctrln` WRITE;
-/*!40000 ALTER TABLE `Ctrln` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Ctrln` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Detail`
---
-
-DROP TABLE IF EXISTS `Detail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Detail` (
-  `num` char(12) COLLATE utf8_unicode_ci NOT NULL,
-  `code` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `date` date DEFAULT NULL,
-  `mtd` char(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `mtc` char(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numfac` char(12) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`num`,`numfac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Detail`
---
-
-LOCK TABLES `Detail` WRITE;
-/*!40000 ALTER TABLE `Detail` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -332,62 +183,6 @@ CREATE TABLE `Docs_Produits` (
 LOCK TABLES `Docs_Produits` WRITE;
 /*!40000 ALTER TABLE `Docs_Produits` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Docs_Produits` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Ecrs`
---
-
-DROP TABLE IF EXISTS `Ecrs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Ecrs` (
-  `jour` char(2) COLLATE utf8_unicode_ci NOT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` date DEFAULT NULL,
-  `numero` int(6) NOT NULL DEFAULT '0',
-  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `compte` char(8) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` decimal(12,2) DEFAULT NULL,
-  `montantc` decimal(12,2) DEFAULT NULL,
-  PRIMARY KEY (`numero`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Ecrs`
---
-
-LOCK TABLES `Ecrs` WRITE;
-/*!40000 ALTER TABLE `Ecrs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Ecrs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Facturefm`
---
-
-DROP TABLE IF EXISTS `Facturefm`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Facturefm` (
-  `code` char(8) COLLATE utf8_unicode_ci NOT NULL,
-  `nom` char(35) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `cp` char(5) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `ville` char(35) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `totald` char(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `totalc` char(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Facturefm`
---
-
-LOCK TABLES `Facturefm` WRITE;
-/*!40000 ALTER TABLE `Facturefm` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Facturefm` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -803,10 +598,10 @@ CREATE TABLE `Fiches_Bl` (
   `cdep` varchar(37) COLLATE utf8_unicode_ci DEFAULT NULL,
   `livraison` tinyint(1) DEFAULT NULL,
   `tel` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numtick` char(7) COLLATE utf8_unicode_ci DEFAULT NULL,
   `reg2` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
   `mtreg2` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
   `acquitte` tinyint(1) DEFAULT NULL,
-  `numtick` char(7) COLLATE utf8_unicode_ci DEFAULT NULL,
   `email` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
   `gestbl` decimal(5,2) DEFAULT '0.00',
   PRIMARY KEY (`numbl`)
@@ -1613,7 +1408,7 @@ CREATE TABLE `Fiches_Docactif` (
   `host_id` varchar(50) DEFAULT NULL,
   `userdb_name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`doc_type`,`doc_num`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2697,62 +2492,6 @@ LOCK TABLES `Fiches_ImpArtDef2` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `Fiches_Inv`
---
-
-DROP TABLE IF EXISTS `Fiches_Inv`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Fiches_Inv` (
-  `inv_nlig` char(9) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `inv_code` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inv_qtestock` double DEFAULT NULL,
-  `inv_qtecomptee` double DEFAULT NULL,
-  `inv_date` datetime DEFAULT NULL,
-  `inv_comptee` int(11) DEFAULT NULL,
-  `inv_valid` int(11) DEFAULT NULL,
-  PRIMARY KEY (`inv_nlig`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Fiches_Inv`
---
-
-LOCK TABLES `Fiches_Inv` WRITE;
-/*!40000 ALTER TABLE `Fiches_Inv` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Fiches_Inv` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Fiches_InvT`
---
-
-DROP TABLE IF EXISTS `Fiches_InvT`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Fiches_InvT` (
-  `inv_nlig` char(9) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `inv_code` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inv_qtestock` double DEFAULT NULL,
-  `inv_qtecomptee` double DEFAULT NULL,
-  `inv_date` datetime DEFAULT NULL,
-  `inv_comptee` int(11) DEFAULT NULL,
-  `inv_valid` int(11) DEFAULT NULL,
-  PRIMARY KEY (`inv_nlig`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Fiches_InvT`
---
-
-LOCK TABLES `Fiches_InvT` WRITE;
-/*!40000 ALTER TABLE `Fiches_InvT` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Fiches_InvT` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `Fiches_Journaux`
 --
 
@@ -3391,14 +3130,17 @@ DROP TABLE IF EXISTS `Fiches_Mvt1`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_Mvt1` (
   `jour` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT '0',
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
+  `compte` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `collectif` tinyint(1) DEFAULT NULL,
   `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` datetime DEFAULT NULL,
+  `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `dateech` datetime DEFAULT NULL,
+  `numcol` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
@@ -3410,8 +3152,15 @@ CREATE TABLE `Fiches_Mvt1` (
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
+  `lind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `dteval` date DEFAULT NULL,
+  `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`lind`),
+  KEY `date` (`dte`),
+  KEY `numero2` (`numero`),
+  KEY `compte2` (`compte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3433,14 +3182,17 @@ DROP TABLE IF EXISTS `Fiches_Mvt2`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_Mvt2` (
   `jour` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT '0',
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
+  `compte` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `collectif` tinyint(1) DEFAULT NULL,
   `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` datetime DEFAULT NULL,
+  `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `dateech` datetime DEFAULT NULL,
+  `numcol` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
@@ -3452,8 +3204,15 @@ CREATE TABLE `Fiches_Mvt2` (
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `relance` int(11) DEFAULT NULL,
+  `lind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `dteval` date DEFAULT NULL,
+  `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
   `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
+  `supprimee` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`lind`),
+  KEY `date` (`dte`),
+  KEY `numero2` (`numero`),
+  KEY `compte2` (`compte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3475,14 +3234,17 @@ DROP TABLE IF EXISTS `Fiches_Mvt3`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_Mvt3` (
   `jour` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT '0',
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
+  `compte` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `collectif` tinyint(1) DEFAULT NULL,
   `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` datetime DEFAULT NULL,
+  `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `dateech` datetime DEFAULT NULL,
+  `numcol` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
@@ -3494,8 +3256,15 @@ CREATE TABLE `Fiches_Mvt3` (
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
+  `lind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `dteval` date DEFAULT NULL,
+  `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`lind`),
+  KEY `date` (`dte`),
+  KEY `numero2` (`numero`),
+  KEY `compte2` (`compte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3517,14 +3286,17 @@ DROP TABLE IF EXISTS `Fiches_Mvt4`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_Mvt4` (
   `jour` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT '0',
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
+  `compte` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `collectif` tinyint(1) DEFAULT NULL,
   `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` datetime DEFAULT NULL,
+  `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `dateech` datetime DEFAULT NULL,
+  `numcol` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
@@ -3536,8 +3308,15 @@ CREATE TABLE `Fiches_Mvt4` (
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
+  `lind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `dteval` date DEFAULT NULL,
+  `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`lind`),
+  KEY `date` (`dte`),
+  KEY `numero2` (`numero`),
+  KEY `compte2` (`compte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3559,14 +3338,17 @@ DROP TABLE IF EXISTS `Fiches_Mvt5`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_Mvt5` (
   `jour` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT '0',
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
+  `compte` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `collectif` tinyint(1) DEFAULT NULL,
   `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` datetime DEFAULT NULL,
+  `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `dateech` datetime DEFAULT NULL,
+  `numcol` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
@@ -3578,8 +3360,15 @@ CREATE TABLE `Fiches_Mvt5` (
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
+  `lind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `dteval` date DEFAULT NULL,
+  `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`lind`),
+  KEY `date` (`dte`),
+  KEY `numero2` (`numero`),
+  KEY `compte2` (`compte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3828,15 +3617,12 @@ CREATE TABLE `Fiches_MvtM` (
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
   `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
   `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
   `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `lind2` int(11) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
   `datem` date DEFAULT NULL,
   `supprimee` tinyint(1) DEFAULT NULL,
-  `lind2` int(11) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
@@ -3862,17 +3648,17 @@ DROP TABLE IF EXISTS `Fiches_MvtM1`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_MvtM1` (
   `jour` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
   `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
   `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
   `numcol` char(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numdoc` char(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` char(10) COLLATE utf8_unicode_ci NOT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
@@ -3885,12 +3671,12 @@ CREATE TABLE `Fiches_MvtM1` (
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
   `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
   `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
   `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `lind2` int(11) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `datem` date DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
@@ -3916,17 +3702,17 @@ DROP TABLE IF EXISTS `Fiches_MvtM2`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_MvtM2` (
   `jour` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
   `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
   `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
   `numcol` char(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numdoc` char(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` char(10) COLLATE utf8_unicode_ci NOT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
@@ -3939,12 +3725,12 @@ CREATE TABLE `Fiches_MvtM2` (
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
   `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
   `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `lind2` int(11) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `datem` date DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
@@ -3970,17 +3756,17 @@ DROP TABLE IF EXISTS `Fiches_MvtM3`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_MvtM3` (
   `jour` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
   `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
   `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
   `numcol` char(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numdoc` char(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` char(10) COLLATE utf8_unicode_ci NOT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
@@ -3993,12 +3779,12 @@ CREATE TABLE `Fiches_MvtM3` (
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
   `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
   `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `lind2` int(11) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `datem` date DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
@@ -4024,17 +3810,17 @@ DROP TABLE IF EXISTS `Fiches_MvtM4`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_MvtM4` (
   `jour` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
   `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
   `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
   `numcol` char(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numdoc` char(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` char(10) COLLATE utf8_unicode_ci NOT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
@@ -4047,12 +3833,12 @@ CREATE TABLE `Fiches_MvtM4` (
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
   `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
   `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `lind2` int(11) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `datem` date DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
@@ -4078,17 +3864,17 @@ DROP TABLE IF EXISTS `Fiches_MvtM5`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_MvtM5` (
   `jour` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
+  `numero` int(11) NOT NULL,
+  `numerodef` int(11) DEFAULT NULL,
   `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
   `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
   `numcol` char(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numdoc` char(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` char(10) COLLATE utf8_unicode_ci NOT NULL,
+  `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
@@ -4101,12 +3887,12 @@ CREATE TABLE `Fiches_MvtM5` (
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
   `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
   `export` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `control` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `control` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `lind2` int(11) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `datem` date DEFAULT NULL,
+  `supprimee` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
@@ -4188,7 +3974,7 @@ DROP TABLE IF EXISTS `Fiches_Numabon`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Fiches_Numabon` (
-  `numero` int(11) NOT NULL DEFAULT '0',
+  `numero` int(11) NOT NULL,
   `intitule` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `type` char(1) COLLATE utf8_unicode_ci NOT NULL,
   `typem` char(1) COLLATE utf8_unicode_ci NOT NULL,
@@ -4402,78 +4188,6 @@ CREATE TABLE `Fiches_Regltz` (
 LOCK TABLES `Fiches_Regltz` WRITE;
 /*!40000 ALTER TABLE `Fiches_Regltz` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Fiches_Regltz` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Fiches_RelFacture`
---
-
-DROP TABLE IF EXISTS `Fiches_RelFacture`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Fiches_RelFacture` (
-  `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
-  `rs` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `adr1` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `adr2` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `cp` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `ville` char(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numdoc` char(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `libelle` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` decimal(12,2) DEFAULT NULL,
-  `montantc` decimal(12,2) DEFAULT NULL,
-  `numero` char(8) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `journal` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`compte`,`numdoc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Fiches_RelFacture`
---
-
-LOCK TABLES `Fiches_RelFacture` WRITE;
-/*!40000 ALTER TABLE `Fiches_RelFacture` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Fiches_RelFacture` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Fiches_Relcomptes`
---
-
-DROP TABLE IF EXISTS `Fiches_Relcomptes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Fiches_Relcomptes` (
-  `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
-  `Rs` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `intitule` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `adr1` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `adr2` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `cp` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `ville` char(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numdoc` char(10) COLLATE utf8_unicode_ci NOT NULL,
-  `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `libelle` char(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` decimal(12,2) DEFAULT NULL,
-  `montantc` decimal(12,2) DEFAULT NULL,
-  `numero` char(8) COLLATE utf8_unicode_ci NOT NULL,
-  `journal` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`compte`,`numdoc`,`numero`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Fiches_Relcomptes`
---
-
-LOCK TABLES `Fiches_Relcomptes` WRITE;
-/*!40000 ALTER TABLE `Fiches_Relcomptes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Fiches_Relcomptes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -4742,36 +4456,6 @@ CREATE TABLE `Fiches_SousComptes` (
 LOCK TABLES `Fiches_SousComptes` WRITE;
 /*!40000 ALTER TABLE `Fiches_SousComptes` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Fiches_SousComptes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Fiches_Stat`
---
-
-DROP TABLE IF EXISTS `Fiches_Stat`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Fiches_Stat` (
-  `code` char(15) COLLATE utf8_unicode_ci NOT NULL,
-  `date` date DEFAULT NULL,
-  `nom` char(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pvb` decimal(12,2) DEFAULT NULL,
-  `rem` char(6) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pvn` decimal(12,2) DEFAULT NULL,
-  `qte` decimal(12,3) DEFAULT NULL,
-  `nfac` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `nlig` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`nfac`,`nlig`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Fiches_Stat`
---
-
-LOCK TABLES `Fiches_Stat` WRITE;
-/*!40000 ALTER TABLE `Fiches_Stat` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Fiches_Stat` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -5380,269 +5064,6 @@ CREATE TABLE `Mails_Four` (
 LOCK TABLES `Mails_Four` WRITE;
 /*!40000 ALTER TABLE `Mails_Four` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Mails_Four` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Nvcompte`
---
-
-DROP TABLE IF EXISTS `Nvcompte`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Nvcompte` (
-  `cd` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `intitule` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`cd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Nvcompte`
---
-
-LOCK TABLES `Nvcompte` WRITE;
-/*!40000 ALTER TABLE `Nvcompte` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Nvcompte` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Report`
---
-
-DROP TABLE IF EXISTS `Report`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Report` (
-  `jour` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numero` int(11) NOT NULL,
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
-  `intitule` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `datee` datetime DEFAULT NULL,
-  `dateech` datetime DEFAULT NULL,
-  `numcol` varchar(3) COLLATE utf8_unicode_ci NOT NULL,
-  `numdoc` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numlot` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `libelle` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
-  `validee` tinyint(1) DEFAULT NULL,
-  `provisoire` tinyint(1) DEFAULT NULL,
-  `tresorerie` tinyint(1) DEFAULT NULL,
-  `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
-  `lettree` tinyint(1) DEFAULT NULL,
-  `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
-  PRIMARY KEY (`numero`,`compte`,`dte`,`numcol`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Report`
---
-
-LOCK TABLES `Report` WRITE;
-/*!40000 ALTER TABLE `Report` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Report` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Total`
---
-
-DROP TABLE IF EXISTS `Total`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Total` (
-  `cdclifac` char(8) COLLATE utf8_unicode_ci NOT NULL,
-  `nmclifac` char(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pnmclifac` char(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `brutfac` decimal(12,2) DEFAULT NULL,
-  `rmfac` decimal(12,2) DEFAULT NULL,
-  `totfac` decimal(12,2) DEFAULT NULL,
-  `totfacn1` decimal(12,2) DEFAULT NULL,
-  PRIMARY KEY (`cdclifac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Total`
---
-
-LOCK TABLES `Total` WRITE;
-/*!40000 ALTER TABLE `Total` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Total` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Totalisation`
---
-
-DROP TABLE IF EXISTS `Totalisation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Totalisation` (
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `intitule` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `totalht` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `totaltva` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `codetva` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Totalisation`
---
-
-LOCK TABLES `Totalisation` WRITE;
-/*!40000 ALTER TABLE `Totalisation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Totalisation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Totalisation01`
---
-
-DROP TABLE IF EXISTS `Totalisation01`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Totalisation01` (
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `intitule` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `totalht` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `totaltva` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `codetva` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Totalisation01`
---
-
-LOCK TABLES `Totalisation01` WRITE;
-/*!40000 ALTER TABLE `Totalisation01` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Totalisation01` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Virements`
---
-
-DROP TABLE IF EXISTS `Virements`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Virements` (
-  `compte` char(8) COLLATE utf8_unicode_ci NOT NULL,
-  `intitule` char(35) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `type` char(1) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `montant` decimal(12,2) DEFAULT NULL,
-  PRIMARY KEY (`compte`,`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Virements`
---
-
-LOCK TABLES `Virements` WRITE;
-/*!40000 ALTER TABLE `Virements` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Virements` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `centralisation`
---
-
-DROP TABLE IF EXISTS `centralisation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `centralisation` (
-  `numrub` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
-  `intitrub` varchar(70) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `type` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `detail` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `compte` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `intitcpt` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `col1` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `col2` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `col3` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `col4` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`numrub`,`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `centralisation`
---
-
-LOCK TABLES `centralisation` WRITE;
-/*!40000 ALTER TABLE `centralisation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `centralisation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `centralisations`
---
-
-DROP TABLE IF EXISTS `centralisations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `centralisations` (
-  `cd_cent` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `intitule` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `db_cent` double DEFAULT NULL,
-  `crd_cent` double DEFAULT NULL,
-  `njournal` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`cd_cent`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `centralisations`
---
-
-LOCK TABLES `centralisations` WRITE;
-/*!40000 ALTER TABLE `centralisations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `centralisations` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `label_def`
---
-
-DROP TABLE IF EXISTS `label_def`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `label_def` (
-  `label_no` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `manufacture` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `type` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `paper` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `gap_top` double DEFAULT NULL,
-  `gap_left` double DEFAULT NULL,
-  `height` double DEFAULT NULL,
-  `width` double DEFAULT NULL,
-  `gap_v` double DEFAULT NULL,
-  `gap_h` double DEFAULT NULL,
-  `number_h` int(11) DEFAULT NULL,
-  `number_v` int(11) DEFAULT NULL,
-  `paper_type` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `compatibility` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`label_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `label_def`
---
-
-LOCK TABLES `label_def` WRITE;
-/*!40000 ALTER TABLE `label_def` DISABLE KEYS */;
-/*!40000 ALTER TABLE `label_def` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

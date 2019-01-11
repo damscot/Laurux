@@ -54,7 +54,7 @@ Public Sub _new()
   Endif
 
   If Utils.db.Opened Then
-    Utils.db.exec("SET NAMES 'latin1'")
+    Utils.db.exec("SET NAMES 'utf8'")
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSoc") & " where cd_sc = &1", Soc)
     If rResult.Available Then Soc = Soc & " " & rResult!type_sc & " - " & rResult!int_sc
     Fmenu.text = titre & " ( Société en cours : " & Soc & ")"

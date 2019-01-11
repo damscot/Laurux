@@ -544,6 +544,28 @@ Public Sub GUI_Event(hCont As Variant, Source As Variant[], Act As String, Value
 
 End
 
+Public Sub Print()
+
+  Dim $user As Variant
+  Dim $table As Table
+  Dim $field As Field
+  Dim $primary As String
+  
+  For Each $table In Me.Tables
+    Print $table.Name
+    Print "\ttype: " & $table.type
+    For Each $primary In $table.PrimaryKey
+      Print "\tprimary: " & $primary
+    Next
+    For Each $field In $table.Fields
+      Print "\t Field: " & $field.Name & " => " & $field.Type & "(" & $field.Length & "), default: " & CStr($field.Default) & ", collation: " & CStr($field.Collation)
+    Next
+  Next
+
+  
+End
+
+
 Public Sub Close()
   
   Super.Close()
