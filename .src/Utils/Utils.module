@@ -1500,6 +1500,38 @@ Public Sub Fill_DataBase(Tab As String, filepath As String)
   
 End
 
+
+Public Function FloatParse(Val As String) As Float
+
+  Dim $reg As RegExp
+  
+  $reg = New RegExp
+  $reg.Compile("[ ]*([+-]+)[ ]*([ 0-9]+)[ .,]*([ 0-9]*)")
+  $reg.Exec(Val)
+  If $reg.Count = 3 Then
+    Return CFloat($reg[1].Text & Replace($reg[2].Text, " ", "") & "." & Replace($reg[3].Text, " ", ""))
+  Else
+    $reg = New RegExp
+    $reg.Compile("[ ]*([ 0-9]+)[ .,]*([ 0-9]*)")
+    $reg.Exec(Val)
+    If $reg.Count = 2 Then
+      Return CFloat(Replace($reg[1].Text, " ", "") & "." & Replace($reg[2].Text, " ", ""))
+    Else If $reg.Count = 1 Then
+      Return CFloat($reg[1].Text)
+    Else
+      Message.Error("Erreur, impossible d'interpréter la valeur " & val & "!\nLa valeur suivante sera utilisé : " & 0)
+      Return 0
+    Endif
+  Endif
+  
+Catch
+
+  Message.Error("Erreur grave lors de l'interprétation de la valeur " & val)
+  Return Null
+  
+End
+
+
 Public Sub Ciel()
 
   Dim tab As String
