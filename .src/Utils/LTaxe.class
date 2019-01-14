@@ -1,0 +1,139 @@
+' Gambas class file
+
+Inherits Array
+Create Static
+
+Private Mnt As Float 'Taxe avec un montant fixe ou pourcentage
+Private Pct As Boolean = False 'Taxe avec un pourcentage
+Private Libelle As String 'libelle de la Taxe
+Private TypeTaxe As Integer 'Type de Taxe
+
+Private Compte As String 'numero du compte pour le ventilation de la taxe/remise... etc
+
+Public Enum Aucune, Remise, TVA, TEE, TEA, CopiePrivee, CSS, Fixe, TxLast 'a complèter par patick chaque taxe s'applique soit sur le montant HT ou sur la quantité
+Public All_Taxes As Integer[] = [LTaxe.TVA, LTaxe.TEE, LTaxe.TEA, LTaxe.CopiePrivee, LTaxe.CSS, LTaxe.Fixe] 'Taxes entre HT Net et TTC Net
+Public All_Remises As Integer[] = [LTaxe.Remise] ' Taxe ou Remise entre Brut et Net, le montant de remise s'applique toujours sur le HT Brut
+Property Ttx As Integer 'Retourne / set le type de taxe
+Property Cpt As String 'Retourne / set le compte de ventilation
+Property Lib As String 'libelle de la taxe
+
+Event change(value As LTaxe) 'levé quand la valeur change
+
+'*****************
+'METHODE SPECIALE
+'*****************
+
+Public Sub _New(Optional Montant As Variant = 0, Optional Type As Integer = LTaxe.Aucune, Optional Cpt As String = "")
+  
+  If Not Montant Then
+    Mnt = 0
+  Else
+    If TypeOf(Montant) = gb.String
+      If Montant Match "%" Then
+        Montant = Replace(Montant, "%", "")
+        Pct = True
+      Endif
+      Mnt = Utils.FloatParse(Montant)
+    Else If TypeOf(Montant) = gb.Float
+      Mnt = Montant
+    Else 'Probably an objet ou un Entier
+      Mnt = CFloat(Montant)
+    Endif
+  Endif
+  
+  Me.Ttx = Type
+  Me.Cpt = Cpt
+  
+End
+
+
+'**************
+'METHODE PRIVEE
+'**************
+
+'********
+'PROPERTY
+'********
+
+Sub Cpt_Read() As String
+  
+  Return Compte
+  
+End
+
+Sub Cpt_Write(Cpt As String)
+
+  If (Left(Cpt, 3) <> "445" And Cpt <> "") And TypeTaxe = LTaxe.TVA Then
+    Message.Error("Le compte (" & Cpt & ") fourni n'est pas un compte valide pour la Taxe " & TypeTaxe)
+    Compte = ""
+  Else
+    Compte = Cpt
+    Raise change(Me)
+  Endif
+  
+End
+
+Sub Lib_Read() As String
+  
+  Return Libelle
+  
+End
+
+Sub Lib_Write(Lib As String)
+  
+  Libelle = Lib
+  
+End
+
+Sub Ttx_Read() As Integer
+  
+  Return TypeTaxe
+  
+End
+
+Sub Ttx_Write(Type As Integer)
+  
+  If Type < 0 Or Type >= LTaxe.TxLast Then
+    Message.Error("Type de taxe erroné : " & Type)
+    TypeTaxe = LTaxe.Aucune
+  Else
+    TypeTaxe = Type
+    If TypeTaxe = LTaxe.Remise Then
+      Mnt = - Mnt
+    Endif
+  Endif
+  
+End
+
+'*****************
+'METHODE PUBLIQUE
+'*****************
+
+Public Sub Montant(Optional HT As LPrix = LPrix(0), Optional ignore_quantite As Boolean = False, Optional TTC As Boolean = False) As LPrix
+  
+  Dim val As Float
+  Dim qte As Float
+  
+  If ignore_quantite = False Then
+    qte = HT.Qte 
+  Else
+    qte = 1
+  Endif
+  
+  If Pct Then
+    If TTC Then
+      If Mnt <> 0 Then
+        val = (HT.Mnt * (1 - (1 / (1 + (Mnt / 100.0))))) * qte
+      Else
+        val = 0
+      Endif
+    Else
+      val = (HT.Mnt * (Mnt / 100.0)) * qte
+    Endif
+  Else
+    val = Mnt * qte
+  Endif
+  
+  Return LPrix(val, qte, HT.Arr, Me.Cpt)
+  
+End

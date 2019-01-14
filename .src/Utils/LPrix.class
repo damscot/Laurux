@@ -1,0 +1,736 @@
+' Gambas class file
+
+Inherits Array
+Create Static
+
+Public Enum Arr_1, Arr_05, Arr_01, Arr_005, Arr_001, Arr_0005, Arr_0001, Arr_00005, Arr_00001
+Public Enum Brut_to_Brut, Net_to_Net, Brut_to_Net, Net_to_Brut
+Public Enum HT_to_HT, TTC_to_TTC, HT_to_TTC, TTC_to_HT
+
+Public Mnt As Float
+Public Qte As Float
+
+Private Taxe As LTaxe[]
+Private Compte As String 'numero de compte pour la ventilation compte d'achat ou de vente
+Private Precision As Integer = -2 '0,01 centimes par défaut en précision à la sortie de l'objet
+Private Arrondi As Integer = LPrix.Arr_001 '0,01 centimes par défaut en arrondi de l'objet
+
+Property L As String 'Laurux String Property
+Property G As Float  'Gambas Date Object Property
+Property D As String 'Database Decimal Property
+Property Cpt As String 'Compte pour Ventilation
+
+Property Q As String 'Quantité en arrondi au millième en string format Laurux decimal (comma)
+Property QD As String 'Quantité en arrondi au millième en string format DB decimal (point)
+
+Property Arr As Variant 'Lit ou Set la Valeur d'arrondi
+
+Property PuBHT As LPrix 'Prix unitaire Brut Hors Taxe
+Property PuBTC As LPrix 'Prix unitaire Brut Taxe Comprise
+Property PuNHT As LPrix 'Prix unitaire Net Hors Taxe
+Property PuNTC As LPrix 'Prix unitaire Net Taxe Comprise
+
+Property TotBHT As LPrix 'Prix Total Brut Hors Taxe
+Property TotBTC As LPrix 'Prix Total Brut Taxe Comprise
+Property TotNHT As LPrix 'Prix Total Net Hors Taxe
+Property TotNTC As LPrix 'Prix Total Net Taxe Comprise
+
+Event change(value As LPrix) 'levé quand la valeur change
+
+'*****************
+'METHODE SPECIALE
+'*****************
+
+Public Sub _New(Optional Montant As Variant = 0, Optional Quantite As Variant = 1, Optional Arr As Variant = LPrix.Arr_001, Optional Cpt As String = "")
+  
+  If Not Montant Then
+    Mnt = 0
+  Else
+    If TypeOf(Montant) = gb.String
+      Mnt = Utils.FloatParse(Montant)
+    Else If TypeOf(Montant) = gb.Float
+      Mnt = Montant
+    Else 'Probably an objet ou un Entier
+      Mnt = CFloat(Montant)
+    Endif
+  Endif
+
+  If Not Quantite Then
+    Qte = 0
+  Else
+    If TypeOf(Quantite) = gb.String
+      Qte = Utils.FloatParse(Quantite)
+    Else If TypeOf(Montant) = gb.Float
+      Qte = Quantite
+    Else 'Probably an objet ou un Entier
+      Qte = CFloat(Quantite)
+    Endif
+  Endif
+  
+  Me.Cpt = Cpt
+  Arrondi = Arrondi_Conv(Arr)
+  Precision = Precision_Calc(Arrondi)
+  
+End
+
+Public Sub _call(Optional Montant As Variant = 0, Optional Qte As Variant = 1, Optional Arr As Variant = LPrix.Arr_001, Optional Cpt As String = "") As LPrix
+
+  Dim $CLPrix As LPrix
+  
+  $CLPrix = New LPrix(Montant, Qte, Arr, Compte)
+  Return $CLPrix
+
+End
+
+
+'**************
+'METHODE PRIVEE
+'**************
+
+Sub Precision_Calc(arrond As Integer) As Integer
+
+  Return Fix(Floor(- arrond / 2))
+
+End
+
+Sub Arrondi_Conv(arrond As Variant) As Integer
+
+  Dim $Arr As Float
+  
+  If IsNull(arrond) And TypeOf(arrond) <> gb.Integer Then
+    $Arr = 0
+  Else
+    If TypeOf(arrond) = gb.String
+      $Arr = Utils.FloatParse(arrond)
+    Else If TypeOf(arrond) = gb.Float
+      $Arr = arrond
+    Else If TypeOf(arrond) = gb.Integer
+      If arrond < LPrix.Arr_1 Or arrond > LPrix.Arr_00001 Then
+        Message.Error("Erreur le paramètre d'arrondi (enumeration) est invalide: " & arrond)
+        Return LPrix.Arr_001
+      Else
+        Return arrond
+      Endif
+    Else
+      Message.Error("Erreur lors de l'interprétation du type de donnée pour l'arrondi: " & TypeOf(arrond))
+      Return LPrix.Arr_001
+    Endif
+  Endif
+
+  Select Case $Arr
+    Case 0.0001
+      Return LPrix.Arr_00001
+    Case 0.0005
+      Return LPrix.Arr_00005
+    Case 0.001
+      Return LPrix.Arr_0001
+    Case 0.005
+      Return LPrix.Arr_0005
+    Case 0.01
+      Return LPrix.Arr_001
+    Case 0.05
+      Return LPrix.Arr_005
+    Case 0.1
+      Return LPrix.Arr_01
+    Case 0.5
+      Return LPrix.Arr_05
+    Case 1
+      Return LPrix.Arr_1
+    Case Else
+      Message.Error("Erreur lors de l'interprétation de l'arrondi: " & arrond)
+      Return LPrix.Arr_001
+  End Select
+  
+End
+
+Sub Arrondi_Calc(Mnt As Float, larr As Integer, lprec As Integer) As Float
+
+  Dim $frac As String
+  Dim $lastdigit As String
+  
+  If larr = Arr_1 Then 'cas simple on remote que la partie entière
+    Return Round(Mnt, 0)
+  Else
+    If Frac(larr / 2) Then 'on est dans le cas d'un arrondi a '5'
+      $frac = CStr(Frac(Mnt))
+      If Len($frac) >= (Abs(lprec) + 2) Then 'on verifie que le montant rentre dans le cas d'un arrondi a appliquer (offset de 2 pour "0.")
+        $lastdigit = Mid$($frac, Abs(lprec) + 2, 1)
+        If $lastdigit Like "[34567]" Then
+          Mnt = Fix(Mnt) + CFloat(Left$($frac, Abs(lprec) + 1) & "5") * Sgn(Mnt)
+        Else If $lastdigit Like "[012]" Then
+          Mnt = Fix(Mnt) + CFloat(Left$($frac, Abs(lprec) + 1) & "0") * Sgn(Mnt)
+        Else
+          Mnt = Fix(Mnt) + (CFloat(Left$($frac, Abs(lprec) + 1) & "0") + Exp10(lprec + 1)) * Sgn(Mnt)
+        Endif
+      Endif
+    Else
+      'On ne fait rien la 'Precision' coupe la sortie au bon endroit
+    Endif
+  Endif
+  
+  Return Mnt
+
+End
+
+
+'********
+'PROPERTY
+'********
+
+Sub L_Read() As String
+
+  Return Format(Round(Arrondi_Calc(Mnt * Qte, Arrondi, Precision), Precision), "0." & String$(Abs(Precision), "0"))
+
+End
+
+Sub L_Write(lmnt As String)
+
+  If Qte = 0 Then
+    Mnt = 0
+  Else
+    Mnt = Utils.FloatParse(lmnt) / Qte
+  Endif
+  Raise change(Me)
+
+End
+
+Sub D_Read() As String
+  
+  Dim $fixe As String
+  Dim $frac As String
+  Dim $mnt As Float
+  $mnt = Arrondi_Calc(Mnt * Qte, Arrondi, Precision)
+  $fixe = Format(Fix($mnt), "0")
+  If Precision < 0 Then
+    $frac = Right$(Format(Frac($mnt), "0." & String$(Abs(Precision), "0")), Abs(Precision))
+    Return $fixe & "." & $frac
+  Else
+    Return $fixe
+  Endif
+
+End
+
+Sub D_Write(dmnt As String)
+
+  If Qte = 0 Then
+    Mnt = 0
+  Else
+    Mnt = Utils.FloatParse(dmnt) / Qte
+  Endif
+  Raise change(Me)
+  
+End
+
+Sub G_Read() As Float
+
+  Return Round(Arrondi_Calc(Mnt * Qte, Arrondi, Precision), Precision)
+
+End
+
+Sub G_Write(gmnt As Float)
+
+  If Qte = 0 Then
+    Mnt = 0
+  Else
+    Mnt = gmnt / Qte
+  Endif
+  Raise change(Me)
+
+End
+
+Sub Cpt_Read() As String
+  
+  Return Compte
+  
+End
+
+Sub Cpt_Write(Cpt As String)
+
+  'If Left(Cpt, 3) <> "707" And Left(Cpt, 3) <> "607" And Cpt <> "" Then
+  '  Message.Error("Le compte (" & Cpt & ") fourni n'est pas un compte valide")
+  'Else
+    Compte = Cpt
+    Raise change(Me)
+  'Endif
+  
+End
+
+Sub Q_Read() As String
+  
+  'Precision Qte au millième
+  Return Format(Round(Qte, -4), "")
+  
+End
+
+
+Sub Q_Write(lqte As String)
+  
+  Qte = Utils.FloatParse(lqte)
+  Raise change(Me)
+  
+End
+
+Sub QD_Read() As String
+  
+  Dim $fixe As String
+  Dim $frac As String
+  Dim $qte As String
+  $qte = Format(Round(Qte, -4), "0.0000")
+  $fixe = Format(Fix(Qte), "0")
+  If Precision < 0 Then
+    $frac = Right$(Format(Frac(Qte), "0." & String$(4, "0")), Abs(4))
+    Return $fixe & "." & $frac
+  Else
+    Return $fixe
+  Endif
+
+End
+
+Sub QD_Write(dmnt As String)
+
+  Mnt = Utils.FloatParse(dmnt)
+  Raise change(Me)
+  
+End
+
+Sub Arr_Write(arrond As Variant)
+  
+  Arrondi = Arrondi_Conv(arrond)
+  Precision = Precision_Calc(Arrondi)
+  Raise change(Me)
+  
+End
+
+Sub Arr_Read() As Variant
+  
+  Select Case Arrondi
+    Case LPrix.Arr_0001
+      Return "0,001"
+    Case LPrix.Arr_0005
+      Return "0,005"
+    Case LPrix.Arr_001
+      Return "0,01"
+    Case LPrix.Arr_005
+      Return "0,05"
+    Case LPrix.Arr_01
+      Return "0,1"
+    Case LPrix.Arr_05
+      Return "0,5"
+    Case LPrix.Arr_1
+      Return "1"
+    Case Else
+      Return ""
+  End Select
+  
+End
+
+'Prix Unitaire
+'*************
+Sub PuBHT_Write(prix As LPrix)
+  
+  Mnt = prix.Mnt
+  Raise change(Me)
+ 
+End
+
+Sub PuBHT_Read() As LPrix
+  
+  Return LPrix(Me.Mnt, 1, Me.Arr, Me.Cpt)
+  
+End
+
+Sub PuBTC_Write(prix As LPrix)
+
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(prix, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_HT)
+  
+  Me.Mnt = $out.Mnt
+  Raise change(Me)
+ 
+End
+
+Sub PuBTC_Read() As LPrix
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(Me, 1, LPrix.Brut_to_Brut, LPrix.HT_to_TTC)
+  
+  Return $out
+  
+End
+
+Sub PuNHT_Write(prix As LPrix)
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(prix, 1, LPrix.Net_to_Brut, LPrix.HT_to_HT)
+  
+  Me.Mnt = $out.Mnt
+  Raise change(Me)
+ 
+End
+
+Sub PuNHT_Read() As LPrix
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(Me, 1, LPrix.Brut_to_Net, LPrix.HT_to_HT)
+  
+  Return $out
+  
+End
+
+Sub PuNTC_Write(prix As LPrix)
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(prix, 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT)
+  
+  Me.Mnt = $out.Mnt
+  Raise change(Me)
+ 
+End
+
+Sub PuNTC_Read() As LPrix
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(Me, 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC)
+  
+  Return $out
+  
+End
+
+
+'Prix Total
+'*************
+Sub TotBHT_Write(prix As LPrix)
+  
+  Me.Mnt = prix.Mnt / Qte
+  Raise change(Me)
+  
+End
+
+Sub TotBHT_Read() As LPrix
+  
+  Return LPrix(Me.Mnt, Qte, Me.Arr, Me.Cpt)
+  
+End
+
+Sub TotBTC_Write(prix As LPrix)
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(prix, Qte, LPrix.Brut_to_Brut, LPrix.TTC_to_HT)
+  
+  Me.Mnt = $out.Mnt
+  Raise change(Me)
+  
+End
+
+Sub TotBTC_Read() As LPrix
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(Me, Qte, LPrix.Brut_to_Brut, LPrix.HT_to_TTC)
+  
+  Return $out
+  
+End
+
+Sub TotNHT_Write(prix As LPrix)
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(prix, Qte, LPrix.Net_to_Brut, LPrix.HT_to_HT)
+  
+  Me.Mnt = $out.Mnt
+  Raise change(Me)
+  
+End
+
+Sub TotNHT_Read() As LPrix
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(Me, Qte, LPrix.Brut_to_Net, LPrix.HT_to_HT)
+  
+  Return $out
+  
+End
+
+Sub TotNTC_Write(prix As LPrix)
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(prix, Qte, LPrix.Net_to_Brut, LPrix.TTC_to_HT)
+  
+  Me.Mnt = $out.Mnt
+  Raise change(Me)
+
+End
+
+Sub TotNTC_Read() As LPrix
+  
+  Dim $out As LPrix
+  
+  $out = Conv_Brut_Net_HT_TTC(Me, Qte, LPrix.Brut_to_Net, LPrix.HT_to_TTC)
+  
+  Return $out
+  
+End
+
+
+'*****************
+'METHODE PUBLIQUE
+'*****************
+
+Public Sub Conv_Brut_Net_HT_TTC(prix As LPrix, Qte As Float, Optional Conv_Brut_Net As Integer = LPrix.Brut_to_Net, Optional Conv_HT_TTC As Integer = LPrix.HT_to_TTC, Optional ignore_taxe As Integer[]) As LPrix
+  
+  Dim $elem As LTaxe
+  Dim $out, $in As LPrix
+  
+  $in = New LPrix(prix.Mnt, Qte, Me.Arr, Me.Cpt)
+  $out = New LPrix(prix.Mnt, Qte, Me.Arr, Me.Cpt)
+  
+  If IsNull(Taxe) Then Return $in
+  
+  If Conv_HT_TTC = LPrix.TTC_to_HT Then
+    For Each $elem In Taxe
+      If $elem Then
+        If ignore_taxe Then
+          If ignore_taxe.Find($elem.Ttx) <> -1 Then Continue 'On ne compte pas la taxe ignorée
+        Endif
+        If LTaxe.All_Taxes.Find($elem.Ttx) <> -1 Then
+          $out.Sub($elem.Montant($in, True, True))
+        Endif
+      Endif
+    Next
+    $in = $out
+  Endif
+  
+  For Each $elem In Taxe
+    If $elem Then
+      If ignore_taxe Then
+        If ignore_taxe.Find($elem.Ttx) <> -1 Then Continue 'On ne compte pas la taxe ignorée
+      Endif
+      If LTaxe.All_Remises.Find($elem.Ttx) <> -1 Then
+        If Conv_Brut_Net = LPrix.Brut_to_Net Then
+          $out.Add($elem.Montant($in, True, False))
+        Else If Conv_Brut_Net = LPrix.Net_to_Brut Then
+          $out.Sub($elem.Montant($in, True, False))
+        Endif
+      Endif
+    Endif
+  Next
+  
+  If Conv_HT_TTC = LPrix.HT_to_TTC Then
+    $in = $out
+    For Each $elem In Taxe
+      If $elem Then
+        If ignore_taxe Then
+          If ignore_taxe.Find($elem.Ttx) <> -1 Then Continue 'On ne compte pas la taxe ignorée
+        Endif
+        If LTaxe.All_Taxes.Find($elem.Ttx) <> -1 Then
+          $out.Add($elem.Montant($in, True, False))
+        Endif
+      Endif
+    Next
+  Endif
+  
+  Return $out
+ 
+End
+
+Public Sub Arrondi_New(prix As LPrix, Optional larr As Variant = LPrix.Arr_001) As LPrix
+
+  Dim $out As LPrix
+  Dim $arr As Integer = Arrondi_Conv(larr)
+  Dim $pre As Integer = Precision_Calc($arr)
+  
+  'on duplique l'objet en applicant l'arrondi sur le conteneur flotant uniquement
+  $out = New LPrix(prix.Mnt, Qte, Me.Arr, Me.Cpt)
+  $out.Mnt = Arrondi_Calc($out.Mnt, $arr, $pre)
+  
+  Return $out
+  
+End
+
+Public Sub Add(Alp As LPrix)
+  
+  Mnt = Mnt + (Alp.Mnt * Alp.Qte) 'On utilise pas l'arrondi de l'element
+  Raise change(Me)
+  
+End
+
+Public Sub AddA(Alp As LPrix)
+  
+  Mnt = Mnt + (Alp.G * Alp.Qte) 'On utilise l'arrondi de l'element
+  Raise change(Me)
+  
+End
+
+Public Sub Sub(Alp As LPrix)
+  
+  Mnt = Mnt - (Alp.Mnt * Alp.Qte) 'On utilise pas l'arrondi de l'element
+  Raise change(Me)
+  
+End
+
+Public Sub SubA(Alp As LPrix)
+  
+  Mnt = Mnt - (Alp.G * Alp.Qte) 'On utilise l'arrondi de l'element
+  Raise change(Me)
+  
+End
+
+Public Sub Sum(Alp As LPrix[])
+  
+  Dim $elem As LPrix
+  
+  For Each $elem In Alp
+    Mnt = Mnt + ($elem.Mnt * $elem.Qte) 'On utilise pas l'arrondi de l'element
+  Next
+  Raise change(Me)
+  
+End
+
+Public Sub SumA(Alp As LPrix[])
+  
+  Dim $elem As LPrix
+  
+  For Each $elem In Alp
+    Mnt = Mnt + ($elem.G * $elem.Qte) 'On utilise l'arrondi de l'element
+  Next
+  Raise change(Me)
+  
+End
+
+Public Sub Add_Taxe(Tx As LTaxe) As Boolean
+  
+  If Not Taxe Then
+    Taxe = New LTaxe[LTaxe.TxLast]
+  Endif
+
+  Taxe[Tx.Ttx] = tx
+  Raise change(Me)
+  Return True
+  
+End
+
+Public Sub Del_Taxe(Ttx As Integer) As Boolean
+  
+  If Not Taxe Then
+    Return False
+  Endif
+  If Not Taxe[Ttx] Then
+    Return False
+  Endif
+
+  Taxe[Ttx] = Null
+  Raise change(Me)
+  Return True
+  
+End
+
+'Methode Publique de test
+
+Public Sub Internal_Test(Test_List As String[]) As Boolean
+
+  Dim x As LPrix[]
+  Dim tot As LPrix
+  Dim tx As LTaxe
+  Dim err As Integer = 0
+  
+  
+  If Test_List.Find("list") <> -1 Then
+    Print "Internal Test for Class " & Object.Class(Me).Name & ": " & Object.Class(Me).Name
+    Return True
+  Endif
+  
+  If ((Test_List.Find("all") = -1) And (Test_List.Find(Object.Class(Me).Name) = -1)) Then
+    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SKIPPED"
+    Return True
+  Endif
+  
+  x = New LPrix[]
+  
+  'TODO supprimer les prints et remplacer par des tests
+  
+  Print LPrix("-3,1500", 1, LPrix.Arr_01).L
+  Print LPrix("-3,15", 1.23456, LPrix.Arr_01).QD
+  
+  x.Add(LPrix("0,03", 1, LPrix.Arr_005))
+  x.Add(LPrix("10", 1, LPrix.Arr_001))
+  x.Add(LPrix("0.3"))
+  tot = New LPrix(0, 2, LPrix.Arr_001)
+  tx = New LTaxe("3", LTaxe.Remise)
+  tot.Add_Taxe(tx)
+  tx = New LTaxe("20%", LTaxe.Tva)
+  tot.Add_Taxe(tx)
+  'tot.Del_Taxe(LTaxe.TVA)
+  tot.Sum(x)
+  Print tot.Mnt
+  
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_TTC).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_TTC).Mnt
+
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.HT_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.HT_to_TTC).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.TTC_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.TTC_to_TTC).Mnt
+
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.TTC_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.TTC_to_TTC).Mnt
+
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.HT_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.HT_to_TTC).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_TTC).Mnt
+  
+  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC), 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_TTC), 1, LPrix.Brut_to_Net, LPrix.TTC_to_HT).Mnt
+  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt
+  
+
+  Print tot.PuBHT.L
+  Print tot.PuBTC.L
+  Print tot.PuNHT.L
+  Print tot.PuNTC.L
+
+  Print tot.totBHT.L
+  Print tot.totBTC.L
+  Print tot.totNHT.L
+  Print tot.TotNTC.L
+
+  'On applique un arrondi sur le TTC Pu / ou Tot (l'arrondi se fait sur l'element unitaire de toute façon) et on affiche les elements calculés
+  tot.TotNTC = tot.Arrondi_New(tot.TotNTC, LPrix.Arr_05) 
+  Print tot.TotNTC.L
+  'autre methode pour l'arrondi sur le montant total on converti le Total en Pu avec le meme montant
+  tot.PuNTC = New LPrix(tot.TotNTC.G, 1, LPrix.Arr_05)
+  tot.Qte = 1
+  Print tot.TotNTC.L
+  
+  'Une fois le TTC Net arrondi on affiche toutes les autres valeurs
+  Print tot.totBHT.L
+  Print tot.totBTC.L
+  Print tot.totNHT.L
+  Print tot.TotNTC.L
+  
+  If err <> 0 Then
+    Print "Internal Test for Class : " & Object.Class(Me).Name & " => FAIL with " & err & " Errors!"
+    Return False
+  Else
+    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SUCCESS"
+    Return True
+  Endif
+
+
+End
+

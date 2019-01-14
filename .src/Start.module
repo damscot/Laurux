@@ -40,6 +40,7 @@ Public Arg_Config_File As String
 Public Arg_Log As Boolean
 Public Arg_Replay As Boolean
 Public Arg_Pos As Boolean
+Public Arg_Test As String
 Public Arg_Start_Societe As String
 Public Arg_Restore_DB As String
 Public Arg_LogFile As String
@@ -50,6 +51,9 @@ Public Evens As String[]
 Public Ev As Date
 Public Evc As Integer
 Public Evl As Integer
+
+Public Success As Boolean = True 'valeur de retour du programme par default success => return 0
+Public Exit As Boolean = False 'autorise la sortie du programme
 
 
 Public Sub Main()
@@ -138,7 +142,7 @@ Public Sub Main()
     Endif
     Pids = File.Load(User.home & "/" & Application.Name & ".lock")
     If Not IsNull(Pids) Then
-      psExist = Shell "ps -p " & Pids Wait
+      psExist = Shell "ps -p " & Pids & " >/dev/null" Wait
       If psExist.Value = 0 Then
         If Message.Warning(("Il semblerait que " & Application.Name & "\nProcess : " & Pids & "\nsoit encore ouvert!\n\nOuvrir deux fois Laurux peut causer des dysfonctionnements (erreur de stock etc...)\net utiliser un programme qui n'a pas été fermé normalement \nsignifie que la base n'est peut-être pas à jour et que vous devriez faire une restauration."), ("Ne pas ouvrir"), ("Ouvrir")) = 1 Then
           Quit
@@ -286,7 +290,7 @@ Public Sub Lancement()
     Tips = New FTips
     Tips.Show()
   Endif
- 
+  
   If Arg_Replay Then
     
     'only replay parameters replay tmp logged file
@@ -313,9 +317,19 @@ Public Sub Lancement()
       
     Else
       Print "Le fichier de log " & Arg_LogFile & " ne peut pas etre rejoué, fichier innexistant!"
-      Quit
+      Start.Exit = True
     Endif
   Endif
+  
+  If Arg_Test Then
+    Start_Test()
+  Endif
+  
+  While (Not Start.Exit)
+    Wait 0.5
+  Wend
+  
+  Quit (Not Start.Success)
 
 End
 
@@ -378,6 +392,7 @@ Public Sub Parse_Args()
   
   Arg_Start_Societe = Args.Get("s", "societe", "societe de demarrage", "01")
   Arg_Restore_DB = Args.Get("", "restore", "fichier de database à restaurer au démarrage", Application.Name & ".sql")
+  Arg_Test = Args.Get("t", "test", "Lance les tests interne (all, list) et retourne le status global", "all")
   
   remaining_args = Args.End()
   
@@ -400,3 +415,49 @@ Public Sub Restore_Args()
   Endif
 
 End
+
+Public Sub Start_Test()
+
+  Dim success As Boolean = True ' True is success, False is  fail
+  Dim List_Test As String[]
+  Dim lcla As String
+  Dim cla As Class
+  Dim obj As Object
+  Dim Load_Classes As String[] = New String[]
+  
+  'force class to be loaded
+  Load_Classes.Add("LPrix")
+  
+  Print "*****************************"
+  Print "*    TEST INTERNE " & Application.Name & "    *"
+  Print "*****************************"
+  List_Test = Split(Arg_Test, ",")
+  
+  'force to load class
+  For Each lcla In Load_Classes
+    Class.Load(lcla)
+  Next
+  
+  'test loaded class
+  For Each cla In Classes
+    If cla.Exist("Internal_Test") Then
+      Try obj = cla.AutoCreate()
+      If Not Error Then
+        If Not IsNull(obj) Then
+          success = success And Object.Call(obj, "Internal_Test", [List_Test])
+        Endif
+      Endif
+    Endif
+  Next
+  
+  If success Then
+    Print "*****************************"
+  Else
+    Print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  Endif
+  
+  Start.Success = success
+  Start.Exit = True
+  
+End
+

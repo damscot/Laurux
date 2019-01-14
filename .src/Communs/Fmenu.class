@@ -236,7 +236,7 @@ Public Sub Form_Open()
     ColTaches.Columns[4].Text = "Libellé de la tâche"
     RecupTaches()
   Endif
-
+  
 Catch
   If Error.text = "Connection is not opened" Then
     Message.Warning("Attention, la base Laurux " & Start.Societe & " n 'existe pas !\n Veuillez remplir le fichier de configuration SVP !")
@@ -1271,6 +1271,7 @@ Public Sub form_close()
   Endif
   Utils.fermeTunnel()
   Utils.db.Close()
+  Start.Exit = True
 
 End
 
