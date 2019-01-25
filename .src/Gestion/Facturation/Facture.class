@@ -4848,6 +4848,7 @@ Public Sub Maj_zonesArt()
   Dim Tartpu As Float
   Dim Tbrlt As String
   Dim cdr As Calculdroit
+  Dim typeclient As String = ""
 
   Qte.Text = "1"
   Artqte.Text = "1"
@@ -4933,11 +4934,14 @@ Public Sub Maj_zonesArt()
             Artpu.Text = Format$(Rarts!art_pvht, Ar$)
             Artbrut.Text = Format(Val(Artpu.Text), Ar$)
             Artrm.Text = Txpieces.Text
+            If Not IsNull(Combocatcli.Current) Then
+              typeclient = Left(Combocatcli.Current.Text, 2)
+            Endif
             Try $tarif.Delete
             If Bdevis.Value = False Then 
-              $tarif = New TarArt(Cart.text, code.Text, Me, Left(Combocatcli.Current.Text, 2), Cpromo) As "trf"
+              $tarif = New TarArt(Cart.text, code.Text, Me, typeclient, Cpromo) As "trf"
             Else
-              $tarif = New TarArt(Cart.text, code.Text, Me, Left(Combocatcli.Current.Text, 2), "") As "trf"
+              $tarif = New TarArt(Cart.text, code.Text, Me, typeclient, "") As "trf"
             Endif
             $tarif.Hide
             $tarif.x = artpu.X + 48
@@ -10388,21 +10392,21 @@ Public Sub Importlig()
         Coldetail.item[4 + i] = "-" & Coldetail3.item[4]
       Else
         If Coldetail3.item[4] <> "" Then
-          Coldetail.item[4 + i] = -Val(Coldetail3.item[4])
+          Coldetail.item[4 + i] = -Val(.CPoint(Coldetail3.item[4]))
           'Coldetail.item[4] = Format$(Coldetail.item[4], "0.00")
         Endif
       Endif
       If Coldetail3.item[5] <> "" And Left$(Coldetail3.item[5]) <> "-" Then
-        Coldetail.item[5 + i] = "-" & Format$(Val(Coldetail3.item[5]), "0.00")
+        Coldetail.item[5 + i] = "-" & Format$(Val(.CPoint(Coldetail3.item[5])), "0.00")
       Else
         If Coldetail3.item[5] <> "" Then
-          Coldetail.item[5 + i] = -Val(Coldetail3.item[5])
+          Coldetail.item[5 + i] = -Val(.CPoint(Coldetail3.item[5]))
           Coldetail.item[5 + i] = Format$(Coldetail.item[5 + i], "0.00")
         Endif
       Endif
       Coldetail.item[6 + i] = Coldetail3.item[6]
       If Coldetail3.item[7] <> "" And Left$(Coldetail3.item[7]) <> "-" Then
-        Coldetail.item[7 + i] = "-" & Format$(Val(Coldetail3.item[7]), "0.00")
+        Coldetail.item[7 + i] = "-" & Format$(Val(.CPoint(Coldetail3.item[7])), "0.00")
       Else
         If Coldetail3.item[7] <> "" Then
           Coldetail.item[7 + i] = -Val(Coldetail3.item[7])
@@ -10412,10 +10416,10 @@ Public Sub Importlig()
       Coldetail.item[9 + i] = Coldetail3.item[8]
       Coldetail.item[10 + i] = Coldetail3.item[10]
       If Coldetail3.item[11] <> "" And Left$(Coldetail3.item[11]) <> "-" Then
-        Coldetail.item[8 + i] = "-" & Format$(Val(Coldetail3.item[11]), "0.00")
+        Coldetail.item[8 + i] = "-" & Format$(Val(.CPoint(Coldetail3.item[11])), "0.00")
       Else
         If Coldetail3.item[11] <> "" Then
-          Coldetail.item[8 + i] = -Val(Coldetail3.item[11])
+          Coldetail.item[8 + i] = -Val(.CPoint(Coldetail3.item[11]))
           Coldetail.item[8 + i] = Format$(Coldetail.item[8 + i], "0.00")
         Endif
       Endif
