@@ -53,7 +53,7 @@ End
 
 Private Function ctrl() As Boolean
 
-  Dim res, resdr As Result
+  Dim res, resdr, reslig As Result
   Dim err As Boolean
   
   Textcontrol.Clear
@@ -80,7 +80,29 @@ Private Function ctrl() As Boolean
     Textcontrol.Text = Textcontrol.Text & "** FACTURES NON VALIDÉES / PÉRIODES PRÉCEDANTES ** \n"
     If err Then ctrlachat(res) Else err = ctrlachat(res)
   Endif
-  
+  'Vérifie si les articles passés sont en compta mat
+  'Bl
+  reslig = utils.db.Exec("SELECT * FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' ORDER by numfac")
+  If reslig.Available Then
+    Repeat
+      res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE num=&1 AND numlig LIKE &2", reslig!numfac, "%" & reslig!numlig_ligbl)
+      If Not res.Available Then 
+        Textcontrol.Text &= "Facture bl non trouvé : " & reslig!numfac & " " & LDate(reslig!dtefac).L & " " & reslig!art_code & " " & reslig!art_design & " " & "\n"
+        err = True
+      Endif
+    Until reslig.MoveNext()
+  Endif
+  'facture
+  reslig = utils.db.Exec("SELECT * FROM Fiches_Art,Fiches_HistoLigfac,Fiches_HistoFac WHERE art_code=code_ligfac and numfac=num_ligfac and art_dra <> '' AND dtligbl_ligfac >= &1 ORDER by numfac", $dteinf.D)
+  If reslig.Available Then
+    Repeat
+      res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE  num=&1 AND numlig LIKE &2", reslig!numfac, "%" & reslig!numlig_ligfac)
+      If Not res.Available Then 
+         Textcontrol.Text &= "Facture archive non trouvé : " & reslig!numfac & " " & LDate(reslig!datefac).L & " " & reslig!numlig_ligfac & " " & reslig!art_code & " " & reslig!art_design
+         err = True
+      Endif
+    Until reslig.MoveNext()
+  Endif
   Return err
 
 End
