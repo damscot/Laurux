@@ -248,6 +248,8 @@ Private $checcons As CheckBox
 Private $inbcol As Integer      'Nb de colis par palette
 Private $inbbout As Integer     'Nb de bouteilles par caisse
 Private $tarif As TarArt
+Private $process As Boolean = False   'test si le programme peut se fermer
+
 
 '**********************************************************
 '*initialisation écrans et gestion onglet client          *
@@ -1323,6 +1325,12 @@ Public Sub Form_Close()
 
   Dim sortie As Boolean = True
 
+  If $process Then
+   If Message.Warning("Il y a un processus en cours : Fermer le programme peut provoquer des dommages sur la base de données \n Voulez vous fermer quand même ?", "Oui", "Non") = 2 Then
+      Stop Event
+      Return
+    Endif
+  Endif
   If Panel5.visible = True Then
     If Val(Utils.cpoint(Mrg.text)) <= 0 And If Start.LocalSettings["/Soc" & Start.Societe & "/Marge"] Then
       If start.son Then
@@ -1625,6 +1633,7 @@ Public Sub Button4_Click()
   'tribl2 = "numbl"
   type = "C"
   $Desc = False
+  $process = True
   If Not IsNull(num.Text) Then
     If Bcomde.Value Then Tp = "C"
     If Bbon.Value Then Tp = "B"
@@ -1683,6 +1692,7 @@ Public Sub Button4_Click()
             Syntheses.Message("Création impossible, ce code client existe déjà !")
             Try Message.Error("Création impossible, ce code client existe déjà !")
             nvc = 0
+            $process = False
             Return
           Endif
         Endif
@@ -1726,6 +1736,7 @@ Public Sub Button4_Click()
   Nm.Text = Nom.Text
   Nvc = 0
   B = 0
+  $process = False
   'CATCH
   'IF start.son THEN
   '  Music.Play
@@ -10282,6 +10293,7 @@ Public Sub Impression(Org As String)
   Dim borientation As Boolean = False
   Dim ccd As Calculconsdroit
 
+  $process = True
   If $soption = "B" Or $soption = "T" Then i = 2 Else i = 0
   variables.typel = ""
   Variables.stexte = ""
@@ -10350,7 +10362,10 @@ Public Sub Impression(Org As String)
       If b <> "1" Then
         If Editfac = "1" Then
           rResult = Utils.db.Exec("SELECT * FROM " & tab5 & " left join Fiches_Commerciaux on code = cli_comm where cli_code = &1", Code3.Text)
-          If Not rResult.Available Then Return
+          If Not rResult.Available Then
+            $process = False
+            Return
+          Endif
           Ech = rResult!cli_cdech
           Cfac = rResult!cli_copie
           Tel2 = rResult!cli_tel_bur
@@ -10750,6 +10765,7 @@ Public Sub Impression(Org As String)
                               Music.Play
                             Endif
                             Message.Error("Il y a un souci avec le code " & code & " Impression impossible !")
+                            $process = False
                             Return
                           Endif
                           'Txtva = ArtRslt!mo_tva
@@ -10908,6 +10924,7 @@ Public Sub Impression(Org As String)
                     If Cptvente = False Then
                       Cptvente = True
                       Me.mouse = Mouse.Default
+                      $process = False
                       Return
                     Endif
                   Endif
@@ -11586,6 +11603,7 @@ Public Sub Impression(Org As String)
       Endif
     End With
     Me.Mouse = Mouse.Default
+    $process = False
     Button16_Click()
     'Visudoc = False
     If Not IsNull(num.text) Then
@@ -11607,6 +11625,7 @@ Catch
     Music.Play
   Endif
   Try message.Error(Error.Text & " " & Error.where)
+  $process = False
   Me.Mouse = Mouse.Default
 
 End
