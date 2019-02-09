@@ -5278,6 +5278,7 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY libelle varchar(50)")
   Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY intitule varchar(40)")
   Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY libelle varchar(50)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Marques MODIFY intitule varchar(40)")
   $i = 1
   While $i < 6 ' iteration de 1 a 5
     Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY intitule varchar(40)")

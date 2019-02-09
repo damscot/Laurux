@@ -1,0 +1,252 @@
+' Gambas class file
+
+OC_Con As DB_Connection
+OC_IsConnected As Boolean
+
+
+Public Sub OC_Ready() As Boolean
+  
+  If OC_IsConnected = False Then
+    Message.Error("Connection a la base opencart est inexistante")
+  Endif
+  
+  Return OC_IsConnected
+  
+End
+
+
+Public Sub Conn_Click()
+
+  Dim Tab As Table
+  
+  OC_Con = New DB_Connection
+  OC_IsConnected = False
+  
+  OC_Con.type = "mysql"
+  OC_Con.Name = "opencart"
+  OC_Con.Login = "jeanne"
+  OC_Con.Password = "jeanne"
+  OC_Con.Host = "127.0.0.1"
+  OC_Con.Port = "3306"
+  
+  Try OC_Con.Open
+  If Error Then
+    Message.Error("La connection à la boutique Opencart a echoué")
+    Return
+  Endif
+  
+  OC_IsConnected = True
+  OC_Con.Exec("SET NAMES 'utf8'")
+  For Each Tab In OC_Con.Tables
+    Print Tab.Name
+  Next
+  
+End
+
+
+
+Public Sub SyncArt_Click()
+  
+  Dim Res As Result
+  Dim OCRes, OCRes2, OCRes3 As Result
+  Dim LaRes As Result
+  Dim PB As ProgBar
+  Dim store_id As Integer = 0
+  Dim description As String
+  
+  
+  If Not OC_Ready() Then Return
+  
+  Res = Utils.db.Exec("Select * from " & Cbase.Table("TabArt") & " where art_suspendu = &1 and art_pvttc <> 0 and ((art_stocke = 1 and art_qte >= 1) or art_stocke = 0)", 0)
+  If Res.Available Then
+    PB = New ProgBar("Mise a jour articles", Res.Count, Null, True, "", True)
+    PB.Show()
+    Repeat
+      PB.Avancement(Left(Res!art_design, 25), 20)
+      OCRes = OC_Con.Exec("Select * from oc_product where sku = &1", Res!art_code)
+      If OCRes.Available Then
+        OC_Con.Exec("Update oc_product set model = &2, status = &3, price = &4, quantity = &5, minimum = &6 where sku = &1", Left(Res!art_code, 64), Left(Res!art_code, 64), 1, Res!art_pvttc, Res!art_qte, Res!art_mincom)
+      Else
+        OC_Con.Exec("Insert into oc_product (model, sku, status, price, quantity, minimum) Values (&1, &2, &3, &4, &5, &6)", Left(Res!art_code, 64), Left(Res!art_code, 64), 1, Res!art_pvttc, Res!art_qte, Res!art_mincom)
+      Endif
+      OCRes = OC_Con.Exec("Select * from oc_product where sku = &1", Res!art_code)
+      If OCRes.Available Then
+        LaRes = OC_Con.Exec("Select * from oc_language")
+        If LaRes.Available Then
+          Repeat
+            'description a construire a partir de crst en cherchant probablement la langue
+            If IsNull(Res!art_crst) Then
+              description = " "
+            Else
+              description = Res!art_crst
+            Endif
+            OCRes2 = OC_Con.Exec("Select * from oc_product_description where product_id = &1 and language_id = &2", OCRes!product_id, LaRes!language_id)
+            If OCRes2.Available Then
+              OC_Con.Exec("Update oc_product_description set name = &3, description = &4 where product_id = &1 and language_id = &2", OCRes!product_id, LaRes!language_id, Left(Res!art_design, 255), description)
+            Else
+              OC_Con.Exec("Insert into oc_product_description (product_id,language_id,name,description,tag,meta_title,meta_description,meta_keyword) Values (&1, &2, &3, &4, &5, &6, &7, &8)", OCRes!product_id, LaRes!language_id, Left(Res!art_design, 255), description, " ", " ", " ", " ")
+            Endif
+          Until LaRes.MoveNext()
+        Endif
+        'default store
+        OCRes2 = OC_Con.Exec("Select * from oc_product_to_store where product_id = &1", OCRes!product_id)
+        If OCRes2.Available Then
+          OC_Con.Exec("Update oc_product_to_store set store_id = &2 where product_id = &1", OCRes!product_id, store_id)
+        Else
+          OC_Con.Exec("Insert into oc_product_to_store (product_id,store_id) Values (&1, &2)", OCRes!product_id, store_id)
+        Endif
+        'marque
+        If Res!art_marque <> "" Then
+          OCRes2 = OC_Con.Exec("Select * from oc_manufacturer where name = &1", Res!art_marque)
+          If OCRes2.Available Then
+            OC_Con.Exec("Update oc_product set manufacturer_id = &2 where product_id = &1", OCRes!product_id, OCRes2!manufacturer_id)
+          Endif
+        Endif
+        'category
+        OCRes2 = OC_Con.Exec("Select * from oc_category as c left join oc_category_description as d on c.category_id = d.category_id where d.meta_title = &1", Res!art_fam)
+        If OCRes2.Available Then
+          OCRes3 = OC_Con.Exec("Select * from oc_product_to_category where product_id = &1", OCRes!product_id)
+          If OCRes3.Available Then
+            OC_Con.Exec("Update oc_product_to_category set category_id = &2 where product_id = &1", OCRes!product_id, OCRes2!category_id)
+          Else
+            OC_Con.Exec("Insert into oc_product_to_category (product_id,category_id) Values (&1, &2)", OCRes!product_id, OCRes2!category_id)
+          Endif
+        Endif
+      Endif
+    Until Res.MoveNext()
+    PB.Close()
+  Endif
+
+End
+
+Public Sub SyncFam_Click()
+  
+  Dim Res As Result
+  Dim OCRes, OCRes2 As Result
+  Dim LaRes As Result
+  Dim PB As ProgBar
+  Dim category_id As Integer = 0
+  Dim store_id As Integer = 0
+  Dim layout_id As Integer = 0
+  Dim parent_id As Integer = 0
+  Dim top, i, level As Integer = 0
+  Dim description As String
+  
+  
+  If Not OC_Ready() Then Return
+  
+  Res = Utils.db.Exec("Select * from " & Cbase.Table("TabFam") & " ", 0)
+  If Res.Available Then
+    PB = New ProgBar("Mise a jour categories", Res.Count, Null, True, "", True)
+    PB.Show()
+    Repeat
+      PB.Avancement(Left(Res!libell_fam, 25), 1)
+      If i Mod 8 = 0 Then
+        top = 1
+        level = 0
+        parent_id = 0
+      Else
+        level = 1
+        top = 0
+      Endif
+      OCRes = OC_Con.Exec("Select * from oc_category as c left join oc_category_description as d on c.category_id = d.category_id where d.meta_title = &1", Res!code_fam)
+      If OCRes.Available Then
+        category_id = OCRes!category_id
+        OC_Con.Exec("Update oc_category set date_modified = &2 where category_id = &1", category_id, LDate.DT)
+      Else
+        OC_Con.Begin()
+        OC_Con.Exec("Insert into oc_category (top, parent_id, `column`, `status`, date_added, date_modified) Values (&1, &2, &3, &4, &5, &6)", top, parent_id, 1, 1, LDate.DT, LDate.DT)
+        OCRes2 = OC_Con.Exec("SELECT LAST_INSERT_ID() as category_id from oc_category")
+        OC_Con.Commit()
+        category_id = OCRes2!category_id
+      Endif
+      If top = 1 Then
+        parent_id = category_id
+      Endif
+      OCRes = OC_Con.Exec("Select * from oc_category where category_id = &1", category_id)
+      If OCRes.Available Then
+        LaRes = OC_Con.Exec("Select * from oc_language")
+        If LaRes.Available Then
+          Repeat
+            'description a construire a partir de crst en cherchant probablement la langue
+            If IsNull(Res!libell_fam) Then
+              description = " "
+            Else
+              description = Res!libell_fam
+            Endif
+            OCRes2 = OC_Con.Exec("Select * from oc_category_description where category_id = &1 and language_id = &2", category_id, LaRes!language_id)
+            If OCRes2.Available Then
+              OC_Con.Exec("Update oc_category_description set name = &3, description = &4 where category_id = &1 and language_id = &2", category_id, LaRes!language_id, Left(Res!libell_fam, 255), Res!libell_fam)
+            Else
+              OC_Con.Exec("Insert into oc_category_description (category_id,language_id,name,description,meta_title,meta_description,meta_keyword) Values (&1, &2, &3, &4, &5, &6, &7)", category_id, LaRes!language_id, Left(Res!libell_fam, 255), description, Res!code_fam, " ", " ")
+            Endif
+          Until LaRes.MoveNext()
+        Endif
+        'default store Both Primary Key
+        OCRes2 = OC_Con.Exec("Select * from oc_category_to_store where category_id = &1", category_id)
+        If OCRes2.Available Then
+          OC_Con.Exec("Delete from oc_category_to_store where store_id = &2 and category_id = &1", category_id, store_id)
+        Endif
+        OC_Con.Exec("Insert into oc_category_to_store (category_id,store_id) Values (&1, &2)", category_id, store_id)
+        
+        'default layout
+        OCRes2 = OC_Con.Exec("Select * from oc_category_to_layout where category_id = &1", category_id)
+        If OCRes2.Available Then
+          OC_Con.Exec("Update oc_category_to_layout set store_id = &2, layout_id = &3 where category_id = &1", category_id, store_id, layout_id)
+        Else
+          OC_Con.Exec("Insert into oc_category_to_layout (category_id,store_id,layout_id) Values (&1, &2, &3)", category_id, store_id, layout_id)
+        Endif
+        'default path Both Primary Key
+        OCRes2 = OC_Con.Exec("Select * from oc_category_path where category_id = &1", category_id)
+        If OCRes2.Available Then
+          OC_Con.Exec("Delete from oc_category_path where path_id = &2 and category_id = &1", category_id, category_id)
+        Endif
+        If level > 0 Then
+          OC_Con.Exec("Insert into oc_category_path(category_id, path_id, level)Values(&1, &2, &3)", category_id, parent_id, 0)
+        Endif
+        OC_Con.Exec("Insert into oc_category_path(category_id, path_id, level)Values(&1, &2, &3)", category_id, category_id, level)
+      Endif
+    Inc i
+    Until Res.MoveNext()
+    PB.Close()
+  Endif
+
+End
+
+Public Sub SyncMarques_Click()
+  
+  Dim Res As Result
+  Dim OCRes, OCRes2 As Result
+  Dim PB As ProgBar
+  Dim store_id As Integer = 0
+  
+  If Not OC_Ready() Then Return
+  
+  Res = Utils.db.Exec("Select * from " & Cbase.Table("TabMarq") & " ")
+  If Res.Available Then
+    PB = New ProgBar("Mise a jour marques", Res.Count, Null, True, "", True)
+    PB.Show()
+    Repeat
+      PB.Avancement(Left(Res!intitule, 20), 5)
+      OCRes = OC_Con.Exec("Select * from oc_manufacturer where name = &1", Res!intitule)
+      If OCRes.Available Then
+        OC_Con.Exec("Update oc_manufacturer set name = &2 where manufacturer_id = &1", OCRes!manufacturer_id, Res!intitule)
+      Else
+        OC_Con.Exec("Insert into oc_manufacturer (name) Values (&1)", Res!intitule)
+      Endif
+      OCRes = OC_Con.Exec("Select * from oc_manufacturer where name = &1", Res!intitule)
+      If OCRes.Available Then
+        'default store
+        OCRes2 = OC_Con.Exec("Select * from oc_manufacturer_to_store where manufacturer_id = &1", OCRes!manufacturer_id)
+        If OCRes2.Available Then
+          OC_Con.Exec("Update oc_manufacturer_to_store set store_id = &2 where manufacturer_id = &1", OCRes!manufacturer_id, store_id)
+        Else
+          OC_Con.Exec("Insert into oc_manufacturer_to_store (manufacturer_id,store_id) Values (&1, &2)", OCRes!manufacturer_id, store_id)
+        Endif
+      Endif
+    Until Res.MoveNext()
+    PB.Close()
+  Endif
+
+  
+End
