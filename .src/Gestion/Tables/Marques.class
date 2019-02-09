@@ -204,7 +204,7 @@ Public Sub Button1_Click()
     With utils
       Rpost = Utils.db.Exec("SELECT * FROM " & Tabcp & " WHERE code = &1", Cmarque.Text)
       If Rpost.Available Then
-        Utils.db.Exec("UPdate  " & Tabcp & "  SET intitule = &2 WHERE code = &2", Cmarque.Text, Imarque.Text)
+        Utils.db.Exec("UPdate  " & Tabcp & "  SET intitule = &2 WHERE code = &1", Cmarque.Text, Imarque.Text)
       Else
         Utils.db.Exec("INSERT INTO " & Tabcp & "(code,intitule) VALUES (&1, &2)", Cmarque.Text, Imarque.Text)
       Endif
