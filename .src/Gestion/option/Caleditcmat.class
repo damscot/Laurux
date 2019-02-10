@@ -2,6 +2,7 @@
 
 Private $dteinv As New LDate
 Private $dteinf As New LDate
+Private $coul As Integer
 
 Public Struct volume
   vdp As Float
@@ -42,6 +43,8 @@ Public Sub _new()
   Textanne.Text = Format(Year(Now), "0000")
   Textmois.Select
   Textmois.SetFocus
+  
+  $coul = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
 
 End
 
@@ -59,12 +62,12 @@ Private Function ctrl() As Boolean
   Textcontrol.Clear
   If calcdate() Then Return True
   'véririe les entrée de marchandise
-  res = Utils.db.Exec("SELECT Fiches_Ligrecpt.four,Fiches_Ligrecpt.numrecpt,ddate,art_code,art_dra,art_design FROM Fiches_Entrecpt, Fiches_Ligrecpt,Fiches_Art WHERE NOT validee AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND Fiches_Ligrecpt.code=art_code AND art_dra IS NOT NULL AND (ddate BETWEEN &1 AND &2) ORDER BY Fiches_Ligrecpt.numrecpt", $dteinf.D, $dteinf.FinMois.D)
+  res = Utils.db.Exec("SELECT Fiches_Ligrecpt.four,Fiches_Ligrecpt.numrecpt,daterecpt AS ddate,art_code,art_dra,art_design FROM Fiches_Entrecpt, Fiches_Ligrecpt,Fiches_Art WHERE NOT validee AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND Fiches_Ligrecpt.code=art_code AND art_dra IS NOT NULL AND (ddate BETWEEN &1 AND &2) ORDER BY Fiches_Ligrecpt.numrecpt", $dteinf.D, $dteinf.FinMois.D)
   If res.Available Then
     Textcontrol.Text = Textcontrol.Text & "** ACHATS NON VALIDÉES / PÉRIODE EN COURS ** \n"
     err = ctrlachat(res)
   Endif
-  res = Utils.db.Exec("SELECT Fiches_Ligrecpt.four,Fiches_Ligrecpt.numrecpt,ddate,art_code,art_dra,art_design FROM Fiches_Entrecpt, Fiches_Ligrecpt,Fiches_Art WHERE NOT validee AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND Fiches_Ligrecpt.code=art_code AND art_dra IS NOT NULL AND ddate < &1 ORDER BY Fiches_Ligrecpt.numrecpt", $dteinf.D)
+  res = Utils.db.Exec("SELECT Fiches_Ligrecpt.four,Fiches_Ligrecpt.numrecpt,daterecpt AS ddate,art_code,art_dra,art_design FROM Fiches_Entrecpt, Fiches_Ligrecpt,Fiches_Art WHERE NOT validee AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND Fiches_Ligrecpt.code=art_code AND art_dra IS NOT NULL AND ddate < &1 ORDER BY Fiches_Ligrecpt.numrecpt", $dteinf.D)
   If res.Available Then
     Textcontrol.Text = Textcontrol.Text & "** ACHATS NON VALIDÉES / PÉRIODES PRÉCEDANTES ** \n"
     If err Then ctrlachat(res) Else err = ctrlachat(res)
@@ -414,3 +417,422 @@ Public Sub Quitter_Click()
   Me.Close
 
 End
+'edition du detail de la cm classée par droit et degres
+Public Sub detail_Click()
+
+  Dim rpr As Report
+  Dim res, resreg, resecour As Result
+  Dim cdd As Calculdroit
+  Dim volef, volap, totef, totap As Volume
+  Dim degr As Float
+  Dim ccd As Calculdroit
+  Dim sdp As ReportPageBreak
+  Dim Filename As String
+  Dim prt As New Printer
+  
+  calcdate
+  Filename = User.Home & "/tmp/tarif.pdf"
+  prt.OutputFile = Filename
+  '1° tri par code regie
+  resreg = utils.db.Exec("SELECT code,nom FROM Fiches_regie ORDER BY code")
+  If resreg.Available Then
+    resreg.MoveFirst
+    rpr = entete()
+    totef = New Volume
+    totap = New Volume
+    Repeat
+      volef = New Volume
+      volap = New Volume
+      'stock début de periode
+      res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE coderegie=&1 AND type='I' AND dtmouv BETWEEN &2 AND &3", resreg!code, $dteinf.D, $dteinf.FinMois.D)
+      If Not res.Available Then
+        res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE coderegie=&1 AND type='M' AND dtmouv BETWEEN &2 AND &3", resreg!code, $dteinf.D, $dteinf.FinMois.D)
+      Endif
+      If res.Available Then
+        volef.vdp = res!volume
+        volap.vdp = res!volumeap
+      Endif
+      'mouvement du mois classé par degres
+      res = utils.db.Exec("SELECT * FROM Fiches_ligregie,Fiches_Art WHERE art_code= codeart AND coderegie=&1 AND (type='S' OR type='E' OR type='C') AND dtmouv BETWEEN &2 AND &3 ORDER BY degres DESC", resreg!code, $dteinf.D, $dteinf.FinMois.D)
+      If res.Available Then
+        res.MoveFirst
+        entreg(rpr, resreg!code, resreg!nom)
+        degr = res!degres
+        Repeat
+          If degr <> CFloat(res!degres) Then
+            degr = res!degres
+            soustot(rpr, totef, totap)
+            totef = New Volume
+            totap = New Volume
+          Endif
+          Select Case res!type
+            Case "S", "C"
+              volef.vso = res!volume
+              volef.ven = 0
+              volef.vfp = volef.vdp - volef.vso
+              totef.vso += volef.vso
+              volap.vso = res!volumeap
+              volap.vfp = volap.vdp - volap.vso
+              totap.vso += volap.vso
+            Case "E"
+              volef.ven = res!volume
+              volef.vso = 0
+              volef.vfp = volef.vdp + volef.ven
+              totef.ven += volef.ven
+              volap.ven = res!volumeap
+              volap.vfp = volap.vdp - volap.ven
+              totap.ven += volap.ven
+          End Select         
+          ligne(rpr, volef, volap, res!coderegie, res!art_code, res!art_design, res!num, res!dtmouv, res!art_volm, res!art_deg)
+          volef.vdp = volef.vfp
+          volap.vdp = volap.vfp
+        Until res.MoveNext()
+        soustot(rpr, totef, totap)
+        'on regarde dans les entrées et sorties en cours non validées
+        resecour = utils.db.Exec("SELECT art_code,art_volm,art_deg,art_design,art_dra,numbl AS num,dte_ligbl AS dte,qte_ligbl AS qte, 'S' AS type FROM Fiches_Bl,Fiches_Ligbl,Fiches_Art WHERE numbl=num_ligbl AND art_code=code_ligbl AND art_dra=&3 AND Fiches_Bl.type='B' AND dte_ligbl BETWEEN &1 AND &2 " & 
+        "UNION ALL SELECT art_code,art_volm,art_deg,art_design,art_dra,Fiches_Entrecpt.numrecpt AS num,daterecpt AS dte,qte, 'E' AS type FROM Fiches_Ligrecpt,Fiches_Entrecpt,Fiches_Art WHERE Fiches_Ligrecpt.numrecpt = Fiches_Entrecpt.numrecpt  AND art_code=code AND art_dra=&3 AND validee=False AND daterecpt BETWEEN &1 AND &2", $dteinf.D, $dteinf.FinMois.D, resreg!code)
+        If resecour.Available Then
+          totef = New Volume
+          totap = New Volume
+          entreg(rpr, "  ", "Mouvements non validés")
+          resecour.MoveFirst
+          Repeat
+            cdd = New Calculdroit(resecour!art_dra, resecour!art_volm, resecour!art_deg, resecour!qte)
+            If resecour!type = "S" Then
+              volef.vso = cdd.vol
+              volef.ven = 0
+              volef.vfp = volef.vdp - volef.vso
+              totef.vso += volef.vso
+              volap.vso = cdd.volap
+              volap.vfp = volap.vdp - volap.vso
+              totap.vso += volap.vso
+            Else
+              volef.ven = cdd.vol
+              volef.vso = 0
+              volef.vfp = volef.vdp + volef.ven
+              totef.ven += volef.ven
+              volap.ven = cdd.volap
+              volap.vfp = volap.vdp - volap.ven
+              totap.ven += volap.ven
+            Endif
+            ligne(rpr, volef, volap, resecour!art_dra, resecour!art_code, resecour!art_design, resecour!num, resecour!dte, resecour!art_volm, resecour!art_deg)
+            volef.vdp = volef.vfp
+            volap.vdp = volap.vfp
+          Until resecour.MoveNext()
+          soustot(rpr, totef, totap)
+        Endif
+        totef = New Volume
+        totap = New Volume
+        sdp = New ReportPageBreak(rpr)
+        sdp.ForceNewPage = True
+      Endif
+    Until resreg.MoveNext()
+  Endif
+  rpr.Print(prt)
+  Visualiseur.Prog(Filename)
+  
+End
+
+Private Function entete() As Report
+
+  Dim rpr As Report
+  Dim lab As ReportLabel
+  Dim hb As ReportHBox
+  
+  rpr = New Report
+  rpr.Orientation = Printer.Landscape
+  lab = New ReportLabel(rpr)
+  
+  lab.Text = "Détail des mouvements par code régie et degrés de  : " & Format($dteinf.G, "mmmm") & " " & Format($dteinf.g, "yyyy")
+  lab.Font = font["Serif,-2"]
+  lab.Alignment = Align.Center
+  lab.BackGround = ReportBrush.Color($coul)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+  lab.Fixed = True
+  
+  hb = New ReportHBox(rpr)
+  hb.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+  hb.BackGround = ReportBrush.Color($coul)
+  hb.Height = "4mm"
+  hb.Fixed = True
+  
+  lab = New ReportLabel(hb)
+  lab.Text = "Code "
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "10mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "Code art"
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "20mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "Libelle art"
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  Lab.Expand = True
+
+  lab = New ReportLabel(hb)
+  lab.Text = "Document"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Width = "20mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+
+  lab = New ReportLabel(hb)
+  lab.Text = "Date"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Width = "18mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+
+  lab = New ReportLabel(hb)
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Text = "Degrés"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Width = "15mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+
+  lab = New ReportLabel(hb)
+  lab.Text = "Volume"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Width = "15mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+
+  lab = New ReportLabel(hb)
+  lab.Text = "VE début"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "VE sorti"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "VE entré"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "VE fin"
+  lab.Font = font["Serif,-5"]
+  lab.Alignment = Align.Center
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "AP début" 
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "AP sorti"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+
+  lab = New ReportLabel(hb)
+  lab.Text = "AP entré"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  lab.Alignment = Align.Center
+
+  lab = New ReportLabel(hb)
+  lab.Text = "AP fin"
+  lab.Font = font["Serif,-5"]
+  lab.Alignment = Align.Center
+  lab.Width = "15mm"
+  
+  Return rpr
+  
+End
+
+Private Sub entreg(rpr As Report, cde As String, lib As String)
+  
+  Dim lab As ReportLabel
+ 
+  lab = New ReportLabel(rpr)
+  lab.Font = font["Serif,-4"]
+  lab.Text = cde & "  " & lib
+  
+End
+
+Private Sub soustot(rpr As Report, totef As Volume, totap As Volume)
+  
+  Dim hb As ReportHBox
+  Dim lab As ReportLabel
+  
+  hb = New ReportHBox(rpr)
+  hb.Height = "4mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Width = "30mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Expand = True
+  lab.Font = font["Serif,-5"]
+  lab.Text = "Total"
+  
+  lab = New ReportLabel(hb)
+  If totef.vso <> 0 Then lab.Text = Format(totef.vso, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If totef.ven <> 0 Then lab.Text = Format(totef.ven, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If totap.vso <> 0 Then lab.Text = Format(totap.vso, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If totap.ven <> 0 Then lab.Text = Format(totap.ven, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Width = "15mm"
+  
+End
+
+Private Sub ligne(rpr As Report, volef As Volume, volap As Volume, code As String, art As String, lib As String, doc As String, dte As Date, vol As Float, deg As Float)
+  
+  Dim hb As ReportHBox
+  Dim lab As ReportLabel
+  
+  hb = New ReportHBox(rpr)
+  hb.Height = "4mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Text = code 
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "10mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Text = art
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "20mm"
+  
+  lab = New ReportLabel(hb)
+  lab.Text = lib
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  Lab.Expand = True
+  
+   lab = New ReportLabel(hb)
+  lab.Text = doc
+  lab.Font = font["Serif,-5"]
+  lab.Width = "20mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  
+  lab = New ReportLabel(hb)
+  lab.Text = LDate(dte).L
+  lab.Font = font["Serif,-5"]
+  lab.Width = "18mm"
+   lab.Alignment = Align.Center
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  
+   lab = New ReportLabel(hb)
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Text = deg
+  lab.Font = font["Serif,-5"]
+  lab.Alignment = Align.Right
+  lab.Width = "15mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  
+  lab = New ReportLabel(hb)
+  lab.Text = vol
+  lab.Font = font["Serif,-5"]
+  lab.Alignment = Align.Right
+  lab.Width = "15mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  
+  lab = New ReportLabel(hb)
+  If volef.vdp <> 0 Then lab.Text = Format(volef.vdp, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If volef.vso <> 0 Then lab.Text = Format(volef.vso, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If volef.ven <> 0 Then lab.Text = Format(volef.ven, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If volef.vfp <> 0 Then lab.Text = Format(volef.vfp, "0.00")
+  lab.Font = font["Serif,-5"]
+  lab.Alignment = Align.Right
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If volap.vdp <> 0 Then lab.Text = Format(volap.vdp, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If volap.vso <> 0 Then lab.Text = Format(volap.vso, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If volap.ven <> 0 Then lab.Text = Format(volap.ven, "0.00")
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,-5"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+  lab = New ReportLabel(hb)
+  If volap.vfp <> 0 Then lab.Text = Format(volap.vfp, "0.00")
+  lab.Font = font["Serif,-5"]
+  lab.Alignment = Align.Right
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "15mm"
+  
+End
+
