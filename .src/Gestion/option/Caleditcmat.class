@@ -469,6 +469,7 @@ Public Sub detail_Click()
             Case "S", "C"
               volef.vso = res!volume
               volef.ven = 0
+              volap.ven = 0
               volef.vfp = volef.vdp - volef.vso
               totef.vso += volef.vso
               volap.vso = res!volumeap
@@ -477,6 +478,7 @@ Public Sub detail_Click()
             Case "E"
               volef.ven = res!volume
               volef.vso = 0
+              volap.vso = 0
               volef.vfp = volef.vdp + volef.ven
               totef.ven += volef.ven
               volap.ven = res!volumeap
