@@ -2,41 +2,335 @@
 
 { Report Report
   #MoveScaled(0,0,169,91)
+  Font = Font["Serif,-2"]
+  Orientation = Printer.Landscape
   Index = 0
   Text = ("")
+  { ReportLabel11 ReportLabel
+    #MoveScaled(1,1,167,5)
+    Text = ("ANNEXE IX")
+    Alignment = Align.Center
+  }
   { ReportHBox1 ReportHBox
-    #MoveScaled(1,1,167,36)
+    #MoveScaled(1,6,167,36)
+    Fixed = True
+    AutoResize = True
     { ReportVBox1 ReportVBox
       #MoveScaled(1,1,58,34)
+      Font = Font["Serif,-2"]
+      Expand = True
+      AutoResize = True
       Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
       { ReportLabel1 ReportLabel
         #MoveScaled(1,1,56,4)
+        Font = Font["Bold,Underline,-2"]
         Text = ("DISTRIBUTEUR DE CARBURANTS")
         Alignment = Align.Center
       }
       { ReportLabel2 ReportLabel
-        #MoveScaled(1,5,56,4)
+        #MoveScaled(1,5,56,3)
+        Font = Font["Bold,Underline,-2"]
         Text = ("EN ACQUITE :")
         Alignment = Align.Center
       }
       { ReportLabel4 ReportLabel
-        #MoveScaled(1,9,56,3)
+        #MoveScaled(1,8,56,3)
       }
       { ReportLabel3 ReportLabel
-        #MoveScaled(1,12,56,4)
+        #MoveScaled(1,11,56,4)
+        Font = Font["Serif"]
         Text = ("S.E ETS MAGUER SAS")
         Alignment = Align.Center
       }
       { ReportLabel5 ReportLabel
-        #MoveScaled(1,16,56,4)
+        #MoveScaled(1,15,56,4)
+        Font = Font["Serif"]
+        Text = ("24800 THIVIERS")
+        Alignment = Align.Center
+      }
+      { ReportLabel6 ReportLabel
+        #MoveScaled(1,19,56,3)
+      }
+      { ReportLabel7 ReportLabel
+        #MoveScaled(1,22,56,5)
+        Font = Font["Serif,Bold"]
+        Text = ("N° de la décision d'enregistrement")
+      }
+      { ReportLabel8 ReportLabel
+        #MoveScaled(1,27,56,4)
+        Font = Font["Serif,Bold"]
+        Text = ("DGDDI :   ")
+      }
+      { ReportLabel9 ReportLabel
+        #MoveScaled(1,31,56,3)
       }
     }
     { ReportVBox2 ReportVBox
       #MoveScaled(59,1,66,34)
+      Expand = True
+      AutoResize = True
+      { ReportLabel10 ReportLabel
+        #MoveScaled(1,1,64,8)
+      }
+      { ReportLabel12 ReportLabel
+        #MoveScaled(1,9,64,3)
+        Font = Font["Bold,-2"]
+        Text = ("LISTE DES DESTINATAIRES FINALS")
+        Alignment = Align.Center
+      }
+      { ReportLabel13 ReportLabel
+        #MoveScaled(1,12,64,3)
+        Font = Font["Bold,-3"]
+        Text = ("En suite de livraison par un distributeur ")
+        Alignment = Align.Center
+      }
+      { ReportLabel14 ReportLabel
+        #MoveScaled(1,15,64,3)
+        Font = Font["Bold,-3"]
+        Text = ("De carburant en acquitté")
+        Alignment = Align.Center
+      }
+      { ReportLabel15 ReportLabel
+        #MoveScaled(1,18,64,2)
+      }
+      { ReportLabel16 ReportLabel
+        #MoveScaled(1,20,64,3)
+        Font = Font["Bold,-3"]
+        Text = ("Année .......................") & "..."
+        Alignment = Align.Center
+      }
+      { ReportLabel17 ReportLabel
+        #MoveScaled(1,23,64,4)
+        Font = Font["Bold,-3"]
+        Text = ("Mois de ..........................................") & "..."
+        Alignment = Align.Center
+      }
+      { ReportLabel18 ReportLabel
+        #MoveScaled(1,27,64,3)
+        Font = Font["-2"]
+        Text = ("(Ce document doit être conservé ")
+        Alignment = Align.Center
+      }
+      { ReportLabel19 ReportLabel
+        #MoveScaled(1,30,64,3)
+        Font = Font["-2"]
+        Text = ("Par l'opérateur aux fin de contrôle)")
+        Alignment = Align.Center
+      }
     }
     { ReportVBox3 ReportVBox
       #MoveScaled(125,1,62,34)
+      Expand = True
+      AutoResize = True
       Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+      { ReportLabel20 ReportLabel
+        #MoveScaled(1,1,60,3)
+        Font = Font["-2"]
+        Text = ("Nous")
+      }
+      { ReportLabel21 ReportLabel
+        #MoveScaled(1,4,60,3)
+      }
+      { ReportLabel22 ReportLabel
+        #MoveScaled(1,7,60,4)
+        Font = Font["-2"]
+        Text = ("Déclarons sous peine de droit, que toutes les")
+      }
+      { ReportLabel23 ReportLabel
+        #MoveScaled(1,11,60,3)
+        Font = Font["-2"]
+        Text = ("indications figurant dans cette déclaration sont")
+      }
+      { ReportLabel24 ReportLabel
+        #MoveScaled(1,14,60,3)
+        Font = Font["-2"]
+        Text = ("sincères et véritables")
+      }
+      { ReportLabel25 ReportLabel
+        #MoveScaled(1,17,60,2)
+      }
+      { ReportLabel26 ReportLabel
+        #MoveScaled(1,19,60,3)
+        Text = ("A ........................ le ....................") & "..."
+      }
+      { ReportLabel28 ReportLabel
+        #MoveScaled(1,22,60,4)
+        Font = Font["-2"]
+        Text = ("(Signature et nom du déclarant)")
+      }
+    }
+  }
+  { ReportLabel27 ReportLabel
+    #MoveScaled(1,42,167,3)
+    Fixed = True
+  }
+  { ReportVBox4 ReportVBox
+    #MoveScaled(1,45,167,13)
+    Height = "11mm"
+    Fixed = True
+    Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+    { ReportHBox2 ReportHBox
+      #MoveScaled(1,1,165,5)
+      Height = "5mm"
+      { ReportLabel29 ReportLabel
+        #MoveScaled(1,1,21,3)
+        Width = "38mm"
+        Font = Font["Bold,-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("N° de facture ou de ")
+        Alignment = Align.Center
+      }
+      { ReportLabel31 ReportLabel
+        #MoveScaled(22,1,17,3)
+        Width = "22mm"
+        Font = Font["Bold,-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("Produit(s)")
+        Alignment = Align.Center
+      }
+      { ReportLabel32 ReportLabel
+        #MoveScaled(39,1,22,3)
+        Width = "38mm"
+        Font = Font["Bold,-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("Volume(s) facturé(s)")
+        Alignment = Align.Center
+      }
+      { ReportLabel33 ReportLabel
+        #MoveScaled(61,1,38,3)
+        Font = Font["Bold,-3"]
+        Expand = True
+        AutoResize = True
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("Raison sociale et lieu de livraison")
+        Alignment = Align.Center
+      }
+      { ReportLabel34 ReportLabel
+        #MoveScaled(99,1,14,3)
+        Width = "30mm"
+        Font = Font["Bold,-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("N° SIRET")
+        Alignment = Align.Center
+      }
+      { ReportLabel35 ReportLabel
+        #MoveScaled(113,1,11,3)
+        Width = "20mm"
+        Font = Font["Bold,-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("Code(s)")
+        Alignment = Align.Center
+      }
+      { ReportLabel36 ReportLabel
+        #MoveScaled(124,1,17,3)
+        Width = "28mm"
+        Font = Font["Bold,-3"]
+        Text = ("Destinataire(s)")
+        Alignment = Align.Center
+      }
+    }
+    { ReportHBox3 ReportHBox
+      #MoveScaled(1,6,165,6)
+      Height = "5mm"
+      { ReportLabel30 ReportLabel
+        #MoveScaled(1,1,21,4)
+        Width = "38mm"
+        Font = Font["Bold,-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("Bon de livraison")
+        Alignment = Align.Center
+      }
+      { ReportLabel37 ReportLabel
+        #MoveScaled(22,1,17,4)
+        Width = "22mm"
+        Border = ReportBorder["Right:1pt #000000"]
+      }
+      { ReportLabel38 ReportLabel
+        #MoveScaled(39,1,22,4)
+        Width = "38mm"
+        Font = Font["-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("(en m3 3 décimales)")
+        Alignment = Align.Center
+      }
+      { ReportLabel39 ReportLabel
+        #MoveScaled(61,1,37,4)
+        Expand = True
+        Border = ReportBorder["Right:1pt #000000"]
+      }
+      { ReportLabel40 ReportLabel
+        #MoveScaled(98,1,14,4)
+        Width = "30mm"
+        Font = Font["-2"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("*")
+        Alignment = Align.Center
+      }
+      { ReportLabel41 ReportLabel
+        #MoveScaled(112,1,12,4)
+        Width = "20mm"
+        Font = Font["Bold,-3"]
+        Border = ReportBorder["Right:1pt #000000"]
+        Text = ("Région")
+        Alignment = Align.Center
+      }
+      { ReportLabel42 ReportLabel
+        #MoveScaled(124,1,17,4)
+        Width = "28mm"
+        Font = Font["-2"]
+        Text = ("**")
+        Alignment = Align.Center
+      }
+    }
+  }
+  { ligne ReportHBox
+    #MoveScaled(1,58,167,5)
+    Height = "6mm"
+    { num ReportLabel
+      #MoveScaled(1,1,21,3)
+      Width = "38mm"
+      Font = Font["-3"]
+      Border = ReportBorder["Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+    }
+    { prod ReportLabel
+      #MoveScaled(22,1,17,3)
+      Width = "22mm"
+      Font = Font["-3"]
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+    }
+    { vol ReportLabel
+      #MoveScaled(39,1,22,3)
+      Width = "38mm"
+      Font = Font["-3"]
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+      Alignment = Align.Right
+    }
+    { rais ReportLabel
+      #MoveScaled(61,1,38,3)
+      Font = Font["-3"]
+      Expand = True
+      AutoResize = True
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+    }
+    { siret ReportLabel
+      #MoveScaled(99,1,14,3)
+      Width = "30mm"
+      Font = Font["-3"]
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+    }
+    { code ReportLabel
+      #MoveScaled(113,1,11,3)
+      Width = "20mm"
+      Font = Font["-3"]
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+      Alignment = Align.Center
+    }
+    { dest ReportLabel
+      #MoveScaled(124,1,17,3)
+      Width = "28mm"
+      Font = Font["-3"]
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+      Alignment = Align.Center
     }
   }
   Index = 0

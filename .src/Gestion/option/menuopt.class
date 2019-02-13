@@ -1,7 +1,9 @@
 ' Gambas class file
 
 Private $men As Menu
-
+Private $win As Window
+Private $mois As String
+Private $anne As String
 
 Public Sub _new(constante As Menu, table As Menu, stock As Menu, regbl As Menu)
 
@@ -26,6 +28,8 @@ Public Sub _new(constante As Menu, table As Menu, stock As Menu, regbl As Menu)
     $men.Text = "Tipp régional&e"
     $men = New Menu(table) As "Tfioul"
     $men.Text = "Tarif &fioul"
+    $men = New Menu(stock) As "edtipp"
+    $men.Text = "Edition de la TIPP"
     regbl.Visible = False
   Endif
 End
@@ -77,3 +81,103 @@ Public Sub vign_click()
   atribvignette.Show
 
 End
+'Edition de la tipce régionale
+
+Public Sub edtipp_click()
+
+  Dim lab As Label
+  Dim txt As TextReg
+  Dim hb As HBox
+  Dim vb As VBox
+  Dim btn As Button
+  Dim ch As Chainage
+  Dim obs As Observer
+  
+  $win = New Window As "win"
+  $win.AutoResize = True
+  $win.Arrangement = Arrange.Vertical
+  $win.Text = "Edition de la TIPCE régionale"
+ 
+  hb = New HBox($win)
+  hb.AutoResize = True
+  
+  hb.x = 0
+  hb.y = 0
+  lab = New Label(hb)
+  lab.Text = "Entrez le mois :  "
+  lab.Height = 24
+  lab.Width = 150
+  txt = New TextReg(hb) As "mois"
+  txt.Height = 24
+  txt.Width = 100
+  txt.reg = "[0-9]{0,2}"
+  txt.numerique = True
+  txt.Text = Format(Now, "mm")
+  $mois = txt.Text
+  ch = New Chainage([txt])
+   
+  hb = New HBox($win)
+  hb.AutoResize = True
+  lab = New Label(hb)
+  lab.Text = "Entrez l'année :  "
+  lab.Height = 24
+  lab.Width = 150
+  txt = New TextReg(hb) 
+  obs = New Observer(txt) As "annee"
+  txt.Height = 24
+  txt.Width = 100
+  txt.reg = "[0-9]{0,4}"
+  txt.numerique = True
+  txt.Text = Format(Now, "yyyy")
+  $anne = txt.Text
+  ch.add([txt])
+  
+  btn = New Button($win)
+  obs = New Observer(btn) As "btn"
+  btn.Text = "OK"
+  
+  $win.ShowModal
+ 
+
+End
+
+Public Sub mois_lostfocus()
+
+  $mois = Last.Text
+  If Last.Value < 1 Or Last.value > 12 Then
+    Last.Select
+    Last.setfocus
+    Stop Event
+  Endif
+
+End
+
+Public Sub annee_lostfocus()
+
+  $anne = Last.Text
+  
+End
+
+Public Sub btn_Click()
+
+  Dim edt As Edittipp
+  Dim Filename As String
+  Dim prt As New Printer
+  
+  Filename = User.Home & "/tmp/tipce.pdf"
+  prt.OutputFile = Filename
+  $win.Close
+  edt = New Edittipp($mois, $anne)
+  edt.Print(prt)
+  Visualiseur.Prog(Filename)
+
+End
+
+Public Sub win_close()
+
+  $win.Close
+
+End
+ 
+
+

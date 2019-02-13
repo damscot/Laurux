@@ -1,2 +1,64 @@
 ' Gambas class file
 
+Private $dte As LDate
+Private $res As Result
+
+Public Sub _new(mois As String, anne As String)
+  
+  $dte = New LDate(Date(anne, Val(mois), 1))
+  $res = Utils.db.Exec("SELECT cart,art_design,CASE WHEN numfac IS NULL THEN numbl ELSE numfac END AS num,cli_nom,cli_ville,tipp_ligbl AS tipp,cli_dfin,cli_siret,qte_ligbl AS qte FROM Fiches_region,Fiches_Ligbl,Fiches_Bl,Fiches_Cli,Fiches_Art WHERE cart=art_code AND code_ligbl=cart AND numbl=num_ligbl AND cdclibl=cli_code AND Fiches_Bl.type  IN('B','F') AND tipp_ligbl IS NOT NULL AND dte_ligbl BETWEEN &1 AND &2 " &
+  "UNION ALL SELECT cart,art_design,numfac AS num,cli_nom,cli_ville,tipp_ligfac AS tipp,cli_dfin,cli_siret,qte_ligfac AS qte FROM Fiches_region,Fiches_HistoLigfac,Fiches_HistoFac,Fiches_Cli,Fiches_Art WHERE cart=art_code AND code_ligfac=cart AND numfac=num_ligfac AND cdclifac=cli_code AND tipp_ligfac  IS NOT NULL AND  dtligbl_ligfac BETWEEN &1 AND &2", $dte.D, $dte.FinMois.D)
+  If $res.Available Then
+    ligne.DataCount = $res.Count
+  Endif
+  
+End
+
+Public Sub num_Data(Index As Integer)
+
+  $res.MoveTo(Index)
+  num.Data = $res!num
+
+End
+
+Public Sub prod_Data(Index As Integer)
+
+   $res.MoveTo(Index)
+   prod.Data = $res!art_design
+
+End
+
+Public Sub vol_Data(Index As Integer)
+
+   $res.MoveTo(Index)
+   vol.Data = $res!qte
+
+End
+
+Public Sub rais_Data(Index As Integer)
+
+   $res.MoveTo(Index)
+   rais.Data = Left($res!cli_nom, 25) & " " & Left($res!cli_ville, 20)
+
+End
+
+Public Sub siret_Data(Index As Integer)
+
+   $res.MoveTo(Index)
+   siret.Data = $res!cli_siret
+
+End
+
+Public Sub code_Data(Index As Integer)
+
+   $res.MoveTo(Index)
+   code.Data = $res!tipp
+
+End
+
+Public Sub dest_Data(Index As Integer)
+
+   $res.MoveTo(Index)
+   dest.Data = $res!cli_dfin
+
+End
