@@ -151,6 +151,9 @@ Public Sub bouton_Click()         'lit et affiche les stat
           Case "C"
             req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
             cond = "cdclifac=&1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
+          Case "T"
+            req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            cond = "tour_ligfac=&1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
 
         End Select
         If IsNull($grdv[j, i].Text) Then
@@ -179,6 +182,10 @@ Public Sub bouton_Click()         'lit et affiche les stat
           Case "C"
             req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
             cond = "cdclibl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND  datebl BETWEEN &2 AND &3"
+          Case "T"
+            req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
+            cond = "tour_ligbl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND  datebl BETWEEN &2 AND &3"
+            
         End Select
         requete(tab, tab1, req, cond, dateinf, datesup, i, j)
         tab = "Fiches_LigblM"

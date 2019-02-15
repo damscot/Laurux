@@ -3,6 +3,7 @@
 Private $bs As Barselection
 Private $restour As Result
 Private $ind As Integer
+Private $grv As Gridvi
 
 Public Sub form_Open()
 
@@ -11,6 +12,7 @@ Public Sub form_Open()
   
   $restour = Utils.db.Exec("SELECT * FROM Fiches_tourne ORDER BY code")
   If $restour.Available Then
+    $grv = New Gridvi(TabStrip1, "T")
     $restour.MoveFirst
     affichedonne
   Endif
@@ -198,6 +200,7 @@ Private Sub affichedonne()
   If $ind = -1 Then Return
   textnum.Text = $restour!code
   Texttour.Text = $restour!tourne
+  $grv.code = $restour!code
   
 End
 
