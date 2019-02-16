@@ -129,7 +129,7 @@ Public Function Ed(Nbls As String, codef As String, dater As String, Coulfond As
   Dim adr2 As String
   Dim cp As String
   Dim tel As String
-  Dim dte As String
+  Dim dte As LDate
   Dim Fichier As String
   Dim Cfac As Boolean = False
   Dim Nbl As String
@@ -140,7 +140,7 @@ Public Function Ed(Nbls As String, codef As String, dater As String, Coulfond As
   pdf = New Cdocuments("Portrait", "mm", "A4")
   pdf.Open()
   pdf.AliasNbPages()
-  dte = Format$(Now, "dd.mm.yyyy")
+  dte = New LDate(Now)
   Tab = "Fiches_Ligrecpt"
   Tab2 = "Fiches_Four"
   If Not Exist(User.home & "/BR") Then Try Mkdir User.home & "/BR"
@@ -164,8 +164,8 @@ Public Function Ed(Nbls As String, codef As String, dater As String, Coulfond As
             tel = fourResult!fo_tel_std
             Cfac = fourResult!fo_copie
           Endif
-          dte = Mid$(CStr(rResult!daterecpt), 4, 2) & "." & Left$(CStr(rResult!daterecpt), 2) & "." & Right$(CStr(rResult!daterecpt), 4)
-          pdf.Level1br(codef, intitulef, Nbl, dte, adr1, adr2, cp, tel)
+          dte = New LDate(rResult!daterecpt)
+          pdf.Level1br(codef, intitulef, Nbl, dte.L, adr1, adr2, cp, tel)
           Posy = 60
           Repeat
             code = rResult!code
