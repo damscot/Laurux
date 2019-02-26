@@ -384,8 +384,6 @@ Public Sub Form_Open()
   Try Adrbase3.Text = cursettings["/Soc" & Start.Societe & "/Adrbase3"]
   Try IdFTP3.Text = cursettings["/Soc" & Start.Societe & "/Idftp3"]
   Try MdpFTP3.Text = hexdblKey.crypt("de", cursettings["/Soc" & Start.Societe & "/MdpFTP3"], "Laurux")
-  Try Cnomade.Value = cursettings["/Soc" & Start.Societe & "/Cnomade"]
-  Try Chmcsv.Text = cursettings["/Soc" & Start.Societe & "/Chmcsv"]
   Try Depannage.Value = cursettings["/Soc" & Start.Societe & "/Depannage"]
   Try Afour.Value = cursettings["/Soc" & Start.Societe & "/Afour"]
   Try AffArt.Value = cursettings["/Soc" & Start.Societe & "/AffArt"]
@@ -687,8 +685,6 @@ Public Sub form_close()
   cursettings["/Soc" & Start.Societe & "/MdpFTP3"] = hexdblKey.crypt("en", MdpFTP3.Text, "Laurux")
   cursettings["/Soc" & Start.Societe & "/Idftp3"] = IdFTP3.Text
   cursettings["/Soc" & Start.Societe & "/Prgmail"] = PrgMail.Text
-  cursettings["/Soc" & Start.Societe & "/Cnomade"] = Cnomade.Value
-  cursettings["/Soc" & Start.Societe & "/Chmcsv"] = Chmcsv.Text
   cursettings["/Soc" & Start.Societe & "/AffArt"] = AffArt.Value
   cursettings["/Soc" & Start.Societe & "/AffMarge"] = MasqueMarge.Value
   cursettings["/Soc" & Start.Societe & "/AffClient"] = AffClient.Value
@@ -1223,18 +1219,6 @@ Public Sub Bchemin9_Click()
     Chemin9.Text = Dialog.Path
   Else
     Chemin9.Text = User.Home
-  Endif
-
-End
-
-Public Sub chm_Click()
-
-  Dialog.Title = "Choisir un repertoire"
-  Dialog.Path = User.home
-  If Not Dialog.SelectDirectory() Then
-    Chmcsv.Text = Dialog.Path
-  Else
-    Chmcsv.Text = User.Home
   Endif
 
 End
