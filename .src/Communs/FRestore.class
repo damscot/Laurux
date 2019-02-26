@@ -203,13 +203,13 @@ Public Sub Verif_Version()
     Start.UnLock()
     Utils.fermeTunnel()
     Utils.db.Close
-    Quit
+    Start.Exit = True
   Else If AppVersion <> rResult!version Then
     Message.Warning("La version de la base restaurée est différente de celle de l'exécutable !\nVeuillez relancer Laurux SVP !")
     Start.UnLock()
     Utils.fermeTunnel()
     Utils.db.Close
-    Quit
+    Start.Exit = True
   Endif
 
 End

@@ -52,8 +52,8 @@ Public Ev As Date
 Public Evc As Integer
 Public Evl As Integer
 
-Public Success As Boolean = True 'valeur de retour du programme par default success => return 0
-Public Exit As Boolean = False 'autorise la sortie du programme
+Public Success As Boolean 'valeur de retour du programme par default success => return 0
+Public Exit As Boolean 'autorise la sortie du programme
 
 
 Public Sub Main()
@@ -66,6 +66,9 @@ Public Sub Main()
   
   Try Start.version_branch = Trim(File.Load("branch.txt"))
   Try Start.version_sha1 = Trim(File.Load("sha1.txt"))
+  
+  Start.Success = True
+  Start.Exit = False
   
   Parse_Args()
   StartDate = Now
