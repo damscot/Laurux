@@ -17,6 +17,7 @@ End
 '**********************************************On lance le traitement**************************************
 Public Sub Button1_Click()
 
+  Dim PB As ProgBar
   Dim rResult As Result
   Dim chemin As String = "/Sauve"
   Dim Nb As Integer = 0
@@ -28,20 +29,28 @@ Public Sub Button1_Click()
     Shell "mysqldump --lock-tables=0 -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " " & Utils.db.Name & " --add-drop-table > " & User.home & "/Sauve/" & Utils.db.Name & "EffaceD.sql" Wait
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabBl") & " where datebl < &1 and type = &2", Format$(DateChooser1.Value, "yyyymmdd"), "D")
     If rResult.Available Then
+      PB = New ProgBar("Suppression devis", rResult.Count, Null, True, "", True)
+      PB.Show()
       Repeat
+        If PB.Avancement("Suppression devis " & rResult!numbl, 10) Then Break
         Utils.db.Exec("delete FROM " & Cbase.Table("TabLigbl") & " where num_ligbl = &1", rResult!numbl)
         Utils.db.Exec("delete FROM " & Cbase.Table("TabBl") & " where numbl = &1", rResult!numbl)
         Inc nb
       Until rResult.MoveNext()
+      PB.Close()
     Endif
     If CheckBox1.Value = True Then
       rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabBlM") & " where datebl < &1 and type = &2", Format$(DateChooser1.Value, "yyyymmdd"), "D")
       If rResult.Available Then
+        PB = New ProgBar("Suppression devis matériel", rResult.Count, Null, True, "", True)
+        PB.Show()
         Repeat
+          If PB.Avancement("Suppression devis matériel " & rResult!numbl, 10) Then Break
           Utils.db.Exec("delete FROM " & Cbase.Table("TabLigblM") & " where num_ligbl = &1", rResult!numbl)
           Utils.db.Exec("delete FROM " & Cbase.Table("TabBlM") & " where numbl = &1", rResult!numbl)
           Inc nb
         Until rResult.MoveNext()
+        PB.Close()
       Endif
     Endif
     Me.mouse = mouse.Default

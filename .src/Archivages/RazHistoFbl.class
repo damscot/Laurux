@@ -15,6 +15,7 @@ End
 '**********************************************On lance le traitement**************************************
 Public Sub Button1_Click()
 
+  Dim PB As ProgBar
   Dim rResult As Result
   Dim chemin As String = "/Sauve"
   Dim Nb As Integer = 0
@@ -26,11 +27,15 @@ Public Sub Button1_Click()
     Shell "mysqldump --lock-tables=0 -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " " & Utils.db.Name & " --add-drop-table > " & User.home & "/Sauve/" & Utils.db.Name & "EffaceB.sql" Wait
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabEntrecpt") & " where ddate < &1", Format$(DateChooser1.Value, "yyyymmdd"))
     If rResult.Available Then
+      PB = New ProgBar("Suppression réceptions", rResult.Count, Null, True, "", True)
+      PB.Show()
       Repeat
+        If PB.Avancement("Suppression réception " & rResult!numrecpt, 10) Then Break
         Utils.db.Exec("delete FROM " & Cbase.Table("TabLigrecpt") & " where numrecpt = &1", rResult!numrecpt)
         Utils.db.Exec("delete FROM " & Cbase.Table("TabEntrecpt") & " where numrecpt = &1", rResult!numrecpt)
         Inc nb
       Until rResult.MoveNext()
+      PB.Close()
     Endif
     Me.mouse = mouse.Default
     Syntheses.Message("Traitement terminé ! " & nb & " Bons de réception ont été effacés.")
