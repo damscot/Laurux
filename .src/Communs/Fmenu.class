@@ -37,6 +37,7 @@ Public CpTable[5] As String
 Private Btunnel As Boolean = True
 Private $mopt As Menuopt
 Private $keyObserver As Observer
+Private CMenu As Object
 
 Public Sub _new()
 
@@ -2599,19 +2600,21 @@ End
 
 Public Sub Menu332_Click()
 
-  Dim Menu As Object
-
-  Menu = New Cmenu
-    If Not IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/caisse/Ncai"]) Then
-      If Start.LocalSettings["/Soc" & Start.Societe & "/caisse/choixtouches"] Then
-        Start.$tcai = Split(Start.LocalSettings["/Soc" & Start.Societe & "/caisse/Ncai"], ";")[0]
-      Else
-        Start.$tcai = 0
-      Endif
-    Endif
-    
-    Object.Call(Menu, "Show")
+  If Object.IsValid(CMenu) Then
+    Message.Warning("Une interface de caisse est déjà ouverte!")
+    Return
+  Endif
   
+  CMenu = New Cmenu
+  If Not IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/caisse/Ncai"]) Then
+    If Start.LocalSettings["/Soc" & Start.Societe & "/caisse/choixtouches"] Then
+      Start.$tcai = Split(Start.LocalSettings["/Soc" & Start.Societe & "/caisse/Ncai"], ";")[0]
+    Else
+      Start.$tcai = 0
+    Endif
+  Endif
+  
+  Object.Call(CMenu, "Show")
 
 End
 
