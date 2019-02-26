@@ -4152,7 +4152,7 @@ Public Sub MvtHV_Sortie_Click()
 
   If MvtHV_Sortie.value = True Then
     Frame5.text = "Decaissement Hors vente"
-    Nmc3.Text = "Origine: "
+    Nmc3.Text = "Sortie HV : "
     Nmc3.SetFocus
     AcomptesE.Enabled = False
     AcptClicpt.Visible = False
@@ -4174,7 +4174,7 @@ Public Sub MvtHV_Entree_Click()
       AcptChClicpt.Visible = True
     Else
       AcptClicpt.Clear
-      Nmc3.Text = "Origine: "
+      Nmc3.Text = "Entrée HV : "
     Endif
   Endif
 
@@ -4192,7 +4192,7 @@ Public Sub AcomptesE_Click()
       AcptClicpt.SetFocus
     Else
       Frame5.text = "Encaissement Hors vente"
-      Nmc3.Text = "Origine: "
+      Nmc3.Text = "Entrée HV : "
       AcptClicpt.Visible = False
       AcptChClicpt.Visible = False
       AcptClicpt.Clear
@@ -4300,8 +4300,8 @@ Public Sub Mvt_HorsEnc(Enc As Boolean)
       Zone = "Especes2"
     Else
       
-      If Nmc3.Text = "" Then
-        Message.Error("Vous devez saisir un libelle aux mouvements hors vente!")
+      If Len(Nmc3.Text) < 15 Then
+        Message.Error("Vous devez saisir un libelle d'au moins 15 caractères pour justifier les mouvements hors vente!")
       Else
         Especes2.Text = Format$(Val(Especes2.Text), "0.00")
         Frame5.Visible = False
@@ -5547,11 +5547,13 @@ Public Sub Aff_bastk() As Boolean
   Until LigTk.MoveNext()
   Inc iligne
   Inc iNlg
+  bloc = iNlg
   LigTk.Add(iligne, iligne)
   LigTk.Item[0] = iNlg
   LigTk.Item[1] = ""
   LigTk.Item[2] = Pointille
   LigTk.Item[5] = "L"
+  LigTk.Item[8] = bloc
   Inc iligne
   Inc iNlg
   LigTk.Add(iligne, iligne)
@@ -5561,6 +5563,7 @@ Public Sub Aff_bastk() As Boolean
   LigTk.Item[3] = Format$(Val(utils.cpoint(Totalht)), "0.00")
   LigTk.Item[11] = LigTk.Item[3]
   LigTk.Item[5] = "BH"
+  LigTk.Item[8] = bloc
   Inc iligne
   Inc iNlg
   rtva = Utils.db.Exec(" select * from " & Tatva & "")
@@ -5573,6 +5576,7 @@ Public Sub Aff_bastk() As Boolean
       LigTk.Item[3] = Format$(Val(Utils.cpoint(rtva!mtva)), "0.00")
       LigTk.Item[11] = LigTk.Item[3]
       LigTk.Item[5] = "BA"
+      LigTk.Item[8] = bloc
       Inc iligne
       Inc iNlg
     Endif
@@ -5584,6 +5588,7 @@ Public Sub Aff_bastk() As Boolean
   LigTk.Item[3] = Format$(Val(Utils.cpoint(TotalTk.Text)), "0.00")
   LigTk.Item[11] = LigTk.Item[3]
   LigTk.Item[5] = "BC"
+  LigTk.Item[8] = bloc
   ColumnView1.MoveFirst()
   If iavoir = 0 And If Clicompte = 0 Then
     Repeat
@@ -5598,6 +5603,7 @@ Public Sub Aff_bastk() As Boolean
         LigTk.Item[2] = ColumnView1.Item[1]
         LigTk.Item[3] = ColumnView1.Item[2]
         LigTk.Item[11] = LigTk.Item[3]
+        LigTk.Item[8] = bloc
         'LigTk.Item[5] = "R" & ColumnView1.Item[0]
       Endif
     Until ColumnView1.MoveNext()
@@ -5611,12 +5617,15 @@ Public Sub Aff_bastk() As Boolean
         LigTk.Item[2] = Clinom & " " & Clipnm
         LigTk.Item[3] = Format$(Val(Utils.cpoint(TotalTk.Text)), "0.00")
         LigTk.Item[11] = LigTk.Item[3]
+        LigTk.Item[8] = bloc
   Endif
+  'on rajoute une dernière ligne vide
   Inc iligne
   Inc iNlg
   LigTk.Add(iligne, iligne)
   LigTk.Item[0] = iNlg
   LigTk.Item[1] = ""
+  LigTk.Item[8] = iNlg
   Inc iligne
   Inc iNlg
   
@@ -5637,6 +5646,7 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim sdesign As String ' libellé de la ligne
   Dim smontant As String 'montant de la ligne ttc
   Dim smontantht As String 'montant de la ligne ht
+  Dim smontanttva As String 'montant de la ligne tva
   Dim sqte As String ' quantité
   Dim stype As String ' type de ligne
   Dim sstatut As Integer = 0 ' si ticket mis en attente
@@ -5681,6 +5691,7 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim numero_tk As String
   Dim lasttk_valid As String
   Dim scartef As String
+  Dim numbon As String
 
   Datetk = LDate(Now)
   If iRattente = 0 Then
@@ -5819,6 +5830,8 @@ Public Sub Enrg_Tk(Supprime As Boolean)
       If stype = "A" Or stype = "S" Then
         rFam = Utils.db.Exec(" select * from " & Cbase.Table("TabArt") & " where art_code = &1", scode)
         Fam = rFam!art_fam
+      Else
+        Fam = ""
       Endif
       smontantht = LigTk.Item[6]
       smrem = Utils.cpoint(LigTk.Item[7])
@@ -5826,14 +5839,14 @@ Public Sub Enrg_Tk(Supprime As Boolean)
       bloc = LigTk.Item[8]
 
       If stype = "T" Or stype = "BL" Then
-        Try smtva = Format$(Val(utils.cpoint(LigTk.Item[9])), "0.00")
+        Try smontanttva = Format$(Val(utils.cpoint(LigTk.Item[9])), "0.00")
       Else
-        Try smtva = Format$((Val(utils.cpoint(smontant)) * Abs(Val(Utils.cpoint(sqte)))) - Val(Utils.cpoint(smontantht)), "0.00")
+        Try smontanttva = Format$((Val(utils.cpoint(smontant)) * Abs(Val(Utils.cpoint(sqte)))) - Val(Utils.cpoint(smontantht)), "0.00")
       Endif
-      If Error Then smtva = ""
+      If Error Then smontanttva = ""
 
       'On enregistre chaques lignes du ticket
-      Utils.db.Exec("INSERT INTO " & Tab & " (numero, numlig, code, intitule, montant, qte, type, fam, mht, mrem, mtva, block, tva, date) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14})", numero_tk, snumlig, Left$(scode, 15), sdesign, smontant, sqte, stype, fam, smontantht, smrem, smtva, LigTk.Item[8], LigTk.Item[10], Datetk.DT)
+      Utils.db.Exec("INSERT INTO " & Tab & " (numero, numlig, code, intitule, montant, qte, type, fam, mht, mrem, mtva, block, tva, date) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14})", numero_tk, snumlig, Left$(scode, 15), sdesign, smontant, sqte, stype, fam, smontantht, smrem, smontanttva, LigTk.Item[8], LigTk.Item[10], Datetk.DT)
 
     Until LigTk.MoveNext()
 
@@ -5853,6 +5866,8 @@ Public Sub Enrg_Tk(Supprime As Boolean)
       If stype = "A" Then
         rFam = Utils.db.Exec(" select * from " & Cbase.Table("TabArt") & " where art_code = &1", scode)
         Fam = rFam!art_fam
+      Else
+        Fam = ""
       Endif
       'Uniquement Ticket avec Règlement dans statistique ticket X/Z
       If iAttente = 0 And Supprime = False Then
@@ -5909,9 +5924,28 @@ Public Sub Enrg_Tk(Supprime As Boolean)
       Message.Error("Erreur de chainage des tickets (" & numero_tk & "), ceci ne devrait pas arriver!")
       prev_numero = ""
     Endif
-    Sha1Calc.CalcSha1T(Tab, numero_tk, prev_numero)
+    
     'Lors de l'enregistrement d'un ticket on supprime le flag ticketz, il sera remis par la génération du livre de caisse
     Utils.db.Exec("Update " & Cbase.Table("TabCaisses") & " set tkz = &2 where code = &1", NCaisse, 0)
+    
+    'Client compte on génère le BL depuis le ticket z
+    'On rajoute une dernière ligne dans le ticket pour donner le numero de BL associe
+    If clicompte = 1 And Supprime = False Then
+      numbon = Moulinage.Generation_BL(numero_tk, clicode, False)
+      If numbon Then
+        Tab = "Fiches_LigTicketz"
+        ' On met a jour la ligne de reglement client compte par le numero de BL dans lequel le règlement est enregistré
+        Utils.db.Exec("UPdate " & Tab & " set mrem = &2 where numero = &1 and type = \"M\"", numero_tk, numbon)
+        ' On rajoute une ligne de commentaire
+        snumlig = Format(Val(snumlig) + 1, "0")
+        bloc = Format(Val(bloc) + 1, "0")
+        Utils.db.Exec("INSERT INTO " & Tab & " (numero, numlig, intitule, type, date) VALUES (&1, &2, &3, &4, &5)", numero_tk, snumlig, "Ticket enr. sur BL " & numbon, "C", Datetk.DT)
+      Endif
+    Endif
+    
+    'Sha1 de Controle et chainage
+    Tab = "Fiches_EntTicketz"
+    Sha1Calc.CalcSha1T(Tab, numero_tk, prev_numero)
 
     'Si ce n'est pas un ticket mis en attente on met a jour le numero du dernier Ticket validé
     If iAttente = 0 Then

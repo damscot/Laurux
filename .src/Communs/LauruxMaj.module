@@ -5031,12 +5031,10 @@ Public Sub Maj369()
   
   'Modification charset to utf8
   rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, t1.COLUMN_TYPE, t1.character_set_name from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.column_type like '%CHAR%' or t1.column_type like 'TEXT') and t1.character_set_name != 'utf8'", "Laurux" & Start.Societe)
-  If rReq.Count <> 0 Then
-    If Message.Warning("Il semble que la conversion UTF8 de la base de donnée n'a pas été effectué\n" & rReq.Count & " champ(s) non converti!\nVoulez-vous lancer la conversion", "Oui", "Non") = 2 Then
+  If rReq.Count = 0 Then
+    If Message.Warning("Il semble que la conversion UTF8 de la base de donnée a déjà été effectué\nAttention, executer deux fois la conversion peux corrompre les données de type texte!\nVoulez-vous quand même lancer la conversion?", "Non", "Oui") = 1 Then
       Goto end_utf8
     Endif
-  Else
-    Goto end_utf8
   Endif
   rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` ENGINE=InnoDB;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
@@ -5132,6 +5130,7 @@ end_utf8:
   Tab = "Fiches_LigTicketz"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY intitule varchar(50)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY numlig char(6)")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY block char(6)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (date DATETIME)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " drop marge")
   
@@ -5145,7 +5144,7 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY numlig char(6)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mrem CHAR(12))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtva CHAR(12))")
-  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (block CHAR(4))")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (block CHAR(6))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (date DATETIME)")
   Tab = "Fiches_Regltz"
   Try Utils.db.Exec("DROP TABLE " & Tab)
@@ -5161,12 +5160,14 @@ end_utf8:
     PB.Show()
     Repeat
       PB.Avancement("Conversion articles " & rResult!art_design, 10)
-      If TypeOf(rResult!art_ddate) = gb.String
+      If TypeOf(rResult!art_ddate) = gb.String Or TypeOf(rResult!art_ddate) = gb.Date
         'Utilisation de la classe LDate pour les conversions de date on utilise la dernière date d'achat comme création
         Try Utils.db.Exec("UPdate   " & Tab & " SET art_ddate2 = &1, art_cdate = &1 WHERE art_code = &2", LDate(rResult!art_ddate).DT, rResult!art_code)
       Else If TypeOf(rResult!art_ddate) = gb.Null
         'Si aucune date possible de création on prend la date de l'exercice en cours
         Try Utils.db.Exec("UPdate   " & Tab & " SET art_cdate = &1 WHERE art_code = &2", LDate(Now).EDeb.DT, rResult!art_code)
+      Else
+        Message.Error("Conversion de date non implementé! Ceci ne devrait jamais arriver")
       Endif
     Until rResult.MoveNext()
     PB.Close()
@@ -5183,9 +5184,11 @@ end_utf8:
     PB.Show()
     Repeat
       PB.Avancement("Conversion avoirs " & rResult!ntk, 10)
-      If TypeOf(rResult!dte) = gb.String
+      If TypeOf(rResult!dte) = gb.String Or TypeOf(rResult!dte) = gb.Date
         'Utilisation de la classe LDate pour les conversions de date
         Try Utils.db.Exec("UPdate   " & Tab & " SET dte2 = &1 WHERE lind = &2", LDate(rResult!dte).DT, rResult!lind)
+      Else
+        Message.Error("Conversion de date non implementé! Ceci ne devrait jamais arriver")
       Endif
     Until rResult.MoveNext()
     PB.Close()
@@ -5199,10 +5202,12 @@ end_utf8:
   PB.Show()
   PB.Avancement("Table Factures", 1)
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac change dtligbl_ligfac dtligbl_ligfac datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac MODIFY typel_ligfac char(2)")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac ADD dtligbl_ligfac datetime")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac ADD numbl_ligfac char(6)")
   PB.Avancement("Table Factures Matériels", 1)
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM change dtligbl_ligfac dtligbl_ligfac datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM MODIFY typel_ligfac char(2)")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM ADD dtligbl_ligfac datetime")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM ADD numbl_ligfac char(6)")
   PB.Avancement("Lignes Factures", 1)
@@ -5215,8 +5220,10 @@ end_utf8:
   PB.Show()
   PB.Avancement("Table BL", 1)
   Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl ADD dte_ligbl datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY typel_ligbl char(2)")
   PB.Avancement("Table BL Matériels", 1)
   Try Utils.db.Exec("ALTER TABLE Fiches_LigblM ADD dte_ligbl datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY typel_ligbl char(2)")
   PB.Avancement("Ligned BL", 1)
   Try Utils.db.Exec("UPDATE Fiches_Ligbl SET dte_ligbl=(SELECT datebl FROM Fiches_Bl WHERE numbl=num_ligbl) WHERE dte_ligbl IS NULL")
   PB.Avancement("Ligned BL Matériels", 1)
@@ -5245,11 +5252,13 @@ end_utf8:
     PB.Show()
     Repeat
       PB.Avancement("Tickets " & rResult!numero, 300)
-      If TypeOf(rResult!date) = gb.String
+      If TypeOf(rResult!date) = gb.String Or TypeOf(rResult!date) = gb.Date
         'Utilisation de la classe LDate pour les conversions de date
         Try Utils.db.Exec("UPdate   " & Tab & " SET date2 = &1 WHERE lInd = &2", LDate(rResult!date).DT, rResult!lInd)
         'Pour tout les tickets on applique la date pour chaque ligne
         Try Utils.db.Exec("UPdate Fiches_HisLigTickets SET date = &1 WHERE numero = &2", LDate(rResult!date).DT, rResult!numero)
+      Else
+        Message.Error("Conversion de date non implementé! Ceci ne devrait jamais arriver")
       Endif
       lasttk = rResult!numero
     Until rResult.MoveNext()
