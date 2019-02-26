@@ -47,13 +47,13 @@ Private Impcumul As Boolean
 '******************
 '*   On imprime   *
 '******************
-Public Sub Imprime(cpt As String, cpt2 As String, Type As String, Type2 As String, dteN0 As String, dteN1 As String, Impcumule As Boolean, Impc As Boolean, sTab0 As String, snom As String)
+Public Sub Imprime(cpt As String, cpt2 As String, Type As String, Type2 As String, dteN0 As String, dteN1 As String, Impcumule As Boolean, Impc As Boolean, sTab0 As String, snom As String, typecl As TypeClient)
 
   Dim i As Integer
   Dim rResult As Result
   Dim rrResult As Result
   Dim SteResult As Result
-  Dim Intit As String
+  Dim Intit, req As String
   Dim p1 As Integer
   Dim Stotdeb As String
   Dim Stotcred As String
@@ -78,7 +78,8 @@ Public Sub Imprime(cpt As String, cpt2 As String, Type As String, Type2 As Strin
     Balance.mouse = Mouse.wait
     SteResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSoc") & " Where cd_sc = &1", Start.Societe)
     Ste = "Societe " & " " & SteResult!int_sc
-    rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&3 or cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 order by cast(compte_cc AS char)", cpt, cpt2, Type, Type2)
+    If Typecl.where Then req = " AND " & typecl.where Else req = ""
+    rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & ", Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and (type_cc =&3 or type_cc =&4) " & req & " order by cast(compte_cc AS char)", cpt, cpt2, Type, Type2)
     If rrResult.Available Then
       pdf.Entete("Impression de la balance " & nom)
       posx = 40

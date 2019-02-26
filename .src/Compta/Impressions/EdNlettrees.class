@@ -260,6 +260,7 @@ End
 '*********************************
 Public Sub Bclient_Click()
 
+  TypeClient1.Visible = True
   cpt.Text = "41100001"
   cpt2.Text = "41199999"
   type = "C"
@@ -273,6 +274,7 @@ End
 '*************************************
 Public Sub Bfournisseur_Click()
 
+  TypeClient1.Visible = False
   cpt.Text = "40100001"
   cpt2.Text = "40199999"
   type = "F"
@@ -286,6 +288,7 @@ End
 '*************************************
 Public Sub Bbilan_Click()
 
+  TypeClient1.Visible = False
   cpt.Text = "1010000"
   cpt2.Text = "9999999"
   type = "B"
@@ -352,12 +355,14 @@ Public Sub Button1_Click()
   Dim SteResult As Result
   Dim Nbpage As Integer
   Dim lstex As Listextcpt
+  Dim req As String
 
   Tab = "Fiches_Mvt"
   Tab2 = "Fiches_Comptes"
   Tab3 = "Fiches_Societes"
   p = 0
   Nbpage = 1
+  ste = TypeClient1.where
   Shell "cd " & User.Home & ""
   Filename = User.Home & "/tmp/Enlettrees.pdf"
   dateedition = "du " & dteN0.Text & " au " & dteN1.Text
@@ -373,7 +378,8 @@ Public Sub Button1_Click()
   posy += 5
   Me.Mouse = Mouse.Wait
   With Utils
-    rrResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, cent_cc  FROM " & Tab2 & " WHERE cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 and lettrable <> false order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
+    If Bclient.Value Then req = " AND " & TypeClient1.where Else req = ""
+    rrResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, cent_cc  FROM " & Tab2 & ",Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 and lettrable <> false " & req & " order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
     If rrResult.Available Then
       Repeat
         compt = rrResult!compte_cc

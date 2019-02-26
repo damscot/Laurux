@@ -1,0 +1,36 @@
+' Gambas class file
+
+Export
+Inherits TreeView
+
+Property Read where As String
+
+
+Public Sub _new()
+
+  Dim res As Result
+  
+  res = Utils.db.Exec("SELECT * FROM Fiches_Typec")
+  If res.Available Then
+    Repeat
+      Me.Add(res!code, res!libelle)
+    Until res.MoveNext()
+  Endif
+
+End
+
+Private Function where_Read() As String
+
+  Dim i As Integer
+  Dim req As String
+  
+  If Me.Selection.Count = 0 Then Return ""
+  req = "cli_typec IN("
+  For i = 0 To Me.Selection.Max
+    req &= Utils.db.Subst("&1,", Me.Selection[i])
+  Next
+  req = Left(req, -1)
+  req &= ")"
+  Return req
+
+End

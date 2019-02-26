@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,98,35)
+  MoveScaled(0,0,126,35)
   Background = Color.Background
   Text = ("Impressions des écritures non justifiées")
   { Label3 Label
@@ -13,19 +13,19 @@
   { Frame2 Frame
     MoveScaled(1,15,37,7)
     { Bclient RadioButton
-      MoveScaled(0.5714,2,13,3)
+      MoveScaled(0.5556,2,13,3)
       Font = Font["Serif,-1"]
-      Text = ("&Clients")
+      Text = Shortcut(("Clients"), "C")
       Value = True
     }
     { Bfournisseur RadioButton
       MoveScaled(18,2,17,3)
       Font = Font["Serif,-1"]
-      Text = ("&Fournisseurs")
+      Text = Shortcut(("Fournisseurs"), "F")
     }
   }
   { Label1 Label
-    MoveScaled(39,17,6.5714,3)
+    MoveScaled(39,17,6.5556,3)
     Font = Font["Serif,-1"]
     Text = ("Du N°")
   }
@@ -37,7 +37,7 @@
     Tag = "1"
   }
   { Label5 Label
-    MoveScaled(64.5714,17,6.5714,3)
+    MoveScaled(64.5556,17,6.5556,3)
     Font = Font["Serif,-1"]
     Text = ("Au N°")
   }
@@ -49,37 +49,40 @@
     Tag = "2"
   }
   { ToggleButton2 ToggleButton
-    MoveScaled(84.5714,16.5714,4,4)
+    MoveScaled(84.5556,16.5556,4,4)
     Background = Color.ButtonBackground
     ToolTip = ("Cliquer pour recuperer votre compte.")
     Picture = Picture["Icones/next_frame.png"]
   }
   { Button6 Button Btn
     Name = "Button6"
-    MoveScaled(68,26,14.5714,4.4286)
+    MoveScaled(68,26,14.5556,4.4444)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     Tag = "3"
     ToolTip = ("Quitter le programme .")
     Drop = True
-    Text = ("&Quitter")
+    Text = Shortcut(("Quitter"), "Q")
     Picture = Picture["Icones/exit.png"]
   }
   { ToggleButton1 ToggleButton
-    MoveScaled(59.5714,16.5714,4,4)
+    MoveScaled(59.5556,16.5556,4,4)
     Background = Color.ButtonBackground
     ToolTip = ("Cliquer pour recuperer votre compte.")
     Picture = Picture["Icones/next_frame.png"]
   }
   { Button1 Button btn
     Name = "Button1"
-    MoveScaled(43,26,18,4.4286)
+    MoveScaled(43,26,18,4.4444)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     Tag = "2"
     ToolTip = ("Imprime le résultat sur l'imprimante")
     Drop = True
-    Text = ("&Imprimer")
+    Text = Shortcut(("Imprimer"), "I")
     Picture = Picture["Icones/frameprint.png"]
+  }
+  { TypeClient1 TypeClient
+    MoveScaled(95,1,30,33)
   }
 }

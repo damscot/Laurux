@@ -453,6 +453,7 @@ End
 '*********************************
 Public Sub Bclient_Click()
 
+  TypeClient1.Visible = True
   Cpt.Text = "41100001"
   Type = "C"
   Type2 = "C"
@@ -467,6 +468,7 @@ End
 '*************************************
 Public Sub Bfournisseur_Click()
 
+  TypeClient1.Visible = False
   Cpt.Text = "40100001"
   Type = "F"
   Type2 = "F"
@@ -481,6 +483,7 @@ End
 '*************************************
 Public Sub Bgestion_Click()
 
+  TypeClient1.Visible = False
   Cpt.Text = "10000"
   Type = "G"
   Type2 = "B"
@@ -605,7 +608,7 @@ End
 '******************
 Public Sub Button1_Click()
 
-  BalanceM.Imprime(cpt.text, cpt2.text, Type, Type2, dteN0.Text, dteN1.Text, Impcumul.value, Impc.value, Tab0, nom)
+  BalanceM.Imprime(cpt.text, cpt2.text, Type, Type2, dteN0.Text, dteN1.Text, Impcumul.value, Impc.value, Tab0, nom, TypeClient1)
 
 End
 
@@ -618,7 +621,7 @@ Public Sub Button2_Click()
   Dim rResult As Result
   Dim rrResult As Result
   Dim SteResult As Result
-  Dim Intit As String
+  Dim Intit, req As String
   Dim Imp As Boolean = False
 
   totsldhp = 0.00
@@ -631,7 +634,8 @@ Public Sub Button2_Click()
     If Bgestion.Value = True Then
       rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and coll <> &3 and type_cc =&4  or type_cc =&5 order by cast(compte_cc AS char)", cpt.text, cpt2.text, 1, type, type2)
     Else
-      rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and coll <> &3 and type_cc =&4 order by cast(compte_cc AS char)", cpt.text, cpt2.text, 1, type)
+      If TypeClient1.where Then req = " AND " & TypeClient1.where Else req = ""
+      rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and coll <> &3 and type_cc =&4 " & req & " order by cast(compte_cc AS char)", cpt.text, cpt2.text, 1, type)
     Endif
     If rrResult.Available Then
       Repeat

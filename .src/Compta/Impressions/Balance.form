@@ -9,16 +9,16 @@
     Font = Font["Serif,-1"]
     { Bclient RadioButton
       MoveScaled(1,2,14,3)
-      Text = ("&Clients")
+      Text = Shortcut(("Clients"), "C")
       Value = True
     }
     { Bfournisseur RadioButton
       MoveScaled(18,2,17,3)
-      Text = ("&Fournisseurs")
+      Text = Shortcut(("Fournisseurs"), "F")
     }
     { Bgestion RadioButton
       MoveScaled(1,7,13,3)
-      Text = ("&Générale")
+      Text = Shortcut(("Générale"), "G")
     }
   }
   { Label3 Label
@@ -50,77 +50,77 @@
     Font = Font["Serif,-1"]
     { E0 RadioButton
       MoveScaled(1,1,21,3)
-      Text = ("E&xercice en cours")
+      Text = Shortcut(("Exercice en cours"), "x")
       Value = True
     }
     { N1 RadioButton
       MoveScaled(45,1,8,3)
-      Text = ("N-&1")
+      Text = Shortcut(("N-1"), "1")
     }
     { N2 RadioButton
       MoveScaled(53,1,6,3)
-      Text = ("N-&2")
+      Text = Shortcut(("N-2"), "2")
     }
     { N3 RadioButton
       MoveScaled(61,1,6,3)
-      Text = ("N-&3")
+      Text = Shortcut(("N-3"), "3")
     }
     { N4 RadioButton
       MoveScaled(69,1,6,3)
-      Text = ("N-&4")
+      Text = Shortcut(("N-4"), "4")
     }
     { N5 RadioButton
       MoveScaled(77,1,6,3)
-      Text = ("N-&5")
+      Text = Shortcut(("N-5"), "5")
     }
     { E1 RadioButton
       MoveScaled(22,1,23,3)
-      Text = ("Exercice &précédent")
+      Text = Shortcut(("Exercice précédent"), "p")
     }
   }
   { HBox1 HBox
-    MoveScaled(2,38,83,4.1429)
+    MoveScaled(2,38,83,4.1111)
     Font = Font["Serif,-1"]
     Spacing = True
     { Button3 Button
-      MoveScaled(7,0,4.1429,4.1429)
+      MoveScaled(7,0,4.1111,4.1111)
       ToolTip = ("Doc HTML")
       Picture = Picture["Icones/khelp.png"]
     }
     { Button2 Button Btn
       Name = "Button2"
-      MoveScaled(12,0,19,4.1429)
+      MoveScaled(12,0,19,4.1111)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "1"
       ToolTip = ("Imprime le résultat dans un fichier texte")
       Drop = True
       Expand = True
-      Text = ("&Exporter")
+      Text = Shortcut(("Exporter"), "E")
       Picture = Picture["Icones/folder_new.png"]
     }
     { Button1 Button Btn
       Name = "Button1"
-      MoveScaled(39,0,18,4.1429)
+      MoveScaled(39,0,18,4.1111)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "2"
       ToolTip = ("Imprime le résultat sur l'imprimante")
       Drop = True
       Expand = True
-      Text = ("&Imprimer")
+      Text = Shortcut(("Imprimer"), "I")
       Picture = Picture["Icones/frameprint.png"]
     }
     { Button6 Button Btn
       Name = "Button6"
-      MoveScaled(64,0,14,4.1429)
+      MoveScaled(64,0,14,4.1111)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "3"
       ToolTip = ("Quitter le programme .")
       Drop = True
       Expand = True
-      Text = ("&Quitter")
+      Text = Shortcut(("Quitter"), "Q")
       Picture = Picture["Icones/exit.png"]
     }
   }
@@ -169,5 +169,8 @@
     Font = Font["Serif,-1"]
     ToolTip = ("Cliquer pour recuperer votre compte.")
     Picture = Picture["Icones/next_frame.png"]
+  }
+  { TypeClient1 TypeClient
+    MoveScaled(46,11,38,19)
   }
 }

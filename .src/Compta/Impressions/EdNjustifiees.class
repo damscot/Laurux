@@ -172,6 +172,7 @@ End
 '*********************************
 Public Sub Bclient_Click()
 
+  TypeClient1.Visible = True
   cpt.Text = "41100001"
   cpt2.Text = "41199999"
   type = "C"
@@ -185,6 +186,7 @@ End
 '*************************************
 Public Sub Bfournisseur_Click()
 
+  TypeClient1.Visible = False
   cpt.Text = "40100001"
   cpt2.Text = "40199999"
   type = "F"
@@ -238,7 +240,7 @@ Public Sub Button1_Click()
   Dim dte As String
   Dim dateedition As String
   Dim Tab3 As String
-  Dim Ste As String
+  Dim Ste, req As String
   Dim SteResult As Result
   Dim SoldeC As Float
   Dim Tot As Float
@@ -261,7 +263,8 @@ Public Sub Button1_Click()
   posy += 5
   Me.Mouse = Mouse.Wait
   With Utils
-    cResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, solde  FROM " & Cbase.Table("TabComptes") & " WHERE cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
+    If TypeClient1.where Then req = " AND " & TypeClient1.where Else req = ""
+    cResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, solde  FROM " & Cbase.Table("TabComptes") & ",Fiches_Cli" & " WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 " & req & " order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
     If cResult.Available Then
       Repeat
         compt = cResult!compte_cc
