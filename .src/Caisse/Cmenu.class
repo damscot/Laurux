@@ -11,6 +11,7 @@ Public intitule As String
 Private hForm As Fondcaisse
 Private Ncaisse As String
 Private Efface As Integer = 1
+Private OCaisse As Object
 
 Public Sub _new()
 
@@ -138,7 +139,13 @@ Public Sub Button1_Click()
         Message.Warning("Attention, Vous n'avez pas selectionné le client caisse !")
         b = 0
       Endif
-      If b = 1 Then Ouverture.ShowModal()
+      If b = 1 Then
+        If Object.IsValid(OCaisse) Then
+          Message.Warning("Une interface de saisie caisse est déjà ouverte!")
+          Return
+        Endif
+        Ouverture.ShowModal()
+      Endif
     Endif
   Else
     message.Warning("Il faut d'abord créer vos caisses par la table des caisses sous Laurux !")
@@ -229,15 +236,19 @@ End
 
 Public Sub Button11_Click()
 
+  If Object.IsValid(OCaisse) Then
+    Message.Warning("Une interface de saisie caisse est déjà ouverte!")
+    Return
+  Endif
+
   If IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/caisse/Ncai"]) Then
     If Start.son Then
       Music.Play
     Endif
     Message.Error("La caisse n'est pas connectée!\n Veuillez connecter votre caisse avant d'aller en saisie SVP")
   Else
-    Me.Hide
-    Caisse.Showmodal()
-    Me.Show
+    OCaisse = New Caisse
+    Object.Call(OCaisse, "Show")
   Endif
 
 End
