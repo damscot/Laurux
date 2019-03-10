@@ -7,9 +7,10 @@ Private Tri As String
 Private sel As String
 Private Origine As String
 Private lg As Integer
+Private Obj As Object
 
 '************************************** Gestion des articles *****************************************************
-Public Sub _new(sOrg As String)
+Public Sub _new(sOrg As String, Optional ob As Object = Null)
 
   Utils.Observers(Me)
   If Start.LocalSettings["/tactile"] Then Fermer.Visible = True
@@ -19,6 +20,14 @@ Public Sub _new(sOrg As String)
   lg = Int(Colcli.height / colcli.Rows.Height) - 1
   Me.Center
   Origine = sOrg
+  Obj = ob
+  If sOrg = "Me" Then
+    If Object.IsValid(Obj) Then
+      Object.SetProperty(Obj, "Bsel", False)
+      Object.SetProperty(Obj, "Bval", Null)
+    Endif
+  Endif
+      
   C1.Text = "Code"
   N1.Text = "Nom"
   P1.Text = "      Prénom             Adresse1                      Adresse2   "
@@ -74,6 +83,12 @@ End
 Public Sub colcli_Click()
 
   Select Case Origine
+
+    Case "Me"
+      If Object.IsValid(Obj) Then
+        Object.SetProperty(Obj, "Bsel", True)
+        Object.SetProperty(Obj, "Bval", colcli[colcli.row, 0].Text)
+      Endif
 
     Case "Caisse"
       Caisse.Bsel = True

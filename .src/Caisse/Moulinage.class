@@ -264,10 +264,13 @@ Public Sub Livre_caisse(Optional Ncaisse As String = "", Optional Statut As Stri
                 sreg = "Tot. acompte utilise "
               Else If rTkhv!type = "EA" Then
                 sreg = "Tot. acompte verse "
+                totventes = Val(.cpoint(Totventes)) - rTkhv!totmontant
               Else If rTkhv!type = "EH" Then
                 sreg = "Tot. entree "
+                totventes = Val(.cpoint(Totventes)) - rTkhv!totmontant
               Else If rTkhv!type = "SH" Then
                 sreg = "Tot. sortie "
+                totventes = Val(.cpoint(Totventes)) - rTkhv!totmontant
               Else If rTkhv!type <> "" Then
                 sreg = "Type inconnu " & rTkhv!type & " "
               Else
@@ -860,6 +863,63 @@ Public Sub Generation_Bl(Ntk As String, Client As String, Bande_Z_Valide As Bool
   
 End
 
+
+Public Sub Moulinage_Acomptes(Type As String, jour As String, CptCli As String, CptCaisse As String, Ntk As String, mnt As Float, libelac As String, date_moulinage As LDate)
+
+
+  Dim rResult As Result
+  Dim icli, icai, iacom As String
+  Dim cpt_acompte As String = "419100"
+  
+  
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", CptCli)
+  If rResult.Available Then
+    icli = rResult!intitule_cc
+  Endif
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", CptCaisse)
+  If rResult.Available Then
+    icai = rResult!intitule_cc
+  Endif
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", cpt_acompte)
+  If rResult.Available Then
+    iacom = rResult!intitule_cc
+  Else
+    Error.Raise("Attention le compte de Bilan pour les acomptes d'existe pas!\nVeuillez le créer avant de faire le moulinage!")
+  Endif
+  
+  With Utils
+    
+    If type = "RA" Then
+      'RA est une ligne de règlement
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, CptCli, "Rappel Acompte en Caisse", date_moulinage.D, Ntk, Ntk, libelac, mnt, 0, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, cpt_acompte, "Rappel Acompte en Caisse", date_moulinage.D, Ntk, Ntk, libelac, 0, mnt, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+      'Maj_Totalisation(CptCli, icli, - mnt)
+      Maj_Totalisation(cpt_acompte, iacom, - mnt)
+      Maj_Totalisation(CptCaisse, icai, - mnt)
+    Else
+      'EA est une ligne d'article
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, CptCli, "Encaissement Acompte en Caisse", date_moulinage.D, Ntk, Ntk, libelac, 0, mnt, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, cpt_acompte, "Encaissement Acompte en Caisse", date_moulinage.D, Ntk, Ntk, libelac, mnt, 0, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+      'Maj_Totalisation(CptCli, icli, mnt)
+      Maj_Totalisation(cpt_acompte, iacom, mnt)
+      'Maj_Totalisation(CptCaisse, icai, - mnt) 'on corrige le montant TTC de la caisse
+    Endif
+
+    Sha1Calc.CalcSha1("Fiches_Mvt", numr)
+
+    Csolde.Solde_caisse(CptCli)
+    Csolde.Solde_caisse(CptCaisse)
+    Maj_Collectif(CptCli, "Acompte en Caisse", libelac, mnt)
+    
+    ' On met à jour le numéro d'écriture
+    numr = numr + 1
+    numr2 = numr2 + 1
+    
+  End With
+
+End
+
+
 Public Sub Moulinage()
 
   Dim rTck As Result
@@ -1175,11 +1235,11 @@ Public Sub Moulinage()
                         'Endif
                       Endif
                     Endif
-                    If rlTck!type = "RA" And Not rTck!suppr Then
+                    If (rlTck!type = "RA" Or rlTck!type = "EA") And Not rTck!suppr Then
                       'Ticket avec un règlement par acompte
-                      Message.Info("Reglement acompte")
+                      Moulinage_Acomptes(rlTck!type, Jnl, rlTck!code, Client, rlTck!numero, Val(Utils.cpoint(rlTck!montant)), rlTck!intitule, LDate(datec))
                     Endif
-                    If (rlTck!type = "EH" Or rlTck!type = "SH") Then
+                    If ((rlTck!type = "EH" Or rlTck!type = "SH") And Not rTck!suppr) Then
                       'Ticket avec une entree ou sortie exceptionnelle de caisse
                       If rlTck!type = "SH" Then
                         vente = "658000"
@@ -1190,7 +1250,6 @@ Public Sub Moulinage()
                       If rResult.Available Then
                         ivente = rResult!intitule_cc
                       Endif
-                      Message.Info("Ventil Hors vente a revoir base du 16/02")
                       montant = Val(.cpoint(rlTck!mht)) 'HT = TTC
                       If Not rTck!suppr Then
                         Maj_Totalisation(vente, ivente, montant)
@@ -1223,11 +1282,11 @@ Public Sub Moulinage()
                     Utils.db.Exec("UPDATE " & Cbase.Table("TabBl") & " set type = \"F\", numtick = NULL, imp = 1, reg = \"Caisse\", mtreg = &2, numfac = &3, dtefac = &4, ech = &4 where numbl = &1", numbon, Blg!totalttc, snfac, LDate(Date_Bl).DT)
                     'On genere les Mvt pour le clients
                     If Blg!totalttc < 0 Then
-                      bl_cli_credit = 0
-                      bl_cli_debit = Abs(Blg!totalttc)
-                    Else
-                      bl_cli_credit = Blg!totalttc
+                      bl_cli_credit = Abs(Blg!totalttc)
                       bl_cli_debit = 0
+                    Else
+                      bl_cli_credit = 0
+                      bl_cli_debit = Blg!totalttc
                     Endif
                     Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnl, numr, Blg!cdclibl, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), snfac, snfac, Left$("Facture " & Blg!nmclibl, 30), bl_cli_debit, bl_cli_credit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
                     Sha1Calc.CalcSha1("Fiches_Mvt", numr)
@@ -1358,6 +1417,7 @@ Public Sub Controle_Moulinage() As Boolean
   Dim tva As String
   Dim itva As String
   Dim montant As String
+  Dim acompte As String
   Dim Datec As Date
   Dim code As String
   Dim totalht As Float
@@ -1612,6 +1672,7 @@ Public Sub Controle_Moulinage() As Boolean
     If rResult.Available Then
       
       montant = 0
+      acompte = 0
       nbMoulinage = rResult!cnt
       
       rTck = Utils.db.Exec("SELECT * From " & Cbase.Table("TabHisFac") & " where left(datefac, 10) = &1 and cdclifac = &2", Format$(DateChooser1.Value, "yyyy-mm-dd"), client)
@@ -1620,21 +1681,23 @@ Public Sub Controle_Moulinage() As Boolean
         Return False
       Endif
       
+      'On recupère les ecritures de ventes et les encaissement clients (caisse et acompte)
       rResult = Utils.db.Exec("Select compte, numero, intitule, SUM(montantd) as montantd, SUM(montantc) as montantc, COUNT(*) as cnt From Fiches_Mvt where jour = &1 and dte = &2 and intitule != &3 and libelle like &4 and collectif is null and tresorerie = 0 group by compte", Jnl, Format$(DateChooser1.Value, "yyyy-mm-dd"), "Reglement BL Caisse", "Caisse du " & Format$(DateChooser1.Value, "dd.mm.yyyy") & "%")
       Repeat
         If Left(rResult!compte, 3) = "411"
           montant = montant + (Val(.cpoint(rResult!montantd)) - Val(.cpoint(rResult!montantc)))
+        Else If Left(rResult!compte, 4) = "4191"
+          acompte = acompte + (Val(.cpoint(rResult!montantd)) - Val(.cpoint(rResult!montantc)))
         Else
           'On ne fait rien
         Endif
       Until rResult.MoveNext()
-    
   
       'On verifie la ventilation compte client des facture de caisse
       rVent = Utils.db.Exec("SELECT * From Totalisation where compte = &1", client)
       If rVent.Available Then
         totalttc = Val(.cpoint(rVent!totalttc))
-        solde = Round(montant - totalttc, -2)
+        solde = Round(montant + acompte - totalttc, -2) 'on ajoute les acomptes au clients caisse
         If (solde <> 0) Then
           If Message.Warning("Une différente de " & solde & " apparait entre les \nencaissement et les ventilations ( " & nbMoulinage & " moulinage sur la journée )\nVoulez-vous créer une ecriture de vente à affecter au compte d'erreur 707999", "Oui", "Non") = 1 Then
             ' On verifie que les deux comptes d'erreur existent
@@ -1687,7 +1750,7 @@ Public Sub Controle_Moulinage() As Boolean
             rResult = Utils.db.Exec("Select compte, numero, SUM(montantd) as montantd, SUM(montantc) as montantc From Fiches_Mvt where jour = &1 and dte = &2 and compte = &3 and intitule != &4 and libelle like &5 and collectif is null and tresorerie = 0 group by compte", Jnl, Format$(DateChooser1.Value, "yyyy-mm-dd"), rVent!compte, "Reglement BL Caisse", "Caisse du " & Format$(DateChooser1.Value, "dd.mm.yyyy") & "%")
             If rResult.Available Then
               If rVent!compte = client Then
-                totalttc = Val(.cpoint(rVent!totalttc))
+                totalttc = Val(.cpoint(rVent!totalttc)) - Val(.cpoint(acompte)) 'on deduit les acomptes au total de ventes
                 montant = Val(.cpoint(rResult!montantc)) - Val(.cpoint(rResult!montantd))
                 Solde = Round(totalttc + montant, -2)
                 verif = Round(verif - Solde, -2)
@@ -2161,7 +2224,7 @@ Public Sub Verif() As Boolean
     If hResult.Available Then
       Repeat
         If Left$(hResult!compte, 3) = "411" Then
-          sTotalD = hResult!totalttc
+          sTotalD = Val(.cpoint(sTotalD)) + Val(.cpoint(hResult!totalttc))
         Else
           sTotalC = Val(.cpoint(sTotalC)) + Val(.cpoint(hResult!totalht))
           sCompte = hResult!compte
@@ -2182,7 +2245,7 @@ Public Sub Verif() As Boolean
             sDif = Val(.cpoint(sTotalD)) - Val(.cpoint(sTotalC))
             'sDif = Val(.cpoint(hResult!totalht)) + sDif
             If (sDif > 0.05) Then
-              If Message.Error("Une erreur de ventilation génère un bénéfice de " & sDif & "!\nVoulez vous continuer et enregistrer une ecriture de produit exceptionelle?", "OK", "Annuler") = 2 Then
+              If Message.Error("Une erreur de ventilation génère un bénéfice de " & sDif & "!\nVoulez vous continuer et enregistrer une ecriture de produit exceptionnel?", "OK", "Annuler") = 2 Then
                 Return False
               Endif
             Endif
@@ -2246,7 +2309,7 @@ Public Sub Maj_Compta() As Float
           coll = hResult!coll_cc
           collectif = "1"
           Mtd = Val(.cpoint(rResult!totalttc))
-          Verif_Caisse = Mtd
+          Verif_Caisse += Mtd
           If Mtd < 0 Then
             Mtc = Abs(Mtd)
             Mtd = 0
