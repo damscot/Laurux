@@ -5027,6 +5027,7 @@ Public Sub Maj369()
   Dim txt As String
   Dim lasttk As String = "0000001"
   Dim $i As Integer = 0
+  Dim val As Variant
   
   'Modification charset to utf8
   rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, t1.COLUMN_TYPE, t1.character_set_name from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.column_type like '%CHAR%' or t1.column_type like 'TEXT') and t1.character_set_name != 'utf8'", "Laurux" & Start.Societe)
@@ -5262,13 +5263,37 @@ end_utf8:
     Until rResult.MoveNext()
     PB.Close()
   Endif
-  
-  PB = New ProgBar("Modification autres Tables", 6)
-  PB.Show()
-  PB.Avancement("Table HisEntTickets", 1)
-  
+
   Try Utils.db.Exec("ALTER TABLE " & Tab & " drop date")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " change date2 date datetime")
+
+  PB = New ProgBar("Modification autres Tables", 6)
+  PB.Show()
+  
+  PB.Avancement("Table Acompte", 1)
+  
+  rResult = Utils.db.Exec("SELECT code FROM Fiches_ClientCaisse")
+  If rResult.Available Then
+    val = rResult!code
+  Else
+    val = "411027"
+  Endif
+
+  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes ADD cli_code int(11)")
+  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " order by numero")
+  If rResult.Available Then
+    Repeat
+      Try Utils.db.Exec("UPdate Fiches_Acomptes SET cli_code = &1 WHERE cli_code = Null", val)
+    Until rResult.MoveNext()
+  Endif
+  
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", "419100")
+  If rResult.Available Then
+    Message.Warning("Attention le compte d'acompte client 419100 existe déjà\nVerifiez son libelle et son affection au Bilan dans la table des comptes\n(Il ne s'agit pas d'un compte collectif!)")
+  Else
+    'On cree le compte pour la gestion des acomptes au besoin
+    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabComptes") & " (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( &1,&2,&3,&4,&5,&6,&7,&8,&9,&{10},&{11},&{12})", "419100", "Clients avances et acomptes reçus", "B", 0, "", 0, 0, 0, 0, 0, 0, True)
+  Endif
   
   PB.Avancement("Table Parametres", 1)
   

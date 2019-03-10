@@ -1564,3 +1564,22 @@ Public Sub Ciel()
   Endif
 
 End
+
+Public Sub Play(Optional Sound As String = Null)
+
+  If Start.son Then
+    If Sound Then
+      Music.Load("son/" & sound & ".ogg")
+    Else
+      Music.Load("son/warning.ogg")
+    Endif
+    Music.Play
+  Endif
+
+End
+
+Public Sub Bip()
+
+  Utils.Play()
+
+End
