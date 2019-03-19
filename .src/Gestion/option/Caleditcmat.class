@@ -101,7 +101,7 @@ Private Function ctrl() As Boolean
     Repeat
       res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE  num=&1 AND numlig LIKE &2", reslig!numfac, "%" & reslig!numlig_ligfac)
       If Not res.Available Then 
-         Textcontrol.Text &= "Facture archive non trouvé : " & reslig!numfac & " " & LDate(reslig!datefac).L & " " & reslig!numlig_ligfac & " " & reslig!art_code & " " & reslig!art_design
+         Textcontrol.Text &= "Facture archive non trouvé : " & reslig!numfac & " " & LDate(reslig!datefac).L & " " & reslig!numlig_ligfac & " " & reslig!art_code & " " & reslig!art_design & " " & "\n"
          err = True
       Endif
     Until reslig.MoveNext()
