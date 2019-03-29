@@ -1253,8 +1253,8 @@ Public Sub Impression()
                   Try mgmo = Val(mgmo) + numbl!marge_mo
                   Try Acpt = numbl!acpt
                   Try TotAcpt = TotAcpt + numbl!acpt
-                  Try Mfacttc = Mfacttc + numbl!totalttc
-                  Toteuros = Val(.cpoint(Toteuros)) + Val(.cpoint(Bl!ht))
+                  Try Mfacttc = Mfacttc + Val(.cpoint(Bl!ttc))
+                  Toteuros = Round(Val(.cpoint(Toteuros)) + Val(.cpoint(Bl!ht)), -2)
                   Ligbl = Utils.db.Exec("SELECT * FROM " & $ligbl & " where num_ligbl = &1", Bl!num)
                   If Ligbl.Count <> 0 Then
                     If Not borientation Then
@@ -1522,7 +1522,7 @@ Public Sub Impression()
               Maj_Compta()
               Majnum()
               Ventilation()
-              If radioButton1.Value And UCase$(Reglmt) = "TRAITE" Or If radioButton1.Value And UCase$(Reglmt) = "LCR" Then Maj_Traite()
+              If UCase$(Reglmt) = "TRAITE" Or UCase$(Reglmt) = "LCR" Then Maj_Traite()
               Toteuros = 0
             Endif
           Endif
@@ -2210,7 +2210,7 @@ Public Sub Calc_tva(borientation As Boolean)
               Mtva2 = Format$(Val(CResult!totaltva), ",0.00")
               If IsNull(Mtva2) Then Mtva2 = "0,00"
               Mht = Format$(Val(CResult!totalht), ",0.00")
-              Mttc = Val(CResult!totalht) * (1 + (Ttx / 100))
+              Mttc = Round(Val(CResult!totalht) * (1 + (Ttx / 100)), -2)
               Mtva2 = Val(Utils.cpoint(Mttc)) - Val(CResult!totalht)
               If IsNull(Mht) Then Mht = "0,00"
               If Prxdec Then

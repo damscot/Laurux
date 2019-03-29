@@ -509,10 +509,11 @@ Public Sub affdroit(num As String)
       tss += reslig!montss
       tvolap += reslig!volumeap
       tvol += reslig!volume
-      $ftvadra += (reslig!montdr * Val(reslig!txtvadr)) + (reslig!montss * Val(reslig!txtvass))
+      $ftvadra += Round(reslig!montdr * Val(reslig!txtvadr), -2) + Round(reslig!montss * Val(reslig!txtvass), -2)
       $ftvadra = Round($ftvadra, -2)
       reslig.MoveNext
     Next
+'    $ftvadra = Round($ftvadra, -2)
   Else        'si fact non édité
     reslig = Utils.db.Exec("SELECT numlig_ligbl,code_ligbl,libel_ligbl,qte_ligbl,art_dra,art_volm,art_deg FROM Fiches_Ligbl, Fiches_Art WHERE num_ligbl=&1 AND code_ligbl=art_code AND art_dra IS NOT NULL", num)
     If reslig.Available Then
@@ -535,9 +536,9 @@ Public Sub affdroit(num As String)
           $gridregi[i, 7].Alignment = Align.Right
           $gridregi[i, 8].Text = Format(drt.secu, "0.00")
           $gridregi[i, 8].Alignment = Align.Right
-          tdr += drt.droit
-          tss += drt.secu
-          $ftvadra += drt.tva
+          tdr += Round(drt.droit, -2)
+          tss += Round(drt.secu, -2)
+          $ftvadra += Round(drt.tva, -2)
         Else
           $gridregi[i, 7].Text = Format(0, "0.00")
           $gridregi[i, 7].Alignment = Align.Right
@@ -966,7 +967,7 @@ End
 
 Private Function consigne_Read() As Boolean
 
-  If $gridcons.Rows.Count > 0 Then
+  If $gridcons.Rows.Count > 0 Or $gridsaisie.Rows.Count > 0 Then
     Return True
   Else
     Return False

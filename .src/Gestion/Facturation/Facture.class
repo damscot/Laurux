@@ -2200,7 +2200,7 @@ Public Sub ColblSelection(bright As Boolean)
           Totrem.Text = "0,00"
           Totht.Text = "0,00"
           Tottc.Text = "0,00"
-          Tottva.Text = "0,00"
+          Tottva.Text = "0,000"
           Coldetail.Clear
           Recup_type()
           Recup_ligbl()
@@ -2278,14 +2278,14 @@ Public Sub Recup_ligbl()
   Totalmottc = "0,00"
   Totalartttc = "0,00"
   Totalremttc = "0,00"
-  Totalht = "0,00"
+  Totalht = "0,000"
   Totalttc = "0,00"
   Totmo.Text = "0,00"
   Totart.Text = "0,00"
   Totrem.Text = "0,00"
   Totht.Text = "0,00"
   Tottc.Text = "0,00"
-  Tottva.Text = "0,00"
+  Tottva.Text = "0,000"
   Mrgart = 0
   Mrgmo = 0
   Mrg.text = "0,00"
@@ -2456,9 +2456,9 @@ Public Sub Recup_ligbl()
       Totrem.Text = Totalrem
       Totht.Text = Totalht
       Tottc.Text = Totalttc
-      Tottva.Text = Format$(Val(.CPoint(Tottc.Text)) - Val(.CPoint(Totht.Text)), "0.00")
+      Tottva.Text = Format$(Val(.CPoint(Tottc.Text)) - Val(.CPoint(Totht.Text)), "0.000")
       Totht1.Text = Totht.Text
-      Totva1.Text = Tottva.Text
+      Totva1.Text = Format(Val(Tottva.Text), "0.00")
       Tottc1.Text = Tottc.Text
       calculfindoc
       If Prxdec Then
@@ -2510,8 +2510,8 @@ Public Sub CalculTotal()
       Endif
     Endif
     Try Totalrem = Format$(Val(.CPoint(Totalrem)) + (Val(.CPoint(Rligbl!brut_ligbl)) - Val(.CPoint(Rligbl!netht_ligbl))), "0.00")
-    Try Totalht = Format$(Val(.CPoint(Totalht)) + Val(.CPoint(Rligbl!netht_ligbl)), "0.00")
-    Try Totalttc = Format$(Val(.CPoint(Totalttc)) + Val(.CPoint(Rligbl!nettc_ligbl)), "0.00")
+    Try Totalht = Format$(Val(.CPoint(Totalht)) + Val(.CPoint(Rligbl!netht_ligbl)), "0.000")
+    Try Totalttc = Format$(Val(.CPoint(Totalttc)) + Val(.CPoint(Rligbl!nettc_ligbl)), "0.000")
     Try Mtva = Val(.CPoint(Rligbl!brut_ligbl)) - Val(.CPoint(Rligbl!netht_ligbl))
     Try Totalremttc = Format$(Val(Totalremttc) + Mtva + (Mtva * Rtva!taux_tva / 100), "0.00")
     If Start.LocalSettings["/Soc" & Start.Societe & "/Impttc"] Then
@@ -10682,9 +10682,9 @@ Public Sub Impression(Org As String)
                   If Remart = "" Then Remart = "0"
                   If Rem = "" Then Rem = "0"
                   If rem <> "0" And Impttc.Value = False Then Trem = Trem + Val(.CPoint(brutht)) - Val(.CPoint(totalht))
-                  If totalht = "" Then totalht = "0,00"
+                  If totalht = "" Then totalht = "0,000"
                   If Brutht = "" Then Brutht = "0,00"
-                  If Remmo = "" Then Remmo = "0,00"
+                  If Remmo = "" Then Remmo = "0,000"
                   If typeL = "M" Then Remmo = Val(.CPoint(Remmo)) + Val(.CPoint(Brutht)) - Val(.CPoint(Totalht))
                   If typeL = "A" Then Remart = Val(.CPoint(Remart)) + Val(.CPoint(Brutht)) - Val(.CPoint(Totalht))
                   If typeL = "E" Or typeL = "P" Or typeL = "D" Then
@@ -12886,7 +12886,7 @@ Public Sub EntFac()
   Totrem.Text = "0,00"
   Totht.Text = "0,00"
   Tottc.Text = "0,00"
-  Tottva.Text = "0,00"
+  Tottva.Text = "0,000"
   Coldetail3.Clear
   button4_click()
   Recup_ligfac()
@@ -12915,14 +12915,14 @@ Public Sub Recup_ligfac()
   Totalmo = "0,00"
   Totalart = "0,00"
   Totalrem = "0,00"
-  Totalht = "0,00"
-  Totalttc = "0,00"
+  Totalht = "0,000"
+  Totalttc = "0,000"
   Totmo.Text = "0,00"
   Totart.Text = "0,00"
   Totrem.Text = "0,00"
   Totht.Text = "0,00"
   Tottc.Text = "0,00"
-  Tottva.Text = "0,00"
+  Tottva.Text = "0,000"
   Coldetail3.visible = True
   Coldetail3.Raise
   With utils
@@ -13017,8 +13017,8 @@ Public Sub Recup_ligfac()
               With Utils
                 If hresult["typel_ligfac"] <> "E" And If hresult["typel_ligfac"] <> "T" And If hresult["typel_ligfac"] <> "O" And If hresult["typel_ligfac"] <> "C" And If hresult["typel_ligfac"] <> "D" Then
                   Totalrem = Format$(Val(.CPoint(Totalrem)) + (Val(.CPoint(hresult["brut_ligfac"])) - Val(.CPoint(hresult["netht_ligfac"]))), "0.00")
-                  Totalht = Format$(Val(.CPoint(Totalht)) + Val(.CPoint(hresult["netht_ligfac"])), "0.00")
-                  Totalttc = Format$(Val(.CPoint(Totalttc)) + Val(.CPoint(hresult["nettc_ligfac"])), "0.00")
+                  Totalht = Format$(Val(.CPoint(Totalht)) + Val(.CPoint(hresult["netht_ligfac"])), "0.000")
+                  Totalttc = Format$(Val(.CPoint(Totalttc)) + Val(.CPoint(hresult["nettc_ligfac"])), "0.000")
                 Endif
               End With
             Endif
@@ -13094,7 +13094,7 @@ Public Sub Recup_ligfac()
                 With Utils
                   If hresult["typel_ligbl"] <> "E" And hresult["typel_ligbl"] <> "T" And hresult["typel_ligbl"] <> "O" And hresult["typel_ligbl"] <> "C" And hresult["typel_ligbl"] <> "R" And hresult["typel_ligbl"] <> "D" Then
                     Totalrem = Format$(Val(.CPoint(Totalrem)) + (Val(.CPoint(hresult["brut_ligbl"])) - Val(.CPoint(hresult["netht_ligbl"]))), "0.00")
-                    Totalht = Format$(Val(.CPoint(Totalht)) + Val(.CPoint(hresult["netht_ligbl"])), "0.00")
+                    Totalht = Format$(Val(.CPoint(Totalht)) + Val(.CPoint(hresult["netht_ligbl"])), "0.000")
                     Totalttc = Format$(Val(.CPoint(Totalttc)) + Val(.CPoint(hresult["nettc_ligbl"])), "0.00")
                   Endif
                 End With
@@ -13155,8 +13155,8 @@ Public Sub Button20_Click()
   Totalart = "0,00"
   Totalmo = "0,00"
   Totalrem = "0,00"
-  Totalht = "0,00"
-  Totalttc = "0,00"
+  Totalht = "0,000"
+  Totalttc = "0,000"
   With Utils
     If Coldetail3.Visible Then
       If $soption = "B" Or $soption = "T" Then
@@ -13234,7 +13234,7 @@ Public Sub Button20_Click()
         Totrem.Text = Totalrem
         Totht.Text = Totalht
         Tottc.Text = Totalttc
-        Tottva.Text = Format$(Val(.CPoint(Tottc.Text)) - Val(.CPoint(Totht.Text)), "0.00")
+        Tottva.Text = Format$(Val(.CPoint(Tottc.Text)) - Val(.CPoint(Totht.Text)), "0.000")
         Totht1.Text = Totht.text
         Tottc1.Text = Tottc.Text
         Totva1.Text = Tottva.Text
@@ -13303,8 +13303,8 @@ Public Sub Majligbl(Optional dtcm As Boolean)
     Endif
     If Coldetail.item[9 + i] <> "C" And Coldetail.item[9 + i] <> "T" And Coldetail.item[9 + i] <> "O" And Coldetail.item[9 + i] <> "R" Then
       Try Totalrem = Format$(Val(.CPoint(Totalrem)) + (Val(.CPoint(Coldetail.item[5 + i])) - Val(.CPoint(Coldetail.item[7 + i]))), "0.00")
-      Try Totalht = Format$(Val(Totalht) + Val(.CPoint(Coldetail.item[7 + i])), "0.00")
-      Try Totalttc = Format$(Val(Totalttc) + Val(.CPoint(Coldetail.item[8 + i])), "0.00")
+      Try Totalht = Format$(Val(Totalht) + Val(.CPoint(Coldetail.item[7 + i])), "0.000")
+      Try Totalttc = Format$(Val(Totalttc) + Val(.CPoint(Coldetail.item[8 + i])), "0.000")
     Endif
   End With
 

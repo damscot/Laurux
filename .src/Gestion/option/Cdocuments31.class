@@ -799,7 +799,7 @@ Public Sub Level10F(Totht As String, Mtva2 As String, Toteuros As String, Txtleg
   Try totttc = Val(Totht)
   Try totttc += Val(Mtva2)
   Me.SetXY(177, posY + 11)
-  Me.cell(25, 4, Format($tottc + Val(Mtva2), "0.00"), False, 0, "R", False)
+  Me.cell(25, 4, Format($tottc, "0.00"), False, 0, "R", False)
 '  If ImpAuto Or If Franchise Or If exo = True Then
 '    Me.SetXY(152, PosY)
 '    Me.cell(24, 5, "Net à payer", True, 0, "C", True)
@@ -812,6 +812,14 @@ Public Sub Level10F(Totht As String, Mtva2 As String, Toteuros As String, Txtleg
   Me.cell(100, 4, Txtleg, False, 0, "L", False)
   PosY = PosY + 3
  ' Me.SetXY(7, PosY)
+
+End
+
+Public Sub Level10F3(PosY As Integer)
+
+  Me.SetXY(80, PosY + 6)
+  Me.SetFont("Helvetica", "B", 10)
+  Me.cell(110, 4, "Facture acquittée", False, 0, "L", False)
 
 End
 
@@ -878,7 +886,7 @@ Public Sub Level17F(Totht As String, Totva1 As String, textfrais As String, acci
   Me.cell(13, 3, totvol, False, 0, "R", False)
   Me.cell(13, 3, totap, False, 0, "R", False)
   tottc = Val(Totht) + Val(textfrais) + Val(accise) + Val(droit) + Val(secu)
-  $tottc = tottc + Val(consigne) + Val(deconsigne)
+  $tottc = tottc + Val(consigne) + Val(deconsigne) + Val(Totva1)
   tot = Val(textfrais) + Val(accise) + Val(droit) + Val(secu)
   posy += 4
   Me.SetXY(177, posY)

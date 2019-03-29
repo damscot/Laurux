@@ -150,14 +150,14 @@ Public Sub _new(num As String, choix As String)
         $cdrt.Add(drt)
         Select Case drt.type
           Case "A", "V"
-            $stotdr = Str(Val($stotdr) + drt.droit)
+            $stotdr = Str(Val($stotdr) + Round(drt.droit, -2))
           Case "B"
             If drt.drsurfac Then
-              $stotasc = Str(Val($stotasc) + drt.droit)
+              $stotasc = Str(Val($stotasc) + Round(drt.droit, -2))
             Endif
         End Select
-        $stotss = Str(Val($stotss) + drt.secu)
-        $ftotht += drt.droit + drt.secu
+        $stotss = Str(Val($stotss) + Round(drt.secu, -2))
+        $ftotht += Round(drt.droit, -2) + Round(drt.secu, -2)
         $ftotv += drt.vol
         $ftotap += drt.volap
         reslig.MoveNext
@@ -229,8 +229,8 @@ Public Sub Totalisation()
      If drt.suspendu Then
        res = Utils.db.Edit("Totalisation", "compte=&1", drt.cptreg) 'enregistrement des droits
        If res.Available Then
-         res!totalht = Str(Val(res!totalht) + drt.droit)
-         res!totaltva = Str(Val(res!totaltva) + drt.tvadroit)
+         res!totalht = Str(Val(res!totalht) + Round(drt.droit, -2))
+         res!totaltva = Str(Val(res!totaltva) + Round(drt.tvadroit, -2))
          res.Update
         Else
          res = Utils.db.Create("Totalisation")
@@ -245,8 +245,8 @@ Public Sub Totalisation()
        If drt.secu <> 0 Then
         res = Utils.db.Edit("Totalisation", "compte=&1", respar!css) 'enregistrement de la secu
          If res.Available Then
-           res!totalht = Str(Val(res!totalht) + drt.secu)
-           res!totaltva = Str(Val(res!totaltva) + drt.tvasec)
+           res!totalht = Str(Val(res!totalht) + Round(drt.secu, -2))
+           res!totaltva = Str(Val(res!totaltva) + Round(drt.tvasec, -2))
            res.Update
          Else
            res = Utils.db.Create("Totalisation")
@@ -264,8 +264,8 @@ Public Sub Totalisation()
          respar = Utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Comptes,Fiches_Fam WHERE code_fam=&1 and compte_cc=compt_fam", drt.famille)
          res = Utils.db.Edit("Totalisation", "compte=&1", respar!compte_cc)
          If res.Available Then
-           If IsNumber(res!totalht) Then res!totalht = Str(Val(res!totalht) + drt.droit) Else res!totalht = Format(drt.droit, "0.00")
-           If IsNumber(res!totaltva) Then res!totaltva = Str(Val(Replace(res!totaltva, ".", ",")) + drt.tvadroit) Else res!totaltva = Format(drt.tvadroit, "0.00")
+           If IsNumber(res!totalht) Then res!totalht = Str(Val(res!totalht) + Round(drt.droit, -2)) Else res!totalht = Format(drt.droit, "0.00")
+           If IsNumber(res!totaltva) Then res!totaltva = Str(Val(Replace(res!totaltva, ".", ",")) + Round(drt.tvadroit, -2)) Else res!totaltva = Format(drt.tvadroit, "0.00")
          Else
            res = Utils.db.Create("Totalisation")
            res!compte = respar!compte_cc
