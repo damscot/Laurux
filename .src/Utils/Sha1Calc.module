@@ -1,6 +1,6 @@
 ' Gambas module file
 
-Private Const $champ As String = "jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind"
+Private Const $champ As String = "jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control"
 
 
 Public Function CalcSha1(Tab As String, numecr As String, Optional lind As String = Null, Optional update As Boolean = True) As String
@@ -64,7 +64,7 @@ Public Function CalcSha1(Tab As String, numecr As String, Optional lind As Strin
     Repeat
       $cle = Trim($cle2) & sResult!jour & sResult!numero & sResult!compte & sResult!intitule & sResult!dte & sResult!numdoc & sResult!libelle & sResult!montantd & sResult!montantc & sResult!collectif & sResult!lind
       $cleout = Base64$(Digest["sha1"]($cle))
-      If update = True Then
+      If update = True And sResult!control <> Left$($cleout, 40) Then
         Utils.db.Exec("update " & Tab & " set  control = &2 where lind = &1", sResult!lind, Left$($cleout, 40))
       Endif
     Until sResult.MoveNext()
@@ -79,12 +79,12 @@ Public Function CalcSha1_all(Tab As String)
   Dim sresult, s2Result As Result
   Dim PB As ProgBar
   
-  sResult = Utils.db.Exec("SELECT numero FROM " & Tab & " order by numero asc")
+  sResult = Utils.db.Exec("SELECT numero FROM " & Tab & " GROUP BY numero ORDER BY numero asc")
   If sResult.Available Then
     PB = New ProgBar("Generation Cles (table " & Tab & " )", sResult.Count)
     PB.Show()
     Repeat
-      If PB.Avancement("Ecriture " & sResult!numero, 30) = True Then Break
+      If PB.Avancement("Ecriture " & sResult!numero, 130) = True Then Break
       CalcSha1(Tab, sResult!numero)
     Until sResult.MoveNext()
     PB.Close()
