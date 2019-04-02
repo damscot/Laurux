@@ -391,6 +391,12 @@ Public Sub jrnal_LostFocus()
       Case jrnal5
         If Jnal!type_jo <> "AC" Then jal = " achat !"
       Case Jod, Jreport
+        If Jod.Text = Jreport.Text Then
+          Message.Warning("Les journaux d'OD et de report ne doivent pas êtres les mêmes")
+          Stop Event
+          Last.SetFocus
+          Return
+        Endif
         If Jnal!type_jo <> "OD" Then jal = " OD"
       Case Else
         jal = ""
