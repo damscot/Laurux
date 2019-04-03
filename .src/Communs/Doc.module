@@ -3,7 +3,7 @@
 Private wwwpath As String = "https://www.laurux.fr/drupal/documentation"
 
 
-Public Sub Open(Rubrique As String, Optional Module as String = "Ecrans")
+Public Sub Open(Rubrique As String, Optional Module As String = "Ecrans")
   
   If Exist(Application.Path & "/" & Module & "/" & Rubrique & ".html")
     Exec ["xdg-open", Application.Path & "/" & Module & "/" & Rubrique & ".html"]
