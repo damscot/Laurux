@@ -25,6 +25,17 @@ Public TunnelPid As String ' pid du tunnel ssh conservé afin de l'arrêter en q
 Public ROArray As ReplayObserver[] = New ReplayObserver[]
 Private $dtcloture As Date
 
+
+'Utilitaire pour sortir de l'application sans attendre les 60 seconde de boucle
+Public Sub Exit(Optional Success As Boolean = True)
+  
+  Start.Success = Success
+  Start.Exit = True
+  Signal.Send(Application.Handle, Signal.SIGINT)
+
+End
+
+
 Public Sub Base(tbv As Gridview, qry As String)
 
   rs1 = db.exec(qry)

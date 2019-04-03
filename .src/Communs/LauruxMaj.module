@@ -5272,7 +5272,7 @@ end_utf8:
   PB = New ProgBar("Modification autres Tables", 6)
   PB.Show()
   
-  PB.Avancement("Table Acompte", 1)
+  PB.Avancement("Table Acompte / Avoir", 1)
   
   rResult = Utils.db.Exec("SELECT code FROM Fiches_ClientCaisse")
   If rResult.Available Then
@@ -5281,20 +5281,47 @@ end_utf8:
     val = "411027"
   Endif
 
-  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes ADD cli_code int(11)")
-  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " order by numero")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes ADD cli_code char(8)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes change date dte datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes ADD ntk char(7)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes ADD montant2 DECIMAL(12,2)")
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Acomptes")
   If rResult.Available Then
     Repeat
-      Try Utils.db.Exec("UPdate Fiches_Acomptes SET cli_code = &1 WHERE cli_code = Null", val)
+      Try Utils.db.Exec("UPdate Fiches_Acomptes SET cli_code = &2 WHERE lind = &1 and cli_code is Null", rResult!lind, val)
+      Try Utils.db.Exec("UPdate Fiches_Acomptes SET montant2 = &2 WHERE lind = &1", rResult!lind, Val(Utils.cpoint(rResult!montant)))
+    Until rResult.MoveNext()
+  Endif
+  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes drop montant")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Acomptes change montant2 montant DECIMAL(12,2)")
+  
+  Try Utils.db.Exec("ALTER TABLE Fiches_Avoirs drop montantdu")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Avoirs ADD type varchar(15)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Avoirs change intitule intitule varchar(35)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Avoirs ADD cli_code char(8)")
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Avoirs")
+  If rResult.Available Then
+    Repeat
+      Try Utils.db.Exec("UPdate Fiches_Avoirs SET cli_code = &2 WHERE lind = &1 and cli_code is Null", rResult!lind, val)
     Until rResult.MoveNext()
   Endif
   
+  'Acomptes
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", "419100")
   If rResult.Available Then
-    Message.Warning("Attention le compte d'acompte client 419100 existe déjà\nVerifiez son libelle et son affection au Bilan dans la table des comptes\n(Il ne s'agit pas d'un compte collectif!)")
+    Message.Warning("Attention le compte d'acompte client 419100 existe déjà\nVerifiez son libelle et son affection au Bilan dans la table des comptes\n(Il ne s'agit pas d'un compte client ni collectif!)")
   Else
     'On cree le compte pour la gestion des acomptes au besoin
     Utils.db.Exec("INSERT INTO " & Cbase.Table("TabComptes") & " (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( &1,&2,&3,&4,&5,&6,&7,&8,&9,&{10},&{11},&{12})", "419100", "Clients avances et acomptes reçus", "B", 0, "", 0, 0, 0, 0, 0, 0, True)
+  Endif
+  
+  'Avoirs
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", "419700")
+  If rResult.Available Then
+    Message.Warning("Attention le compte d'avoir client 419700 existe déjà\nVerifiez son libelle et son affection au Bilan dans la table des comptes\n(Il ne s'agit pas d'un compte client ni collectif!)")
+  Else
+    'On cree le compte pour la gestion des avoirs au besoin
+    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabComptes") & " (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( &1,&2,&3,&4,&5,&6,&7,&8,&9,&{10},&{11},&{12})", "419700", "Clients autres avoirs", "B", 0, "", 0, 0, 0, 0, 0, 0, True)
   Endif
   
   PB.Avancement("Table Parametres", 1)

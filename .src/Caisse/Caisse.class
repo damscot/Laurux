@@ -16,8 +16,9 @@ iModif As Integer = 0 ' Variable pour modification ligne
 iNlg As Integer = 0 ' Variable pour numéro de ligne à modifier
 iAvoir As Integer = 0 ' initialise l'avoir
 sAvoir As String ' Texte de l'avoir en haut de ticket'
-snavoir As String ' variable pour nom de l'avoir
-Numavoir As String ' variable pour numéro du ticket de l'avoir
+Numavoir As String ' variable pour numéro du document de l'avoir
+cliavoir As String ' variable pour le code client de l'avoir
+lindavoir As String ' variable pour le numero d'index de l'avoir
 iAttente As Integer = 0 'Si mise en attente du ticket
 iRattente As Integer = 0 'Si ticket en cours est un ticket qui était en attente
 ipaiement As Integer = 0 ' pour savoir si le paiement a été appelé
@@ -119,7 +120,9 @@ devises As String
 Crt As Boolean = False
 Public origine As String = "Caisse"
 Private sIacompte As String 'Libellé de l'acompte
-Private slinda As String 'numéro d'index de l'acompte
+Private cliacompte As String 'numero de compte du client possedant l'acompte
+Private lindacompte As String 'numéro d'index de l'acompte
+Private numacompte As String ' variable pour numéro du document de l'acompte
 Private numr As Integer ' Numero ecriture provisoire
 Private numr2 As Integer ' numero ecriture définitif
 Private numecr As String
@@ -149,7 +152,6 @@ Private mtrem As String = "0"
 Private nbc As Integer = 1
 Private Prix As String
 Private bFam As Boolean = False
-Private mavoir As String
 Private rremT As String = "0"
 Private iart As Integer = 0
 Private Touche_P As String
@@ -242,7 +244,6 @@ Public Sub Form_Open()
   ColTka.Columns[3].Text = " Montant"
   ColTka.Columns[4].Width = 60
   ColTka.Columns[4].Text = " Client"
-  ColumnView1.Columns[2].Alignment = 2
   'If Imprimante = "DéfautA4" Then
   'pointille = String$(38, "-")
   'Else
@@ -2327,6 +2328,12 @@ Public Sub ColTka_Click()
     Else
       Bdc.Text = "Bon de caisse " & clicode
     Endif
+  Else
+    If RTck!savoir = 1 Then
+      iavoir = 1
+      Nmc.Text = RTck!nom
+      cliavoir = RTck!clicode
+    Endif
   Endif
 
   Tab = "Fiches_LigTicketz"
@@ -2342,7 +2349,7 @@ Public Sub ColTka_Click()
       LigTk.Item[2] = rResult!intitule
       LigTk.Item[3] = rResult!montant
       LigTk.Item[4] = rResult!qte
-      LigTk.Item[5] = rResult!type
+      LigTk.Item[5] = Trim(rResult!type)
       LigTk.Item[6] = rResult!mht
       LigTk.Item[7] = rResult!mrem
       If (rResult!block <> s_l_block_orig) Then
@@ -2466,32 +2473,47 @@ End
 '*****************************************
 Public Sub Button10_Click()
 
+  If clicompte = 1 Then
+    Utils.Bip()
+    Message.Error("Un règlement par client en comte a déjà été selectionné!\nPour faire un avoir pour ce client, il faut d'abord le déselectionner\npuis le selectionner à nouveau dans le fenêtre d'avoir!")
+    Return
+  Endif
+  
+  If LigTk.Count > 0 And iAvoir = 0 Then
+    Message.Error("Un nouvel avoir se défini en début de ticket!")
+    Return
+  Endif
+  
   If Frame3.Visible = True Then
     Frame3.Visible = False
-    iavoir = 0
-    Cart.SetFocus
-    Zone = "Article"
   Else
-    If LigTk.Count = 0 Then
-      mdp_admin()
-      If GestMdp = 1 Then
-        org = "F11"
-        If Start.son Then
-          Music.Play
-        Endif
-        Frame8.visible = True
-        Mdp.SetFocus
-        Zone = "Mdp"
+    If iAvoir = 1 Then
+      If Message.Warning("Un avoir est déjà défini!\nVoulez vous le supprimer (toutes les lignes seront supprimés)", "Oui", "Non") = 1 Then
+        iAvoir = 0
+        Nmc.Text = ""
+        CliAv.Text = ""
+        cliavoir = ""
+        Cart.SetFocus
+        Zone = "Article"
+        ligtk.Clear()
+        TotalTk.Text = 0
+        Return
       Else
-        iAvoir = 1
-        Frame3.Visible = True
-        Nmc.SetFocus
+        Return
       Endif
-    Else
+    Endif
+    mdp_admin()
+    If GestMdp = 1 Then
+      org = "F11"
       If Start.son Then
         Music.Play
       Endif
-      Try Message.Warning("Un avoir se détermine en début de ticket !\n Veuillez annuler votre saisie en cours SVP.")
+      Frame8.visible = True
+      Mdp.SetFocus
+      Zone = "Mdp"
+    Else
+      Frame3.Visible = True
+      Nmc.SetFocus
     Endif
   Endif
 
@@ -2501,39 +2523,54 @@ Public Sub button17_Click()
 
   Dim i As Integer = 0
   Dim sline As String
-
-  If iavoir = "1" Then
-    Inc iligne
-    Inc iNlg
-    snavoir = Nmc.Text
-    LigTk.Add(iligne, iligne)
-    LigTk.Item[0] = iNlg
-    LigTk.Item[2] = "Avoir " & Nmc.Text
-    LigTk.Item[5] = "TA"
-    Inc iligne
-    Inc iNlg
-    For Each sline In Split(sAvoir, "\n")
-      Inc i
-      LigTk.Add(iligne, iligne)
-      LigTk.Item[0] = iNlg
-      LigTk.Item[2] = sline
-      LigTk.Item[5] = "TA"
-      Inc iligne
-      Inc iNlg
-      If i = 4 Then Break
-    Next
-    LigTk.Add(iligne, iligne)
-    LigTk.Item[0] = iNlg
-    LigTk.Item[2] = " "
-    LigTk.Item[5] = "C"
-  Else
-    $Cli = Nmc.Text
+  Dim bloc As String
+  
+  If Nmc.Text = "" Or cliavoir = "" Then
+    Message.Warning("Il vous faut sélectionner un compte client et définir un intitulé!")
+    Return
   Endif
+
+  Inc iligne
+  Inc iNlg
+  bloc = iNlg
+  $Cli = Nmc.Text
+  cliavoir = CliAv.Text
+  LigTk.Add(iligne, iligne)
+  LigTk.Item[0] = iNlg
+  LigTk.Item[8] = bloc
+  LigTk.Item[1] = cliavoir
+  LigTk.Item[2] = "Avoir de " & Nmc.Text
+  LigTk.Item[5] = "EZ"
+  Inc iligne
+  Inc iNlg
+  For Each sline In Split(sAvoir, "\n")
+    Inc i
+    LigTk.Add(iligne, iligne)
+    LigTk.Item[0] = iNlg
+    LigTk.Item[8] = bloc
+    LigTk.Item[2] = sline
+    LigTk.Item[5] = "C"
+    Inc iligne
+    Inc iNlg
+    If i = 4 Then Break
+  Next
+  LigTk.Add(iligne, iligne)
+  LigTk.Item[0] = iNlg
+  LigTk.Item[8] = bloc
+  LigTk.Item[2] = " "
+  LigTk.Item[5] = "C"
+
   Frame3.Visible = False
-  Nmc.Clear
+  iAvoir = 1
   Cart.SetFocus
   Zone = "Article"
   $saisie = ""
+
+End
+
+Public Sub Button52_Click()
+
+  Frame3.Visible = False
 
 End
 
@@ -2541,13 +2578,35 @@ Public Sub Nmc_KeyPress()
 
   If Key.code = Key.F11 Or key.code = Key.esc Then
     Frame3.Visible = False
-    iavoir = 0
     Cart.SetFocus
     Zone = "Article"
+    $saisie = ""
+  Else
+    If Key.Code = Key.Return Or If Key.Code = Key.Enter Or If Key.Code = Key.Tab Then button17_Click()
   Endif
-  If Key.Code = Key.Return Or If Key.Code = Key.Enter Or If Key.Code = Key.Tab Then button17_Click()
 
 End
+
+
+Public Sub CliAv_Select_Click()
+
+  Dim hForm As Triclients
+  Dim rResult As Result
+  
+  hForm = New Triclients("Me", Null, Me)
+  hForm.Showmodal()
+  If Bsel = True Then
+    rResult = Utils.db.Exec("select * from " & Cbase.Table("TabCli") & " where cli_code = &1", Bval)
+    If rResult.Available Then
+      CliAv.Text = Bval
+      cliavoir = CliAv.Text
+      Nmc.Text = rResult!cli_nom & " " & rResult!cli_pnm
+      Nmc.SetFocus()
+    Endif
+  Endif
+
+End
+
 
 '*****************************************
 '*         Gestion des especes           *
@@ -3251,16 +3310,20 @@ Public Sub Button18_Click()
     init_paiement()
     If Val(Rticket.Text) <> 0 Then
       Cavoirs.Visible = True
-      Cavoirs.Columns.count = 4
-      Cavoirs.Columns[0].text = "No ticket"
+      Cavoirs.Columns.count = 6
       Cavoirs.Columns[0].Width = 80
+      Cavoirs.Columns[0].text = "Document"
       Cavoirs.Columns[1].Width = 240
       Cavoirs.Columns[1].text = "Nom du client"
-      Cavoirs.Columns[2].text = "Date"
       Cavoirs.Columns[2].Width = 100
+      Cavoirs.Columns[2].text = "Date"
       Cavoirs.Columns[3].Width = 80
       Cavoirs.Columns[3].text = "Montant"
       Cavoirs.Columns[3].Alignment = 2
+      Cavoirs.Columns[4].Width = 80
+      Cavoirs.Columns[4].text = "cli_code"
+      Cavoirs.Columns[5].Width = 0 'lind
+      
       rlib = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabAvoirs") & "")
       If rlib.Available Then
         Repeat
@@ -3269,6 +3332,8 @@ Public Sub Button18_Click()
           Cavoirs.Item[1] = rlib!intitule
           Cavoirs.Item[2] = LDate(rlib!dte).LT
           Cavoirs.Item[3] = Format$(rlib!montant, "0.00")
+          Cavoirs.Item[4] = rlib!cli_code
+          Cavoirs.Item[5] = rlib!lind
         Until rlib.MoveNext()
       Endif
       Cavoirs.MoveFirst()
@@ -3295,8 +3360,9 @@ Public Sub cavoirs_keyPress()
   Endif
   If Key.Code = Key.Return Or If Key.Code = Key.Enter Or If Key.Code = Key.Tab Then
     Bavoir.Text = Cavoirs.Item[3]
-    mavoir = Bavoir.Text
     Numavoir = Cavoirs.Item[0]
+    cliavoir = Cavoirs.Item[4]
+    lindavoir = Cavoirs.Item[5]
     Cavoirs.Clear
     Cavoirs.Visible = False
     Bavoir.visible = True
@@ -3338,6 +3404,9 @@ Catch
 End
 
 Public Sub Valid_Bavoir()
+  
+  Dim rResult As Result
+  Dim mavoir As Float
 
   If Not IsNull(Bavoir.text) Then
     Bavoir.Text = Utils.cpoint(Bavoir.Text)
@@ -3352,34 +3421,59 @@ Public Sub Valid_Bavoir()
       Bavoir.Select
       Zone = "Bavoir"
     Else
-      If Val(Bavoir.Text) <> 0 And Val(Rticket.Text) > 0 Then
+      If Val(Bavoir.Text) > 0 And Val(Rticket.Text) > 0 Then
         Bavoir.Text = Format$(Val(Bavoir.Text), "0.00")
+        mavoir = Val(Bavoir.Text)
+      
+        rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAvoirs") & " WHERE lind = &1", lindavoir)
+        If Not rResult.Available Then
+          Utils.Bip()
+          message.Warning("Avoir introuvable dans la base de donnée!")
+          Bavoir.Clear
+          Bavoir.Visible = False
+          Return
+        Endif
+        If mavoir > Val(Utils.cpoint(rResult!montant)) Then
+          Utils.Bip()
+          Message.Error("Vous ne pouvez pas saisir un montant supérieur à l'avoir")
+          Bavoir.Text = Format$(Val(Utils.cpoint(rResult!montant)), "0.00")
+          Return
+        Endif
+        If Not DocActif.Get_Lock("Avoirs", lindavoir) Then
+          Bavoir.Clear
+          Bavoir.Visible = False
+          Return
+        Endif
         Calc_reste(Bavoir.text)
-        Try ColumnView1.Add("Z" & Numavoir, "Z" & Numavoir)
+        Try ColumnView1.Add("Z" & lindavoir, "Z")
         If Not Error Then
           ColumnView1.Item[0] = "Z"
-          ColumnView1.Item[1] = "Avoir No " & Numavoir
+          ColumnView1.Item[1] = "Avoir utilisé N° " & Numavoir
           ColumnView1.Item[2] = Bavoir.Text
-          'Else
-          'ColumnView1.MoveFirst()
-          'Repeat
-          'If ColumnView1.Item[0] = "Z" Then
-          'ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) + Val(Utils.cpoint(Bavoir.Text)), "0.00")
-          'Break
-          'Endif
-          'Until ColumnView1.MoveNext()
-        Endif
-        If Bavoir.Text < mavoir Then
-          Valid_Reste()
-          Aff_bastk()
+          ColumnView1.Item[3] = Numavoir
+          ColumnView1.Item[4] = cliavoir
+          ColumnView1.Item[5] = lindavoir
+        Else
+          'le reglement existe déjà on le modifie
+          ColumnView1.MoveFirst()
+          Repeat
+            If ColumnView1.Item[0] = "Z" And ColumnView1.Item[5] = lindavoir Then
+              Calc_reste("-" & ColumnView1.Item[2])
+              ColumnView1.Item[2] = Format$(Val(Utils.cpoint(Bavoir.Text)), "0.00")
+              Break
+            Endif
+          Until ColumnView1.MoveNext()
         Endif
         Bavoir.Clear
-        mavoir = False
-        If Val(Rticket.Text) = 0 Then
-          Bavoir.Visible = False
+        Bavoir.Visible = False
+        Valid_Reste()
+        If Val(Rticket.Text) <= 0 Then
+          Aff_bastk()
           Ouv_Tiroir()
           pointsF()
           Button15.SetFocus
+        Else
+          Inpm.SetFocus
         Endif
       Endif
     Endif
@@ -3390,8 +3484,9 @@ End
 Public Sub Cavoirs_Click()
 
   Bavoir.Text = Cavoirs.Item[3]
-  mavoir = Bavoir.text
   Numavoir = Cavoirs.Item[0]
+  cliavoir = Cavoirs.Item[4]
+  lindavoir = Cavoirs.Item[5]
   Cavoirs.Clear
   Cavoirs.Visible = False
   Bavoir.visible = True
@@ -3933,8 +4028,8 @@ Public Sub Button35_Click()
     init_paiement()
     If Val(Rticket.Text) <> 0 Then
       Cacomptes.Visible = True
-      Cacomptes.Columns.count = 5
-      Cacomptes.Columns[0].Width = 0
+      Cacomptes.Columns.count = 7
+      Cacomptes.Columns[0].Width = 0 'lind
       Cacomptes.Columns[1].Width = 250
       Cacomptes.Columns[1].text = "Intitulé"
       Cacomptes.Columns[2].Width = 120
@@ -3945,6 +4040,13 @@ Public Sub Button35_Click()
       Cacomptes.Columns[4].Width = 60
       Cacomptes.Columns[4].text = "Date"
       Cacomptes.Columns[4].Alignment = 2
+      Cacomptes.Columns[5].Width = 100
+      Cacomptes.Columns[5].text = "Document"
+      Cacomptes.Columns[5].Alignment = 2
+      Cacomptes.Columns[6].Width = 80
+      Cacomptes.Columns[6].text = "cli_code"
+      Cacomptes.Columns[6].Alignment = 2
+      
       rlib = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabAcomptes") & "")
       If rlib.Available Then
         Repeat
@@ -3959,7 +4061,9 @@ Public Sub Button35_Click()
           Cacomptes.Item[1] = rlib!intitule
           Cacomptes.Item[2] = infoclient
           Cacomptes.Item[3] = Format$(Val(Utils.cpoint(rlib!montant)), "0.00")
-          Cacomptes.Item[4] = Utils.Cdate_Aff(rlib!date)
+          Cacomptes.Item[4] = LDate(rlib!dte).LT
+          Cacomptes.Item[5] = rlib!ntk
+          Cacomptes.Item[6] = rlib!cli_code
         Until rlib.MoveNext()
       Endif
       Cacomptes.MoveFirst()
@@ -4040,32 +4144,44 @@ Public Sub Valid_Bacompte()
       Bacompte.Select
       Zone = "Bacompte"
     Else
-      If Val(Bacompte.Text) <> 0 And Val(Rticket.Text) > 0 Then
+      If Val(Bacompte.Text) > 0 And Val(Rticket.Text) > 0 Then
         Bacompte.Text = Format$(Val(Bacompte.Text), "0.00")
         macompte = Val(Bacompte.Text)
-        rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", slinda)
+        rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", lindacompte)
         If Not rResult.Available Then
           Utils.Bip()
           message.Warning("Acompte introuvable dans la base de donnée!")
+          Bacompte.Clear
+          Bacompte.Visible = False
           Return
         Endif
         If macompte > Val(Utils.cpoint(rResult!montant)) Then
-          Message.Error("Vous ne pouvez pas saisir un montant supérieur à l'acompte")
-          Bacompte.Text = Format$(Val(rResult!montant), "0.00")
           Utils.Bip()
+          Message.Error("Vous ne pouvez pas saisir un montant supérieur à l'acompte")
+          Bacompte.Text = Format$(Val(Utils.cpoint(rResult!montant)), "0.00")
+          Return
+        Endif
+        If Not DocActif.Get_Lock("Acomptes", lindacompte) Then
+          Bacompte.Clear
+          Bacompte.Visible = False
           Return
         Endif
         Calc_reste(Bacompte.text)
-        Try ColumnView1.Add("RA", "RA")
+        Try ColumnView1.Add("RA" & lindacompte, "RA")
         If Not Error Then
           ColumnView1.Item[0] = "RA"
-          ColumnView1.Item[1] = "Acompte utilisé de " & sIacompte
+          ColumnView1.Item[1] = "Acompte utilisé N° " & numacompte
           ColumnView1.Item[2] = Bacompte.Text
+          ColumnView1.Item[3] = numacompte
+          ColumnView1.Item[4] = cliacompte
+          ColumnView1.Item[5] = lindacompte
         Else
+          'le reglement existe déjà on le modifie
           ColumnView1.MoveFirst()
           Repeat
-            If ColumnView1.Item[0] = "RA" Then
-              ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[3])) + Val(Utils.cpoint(Bacompte.Text)), "0.00")
+            If ColumnView1.Item[0] = "RA" And ColumnView1.Item[5] = lindacompte Then
+              Calc_reste("-" & ColumnView1.Item[2])
+              ColumnView1.Item[2] = Format$(Val(Utils.cpoint(Bacompte.Text)), "0.00")
               Break
             Endif
           Until ColumnView1.MoveNext()
@@ -4075,13 +4191,15 @@ Public Sub Valid_Bacompte()
         Valid_Reste()
         If Val(Rticket.Text) <= 0 Then
           Aff_bastk()
-          Bacompte.Visible = False
           Ouv_Tiroir()
           pointsF()
           Button15.SetFocus
         Else
           Inpm.SetFocus
         Endif
+      Else
+        Bacompte.Clear
+        Bacompte.Visible = False
       Endif
     Endif
   Endif
@@ -4090,28 +4208,24 @@ End
 
 Public Sub Cacomptes_Click()
 
-  If Not IsNull(slinda)
-    Message.Warning("Attention ! Vous ne pouvez saisir qu'un seul acompte par ticket !")
-    Cacomptes.Clear
-    Cacomptes.Visible = False
-  Else
-    If Val(Utils.cpoint(TotalTk.text)) < Val(Utils.cpoint(Cacomptes.Item[3])) Then
-      If Message.Warning("Attention! Vous avez selectionné un acompte supérieur au montant du ticket!\nVous devez rembourser la différence si vous continuez!\nVoulez-vous continuer?", "Non", "Oui") == 1 Then
-        Cacomptes.Clear
-        Cacomptes.Visible = False
-        Return
-      Endif
+  If Val(Utils.cpoint(TotalTk.text)) < Val(Utils.cpoint(Cacomptes.Item[3])) Then
+    If Message.Warning("Attention! Vous avez selectionné un acompte supérieur au montant du ticket!\nVous devez rembourser la différence si vous continuez!\nVoulez-vous continuer?", "Non", "Oui") == 1 Then
+      Cacomptes.Clear
+      Cacomptes.Visible = False
+      Return
     Endif
-    slinda = Cacomptes.Item[0]
-    Bacompte.Text = Cacomptes.Item[3]
-    sIacompte = Cacomptes.Item[2]
-    Cacomptes.Clear
-    Cacomptes.Visible = False
-    Bacompte.visible = True
-    Bacompte.SetFocus
-    Bacompte.Select
-    Zone = "Bacompte"
   Endif
+  lindacompte = Cacomptes.Item[0]
+  Bacompte.Text = Cacomptes.Item[3]
+  sIacompte = Cacomptes.Item[2]
+  numacompte = Cacomptes.Item[5]
+  cliacompte = Cacomptes.Item[6]
+  Cacomptes.Clear
+  Cacomptes.Visible = False
+  Bacompte.visible = True
+  Bacompte.SetFocus
+  Bacompte.Select
+  Zone = "Bacompte"
 
 End
 
@@ -4144,7 +4258,10 @@ Public Sub Btn_EntreeEnc_Click()
       Frame5.Visible = True
       AcptClicpt.Visible = False
       AcptChClicpt.Visible = False
-      MvtHV_Entree.value = True
+      MvtHV_Entree.Value = True
+      AcomptesE.Value = False
+      AcptClicpt.Clear
+      Nmc3.Text = "Entrée HV : "
       Nmc3.SetFocus
       Zone = "Nmc3"
       Frame5.Raise
@@ -4340,7 +4457,7 @@ Public Sub Btn_Find_Click()
 
 End
 
-Public Sub Maj_Acomptes(cli_code As String, intitule As String, smnt As String, libelac As String)
+Public Sub Maj_Acomptes(cli_code As String, intitule As String, smnt As String, libelac As String, ntk As String)
 
   Dim rJnl As Result
   Dim CptCaisse As String
@@ -4350,7 +4467,7 @@ Public Sub Maj_Acomptes(cli_code As String, intitule As String, smnt As String, 
     If IsNull(cli_code) Then
       cli_code = CodeclientDefault
     Endif
-    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAcomptes") & " (cli_code, intitule, type, montant, date) VALUES (&1, &2, &3, &4, &5)", cli_code, Left$(Intitule, 35), Left$(libelac, 15), Val(.cpoint(smnt)), Format$(Now, "yyyy-mm-dd"))
+    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAcomptes") & " (cli_code, intitule, type, montant, dte, ntk) VALUES (&1, &2, &3, &4, &5, &6)", cli_code, Left$(Intitule, 35), Left$(libelac, 15), Val(.cpoint(smnt)), LDate.DT, ntk)
 
   End With
 
@@ -4432,7 +4549,7 @@ End
 
 Public Sub Button37_Click()
 
-  If Clicompte = 1 And If LigTk.count > 0 Then
+  If Clicompte = 1 Or iAvoir = 1 And If LigTk.count > 0 Then
     Defaut_Tk()
   Else
     If ((Abs(Val(Utils.cpoint(Rticket.Text))) = 0) Or TextLabel5.text = "A rendre :") And If LigTk.count > 0 And ColumnView1.Count > 0 Then
@@ -4776,7 +4893,7 @@ Public Sub Imp_Cheque1()
     LigTk.MoveFirst()
     Repeat
       LigTk.Item.Selected = True
-      If Right$(LigTk.Item[5], 1) = "V" Then
+      If LigTk.Item[5] = "V" Then
         sEntier = LigTk.Item[3]
         sDizaine = sEntier
         iPos = InStr(sEntier, ",")
@@ -5411,14 +5528,10 @@ Public Sub Aff_bastk() As Boolean
         Inc iligne
         Inc iNlg
         LigTk.Add(ColumnView1.Item[0] & iligne, ColumnView1.Item[0] & iligne)
-        LigTk.Item[5] = ColumnView1.Item[0]
+        LigTk.Item[5] = Trim(ColumnView1.Item[0])
+        LigTk.Item[7] = ColumnView1.Item[5]
         LigTk.Item[0] = iNlg
-        If LigTk.Item[5] = "RA" Then
-          rResult = Utils.db.Exec("Select cli_code FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", slinda)
-          LigTk.Item[1] = rResult!cli_code
-        Else
-          LigTk.Item[1] = ""
-        Endif
+        LigTk.Item[1] = ColumnView1.Item[4]
         LigTk.Item[2] = ColumnView1.Item[1]
         LigTk.Item[3] = ColumnView1.Item[2]
         LigTk.Item[11] = LigTk.Item[3]
@@ -5484,9 +5597,8 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim scredit As String
   Dim smcredit As String
   Dim scavoir As String
-  Dim smavoir As String
-  Dim sacompte As String
-  Dim smacompte As String
+  Dim smavoir As String = "0"
+  Dim smacompte As String = "0"
   Dim sachat As String
   Dim smachat As String
   Dim schequecad As String
@@ -5502,7 +5614,6 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim smrem As String
   Dim Tab As String
   Dim Tiketx As String
-  Dim mntAv As String
   Dim MntFam As String
   Dim QteFam As String
   Dim Totpoint, Totp, Totg As Float = 0
@@ -5514,6 +5625,7 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim scartef As String
   Dim numbon As String
   Dim macompte As Float
+  Dim mavoir As Float
 
   Datetk = LDate(Now)
   If iRattente = 0 Then
@@ -5543,92 +5655,55 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   With utils
     'Ticket avec Règlement a enregistrer
     If iAttente = 0 And Supprime = False Then
+      sstatut = 0 'Ticket non en attente
       Repeat
         LigTk.Item.Selected = True
-        If LigTk.Item[5] = "BH" Then smht = LigTk.Item[3]
-        If LigTk.Item[5] = "BA" Then smtva = LigTk.Item[3]
-        If LigTk.Item[5] = "BC" Then smttc = LigTk.Item[3]
-        If Right$(LigTk.Item[5], 1) = "N" Then
+        If LigTk.Item[5] = "BH" Then
+          smht = LigTk.Item[3]
+        Else If LigTk.Item[5] = "BA" Then
+          smtva = LigTk.Item[3]
+        Else If LigTk.Item[5] = "BC" Then
+          smttc = LigTk.Item[3]
+        Else If LigTk.Item[5] = "N" Then
           sespeces = "N"
           Esp += Val(utils.cpoint(LigTk.Item[3]))
           smespeces = Esp
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "Q" Then
+        Else If LigTk.Item[5] = "Q" Then
           Esp += Val(utils.cpoint(LigTk.Item[3]))
           smespeces = Esp
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "U" Then
+        Else If LigTk.Item[5] = "U" Then
           scarte = "U"
           nmcarte = LigTk.Item[2]
           smcarte = LigTk.Item[3]
-          sstatut = 0
           smcarte2 = Val(.cpoint(smcarte2)) + Val(.cpoint(smcarte))
-        Endif
-        If Right$(LigTk.Item[5], 1) = "V" Then
+        Else If LigTk.Item[5] = "V" Then
           scheque = "V"
           nmcheque = LigTk.Item[2]
           smcheque = LigTk.Item[3]
-          sstatut = 0
           tcheque = Val(.cpoint(tcheque)) + Val(.cpoint(smcheque))
-        Endif
-        If Right$(LigTk.Item[5], 1) = "W" Then
+        Else If LigTk.Item[5] = "W" Then
           scredit = "W"
           smcredit = LigTk.Item[3]
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "X" Then
+        Else If LigTk.Item[5] = "X" Then
           sachat = "X"
           smachat = LigTk.Item[3]
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "Y" Then
+        Else If LigTk.Item[5] = "Y" Then
           schequecad = "Y"
           smchequecad = LigTk.Item[3]
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "Z" Then
+        Else If LigTk.Item[5] = "Z" Then
+          'avoir utilisé en caisse
           scavoir = "Z"
-          smavoir = LigTk.Item[3]
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "B" Then
-          sbonus = "B"
-          nmbonus = LigTk.Item[2]
-          smbonus = LigTk.Item[3]
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "E" Then
-          sreduc = "E"
-          smreduc = LigTk.Item[3]
-          sstatut = 0
-        Endif
-        If Right$(LigTk.Item[5], 1) = "1" Then
-          sresto = "1"
-          smresto = LigTk.Item[3]
-          sstatut = 0
-        Endif
-        If LigTk.Item[5] = "EA" Then ' pour les acomptes
-          sacompte = "D"
-          smacompte = LigTk.Item[3]
-          Maj_Acomptes(LigTk.Item[1], LigTk.Item[2], smacompte, "Caisse")
-          TotAcompte = TotAcompte + Val(Utils.cpoint(smacompte))
-          sstatut = 0
-        Endif
-        If LigTk.Item[5] = "RA" Then ' pour les acomptes
-          sacompte = "C"
-          smacompte = LigTk.Item[3]
-          rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", slinda)
+          smavoir = Format(Val(Utils.cpoint(smavoir)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
+          rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAvoirs") & " WHERE lind = &1", LigTk.Item[7])
           If rResult.Available Then
-            macompte = Val(Utils.cpoint(rResult!montant)) - Val(Utils.cpoint(smacompte)) 
-            If macompte <> 0 Then 
-              Utils.db.Exec("UPDATE " & Cbase.Table("TabAcomptes") & " set montant = &2 WHERE lind = &1", slinda, Format$(macompte, "0.00"))
+            mavoir = Val(Utils.cpoint(rResult!montant)) - Val(Utils.cpoint(LigTk.Item[3]))
+            If mavoir <> 0 Then 
+              Utils.db.Exec("UPDATE " & Cbase.Table("TabAvoirs") & " set montant = &2 WHERE lind = &1", LigTk.Item[7], mavoir)
             Else
-              Utils.db.Exec("DELETE FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", slinda)
+              Utils.db.Exec("DELETE FROM  " & Cbase.Table("TabAvoirs") & " WHERE lind = &1", LigTk.Item[7])
             Endif
           Else
-            Message.Error("L'acompte " & slinda & " n'existe pas!\nErreur Grave!\nLe ticket sera supprimé!")
+            Message.Error("L'avoir " & LigTk.Item[7] & " n'existe pas!\nErreur Grave!\nLe ticket sera supprimé!")
             'Ticket a supprimer
             Supprime = True
             ssuppr = 1
@@ -5636,11 +5711,43 @@ Public Sub Enrg_Tk(Supprime As Boolean)
             smtva = Format$(Val(Utils.cpoint(TotalTk.Text)) - Val(Utils.cpoint(Totalht)), "0.00")
             smttc = TotalTk.text
           Endif
-          sstatut = 0
-        Endif
-        If Clicompte = 1 And LigTk.Item[5] = "BC" Then 'On enregistre le montant TTC en compte client
-          sstatut = 0
-          smttc = LigTk.Item[3]
+          DocActif.Free_Lock("Avoirs", LigTk.Item[7])
+        Else If LigTk.Item[5] = "B" Then
+          sbonus = "B"
+          nmbonus = LigTk.Item[2]
+          smbonus = LigTk.Item[3]
+        Else If LigTk.Item[5] = "E" Then
+          sreduc = "E"
+          smreduc = LigTk.Item[3]
+        Else If LigTk.Item[5] = "1" Then
+          sresto = "1"
+          smresto = LigTk.Item[3]
+        Else If LigTk.Item[5] = "EA" Then ' pour les acomptes encaissé
+          smacompte = LigTk.Item[3]
+          Maj_Acomptes(LigTk.Item[1], LigTk.Item[2], smacompte, "Caisse", numero_tk)
+          TotAcompte = TotAcompte + Val(Utils.cpoint(smacompte))
+        Else If LigTk.Item[5] = "RA" Then ' pour les acomptes utilisé
+          rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", LigTk.Item[7])
+          If rResult.Available Then
+            macompte = Val(Utils.cpoint(rResult!montant)) - Val(Utils.cpoint(LigTk.Item[3]))
+            If macompte <> 0 Then 
+              Utils.db.Exec("UPDATE " & Cbase.Table("TabAcomptes") & " set montant = &2 WHERE lind = &1", LigTk.Item[7], macompte)
+            Else
+              Utils.db.Exec("DELETE FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", LigTk.Item[7])
+            Endif
+          Else
+            Message.Error("L'acompte " & LigTk.Item[7] & " n'existe pas!\nErreur Grave!\nLe ticket sera supprimé!")
+            'Ticket a supprimer
+            Supprime = True
+            ssuppr = 1
+            smht = Totalht
+            smtva = Format$(Val(Utils.cpoint(TotalTk.Text)) - Val(Utils.cpoint(Totalht)), "0.00")
+            smttc = TotalTk.text
+          Endif
+          DocActif.Free_Lock("Acomptes", LigTk.Item[7])
+        Else
+          'Type de Ligne de règlement non traité
+          'les lignes d'articles sont gérés plus bas
         Endif
       Until LigTk.MoveNext()
     Else
@@ -5749,18 +5856,20 @@ Public Sub Enrg_Tk(Supprime As Boolean)
       Totg = rResult!fndtotg + Val(.cpoint(smttc)) - TotAcompte
       Utils.db.Exec("UPdate Fiches_Caisses  SET fndtotp = &1, fndtotg = &2 WHERE code = &3", Totp, Totg, Ncaisse)
     Endif
-    If scavoir = "Z" Then
-      rResult = Utils.db.Exec(" select * from " & Cbase.Table("TabAvoirs") & " where ntk = &1", Numavoir)
-      If rResult.Available Then mntAv = rResult!montant
-      If Val(Utils.cpoint(mntav)) = Val(Utils.cpoint(smavoir)) Then
-        Utils.db.Exec("DELETE FROM  " & Cbase.Table("TabAvoirs") & " WHERE ntk = &1", Numavoir)
-      Else
-        mntav = Val(Utils.cpoint(mntav)) - Val(Utils.cpoint(smavoir))
-        Utils.db.Exec("UPdate  " & Cbase.Table("TabAvoirs") & "  SET montant = &1 WHERE ntk = &2", Mntav, Numavoir)
-      Endif
-    Endif
+    'If scavoir = "Z" Then
+    '  rResult = Utils.db.Exec(" select * from " & Cbase.Table("TabAvoirs") & " where ntk = &1", Numavoir)
+    '  If rResult.Available Then mntAv = rResult!montant
+    '  If Val(Utils.cpoint(mntav)) = Val(Utils.cpoint(smavoir)) Then
+    '    Utils.db.Exec("DELETE FROM  " & Cbase.Table("TabAvoirs") & " WHERE ntk = &1", Numavoir)
+    '  Else
+    '    mntav = Val(Utils.cpoint(mntav)) - Val(Utils.cpoint(smavoir))
+    '    Utils.db.Exec("UPdate  " & Cbase.Table("TabAvoirs") & "  SET montant = &1 WHERE ntk = &2", Mntav, Numavoir)
+    '  Endif
+    'Endif
+    
+    'Si le ticket est un enregistrement d'avoir
     If iavoir = 1 Then
-      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAvoirs") & " (intitule, dte, montant, montantdu, ntk) VALUES (&1, &2, &3, &4, &5)", snavoir, datetk.DT, Val(utils.cpoint(TotalTk.Text)), 0, numero_tk)
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAvoirs") & " (intitule, dte, montant, ntk, cli_code) VALUES (&1, &2, &3, &4, &5)", $Cli, datetk.DT, Val(utils.cpoint(TotalTk.Text)), numero_tk, cliavoir)
     Endif
     
     'On enregistre dans la table Ent_Ticket
@@ -5834,6 +5943,9 @@ Label_CleanUp:
   iAttente = 0
   iRattente = 0
   iAvoir = 0
+  cliavoir = ""
+  Nmc.Clear
+  CliAv.Clear
   Clicompte = 0
   inlg = 0
   iligne = 0
@@ -5842,7 +5954,7 @@ Label_CleanUp:
   Label2.Text = ""
   Label3.Text = ""
   Label4.Text = ""
-  slinda = ""
+  lindacompte = ""
   scartef = ""
   $Cli = ""
   $Nomd = ""
@@ -5879,14 +5991,23 @@ End
 
 Public Sub Init_Columnview1()
 
-  ColumnView1.Columns.count = 3
-  ColumnView1.Columns[0].Width = 0
+  ColumnView1.Columns.count = 6
+  ColumnView1.Columns[0].Width = 20
+  ColumnView1.Columns[0].Text = "Code"
   ColumnView1.Columns[1].Text = "Mode de réglement"
   ColumnView1.Columns[1].Width = 240
   ColumnView1.Columns[2].Text = "Montant"
   ColumnView1.Columns[2].Width = 100
   ColumnView1.Columns[2].Alignment = 2
-
+  ColumnView1.Columns[3].Text = "Document"
+  ColumnView1.Columns[3].Width = 100
+  ColumnView1.Columns[3].Alignment = 2
+  ColumnView1.Columns[4].Text = "client"
+  ColumnView1.Columns[4].Width = 100
+  ColumnView1.Columns[4].Alignment = 2
+  ColumnView1.Columns[5].Text = "lind"
+  ColumnView1.Columns[5].Width = 10
+  ColumnView1.Columns[5].Alignment = 2
 End
 
 Public Sub Init_Reg()
@@ -6688,8 +6809,8 @@ Public Sub Serial_Ticketxz(sintitule As String, origine As String)
           If rTkhv!type = "E" Then sreg = "Tot. bons de reduction "
           If rTkhv!type = "X" Then sreg = "Tot. bons achat "
           If rTkhv!type = "Y" Then sreg = "Tot. cheques cadeaux "
-          If rTkhv!type = "W" Then sreg = "Tot. credits "
-          If rTkhv!type = "Z" Then sreg = "Tot. avoirs "
+          If rTkhv!type = "W" Then sreg = "Tot. rglts par credits "
+          If rTkhv!type = "Z" Then sreg = "Tot. rglts par avoirs "
           If rTkhv!type = "1" Then sreg = "Tot. Cheques entreprise"
           If rTkhv!type = "M" Then sreg = "Tot. clients compte "
           If rTkhv!totmontant <> Null Then
@@ -6977,6 +7098,11 @@ Public Sub Button30_click()
   Else
     numero_tk = numtk
   Endif
+  
+  If iAvoir = 1 Then
+    Utils.Bip()
+    Message.Error("Un avoir est déjà en cours de saisie\nVous ne pouvez pas saisir ou régler des bons de caisse")
+  Endif
 
   bsel = False
   If clicompte = 0 Then
@@ -7007,11 +7133,7 @@ Public Sub Button30_click()
         'do nothing
     End Select
   Else
-    If Start.son Then
-      If Start.son Then
-        Music.Play
-      Endif
-    Endif
+    Utils.Bip()
     If Message.Question("Il y a déjà un bon de caisse en cours de saisie\nVoulez-vous le supprimer ?", "Oui", "Non") = 1 Then
       Clicompte = 0
       Bdc.Text = ""
@@ -7376,9 +7498,11 @@ Public Sub Delete_Reglements_Tk()
         If IsNull(LigTk.Current[5]) Then
           'donnée type Null
           LigTk.Current.Delete
+        Else If LigTk.Current[5] = "BL" 
+          'on ne fait rien sinon "BL" pourrait ci-dessous pris pour une ligne de total de type "B"
         Else If Left(LigTk.Current[5], 1) = "B" Or Left(LigTk.Current[5], 1) = "L" 'Total Ticket
           LigTk.Current.Delete
-        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" 'Mode de Paiement
+        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" Or Left(LigTk.Current[5], 1) = "Z" 'Mode de Paiement
           LigTk.Current.Delete
         Else If Left(LigTk.Current[5], 2) = "RA" 'Rappel Accompte
           LigTk.Current.Delete
@@ -7409,10 +7533,28 @@ End
 
 Public Sub ColumnView1_Delete()
 
+  Dim numl As Integer
+
   If ColumnView1.count > 0 Then
     If message.Question("Voulez-vous supprimer les lignes de règlements ?", "Oui", "Non") = 1 Then
       Delete_Reglements_Tk()
-      slinda = ""
+      lindacompte = ""
+      lindavoir = ""
+      ColumnView1.MoveFirst()
+      For numl = 0 To ColumnView1.count - 1
+        Try ColumnView1.item.Selected = True
+        Try ColumnView1.MoveNext()
+        If Not Error Then
+          If ColumnView1.Current[0] = "RA" 
+            'on libere le lock sur le document d'acompte
+            DocActif.Free_Lock("Acomptes", ColumnView1.Current[5])
+          Else If ColumnView1.Current[0] = "Z" 
+            'on libere le lock sur le document d'acompte
+            DocActif.Free_Lock("Avoirs", ColumnView1.Current[5])
+          Endif
+          ColumnView1.Current.Delete
+        Endif
+      Next
       ColumnView1.Clear
       Rticket.text = Mticket.Text
       TextLabel5.Text = "Reste à payer :"
@@ -7465,6 +7607,11 @@ Public Sub Recalc_Tottk()
 
       If LigTk.Item[5] = "BL" Then
         Blexists = True
+        TotalTk.Text = Format$(Val(Utils.cpoint(TotalTk.Text)) + Val(Utils.cpoint(LigTk.Current[11])), "0.00")
+        Totalht = Val(Utils.cpoint(Totalht)) + Val(Utils.cpoint(LigTk.Current[6]))
+      Endif
+      
+      If LigTk.Item[5] = "EA" Then
         TotalTk.Text = Format$(Val(Utils.cpoint(TotalTk.Text)) + Val(Utils.cpoint(LigTk.Current[11])), "0.00")
         Totalht = Val(Utils.cpoint(Totalht)) + Val(Utils.cpoint(LigTk.Current[6]))
       Endif
@@ -8107,13 +8254,6 @@ Public Sub Button49_Click()
   Nmc5.Clear
   Nmc6.Clear
   Frame7.Visible = False
-
-End
-
-Public Sub Button52_Click()
-
-  Nmc.Clear
-  Frame3.Visible = False
 
 End
 
