@@ -897,23 +897,41 @@ Public Sub Moulinage_Acomptes_Avoir(Type As String, jour As String, CptCli As St
       'Maj_Totalisation(CptCli, icli, - mnt)
       Maj_Totalisation(cpt_avac, iacom, - mnt)
       Maj_Totalisation(CptCaisse, icai, - mnt)
-    Else If type = "EA" Or type = "EZ" Then
-      If type = "EZ" Then mode = "Avoir"
+      Maj_Collectif(CptCli, mode & " en Caisse", libelac, - mnt)
+    Else If type = "EA" Or type = "EZ" Or type = "W" Then
+      If type = "EZ" Then
+        mode = "Avoir"
+      Else If type = "W" Then
+        mode = "Crédit"
+      Else
+        mode = "Encaissement " & mode
+      Endif
       'EA est une ligne d'article de type Encaissement d'Acompte
-      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, CptCli, "Encaissement " & mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, 0, mnt, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
-      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, cpt_avac, "Encaissement " & mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, mnt, 0, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
-      'Maj_Totalisation(CptCli, icli, mnt)
-      Maj_Totalisation(cpt_avac, iacom, mnt)
-      'Maj_Totalisation(CptCaisse, icai, - mnt) 'on corrige le montant TTC de la caisse
+      'EZ est un ticket de type avoir
+      'W est un crédit accordé au client
+      If type <> "W" Then
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, CptCli, mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, 0, mnt, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, cpt_avac, mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, mnt, 0, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+        'Maj_Totalisation(CptCli, icli, mnt)
+        Maj_Totalisation(cpt_avac, iacom, mnt)
+        'Maj_Totalisation(CptCaisse, icai, - mnt) 'on corrige le montant TTC de la caisse
+        Maj_Collectif(CptCli, mode & " en Caisse", libelac, mnt)
+      Else
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, CptCli, mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, mnt, 0, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, cpt_avac, mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, 0, mnt, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
+        Maj_Totalisation(cpt_avac, iacom, - mnt)
+        Maj_Totalisation(CptCaisse, icai, - mnt) 'on corrige le montant TTC de la caisse
+        Maj_Collectif(CptCli, mode & " en Caisse", libelac, - mnt)
+      Endif
     Else
-      Error.Raise("Type d'avoir ou d'accompte non supporté : ", type)
+      Error.Raise("Type d'avoir, de crédit ou d'accompte non supporté : ", type)
     Endif
 
     Sha1Calc.CalcSha1("Fiches_Mvt", numr)
 
     Csolde.Solde_caisse(CptCli)
     Csolde.Solde_caisse(CptCaisse)
-    Maj_Collectif(CptCli, mode & " en Caisse", libelac, mnt)
+    Csolde.Solde_caisse(cpt_avac)
     
     ' On met à jour le numéro d'écriture
     numr = numr + 1
@@ -1240,9 +1258,12 @@ Public Sub Moulinage()
                       If (rlTck!type = "Z") Then
                         'Ticket avec un règlement par depuis un avoir
                         Moulinage_Acomptes_Avoir(rlTck!type, Jnl, rlTck!code, Client, rlTck!numero, Val(Utils.cpoint(rlTck!montant)), rlTck!intitule, LDate(datec), "419700")
-                      Else If (rlTck!type = "EZ") Then
+                      Else If (rlTck!type = "EZ")
                         'Ticket d avoir
                         Moulinage_Acomptes_Avoir(rlTck!type, Jnl, rlTck!code, Client, rTck!numero, Val(Utils.cpoint(rTck!mttc)), "Ticket d'Avoir en Caisse", LDate(datec), "419700")
+                      Else If (rlTck!type = "W") Then
+                        'Ticket de crédit
+                        Moulinage_Acomptes_Avoir(rlTck!type, Jnl, rlTck!code, Client, rTck!numero, Val(Utils.cpoint(rlTck!montant)), "Crédit en Caisse", LDate(datec), "468700")
                       Else If (rlTck!type = "RA" Or rlTck!type = "EA") Then
                         'Ticket avec un règlement par acompte ou encaissement d'acompte
                         Moulinage_Acomptes_Avoir(rlTck!type, Jnl, rlTck!code, Client, rlTck!numero, Val(Utils.cpoint(rlTck!montant)), rlTck!intitule, LDate(datec), "419100")
@@ -2616,7 +2637,13 @@ Public Sub Maj_Collectif(Cpt As String, intit As String, libel As String, Mnt As
     Utils.db.Exec("UPDATE " & Cbase.Table("TabMvt") & " set montantc = &4 Where compte = &1 and numero = &2 and numerodef = &3", Coll, numr, numr2, mtc)
     Sha1Calc.CalcSha1("Fiches_Mvt", Numr, cResult!lind)
   Else
-    Mtc = Mnt
+    If Mnt > 0 Then
+      Mtd = 0
+      Mtc = Mnt
+    Else
+      Mtc = 0
+      Mtd = Abs(Mnt)
+    Endif
     Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, collectif, intitule, dte, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef, numdoc, numlot) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19})", Jnal, numr, coll, 1, Intit, Utils.Cdate_Dbase(Datem), Libel, Mtd, Mtc, 1, 0, 1, 0, 0, 1, 0, numr2, Numlt, numlt)
     Sha1Calc.CalcSha1("Fiches_Mvt", Numr)
   Endif
