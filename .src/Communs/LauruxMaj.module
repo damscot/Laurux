@@ -5324,6 +5324,15 @@ end_utf8:
     Utils.db.Exec("INSERT INTO " & Cbase.Table("TabComptes") & " (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( &1,&2,&3,&4,&5,&6,&7,&8,&9,&{10},&{11},&{12})", "419700", "Clients autres avoirs", "B", 0, "", 0, 0, 0, 0, 0, 0, True)
   Endif
   
+  'Credit
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", "468700")
+  If rResult.Available Then
+    Message.Warning("Attention le compte d'avoir client 468700 existe déjà\nVerifiez son libelle et son affection au Bilan dans la table des comptes\n(Il ne s'agit pas d'un compte client ni collectif!)")
+  Else
+    'On cree le compte pour la gestion des crédit au besoin
+    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabComptes") & " (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( &1,&2,&3,&4,&5,&6,&7,&8,&9,&{10},&{11},&{12})", "468700", "Débiteurs divers produits à recevoir", "B", 0, "", 0, 0, 0, 0, 0, 0, True)
+  Endif
+  
   PB.Avancement("Table Parametres", 1)
   
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD dntk char(7)")

@@ -29,6 +29,7 @@ snmcheque As String
 bcheque As Boolean = False ' variable pour imprimer les chéques
 icredit As Integer = 0
 snmcredit As String
+clicredit As String
 iachat As Integer = 0
 snmachat As String
 ichequecad As Integer = 0
@@ -2475,7 +2476,7 @@ Public Sub Button10_Click()
 
   If clicompte = 1 Then
     Utils.Bip()
-    Message.Error("Un règlement par client en comte a déjà été selectionné!\nPour faire un avoir pour ce client, il faut d'abord le déselectionner\npuis le selectionner à nouveau dans le fenêtre d'avoir!")
+    Message.Error("Un règlement par client en comte a déjà été selectionné!\nPour faire un avoir/credit pour ce client, il faut d'abord le déselectionner\npuis le selectionner à nouveau dans le fenêtre d'avoir!")
     Return
   Endif
   
@@ -2513,6 +2514,7 @@ Public Sub Button10_Click()
       Zone = "Mdp"
     Else
       Frame3.Visible = True
+      TextLabel13.Text = "Avoir de"
       Nmc.SetFocus
     Endif
   Endif
@@ -2525,51 +2527,78 @@ Public Sub button17_Click()
   Dim sline As String
   Dim bloc As String
   
-  If Nmc.Text = "" Or cliavoir = "" Then
+  
+  'on reutilise la mecanique des avoirs pour les credit également pour la selection du client
+  
+  If Nmc.Text = "" Or CliAv.Text = "" Then
     Message.Warning("Il vous faut sélectionner un compte client et définir un intitulé!")
     Return
   Endif
-
-  Inc iligne
-  Inc iNlg
-  bloc = iNlg
-  $Cli = Nmc.Text
-  cliavoir = CliAv.Text
-  LigTk.Add(iligne, iligne)
-  LigTk.Item[0] = iNlg
-  LigTk.Item[8] = bloc
-  LigTk.Item[1] = cliavoir
-  LigTk.Item[2] = "Avoir de " & Nmc.Text
-  LigTk.Item[5] = "EZ"
-  Inc iligne
-  Inc iNlg
-  For Each sline In Split(sAvoir, "\n")
-    Inc i
+  
+  If TextLabel13.Text = "Avoir de" Then
+    iAvoir = 1
+    iCredit = 0
+    Inc iligne
+    Inc iNlg
+    bloc = iNlg
+    $Cli = Nmc.Text
+    cliavoir = CliAv.Text
     LigTk.Add(iligne, iligne)
     LigTk.Item[0] = iNlg
     LigTk.Item[8] = bloc
-    LigTk.Item[2] = sline
-    LigTk.Item[5] = "C"
+    LigTk.Item[1] = cliavoir
+    LigTk.Item[2] = "Avoir de " & Nmc.Text
+    LigTk.Item[5] = "EZ"
     Inc iligne
     Inc iNlg
-    If i = 4 Then Break
-  Next
-  LigTk.Add(iligne, iligne)
-  LigTk.Item[0] = iNlg
-  LigTk.Item[8] = bloc
-  LigTk.Item[2] = " "
-  LigTk.Item[5] = "C"
+    For Each sline In Split(sAvoir, "\n")
+      Inc i
+      LigTk.Add(iligne, iligne)
+      LigTk.Item[0] = iNlg
+      LigTk.Item[8] = bloc
+      LigTk.Item[2] = sline
+      LigTk.Item[5] = "C"
+      Inc iligne
+      Inc iNlg
+      If i = 4 Then Break
+    Next
+    LigTk.Add(iligne, iligne)
+    LigTk.Item[0] = iNlg
+    LigTk.Item[8] = bloc
+    LigTk.Item[2] = " "
+    LigTk.Item[5] = "C"
+    
+    Frame3.Visible = False
+    Cart.SetFocus
+    Zone = "Article"
+    $saisie = ""
+  Else
+    iAvoir = 0
+    iCredit = 1
+    Frame3.Visible = False
+    clicredit = CliAv.Text
+    Button19_click()
+  Endif
 
-  Frame3.Visible = False
-  iAvoir = 1
-  Cart.SetFocus
-  Zone = "Article"
-  $saisie = ""
+
 
 End
 
 Public Sub Button52_Click()
 
+  If LigTk.Count <> 0 Then
+    Message.Info("L'annulation va supprimer toutes les lignes existantes")
+    LigTk.MoveFirst()
+    Repeat
+      LigTk.Item.Selected = True
+      Ligtk_Delete(False)
+      LigTk.MoveFirst()
+    Until Ligtk.MoveNext()
+  Endif
+  clicredit = ""
+  cliavoir = ""
+  iAvoir = 0
+  iCredit = 0
   Frame3.Visible = False
 
 End
@@ -2831,7 +2860,7 @@ Public Sub button19_Click()
     Zone = "Cheque"
   Endif
   If icredit = 1 Then
-    snmcredit = Nmc2.Text
+    snmcredit = Nmc.Text 'on utilise une selection compte client pour les credits
     init_paiement()
     If Val(Rticket.Text) <> 0 Then
       Credit.text = Rticket.Text
@@ -3093,17 +3122,18 @@ End
 Public Sub Button14_Click()
 
   init_paiement()
-  If Frame4.Visible = True Then
-    Frame4.Visible = False
+  If Frame3.Visible = True Then
+    Frame3.Visible = False
     'Panel12.visible = False
     icredit = 0
     Inpm.SetFocus
   Else
-    Frame4.visible = True
+    Frame3.visible = True
+    TextLabel13.Text = "Crédit accordé à"
     icredit = 1
-    If icartef = 1 Then Nmc2.Text = Label1.Text
-    Nmc2.SetFocus
-    Zone = "Nmc2"
+    If icartef = 1 Then Nmc.Text = Label1.Text
+    Nmc.SetFocus
+    Zone = "Nmc"
   Endif
 
 End
@@ -3159,8 +3189,11 @@ Public Sub Valid_Credit()
         Try ColumnView1.Add("W", "W")
         If Not Error Then
           ColumnView1.Item[0] = "W"
-          ColumnView1.Item[1] = "Credit " & snmcredit
+          ColumnView1.Item[1] = "Credit accordé à " & snmcredit
           ColumnView1.Item[2] = credit.Text
+          ColumnView1.Item[3] = ""
+          ColumnView1.Item[4] = clicredit
+          ColumnView1.Item[5] = ""
         Else
           ColumnView1.MoveFirst()
           Repeat
@@ -3176,6 +3209,7 @@ Public Sub Valid_Credit()
         Endif
         credit.Clear
         Credit.Visible = False
+        Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           Ouv_Tiroir()
           pointsF()
@@ -3278,7 +3312,8 @@ Public Sub Valid_Bachat()
         Endif
         Bachat.Clear
         Bachat.Visible = False
-        If Val(Utils.cpoint(Rticket.Text)) = 0 Then
+        Valid_Reste()
+        If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           Ouv_Tiroir()
           pointsF()
           Button15.SetFocus
@@ -3587,6 +3622,7 @@ Public Sub Valid_Chequecad()
         Endif
         Chequecad.Clear
         Chequecad.Visible = False
+        Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           Ouv_Tiroir()
           pointsF()
@@ -3682,6 +3718,7 @@ Public Sub Valid_Breduc()
         Endif
         Breduc.Clear
         Breduc.Visible = False
+        Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           Ouv_Tiroir()
           pointsF()
@@ -3779,6 +3816,7 @@ Public Sub Valid_Tresto()
         Endif
         Tresto.Clear
         Tresto.Visible = False
+        Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           Ouv_Tiroir()
           pointsF()
@@ -3885,6 +3923,7 @@ Public Sub Valid_Bonus()
         Boni = Val(Utils.cpoint(ColumnView1.Item[2]))
         Bonus.Clear
         Bonus.Visible = False
+        Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           Ouv_Tiroir()
           pointsF()
@@ -5215,6 +5254,7 @@ Public Sub Valid_Mdp()
     If org = "F11" Then
       iAvoir = 1
       Frame3.Visible = True
+      TextLabel13.Text = "Avoir de"
       Nmc.SetFocus
     Endif
     If Org = "F2" Then
@@ -5264,10 +5304,11 @@ Public Sub Valid_Mdp()
     Endif
     If org = "Credit" Then
       Frame4.visible = True
+      TextLabel13.Text = "Crédit accordé à"
       icredit = 1
-      If icartef = 1 Then Nmc2.Text = Label1.Text
-      Nmc2.SetFocus
-      Zone = "Nmc2"
+      If icartef = 1 Then Nmc.Text = Label1.Text
+      Nmc.SetFocus
+      Zone = "Nmc"
     Endif
   Endif
 
@@ -5669,6 +5710,7 @@ Public Sub Enrg_Tk(Supprime As Boolean)
           Esp += Val(utils.cpoint(LigTk.Item[3]))
           smespeces = Esp
         Else If LigTk.Item[5] = "Q" Then
+          sespeces = "N"
           Esp += Val(utils.cpoint(LigTk.Item[3]))
           smespeces = Esp
         Else If LigTk.Item[5] = "U" Then
@@ -7502,7 +7544,7 @@ Public Sub Delete_Reglements_Tk()
           'on ne fait rien sinon "BL" pourrait ci-dessous pris pour une ligne de total de type "B"
         Else If Left(LigTk.Current[5], 1) = "B" Or Left(LigTk.Current[5], 1) = "L" 'Total Ticket
           LigTk.Current.Delete
-        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" Or Left(LigTk.Current[5], 1) = "Z" 'Mode de Paiement
+        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" Or Left(LigTk.Current[5], 1) = "Z" Or Left(LigTk.Current[5], 1) = "W" 'Mode de Paiement
           LigTk.Current.Delete
         Else If Left(LigTk.Current[5], 2) = "RA" 'Rappel Accompte
           LigTk.Current.Delete
@@ -7668,13 +7710,17 @@ End
 
 
 
-Public Sub Ligtk_Delete()
+Public Sub Ligtk_Delete(Optional Need_Confirmation As Boolean = True)
 
   Dim Block, $Block As String
   Dim numl As Integer
+  Dim conf As Integer = 1
 
   If ColumnView1.count = 0 Then
-    If message.Question("Voulez-vous supprimer cette ligne ?\nLes lignes de remise sur total seront également supprimées.", "Oui", "Non") = 1 Then
+    If Need_Confirmation Then
+      Conf = Message.Question("Voulez-vous supprimer cette ligne ?\nLes lignes de remise sur total seront également supprimées.", "Oui", "Non")
+    Endif
+    If Conf = 1 Then
       Ligtk.MoveFirst()
       Repeat
         If LigTk.Item.Selected = True Then
@@ -7687,6 +7733,11 @@ Public Sub Ligtk_Delete()
               If Val(LigTk.Item[8]) = Val(Block) Then
                 If LigTk.Current[5] = "BL" Then
                   Utils.db.Exec("Update " & Cbase.Table("TabBl") & " set numtick = &1 where numbl = &2", Null, LigTk.Current[7])
+                Endif
+                If LigTk.Current[5] = "EZ" Then
+                  iAvoir = 0
+                  Nmc.Text = ""
+                  CliAv.Text = ""
                 Endif
                 LigTk.current.delete
                 Ligtk.MoveFirst()
@@ -8467,6 +8518,7 @@ Public Sub Echap_Click()
     Case "Nmc"
       Frame3.Visible = False
       iavoir = 0
+      icredit = 0
       Cart.SetFocus
       Zone = "Article"
 
