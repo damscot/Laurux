@@ -293,8 +293,8 @@ End
 Public Sub Form_Close()
 
   Button2_Click()
-  DocActif.Free_Lock("Parametres", "0")
   If b <> 1 Then
+    DocActif.Free_Lock("Parametres", "0")
     Me.Close
   Else
     Stop Event
