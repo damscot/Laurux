@@ -2195,10 +2195,10 @@ Public Sub Enrgbl()
                 Endif
               Endif
               Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigrecpt") & "(code,design,numrecpt,four,paht,frais,prvt,qte,pbht,rm, daterecpt, nligne, pattc) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11} , &{12} , &{13})", Colrcp.Item[1], Left$(Colrcp.Item[2], 30), Nbl.Text, four.Text, Colrcp.Item[5], Colrcp.Item[10 + $o], Colrcp.Item[9 + $o], Colrcp.Item[6 + $o], Colrcp.Item[3], Colrcp.Item[4], .Cdate_Dbase(datej.Text), Colrcp.Item[0], Colrcp.Item[11 + $o])
+              If Materiel And Gmateriel Then Enrgnum()
             Until Colrcp.Movenext()
             Utils.db.Exec("UNLOCK TABLES")
           Endif
-          If Materiel And Gmateriel Then Enrgnum()
           If $soption = "B" Or $soption = "T" Then
             $fcd.enrligne(nbl.Text)
             $bcrea = True
