@@ -1237,6 +1237,70 @@ Public Function lastday(dte As Date) As Integer
 
 End
 
+Public Function Next_Code(code As String, Optional max_length As Integer = 15) As String
+
+  Dim codenum As Integer
+  Dim i As Integer = 1
+  Dim last_code, carri As Integer
+  Dim codetext, codeout As String
+  
+  If Len(code) > 0 Then
+    
+    While i <= Len(code)
+      If IsInteger(Right(code, i)) Then
+        If Val(Right(code, i)) < 0 Then
+          Break
+        Endif
+      Else
+        Break
+      Endif
+      Inc i
+    Wend
+  
+    codetext = Mid(code, 1, Len(code) - i + 1) 
+    If i > 1 Then
+      codeout = codetext & Format(Val(Right(code, i - 1)) + 1, String$(Len(Right(code, i - 1)), "0")) 
+    Else
+      'Calcul en base 26
+      carri = 1
+      codeout = ""
+      While ((i <= Len(code)) And carri)
+        last_code = Asc(Mid(code, Len(code) - i + 1, 1))
+        If (last_code >= 65 And last_code < 90) Or (last_code >= 97 And last_code < 122) Then ' A-Z or a-z
+          last_code = last_code + carri
+          carri = 0
+        Else If last_code = 90 ' Z
+          last_code = 65 'Then A + next char carri
+          carri = 1
+        Else If last_code = 122 ' z
+          last_code = 97 'Then a + next char carri
+          carri = 1
+        Else
+          Break
+        Endif
+        codeout = Chr(last_code) & codeout
+        Inc i
+      Wend
+      If (i > 1 And carri = 1) Then 'propagation de retenue apres la boucle, on rajoute un caractère
+        codeout = "A" & codeout
+      Endif
+      codeout = Mid(code, 1, Len(code) - i + 1) & codeout
+      If codeout = code Then 'Impossible de créer un nouveau code on rajoute 1
+        codeout = code & "1"
+      Endif
+    Endif
+    
+    If (Len(codeout) > max_length) Then
+      Message.Warning("la génération de code est tronqué car la sortie dépasse la limite de " & max_length & " caractère(s)")
+    Endif
+    Return Left(codeout, max_length)
+    
+  Else
+    Return "1" 'initial code id
+  Endif
+
+End
+
 Public Function Option() As String
 
   Dim opt As String
