@@ -222,7 +222,7 @@ Public Sub Deb()
       Utils.Base(colmat, "select * from " & Tabmat & " where " & tri & " like  \"" & Prd & "%\" order by " & lpd & "")
     Else
       If Radiobutton2.Value Then
-        Utils.Base(colmat, "select * from " & Tabmat & " where " & tri & " like  \"" & Prd & "%\" and mat_qte > " & 0 & " order by " & lpd & "")
+        Utils.Base(colmat, "select * from " & Tabmat & " where " & tri & " like  \"" & Prd & "%\" and mat_vendu = " & 0 & " order by " & lpd & "")
       Endif
     Endif
   End With
@@ -319,7 +319,7 @@ Public Sub Deb4()
       Utils.Base(colmat, "select * from " & Tabmat & " where " & tri & " like  \"%" & sel & "%\" order by " & lpd & "")
     Else
       If Radiobutton2.Value Then
-        Utils.Base(colmat, "select * from " & Tabmat & " where " & tri & " like  \"%" & sel & "%\" AND mat_qte <= " & 0 & " order by " & lpd & "")
+        Utils.Base(colmat, "select * from " & Tabmat & " where " & tri & " like  \"%" & sel & "%\" AND mat_vendu = " & 0 & " order by " & lpd & "")
       Endif
     Endif
   End With
