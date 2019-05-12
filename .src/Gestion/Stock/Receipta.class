@@ -2636,9 +2636,9 @@ Public Sub Enrgcoml()
                       Endif
                     Endif
                     Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigrecpt") & "(code,design,numrecpt,four,daterecpt,qte,pbht,rm,paht,nligne, frais, prvt, pattc) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13})", Colrcp.Item[1], Colrcp.Item[2], numbl.Text, codefour.Text, .Cdate_Dbase(Datej.Text), Colrcp.Item[7], Colrcp.Item[4], Colrcp.Item[5], Colrcp.Item[6], Colrcp.Item[0], Colrcp.Item[11], Colrcp.Item[12], Colrcp.Item[15])
+                    If Materiel And Gmateriel Then Enrgnum()
                   Endif
                 Until Colrcp.Movenext()
-                If Materiel And Gmateriel Then Enrgnum()
                 If $soption = "B" Or $soption = "T" Then
                   $fcd.enrligne(numbl.Text)
                   win = New Window
