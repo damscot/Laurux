@@ -4,7 +4,7 @@
   MoveScaled(50.75,25,154,62)
   Font = Font["Serif,-1"]
   Background = Color.Background
-  Text = ("Historique des ventes")
+  Text = ("Statistiques et relevés détaillés")
   { ColumnView2 ColumnView
     MoveScaled(69,11,17,27)
     Visible = False
@@ -14,7 +14,7 @@
     Visible = False
   }
   { Panel1 Panel
-    MoveScaled(1,2,36,25)
+    MoveScaled(1,2,36,27)
     Border = Border.Plain
     { Label1 Label
       MoveScaled(1,1,34,3)
@@ -22,27 +22,69 @@
       Text = ("FICHIERS")
       Alignment = Align.Center
     }
-    { Checkbl CheckBox
-      MoveScaled(1,5,28,3)
+    { Label16 Label
+      MoveScaled(2,4,29,3)
+      Text = ("type de document:")
+      Alignment = Align.Left
+    }
+    { CheckPro CheckBox
+      MoveScaled(0.375,7,7,3)
+      ToolTip = ("Proforma")
       Expand = True
-      Text = ("BL et factures non archivées")
+      Text = ("Pro")
+    }
+    { CheckDev CheckBox
+      MoveScaled(7.25,7,7,3)
+      ToolTip = ("Devis")
+      Expand = True
+      Text = ("Dev")
+    }
+    { CheckCom CheckBox
+      MoveScaled(14.5,7,7,3)
+      ToolTip = ("Commandes")
+      Expand = True
+      Text = ("Com")
+    }
+    { CheckBl CheckBox
+      MoveScaled(22,7,7,3)
+      ToolTip = ("Bon de Livraison")
+      Expand = True
+      Text = ("BL")
       Value = CheckBox.True
     }
-    { Checkfac CheckBox
-      MoveScaled(1,9,26,1)
+    { CheckFac CheckBox
+      MoveScaled(29,7,7,3)
+      ToolTip = ("Factures et Factures fin de mois")
+      Expand = True
+      Text = ("Fac")
+      Value = CheckBox.True
+    }
+    { CheckDoc CheckBox
+      MoveScaled(1,10,28,3)
+      Expand = True
+      Text = ("Documents non archivées")
+      Value = CheckBox.True
+    }
+    { CheckFacA CheckBox
+      MoveScaled(1,17,26,1)
       Expand = True
       Text = ("Factures archivées")
       Value = CheckBox.True
     }
-    { Checkblm CheckBox
-      MoveScaled(1,13,36,4)
+    { CheckDocE CheckBox
+      MoveScaled(1,12,36,4)
       Expand = True
-      Text = ("BL et factures entretien non archivées")
+      Text = ("Documents entretien non archivées")
     }
-    { Checkfacm CheckBox
+    { CheckFacEA CheckBox
       MoveScaled(1,19,33,3)
       Expand = True
       Text = ("Factures entretien archivées")
+    }
+    { CheckTk CheckBox
+      MoveScaled(1,23,33,3)
+      Expand = True
+      Text = ("Ticket archivés")
     }
   }
   { Panel2 Panel
@@ -82,8 +124,8 @@
       }
     }
     { Checkca CheckBox
-      MoveScaled(2,19,19,2)
-      Text = ("Edition du CA")
+      MoveScaled(2,19,27,3)
+      Text = ("Edition du CA (HT)")
     }
     { Checkmarg CheckBox
       MoveScaled(2,24,22,3)
@@ -107,7 +149,6 @@
     { Cli TextReg
       MoveScaled(11,6,13,3)
       Text = ("41100001")
-      Editor.MaxLength = 8
     }
     { Butcli Button
       MoveScaled(25,6,4,4)
@@ -120,7 +161,6 @@
     { Cli2 TextReg
       MoveScaled(11,11,13,3)
       Text = ("41199999")
-      Editor.MaxLength = 8
     }
     { Label6 Label
       MoveScaled(1,11,10,3)
@@ -168,7 +208,6 @@
     { Textart TextReg
       MoveScaled(13,6,17,3)
       Text = ("000000000000000")
-      Editor.MaxLength = 15
     }
     { Buttonart Button butart
       Name = "Buttonart"
@@ -179,7 +218,6 @@
     { Textart1 TextReg
       MoveScaled(13,10,17,3)
       Text = ("ZZZZZZZZZZZZZZZ")
-      Editor.MaxLength = 15
     }
     { Buttonart1 Button butart
       Name = "Buttonart1"
@@ -222,7 +260,6 @@
     { Textfour TextReg
       MoveScaled(15,15,15,3)
       Text = ("40100001")
-      Editor.MaxLength = 8
     }
     { Button8 Button butfour
       Name = "Button8"
@@ -239,7 +276,6 @@
     { Textfour1 TextReg
       MoveScaled(15,19,15,3)
       Text = ("40199999")
-      Editor.MaxLength = 8
     }
     { Label15 Label
       MoveScaled(1,19,14,3)
