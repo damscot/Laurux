@@ -14,14 +14,22 @@ Private NbEnreg As Integer = 0 ' Enregistrement de départ de la sélection
 Private lg As Integer
 Private chkfocus As Boolean = True
 Private filter As String
+Private Obj As Object
 
 '************************************** Gestion des articles *****************************************************
-Public Sub _new(Barticle As Boolean, B2article As Boolean, TriArticle As String, sOrg As String, sFour As String, Centrale As String, Optional Dispo As Boolean = False, Optional Mat As Boolean = False)
+Public Sub _new(Barticle As Boolean, B2article As Boolean, TriArticle As String, sOrg As String, sFour As String, Centrale As String, Optional Dispo As Boolean = False, Optional Mat As Boolean = False, Optional ob As Object = Null)
 
   Utils.Observers(Me)
   lg = Int(Colart.height / colart.Rows.Height) - 1
   Me.Center
   Origine = sOrg
+  Obj = ob
+  If sOrg = "Me" Then
+    If Object.IsValid(Obj) Then
+      Object.SetProperty(Obj, "Bsel", False)
+      Object.SetProperty(Obj, "Bval", Null)
+    Endif
+  Endif
   If IsNull(sFour) Then CB2.Text = ""
   If Origine = "Commande" And If Not IsNull(sFour) Then
     CB2.Text = sFour
@@ -756,6 +764,12 @@ Public Sub colart_Click()
   Variables.ArtCode = colart[colart.row, 0].Text
 
   Select Case Origine
+
+    Case "Me"
+      If Object.IsValid(Obj) Then
+        Object.SetProperty(Obj, "Bsel", True)
+        Object.SetProperty(Obj, "Bval", colart[colart.row, 0].Text)
+      Endif
 
     Case "Facture"
       Variables.Bsel = True

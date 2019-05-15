@@ -6984,10 +6984,10 @@ Public Sub SelectionArt()
   Bsel = False
   sel = ""
   Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "Caisse", "", "")
+  MyForm = New TriArticles(True, "", Tri, "Me", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Cart.text = Codearticle
+    Cart.text = Bval
     Aff_Art()
   Else
     Cart.SetFocus
