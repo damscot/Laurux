@@ -13,6 +13,7 @@ Property GnT As Date  'Gambas Date (without Time) Object Propery
 Property D As String 'Database Date String Propery
 Property DT As String 'Database DateTime String Propery
 Property Read FinMois As LDate 'retourne le dernier jour du mois
+Property Read FinJour As LDate 'retourne la dernière seconde du meme jour
 
 Property Read EDeb As LDate 'Date Debut Exercice comprenant dte
 Property Read EFin As LDate 'Date Fin Exercice comprenant dte
@@ -398,6 +399,12 @@ End
 Sub FinMois_Read() As LDate
   
   Return Fin_Mois()
+  
+End
+
+Sub FinJour_Read() As LDate
+  
+  Return Fin_Jour()
   
 End
 
