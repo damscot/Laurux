@@ -2586,19 +2586,6 @@ End
 
 Public Sub Button52_Click()
 
-  If LigTk.Count <> 0 Then
-    Message.Info("L'annulation va supprimer toutes les lignes existantes")
-    LigTk.MoveFirst()
-    Repeat
-      LigTk.Item.Selected = True
-      Ligtk_Delete(False)
-      LigTk.MoveFirst()
-    Until Ligtk.MoveNext()
-  Endif
-  clicredit = ""
-  cliavoir = ""
-  iAvoir = 0
-  iCredit = 0
   Frame3.Visible = False
 
 End
@@ -3211,9 +3198,19 @@ Public Sub Valid_Credit()
         Credit.Visible = False
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
-          Ouv_Tiroir()
-          pointsF()
-          Button15.SetFocus
+          If Val(Utils.cpoint(Rticket.Text)) < 0 Then
+            If Message.Warning("Attention, Voulez-vous vraiment rendre la monnaie sur ce mode de règlement?\n\nSi non, vous devez modifier le montant de ce mode règlements pour solder uniquement le montant du ticket", "Non", "Oui") = 2 Then
+              Ouv_Tiroir()
+              pointsF()
+              Button15.SetFocus
+            Else
+              ColumnView1_Delete(False)
+            Endif
+          Else
+            Ouv_Tiroir()
+            pointsF()
+            Button15.SetFocus
+          Endif
         Else
           Inpm.SetFocus
         Endif
@@ -3314,9 +3311,19 @@ Public Sub Valid_Bachat()
         Bachat.Visible = False
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
-          Ouv_Tiroir()
-          pointsF()
-          Button15.SetFocus
+          If Val(Utils.cpoint(Rticket.Text)) < 0 Then
+            If Message.Warning("Attention, Voulez-vous vraiment rendre la monnaie sur ce mode de règlement?\n\nSi non, vous devez modifier le montant de ce mode règlements pour solder uniquement le montant du ticket", "Non", "Oui") = 2 Then
+              Ouv_Tiroir()
+              pointsF()
+              Button15.SetFocus
+            Else
+              ColumnView1_Delete(False)
+            Endif
+          Else
+            Ouv_Tiroir()
+            pointsF()
+            Button15.SetFocus
+          Endif
         Else
           Inpm.SetFocus
         Endif
@@ -3456,7 +3463,7 @@ Public Sub Valid_Bavoir()
       Bavoir.Select
       Zone = "Bavoir"
     Else
-      If Val(Bavoir.Text) > 0 And Val(Rticket.Text) > 0 Then
+      If Val(Bavoir.Text) > 0 Then
         Bavoir.Text = Format$(Val(Bavoir.Text), "0.00")
         mavoir = Val(Bavoir.Text)
       
@@ -3599,7 +3606,7 @@ Public Sub Valid_Chequecad()
       Chequecad.Select
       Zone = "Chequecad"
     Else
-      If Val(Chequecad.Text) <> 0 And Val(Rticket.Text) > 0 Then
+      If Val(Chequecad.Text) <> 0 Then
         Chequecad.Text = Format$(Val(Chequecad.Text), "0.00")
         Calc_reste(Chequecad.text)
         Try ColumnView1.Add("Y", "Y")
@@ -3624,9 +3631,19 @@ Public Sub Valid_Chequecad()
         Chequecad.Visible = False
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
-          Ouv_Tiroir()
-          pointsF()
-          Button15.SetFocus
+          If Val(Utils.cpoint(Rticket.Text)) < 0 Then
+            If Message.Warning("Attention, Voulez-vous vraiment rendre la monnaie sur ce mode de règlement?\n\nSi non, vous devez modifier le montant de ce mode règlements pour solder uniquement le montant du ticket", "Non", "Oui") = 2 Then
+              Ouv_Tiroir()
+              pointsF()
+              Button15.SetFocus
+            Else
+              ColumnView1_Delete(False)
+            Endif
+          Else
+            Ouv_Tiroir()
+            pointsF()
+            Button15.SetFocus
+          Endif
         Else
           Inpm.SetFocus
         Endif
@@ -3720,9 +3737,19 @@ Public Sub Valid_Breduc()
         Breduc.Visible = False
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
-          Ouv_Tiroir()
-          pointsF()
-          Button15.SetFocus
+          If Val(Utils.cpoint(Rticket.Text)) < 0 Then
+            If Message.Warning("Attention, Voulez-vous vraiment rendre la monnaie sur ce mode de règlement?\n\nSi non, vous devez modifier le montant de ce mode règlements pour solder uniquement le montant du ticket", "Non", "Oui") = 2 Then
+              Ouv_Tiroir()
+              pointsF()
+              Button15.SetFocus
+            Else
+              ColumnView1_Delete(False)
+            Endif
+          Else
+            Ouv_Tiroir()
+            pointsF()
+            Button15.SetFocus
+          Endif
         Else
           Inpm.SetFocus
         Endif
@@ -3739,7 +3766,7 @@ Public Sub Button53_Click()
 
   init_paiement()
   Tresto.visible = True
-  Tresto.text = "0,00"
+  Tresto.text = Rticket.Text
   Tresto.SetFocus
   Tresto.Select
   Zone = "Tresto"
@@ -3793,9 +3820,7 @@ Public Sub Valid_Tresto()
     Else
       If Val(Tresto.Text) <> 0 Then
         Tresto.Text = Format$(Val(Tresto.Text), "0.00")
-        Rticket.text = Val(Utils.cpoint(Rticket.text)) - Val(Utils.cpoint(Tresto.Text))
-        If Val(Utils.cpoint(Rticket.Text)) < 0 Then Rticket.Text = "0.00"
-        Rticket.Text = Format$(Rticket.Text, "0.00")
+        Calc_reste(Tresto.Text)
         Try ColumnView1.Add("1", "1")
         If Not Error Then
           ColumnView1.Item[0] = "1"
@@ -3818,9 +3843,19 @@ Public Sub Valid_Tresto()
         Tresto.Visible = False
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
-          Ouv_Tiroir()
-          pointsF()
-          Button15.SetFocus
+          If Val(Utils.cpoint(Rticket.Text)) < 0 Then
+            If Message.Warning("Attention, Voulez-vous vraiment rendre la monnaie sur ce mode de règlement?\n\nSi non, vous devez modifier le montant de ce mode règlements pour solder uniquement le montant du ticket", "Non", "Oui") = 2 Then
+              Ouv_Tiroir()
+              pointsF()
+              Button15.SetFocus
+            Else
+              ColumnView1_Delete(False)
+            Endif
+          Else
+            Ouv_Tiroir()
+            pointsF()
+            Button15.SetFocus
+          Endif
         Else
           Inpm.SetFocus
         Endif
@@ -3899,7 +3934,7 @@ Public Sub Valid_Bonus()
       Bonus.Select
       Zone = "Bonus"
     Else
-      If Val(Bonus.Text) <> 0 And Val(Rticket.Text) > 0 Then
+      If Val(Bonus.Text) <> 0 Then
         Bonus.Text = Format$(Val(Bonus.Text), "0.00")
         Calc_reste(Bonus.text)
         Try ColumnView1.Add("B", "B")
@@ -3925,9 +3960,19 @@ Public Sub Valid_Bonus()
         Bonus.Visible = False
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
-          Ouv_Tiroir()
-          pointsF()
-          Button15.SetFocus
+          If Val(Utils.cpoint(Rticket.Text)) < 0 Then
+            If Message.Warning("Attention, Voulez-vous vraiment rendre la monnaie sur ce mode de règlement?\n\nSi non, vous devez modifier le montant de ce mode règlements pour solder uniquement le montant du ticket", "Non", "Oui") = 2 Then
+              Ouv_Tiroir()
+              pointsF()
+              Button15.SetFocus
+            Else
+              ColumnView1_Delete(False)
+            Endif
+          Else
+            Ouv_Tiroir()
+            pointsF()
+            Button15.SetFocus
+          Endif
         Else
           Inpm.SetFocus
         Endif
@@ -4183,7 +4228,7 @@ Public Sub Valid_Bacompte()
       Bacompte.Select
       Zone = "Bacompte"
     Else
-      If Val(Bacompte.Text) > 0 And Val(Rticket.Text) > 0 Then
+      If Val(Bacompte.Text) > 0 Then
         Bacompte.Text = Format$(Val(Bacompte.Text), "0.00")
         macompte = Val(Bacompte.Text)
         rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAcomptes") & " WHERE lind = &1", lindacompte)
@@ -5628,7 +5673,7 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim sespeces As String
   Dim smespeces As String
   Dim sreduc As String
-  Dim smreduc As String
+  Dim smreduc As String = "0"
   Dim scarte As String
   Dim smcarte, smcarte2 As String = "0"
   Dim nmcarte As String
@@ -5636,19 +5681,19 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim smcheque, tcheque As String = "0"
   Dim nmcheque As String
   Dim scredit As String
-  Dim smcredit As String
+  Dim smcredit As String = "0"
   Dim scavoir As String
   Dim smavoir As String = "0"
   Dim smacompte As String = "0"
   Dim sachat As String
-  Dim smachat As String
+  Dim smachat As String = "0"
   Dim schequecad As String
-  Dim smchequecad As String
+  Dim smchequecad As String = "0"
   Dim sbonus As String
-  Dim smbonus As String
+  Dim smbonus As String = "0"
   Dim nmbonus As String
   Dim sresto As String
-  Dim smresto As String
+  Dim smresto As String = "0"
   Dim smht As String
   Dim smtva As String
   Dim smttc As String
@@ -5685,6 +5730,8 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   rResult = Utils.db.Exec("select * FROM Fiches_EntTicketz where caisse = &1 and numero = &2", Ncaisse, numero_tk)
   If rResult.Available Then
     Message.Warning("Ticket " & numero_tk & " déjà présent dans la ticketz!\nCeci ne devrait pas arriver, enregistrement impossible!")
+    'on libere le numero de ticket en erreur pour autoriser la creation d'un nouveau numero
+    Utils.db.Exec("Update " & Cbase.Table("TabCaisses") & " set cutk = &1 where code = &2", Null, Ncaisse)
     Goto Label_Cleanup
   Endif
   
@@ -5725,13 +5772,13 @@ Public Sub Enrg_Tk(Supprime As Boolean)
           tcheque = Val(.cpoint(tcheque)) + Val(.cpoint(smcheque))
         Else If LigTk.Item[5] = "W" Then
           scredit = "W"
-          smcredit = LigTk.Item[3]
+          smcredit = Format(Val(Utils.cpoint(smcredit)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "X" Then
           sachat = "X"
-          smachat = LigTk.Item[3]
+          smachat = Format(Val(Utils.cpoint(smachat)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "Y" Then
           schequecad = "Y"
-          smchequecad = LigTk.Item[3]
+          smchequecad = Format(Val(Utils.cpoint(smchequecad)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "Z" Then
           'avoir utilisé en caisse
           scavoir = "Z"
@@ -5757,13 +5804,13 @@ Public Sub Enrg_Tk(Supprime As Boolean)
         Else If LigTk.Item[5] = "B" Then
           sbonus = "B"
           nmbonus = LigTk.Item[2]
-          smbonus = LigTk.Item[3]
+          smbonus = Format(Val(Utils.cpoint(smbonus)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "E" Then
           sreduc = "E"
-          smreduc = LigTk.Item[3]
+          smreduc = Format(Val(Utils.cpoint(smreduc)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "1" Then
           sresto = "1"
-          smresto = LigTk.Item[3]
+          smresto = Format(Val(Utils.cpoint(smresto)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "EA" Then ' pour les acomptes encaissé
           smacompte = LigTk.Item[3]
           Maj_Acomptes(LigTk.Item[1], LigTk.Item[2], smacompte, "Caisse", numero_tk)
@@ -6637,11 +6684,11 @@ Public Sub Ticketz()
         Tkz = 1
         If Imprimante = "DéfautA4" Or If Imprimante = "Défaut80" Then
           Defaut_Ticketxz(sIntitule, True)
-          Dupli()
+          Dupli(rtx!numero)
         Else
           Serial_Ticketxz(sIntitule, "z")
           Defaut_Ticketxz(sIntitule, False)
-          Dupli()
+          Dupli(rtx!numero)
         Endif
         If sDon Then
           If Start.son Then
@@ -6732,7 +6779,7 @@ Public Sub DupliZ(Zfile As String)
       Message.Error("Problème lors de la création d'un répertoire\nMerci de créer manuellement un répertoire nommé :  " & Chemin)
     Endif
     Shell "cd " & User.Home & "" Wait
-    Shell "cp " & Zfile & " " & chemin & "/" & "Ticket.pdf" & Format$(Now, "ddmmyyyy-hh-nn") Wait
+    Shell "cp " & Zfile & " " & chemin & "/" & "TicketZ_" & Format$(Now, "yyyymmdd-hhnnss") & ".pdf" Wait
     Wait 0.5
   Endif
 
@@ -6954,7 +7001,7 @@ Public Sub Serial_Ticketxz(sintitule As String, origine As String)
 
 End
 
-Public Sub Dupli()
+Public Sub Dupli(numero As String)
 
   Dim chemin As String
 
@@ -6965,7 +7012,7 @@ Public Sub Dupli()
   Chemin = Chemin & "/" & Format$(Now, "mm")
   If Not Exist(chemin) Then Try Mkdir chemin
   Shell "cp " & User.home & "/" & "Ticket.pdf" & " " & chemin Wait
-  Shell "mv " & chemin & "/" & "Ticket.pdf " & chemin & "/" & "Ticket" & Format(Now, "yyyymmddhhnnss") & ".pdf" Wait
+  Shell "mv " & chemin & "/" & "Ticket.pdf " & chemin & "/" & "Ticket_" & numero & "_" & Format(Now, "yyyymmdd-hhnnss") & ".pdf" Wait
 
 End
 
@@ -7544,7 +7591,7 @@ Public Sub Delete_Reglements_Tk()
           'on ne fait rien sinon "BL" pourrait ci-dessous pris pour une ligne de total de type "B"
         Else If Left(LigTk.Current[5], 1) = "B" Or Left(LigTk.Current[5], 1) = "L" 'Total Ticket
           LigTk.Current.Delete
-        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" Or Left(LigTk.Current[5], 1) = "Z" Or Left(LigTk.Current[5], 1) = "W" 'Mode de Paiement
+        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" Or Left(LigTk.Current[5], 1) = "Z" Or Left(LigTk.Current[5], 1) = "W" Or Left(LigTk.Current[5], 1) = "X" Or Left(LigTk.Current[5], 1) = "Y" Or Left(LigTk.Current[5], 1) = "I" Or Left(LigTk.Current[5], 1) = "E" Or Left(LigTk.Current[5], 1) = "B" Or Left(LigTk.Current[5], 1) = "1" 'Mode de Paiement
           LigTk.Current.Delete
         Else If Left(LigTk.Current[5], 2) = "RA" 'Rappel Accompte
           LigTk.Current.Delete
@@ -7573,35 +7620,40 @@ Public Sub ColumnView1_Activate()
 
 End
 
-Public Sub ColumnView1_Delete()
+Public Sub ColumnView1_Delete(Optional Confirm As Boolean = True)
 
   Dim numl As Integer
 
   If ColumnView1.count > 0 Then
-    If message.Question("Voulez-vous supprimer les lignes de règlements ?", "Oui", "Non") = 1 Then
-      Delete_Reglements_Tk()
-      lindacompte = ""
-      lindavoir = ""
-      ColumnView1.MoveFirst()
-      For numl = 0 To ColumnView1.count - 1
-        Try ColumnView1.item.Selected = True
-        Try ColumnView1.MoveNext()
-        If Not Error Then
-          If ColumnView1.Current[0] = "RA" 
-            'on libere le lock sur le document d'acompte
-            DocActif.Free_Lock("Acomptes", ColumnView1.Current[5])
-          Else If ColumnView1.Current[0] = "Z" 
-            'on libere le lock sur le document d'acompte
-            DocActif.Free_Lock("Avoirs", ColumnView1.Current[5])
-          Endif
-          ColumnView1.Current.Delete
-        Endif
-      Next
-      ColumnView1.Clear
-      Rticket.text = Mticket.Text
-      TextLabel5.Text = "Reste à payer :"
-      inpm.SetFocus()
+    
+    If Confirm = True Then
+      If message.Question("Voulez-vous supprimer les lignes de règlements ?", "Oui", "Non") = 2 Then
+        Return
+      Endif
     Endif
+    
+    Delete_Reglements_Tk()
+    lindacompte = ""
+    lindavoir = ""
+    ColumnView1.MoveFirst()
+    For numl = 0 To ColumnView1.count - 1
+      Try ColumnView1.item.Selected = True
+      Try ColumnView1.MoveNext()
+      If Not Error Then
+        If ColumnView1.Current[0] = "RA" 
+          'on libere le lock sur le document d'acompte
+          DocActif.Free_Lock("Acomptes", ColumnView1.Current[5])
+        Else If ColumnView1.Current[0] = "Z" 
+          'on libere le lock sur le document d'acompte
+          DocActif.Free_Lock("Avoirs", ColumnView1.Current[5])
+        Endif
+        ColumnView1.Current.Delete
+      Endif
+    Next
+    ColumnView1.Clear
+    Rticket.text = Mticket.Text
+    TextLabel5.Text = "Reste à payer :"
+    inpm.SetFocus()
   Endif
 
 End
