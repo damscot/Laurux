@@ -1076,7 +1076,7 @@ Public Sub Moulinage()
               resto = ""
             Endif
             bretro = rtck!retro
-            Utils.db.Exec("INSERT INTO " & Cbase.Table("TabHisEntTck") & " (caisse, numero, date, client, scheque, mcheque, scarte, mcarte, sespeces, mespeces, scredit, mcredit, mht, mtva, mttc, savoir, scavoir, mavoir, vendeur, carte, points, sresto, mresto, nom, suppr, control, type, retro, prev_numero) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21}, &{22}, &{23}, &{24}, &{25}, &{26}, &{27}, &{28}, &{29})", rtck!caisse, rtck!numero, rtck!date, rtck!client, rtck!scheque, rtck!mcheque, rtck!scarte, rtck!mcarte, rtck!sespeces, rtck!mespeces, rtck!scredit, rtck!mcredit, rtck!mht, rtck!mtva, rtck!mttc, rtck!savoir, rtck!scavoir, rtck!mavoir, rtck!vendeur, rtck!carte, rtck!points, rtck!sresto, rtck!mresto, rtck!nom, rtck!suppr, rtck!control, rtck!type, rtck!retro, rtck!prev_numero)
+            Utils.db.Exec("INSERT INTO " & Cbase.Table("TabHisEntTck") & " (caisse, numero, date, client, scheque, mcheque, scarte, mcarte, sespeces, mespeces, scredit, mcredit, nmcredit, sbachat, mbachat, mht, mtva, mttc, savoir, scavoir, mavoir, vendeur, carte, points, sresto, mresto, nom, suppr, control, type, retro, prev_numero) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21}, &{22}, &{23}, &{24}, &{25}, &{26}, &{27}, &{28}, &{29}, &{30}, &{31}, &{32})", rtck!caisse, rtck!numero, rtck!date, rtck!client, rtck!scheque, rtck!mcheque, rtck!scarte, rtck!mcarte, rtck!sespeces, rtck!mespeces, rtck!scredit, rtck!mcredit, rtck!nmcredit, rtck!sbachat, rtck!mbachat, rtck!mht, rtck!mtva, rtck!mttc, rtck!savoir, rtck!scavoir, rtck!mavoir, rtck!vendeur, rtck!carte, rtck!points, rtck!sresto, rtck!mresto, rtck!nom, rtck!suppr, rtck!control, rtck!type, rtck!retro, rtck!prev_numero)
             If Jnl Then
               ' On gère d'abord les clients caisse
               If rTck!type = "0" Then
@@ -1446,6 +1446,7 @@ Public Sub Controle_Moulinage() As Boolean
   Dim montant As String
   Dim acompte As String
   Dim avoir As String
+  Dim credit As String
   Dim Datec As Date
   Dim code As String
   Dim totalht As Float
@@ -1702,6 +1703,7 @@ Public Sub Controle_Moulinage() As Boolean
       montant = 0
       acompte = 0
       avoir = 0
+      credit = 0
       nbMoulinage = rResult.Count
       
       rTck = Utils.db.Exec("SELECT * From " & Cbase.Table("TabHisFac") & " where left(datefac, 10) = &1 and cdclifac = &2", Format$(DateChooser1.Value, "yyyy-mm-dd"), client)
@@ -1713,7 +1715,7 @@ Public Sub Controle_Moulinage() As Boolean
         Return False
       Endif
       
-      'On recupère les ecritures de ventes et les encaissement clients (caisse et acompte)
+      'On recupère les ecritures de ventes et les encaissement clients (caisse et acompte/avoir/credit)
       rResult = Utils.db.Exec("Select compte, numero, intitule, SUM(montantd) as montantd, SUM(montantc) as montantc, COUNT(*) as cnt From Fiches_Mvt where jour = &1 and dte = &2 and intitule != &3 and libelle like &4 and collectif is null and tresorerie = 0 group by compte", Jnl, Format$(DateChooser1.Value, "yyyy-mm-dd"), "Reglement BL Caisse", "Caisse du " & Format$(DateChooser1.Value, "dd.mm.yyyy") & "%")
       Repeat
         If Left(rResult!compte, 3) = "411"
@@ -1722,6 +1724,8 @@ Public Sub Controle_Moulinage() As Boolean
           acompte = acompte + (Val(.cpoint(rResult!montantd)) - Val(.cpoint(rResult!montantc)))
         Else If Left(rResult!compte, 4) = "4197"
           avoir = avoir + (Val(.cpoint(rResult!montantd)) - Val(.cpoint(rResult!montantc)))
+        Else If Left(rResult!compte, 4) = "4687"
+          credit = credit + (Val(.cpoint(rResult!montantd)) - Val(.cpoint(rResult!montantc)))
         Else
           'On ne fait rien
         Endif
@@ -1731,7 +1735,7 @@ Public Sub Controle_Moulinage() As Boolean
       rVent = Utils.db.Exec("SELECT * From Totalisation where compte = &1", client)
       If rVent.Available Then
         totalttc = Val(.cpoint(rVent!totalttc))
-        solde = Round(montant + acompte + avoir - totalttc, -2) 'on ajoute les acomptes au clients caisse
+        solde = Round(montant + acompte + avoir + credit - totalttc, -2) 'on ajoute les acomptes/avoir/crédit au clients caisse
         If (solde <> 0) Then
           If Message.Warning("Une différente de " & solde & " apparait entre les \nencaissement et les ventilations ( " & nbMoulinage & " moulinage sur la journée )\nVoulez-vous créer une ecriture de vente à affecter au compte d'erreur 707999", "Oui", "Non") = 1 Then
             ' On verifie que les deux comptes d'erreur existent
@@ -1784,7 +1788,7 @@ Public Sub Controle_Moulinage() As Boolean
             rResult = Utils.db.Exec("Select compte, numero, SUM(montantd) as montantd, SUM(montantc) as montantc From Fiches_Mvt where jour = &1 and dte = &2 and compte = &3 and intitule != &4 and libelle like &5 and collectif is null and tresorerie = 0 group by compte", Jnl, Format$(DateChooser1.Value, "yyyy-mm-dd"), rVent!compte, "Reglement BL Caisse", "Caisse du " & Format$(DateChooser1.Value, "dd.mm.yyyy") & "%")
             If rResult.Available Then
               If rVent!compte = client Then
-                totalttc = Val(.cpoint(rVent!totalttc)) - Val(.cpoint(acompte)) - Val(.cpoint(avoir)) 'on deduit les acomptes au total de ventes
+                totalttc = Val(.cpoint(rVent!totalttc)) - Val(.cpoint(acompte)) - Val(.cpoint(avoir)) - Val(.cpoint(credit)) 'on deduit les acomptes/avoirs/credit au total de ventes
                 montant = Val(.cpoint(rResult!montantc)) - Val(.cpoint(rResult!montantd))
                 Solde = Round(totalttc + montant, -2)
                 verif = Round(verif - Solde, -2)
@@ -2526,6 +2530,73 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
       Endif
     Until hResult.MoveNext()
   Endif
+  
+  ' On fait le total des bonus
+  MtTot = 0
+  hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabEntTck") & " where sbonus = &1 and statut = &2", "B", "V")
+  If hResult.Available Then
+    Repeat
+      If LDate(hResult!date).GnT = DateChooser1.Value Then
+        Cptcli = hresult!client
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", hResult!client)
+        Nom = rresult!intitule_cc
+        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where compte = &1 and type = &2", Client, "B")
+        SldTot = SldTot - Val(utils.cpoint(hResult!mbonus))
+        If rresult.Available Then
+          MtTot = Val(Utils.cpoint(rResult!montant)) + Val(utils.cpoint(hResult!mbonus))
+          Utils.db.Exec("UPDATE " & Tab & " set montant = &3, intitule = &4 Where compte = &1 and type = &2", Client, "B", MtTot, nom)
+        Else
+          Utils.db.Exec("INSERT INTO " & Tab & "(compte, type, montant, intitule) VALUES (&1, &2, &3, &4)", Client, "B", Val(Utils.cpoint(hResult!mbonus)), nom)
+        Endif
+        Csolde.Solde_caisse(Client)
+      Endif
+    Until hResult.MoveNext()
+  Endif
+
+  ' On fait le total des bon d'achat
+  MtTot = 0
+  hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabEntTck") & " where sbachat = &1 and statut = &2", "X", "V")
+  If hResult.Available Then
+    Repeat
+      If LDate(hResult!date).GnT = DateChooser1.Value Then
+        Cptcli = hresult!client
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", hResult!client)
+        Nom = rresult!intitule_cc
+        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where compte = &1 and type = &2", Client, "X")
+        SldTot = SldTot - Val(utils.cpoint(hResult!mbachat))
+        If rresult.Available Then
+          MtTot = Val(Utils.cpoint(rResult!montant)) + Val(utils.cpoint(hResult!mbachat))
+          Utils.db.Exec("UPDATE " & Tab & " set montant = &3, intitule = &4 Where compte = &1 and type = &2", Client, "X", MtTot, nom)
+        Else
+          Utils.db.Exec("INSERT INTO " & Tab & "(compte, type, montant, intitule) VALUES (&1, &2, &3, &4)", Client, "X", Val(Utils.cpoint(hResult!mbachat)), nom)
+        Endif
+        Csolde.Solde_caisse(Client)
+      Endif
+    Until hResult.MoveNext()
+  Endif
+  
+  ' On fait le total des tickets restaurant
+  MtTot = 0
+  hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabEntTck") & " where sresto = &1 and statut = &2", "1", "V")
+  If hResult.Available Then
+    Repeat
+      If LDate(hResult!date).GnT = DateChooser1.Value Then
+        Cptcli = hresult!client
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", hResult!client)
+        Nom = rresult!intitule_cc
+        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where compte = &1 and type = &2", Client, "1")
+        SldTot = SldTot - Val(utils.cpoint(hResult!mresto))
+        If rresult.Available Then
+          MtTot = Val(Utils.cpoint(rResult!montant)) + Val(utils.cpoint(hResult!mresto))
+          Utils.db.Exec("UPDATE " & Tab & " set montant = &3, intitule = &4 Where compte = &1 and type = &2", Client, "1", MtTot, nom)
+        Else
+          Utils.db.Exec("INSERT INTO " & Tab & "(compte, type, montant, intitule) VALUES (&1, &2, &3, &4)", Client, "1", Val(Utils.cpoint(hResult!mresto)), nom)
+        Endif
+        Csolde.Solde_caisse(Client)
+      Endif
+    Until hResult.MoveNext()
+  Endif
+
 
   ' On génère l'écriture de trésorerie pour les especes
   hResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
@@ -2540,16 +2611,12 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
     Repeat
       If Val(Utils.cpoint(hResult!montant)) > 0 Then
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, CptCaisse, "Espèces", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
       Else
         Mtd = hResult!montant
         Mtd = Abs(Mtd)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, Mtd, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, CptCaisse, "Espèces", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, Mtd, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
       Endif
       Csolde.Solde_caisse(Client)
       Csolde.Solde_caisse(CptCaisse)
@@ -2565,16 +2632,12 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
       Repeat
         If Val(Utils.cpoint(hResult!montant)) > 0 Then
           Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-          Sha1Calc.CalcSha1("Fiches_Mvt", numr)
           Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Vichq, "Virements internes chèques", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-          Sha1Calc.CalcSha1("Fiches_Mvt", numr)
         Else
           Mtd = hResult!montant
           Mtd = Abs(Mtd)
           Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-          Sha1Calc.CalcSha1("Fiches_Mvt", numr)
           Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Vichq, "Virements internes chèques", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 1, 1, 0, 1, Utils.Cdate_Dbase(Datem), numr2)
-          Sha1Calc.CalcSha1("Fiches_Mvt", numr)
         Endif
         Csolde.Solde_caisse(Client)
         Csolde.Solde_caisse(Vichq)
@@ -2591,22 +2654,84 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
     Repeat
       If Val(Utils.cpoint(hResult!montant)) > 0 Then
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Vic, "Virements internes cartes", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
       Else
         Mtd = hResult!montant
         Mtd = Abs(Mtd)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Vic, "Virements internes cartes", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-        Sha1Calc.CalcSha1("Fiches_Mvt", numr)
       Endif
       Csolde.Solde_caisse(Client)
       Csolde.Solde_caisse(Vic)
       Maj_Collectif(cptcli, hResult!intitule, libel, hResult!montant)
     Until hresult.MoveNext()
   Endif
+  
+  ' On génère l'écriture de trésorerie pour les bonus
+  hResult = Utils.db.Exec("SELECT * FROM " & Tab & " where type = &1", "B")
+  If hresult.Available Then
+    Cptcli = hResult!compte
+    Libel = "Bonus caisse " & Datem
+    Repeat
+      If Val(Utils.cpoint(hResult!montant)) > 0 Then
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Viautre, "Virements internes bonus", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Else
+        Mtd = hResult!montant
+        Mtd = Abs(Mtd)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Viautre, "Virements internes bonus", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Endif
+      Csolde.Solde_caisse(Client)
+      Csolde.Solde_caisse(Viautre)
+      Maj_Collectif(cptcli, hResult!intitule, libel, hResult!montant)
+    Until hresult.MoveNext()
+  Endif
+
+  ' On génère l'écriture de trésorerie pour les bons d'achat
+  hResult = Utils.db.Exec("SELECT * FROM " & Tab & " where type = &1", "X")
+  If hresult.Available Then
+    Cptcli = hResult!compte
+    Libel = "Bon achat caisse " & Datem
+    Repeat
+      If Val(Utils.cpoint(hResult!montant)) > 0 Then
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Viautre, "Virements internes bon achat", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Else
+        Mtd = hResult!montant
+        Mtd = Abs(Mtd)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Viautre, "Virements internes bon achat", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Endif
+      Csolde.Solde_caisse(Client)
+      Csolde.Solde_caisse(Viautre)
+      Maj_Collectif(cptcli, hResult!intitule, libel, hResult!montant)
+    Until hresult.MoveNext()
+  Endif
+
+  ' On génère l'écriture de trésorerie pour les tickets restaurant/entreprise
+  hResult = Utils.db.Exec("SELECT * FROM " & Tab & " where type = &1", "1")
+  If hresult.Available Then
+    Cptcli = hResult!compte
+    Libel = "Cheque entreprise caisse " & Datem
+    Repeat
+      If Val(Utils.cpoint(hResult!montant)) > 0 Then
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Viautre, "Virements internes cheque entreprise", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Else
+        Mtd = hResult!montant
+        Mtd = Abs(Mtd)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Viautre, "Virements internes cheque entreprise", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Endif
+      Csolde.Solde_caisse(Client)
+      Csolde.Solde_caisse(Viautre)
+      Maj_Collectif(cptcli, hResult!intitule, libel, hResult!montant)
+    Until hresult.MoveNext()
+  Endif
+  
+  Sha1Calc.CalcSha1("Fiches_Mvt", numr)
+  
   If Round(SldTot, -3) <> 0 Then
     Message.Warning("Une erreur de moulinage importante est survenu!\nLa comparaison de la caisse et des règlements donne un solde de\n" & CStr(Round(SldTot, -3)) & "\nVeuillez corriger manuellement l'ecriture " & numr & ".")
   Endif
