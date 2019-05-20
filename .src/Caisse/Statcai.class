@@ -61,6 +61,8 @@ Public Sub _New()
     .Columns[12].Alignment = 3
     .Columns[12].Width = TextBox13.Width
   End With
+  
+  DateBox1.Value = Now
 
 End
 
@@ -84,16 +86,17 @@ Public Sub Recup_ca()
   Dim rCai As Result
   Dim rTot As Result
   Dim Tab As String
-  Dim Tab2 As String
+  Dim Tab2, Tab3 As String
   Dim Totl As Float = 0
   Dim Ncaisse As String
+  Dim heure As Integer
 
   Tab = "Total"
   ' on efface le fichier des totalisations
   Utils.db.Exec("drop Table IF exists " & Tab & "")
   ' puis on recréé
   Utils.db.EXEC("CREATE TABLE " & Tab &
-    "(heure Char(5) NOT NULL," &
+    "(heure int NOT NULL," &
     "ca decimal(12,2)," &
     "ncai Char(2)," &
     "PRIMARY KEY (heure, ncai))" & Utils.db.Engine())
@@ -101,16 +104,23 @@ Public Sub Recup_ca()
   If rResult.Available Then
     Repeat
       Ncaisse = rResult!code
-      Tab2 = "Fiches_EntTickets" & rResult!code
-      rCai = Utils.db.Exec("SELECT * FROM " & Tab2 & " where caisse = &1 ", Ncaisse)
+      Tab2 = "Fiches_EntTicketz"
+      Tab3 = "Fiches_HisEntTickets" 
+      rCai = Utils.db.Exec("SELECT sum(cast(REPLACE(mht,',','.') as decimal(11,2))) as ca, HOUR(date) as heure FROM " & Tab2 & " where caisse = &1 and statut IN(&2) and date BETWEEN &3 AND &4 and suppr != 1 group by HOUR(date) union SELECT sum(cast(REPLACE(mht,',','.') as decimal(11,2))) as ca, HOUR(date) as heure FROM " & Tab3 & " where caisse = &1 and date BETWEEN &3 AND &4 and suppr != 1 group by HOUR(date)", Ncaisse, "\"V\",\"0\"", LDate(DateBox1.Value).DT, LDate(DateBox1.Value).FinJour.DT)
       If rCai.Available Then
         Repeat
-          rTot = Utils.db.Exec("SELECT * FROM " & Tab & " where ncai = &1 and heure = &2", Ncaisse, Mid$(rCai!date, 13, 2))
-          If rTot.Available Then
-            Totl = rTot!ca + Val(Utils.cpoint(rCai!mht))
-            Utils.db.Exec("UPDATE  " & Tab & "  SET ca = &2 WHERE ncai = &1 and heure = &3", Ncaisse, Totl, Mid$(rCai!date, 13, 2))
+          heure = rCai!heure
+          If heure < 8 Then
+            heure = 8 
           Else
-            Utils.db.Exec("INSERT INTO " & Tab & "(heure, ca, ncai) VALUES (&1, &2, &3)", Mid$(rCai!date, 13, 2), Val(Utils.cpoint(rCai!mht)), Ncaisse)
+            If heure > 19 Then heure = 19
+          Endif
+          rTot = Utils.db.Exec("SELECT * FROM " & Tab & " where ncai = &1 and heure = &2", Ncaisse, heure)
+          If rTot.Available Then
+            Totl = rTot!ca + Val(Utils.cpoint(rCai!ca))
+            Utils.db.Exec("UPDATE  " & Tab & "  SET ca = &2 WHERE ncai = &1 and heure = &3", Ncaisse, Totl, heure)
+          Else
+            Utils.db.Exec("INSERT INTO " & Tab & "(heure, ca, ncai) VALUES (&1, &2, &3)", heure, Val(Utils.cpoint(rCai!ca)), Ncaisse)
           Endif
           Totl = 0
         Until rCai.MoveNext()
@@ -145,31 +155,32 @@ Public Sub Traitement()
       Repeat
         If rResult!ncai <> Ncaisse Then .Add(rResult!ncai & rResult!heure, rResult!ncai)
         Vah = Format$(rResult!ca, "0.00")
+        If IsNull(vah) Then Vah = " "
+        
         Select Case rResult!heure
-          Case "08"
+          Case 8
             .Item[1] = Vah
-            If IsNull(vah) Then .Item[0] = " "
-          Case "09"
+          Case 9
             .Item[2] = Vah
-          Case "10"
+          Case 10
             .Item[3] = Vah
-          Case "11"
+          Case 11
             .Item[4] = Vah
-          Case "12"
+          Case 12
             .Item[5] = Vah
-          Case "13"
+          Case 13
             .Item[6] = Vah
-          Case "14"
+          Case 14
             .Item[7] = Vah
-          Case "15"
+          Case 15
             .Item[8] = Vah
-          Case "16"
+          Case 16
             .Item[9] = Vah
-          Case "17"
+          Case 17
             .Item[10] = Vah
-          Case "18"
+          Case 18
             .Item[11] = Vah
-          Case "19"
+          Case 19
             .Item[12] = Vah
         End Select
         Totl = Totl + Val(Utils.cpoint(vah))
