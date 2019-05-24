@@ -59,7 +59,7 @@ Public Sub _New()
   A1.Text = "Adresse 1"
   cp1.Text = "CP"
   V1.Text = "Ville"
-  CV.Text = ""
+  Utils.Fill_Civilite(CV)
   Nm.setfocus
 
 End
@@ -594,7 +594,7 @@ Public Sub Button4_Click()
           Endif
         Next
       Else
-        Utils.db.Exec("UPdate  " & Cbase.Table("TabCarte") & "  SET  code = &1, rs_soc= &2, nom = &3, pnm = &4, adr1 = &5, adr2 = &6, cd_ptl = &7, ville = &8, email = &9, tel_dom = &{10}, tel_bur = &{11}, tel_poste = &{12}, pble = &{13}, fx1 = &{14}, fx2 = &{15}, datec = &{16}, datef = &{17}, rem = &{18}, promo = &{19}, tp1 = &{20}, tp2 = &{21}, tg1 = &{22}, tg2 = &{23}, obs = &{24}, cb = &{25}, divers = &{26}  WHERE code = &1", Cd.text, CV.text, Nm.text, Pnm.text, Adresse1.text, Adresse2.text, cp.text, Burdist.text, Email.text, Telbur.text, Teldom.text, Poste.text, Portable.text, Fax1.text, Fax2.text, Utils.Cdate_Dbase(Dte1.Text), Utils.Cdate_Dbase(Dte2.Text), Rem.value, Prom.value, Tp1.Text, Val(.cpoint(Tp2.Text)), Tg1.Text, Tg2.Text, Observation.text, cb.text, divers2.value)
+        Utils.db.Exec("UPdate  " & Cbase.Table("TabCarte") & "  SET  code = &1, rs_soc= &2, nom = &3, pnm = &4, adr1 = &5, adr2 = &6, cd_ptl = &7, ville = &8, email = &9, tel_dom = &{10}, tel_bur = &{11}, tel_poste = &{12}, pble = &{13}, fx1 = &{14}, fx2 = &{15}, datec = &{16}, datef = &{17}, rem = &{18}, promo = &{19}, tp1 = &{20}, tp2 = &{21}, tg1 = &{22}, tg2 = &{23}, obs = &{24}, cb = &{25}, divers = &{26}  WHERE code = &1", Cd.text, CV.text, Nm.text, Pnm.text, Adresse1.text, Adresse2.text, cp.text, Burdist.text, Email.text, Telbur.text, Teldom.text, Poste.text, Portable.text, Fax1.text, Fax2.text, Utils.Cdate_Dbase(Dte1.Text), Utils.Cdate_Dbase(Dte2.Text), Rem.value, Prom.value, Val(.cpoint(Tp1.Text)), Val(.cpoint(Tp2.Text)), Val(.cpoint(Tg1.Text)), Val(.cpoint(Tg2.Text)), Observation.text, cb.text, divers2.value)
         Enrgcp.Ecp(Cp.Text, Burdist.Text)
         sKey = Colcli.row
         Cleanchamps()
@@ -1053,11 +1053,11 @@ Public Sub Hisv_Click()
     Histo.Columns[5].Alignment = 2
     Histo.Columns[6].Text = "Remise"
     Histo.Columns[6].Alignment = 2
-    HisResult = Utils.db.Exec("SELECT * FROM Fiches_HisEntTickets where carte = &1 order by numero", cd.text)
+    HisResult = Utils.db.Exec("SELECT * FROM Fiches_HisEntTickets where carte = &1 and suppr != 1 order by numero", cd.text)
     If HisResult.Available Then
       If Not IsNull(HisResult!carte) Then
         Repeat
-          HligResult = Utils.db.Exec("SELECT * FROM Fiches_HisLigTickets where numero = &1 order by code", HisResult!numero)
+          HligResult = Utils.db.Exec("SELECT * FROM Fiches_HisLigTickets where numero = &1 order by cast(numlig as unsigned)", HisResult!numero)
           If HligResult.Available Then
             Repeat
               Histo.Add(HligResult!lInd, HligResult!lInd)
@@ -1066,7 +1066,7 @@ Public Sub Hisv_Click()
               Histo.Item[2] = HligResult!code
               Histo.Item[3] = HligResult!intitule
               Histo.Item[4] = HligResult!qte
-              Histo.Item[5] = Format$(Val(Utils.cpoint(HligResult!mht)), "0.00")
+              Try Histo.Item[5] = Format$(Val(Utils.cpoint(HligResult!mht)), "0.00")
               Try Histo.Item[6] = Format$(Val(Utils.cpoint(HligResult!mrem)), "0.00")
             Until HligResult.MoveNext()
           Endif
@@ -1103,7 +1103,7 @@ Public Sub Hisp_Click()
     Histo.Columns[4].Alignment = 2
     Histo.Columns[5].Text = "Total points"
     Histo.Columns[5].Alignment = 2
-    HisResult = Utils.db.Exec("SELECT * FROM  Fiches_HisEntTickets where carte = &1 order by numero", cd.text)
+    HisResult = Utils.db.Exec("SELECT * FROM  Fiches_HisEntTickets where carte = &1 and suppr != 1 order by numero", cd.text)
     If HisResult.Available Then
       If Not IsNull(HisResult!carte) Then
         Repeat

@@ -34,7 +34,7 @@ iachat As Integer = 0
 snmachat As String
 ichequecad As Integer = 0
 snmchequecad As String
-snmreduc As String
+snmautre As String
 icartef As Integer = 0 'si on traite une carte de fidélité
 scartef As String
 snmcartef As String
@@ -43,7 +43,7 @@ ftpoint2 As Float = 0
 Ftpointg As Float = 0 'total des points gagnés par le client (éventuellement sans les remises et les promos)
 fbonusv As Float = 0 'Valeur générant un bonus
 fbonus As Float = 0 'Valeur du bonus
-fbonusg As Float = 0 'total des boni gagnés
+fbonusg As Float = 0 'total des bonus gagnés
 frem As Boolean = False ' flag pour savoir si on s'occupe des remises pour les cartes de fidélité
 fpromo As Boolean = False ' flag pour savoir si on s'occupe des promotions pour les cartes de fidélité
 Chkart As Boolean = True 'si on doit regarder le code produit
@@ -113,7 +113,6 @@ Cpromo As String ' code promo en cours
 Apromo As Boolean 'flag pour savoir si le produit est en promo
 Bloc As String = ""
 totgain As Float = 0 'Bonus
-Boni As Float = 0 'Bonus utilisé
 BonusArt As Float = 0 'remise du produit pour calcul des points gagnés
 Ctrlstk As Boolean
 tx As Float
@@ -633,6 +632,7 @@ Public Sub Art_man()
           LigTk.Add(iligne, iligne)
           LigTk.Item[0] = iNlg
           LigTk.Item[2] = "*** Produit en promotion ***"
+          LigTk.Item[5] = "C"
           LigTk.Item[8] = bloc
           Inc iNlg
           Inc iligne
@@ -1122,6 +1122,7 @@ Public Sub Prix_promo()
     Pvttc.Text = Format$(ArtPromo.Prix_Promottc(Cart.text, Cpromo), Nbdec)
     Pvttc.Text = Format$(Val(Pvttc.Text), "0.00")
     Artpu = Pvttc.Text
+    Design.Text = ArtPromo.Intitule_Promo(Cart.text, Cpromo)
   Endif
 
 End
@@ -1351,7 +1352,7 @@ Public Sub Valid_Cart() As Boolean
   Endif
   If Crt = True Then
     If Clicompte = 0 Then
-      RecupCarte()
+      RecupCarte(Codearticle)
       ret = True
     Else
       Message.Warning("Saisie d'une carte impossible sur un client en compte !")
@@ -2439,7 +2440,7 @@ Public Sub suppr_Tk()
       If rResult.Available Then
         Message.Warning("Ticket " & numero_tk & " déjà présent dans la ticketz!\nCeci ne devrait pas arriver, archivage impossible!")
       Else
-        Enrg_Tk(True)
+        Dupli(Enrg_Tk(True))
       Endif
       LigTk.Clear
       Init_LigTk()
@@ -3654,20 +3655,20 @@ Public Sub Valid_Chequecad()
 End
 
 '*****************************************
-'*      Gestion des bons de réduction    *
+'*      Gestion des règlement autre      *
 '*****************************************
 Public Sub Button36_Click()
 
   init_paiement()
-  Breduc.visible = True
-  Breduc.text = "0,00"
-  Breduc.SetFocus
-  Breduc.Select
-  Zone = "Breduc"
+  Bautre.visible = True
+  Bautre.text = "0,00"
+  Bautre.SetFocus
+  Bautre.Select
+  Zone = "Bautre"
 
 End
 
-Public Sub Breduc_KeyPress()
+Public Sub Bautre_KeyPress()
 
   If key.code = Key.F11 Or key.code = Key.esc Then
     init_paiement()
@@ -3685,7 +3686,7 @@ Public Sub Breduc_KeyPress()
 
   ChkPrx()
   If Key.Code = Key.Return Or If Key.Code = Key.Enter Or If Key.Code = Key.Tab Then
-    Valid_Breduc()
+    Valid_Bautre()
   Endif
 Catch
   If Start.son Then
@@ -3697,44 +3698,44 @@ Catch
 
 End
 
-Public Sub Valid_Breduc()
+Public Sub Valid_Bautre()
 
-  If Not IsNull(Breduc.text) Then
-    Breduc.Text = Utils.cpoint(Breduc.Text)
-    If Val(Breduc.Text) = Null Then
+  If Not IsNull(Bautre.text) Then
+    Bautre.Text = Utils.cpoint(Bautre.Text)
+    If Val(Bautre.Text) = Null Then
       If Start.son Then
         If Start.son Then
           Music.Play
         Endif
       Endif
       Try message.Warning("Veuillez verifier votre saisie SVP !")
-      Breduc.SetFocus
-      Breduc.Select
-      Zone = "Breduc"
+      Bautre.SetFocus
+      Bautre.Select
+      Zone = "Bautre"
     Else
-      If Val(Breduc.Text) <> 0 Then
-        Breduc.Text = Format$(Val(Breduc.Text), "0.00")
-        Calc_reste(Breduc.text)
+      If Val(Bautre.Text) <> 0 Then
+        Bautre.Text = Format$(Val(Bautre.Text), "0.00")
+        Calc_reste(Bautre.text)
         Try ColumnView1.Add("E", "E")
         If Not Error Then
           ColumnView1.Item[0] = "E"
-          ColumnView1.Item[1] = "Bon reduction " & snmreduc
-          ColumnView1.Item[2] = Breduc.Text
+          ColumnView1.Item[1] = "Autre Règlement " & snmautre
+          ColumnView1.Item[2] = Bautre.Text
         Else
           ColumnView1.MoveFirst()
           Repeat
             If ColumnView1.Item[0] = "E" Then
-              If Val(Utils.cpoint(Breduc.Text)) < 0 Then
-                Chequecad.Text = Abs(Val(Utils.cpoint(Breduc.Text)))
-                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) - Val(Utils.cpoint(Breduc.Text)), "0.00")
+              If Val(Utils.cpoint(Bautre.Text)) < 0 Then
+                Chequecad.Text = Abs(Val(Utils.cpoint(Bautre.Text)))
+                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) - Val(Utils.cpoint(Bautre.Text)), "0.00")
               Else
-                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) + Val(Utils.cpoint(Breduc.Text)), "0.00")
+                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) + Val(Utils.cpoint(Bautre.Text)), "0.00")
               Endif
             Endif
           Until ColumnView1.MoveNext()
         Endif
-        Breduc.Clear
-        Breduc.Visible = False
+        Bautre.Clear
+        Bautre.Visible = False
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           If Val(Utils.cpoint(Rticket.Text)) < 0 Then
@@ -3870,14 +3871,17 @@ End
 '*****************************************
 Public Sub Button31_Click()
 
-  If Val(Utils.cpoint(fbonusg)) = 0 Then
+  If Val(Utils.cpoint(fbonusg)) <= 0 Then
     Message.Info("Il n'y a pas de bonus en cours!")
   Else
     init_paiement()
     Aff_viseur("Bonus")
     Bonus.Visible = True
-    'Totgain = fbonusg
-    Bonus.text = Format$(Val(Utils.cpoint(fbonusg)), "0.00")
+    If fbonusg <= Val(Utils.cpoint(Rticket.Text)) Then
+      Bonus.text = Format$(Val(Utils.cpoint(fbonusg)), "0.00")
+    Else
+      Bonus.text = Rticket.Text
+    Endif
     Bonus.SetFocus
     Bonus.Select
     Zone = "Bonus"
@@ -3946,16 +3950,15 @@ Public Sub Valid_Bonus()
           ColumnView1.MoveFirst()
           Repeat
             If ColumnView1.Item[0] = "B" Then
-              If Val(Utils.cpoint(Bonus.text.Text)) < 0 Then
-                Bonus.text.Text = Abs(Val(Utils.cpoint(Bonus.text.Text)))
-                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) - Val(Utils.cpoint(Bonus.text.Text)), "0.00")
+              If Val(Utils.cpoint(Bonus.Text)) < 0 Then
+                Bonus.Text = Abs(Val(Utils.cpoint(Bonus.Text)))
+                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) - Val(Utils.cpoint(Bonus.Text)), "0.00")
               Else
-                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) + Val(Utils.cpoint(Bonus.text.Text)), "0.00")
+                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) + Val(Utils.cpoint(Bonus.Text)), "0.00")
               Endif
             Endif
           Until ColumnView1.MoveNext()
         Endif
-        Boni = Val(Utils.cpoint(ColumnView1.Item[2]))
         Bonus.Clear
         Bonus.Visible = False
         Valid_Reste()
@@ -4044,6 +4047,7 @@ Public Sub pointsF()
         pu = "0"
       Endif
     Next
+    Inc Block
     If icartef = 1 Then
       If Start.LocalSettings["/Soc" & Start.Societe & "/caisse/recapbonus"] <> "0" Then
         Try LigTk.Add("Da", "Da")
@@ -4051,12 +4055,16 @@ Public Sub pointsF()
           LigTk.Item[0] = iNlg
           LigTk.Item[1] = "Pts avant "
           LigTk.Item[2] = Format$(ftpoint, "0.00")
+          LigTk.Item[5] = "BB"
+          LigTk.Item[8] = Block
         Endif
         Try LigTk.Add("Dc", "Dc")
         If Not Error Then
           LigTk.Item[0] = iNlg
           LigTk.Item[1] = "Pts acquis "
           LigTk.Item[2] = Format$(totf, "0.00")
+          LigTk.Item[5] = "BB"
+          LigTk.Item[8] = Block
           Ftpointg = totf
         Endif
         Try LigTk.Add("Dt", "Dt")
@@ -4064,6 +4072,8 @@ Public Sub pointsF()
           LigTk.Item[0] = iNlg
           LigTk.Item[1] = "Tot points "
           LigTk.Item[2] = Format$(Val(Utils.cpoint(ftpoint)) + totf, "0.00")
+          LigTk.Item[5] = "BB"
+          LigTk.Item[8] = Block
           ftpoint = ftpoint + totf
         Endif
       Else
@@ -4073,6 +4083,7 @@ Public Sub pointsF()
     Endif
     Inc iligne
     Inc iNlg
+    Inc Block
     LigTk.Columns[2].Width = 340
     For Each sline In Split(Txtbfac, "\n")
       Inc i
@@ -4080,7 +4091,8 @@ Public Sub pointsF()
       LigTk.Item[0] = iNlg
       LigTk.Item[1] = ""
       LigTk.Item[2] = sline
-      LigTk.Item[5] = "K"
+      LigTk.Item[5] = "C"
+      LigTk.Item[8] = Block
       Inc iNlg
       Inc iligne
       If i = 4 Then Break
@@ -4755,7 +4767,7 @@ Public Sub Serial_Tk()
           Maj_QteDep()
         Endif
       Endif
-      Enrg_Tk(False)
+      Dupli(Enrg_Tk(False))
       'Entete_Tck("1")
       Tottva = 0
       Totalht = 0
@@ -5129,7 +5141,7 @@ Public Sub Defaut_Tk()
         Maj_QteDep()
       Endif
     Endif
-    Enrg_Tk(False)
+    Dupli(Enrg_Tk(False))
     Tottva = 0
     Totalht = 0
     'ClavFam()
@@ -5375,8 +5387,8 @@ Public Sub init_paiement()
   icarte = 0
   Especes.Visible = False
   Especes.Clear
-  Breduc.Visible = False
-  Breduc.Clear
+  Bautre.Visible = False
+  Bautre.Clear
   Bachat.Visible = False
   Bachat.Clear
   iachat = 0
@@ -5654,7 +5666,7 @@ End
 '*********************************************
 '*        On enregistre le ticket            *
 '*********************************************
-Public Sub Enrg_Tk(Supprime As Boolean)
+Public Sub Enrg_Tk(Supprime As Boolean) As String
 
   Dim rLastTk As Result
   Dim rFam As Result
@@ -5672,8 +5684,8 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim ssuppr As Integer = 0 ' si ticket est supprime
   Dim sespeces As String
   Dim smespeces As String
-  Dim sreduc As String
-  Dim smreduc As String = "0"
+  Dim sautre As String
+  Dim smautre As String = "0"
   Dim scarte As String
   Dim smcarte, smcarte2 As String = "0"
   Dim nmcarte As String
@@ -5708,7 +5720,6 @@ Public Sub Enrg_Tk(Supprime As Boolean)
   Dim prev_numero As String
   Dim numero_tk As String
   Dim lasttk_valid As String
-  Dim scartef As String
   Dim numbon As String
   Dim macompte As Float
   Dim mavoir As Float
@@ -5806,8 +5817,8 @@ Public Sub Enrg_Tk(Supprime As Boolean)
           nmbonus = LigTk.Item[2]
           smbonus = Format(Val(Utils.cpoint(smbonus)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "E" Then
-          sreduc = "E"
-          smreduc = Format(Val(Utils.cpoint(smreduc)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
+          sautre = "E"
+          smautre = Format(Val(Utils.cpoint(smautre)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
         Else If LigTk.Item[5] = "1" Then
           sresto = "1"
           smresto = Format(Val(Utils.cpoint(smresto)) + Val(Utils.cpoint(LigTk.Item[3])), "0.00")
@@ -5962,7 +5973,7 @@ Public Sub Enrg_Tk(Supprime As Boolean)
     Endif
     
     'On enregistre dans la table Ent_Ticket
-    Utils.db.Exec("INSERT INTO Fiches_EntTicketz (caisse, numero, date, client, scheque, mcheque, nmcheque, scarte, mcarte, nmcarte, sespeces, mespeces, scredit, mcredit, mht, mtva, mttc, statut, savoir, scavoir, mavoir, type, vendeur, carte, points, sbonus, mbonus, sresto, mresto, sbachat, mbachat, nom, suppr, retro) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21}, &{22}, &{23}, &{24}, &{25}, &{26}, &{27}, &{28}, &{29}, &{30}, &{31}, &{32}, &{33}, &{34})", Ncaisse, numero_tk, datetk.DT, clicode, scheque, tcheque, nmcheque, scarte, smcarte2, nmcarte, sespeces, smespeces, scredit, smcredit, smht, smtva, smttc, sstatut, iavoir, scavoir, smavoir, clicompte, Caissiere, Left(scartef, 13), ftpointg, sbonus, smbonus, sresto, smresto, sachat, smachat, Left$($Cli, 35), ssuppr, bretro)
+    Utils.db.Exec("INSERT INTO Fiches_EntTicketz (caisse, numero, date, client, scheque, mcheque, nmcheque, scarte, mcarte, nmcarte, sespeces, mespeces, scredit, mcredit, mht, mtva, mttc, statut, savoir, scavoir, mavoir, type, vendeur, carte, points, sbonus, mbonus, sresto, mresto, sbachat, mbachat, nom, suppr, retro, sautre, mautre) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21}, &{22}, &{23}, &{24}, &{25}, &{26}, &{27}, &{28}, &{29}, &{30}, &{31}, &{32}, &{33}, &{34}, &{35}, &{36})", Ncaisse, numero_tk, datetk.DT, clicode, scheque, tcheque, nmcheque, scarte, smcarte2, nmcarte, sespeces, smespeces, scredit, smcredit, smht, smtva, smttc, sstatut, iavoir, scavoir, smavoir, clicompte, Caissiere, Left(scartef, 13), ftpointg, sbonus, smbonus, sresto, smresto, sachat, smachat, Left$($Cli, 35), ssuppr, bretro, sautre, smautre)
     If numero_tk = prev_numero Then
       Message.Error("Erreur de chainage des tickets (" & numero_tk & "), ceci ne devrait pas arriver!")
       prev_numero = ""
@@ -5997,22 +6008,23 @@ Public Sub Enrg_Tk(Supprime As Boolean)
     If iRattente = 0
         Utils.db.Exec("Update " & Cbase.Table("TabCaisses") & " set cutk = &1 where code = &2", Null, Ncaisse)
     Endif
-        
+    
+    'conversion des points en gain
+    'TODO verifier les comportement en avoir
     Totpoint = Ftpoint
-    Totgain = totgain + fbonusg
-    Totgain = totgain - boni
-    Utils.db.Exec("UPdate " & Cbase.Table("TabCarte") & "  SET   tp2 = &2, tg2 = &3 WHERE code = &1", scartef, Totpoint, Totgain)
-    If Totpoint <> 0 Then
+    Totgain = fbonusg - Val(Utils.cpoint(smbonus))
+    If Totpoint <> 0 And fBonusv <> 0 Then
       Do
         If Totpoint >= fbonusv Then
           Totpoint = Totpoint - fbonusv
           Totgain = totgain + fbonus
-          Utils.db.Exec("UPdate " & Cbase.Table("TabCarte") & "  SET   tp2 = &2, tg2 = &3 WHERE code = &1", scartef, Totpoint, Totgain)
+        Else
+          Break
         Endif
-        If fBonusv = 0 Then Break
-        If Totpoint < fbonusv Then Break
       Loop
     Endif
+    Utils.db.Exec("UPdate " & Cbase.Table("TabCarte") & "  SET   tp2 = &2, tg2 = &3 WHERE code = &1", scartef, Totpoint, Totgain)
+
 
   End With
   
@@ -6050,13 +6062,13 @@ Label_CleanUp:
   ftpointg = 0
   ftpoint = 0
   icartef = 0
-  Boni = 0
   Totgain = 0
   bretro = False
   bmodifregl = False
   Cart.ReadOnly = False
   Cart.SetFocus
 
+  Return numero_tk
 
 End
 
@@ -6684,11 +6696,9 @@ Public Sub Ticketz()
         Tkz = 1
         If Imprimante = "DéfautA4" Or If Imprimante = "Défaut80" Then
           Defaut_Ticketxz(sIntitule, True)
-          Dupli(rtx!numero)
         Else
           Serial_Ticketxz(sIntitule, "z")
           Defaut_Ticketxz(sIntitule, False)
-          Dupli(rtx!numero)
         Endif
         If sDon Then
           If Start.son Then
@@ -6895,7 +6905,7 @@ Public Sub Serial_Ticketxz(sintitule As String, origine As String)
           If rTkhv!type = "U" Then sreg = "Tot. rglts par cartes "
           If rTkhv!type = "V" Then sreg = "Tot. rglts par cheques "
           If rTkhv!type = "B" Then sreg = "Tot. bonus utilises "
-          If rTkhv!type = "E" Then sreg = "Tot. bons de reduction "
+          If rTkhv!type = "E" Then sreg = "Tot. autre règlements "
           If rTkhv!type = "X" Then sreg = "Tot. bons achat "
           If rTkhv!type = "Y" Then sreg = "Tot. cheques cadeaux "
           If rTkhv!type = "W" Then sreg = "Tot. rglts par credits "
@@ -7061,7 +7071,7 @@ End
 
 Public Sub ChkBs()
 
-  If InStr("0123456789", Key.Text) = 0 Then
+  If InStr("0123456789,.", Key.Text) = 0 Then
     If key.code <> key.BackSpace And Key.Code <> Key.tab And Key.Code <> Key.Delete And Key.code <> Key.enter And Key.code <> Key.return And key.code <> 37 And key.code <> 42 And key.code <> 43 And key.code <> 45 And key.code <> 47 And key.code <> key.F3 Then
       Stop Event
     Endif
@@ -7385,10 +7395,10 @@ Public Sub CartesFidelite()
   Bsel = False
   sel = ""
   If clicompte = 0 Then
-    MyForm = New Tricartes(0)
+    MyForm = New Tricartes(0, Null, Me)
     MyForm.Showmodal()
     If Bsel = True Then
-      RecupCarte()
+      RecupCarte(Bval)
     Endif
   Else
     If Start.son Then
@@ -7402,16 +7412,15 @@ Public Sub CartesFidelite()
 
 End
 
-Public Sub RecupCarte()
+Public Sub RecupCarte(code As String)
 
   Dim Rcarte As Result
-  Dim icartef As Integer
 
-  Rcarte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCarte") & " where code = &1", Codearticle)
+  Rcarte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCarte") & " where code = &1", code)
   If Rcarte.Available Then
     icartef = 1
     $Cli = Rcarte!nom
-    scartef = Codearticle
+    scartef = code
     snmcartef = Rcarte!nom & " " & Rcarte!pnm
     ftpoint = Rcarte!tp2
     ftpoint2 = ftpoint
@@ -7600,6 +7609,7 @@ Public Sub Delete_Reglements_Tk()
     Next
   Endif
   RenameLigne()
+  ftpoint = ftpoint2
 
 End
 
@@ -7911,8 +7921,8 @@ Public Sub Button39_Click()
     Case "Bonus"
       Valid_Bonus()
 
-    Case "Breduc"
-      Valid_Breduc()
+    Case "Bautre"
+      Valid_Bautre()
 
     Case "Tresto"
       Valid_Tresto()
@@ -7955,8 +7965,8 @@ Public Sub Button43_Click()
     If Zone = "Bonus" Then
       Bonus.Text = ""
     Endif
-    If Zone = "Breduc" Then
-      Breduc.Text = ""
+    If Zone = "Bautre" Then
+      Bautre.Text = ""
     Endif
     If Zone = "Tresto" Then
       Tresto.Text = ""
@@ -8130,8 +8140,8 @@ Public Sub Efface_Click()
     Bacompte.Text = "0,00"
   Endif
 
-  If zone = "Breduc" Then
-    Breduc.Text = "0,00"
+  If zone = "Bautre" Then
+    Bautre.Text = "0,00"
   Endif
 
   If zone = "Nmc" Then
@@ -8254,9 +8264,9 @@ Public Sub Clav_click()
     Bacompte.Text = $saisie
   Endif
 
-  If zone = "Breduc" Then
+  If zone = "Bautre" Then
     Alpha()
-    Breduc.Text = $saisie
+    Bautre.Text = $saisie
   Endif
 
   If zone = "Nmc" Then
@@ -8625,7 +8635,7 @@ Public Sub Echap_Click()
       inpm.SetFocus()
       Zone = "Inpm"
 
-    Case "Breduc"
+    Case "Bautre"
       init_paiement()
       inpm.SetFocus()
       Zone = "Inpm"

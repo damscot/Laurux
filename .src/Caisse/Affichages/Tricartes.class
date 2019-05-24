@@ -5,11 +5,12 @@ Clitable[9] As String
 Dbl As Boolean = False
 Tri As String
 sel As String
-Origine As Integer
+$divers As Integer
 Private lg As Integer
+Private Obj As Object
 
 '************************************** Gestion des cartes de fidélités *****************************************************
-Public Sub _new(sOrg As Integer)
+Public Sub _new(Divers As Integer, Optional ob As Object = Null)
 
   Utils.Observers(Me)
   If Start.LocalSettings["/Soc" & Start.Societe & "/caisse/tactile"] Then Fermer.Visible = True
@@ -18,7 +19,12 @@ Public Sub _new(sOrg As Integer)
   colcli.Rows.Height = 22
   lg = Int(Colcli.height / colcli.Rows.Height) - 1
   Me.Center
-  Origine = sOrg
+  $divers = Divers
+  Obj = ob
+  If Object.IsValid(Obj) Then
+    Object.SetProperty(Obj, "Bsel", False)
+    Object.SetProperty(Obj, "Bval", Null)
+  Endif
   C1.Text = "Code"
   N1.Text = "Nom"
   P1.Text = "      Prénom             Adresse1                      Adresse2   "
@@ -72,8 +78,10 @@ End
 
 Public Sub colcli_Click()
 
-  Caisse.Bsel = True
-  Caisse.Codearticle = colcli[colcli.row, 0].Text
+  If Object.IsValid(Obj) Then
+    Object.SetProperty(Obj, "Bsel", True)
+    Object.SetProperty(Obj, "Bval", colcli[colcli.row, 0].Text)
+  Endif
 
   Me.close
 
@@ -172,7 +180,7 @@ End
 Public Sub Deb3()
 
   Tris()
-  Utils.Base2(colcli, "select * from " & Cbase.Table("TabCarte") & " where " & Tri & " like  \"%" & sel & "%\" and divers = " & Origine & " order by " & Tri & " limit " & NbEnreg & ", " & lg & " ")
+  Utils.Base2(colcli, "select * from " & Cbase.Table("TabCarte") & " where " & Tri & " like  \"%" & sel & "%\" and divers = " & $divers & " order by " & Tri & " limit " & NbEnreg & ", " & lg & " ")
   Colcli.Refresh
 
 End
@@ -180,7 +188,7 @@ End
 Public Sub Deb4()
 
   Tris()
-  Utils.Base2(colcli, "select * from " & Cbase.Table("TabCarte") & " where " & Tri & " like  \"%" & sel & "%\"  and divers = " & Origine & " order by " & Tri & " desc limit " & NbEnreg & ", " & lg & "")
+  Utils.Base2(colcli, "select * from " & Cbase.Table("TabCarte") & " where " & Tri & " like  \"%" & sel & "%\"  and divers = " & $divers & " order by " & Tri & " desc limit " & NbEnreg & ", " & lg & "")
   Colcli.Refresh
 
 End

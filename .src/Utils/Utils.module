@@ -1633,6 +1633,24 @@ Public Sub Ciel()
 
 End
 
+Public Sub Fill_Civilite(obj As Object)
+
+  Dim Tab As String
+  Dim rResult As Result
+  
+  If Not Object.IsValid(obj) Then Return
+  
+  Tab = "Fiches_Identite"
+  Try rResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
+  If Not Error Then
+    If rResult.Available Then
+      Do
+        Try Object.Call(Obj, "Add", [rResult!libelle])
+      Loop Until rResult.MoveNext()
+    Endif
+  Endif
+End
+
 Public Sub Play(Optional Sound As String = Null)
 
   If Start.son Then

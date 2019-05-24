@@ -5129,6 +5129,8 @@ end_utf8:
   PB.Avancement("Table TicketsZ", 1)
   Tab = "Fiches_EntTicketz"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " change date date datetime")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (sautre Char(1))")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mautre Char(12))")
   Tab = "Fiches_LigTicketz"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY intitule varchar(50)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY numlig char(6)")
@@ -5141,6 +5143,8 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (type CHAR(1))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (retro TINYINT(1))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (prev_numero CHAR(7))")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (sautre Char(1))")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mautre Char(12))")
   Tab = "Fiches_HisLigTickets"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY intitule varchar(50)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY numlig char(6)")
@@ -5176,6 +5180,12 @@ end_utf8:
   Tab = "Fiches_Art"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_ddate2 datetime)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_cdate datetime)") 'date de creation de l'article
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY art_photo TEXT")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_export TINYINT) DEFAULT 0") 'flag d'export article
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredu TINYINT) DEFAULT 0") 'flag pour edition de bon de réduction et sa probabilité d'apparition
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredudate DATE)") 'flag de validité du bon de réduction
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_breducond TEXT)") 'condition d'application du bon de réduction
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredumnt decimal(15,2)) DEFAULT 0.00") 'montant nécessaire pour que le bon apparaisse
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
   If rResult.Available Then
     PB = New ProgBar("Conversion des dates des articles", rResult.Count)
@@ -5365,6 +5375,9 @@ end_utf8:
   If rResult.Available Then
     Try Utils.db.Exec("UPdate Fiches_Parametres SET dnart = &1", rResult!art_code)
   Endif
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (virembonus Char(8))")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (virembachat Char(8))")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (viremtresto Char(8))")
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres drop version_pos")
 
   Try utils.db.exec("ALTER TABLE Fiches_Parametres ADD ecart decimal(6,2) DEFAULT 0.00")
