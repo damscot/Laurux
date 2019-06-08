@@ -5026,6 +5026,8 @@ Public Sub Maj369()
   Dim txt As String
   Dim lasttk As String = "0000001"
   Dim res, respar As Result
+  Dim block As Integer = 0
+  Dim numero As String
   Dim $i As Integer = 0
   Dim val As Variant
   
@@ -5146,9 +5148,29 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtva CHAR(12))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (block CHAR(6))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (date DATETIME)")
+  PB.Close()
+  rResult = Utils.db.Exec("SELECT numero, numlig, lInd, block, type FROM " & Tab & " order by numero, cast(numlig as unsigned)")
+  If rResult.Available Then
+    PB = New ProgBar("Correction des blocks sur tickets archivés", rResult.Count)
+    PB.Show()
+    numero = rResult!numero
+    Repeat
+      PB.Avancement("Correction ligne " & rResult!numlig & " sur ticket " & rResult!numero, 50)
+      If rResult!block <> "" Then Continue
+      If rResult!numero <> numero Then
+        numero = rResult!numero
+        block = 0
+      Endif
+      If rResult!type <> "S" And rResult!type <> "T" And rResult!type <> "O"
+        Inc block
+      Endif
+      Try Utils.db.Exec("UPdate   " & Tab & " SET block = &1 WHERE lind = &2", Format(block, "000000"), rResult!lInd)
+    Until rResult.MoveNext()
+    PB.Close()
+  Endif
+
   Tab = "Fiches_Regltz"
   Try Utils.db.Exec("DROP TABLE " & Tab)
-  PB.Close()
   
    'Date des articles (date d'achat et de création)
   Tab = "Fiches_Art"
