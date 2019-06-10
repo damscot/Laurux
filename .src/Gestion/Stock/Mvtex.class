@@ -590,7 +590,7 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
   hrep.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
   hrep.Fixed = True
   lab = New ReportLabel(hrep)
-  lab.Text = "Liste des mouvements excptionelles du :   " & datej.dte.L
+  lab.Text = "Liste des mouvements exceptionels du :   " & datej.dte.L
   lab.BackGround = ReportBrush.Color(coul)
   lab.Alignment = Align.Center
   lab.Font = font["Serif,-1"]
@@ -730,7 +730,7 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
   Until Colrcp.MoveNext()
   
    rep.Print(prt)
-   Visualiseur.Prog_Editeur(Filename)
+   Visualiseur.Prog(Filename)
   
 End
 

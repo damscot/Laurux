@@ -5,17 +5,17 @@
 '* Procedure inspirée par Benoit Minisini  *
 '*********************************************
 
-Public Sub Prog_Editeur(Fic As String) As String
+Public Enum FILE_TYPE_TXT, FILE_TYPE_PDF, FILE_TYPE_MAX
+
+Public Sub Prog_Editeur(Fic As String, Optional Type As Integer = FILE_TYPE_TXT) As String
 
   Dim $Exec As String
 
-  $Exec = "gedit"
-  If Not CheckProg.Chk($Exec) Then $Exec = "kate"
-  If Not CheckProg.Chk($Exec) Then $Exec = "kwrite"
-  If Not CheckProg.Chk($Exec) Then $Exec = "pluma"
-  If Not CheckProg.Chk($Exec) Then $Exec = "mousepad"
-  'Shell $Exec & " " & Fic
-  Exec ["xdg-open", Fic]
+  If Start.LocalSettings["/CmdEditor" & Type] Then
+    Shell Start.LocalSettings["/CmdEditor" & Type] & " " & Fic
+  Else
+    Desktop.Open(Fic)
+  Endif
 
 End
 

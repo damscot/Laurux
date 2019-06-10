@@ -4,8 +4,8 @@ Public Sub Prog(Fic As String) As String
 
   Dim $Exec As String
 
-  If Start.LocalSettings["/CmdVis"] Then
-    Shell Start.LocalSettings["/CmdVis"] & " " & Fic
+  If Start.LocalSettings["/caisse/CmdVis"] Then
+    Shell Start.LocalSettings["/caisse/CmdVis"] & " " & Fic
   Else
     Desktop.Open(Fic)
   Endif
