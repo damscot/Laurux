@@ -1890,7 +1890,18 @@ Public Sub Btn_click()
   Select Case Last.tag
 
     Case 1
-      art_Suppr()
+      If art_Suppr(code.Text, True) <> "" Then
+        sKey = colarts.row
+        ComboTest = False
+        Cb1.Text = "Equivalent"
+        ComboTest = True
+        sel = ""
+        Deb2()
+        Colarts.Refresh
+        Cleanchamps()
+        colarts.MoveTo(skey, 0)
+        Code.setfocus()
+      Endif
 
     Case 2
       If b <> 1 Then
@@ -4796,110 +4807,85 @@ End
 '* Suppression du code Article    *
 '**********************************
 
-Public Sub art_Suppr()
+Public Function art_Suppr(art_code As String, Optional Confirm As Boolean = True) As String
 
   Dim rResult As Result
-  Dim Suppr As Integer
+  Dim lcfour As String
+  Dim lcequ As String
 
-  Suppr = 1
-  If Not IsNull(code.Text) Then
-    If start.son Then
-      Music.Play
+  If Not IsNull(art_code) Then
+    
+    If Confirm = True Then
+      Utils.Bip()
+      If Message.Question("Etes vous sur de vouloir effacer cet enregistrement", "Oui", "Non") = 2 Then
+        Return "" 'sortie volontaire, il ne s'agit pas d'un erreur
+      Endif
     Endif
-    If Message.Question("Etes vous sur de vouloir effacer cet enregistrement", "Oui", "Non") = 1 Then
-      Me.Mouse = Mouse.Wait
-      rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabArt") & " WHERE  art_code = &1", code.Text)
-      If stocke.value = True And qte.Text <> 0 Then
-        If start.son Then
-          Music.Play
-        Endif
-        Try Message.Delete(" Suppression impossible ! Stock différent de zéro")
-        Suppr = 0
+ 
+    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabArt") & " WHERE  art_code = &1", art_code)
+    If Not rResult.Available Then
+      Return "Suppression " & art_code & " impossible! Article inconnu."
+    Endif
+    lcfour = rResult!art_cfour
+    lcequ = rResult!art_cequ
+    If stocke.value = True And qte.Text <> 0 Then
+      If Confirm = True Then Utils.Bip()
+      Return "Suppression " & art_code & " impossible! Stock différent de zéro."
+       
+    Else
+      rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigbl") & "," & Cbase.Table("TabBl") & " WHERE numbl = num_ligbl and code_ligbl = &1  and typel_ligbl = 'A'", art_code)
+      If rResult.Available Then
+        If Confirm = True Then Utils.Bip()
+        Return "Suppression " & art_code & " impossible ! Article utilisé dans des documents en cours (" & rResult!numbl & ":" & rResult!type & ",...)"
       Else
-        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigbl") & " WHERE  code_ligbl = &1  and typel_ligbl = 'A'", code.Text)
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigcom") & " as l inner join " & Cbase.Table("TabEntcom") & " as e on l.numcom=e.numcom and l.code = &1", art_code)
         If rResult.Available Then
-          If start.son Then
-            Music.Play
-          Endif
-          Try Message.Delete(" Suppression impossible ! Article utilisé en facturation")
-          Suppr = 0
+          If Confirm = True Then Utils.Bip()
+          Return "Suppression " & art_code & " impossible ! Article utilisé dans les commandes fournisseurs (" & rResult!numcom & ",...)"
         Else
-          rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigcom") & " WHERE  code = &1", code.Text)
+          rResult = Utils.db.Exec("SELECT * FROM  " & Cbase.Table("TabLigrecpt") & " as l inner join " & Cbase.Table("TabEntrecpt") & " as e on l.numrecpt = e.numrecpt where e.validee != 1 and l.code = &1", art_code)
           If rResult.Available Then
-            If start.son Then
-              Music.Play
-            Endif
-            Try Message.Delete(" Suppression impossible ! Article utilisé dans les commandes fournisseurs")
-            Suppr = 0
+            If Confirm = True Then Utils.Bip()
+            Return "Suppression " & art_code & " impossible ! Article utilisé dans les réceptions non validées (" & rResult!numrecpt & ",...)"
           Else
-            rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvtexp") & " WHERE  code = &1 or code = &2", code.Text, cfour.Text)
+            rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMat") & " WHERE  mat_code = &1", art_code)
             If rResult.Available Then
-              If start.son Then
-                Music.Play
-              Endif
-              Try Message.Delete(" Suppression impossible ! Article utilisé dans les mouvements exceptionnels")
-              Suppr = 0
+              If Confirm = True Then Utils.Bip()
+              Return "Suppression " & art_code & " impossible ! Article utilisé dans les fiches materiels (no de serie:" & rResult!mat_serie & ",vendu:" & rResult!mat_vendu & ",...)"
             Else
-              Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabInv") & " WHERE  inv_code = &1", code.Text)
+              rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigTck") & " WHERE code = &1", art_code)
               If rResult.Available Then
-                If start.son Then
-                  Music.Play
-                Endif
-                Try Message.Delete(" Suppression impossible ! Article utilisé dans l'inventaire")
-                Suppr = 0
-              Else
-                Try rResult = Utils.db.Exec("SELECT * FROM  " & Cbase.Table("TabLigrecpt") & " as e inner join " & Cbase.Table("TabEntrecpt") & " as a on a.numrecpt = e.numrecpt where code = &1", code.text)
-                If rResult.Available Then
-                  If Not rResult!validee Then
-                    If start.son Then
-                      Music.Play
-                    Endif
-                    Try Message.Delete(" Suppression impossible ! Article utilisé dans les réceptions non validées")
-                    Suppr = 0
-                  Endif
-                Else
-                  Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMat") & " WHERE  mat_code = &1", code.Text)
-                  If rResult.Available Then
-                    If start.son Then
-                      Music.Play
-                    Endif
-                    Try Message.Delete(" Suppression impossible ! Article utilisé dans les fiches materiels")
-                    Suppr = 0
-                  Endif
-                Endif
+                If Confirm = True Then Utils.Bip()
+                Return "Suppression " & art_code & " impossible ! Article utilisé dans les tickets non archivés (" & rResult!numero & ",...)"
               Endif
             Endif
           Endif
         Endif
       Endif
-      If Suppr = 1 Then
-        If Variables.Sprix And Variables.Sexport And Variables.SMajArt Then Serveur.Pass("Art", "S", code.Text, Cequ.Text, Cfour.text)
-        Utils.db.Exec("DELETE FROM " & Cbase.Table("TabArt") & " WHERE art_code = &1", code.Text)
-        Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCdBarre") & " WHERE codep = &1", code.Text)
-        Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl1") & " WHERE codep = &1", code.Text)
-        Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl2") & " WHERE codep = &1", code.Text)
-        Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabPdocs") & " WHERE code = &1", Code.Text)
-        Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCequ") & " WHERE codequ = &2 or codep = &2 or  codequ = &1 or codep = &1", code.Text, Cequ.Text)
-        sKey = colarts.row
-        ComboTest = False
-        Cb1.Text = "Equivalent"
-        ComboTest = True
-        sel = ""
-        Deb2()
-        Colarts.Refresh
-        Cleanchamps()
-        colarts.MoveTo(skey, 0)
-      Endif
-      Me.Mouse = Mouse.Default
-      Code.setfocus()
     Endif
+
+    If Variables.Sprix And Variables.Sexport And Variables.SMajArt Then Serveur.Pass("Art", "S", art_code, lcequ, lcfour)
+    Utils.db.Exec("DELETE FROM " & Cbase.Table("TabArt") & " WHERE art_code = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabMvtexp") & " WHERE  code = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabInv") & " WHERE  inv_code = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabInvT") & " WHERE  inv_code = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabLigrecpt") & "WHERE code = &1", art_code) 'celle contenant cet article ont toutes été validée
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCdBarre") & " WHERE codep = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl1") & " WHERE codep = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl2") & " WHERE codep = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabPdocs") & " WHERE code = &1", art_code)
+    Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCequ") & " WHERE codequ = &1 or codep = &1", art_code)
+  
   Endif
+  
+  Return ""
+  
 Catch
   If start.son Then
     Music.Play
   Endif
-  Try message.Error(Error.Text & " " & Error.where)
-  Me.Mouse = Mouse.Default
+  Message.Error(Error.Text & " " & Error.where)
+  Return False
 
 End
 

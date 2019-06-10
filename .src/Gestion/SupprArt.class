@@ -42,24 +42,21 @@ Public Sub Liste_Click()
   Try rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
   If Not Error Then
     If rResult.Available Then
-      If message.Question("Une liste existe déjà ! Que voulez-vous faire ?\n", " 1- La supprimer", " 2- Ajouter des articles") = 1 Then
-        Utils.db.Exec("drop Table IF exists " & Tab & "")
-        Utils.db.Exec("CREATE TABLE " & Tab &
-          "(art_code Char(15) NOT NULL," &
-          "PRIMARY KEY (art_code))" & Utils.db.Engine())
-        ListArt.Text = ""
-      Else
+      If message.Question("Une liste existe déjà ! Que voulez-vous faire ?\n", " 1- La supprimer", " 2- Ajouter des articles") = 2 Then
         Repeat
-          ListArt.Text = ListArt.Text & " " & rResult!art_code
+          ListArt.Text = ListArt.Text & " " & rResult!art_code & " : " & rResult!art_design & "\n"
         Until rResult.MoveNext()
+        Return
       Endif
     Endif
-  Else
-    Utils.db.Exec("CREATE TABLE " & Tab &
-      "(art_code Char(15) NOT NULL," &
-      "PRIMARY KEY (art_code))" & Utils.db.Engine())
-    ListArt.Text = ""
   Endif
+
+  ListArt.Text = ""
+  Utils.db.Exec("drop Table IF exists " & Tab & "")
+  Utils.db.Exec("CREATE TABLE " & Tab &
+    "(art_code Char(15) NOT NULL," &
+    "art_design Char(50)," &
+    "PRIMARY KEY (art_code))" & Utils.db.Engine())
 
 End
 
@@ -330,9 +327,9 @@ Public Sub art_man()
       Endif
       If rarts.Available Then
         Art.Text = rarts!art_code
-        Try Utils.db.Exec("INSERT INTO " & Tab & " (art_code) Values (&1)", Art.Text)
+        Try Utils.db.Exec("INSERT INTO " & Tab & " (art_code, art_design) Values (&1,&2)", rarts!art_code, Left(rarts!art_design, 50))
         If Not Error Then
-          ListArt.Text = ListArt.Text & " " & Art.Text
+          ListArt.Text = ListArt.Text & " " & rarts!art_code & " : " & rarts!art_design & "\n"
         Else
           message.Error("Ce produit a déjà été saisi !")
         Endif
@@ -356,8 +353,6 @@ Public Sub button8_Click()
 
   Dim aResult As Result
   Dim hResult As Result
-  Dim lResult As Result
-  Dim blResult As Result
   Dim cmResult As Result
   Dim Tab As String
   Dim i As Integer = 0
@@ -365,75 +360,46 @@ Public Sub button8_Click()
   Dim Sp As Boolean = False
   Dim hfil As File
   Dim filename As String
-  Dim Lecfic As Boolean = False
+  Dim Errtxt As String
+  Dim PB As ProgBar
 
   Tab = "Artsup"
   filename = User.Home & "/tmp/Artsuppr.txt"
   Hfil = Open filename For Write Create
-  If Message.Question("Attention ! Seuls les produits séléctionnés ayant un stock inférieur ou égal à zéro\n seront supprimés. OK ?", "Oui", "Non") = 1 Then
+  If Message.Question("Attention ! Seuls les produits séléctionnés ayant un stock égal à zéro (ou non stocké) et non utilisés (documents en cours) seront supprimés.", "Supprimer", "Sortir") = 1 Then
     Me.mouse = Mouse.wait
     If Not fichier.value Then
-      Try hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisFac") & " where datefac >= &1 union SELECT * FROM " & Cbase.Table("TabHisFacm") & " where datefac >= &1", Utils.Cdate_Dbase(dte1.Text))
-      If Error Then hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisFac") & " where datefac >= &1", Utils.Cdate_Dbase(dte1.Text))
-      If hResult.Available Then
-        If CheckSpd.value = True Then aResult = Utils.db.Exec("SELECT art_code FROM " & Cbase.Table("TabArt") & " where art_suspendu = &1 and art_fam > &2 and art_fam < &3 and art_four > &4 and art_four < &5 and art_stocke <= &6", True, Fam1.text, Fam2.Text, Cp1.text, Cp2.Text, 0)
-        If Liste.Value = True Then aResult = Utils.db.Exec("SELECT * from " & Tab & "")
-        If Liste.value = False And CheckSpd.value = False Then aResult = Utils.db.Exec("SELECT art_code FROM " & Cbase.Table("TabArt") & " where art_fam > &1 and art_fam < &2 and art_four > &3 and art_four < &4 and art_stocke <= &5", Fam1.text, Fam2.Text, Cp1.text, Cp2.Text, 0)
-        If aResult.Available Then
-          Repeat
-            blResult = Utils.db.Exec("SELECT num_ligbl FROM " & Cbase.Table("TabLigbl") & " where code_ligbl = &1", aResult!art_code)
-            If Not blResult.Available Then
-              cmResult = Utils.db.Exec("SELECT code FROM " & Cbase.Table("TabLigcom") & " where code = &1", aResult!art_code)
-              If Not blResult.Available Then
-                Try lResult = Utils.db.Exec("SELECT num_ligfac FROM " & Cbase.Table("TabHisLigFac") & " where code_ligfac = &1 and typel_ligfac = &2 union SELECT num_ligfac and typel_ligfac = &2  FROM " & Cbase.Table("TabHisLigFacm") & " where code_ligfac = &1 ", aResult!art_code, "A")
-                If Error Then lResult = Utils.db.Exec("SELECT num_ligfac, numlig_ligfac FROM " & Cbase.Table("TabHisLigFac") & " where code_ligfac = &1 and typel_ligfac = &2 ", aResult!art_code, "A")
-                If lResult.Available Then
-                  Repeat
-                    Try hResult = Utils.db.Exec("SELECT numfac FROM " & Cbase.Table("TabHisFac") & " where numfac = &1 and datefac >= &2 union SELECT numfac FROM " & Cbase.Table("TabHisFacm") & " where numfac = &1  and datefac >= &2 ", lResult!num_ligfac, Utils.Cdate_Dbase(dte1.Text))
-                    If Error Then hResult = Utils.db.Exec("SELECT numfac FROM " & Cbase.Table("TabHisFac") & " where numfac = &1 and datefac >= &2 ", lResult!num_ligfac, Utils.Cdate_Dbase(dte1.Text))
-                    If Not hResult.Available Then Sp = True
-                  Until lResult.MoveNext()
-                Endif
-                If sp = True Then
-                  Inc i
-                  Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabArt") & " WHERE art_code = &1", aResult!art_code)
-                  If Not Error Then Utils.db.Exec("DELETE FROM " & Tab & " WHERE art_code = &1", aResult!art_code)
-                  Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCdBarre") & " WHERE codep = &1", aResult!art_code)
-                  Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCequ") & " WHERE codep = &1", aResult!art_code)
-                  Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl1") & " WHERE codep = &1", aResult!art_code)
-                  Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl2") & " WHERE codep = &1", aResult!art_code)
-                  sp = False
-                Else
-                  Inc s
-                  Try Print #Hfil, "Impossible de supprimer le produit " & aResult!art_code & " car il est présent dans un historique plus récent que la date séléctionnée !"
-                  LecFic = True
-                Endif
-              Else
-                Inc s
-                Try Print #Hfil, "Impossible de supprimer le produit " & aResult!art_code & " car il est présent dans une commande !"
-                LecFic = True
-              Endif
-            Else
+      If CheckSpd.value = True Then aResult = Utils.db.Exec("SELECT art_code, art_design FROM " & Cbase.Table("TabArt") & " where art_suspendu = &1 and art_fam > &2 and art_fam < &3 and art_four > &4 and art_four < &5", True, Fam1.text, Fam2.Text, Cp1.text, Cp2.Text)
+      If Liste.Value = True Then aResult = Utils.db.Exec("SELECT * from " & Tab & "")
+      If Liste.value = False And CheckSpd.value = False Then aResult = Utils.db.Exec("SELECT art_code, art_design FROM " & Cbase.Table("TabArt") & " where art_fam > &1 and art_fam < &2 and art_four > &3 and art_four < &4", Fam1.text, Fam2.Text, Cp1.text, Cp2.Text)
+      If aResult.Available Then
+        PB = New ProgBar("Suppression Articles", aResult.Count, Null, True, "", True)
+        PB.Show()
+        Repeat
+          If PB.Avancement(aResult!art_design, 5) Then Break
+          hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisLigFac") & " where dtligbl_ligfac >= &1 and code_ligfac = &2 union SELECT * FROM " & Cbase.Table("TabHisLigFacm") & " where dtligbl_ligfac >= &1 and code_ligfac = &2", LDate(dte1.Text).D, aResult!art_code)
+          If ((Not hResult.Available And Selection.Value) Or Not Selection.Value) Then
+            Errtxt = Articles.art_Suppr(aResult!art_code, False)
+            If Errtxt <> "" Then
               Inc s
-              Try Print #Hfil, "Impossible de supprimer le produit " & aResult!art_code & " car il est présent dans un bon de livraison !"
-              LecFic = True
+              Print #Hfil, Errtxt
+            Else
+              Inc i
             Endif
-          Until aResult.MoveNext()
-          Close #hfil
-          If i = 0 Then message.info("Traitement terminé ! aucun article a supprimer.")
-          If i = 1 Then message.info("Traitement terminé ! " & i & " article a été supprimé.")
-          If i > 1 Then message.info("Traitement terminé ! " & i & " articles ont été supprimés.")
-          If s = 1 Then
-            message.info("Attention ! " & s & " article n'a pas pu être supprimé.")
-            Editeur.Prog_Editeur(Filename)
+          Else
+            Inc s
+            Print #Hfil, Errtxt
+            Errtxt = "Suppression " & aResult!art_code & " impossible! car present en archive facture apres la date " & LDate(dte1.Text).L & "."
           Endif
-          If s > 1 Then
-            message.info("Attention ! " & s & " articles n'ont pas pu être supprimés.")
-            Editeur.Prog_Editeur(Filename)
-          Endif
-        Endif
-      Else
-        Message.info("Aucun traitement a effectuer pour cette date !")
+        Until aResult.MoveNext()
+        PB.Close()
+      Endif
+      Close #hfil
+      If i = 0 Then message.info("Traitement terminé ! aucun article supprimé.")
+      If i >= 1 Then message.info("Traitement terminé ! " & i & " article(s) supprimé(s).")
+      If s >= 1 Then
+        message.info("Attention ! impossible de supprimer " & s & " article(s).")
+        Editeur.Prog_Editeur(Filename)
       Endif
     Else
       Suppression()
@@ -450,51 +416,29 @@ Public Sub Suppression()
 
   Dim hfil, hfile As File
   Dim lig As String
-  Dim blResult, cmResult As Result
   Dim i, s As Integer = 0
+  Dim Errtxt As String
 
   filename = User.Home & "/tmp/Artsuppr.txt"
-  hFil = Open filename For Read Write
+  hFil = Open filename For Write Create
   hFile = Open fic.Text For Read
   Me.Mouse = Mouse.Wait
   While Not Eof(hFile)
     Line Input #hFile, Lig
-    blResult = Utils.db.Exec("SELECT num_ligbl FROM " & Cbase.Table("TabLigbl") & " where code_ligbl = &1", lig)
-    If Not blResult.Available Then
-      cmResult = Utils.db.Exec("SELECT code FROM " & Cbase.Table("TabLigcom") & " where code = &1", lig)
-      If Not blResult.Available Then
-        cmResult = Utils.db.Exec("SELECT art_code FROM " & Cbase.Table("TabArt") & " where art_code = &1", lig)
-        If blResult.Available Then
-          Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabArt") & " WHERE art_code = &1", lig)
-          Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCdBarre") & " WHERE codep = &1", lig)
-          Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCequ") & " WHERE codep = &1", lig)
-          Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl1") & " WHERE codep = &1", lig)
-          Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRpl2") & " WHERE codep = &1", lig)
-          Inc i
-        Else
-          Inc s
-          Try Print #Hfil, "La réfèrence " & lig & " n'existe pas !"
-        Endif
-      Else
-        Inc s
-        Try Print #Hfil, "Impossible de supprimer le produit " & lig & " car il est présent dans une commande !"
-      Endif
-    Else
+    Errtxt = Articles.art_Suppr(Lig, False)
+    If Errtxt <> "" Then
       Inc s
-      Try Print #Hfil, "Impossible de supprimer le produit " & lig & " car il est présent dans un bon de livraison !"
+      Print #Hfil, Errtxt
+    Else
+      Inc i
     Endif
   Wend
   Close #hfil
   Close #hfile
-  If i = 0 Then message.info("Traitement terminé ! aucun article a supprimer.")
-  If i = 1 Then message.info("Traitement terminé ! " & i & " article a été supprimé.")
-  If i > 1 Then message.info("Traitement terminé ! " & i & " articles ont été supprimés.")
-  If s = 1 Then
-    message.info("Attention ! " & s & " article n'a pas pu être supprimé.")
-    Editeur.Prog_Editeur(Filename)
-  Endif
-  If s > 1 Then
-    message.info("Attention ! " & s & " articles n'ont pas pu être supprimés.")
+  If i = 0 Then message.info("Traitement terminé ! aucun article supprimé.")
+  If i >= 1 Then message.info("Traitement terminé ! " & i & " article(s) supprimé(s).")
+  If s >= 1 Then
+    message.info("Attention ! impossible de supprimer " & s & " article(s).")
     Editeur.Prog_Editeur(Filename)
   Endif
 

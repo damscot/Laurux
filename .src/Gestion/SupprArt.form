@@ -13,10 +13,10 @@
     Font = Font["Serif,-1"]
     Text = ("Suppression des articles")
     { Panel2 Panel
-      MoveScaled(1,19.5714,82,4)
+      MoveScaled(1,19.625,82,4)
       { Cp1 TextBox Suppr
         Name = "Cp1"
-        MoveScaled(21,0.5714,13,3)
+        MoveScaled(21,0.625,13,3)
         Font = Font["Serif,-1"]
         Tag = "3"
         Text = ("4010001")
@@ -24,29 +24,29 @@
       }
       { Cp2 TextBox Suppr
         Name = "Cp2"
-        MoveScaled(61,0.5714,13,3)
+        MoveScaled(61,0.625,13,3)
         Font = Font["Serif,-1"]
         Tag = "4"
         Text = ("40199999")
         MaxLength = 8
       }
       { Label1 Label
-        MoveScaled(0,0.5714,20,3)
+        MoveScaled(0,0.625,20,3)
         Font = Font["Serif,-1"]
         Text = ("Du fournisseur")
       }
       { Label5 Label
-        MoveScaled(40,0.5714,20,3)
+        MoveScaled(40,0.625,20,3)
         Font = Font["Serif,-1"]
         Text = ("Au fournisseur")
       }
       { Button3 Button
-        MoveScaled(34,0,3.7143,3.7143)
+        MoveScaled(34,0,3.75,3.75)
         ToolTip = ("Cliquer pour recuperer votre compte.")
         Picture = Picture["Icones/next_frame.png"]
       }
       { Button4 Button
-        MoveScaled(74,0,3.7143,3.7143)
+        MoveScaled(74,0,3.75,3.75)
         ToolTip = ("Cliquer pour recuperer votre compte.")
         Picture = Picture["Icones/next_frame.png"]
       }
@@ -60,7 +60,7 @@
       }
       { Fam1 TextBox Suppr
         Name = "Fam1"
-        MoveScaled(21,0.5714,13,3)
+        MoveScaled(21,0.625,13,3)
         Font = Font["Serif,-1"]
         Tag = "1"
         Text = ("00000")
@@ -73,19 +73,19 @@
       }
       { Fam2 TextBox Suppr
         Name = "Fam2"
-        MoveScaled(61,0.5714,13,3)
+        MoveScaled(61,0.625,13,3)
         Font = Font["Serif,-1"]
         Tag = "2"
         Text = ("ZZZZZ")
         MaxLength = 5
       }
       { Button1 Button
-        MoveScaled(34,0,3.7143,3.7143)
+        MoveScaled(34,0,3.75,3.75)
         ToolTip = ("Cliquer pour recuperer votre compte.")
         Picture = Picture["Icones/next_frame.png"]
       }
       { Button2 Button
-        MoveScaled(74,0,3.7143,3.7143)
+        MoveScaled(74,0,3.75,3.75)
         ToolTip = ("Cliquer pour recuperer votre compte.")
         Picture = Picture["Icones/next_frame.png"]
       }
@@ -94,7 +94,7 @@
       MoveScaled(1,24,82,4)
       { Dte1 TextBox Etiq
         Name = "Dte1"
-        MoveScaled(21,0.5714,13,3)
+        MoveScaled(21,0.625,13,3)
         Font = Font["Serif,-1"]
         Tag = "5"
         MaxLength = 10
@@ -105,7 +105,7 @@
         Text = ("Dernière vente < au")
       }
       { Button5 Button
-        MoveScaled(34,0,3.7143,3.7143)
+        MoveScaled(34,0,3.75,3.75)
         ToolTip = ("Cliquer pour recuperer votre compte.")
         Picture = Picture["Icones/next_frame.png"]
       }
@@ -131,14 +131,8 @@
   { Panel4 Panel
     MoveScaled(4,40,83,34)
     Visible = False
-    { Listart TextLabel
-      MoveScaled(0,6,83,27)
-      Visible = False
-      Background = &HFFFFFF&
-      Border = Border.Plain
-    }
     { Label2 Label
-      MoveScaled(1,1.5714,20,3)
+      MoveScaled(1,1.625,20,3)
       Font = Font["Serif,-1"]
       Text = ("Code article")
     }
@@ -150,12 +144,15 @@
       MaxLength = 15
     }
     { Button10 Button
-      MoveScaled(35,0.5714,3.7143,3.7143)
+      MoveScaled(35,0.625,3.75,3.75)
       ToolTip = ("Cliquer pour recuperer votre code produit.")
       Picture = Picture["Icones/next_frame.png"]
     }
     { Design Label
       MoveScaled(39,1,44,3)
+    }
+    { ListArt TextArea
+      MoveScaled(0,5,83,29)
     }
   }
   { HBox1 HBox
@@ -203,7 +200,7 @@
     Background = Color.Background
     Text = ("Fichier")
     { Label8 Label
-      MoveScaled(2,3.4286,42,3)
+      MoveScaled(2,3.375,42,3)
       Font = Font["Serif,-1"]
       Text = ("Chemin et nom du fichier a utiliser")
       Alignment = Align.Center
