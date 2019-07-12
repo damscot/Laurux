@@ -2,7 +2,8 @@
 
 'pour l'édition des factures boissson gére le detail et les totaux des droits et consignes, fait la mise en format pour l'édition.
 'Gére l'écriture dans le fichier consigne (Fiches_ligcons) et régie (Fiches_ligregie).
-' mouvemente le fichier Totalisation pour génerer l'écriture comptable
+
+Inherits CalFac
 
 Private $cimp As New Collection
 Private $vdecons As New Variant[]
@@ -20,6 +21,7 @@ Private $cdrt As New Calculdroit[]
 Private $schoix As String
 Private $slstnum As New String[]
 Private $clot As Date
+Private $borientation As Boolean
 
 Property Read aimprimer As Collection
 Property Read consigne As String
@@ -37,319 +39,354 @@ Property Read clotmat As Date
 
 Public Sub _new(num As String, choix As String)
 
-  Dim rescons, reslig, res As Result
+  Dim rescons, reslig1, res As Result
   Dim drt As Calculdroit
   Dim i, j As Integer
   Dim vri As String[]
   Dim montht, montcons As Float
   Dim numfac, qst As String
+  Dim lg As Variant
   
+   $borientation = borientation()
+  If Not $borientation Or Not Me.vfac.blchif Then Return
   
   $num = num                                              ' si $schoix=B num de bon =F num facture = FM num client =M num facture
   $schoix = choix                                       ' "B" ==> saisie factures "F" réedition des factures "FM" factures fin de mois "M" facture magasin
   If choix = "FM" Then                                   ' facture fin de mois =>regarde dans tous les bons
     $schoix = "B"
-    res = Utils.db.Exec("SELECT num FROM Bl WHERE code=&1", $num)
-    res.MoveFirst
-    For i = 0 To res.Max
-      $slstnum.Add(res!num)
-      res.MoveNext
-    Next
-  Else
-    $slstnum.Add($num)
   Endif
-  If $schoix = "M" Then Return            'Voir pour les consignes + tard
-  For Each numfac In $slstnum
-  vri = ["", "", "", "", "", "", "", ""]
-  'Gestion des consignes
-  rescons = Utils.db.Exec("SELECT numlig FROM Fiches_ligcons WHERE num=&1 AND numlig<>'D' AND type=&2 GROUP BY numlig", numfac, $schoix)
-  If rescons.Available Then
-    rescons.MoveFirst
-    For i = 0 To rescons.Max
-      reslig = Utils.db.Exec("SELECT numlig,nb,montant,Fiches_consigne.type FROM Fiches_ligcons,Fiches_consigne WHERE num=&1 AND Fiches_ligcons.type=&3 AND Fiches_ligcons.codecons=Fiches_consigne.code AND numlig=&2", numfac, rescons!numlig, $schoix)
-      reslig.MoveFirst
-      montcons = 0
-      For j = 0 To reslig.Max
-        Select Case reslig!type
-          Case "P"
-            vri[0] = Str(reslig!nb)
-          Case "C"
-            vri[1] = Str(reslig!nb)
-          Case "B"
-            vri[2] = Str(reslig!nb)
-        End Select
-        $ftotht += reslig!montant
-        $stotcons = Format(Val($stotcons) + reslig!montant, "0.00")
-        montcons += reslig!montant
-       reslig.MoveNext
-      Next
-      vri[3] = Format(montcons, "0.00")
-      $cimp.Add(vri, rescons!numlig)
-      vri = ["", "", "", "", "", "", "", ""]
-      rescons.MoveNext
-    Next
-  Endif
+  If $schoix = "M" Then Return            'Voir pour les consignes magasin+ tard
+  Me.vfac.resent.MoveFirst
+  For Each lg In Me.ligne
+    vri = [" ", " ", " ", " ", " ", " ", " ", " "]
+    If lg.Index > -1 And lg.code And lg.type = "A" Then
+      Me.vfac.reslig.MoveTo(lg.Index)
+      'Gestion des consignes
+      reslig1 = Utils.db.Exec("SELECT numlig,nb,montant,Fiches_consigne.type FROM Fiches_ligcons,Fiches_consigne WHERE num=&1 AND Fiches_ligcons.type=&3 AND Fiches_ligcons.codecons=Fiches_consigne.code AND numlig LIKE &2", Me.vfac.reslig!num_ligbl, "%" & Me.vfac.reslig!numlig_ligbl, $schoix)
+      If reslig1.Available Then
+        reslig1.MoveFirst
+        montcons = 0
+        For j = 0 To reslig1.Max
+          Select Case reslig1!type
+            Case "P"
+              vri[0] = Str(reslig1!nb)
+            Case "C"
+              vri[1] = Str(reslig1!nb)
+            Case "B"
+              vri[2] = Str(reslig1!nb)
+          End Select
+          $ftotht += reslig1!montant
+          $stotcons = Format(Val($stotcons) + reslig1!montant, ",0.00")
+          montcons += reslig1!montant
+          reslig1.MoveNext
+       Next
+        vri[3] = Format(montcons, ",0.00")
+        $cimp.Add(vri, Me.ligne.Key)
+      Endif
+    Else
+      $cimp.Add(vri, Me.ligne.Key)
+    Endif
+    vri = [" ", " ", " ", " ", " ", " ", " ", " "]
+  Next
   'Gestion des droits
   Select Case $schoix
     Case "B"
-      reslig = Utils.db.Exec("SELECT numlig,codeart,coderegie,nom,qte,volume,Fiches_ligregie.degres,Fiches_regie.type,volumeap,montdr,montss,txtvadr,txtvass,nom,art_design,art_volm,art_deg,art_fam FROM Fiches_ligregie,Fiches_regie,Fiches_Art,Fiches_Bl WHERE numbl=&1 AND num=numfac AND Fiches_regie.code=coderegie AND art_code=codeart", numfac)
+      reslig1 = Utils.db.Exec("SELECT numlig,codeart,coderegie,nom,qte,volume,Fiches_ligregie.degres,Fiches_regie.type,volumeap,montdr,montss,txtvadr,txtvass,nom,art_design,art_volm,art_deg,art_fam FROM Fiches_ligregie,Fiches_regie,Fiches_Art,Fiches_Bl WHERE numbl=&1 AND num=numfac AND Fiches_regie.code=coderegie AND art_code=codeart", Me.vfac.numbl)
     Case "F"
-      reslig = Utils.db.Exec("SELECT numlig,codeart,coderegie,nom,qte,volume,Fiches_ligregie.degres,Fiches_regie.type,volumeap,montdr,montss,txtvadr,txtvass,nom,art_design,art_volm,art_deg,art_fam FROM Fiches_ligregie,Fiches_regie,Fiches_Art WHERE num=&1 AND Fiches_regie.code=coderegie AND art_code=codeart", numfac)
+      reslig1 = Utils.db.Exec("SELECT numlig,codeart,coderegie,nom,qte,volume,Fiches_ligregie.degres,Fiches_regie.type,volumeap,montdr,montss,txtvadr,txtvass,nom,art_design,art_volm,art_deg,art_fam FROM Fiches_ligregie,Fiches_regie,Fiches_Art WHERE num=&1 AND Fiches_regie.code=coderegie AND art_code=codeart", Me.vfac.numfac)
   End Select
-  If reslig.Available Then            'affiche si facture déja éditée 
-    reslig.MoveFirst
-    For i = 0 To reslig.Max 
-      If $cimp.Exist(reslig!numlig) Then
-        vri = $cimp[reslig!numlig]
+  If reslig1.Available Then            'affiche si facture déja éditée 
+    reslig1.MoveFirst
+    For i = 0 To reslig1.Max 
+      If $cimp.Exist(Right(reslig1!numlig, 4)) Then
+        vri = $cimp[Right(reslig1!numlig, 4)]
       Else
-        vri = ["", "", "", "", "", "", "", ""]
-        $cimp.Add(vri, reslig!numlig)
+        vri = [" ", " ", " ", " ", " ", " ", " ", " "]
+        $cimp.Add(vri, Right(reslig1!numlig, 4))
       Endif
-      drt = New Calculdroit(reslig!coderegie, reslig!art_volm, reslig!art_deg, reslig!qte, reslig!art_fam)
-      drt.droit = reslig!montdr
-      drt.secu = reslig!montss
-      drt.tauxtvadr = reslig!txtvadr
-      drt.tauxtvass = reslig!txtvass
-      $cdrt.Add(drt)
-      If reslig!art_volm <> 0 Then vri[4] = reslig!art_volm
-      If reslig!art_deg <> 0 Then vri[5] = reslig!art_deg
-      If reslig!volume <> 0 Then vri[6] = reslig!volume
-      If reslig!volumeap <> 0 Then vri[7] = reslig!volumeap
-      $cimp[reslig!numlig] = vri
+      drt = New Calculdroit(reslig1!coderegie, reslig1!art_volm, reslig1!art_deg, reslig1!qte, reslig1!art_fam)
+      drt.droit = reslig1!montdr
+      drt.secu = reslig1!montss
+      drt.tauxtvadr = reslig1!txtvadr
+      drt.tauxtvass = reslig1!txtvass
+      '$cdrt.Add(drt)
+      If reslig1!art_volm <> 0 Then vri[4] = reslig1!art_volm
+      If reslig1!art_deg <> 0 Then vri[5] = reslig1!art_deg
+      If reslig1!volume <> 0 Then vri[6] = reslig1!volume
+      If reslig1!volumeap <> 0 Then vri[7] = reslig1!volumeap
+      $cimp[Right(reslig1!numlig, 4)] = vri
       If drt.suspendu Or drt.drsurfac Then            'rajout des droits si magasin suspendu ou droit a part
-        Select Case reslig!type
+        Select Case reslig1!type
           Case "A", "V"
-            $stotdr = Str(Val($stotdr) + reslig!montdr)
+            $stotdr = Str(Val($stotdr) + reslig1!montdr)
           Case "B"
-            $stotasc = Str(Val($stotasc) + reslig!montdr)
+            $stotasc = Str(Val($stotasc) + reslig1!montdr)
+            If Not drt.suspendu Then cassise(drt)
         End Select
+         If drt.suspendu Then        'prepa de l'ecriture comptable
+          cdroits(drt)
+        Endif
       Endif
-      $stotss = Str(Val($stotss) + reslig!montss)
-      $ftotht += reslig!montdr + reslig!montss
+      $stotss = Str(Val($stotss) + reslig1!montss)
+      $ftotht += reslig1!montdr + reslig1!montss
       $ftotv += drt.vol
       $ftotap += drt.volap
-      reslig.MoveNext
+      reslig1.MoveNext
     Next
   Else
-    reslig = Utils.db.Exec("SELECT num_ligbl,numlig_ligbl,qte_ligbl,art_dra,art_volm,art_deg,art_fam FROM Fiches_Ligbl, Fiches_Art WHERE num_ligbl=&1 AND code_ligbl=art_code AND art_dra IS NOT NULL", numfac)
-    If reslig.Available Then          'affiche si facture non éditée
-      reslig.MoveFirst
-      For i = 0 To reslig.Max
-        vri = ["", "", "", "", "", "", "", ""]
-        If $cimp.Exist(reslig!num_ligbl & reslig!numlig_ligbl) Then
-          vri = $cimp[reslig!num_ligbl & reslig!numlig_ligbl]
+    For Each lg In Me.ligne         'affiche si facture non éditée
+      If lg.Index = -1 Or Not lg.code And lg.type <> "A" Then Continue
+      Me.vfac.reslig.MoveTo(lg.Index)
+      reslig1 = Utils.db.Exec("SELECT art_dra,art_volm,art_deg,art_fam FROM Fiches_Art WHERE art_code=&1 AND art_dra IS NOT NULL", Me.vfac.reslig!code_ligbl)
+      If reslig1.Available Then 
+        vri = [" ", " ", " ", " ", " ", " ", " ", " "]
+        If $cimp.Exist(Me.ligne.Key) Then
+          vri = $cimp[Me.ligne.Key]
         Else
-          $cimp.Add(vri, reslig!num_ligbl & reslig!numlig_ligbl)
+          $cimp.Add(vri, Me.ligne.Key)
         Endif
-        drt = New Calculdroit(reslig!art_dra, reslig!art_volm, reslig!art_deg, reslig!qte_ligbl, reslig!art_fam)
-        If reslig!art_volm <> 0 Then vri[4] = reslig!art_volm
-        If reslig!art_deg <> 0 Then vri[5] = reslig!art_deg
+        drt = New Calculdroit(reslig1!art_dra, reslig1!art_volm, reslig1!art_deg, Me.vfac.reslig!qte_ligbl, reslig1!art_fam)
+        If reslig1!art_volm <> 0 Then vri[4] = reslig1!art_volm
+        If reslig1!art_deg <> 0 Then vri[5] = reslig1!art_deg
         If drt.vol <> 0 Then vri[6] = drt.vol
         If drt.volap <> 0 Then vri[7] = drt.volap
-        $cimp[reslig!num_ligbl & reslig!numlig_ligbl] = vri
-        $cdrt.Add(drt)
+        $cimp[Me.ligne.Key] = vri
+        '$cdrt.Add(drt)
         Select Case drt.type
           Case "A", "V"
             $stotdr = Str(Val($stotdr) + Round(drt.droit, -2))
           Case "B"
             If drt.drsurfac Then
               $stotasc = Str(Val($stotasc) + Round(drt.droit, -2))
+              If Not drt.suspendu Then cassise(drt)
             Endif
         End Select
+        If drt.suspendu Then        'prepa de l'ecriture comptable
+          cdroits(drt)
+        Endif
         $stotss = Str(Val($stotss) + Round(drt.secu, -2))
         $ftotht += Round(drt.droit, -2) + Round(drt.secu, -2)
         $ftotv += drt.vol
         $ftotap += drt.volap
-        reslig.MoveNext
-      Next
-    Endif
+      Endif
+    Next
   Endif
- Next
 
   'Gestion des deconsignes
   qst = "("
-  For i = 0 To $slstnum.Max
-    qst &= Utils.db.Subst(" num=&1", $slstnum[i])
-    If i < $slstnum.Max Then qst &= " OR" Else qst &= ")"
+  Me.vfac.resent.MoveFirst
+  For i = 0 To Me.vfac.resent.Max
+    qst &= Utils.db.Subst(" num=&1", Me.vfac.resent!numbl)
+    If i < Me.vfac.resent.Max Then qst &= " OR" Else qst &= ")"
+    Me.vfac.resent.MoveNext()
   Next
+  Me.vfac.resent.MoveFirst
   rescons = Utils.db.Exec("SELECT SUM(nb) AS nb,SUM(montant) AS montant,codecons,Fiches_consigne.type,libelle FROM Fiches_ligcons,Fiches_consigne WHERE" & qst & " AND codecons=Fiches_consigne.code AND numlig='D' AND Fiches_ligcons.type=&1 GROUP BY codecons", $schoix)
   If rescons.Available Then
     $vdecons.Resize(rescons.Count)
     rescons.MoveFirst
     For i = 0 To rescons.Max
-      vri = ["", "", "", "", "", "", ""]
-      vri[0] = rescons!codecons
-      vri[1] = rescons!libelle
+      vri = [" ", " ", " ", " ", " ", " ", " "]
+      vri[4] = rescons!codecons
+      vri[5] = rescons!libelle
       Select Case rescons!type
         Case "P"
-          vri[2] = rescons!nb
+          vri[0] = rescons!nb
         Case "C"
-          vri[3] = rescons!nb
+          vri[1] = rescons!nb
         Case "B"
-          vri[4] = rescons!nb
+          vri[2] = rescons!nb
       End Select
-      vri[5] = Format(rescons!montant, "0.00")
+      vri[3] = Format(rescons!montant, ",0.00")
       $vdecons[i] = vri
       $ftotht += rescons!montant
-      $stotdecons = Format(Val($stotdecons) + rescons!montant, "0.00")
+      $stotdecons = Format(Val($stotdecons) + rescons!montant, ",0.00")
       rescons.MoveNext
     Next
   Endif
   $inb = rescons.Count
-
+  res = Utils.db.Exec("SELECT conscli,intitule_cc FROM Fiches_Parametres,Fiches_Comptes WHERE compte_cc=conscli")
+  If res.Available Then 
+    montcons = Utils.totobs([$stotcons, $stotdecons])
+    If montcons <> 0 Then
+      Me.ecriture(res!conscli, montcons, res!intitule_cc)
+      Me.ecriture(Me.vfac.resent!cdclibl, montcons * -1, Me.vfac.resent!nmclibl)
+      Me.montttc += montcons
+    Endif
+  Else
+    Message.Error("Erreur sur le paramametrage des consignes client")
+  Endif
+  
  $schoix = choix
 End
-'*****maj du fichier totalisation pour les options boissons
-Public Sub Totalisation()
 
-  Dim res, respar As Result
-  Dim i As Integer
-  Dim drt As Calculdroit
+Private Sub cassise(drt As Calculdroit)    'si magasin acquité et séparation qq même des droits ==> remonté des droits dans le compte vente de la famille article
   
-  '*******gestion des consignes
-  respar = Utils.db.Exec("SELECT conscli,intitule_cc FROM Fiches_Parametres,Fiches_Comptes WHERE compte_cc=conscli")
-  If respar.Available And Val($stotcons) + Val($stotdecons) <> 0 Then
-    Utils.db.Begin
-    res = Utils.db.Create("Totalisation")
-    res!compte = respar!conscli
-    res!intitule = respar!intitule_cc
-    res!totalht = Format(Val($stotcons) + Val($stotdecons), "0.00")
-    res!totaltva = "0"
-    res!codetva = "."
-    res.Update
-    Utils.db.Commit
-  Else
-    If Not respar.Available Then Message.Error("Probleme de paramametrage sur les consignes", "OK")
-  Endif
-   '****************gestion des droits avec le tableau de calculdroit créer dans _new
-   Utils.db.Begin
-   For Each drt In $cdrt
-     respar = Utils.db.Exec("SELECT css,tvass,intitule_cc FROM Fiches_Parametres,Fiches_Comptes WHERE compte_cc=css") 'recupération n° compte et code tva pour la sécu 
-     
-     If drt.suspendu Then
-       res = Utils.db.Edit("Totalisation", "compte=&1", drt.cptreg) 'enregistrement des droits
-       If res.Available Then
-         res!totalht = Str(Val(res!totalht) + Round(drt.droit, -2))
-         res!totaltva = Str(Val(res!totaltva) + Round(drt.tvadroit, -2))
-         res.Update
-        Else
-         res = Utils.db.Create("Totalisation")
-         res!compte = drt.cptreg
-         res!intitule = drt.lib
-         res!totalht = Format(drt.droit, "0.00")
-         res!totaltva = Format(drt.tvadroit, "0.00")
-         res!codetva = "0"
-         res.Update
-       Endif
-       enrtva(drt.codetva, drt.tvadroit, drt.droit)
-       If drt.secu <> 0 Then
-        res = Utils.db.Edit("Totalisation", "compte=&1", respar!css) 'enregistrement de la secu
-         If res.Available Then
-           res!totalht = Str(Val(res!totalht) + Round(drt.secu, -2))
-           res!totaltva = Str(Val(res!totaltva) + Round(drt.tvasec, -2))
-           res.Update
-         Else
-           res = Utils.db.Create("Totalisation")
-           res!compte = respar!css
-           res!intitule = respar!intitule_cc
-           res!totalht = Format(drt.secu, "0.00")
-           res!totaltva = Format(drt.tvasec, "0.00")
-           res!codetva = "0" 
-           res.Update
-         Endif
-         enrtva(respar!tvass, drt.tvasec, drt.secu)
-       Endif
-     Else
-       If drt.drsurfac Then 'si magasin acquité et séparation qq même des droits ==> remonté des droits dans le compte vente de la famille article
-         respar = Utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Comptes,Fiches_Fam WHERE code_fam=&1 and compte_cc=compt_fam", drt.famille)
-         res = Utils.db.Edit("Totalisation", "compte=&1", respar!compte_cc)
-         If res.Available Then
-           If IsNumber(res!totalht) Then res!totalht = Str(Val(res!totalht) + Round(drt.droit, -2)) Else res!totalht = Format(drt.droit, "0.00")
-           If IsNumber(res!totaltva) Then res!totaltva = Str(Val(Replace(res!totaltva, ".", ",")) + Round(drt.tvadroit, -2)) Else res!totaltva = Format(drt.tvadroit, "0.00")
-         Else
-           res = Utils.db.Create("Totalisation")
-           res!compte = respar!compte_cc
-           res!intitule = respar!intitule_cc
-           res!totalht = Format(drt.droit, "0.00")
-           res!totaltva = Format(drt.tvadroit, "0.00")
-           res!codetva = "0"
-         Endif
-         res.Update
-         enrtva(drt.codetva, drt.tvadroit, drt.droit)
-       Endif
-     Endif
-   Next
-   Utils.db.Commit
-
-End
-'Enregistrement de la tva
-Private Sub enrtva(code As String, monttva As Float, montht As Float)
+  Dim res As Result
   
-  Dim res, respar As Result
-  respar = Utils.db.Exec("SELECT compte_cc,intitule_cc,taux_tva FROM Fiches_Comptes,Fiches_Tvaav WHERE code_tva=&1 AND compte_cc=cc_tva", code)
-  If respar.Available Then
-    Utils.db.Begin
-    res = Utils.db.Edit("Totalisation", "compte=&1 AND codetva=&2", respar!compte_cc, code)
-    If res.Available Then
-      res!totalht = Str(Utils.totobs([res!totalht]) + montht)
-      res!totaltva = Str(Utils.totobs([res!totaltva]) + monttva)
-    Else
-      res = Utils.db.Create("Totalisation")
-      res!compte = respar!compte_cc
-      res!intitule = respar!intitule_cc
-      res!totalht = Format(montht, "0.00")
-      res!totaltva = Format(monttva, "0.00")
-      res!codetva = code
+  If Me.tva.Exist(drt.codetva) Then
+    If drt.droit <> 0 Then
+      res = Utils.db.Exec("SELECT compte_cc,intitule_cc,cdtva_fam,txtva_fam FROM Fiches_Comptes,Fiches_Fam WHERE code_fam=&1 and compte_cc=compt_fam", drt.famille)
+      Me.ecriture(res!compte_cc, drt.droit, res!intitule_cc)
+      Me.montht += drt.droit
+      res = Utils.db.Exec("SELECT compte_cc,intitule_cc,taux_tva FROM Fiches_Comptes,Fiches_Tvaav WHERE code_tva=&1 AND compte_cc=cc_tva", res!cdtva_fam)
+      Me.lignetva = Me.tva[drt.codetva]
+      Me.lignetva.totht += drt.droit
+      Me.lignetva.tottva += drt.tvadroit
+      Me.tva[drt.codetva] = Me.lignetva
+      Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
+      Me.monttva += drt.tvadroit
+      Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
+      Me.montttc += (drt.tvadroit + drt.droit)
     Endif
-    res.Update
   Else
-    Message.Error("Probleme de paramametrage sur la TVA option boisson", "OK")
+    If drt.droit <> 0 Then
+      res = Utils.db.Exec("SELECT compte_cc,intitule_cc,cdtva_fam,txtva_fam FROM Fiches_Comptes,Fiches_Fam WHERE code_fam=&1 and compte_cc=compt_fam", drt.famille)
+      Me.ecriture(drt.cptreg, drt.droit, res!intitule_cc)
+      Me.montht += drt.droit
+      res = Utils.db.Exec("SELECT compte_cc,intitule_cc,taux_tva FROM Fiches_Comptes,Fiches_Tvaav WHERE code_tva=&1 AND compte_cc=cc_tva", res!cdtva_fam)
+      Me.lignetva.num = drt.cptreg
+      Me.lignetva.taux = drt.tauxtvadr
+      Me.lignetva.totht = drt.droit
+      Me.lignetva.tottva = drt.tvadroit
+      Me.tva.Add(Me.lignetva, drt.codetva)
+      Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
+      Me.monttva += drt.tvadroit
+      Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
+      Me.montttc += (drt.tvadroit + drt.droit)
+    Endif
   Endif
+End
+
+Private Sub cdroits(drt As Calculdroit)
+  
+  Dim res, respar As Result
+  
+  'enregistrement des droits
+  If Me.tva.Exist(drt.codetva) Then
+    If drt.droit <> 0 Then
+      res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", drt.cptreg)
+      Me.ecriture(drt.cptreg, drt.droit, res!intitule_cc)
+      Me.montht += drt.droit
+      res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", drt.codetva)
+      Me.lignetva = Me.tva[drt.codetva]
+      Me.lignetva.totht += drt.droit
+      Me.lignetva.tottva += drt.tvadroit
+      Me.tva[drt.codetva] = Me.lignetva
+      Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
+      Me.monttva += drt.tvadroit
+      Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
+      Me.montttc += (drt.tvadroit + drt.droit)
+    Endif
+    'enregistrement secu
+    If drt.secu <> 0 Then
+      respar = Utils.db.Exec("SELECT css,tvass FROM Fiches_Parametres")
+      res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", respar!css)
+      Me.ecriture(respar!css, drt.secu, res!intitule_cc)
+      Me.montht += drt.secu
+      res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", respar!tvass)
+      Me.ecriture(res!compte_cc, drt.tvasec, res!intitule_cc)
+      Me.monttva += drt.tvasec
+      Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvasec + drt.secu) * -1, Me.vfac.resent!nmclibl)
+      Me.montttc += (drt.tvasec + drt.secu)
+      Me.lignetva.totht += drt.secu
+      Me.lignetva.tottva += drt.tvasec
+    Endif
+  Else
+    If drt.droit <> 0 Then
+      res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", drt.cptreg)
+      Me.ecriture(drt.cptreg, drt.droit, res!intitule_cc)
+      Me.montht += drt.droit
+      res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", drt.codetva)
+      Me.lignetva.num = drt.cptreg
+      Me.lignetva.taux = drt.tauxtvadr
+      Me.lignetva.totht = drt.droit
+      Me.lignetva.tottva = drt.tvadroit
+      Me.tva.Add(Me.lignetva, drt.codetva)
+      Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
+      Me.monttva += drt.tvasec
+      Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
+      Me.montttc += (drt.tvadroit + drt.droit)
+    Endif
+    If drt.secu <> 0 Then
+      respar = Utils.db.Exec("SELECT css,tvass FROM Fiches_Parametres")
+      res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", respar!css)
+      Me.ecriture(respar!css, drt.secu, res!intitule_cc)
+      Me.montht += drt.secu
+      res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", respar!tvass)
+      Me.ecriture(res!compte_cc, drt.tvasec, res!intitule_cc)
+      Me.monttva += drt.tvasec
+      Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvasec + drt.secu) * -1, Me.vfac.resent!nmclibl)
+      Me.montttc += (drt.tvasec + drt.secu)
+      Me.lignetva.num = respar!css
+      Me.lignetva.taux = respar!tvass
+      Me.lignetva.totht = drt.droit
+      Me.lignetva.tottva = drt.tvadroit
+      Me.tva.Add(Me.lignetva, drt.codetva)
+    Endif
+  Endif
+  
+End
+
+Public Function borientation() As Boolean
+  
+  Dim res As Result
+  Dim lg As Variant
+  Dim opt As String
+  Dim bl As String
+  
+  opt = Utils.Option()
+  If opt = "N" Or opt = "P" Then Return False
+  For Each lg In Me.ligne
+    If lg.Index = -1 Then Continue
+    Me.vfac.reslig.MoveTo(lg.Index)
+    If bl <> Me.vfac.reslig!num_ligbl Then
+      bl = Me.vfac.reslig!num_ligbl
+      res = Utils.db.Exec("SELECT * FROM Fiches_ligcons WHERE num = &1 AND numlig='D' LIMIT 1", Me.vfac.reslig!num_ligbl)
+      If res.Available Then Return True
+    Endif
+    res = Utils.db.Exec("SELECT art_dra,art_consb,art_consc,art_consp FROM Fiches_Art WHERE art_code=&1", lg.code)
+    If res.Available Then
+      If res!art_dra Or res!art_consb Or res!art_consc Or res!art_consp Then Return True
+    Endif
+  Next
+  Return False
+  
 End
 
 Public Sub comptmat(Optional numfac As String)    'enregistrement de la compta matiere à l'edition des factures
 
-  Dim res, resvig, reslig, respar As Result
+  Dim res, resvig, reslig1, respar As Result
   Dim drt As Calculdroit
   Dim i, nvign As Integer
   Dim num As String
+  Dim lg As Variant
 
   Utils.db.Begin
+  'Facture magasin
   'regarde dans le/les bons si un article est en droit suspendu ==> incremente le n° de vignette
-  For Each num In $slstnum
-    If $schoix = "M" Then 
-      resvig = Utils.db.Exec("SELECT suspendu FROM Fiches_HistoLigfac, Fiches_Art,Fiches_regie WHERE num_ligfac=&1 AND art_code=code_ligfac AND Fiches_regie.code=art_dra AND suspendu=True LIMIT 1 ", num)
-    Else
-      resvig = Utils.db.Exec("SELECT suspendu FROM Fiches_Ligbl, Fiches_Art,Fiches_regie WHERE num_ligbl=&1 AND art_code=code_ligbl AND Fiches_regie.code=art_dra AND suspendu=True LIMIT 1 ", num)
-    Endif
+  If $schoix = "M" Then 
+    resvig = Utils.db.Exec("SELECT suspendu FROM Fiches_HistoLigfac, Fiches_Art,Fiches_regie WHERE num_ligfac=&1 AND art_code=code_ligfac AND Fiches_regie.code=art_dra AND suspendu=True LIMIT 1 ", numfac)
     If resvig.Available Then
       If resvig!suspendu Then
-        respar = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
-        nvign = Utils.totobs([respar!nvign])
-        nvign += 1
-        Utils.db.Exec("UPDATE Fiches_Parametres SET nvign=&1", Format(nvign, "0000000000000000000000000"))
-        Break
+        nvign = nvignette()
       Endif
     Endif
-  Next
-  
-  'Facture magasin
-  If $schoix = "M" Then
-    reslig = Utils.db.Exec("SELECT numlig_ligfac,qte_ligfac,art_code,art_dra,art_volm,art_deg,dtligbl_ligfac FROM Fiches_HistoLigfac, Fiches_Art WHERE num_ligfac=&1 AND code_ligfac=art_code AND art_dra IS NOT NULL", $slstnum[0])
-    If reslig.Available Then
-      reslig.MoveFirst
-      For i = 0 To reslig.Max
-        drt = New Calculdroit(reslig!art_dra, reslig!art_volm, reslig!art_deg, reslig!qte_ligfac)
+    reslig1 = Utils.db.Exec("SELECT numlig_ligfac,qte_ligfac,art_code,art_dra,art_volm,art_deg,dtligbl_ligfac FROM Fiches_HistoLigfac, Fiches_Art WHERE num_ligfac=&1 AND code_ligfac=art_code AND art_dra IS NOT NULL", numfac)
+    If reslig1.Available Then
+      reslig1.MoveFirst
+      For i = 0 To reslig1.Max
+        drt = New Calculdroit(reslig1!art_dra, reslig1!art_volm, reslig1!art_deg, reslig1!qte_ligfac)
         res = Utils.db.Create("Fiches_ligregie")
-        res!dtmouv = reslig!dtligbl_ligfac
+        res!dtmouv = reslig1!dtligbl_ligfac
         res!num = numfac
-        res!numlig = Space(6) & reslig!numlig_ligfac
+        res!numlig = Space(6) & reslig1!numlig_ligfac
         res!type = "S"
-        res!codeart = reslig!art_code
-        res!coderegie = reslig!art_dra
-        res!qte = reslig!qte_ligfac
+        res!codeart = reslig1!art_code
+        res!coderegie = reslig1!art_dra
+        res!qte = reslig1!qte_ligfac
         res!volume = drt.vol
-        res!degres = reslig!art_deg
+        res!degres = reslig1!art_deg
         res!volumeap = drt.volap
         res!montdr = drt.droit
         res!txtvadr = drt.tauxtvadr
@@ -357,33 +394,51 @@ Public Sub comptmat(Optional numfac As String)    'enregistrement de la compta m
         res!txtvass = drt.tauxtvass
         res!volumess = drt.volumess
         res!cloture = False
-        If Val($stotdr) <> 0 Then res!vignette = Format(nvign, "0000000000000000000000000")
+        If nvign > 0 Then res!vignette = Format(nvign, "0000000000000000000000000")
         res.Update
-        reslig.MoveNext
+        reslig1.MoveNext
       Next
       Utils.db.Commit
       Return
     Endif
   
   Endif
-  'Factures fin de mois
-  If $schoix = "FM" Then
-    For Each num In $slstnum
-      reslig = Utils.db.Exec("SELECT numlig_ligbl,qte_ligbl,art_code,art_dra,art_volm,art_deg,dte_ligbl FROM Fiches_Ligbl,  Fiches_Art WHERE num_ligbl=&1 AND code_ligbl=art_code AND art_dra IS NOT NULL", num)
-      If reslig.Available Then
-        reslig.MoveFirst
-        For i = 0 To reslig.Max
-          drt = New Calculdroit(reslig!art_dra, reslig!art_volm, reslig!art_deg, reslig!qte_ligbl)
+  
+  If Not $borientation Then Return
+  'recherche si vignette
+  For Each lg In Me.ligne
+     If lg.Index = -1 Then Continue
+     Me.vfac.reslig.MoveTo(lg.Index)
+     reslig1 = Utils.db.Exec("SELECT suspendu FROM Fiches_Art,Fiches_regie WHERE art_code=code AND art_code=&1", lg.code)
+     If reslig1.Available Then
+       If reslig1!suspendu Then
+         nvign = nvignette()
+         Break
+       Endif
+     Endif
+  Next
+  'enregistrement compta matiere
+  For Each lg In Me.ligne
+    If lg.Index = -1 Then Continue
+    Me.vfac.reslig.MoveTo(lg.Index)
+    reslig1 = Utils.db.Exec("SELECT art_code,art_dra,art_volm,art_deg FROM Fiches_Art WHERE art_code=&1", lg.code)
+    If reslig1.Available Then
+      If Not IsNull(reslig1!art_dra) Then
+          drt = New Calculdroit(reslig1!art_dra, reslig1!art_volm, reslig1!art_deg, lg.qte)
           res = Utils.db.Create("Fiches_ligregie")
-          res!dtmouv = reslig!dte_ligbl
-          res!num = numfac
-          res!numlig = num & reslig!numlig_ligbl
-          res!type = "C"    'permet de renuméroter les lignes pour qu'elles s'accordent avec Histoligfac
-          res!codeart = reslig!art_code
-          res!coderegie = reslig!art_dra
-          res!qte = reslig!qte_ligbl
+          res!dtmouv = Me.vfac.reslig!dte_ligbl
+          res!num = Me.vfac.numfac
+          res!numlig = Me.vfac.reslig!num_ligbl & Me.ligne.Key
+          If Me.vfac.choix = "FM" Then 
+            res!type = "C"    'permet de renuméroter les lignes pour qu'elles s'accordent avec Histoligfac
+          Else
+            res!type = "S"
+          Endif
+          res!codeart = reslig1!art_code
+          res!coderegie = reslig1!art_dra
+          res!qte = lg.qte
           res!volume = drt.vol
-          res!degres = reslig!art_deg
+          res!degres = reslig1!art_deg
           res!volumeap = drt.volap
           res!montdr = drt.droit
           res!txtvadr = drt.tauxtvadr
@@ -393,46 +448,27 @@ Public Sub comptmat(Optional numfac As String)    'enregistrement de la compta m
           res!cloture = False
           If Val($stotdr) <> 0 Then res!vignette = Format(nvign, "0000000000000000000000000")
           res.Update
-          reslig.MoveNext
-        Next
       Endif
-    Next
-    Utils.db.Commit
-    Return
-  Endif
-  
-  'Facture issues de la saisie 
-  reslig = Utils.db.Exec("SELECT numlig_ligbl,qte_ligbl,art_code,art_dra,art_volm,art_deg,dte_ligbl,numfac FROM Fiches_Ligbl, Fiches_Bl,Fiches_Art WHERE num_ligbl=&1 AND num_ligbl=numbl AND code_ligbl=art_code AND art_dra IS NOT NULL", $num)
-  
-  If reslig.Available Then
-    reslig.MoveFirst
-    For i = 0 To reslig.Max
-      drt = New Calculdroit(reslig!art_dra, reslig!art_volm, reslig!art_deg, reslig!qte_ligbl)
-      res = Utils.db.Create("Fiches_ligregie")
-      res!dtmouv = reslig!dte_ligbl
-      If numfac Then res!num = numfac Else res!num = reslig!numfac
-      res!numlig = $num & reslig!numlig_ligbl
-      res!type = "S"
-      res!codeart = reslig!art_code
-      res!coderegie = reslig!art_dra
-      res!qte = reslig!qte_ligbl
-      res!volume = drt.vol
-      res!degres = reslig!art_deg
-      res!volumeap = drt.volap
-      res!montdr = drt.droit
-      res!txtvadr = drt.tauxtvadr
-      res!montss = drt.secu
-      res!txtvass = drt.tauxtvass
-      res!volumess = drt.volumess
-      res!cloture = False
-      If Val($stotdr) <> 0 Then res!vignette = Format(nvign, "0000000000000000000000000")
-      res.Update
-      reslig.MoveNext
-    Next
-    Utils.db.Commit
-  Endif
+    Endif
+  Next
+  Utils.db.Commit
   
 End
+
+Private Function nvignette() As Integer
+  Dim respar As Result
+  Dim nvign As Integer
+  
+  Utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
+  respar = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
+    nvign = Utils.totobs([respar!nvign])
+    nvign += 1
+    Utils.db.Exec("UPDATE Fiches_Parametres SET nvign=&1", Format(nvign, "0000000000000000000000000"))
+  Utils.db.Exec("UNLOCK TABLES")
+  Return nvign
+  
+End
+
 Public Function poid() As String
 
   Dim res As Result
@@ -440,7 +476,7 @@ Public Function poid() As String
   
   If $schoix = "M" Or $schoix = "FM" Then Return " "
   If $schoix = "B" Then
-    res = Utils.db.Exec("SELECT SUM(REPLACE(qte_ligb,',','.') * art_poids) as poid FROM Fiches_Ligbl,Fiches_Art WHERE num_ligbl=&1 AND art_code=code_ligbl", $num)
+    res = Utils.db.Exec("SELECT SUM(REPLACE(qte_ligbl,',','.') * art_poids) as poid FROM Fiches_Ligbl,Fiches_Art WHERE num_ligbl=&1 AND art_code=code_ligbl", $num)
   Else
     res = Utils.db.Exec("SELECT SUM(REPLACE(qte_ligfac,',','.') * art_poids) as poid FROM Fiches_HistoLigfac,Fiches_Art WHERE num_ligfac=&1 AND art_code=code_ligfac", $num)
   Endif

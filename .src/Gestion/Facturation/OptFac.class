@@ -1,0 +1,1369 @@
+' Gambas class file
+
+Private $vfac As VarFac
+Private $cal As Calculconsdroit
+Private $rescli As Result
+Private $resent As Result
+Private $reslig As Result
+Private $option As String
+Private $borientation As Boolean
+Private $edit As Report
+Private $courriel As String
+ 
+Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As String, Optional livraison As Boolean, Optional dte As LDate = LDate(Now), Optional fichier As String = "", Optional courriel As String)
+
+  Dim chaine As Chainage
+  Dim res As Result
+  
+  $courriel = courriel
+  'gridview recherche adresse
+  Colal.Columns.count = 6
+  Colal.Columns[0].Width = 0
+  Colal.Columns[1].Width = 80
+  Colal.Columns[2].Width = 150
+  Colal.Columns[3].Width = 150
+  Colal.Columns[4].Expand = True
+  Colal.Columns[1].Text = "Rs"
+  Colal.Columns[2].Text = "Nom"
+  Colal.Columns[3].Text = "Prénom"
+  Colal.Columns[4].Text = "Ville"
+  Colal.Columns[5].Text = "Code"
+  Colal.H = padliv.ClientH
+  'gridview saisie réglement
+  grregl.Columns.Count = 2
+  grregl.Columns[0].Text = "Mode de réglement"
+  grregl.Columns[0].Alignment = Align.Center
+  grregl.Columns[0].Expand = True
+  grregl.Columns[1].Text = "Montant"
+  grregl.Columns[1].Alignment = Align.Center
+  grregl.Columns[1].Width = 80
+  
+  chaine = New Chainage([Nombl, Adr1BL, Adr2BL, CPBL, VilleBL])
+  chaine = New Chainage([Dtef, Dtech])
+
+  Dtef.Dat = True
+  Dtech.Dat = True
+  Rglt.numerique = True
+  Rglt.nbdec = "2"
+  totr.numerique = True
+  totr.nbdec = "2"
+  CPBL.reg = "[0-9]{0,5}"
+  'Affiche les variables modifiables
+  $vfac = New VarFac As "var"
+  $vfac.choix = choix
+  $vfac.livraison = livraison
+  Dtef.Text = dte.L
+  $vfac.dtedoc = dte
+  
+  entete.Value = $vfac.entete
+  If $vfac.autoent Or $vfac.ttc Then
+    Impttc.Value = True
+    If $vfac.autoent Then Impttc.Enabled = False
+  Endif
+  Reserve.Value = $vfac.reserve
+  Recap.Value = $vfac.recap
+  Rgmt.Value = $vfac.saisreg
+  If Rgmt.Value And $vfac.choix = "F" Then 
+    RegDef.Visible = True
+    Preg.Visible = True
+    Preg.Enabled = True
+  Else
+    Rgmt.Enabled = False
+    RegDef.Visible = False
+    Preg.Visible = False
+  Endif
+  RegDef.Value = $vfac.breg
+  'Selection de l'affichage en fonction de "choix"
+  'choix =>de facture on passe Tp => C=ommande  P=proforma D=devis F=facture  B=BL + de Fin de mois choix="FM" + de archive choix="A" + "T" bon atelier
+  Select Case $vfac.choix
+    Case "F", "FM", "A"
+      Pbl.Visible = False
+      Pfac.Visible = True
+      If $vfac.choix = "F" Then
+        Checkdte.Visible = True
+        Pfac1.Visible = True
+        ImpPDF.Enabled = True
+      Else
+        Checkdte.Visible = False
+        Pfac1.Visible = False
+      Endif
+      If $vfac.choix = "F" Or $vfac.choix = "A" Then
+        Rglt.Text = mttc
+      Endif
+    
+    Case "C", "P", "D", "B", "T"
+      If $vfac.choix = "B" Then
+        Checkdte.Visible = True
+        Dtef.Enabled = False
+      Else
+        Checkdte.Visible = False
+      Endif
+      Pbl.Visible = True
+      Pfac1.Visible = False
+      Pfac.Visible = False
+      
+  End Select
+  
+  $vfac.numcli = num
+  If $vfac.choix = "A" Then
+    $vfac.numfac = nfac
+  Else
+    $vfac.numbl = nfac
+  Endif
+  $vfac.tab = fichier
+  If $vfac.sms And $vfac.choix <> "FM" Then sms.Visible = True Else sms.Visible = False
+  If $vfac.choix = "FM" Then visu.Visible = False
+  
+End
+
+Public Sub Form_Open()
+
+  $vfac.numcli = $vfac.numcli
+
+End
+
+Public Sub form_Close()
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Recap"] = Recap.Value
+  ' Start.LocalSettings["/Soc" & Start.Societe & "/Impttc"] = Impttc.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/Entete"] = Entete.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/Conditions"] = Reserve.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/Pied"] = Pied.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/Imp2L"] = Imp2L.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/Col"] = Coln.Value
+ 'Start.LocalSettings["/Soc" & Start.Societe & "/BlA5"] = BlA5.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/Impstocke"] = Impstock.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/ImpPDF"] = ImpPDF.Value
+  Start.LocalSettings["/Soc" & Start.Societe & "/ImpTotbl"] = Imptotbl.value
+  Start.LocalSettings["/Soc" & Start.Societe & "/Recap"] = Recap.Value
+'  Start.LocalSettings["/Soc" & Start.Societe & "/Cimp"] = Cimp.text
+  Start.LocalSettings["/Soc" & Start.Societe & "/Cond"] = Cond.value
+  Start.LocalSettings.Save
+  Start.LocalSettings.Reload
+  If $vfac.choix = "FM" Then Me.Close
+
+End
+'Gestion des click et lostfocus
+Public Sub Checkdte_Click()
+
+  $vfac.dtmouv = Checkdte.Value
+
+End
+
+Public Sub Dtef_LostFocus()
+  
+  If $vfac.dtedoc.L <> Dtef.dte.L Then
+    $vfac.dtedoc = Dtef.dte
+  Endif
+
+End
+
+Public Sub Dtech_LostFocus()
+
+  $vfac.dteech = Dtech.dte
+
+End
+
+Public Sub entete_Click()
+
+  $vfac.entete = entete.Value
+
+End
+
+Public Sub Coln_Click()
+
+  $vfac.colon = Coln.Value
+
+End
+
+Public Sub Cond_Click()
+
+  $vfac.simpcond = Cond.Value
+
+End
+
+Public Sub Imp2L_Click()
+
+  $vfac.ligne2 = Imp2L.Value
+
+End
+
+
+Public Sub Nbexpl_Click()
+
+  $vfac.nbexplemplaire = Nbexpl.Text
+
+End
+
+Public Sub Blch_Click()
+
+  $vfac.blchif = Blch.Value
+
+End
+
+Public Sub Impstock_Click()
+
+  $vfac.Stock = Impstock.Value
+
+End
+
+Public Sub Impttc_Click()
+
+  $vfac.ttc = Impttc.Value
+
+End
+
+Public Sub Ignore_Remise_Click()
+
+  $vfac.remise = Ignore_Remise.Value
+  If $vfac.remise Then
+    Imptotbl.Value = False
+    Imptotbl.Enabled = False
+  Else
+    Imptotbl.Enabled = True
+  Endif
+
+End
+
+Public Sub Imptotbl_Click()
+  
+  $vfac.blrecap = Imptotbl.Value
+  
+End
+
+Public Sub AffBledit2_Click()
+
+  $vfac.badr = AffBledit2.Value
+  If $vfac.badr Then
+    padliv.Visible = True
+  Else
+    padliv.Visible = False
+  Endif
+
+End
+
+Public Sub reserve_Click()
+
+  $vfac.reserve = reserve.Value
+
+End
+
+Public Sub Pied_Click()
+
+  $vfac.pied = Pied.Value
+
+End
+
+Public Sub Recap_Click()
+
+  $vfac.recap = recap.Value
+
+End
+
+Public Sub Rgmt_Click()
+
+  $vfac.saisreg = Rgmt.Value
+  If $vfac.saisreg Then
+    RegDef.Visible = True
+    Preg.Visible = True
+  Else
+    RegDef.Visible = False
+    Preg.Visible = False
+  Endif
+
+End
+
+Public Sub RegDef_Click()
+
+  $vfac.breg = RegDef.Value
+
+End
+
+Public Sub ImpPDF_Click()
+
+  $vfac.pdf = ImpPDF.Value
+
+End
+
+'Evenements issues de VarFac
+Public Sub var_echeance(Value As LDate)
+
+  Dtech.Text = Value.L
+
+End
+
+Public Sub var_nombre(Value As String)
+
+  Nbexpl.Text = Value
+
+End
+
+Public Sub var_fttc(Value As Boolean)
+
+  Impttc.Value = Value
+
+End
+
+
+Public Sub var_modreg(value As String)
+
+  Regmt.Text = value
+
+End
+
+'***********************************************************************************
+'gestion des adresses de livraison
+Public Sub ToggleButton10_Click()
+
+  If Colal.Visible = True Then
+    Colal.clear
+    Colal.visible = False
+  Else
+    Colal.Visible = True
+    Colal.Raise
+    
+     Aff_AdrC("")
+     Colal.SetFocus
+  Endif
+End
+
+Public Sub Aff_AdrC(Org As String)
+  Dim AdrResult As Result
+Dim champ As Boolean = False
+Colal.Clear
+If Org = "F2" Then
+  AdrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabAdrC") & " order by nom", $vfac.numcl)
+Else
+  AdrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabAdrC") & " where code = &1 order by nom", $vfac.numcli)
+Endif
+  If AdrResult.Available Then
+    Repeat
+      Colal.Add(AdrResult!num, AdrResult!num)
+      Colal.item[0] = AdrResult!num
+      Colal.item[1] = AdrResult!rs_soc
+      Colal.item[2] = AdrResult!nom
+      Colal.item[3] = AdrResult!pnm
+      Colal.item[4] = AdrResult!ville
+      Colal.item[5] = AdrResult!code
+    Until AdrResult.MoveNext()
+    Colal.MoveFirst
+    Repeat
+      If Colal.item[5] = $vfac.numcli Then
+        Champ = True
+        Break
+      Endif
+    Until Colal.MoveNext()
+    If champ Then
+    Colal.item.Selected = True
+    Colal.Raise
+    Else
+      Colal.MoveFirst
+    Colal.item.Selected = True
+     Colal.Raise
+    Endif
+  Endif
+
+End
+
+Public Sub Colal_Click()
+
+  Dim rcli As Result
+
+  rCli = Utils.db.Exec("select * from " & Cbase.Table("TabAdrC") & " where num = &1", Colal.item[0])
+  If rCli.Available Then
+    Nombl.Text = rcli!rs_soc & " " & rcli!nom & " " & rcli!pnm
+    Nombl_LostFocus
+    Adr1Bl.Text = rcli!adr1
+    Adr1BL_LostFocus
+    Adr2Bl.Text = rcli!adr2
+    Adr2BL_LostFocus
+    Cpbl.Text = rcli!cd_ptl
+    CPBL_LostFocus
+    VilleBl.text = rcli!ville
+    VilleBL_LostFocus
+    Colal.Clear
+    Colal.visible = False
+    Nombl.SetFocus
+    Nombl.Select
+  Endif
+
+End
+
+Public Sub Colal_Keypress()
+  
+  If Key.code = Key.escape Or If Key.code = Key.esc Then Colal.visible = False
+  If Key.code = Key.Enter Or If Key.code = Key.Return Then 
+ Colal.MoveCurrent
+  Colal_Click()
+  Endif
+  If Key.code = Key.F2 Then
+     Aff_AdrC("F2")
+'    If Colal.count > 9 Then
+'      Colal.H = Edit.H + padliv.H - 30
+ '   Else
+      Colal.H = padliv.ClientH
+ '   Endif
+  Endif
+End
+
+
+'gestion lostfocus 
+Public Sub Nombl_LostFocus()
+
+  $vfac.adrliv.nom = Nombl.Text
+
+End
+
+Public Sub Adr1BL_LostFocus()
+
+  $vfac.adrliv.adr1 = Adr1BL.Text
+
+End
+
+Public Sub Adr2BL_LostFocus()
+
+  $vfac.adrliv.adr2 = Adr2BL.Text
+
+End
+
+Public Sub CPBL_LostFocus()
+
+  $vfac.adrliv.cp = CPBL.Text
+
+End
+
+Public Sub VilleBL_LostFocus()
+
+  $vfac.adrliv.ville = VilleBL.Text
+
+End
+'*************************************************************************************
+'gestion des modes de regelement
+Public Sub ajout_Click()
+
+  If Rglt.Value <> 0 Then
+    grregl.Rows.Count += 1
+    grregl[grregl.Rows.Max, 0].Text = Regmt.Current.Text
+    grregl[grregl.Rows.Max, 0].Alignment = Align.Left
+    grregl[grregl.Rows.Max, 1].Text = Rglt.Text
+    grregl[grregl.Rows.Max, 1].Alignment = Align.Right
+  Endif
+  totr.Value = totreg()
+
+End
+
+Public Sub grregl_KeyPress()
+
+  If Key.Code = Key.Delete Then
+    supreg(grregl.Row)
+  Endif
+
+End
+
+Public Sub grregl_Activate()
+
+  Regmt.Text = grregl[grregl.Row, 0].Text
+  Rglt.Text = grregl[grregl.Row, 1].Text
+  supreg(grregl.Row)
+
+End
+
+Private Sub supreg(row As Integer)
+  
+  Dim i As Integer
+  
+  If grregl.Rows.Count = 0 Then Return
+  
+  grregl.Rows.Remove(row)
+  grregl.Refresh
+  totr.Value = totreg()
+  
+End
+
+Private Function totreg() As Float
+  
+  Dim i As Integer
+  Dim tot As Float
+  
+  For i = 0 To grregl.Rows.Max
+    tot += Val(grregl[i, 1].Text)
+  Next
+  Return tot
+  
+End
+
+'*****************************************************************************************
+'gestion des boutons
+'******************************************************************************************
+'bouton édition
+Public Sub edite_Click()
+  
+  Select Case $vfac.choix
+    Case "FM"
+      If editefm() Then Return
+    Case "F"
+      If editef() Then Return
+    Case Else
+      editebl()
+  End Select
+
+End
+
+Public Sub Fermer_Click()
+
+  Me.Close
+
+End
+
+Public Sub visu_Click()
+
+  Dim cal As Calculconsdroit
+  Dim Filename As String
+  
+  Filename = User.Home & "/tmp/Facture.pdf"
+  If $vfac.choix = "A" Then
+    cal = New Calculconsdroit($vfac, $vfac.numbl, "F")
+  Else
+    cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
+  Endif
+  visufac()
+  
+  $edit = New EditfacB($vfac, cal, cal)
+  $vfac.imp.OutputFile = Filename
+  $edit.Print($vfac.imp)
+  Visualiseur.Prog(Filename)
+  Me.Close
+
+End
+
+Public Sub sms_Click()
+
+  Dim hForm As Gsm
+  Dim telp As String
+
+  $vfac.resent.MoveFirst
+  Telp = Replace$($vfac.resent!tel, ".", "")
+  Telp = Replace$($vfac.resent!tel, " ", "")
+  hForm = New Gsm(telp)
+  hForm.Showmodal()
+
+End
+
+Public Sub mail_Click()
+
+  Dim hForm As Commail
+  Dim rResult, res As Result
+  Dim sText, sText2, num, sCourriel As String
+  Dim Tmail As String[]
+  Dim cal As Calculconsdroit
+  Dim CliMail As String = "Traitement impossible ! Les clients suivants n'ont pas d'adresse courriel"
+  Dim liste As Boolean
+  
+  
+  Select Case $vfac.choix
+    Case "FM"
+      Liste = False
+      res = Utils.db.Exec("SELECT code FROM Facturefm")
+      If res.Available Then
+        res.MoveFirst
+        Repeat
+          rResult = Utils.db.Exec("SELECT cli_email,cli_nom,cli_code FROM  Fiches_Cli where cli_code = &1", res!code)
+          If rResult.Available Then
+            If IsNull(rResult!cli_email) Then
+              Climail &= "\n" & rResult!cli_code & " " & rResult!cli_nom
+              Liste = True
+            Endif
+            Else
+              Climail &= "\n" & rResult!cli_code & " " & rResult!cli_nom & " innexistant"
+              Liste = True
+          Endif
+        Until res.MoveNext()
+        If liste Then
+          Message.Info(Climail)
+          Return
+        Endif
+        hForm = New Commail("F")
+        If Message.Question("Voulez-vous sélectionner un texte prédéfini ?", "Oui", "Non") = 1 Then
+          hForm.Showmodal()
+        Endif
+        
+        editefm(True)
+      Endif
+
+    Case Else
+   If Not $courriel Then
+     Message.Error("Le mail n'est pas renseigné")
+     Me.Close
+   Endif
+  Tmail = Split($courriel, "|")
+  Try sCourriel = Replace$(Tmail[1], " ", "")
+  If Error Then sCourriel = $courriel
+  hForm = New Commail("F")
+  If Message.Question("Voulez-vous sélectionner un texte prédéfini ?", "Oui", "Non") = 1 Then
+    hForm.Showmodal()
+  Endif
+  cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
+  visufac()
+  $edit = New EditfacB($vfac, cal, cal)
+  $vfac.imp.OutputFile = "/tmp/Facture.pdf"
+  $edit.Print($vfac.imp)
+  If $vfac.choix = "F" And $vfac.resent!imp = 1 Then sText = "Facture " Else sText = "Bon "
+  If $vfac.choix = "C" Then sText = "Commande "
+  If $vfac.choix = "B" Then sText = "Bon "
+  If $vfac.choix = "D" Then sText = "Devis "
+  If $vfac.choix = "P" Then sText = "Proforma "
+  If $vfac.numfac Then num = $vfac.numfac Else num = $vfac.numbl
+  If IsNull(Variables.sTexte) Then
+    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabTmail") & "")
+    If rResult.Available Then
+      sText2 = Replace$(rResult!intitule, "**", " client ")
+    Else
+       Stext2 = "Bonjour,\n\nVeuillez trouver ci-joint votre document No " & num & " du " & $vfac.dtedoc.L & ".\n\nCordialement." & "\n\n"
+    Endif
+  Else
+    sText2 = Variables.sTexte
+  Endif
+  sText = sText & " n° : " & num & " du " & $vfac.dtedoc.L
+  EnvMail.Envoi2(sCourriel, sText, sText2, $vfac.imp.OutputFile, $vfac.condvent)
+  Me.Close
+  
+  End Select
+End
+
+Public Sub propimp_Click()
+
+  $vfac.imp.Configure
+
+End
+
+Private Sub visufac()
+  
+  $vfac.resent.MoveFirst()
+  If ($vfac.choix = "F" Or $vfac.choix = "A") And $vfac.resent!imp = 1 Then
+    $vfac.numfac = $vfac.resent!numfac
+    $vfac.dtedoc.G = $vfac.resent!dtefac
+    $vfac.dteech.G = $vfac.resent!ech
+  Endif
+  If $vfac.choix = "F" And $vfac.resent!imp = 0 Then 
+    $vfac.choix = "B"
+  Endif
+  If $vfac.choix = "B" Then $vfac.dtedoc.G = $vfac.resent!datebl
+  
+End
+
+'* * * * * * * * * * * * * * * * * * * * * * * * * * les éditions*******************************
+Private Function editefm(Optional courriel As Boolean = False) As Boolean
+  
+  Dim res, rResult As Result
+  Dim cal As Calculconsdroit
+  Dim Filename, sText, sText2 As String
+  Dim pgb As ProgBar
+  
+  Filename = User.Home & "/tmp/Facture.pdf"
+  If testchem() Then Return 
+  If verifdate() Then Return 
+  res = utils.db.Exec("SELECT * FROM Facturefm")
+  $vfac.AffClient = False       'option pour affichge client sur les mails
+  'on recupere les clients à facturer
+  res.MoveFirst
+  pgb = New ProgBar("Edition des factures fin de mois", res.Count)
+  pgb.Show()
+  Repeat
+    pgb.Avancement()
+    $vfac.numcli = res!code
+    cal = New Calculconsdroit($vfac, $vfac.numbl, "B", res!nom)
+    $vfac.resent.MoveFirst          'on lock les bl en facturation fin de mois
+    Repeat
+      Repeat
+      Until DocActif.get_lock("Facturation", $vfac.resent!numbl)
+    Until $vfac.resent.MoveNext()
+    If ecriturecompt(cal) Then
+      Message.Error("Il y a un problème sur la génération de votre écriture comptable : Client N° " & $vfac.numcli)
+      Return True 
+    Endif 
+    cal.comptmat
+    $edit = New EditfacB($vfac, cal, cal)
+    Dupli2()
+    If courriel Then
+      $vfac.imp.NumCopies = 1
+      $vfac.imp.OutputFile = User.Home & "/tmp/facture.pdf"
+      If IsNull(Variables.sTexte) Then
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabTmail") & "")
+        If rResult.Available Then
+          sText2 = Replace$(rResult!intitule, "**", " client ")
+        Else
+          Stext2 = "Bonjour,\n\nVeuillez trouver ci-joint votre document No " & $vfac.numfac & " du " & $vfac.dtedoc.L & ".\n\nCordialement." & "\n\n"
+        Endif
+      Else
+        sText2 = Variables.sTexte
+      Endif
+      sText = "Facture n° : " & $vfac.numfac & " du " & $vfac.dtedoc.L
+      EnvMail.Envoi($vfac.rescli!cli_email, sText, sText2, True, User.Home & "/tmp/", "application/pdf", "Facture.pdf")
+    Else
+      $vfac.imp.NumCopies = $vfac.nbexplemplaire
+      $edit.Print($vfac.imp)
+      If $vfac.pdf And $vfac.joinfac Then
+        Impression.Facture($vfac.pdf, 1, $vfac.imp.Name)
+      Endif
+      If $vfac.joinfac Then
+        If $vfac.condvent Then Impression.Facture($vfac.condvent, 1, $vfac.imp.Name)
+      Endif
+    Endif
+    
+    transblfac(cal)
+  Until res.MoveNext()
+  pgb.Close
+  
+  $vfac.resent.MoveFirst
+  Repeat
+    DocActif.Free_Lock("Facturation", $vfac.resent!numbl)
+  Until $vfac.resent.MoveNext()
+  Me.Close
+  
+End
+
+Private Function editef() As Boolean
+  
+  Dim cal As Calculconsdroit
+  Dim i As Integer
+  Dim res As Result
+
+  If testchem() Then Return True
+  If verifdate() Then Return True
+  If $vfac.saisreg And totr.Value = 0 Then
+    If start.son Then
+      Music.Play
+    Endif
+    Try Message.Warning("Vous n'avez pas saisi le mode de règlement!")
+    Return True
+  Endif
+  'on garni le tableau des réglements
+  If $vfac.saisreg Then
+    $vfac.newregt()
+    If grregl.Rows.Count = 0 Then ajout_Click
+    For i = 0 To grregl.Rows.Max
+      $vfac.newreg()
+      $vfac.lreg.dte = $vfac.dtedoc.G
+      $vfac.lreg.mode = grregl[i, 0].Text
+      $vfac.lreg.montant = Val(grregl[i, 1].Text)
+      $vfac.lreg.numcli = $vfac.numcli
+      $vfac.reg.Add($vfac.lreg)
+    Next
+  Endif
+  $vfac.AffClient = False
+  
+  cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
+  If $vfac.resent!imp = 0 Then
+    If ecriturecompt(cal) Then
+      Message.Error("Il y a un problème sur la génération de votre écriture comptable : Bon N° " & $vfac.numbl)
+      Return True 
+    Endif
+    cal.comptmat()
+  Else
+    $vfac.numfac = $vfac.resent!numfac
+  Endif
+  $edit = New EditfacB($vfac, cal, cal)
+'  $vfac.imp.OutputFile = Filename
+  $vfac.imp.NumCopies = $vfac.nbexplemplaire
+  $edit.Print($vfac.imp)
+  If $vfac.pdf Then
+    Impression.Facture($vfac.pdf, 1, $vfac.imp.Name)
+  Endif
+  If $vfac.joinfac Then
+    If $vfac.condvent Then Impression.Facture($vfac.condvent, 1, $vfac.imp.Name)
+  Endif
+  dupli2()
+  
+  If $vfac.saisreg Then reglement(cal)
+  
+  Me.Close
+  
+End
+
+Private Function editebl() As Boolean
+  
+  Dim cal As Calculconsdroit
+  Dim Filename As String
+  
+  $vfac.AffClient = False
+  Filename = User.Home & "/tmp/Facture.pdf"
+  cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
+  $vfac.resent.MoveFirst
+  If $vfac.choix = "B" And $vfac.resent!imp = 0 Then
+    If testchem() Then Return True
+    If $vfac.dtmouv Then
+      If verifdate() Then Return True
+    Endif
+  Endif
+
+  $edit = New EditfacB($vfac, cal, cal)
+  $vfac.imp.OutputFile = Filename
+  $vfac.imp.NumCopies = $vfac.nbexplemplaire
+  $edit.Print($vfac.imp)
+  Dupli2()
+  Me.Close
+  
+End
+'fonction sur les dates 
+Private Function verifdate() As Boolean
+  
+  Dim res As Result
+  Dim dte As LDate
+  
+     'gestion des dates
+  If IsNull($vfac.dtedoc.L) Then
+    Message.Warning("Attention ! Vous devez mettre une date de facturation", "Ok")
+    Stop Event
+    Dtef.SetFocus
+    Return True
+  Endif
+  If IsNull($vfac.dteech.L) Then
+    Message.Warning("Attention ! Vous devez mettre une date d'échéance", "Ok")
+     Stop Event
+     Dtech.Text = Dtef.dte.L
+     Dtech.SetFocus
+     Return True
+  Endif
+  If ($vfac.choix = "F" Or $vfac.choix = "FM") Then
+    res = Utils.db.Exec("SELECT dtepp,dtepec FROM Fiches_Parametres")
+    If res.Available Then
+      dte = New LDate("01." & res!dtepp)
+      If $vfac.dtedoc.Avant(dte, True) Then
+        Message.Warning("Attention ! Impression de facture impossible. \nLa date saisie est inférieure à la période précédente. \nVeuillez faire vos clotures SVP !", "Ok")
+        Stop Event
+        Dtef.SetFocus
+        Return True
+      Endif
+      dte.L = "01." & res!dtepec
+      dte.G = DateAdd(dte.G, gb.Month, 1)
+      If $vfac.dtedoc.Apres(dte.FinMois, True) Then
+        Message.Warning("Attention ! Impression de facture impossible. \nLa date saisie est supérieure à la période autorisée. \nVeuillez faire votre cloture mensuelle en facturation SVP", "Ok") 
+        Stop Event
+        Dtef.SetFocus
+        Return True
+      Endif
+    Endif
+  Endif
+  If $option = "B" Or $option = "T" Then        'on regarde la corespondance date cm et date de mouvement article
+    If $vfac.dtmouv Then          ' true que si $vfac.choix="F" ou "B"
+      If Utils.valart($vfac.dtedoc.G) Then
+        Message.Warning("Période CM déjà clôturée \n Veuillez changer la date du document")
+        Dtef.SetFocus
+        Dtef.Select
+        Return True
+      Endif
+    Else
+      If $vfac.choix = "FM" Then         'cas des factures fin de mois ou il faut regarder dans tous les bl
+        res = Utils.db.Exec("SELECT * FROM Bl")
+        If res.Available Then
+          res.MoveFirst
+          Repeat
+            If Utils.valart(Null, "", res!num) Then
+               Message.Warning("Période CM déjà clôturée sur le BL : " & res!num & " " & $vfac.adrfac.nom & "\n Veuillez changer la date des mouvements")
+              Dtef.SetFocus
+              Dtef.Select
+              Return True
+            Endif
+          Until res.MoveNext()
+        Endif
+      Endif
+      If $vfac.choix = "F" Or $vfac.choix = "B" Then
+        If Utils.valart(Null, "", $vfac.numbl) Then
+          Message.Warning("Période CM déjà clôturée sur le BL : " & $vfac.numbl & " " & $vfac.adrfac.nom & "\n Veuillez changer la date des mouvements")
+          Dtef.SetFocus
+          Dtef.Select
+          Return True
+        Endif
+      Endif
+    Endif
+  Endif
+  If $vfac.dtmouv Then        'on change la date de mouvement article
+    utils.db.Exec("UPDATE Fiches_Ligbl SET dte_ligbl=&1 WHERE num_ligbl=&2 and typel_ligbl='A'", $vfac.dtedoc.G, $vfac.numbl)
+  Endif
+  
+  Return False
+   
+End
+'* * * * * * * * * * * * * * * * * * * * * * * * * * Fonctions sur les copies de facture en pdf * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+'on teste la validité des chemins pour la copie de fichier
+Private Function testchem() As Boolean
+  
+  If $vfac.pdf Then
+    If IsNull($vfac.pdfchemin) Then
+      Message.Warning("Le chemin des pdf n'est pas renseigné dans les préférences !")
+      Return True
+    Endif
+    If Not Exist($vfac.pdfchemin) Then
+      Try Mkdir $vfac.pdfchemin
+      If Error Then
+        If start.son Then Music.Play
+        Message.Error("La copie du fichier pdf ne peut pas être effectuée !\nVeuillez vérifier le chemin " & $vfac.pdfchemin & " dans les préférences SVP.")
+        Return True
+      Endif
+    Endif
+    If Not Exist($vfac.pdfchemin & "/Fac") Then
+      Try Mkdir $vfac.pdfchemin & "/Fac"
+      If Error Then
+        If start.son Then Music.Play
+        Message.Error("La copie du fichier pdf ne peut pas être effectuée !\nVeuillez vérifier le chemin " & $vfac.pdfchemin & "/Fac dans les préférences SVP.")
+        Return True
+      Endif
+    Endif
+    If Not Access($vfac.pdfchemin & "/Fac", gb.Write) Then
+      If start.son Then Music.Play
+      Message.Error("Impossible d'écrire sur le répertoire " & $vfac.pdfchemin & "/Fac")
+      Return True
+    Endif
+  Else
+    If Not Exist(User.home & "/Impressions") Then
+      Try Mkdir User.home & "/Impressions"
+      If Error Then
+        If start.son Then Music.Play
+        Message.Error("Problème lors de la création d'un répertoire\nMerci de créer manuellement un répertoire nommé 'Impressions'")
+        Return True
+      Endif
+    Endif
+    If Not Access(User.Home & "/Impressions", gb.Write) Then
+      If start.son Then Music.Play
+      Message.Error("Impossible d'écrire sur le répertoire " & User.Home & "/Impressions")
+      Return True
+    Endif
+  Endif
+End
+'chemin de la facture
+Private Sub Dupli2()
+
+  Dim chemin, ty As String 
+  
+  $vfac.imp.NumCopies = 1
+  $vfac.imp.OutputFile = User.Home & "/tmp/Facture.pdf"
+  $edit.Print($vfac.imp)
+  ty = nom()
+  If $vfac.sauvpdf Then
+    Chemin = $vfac.pdfchemin & "/Fac/" & $vfac.numcli
+    If Not Exist(chemin) Then Try Mkdir chemin
+    Chemin &= "/" & Format(Year(Dtef.dte.G), "0000")
+    If Not Exist(chemin) Then Try Mkdir chemin
+    If Not $vfac.pdfannu Then
+      Chemin &= "/" & Format(Month(Dtef.dte.G), "00")
+      If Not Exist(chemin) Then Try Mkdir chemin
+    Endif
+  Else
+      chemin = User.Home & "/Impressions"
+  Endif
+    $vfac.imp.OutputFile = chemin & "/" & ty & ".pdf"
+    $vfac.imp.NumCopies = 1
+    $edit.Print($vfac.imp)
+    Try Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $vfac.numcli, chemin & "/" & ty & ".pdf", $vfac.numcli & "," & ty & ",", "Facs")
+    If $vfac.choix = "F" Or $vfac.choix = "FM" Then copie.Dupli2CPT($vfac.numeroecr, chemin, $vfac.numcli, ty)
+
+End
+
+Private Function nom() As String
+  
+  Dim ty As String
+  Dim reg As RegExp
+  
+  ty = $vfac.choix
+  If $vfac.choix = "F" Or $vfac.choix = "FM" Then
+    If ty = "FM" Then ty = "F"
+    ty = ty & $vfac.numfac
+  Else
+    ty = ty & $vfac.numbl
+  Endif
+  reg = New RegExp
+  ty = ty & reg.Replace($vfac.adrfac.nom, "[ /']", "")
+  ty = reg.Replace(ty, "[()]", "_")
+  Return ty
+  
+End
+
+'*********************comptabilitée**********************
+Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
+  
+  Dim rescomp, resmvt As Result
+  Dim lg As Variant
+  Dim tot As Float
+  Dim numerodef, numero As Integer
+  Dim jrnal As String
+  
+  For Each lg In cal.ecrit
+    tot = tot + (lg.montantd - lg.montantc)
+  Next
+  If Round(tot, -2) <> 0 Then Return True
+  If cal.ecrit.Count < 2 Then Return True
+  nfac(ByRef numero, ByRef numerodef, ByRef jrnal)     'on récupére les numéros de facture+écriture+écriture définitive
+  $vfac.numeroecr = numero
+  
+  utils.db.Exec("LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE")
+  utils.db.Begin
+  For Each lg In cal.ecrit
+    If $vfac.numcli = lg.numcpt Then     'enregistrement de la ligne collectif
+      rescomp = utils.db.Create("Fiches_Mvt")
+      rescomp!jour = jrnal
+      rescomp!numero = numero
+      rescomp!numerodef = numerodef
+      rescomp!compte = $vfac.rescli!cli_collectif
+      rescomp!collectif = True
+      rescomp!intitule = lg.intitule
+      rescomp!dte = lg.dte
+      rescomp!dateech = lg.dateech
+      rescomp!numdoc = $vfac.numfac
+      rescomp!numlot = $vfac.numfac
+      rescomp!libelle = lg.libelle
+      tot = Round(lg.montantd - lg.montantc, -2)
+      If tot >= 0 Then
+        lg.montantd = tot
+        lg.montantc = 0
+      Else
+        lg.montantc = tot * -1
+        lg.montantd = 0
+      Endif
+      rescomp!montantd = lg.montantd
+      rescomp!montantc = lg.montantc
+      rescomp!validee = True
+      rescomp!provisoire = False
+      rescomp!tresorerie = False
+      rescomp!pointee = False
+      rescomp!lettree = False
+      rescomp!cloturee = True
+      rescomp!relance = 0
+      rescomp!dteval = Now
+      rescomp.Update
+      solde($vfac.rescli!cli_collectif)
+    Endif
+    'enregistrement de la ligne normal
+    rescomp = utils.db.Create("Fiches_Mvt")
+    rescomp!jour = jrnal
+    rescomp!numero = numero
+    rescomp!numerodef = numerodef
+    rescomp!compte = lg.numcpt
+    rescomp!intitule = lg.intitule
+    rescomp!dte = lg.dte
+    rescomp!dateech = lg.dateech
+    rescomp!numdoc = $vfac.numfac
+    rescomp!numlot = $vfac.numfac
+    rescomp!libelle = lg.libelle
+    rescomp!montantd = lg.montantd
+    rescomp!montantc = lg.montantc
+    rescomp!validee = True
+    rescomp!provisoire = False
+    rescomp!tresorerie = False
+    rescomp!pointee = False
+    rescomp!lettree = False
+    rescomp!cloturee = True
+    rescomp!relance = 0
+    rescomp.Update
+    solde(lg.numcpt)
+  Next
+  Sha1Calc.CalcSha1("Fiches_Mvt", numero)
+  
+  utils.db.Exec("UNLOCK TABLES")
+  If $vfac.choix = "F" Then
+    rescomp = utils.db.Edit("Fiches_Bl", "numbl=&1", $vfac.numbl)
+    rescomp!numfac = $vfac.numfac
+    rescomp!imp = 1
+    rescomp!dtefac = $vfac.dtedoc.G
+    rescomp.Update
+  Endif
+  If UCase$(Regmt.Text) = "TRAITE" Or If UCase$(Regmt.Text) = "LCR" Then Maj_Traite()
+  utils.db.Commit
+End
+
+Private Sub nfac(ByRef numero As Integer, ByRef numerodef As Integer, ByRef jrnal As String)
+  
+  Dim n As Integer
+  Dim res As Result
+  
+  utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
+  res = utils.db.Exec("SELECT dnfac,numecriture,numecriture2,jrnal FROM Fiches_Parametres")
+  If res.Available Then
+    If IsNull(res!dnfac) Then n = 1 Else n = Val(res!dnfac) + 1
+    $vfac.numfac = Format($vfac.dtedoc.G, "yyyy") & Format(n, "000000")
+    numero = res!numecriture + 1
+    numerodef = res!numecriture2 + 1
+    jrnal = res!jrnal
+    Utils.db.Exec("UPDATE Fiches_Parametres SET dnfac=&1, numecriture=&2, numecriture2=&3", Str(n), numero, numerodef)
+  Else
+    Message.Error("Il y a un problème sur la table des paramétres !")
+    utils.db.Exec("UNLOCK TABLES")
+    Me.Close
+  Endif
+  utils.db.Exec("UNLOCK TABLES")
+
+End
+
+Private Sub solde(num As String)
+  
+  Dim resmvt, rescomp As Result
+  
+  resmvt = utils.db.Exec("SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte=&1", num)
+  If resmvt.Available Then 
+    If IsNull(resmvt!montantd) Or IsNull(resmvt!montantc) Then
+       Message.Error("Il y a un problème avec le compte : " & num & " calcul du solde impossible")
+       Return
+    Endif
+    rescomp = utils.db.Edit("Fiches_Comptes", "compte_cc=&1", $vfac.rescli!cli_code)
+    rescomp!solde = Round(resmvt!montantd - resmvt!montantc, -2)
+    rescomp.Update
+  Endif
+  
+End
+'ecriture des réglements
+Private Sub reglement(cal As Calculconsdroit)
+  
+  Dim respar, resmvt, rescomp, res As Result
+  Dim tot As Float
+  Dim numero, i As Integer
+  
+  If cal.montttc < 0 Then
+    Message.Info("Les réglements ne sont pas passé en comptabilité lorsque le montant est négatif")
+    Return
+  Endif
+  utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
+  respar = utils.db.Exec("SELECT numecriture FROM Fiches_Parametres")
+  If respar.Available Then
+    numero = respar!numecriture + 1
+    Utils.db.Exec("UPDATE Fiches_Parametres SET numecriture=&1", numero)
+  Else
+    Message.Error("Il y a un problème sur la table des paramétres ! Les réglements de la facture " & $vfac.numfac & " ne seront pas passé")
+    utils.db.Exec("UNLOCK TABLES")
+    Return
+  Endif
+  utils.db.Exec("UNLOCK TABLES")
+  
+  respar = utils.db.Exec("SELECT jrnal2,jrnal3 FROM Fiches_Parametres")
+  utils.db.Begin
+  
+  For i = 0 To $vfac.reg.Max
+    If $vfac.cheque And $vfac.reg[i].mode = "Chèque" Then                 'on garnit le fichier bordereaux si besoin
+      res = utils.db.Create("Fiches_BordereauxC")
+      res!code = $vfac.numcli
+      res!nom = $vfac.adrfac.nom
+      res!montant = $vfac.reg[i].montant
+      res!dateremise = $vfac.reg[i].dte
+      res!banque = respar!jrnal3
+      res!nfacture = $vfac.numfac
+      res.Update
+    Else
+      utils.db.Exec("LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE, Fiches_Journaux WRITE")
+      'compte collectif
+      rescomp = Utils.db.Create("Fiches_Mvt")
+      If $vfac.reg[i].mode = "Espèces" Then rescomp!jour = respar!jrnal2 Else rescomp!jour = respar!jrnal2
+      rescomp!numero = numero
+      rescomp!compte = $vfac.rescli!cli_collectif
+      rescomp!collectif = True
+      rescomp!intitule = Left($vfac.resent!cvclibl & " " & $vfac.resent!nmclibl & $vfac.resent!pnmclibl)
+      rescomp!dte = $vfac.dtedoc.G
+      rescomp!dateech = $vfac.dteech.G
+      rescomp!numdoc = $vfac.numfac
+      rescomp!numlot = $vfac.numfac
+      rescomp!libelle = Left("Rglt " & $vfac.reg[i].mode & $vfac.adrfac.nom, 50)
+      rescomp!montantd = 0
+      rescomp!montantc = $vfac.reg[i].montant
+      rescomp!validee = True
+      rescomp!provisoire = False
+      rescomp!tresorerie = True
+      rescomp!cloturee = False
+      rescomp.Update
+      solde($vfac.rescli!cli_collectif)
+      'compte client
+      rescomp = Utils.db.Create("Fiches_Mvt")
+      If $vfac.reg[i].mode = "Espèces" Then rescomp!jour = respar!jrnal2 Else rescomp!jour = respar!jrnal2
+      rescomp!numero = numero
+      rescomp!compte = $vfac.numcli
+      rescomp!intitule = Left($vfac.resent!cvclibl & " " & $vfac.resent!nmclibl & $vfac.resent!pnmclibl, 40)
+      rescomp!dte = $vfac.dtedoc.G
+      rescomp!dateech = $vfac.dteech.G
+      rescomp!numdoc = $vfac.numfac
+      rescomp!numlot = $vfac.numfac
+      rescomp!libelle = Left("Rglt " & $vfac.reg[i].mode & $vfac.adrfac.nom, 50)
+      rescomp!montantd = 0
+      rescomp!montantc = $vfac.reg[i].montant
+      rescomp!validee = True
+      rescomp!provisoire = False
+      rescomp!tresorerie = True
+      If $vfac.reg[i].mode = "Chèque" Or $vfac.reg[i].mode = "Espèces" Or $vfac.reg[i].mode = "Carte" Then rescomp!lettree = True Else rescomp!lettree = False
+      rescomp!cloturee = False
+      rescomp.Update
+      solde($vfac.numcli)
+      'compte banque
+      rescomp = Utils.db.Create("Fiches_Mvt")
+      If $vfac.reg[i].mode = "Espèces" Then rescomp!jour = respar!jrnal2 Else rescomp!jour = respar!jrnal2
+      res = Utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Comptes,Fiches_Journaux WHERE compte_cc=cde_banque AND code_jo=&1", rescomp!jour)
+      rescomp!numero = numero
+      rescomp!compte = res!compte_cc
+      rescomp!intitule = res!intitule_cc
+      rescomp!dte = $vfac.dtedoc.G
+      rescomp!dateech = $vfac.dteech.G
+      rescomp!numdoc = $vfac.numfac
+      rescomp!numlot = $vfac.numfac
+      rescomp!libelle = Left("Rglt " & $vfac.reg[i].mode & $vfac.adrfac.nom, 50)
+      rescomp!montantd = $vfac.reg[i].montant
+      rescomp!montantc = 0
+      rescomp!validee = True
+      rescomp!provisoire = False
+      rescomp!tresorerie = True
+      If $vfac.reg[i].mode = "Chèque" Or $vfac.reg[i].mode = "Espèces" Or $vfac.reg[i].mode = "Carte" Then rescomp!lettree = True Else rescomp!lettree = False
+      rescomp!cloturee = False
+      rescomp.Update
+      solde(res!compte_cc)
+    Endif
+    utils.db.Exec("UNLOCK TABLES")
+  Next 
+  utils.db.Commit
+  
+End
+
+Public Sub transblfac(cal As Calculconsdroit)
+  
+  Dim entfac, ligfac, hmat, sdep As Result
+  Dim lg As Variant
+  Dim Filename As String
+  
+  'ligne de facure 
+  utils.db.Begin
+  For Each lg In cal.ligne 
+    ligfac = utils.db.Create("Fiches_HistoLigfac" & $vfac.tab)
+    If lg.Index > -1 Then
+      $vfac.reslig.MoveTo(lg.Index)
+      ligfac!num_ligfac = $vfac.numfac
+      ligfac!numlig_ligfac = cal.ligne.Key
+      ligfac!code_ligfac = $vfac.reslig!code_ligbl
+      ligfac!libel_ligfac = $vfac.reslig!libel_ligbl
+      ligfac!fam_ligfac = $vfac.reslig!fam_ligbl
+      ligfac!pu_ligfac = $vfac.reslig!pu_ligbl
+      ligfac!qte_ligfac = $vfac.reslig!qte_ligbl
+      ligfac!brut_ligfac = $vfac.reslig!brut_ligbl
+      ligfac!rem_ligfac = $vfac.reslig!rem_ligbl
+      ligfac!netht_ligfac = $vfac.reslig!netht_ligbl
+      ligfac!tx_ligfac = $vfac.reslig!tx_ligbl
+      ligfac!nettc_ligfac = $vfac.reslig!nettc_ligbl
+      ligfac!typel_ligfac = $vfac.reslig!typel_ligbl
+      ligfac!tm_ligfac = $vfac.reslig!tm_ligbl
+      ligfac!com_ligfac = $vfac.reslig!com_ligbl
+      ligfac!bloc = $vfac.reslig!block_ligbl
+      ligfac!mtx_ligfac = $vfac.reslig!mtx_ligfac
+      ligfac!mrgart_ligfac = $vfac.reslig!mrgart_ligbl
+      ligfac!mrgmo_ligfac = $vfac.reslig!mrgmo_ligbl
+      ligfac!tour_ligfac = $vfac.reslig!tour_ligbl
+      If $option = "T" Or $option = "P" Then ligfac!tipp_ligfac = $vfac.reslig!tipp_ligbl
+      ligfac!dtligbl_ligfac = $vfac.reslig!dte_ligbl
+      ligfac!numbl_ligfac = $vfac.reslig!num_ligbl
+      If $vfac.gmateriel Then         'on met a jour le numéro de facture sur Fiches_materiels
+        hmat = utils.db.Edit("Fiches_Materiels", "WHERE mat_bl = &1 AND mat_code = &2", $vfac.reslig!num_ligbl, $vfac.reslig!code_ligbl)
+        If hmat.Available Then
+          hmat!mat_bl = $vfac.numfac
+          hmat.Update
+        Endif
+      Endif
+    Else
+      If lg.type <> "TD" Then
+        ligfac!num_ligfac = $vfac.numfac
+        ligfac!numlig_ligfac = cal.ligne.Key
+        ligfac!com_ligfac = lg.libel
+        ligfac!typel_ligfac = lg.type
+      Endif
+    Endif
+    ligfac.Update
+    If $option = "B" Or $option = "T" Then
+      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F',numlig=&3 WHERE num=&2 And type='B' AND numlig=&4", $vfac.numfac, $vfac.reslig!num_ligbl, $vfac.reslig!num_ligbl & cal.ligne.Key & $vfac.reslig!numlig_ligbl)  'on met le n° facture, type à F et on renome le n° ligne dans le fichier ligne de consigne
+      utils.db.Exec("UPDATE Fiches_ligregie SET numlig=&1, type='S' WHERE num=&2 AND numlig=&3 AND type='C'", $vfac.reslig!num_ligbl & cal.ligne.Key, $vfac.numfac, $vfac.reslig!numlig_ligbl) 'on met a jour le n° de ligne pour qu'il corresponde à celui de la facture
+    Endif
+  Next
+   If $option = "B" Or $option = "T" Then
+     Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F' WHERE num=&2 AND type='B' AND numlig='D'", $vfac.numfac, $vfac.reslig!num_ligbl)  'on met les n°factures sur les lignes de déconsigne
+  Endif
+  'entete de facture
+  $vfac.resent.MoveFirst
+  entfac = utils.db.Create("Fiches_HistoFac" & $vfac.tab)
+  entfac!numfac = $vfac.numfac
+  entfac!datefac = $vfac.dtedoc.G
+  entfac!cdclifac = $vfac.resent!cdclibl
+  entfac!cvclifac = $vfac.resent!cvclibl
+  entfac!nmclifac = $vfac.resent!nmclibl
+  entfac!rmofac = $vfac.resent!rmobl
+  entfac!rartfac = $vfac.resent!rartbl
+  entfac!pnmclifac = $vfac.resent!pnmclibl
+  entfac!adr1fac = $vfac.resent!adr1bl
+  entfac!adr2fac = $vfac.resent!adr2bl
+  entfac!cpfac = $vfac.resent!cpbl
+  entfac!villefac = $vfac.resent!villebl
+  entfac!Exofac = $vfac.resent!exobl
+  entfac!remmofac = Round(cal.remmo, -2)
+  entfac!remartfac = Round(cal.remart, -2)
+  entfac!totfac = cal.montht
+  entfac!reg = $vfac.resent!reg
+  entfac!ech = $vfac.resent!ech
+  entfac!numerobl = $vfac.resent!numbl
+  entfac!acpt = $vfac.resent!acpt
+  entfac!mreg = $vfac.resent!mreg
+  entfac!marge_art = $vfac.resent!marge_art
+  entfac!marge_mo = $vfac.resent!marge_mo
+  entfac!totfacttc = cal.montttc
+  entfac!gestfac = $vfac.resent!gestbl
+  entfac!numserie = $vfac.resent!numserie
+  entfac!codep = $vfac.resent!codep
+  entfac.Update
+  'historique matériel => n'était pas alimenté => reprise que des infos disponibles dans _BlM
+  'utile pour réedition de facture et de bl de facture regroupées (+tard)
+  If $vfac.tab = "M" Then
+    Repeat
+      If $vfac.resent!codep Then
+        hmat = utils.db.Create("Fiches_HisentMat")
+        hmat!numserie = $vfac.resent!numserie
+        hmat!codep = $vfac.resent!codep
+        hmat!numfac = $vfac.resent!numbl
+        hmat!marque = $vfac.resent!marque
+        hmat!type = $vfac.resent!typemat
+        hmat!design = $vfac.resent!desg1
+        hmat!design2 = $vfac.resent!desg2
+        hmat.Update
+      Endif
+    Until $vfac.resent.MoveNext()
+  Endif
+  'sortie dépots
+   $vfac.resent.MoveFirst
+   Repeat
+      If Not IsNull($vfac.resent!cdep) Then
+        $vfac.reslig.MoveFirst
+        Repeat
+          If $vfac.reslig!typel = "A" And $vfac.resent!numbl = $vfac.reslig!num_ligbl Then
+            sdep = Utils.db.Create("Fiches_Sdepots")
+            sdep!code = Left$($vfac.resent!cdep, 2)
+            sdep!cart = $vfac.reslig!code_ligbl
+            sdep!date = $vfac.reslig!dtefac
+            sdep!type = "S"
+            sdep!qte = $vfac.reslig!qte_ligbl
+            sdep!com = "Facture N° " & $vfac.numfac
+            sdep.Update
+          Endif
+        Until $vfac.reslig.MoveNext()
+      Endif
+   Until $vfac.resent.MoveNext()
+  utils.db.Commit
+  $vfac.resent.MoveFirst
+  Repeat
+    'supprime les adresses de livraison
+    Utils.db.Exec("DELETE FROM Fiches_AdrlivBL WHERE numbl=&1", $vfac.resent!numbl)
+  ' on supprime les entetes de Bl et les lignes de Bl
+    Utils.db.Exec("DELETE FROM Fiches_Bl" & $vfac.tab & " WHERE numbl = &1", $vfac.resent!numbl)
+    Utils.db.Exec("DELETE FROM Fiches_Ligbl" & $vfac.tab & " where num_ligbl = &1", $vfac.resent!numbl)
+  Until $vfac.resent.MoveNext()
+  
+End
+
+Private Sub Maj_Traite()
+
+  Dim Traite As String
+  Dim Accept As Boolean = False
+
+  If Regmt.Text = "Traite" Then
+    Accept = True
+  Else
+    Accept = False
+  Endif
+  Traite = "Fiches_Traites"
+  Utils.db.Exec("insert into  " & Traite & "  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", $vfac.numcli, $vfac.rescli!cli_nom, $vfac.numfac, rglt.Text, $vfac.dteech.G, $vfac.dtedoc.G, Accept, 0)
+
+End

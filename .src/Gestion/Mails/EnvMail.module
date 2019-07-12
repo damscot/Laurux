@@ -16,21 +16,21 @@ Public Sub Envoi(Email As String, sujet As String, Txt As String, piece As Boole
       .From = Start.LocalSettings["/Adrmail"]
       .User = Start.LocalSettings["/Utilisateur"]
       .Password = hexdblKey.crypt("de", Start.LocalSettings["/MdpStmp"], "Laurux")
-      .Encrypt = Net.SSL
+      .Encrypt = Net.None
       .Subject = sujet
       .Alternative = False
       .To.Add(Email)
       .Bcc.Add(Settings["/Adrmail"])
       .Add(Txt, "text/plain")
       If piece = True And IsNull(piece2) Then
-        .Add(File.Load(chemin & FileN), TypeM, FileN)
+        .Add(File.Load(chemin & FileN), Typem, FileN)
       Else
         If piece = True And Not IsNull(piece2) Then 
-          .Add(File.Load(chemin & FileN), TypeM, FileN)
+          .Add(File.Load(chemin & FileN), Typem, FileN)
           .Add(File.Load(piece2), TypeM, spiece2)
         Endif
       Endif
-      Try .Send()
+       Try .Send()
       If Error Then Message.Error("Veuillez vérifier le courriel du client " & Email & " SVP car l'envoi n'a pas pu se faire !")
     Endif
   End With

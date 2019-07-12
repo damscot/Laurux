@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,1.125,105,86)
+  MoveScaled(0,1.1111,105,86)
   Background = Color.Background
   Text = ("Facturation fin de mois")
   { Colbl ColumnView
@@ -34,7 +34,7 @@
     Border = Border.Plain
   }
   { TextLabel4 TextLabel
-    MoveScaled(0.25,0.25,104,4)
+    MoveScaled(0.2222,0.2222,104,4)
     Font = Font["Serif,Bold,+1"]
     Text = ("Génération des factures fin de mois")
     Alignment = Align.Center
@@ -57,7 +57,7 @@
       Picture = Picture["Icones/ecritures.png"]
     }
     { Button5 Button
-      MoveScaled(49.25,0,20,4)
+      MoveScaled(49.2222,0,20,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       ToolTip = ("Quitte la saisie de la facturation fin de mois")
@@ -75,11 +75,11 @@
       Value = True
     }
     { RadioButton2 RadioButton
-      MoveScaled(32,0.25,17.25,3.25)
+      MoveScaled(32,0.2222,17.2222,3.2222)
       Text = Shortcut(("Pour un client"), "u")
     }
     { Codeclient TextBox
-      MoveScaled(51.25,0.25,12,3)
+      MoveScaled(51.2222,0.2222,12,3)
       Font = Font["Serif,-1"]
       Background = &HD4D0C8&
       ReadOnly = True
@@ -90,183 +90,10 @@
       Picture = Picture["Icones/next_frame.png"]
     }
   }
-  { Edit Panel
-    MoveScaled(1,46,76,33.75)
-    Visible = False
-    Background = Color.Background
-    Border = Border.Plain
-    { Date Label
-      MoveScaled(6,2.25,22.25,2)
-      Font = Font["Serif,-1"]
-      Text = ("date du document")
-    }
-    { Dtef TextBox
-      MoveScaled(29,2,12,2.875)
-      Font = Font["Serif,-1"]
-      Background = Color.TextBackground
-    }
-    { !Entete CheckBox
-      MoveScaled(3,7,21,2)
-      #Public = True
-      Font = Font["Serif,-1"]
-      Text = ("Edition de l'entete")
-    }
-    { Reserve CheckBox
-      MoveScaled(27,7,23,2)
-      Font = Font["Serif,-1"]
-      Text = ("Edition des reserves")
-    }
-    { Pied CheckBox
-      MoveScaled(53,7,24,2)
-      Font = Font["Serif,-1"]
-      Text = ("Texte pied de facture")
-    }
-    { Rcp CheckBox
-      MoveScaled(3,12,29,2)
-      Font = Font["Serif,-1"]
-      Text = ("Edition du récapitulatif")
-    }
-    { HBox3 HBox
-      MoveScaled(15,29,50,4)
-      Spacing = True
-      { Button14 Button
-        MoveScaled(15,0,16,4)
-        Font = Font["Serif,Bold,-1"]
-        Background = Color.ButtonBackground
-        ToolTip = ("Imprime le résultat sur l'imprimante")
-        Drop = True
-        Text = Shortcut(("Imprimer"), "I")
-        Picture = Picture["Icones/frameprint.png"]
-      }
-      { Button16 Button
-        MoveScaled(32,0,17,4)
-        Font = Font["Serif,Bold,-1"]
-        Background = Color.ButtonBackground
-        ToolTip = ("Annule l'impression des bons")
-        Drop = True
-        Text = Shortcut(("Fermer"), "F")
-        Picture = Picture["Icones/exit.png"]
-        Cancel = True
-      }
-    }
-    { HBox6 HBox
-      MoveScaled(1,20,39,3)
-      Visible = False
-      { Label1 Label
-        MoveScaled(0,0,20,3)
-        Font = Font["Serif,-1"]
-        Text = ("Mode de reglement")
-      }
-      { Regmt ComboBox
-        MoveScaled(22,0,16,3)
-        Font = Font["Bold"]
-        Background = Color.TextBackground
-        List = [(""), ("Chèque"), ("Espèces"), ("Carte"), ("Paypal"), ("Virement"), ("Traite")]
-      }
-    }
-    { HBox5 HBox
-      MoveScaled(47,20,25,3)
-      Visible = False
-      Spacing = True
-      { Label6 Label
-        MoveScaled(0,0,9,3)
-        Font = Font["Serif,-1"]
-        Text = ("Montant")
-      }
-      { Rglt TextBox
-        MoveScaled(11,0,12,3)
-        Font = Font["Serif,Bold,-1"]
-        Background = Color.TextBackground
-        MaxLength = 92
-      }
-    }
-    { Rgmt CheckBox
-      MoveScaled(3,15,23,4)
-      Visible = False
-      Font = Font["Serif,-1"]
-      ToolTip = ("A cocher si vous souhaitez saisir un réglement.")
-      Text = ("Saisie réglement")
-    }
-    { !ExpMail CheckBox
-      MoveScaled(27,12,26,2)
-      #Public = True
-      Font = Font["Serif,-1"]
-      ToolTip = ("La facture imprimée est ensuite envoyée par courriel.")
-      Text = ("Envoi facture par courriel")
-    }
-    { Cimp ComboBox
-      MoveScaled(18,25,28,3)
-      Font = Font["Serif,-1"]
-    }
-    { TextLabel5 TextLabel
-      MoveScaled(1,25,16,3)
-      Font = Font["Serif,-1"]
-      Text = ("Imprimante")
-      Alignment = Align.Center
-    }
-    { !coln CheckBox
-      MoveScaled(53,12,21,2)
-      #Public = True
-      Font = Font["Serif,-1"]
-      ToolTip = ("La facture imprimée est ensuite envoyée par courriel.")
-      Text = ("Edition des colonnes")
-    }
-  }
   { DateChooser1 DateChooser
     MoveScaled(13,15,35,26)
     Visible = False
     Background = Color.Background
-  }
-  { Panel10 Panel
-    MoveScaled(1,18,76,28)
-    Visible = False
-    Background = &HFF6F3F&
-    Border = Border.Plain
-    { HBox4 HBox
-      MoveScaled(47,17,25,3)
-      Spacing = True
-      { Label9 Label
-        MoveScaled(0,0,9,3)
-        Font = Font["Serif,-1"]
-        Text = ("Montant")
-      }
-      { Rglt2 TextBox edt
-        Name = "Rglt2"
-        MoveScaled(11,0,12,3)
-        Font = Font["Serif,Bold,-1"]
-        Background = Color.TextBackground
-        Tag = "9"
-        MaxLength = 92
-      }
-    }
-    { HBox12 HBox
-      MoveScaled(3,17,39,3)
-      { Label10 Label
-        MoveScaled(0,0,20,3)
-        Font = Font["Serif,-1"]
-        Text = ("Mode de reglement")
-      }
-      { Regmt2 ComboBox
-        MoveScaled(22,0,16,3)
-        Font = Font["Serif,Bold,-1"]
-        Background = Color.TextBackground
-        List = [(""), ("Chèque"), ("Espèces"), ("Carte"), ("Paypal"), ("Virement"), ("Traite"), ("Prélèvement")]
-      }
-    }
-    { Button28 Button
-      MoveScaled(52,21,20,4)
-      Font = Font["Serif,Bold,-1"]
-      Background = Color.ButtonBackground
-      ToolTip = ("Annule l'impression des bons")
-      Drop = True
-      Text = Shortcut(("Imprimer"), "I")
-    }
-    { TextLabel69 TextLabel
-      MoveScaled(2,1,71,15)
-      Font = Font["Serif,-1"]
-      Background = &HFF6F3F&
-      Text = ("Le règlement saisi ne solde pas la facture :<BR><BR>\n\nS'il s'agit d'un règlement partiel cliquez sur \"Imprimer\", sinon, saisissez le deuxième mode règlement puis cliquez sur \"Imprimer\".")
-    }
   }
   { Divers CheckBox
     MoveScaled(4,12,35,3)

@@ -1239,7 +1239,7 @@ Public Function Option() As String
 End
 
 '**************Regarde dans les fichiers regie/consigne si c'est une facture boisson 
-Public Function orientation(numrec As String, choix As String) As Boolean
+Public Function orientation(numrec As String, choix As String, Optional nom As String) As Boolean
 
   Dim rescons, resregie, res As Result
   Dim opt As String
@@ -1252,7 +1252,7 @@ Public Function orientation(numrec As String, choix As String) As Boolean
   
   If choix = "FM" Then          'facture fin de mois => regarde dans tous les bons
     choix = "B"
-    res = Utils.db.Exec("SELECT num FROM Bl WHERE code=&1", numrec)
+    If nom Then res = Utils.db.Exec("SELECT num FROM Bl WHERE code=&1 AND nom=&2", numrec, nom) Else res = Utils.db.Exec("SELECT num FROM Bl WHERE code=&1", numrec)
     res.MoveFirst
     For i = 0 To res.Max
       numlst.Add(res!num)
@@ -1325,11 +1325,11 @@ Public Function valart(dte As Date, Optional art As String, numbl As String) As 
     If Len(numbl) = 10 Then
       champs = " art_dra,dtligbl_ligfac as dte_ligbl"
       fichier = " Fiches_Art,Fiches_regie,Fiches_Ligfac"
-      cond = "art_dra=code AND num_ligfac=&1"
+      cond = "art_dra=code AND num_ligfac=&1 AND typel_ligfac='A'"
     Else
       champs = " art_dra,dte_ligbl"
       fichier = " Fiches_Art,Fiches_regie,Fiches_Ligbl"
-      cond = " art_dra=code AND num_ligbl=&1"
+      cond = " art_dra=code AND num_ligbl=&1 AND typel_ligbl='A'"
     Endif
   Endif
   'pour 1 ligne de saisie
@@ -1344,7 +1344,10 @@ Public Function valart(dte As Date, Optional art As String, numbl As String) As 
   If numbl And IsNull(dte) Then  'cas ou on vérifie les dates de chaque ligne de bon
     res = utils.db.Exec("SELECT" & champs & " FROM" & fichier & " WHERE" & cond, numbl)
     If res.Available Then
-      If Format(res!dte_ligbl, "yyyymmdd") < Format($dtcloture, "yyyymmdd") Then Return True 
+      res.MoveFirst
+      Repeat
+        If Format(res!dte_ligbl, "yyyymmdd") < Format($dtcloture, "yyyymmdd") Then Return True 
+      Until res.MoveNext()
     Endif
     Return False
   Endif

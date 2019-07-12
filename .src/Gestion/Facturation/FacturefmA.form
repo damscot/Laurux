@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,1.125,78,86)
+  MoveScaled(0,1.1111,78,86)
   Background = Color.Background
   Text = ("Facturation périodique")
   { Colbl ColumnView
@@ -23,7 +23,7 @@
     ScrollBar = Scroll.Vertical
   }
   { TextLabel1 TextLabel
-    MoveScaled(1,15.25,76,3)
+    MoveScaled(1,15.2222,76,3)
     Text = ("Liste des clients")
     Alignment = Align.Center
     Border = Border.Plain
@@ -35,7 +35,7 @@
     Border = Border.Plain
   }
   { TextLabel4 TextLabel
-    MoveScaled(0.25,0.25,73,4.25)
+    MoveScaled(0.2222,0.2222,73,4.2222)
     Font = Font["Serif,Bold,+1"]
     Text = ("Génération des factures périodiques")
     Alignment = Align.Center
@@ -58,7 +58,7 @@
       Picture = Picture["Icones/ecritures.png"]
     }
     { Button5 Button
-      MoveScaled(49.25,0,20,4)
+      MoveScaled(49.2222,0,20,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       ToolTip = ("Quitte la saisie de la facturation fin de mois")
@@ -71,16 +71,16 @@
     MoveScaled(4,6,68,4)
     Padding = 50
     { RadioButton1 RadioButton
-      MoveScaled(0,1,27,3.25)
+      MoveScaled(0,1,27,3.2222)
       Text = Shortcut(("Pour tous les clients"), "t")
       Value = True
     }
     { RadioButton2 RadioButton
-      MoveScaled(32,0.25,17.25,3.25)
+      MoveScaled(32,0.2222,17.2222,3.2222)
       Text = Shortcut(("Pour un client"), "u")
     }
     { Codeclient TextBox
-      MoveScaled(51.25,0.25,12,3)
+      MoveScaled(51.2222,0.2222,12,3)
       Font = Font["Serif,-1"]
       Background = &HD4D0C8&
       ReadOnly = True
@@ -92,13 +92,13 @@
     }
   }
   { Datej TextBox
-    MoveScaled(23,11.25,12,3)
+    MoveScaled(23,11.2222,12,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     ToolTip = ("F2 ou double-clic pour choisir une date.")
   }
   { TextLabel3 TextLabel
-    MoveScaled(4.25,11.25,18,3.25)
+    MoveScaled(4.2222,11.2222,18,3.2222)
     Text = ("Abonnement du")
   }
   { Button1 Button
@@ -110,18 +110,26 @@
     Text = Shortcut(("Traitement"), "T")
     Picture = Picture["Icones/find.png"]
   }
+  { DateChooser1 DateChooser
+    MoveScaled(12,14,36,26)
+    Visible = False
+    Background = Color.Background
+  }
+  { FtpClient1 #FtpClient
+    #MoveScaled(71,44)
+  }
   { Edit Panel
     MoveScaled(1,48,76,32)
     Visible = False
     Background = Color.Background
     Border = Border.Plain
     { Date Label
-      MoveScaled(7,1,22.25,2)
+      MoveScaled(7,1,22.2222,2)
       Font = Font["Serif,-1"]
       Text = ("date du document")
     }
     { Dtef TextBox
-      MoveScaled(30,0.75,12,2.875)
+      MoveScaled(30,0.7778,12,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
     }
@@ -159,7 +167,7 @@
         Picture = Picture["Icones/frameprint.png"]
       }
       { Button16 Button
-        MoveScaled(29.25,0,17,4)
+        MoveScaled(29.2222,0,17,4)
         Font = Font["Serif,Bold,-1"]
         Background = Color.ButtonBackground
         ToolTip = ("Annule l'impression des bons")
@@ -170,12 +178,12 @@
       }
     }
     { ComboBox1 ComboBox
-      MoveScaled(21,17.75,21,3)
+      MoveScaled(21,17.7778,21,3)
       Font = Font["Serif,-1"]
       List = [("1- Messagerie"), ("2- Serveur exim"), ("3- Serveur FTP"), ("4- Courrier")]
     }
     { TextLabel5 TextLabel
-      MoveScaled(6,17.75,14,3)
+      MoveScaled(6,17.7778,14,3)
       Font = Font["Serif,-1"]
       Text = ("Mode d'envoi")
       Alignment = Align.Left
@@ -190,13 +198,5 @@
       Text = ("Imprimante")
       Alignment = Align.Left
     }
-  }
-  { DateChooser1 DateChooser
-    MoveScaled(12,14,36,26)
-    Visible = False
-    Background = Color.Background
-  }
-  { FtpClient1 #FtpClient
-    #MoveScaled(71,44)
   }
 }

@@ -1,0 +1,686 @@
+' Gambas class file
+
+Inherits Editfac
+
+Private $cal As Calculconsdroit
+
+Private $Palette As ReportLabel
+Private $coli As ReportLabel
+Private $bout As ReportLabel
+Private $montcons As ReportLabel
+Private $cu As ReportLabel
+Private $pourc As ReportLabel
+Private $ve As ReportLabel
+Private $ap As ReportLabel
+Private $gestion As ReportLabel
+Private $accise As ReportLabel
+Private $regie As ReportLabel
+Private $secu As ReportLabel
+Private $stotart As ReportLabel
+Private $poid As ReportLabel
+Private $totve As ReportLabel
+Private $totap As ReportLabel
+
+Public Sub _new(cal As Calculconsdroit)
+
+  Dim pan, pan1 As ReportPanel
+  Dim lab As ReportLabel
+  Dim i As Integer
+  
+  $cal = cal
+  If Not cal.borientation() Or Not cal.vfac.blchif Then Return
+  ''on modifi la présentation des factures + rajout des consignes et droits
+  Me.comdsa.Text = "(DSA) COMMUNAUTÉ EUROPÉENNE-DOCUMENT SIMPLIFIÉ D'ACCOMPAGNEMENT COMMERCIAL POUR LE CONTROLE FISCAL DES PRODUITS\nSOUMS A ACCISES EN REGIMES : O DE DROITS ACQUITTÉS  O D'EXONÉRATION DE DROITS   Exemplaire 1 à conserver par le destinataire\n  Exemplaire 2 à conserver par le fournisseur\n\ncontrol.A"
+  'corp de facture
+  Me.rcolon.Height = "7mm"
+  pan = New ReportPanel(Me.rcolon)
+  pan.Height = "7mm"
+  pan.Width = "45mm"
+  pan.Arrangement = Arrange.Vertical
+  pan.Border = ReportBorder["Left:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(pan)
+  lab.Text = "CONSIGNATION"
+  lab.Alignment = Align.Center
+  lab.Height = "3mm"
+  lab.Font = Font["Sans Serif,Bold,4"]
+  lab.Border = ReportBorder["Bottom:1 pt #000000"]
+  pan = New ReportPanel(pan)
+  pan.Arrangement = Arrange.Horizontal
+  pan.Height = "3mm"
+  pan.Border = ReportBorder["Top:1 pt #000000"]
+  lab = New ReportLabel(pan)
+  lab.Text = "Palettes"
+  lab.Font = Font["Sans Serif,Bold,3"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "10mm"
+  lab.Alignment = Align.Center
+  lab = New ReportLabel(pan)
+  lab.Text = "Colis"
+  lab.Font = Font["Sans Serif,Bold,3"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "10mm"
+  lab.Alignment = Align.Center
+  lab = New ReportLabel(pan)
+  lab.Text = "Bouteilles"
+  lab.Font = Font["Sans Serif,Bold,3"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "10mm"
+  lab.Alignment = Align.Center
+  lab = New ReportLabel(pan)
+  lab.Text = "Montant"
+  lab.Font = Font["Sans Serif,Bold,3"]
+  lab.Expand = True
+  lab.Alignment = Align.Center
+  lab = New ReportLabel(Me.rcolon)
+  lab.Height = "7mm"
+  lab.Width = "10mm"
+  lab.Font = Font["Sans Serif,Bold,9"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Text = "C.U"
+  lab.Alignment = Align.Center
+  lab = New ReportLabel(Me.rcolon)
+  lab.Height = "7mm"
+  lab.Width = "10mm"
+  lab.Font = Font["Sans Serif,Bold,9"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Text = "%"
+  lab.Alignment = Align.Center
+  lab = New ReportLabel(Me.rcolon)
+  lab.Height = "7mm"
+  lab.Width = "10mm"
+  lab.Font = Font["Sans Serif,Bold,9"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Text = "V.E"
+  lab.Alignment = Align.Center
+  lab = New ReportLabel(Me.rcolon)
+  lab.Height = "7mm"
+  lab.Width = "10mm"
+  lab.Font = Font["Sans Serif,Bold,9"]
+  lab.Text = "A.P"
+  lab.Alignment = Align.Center
+  'lignes de facture
+  $Palette = New ReportLabel(Me.ligne) As "palette"
+  $Palette.Font = Font["Sans Serif,5"]
+  $Palette.Width = "10mm"
+  $Palette.Alignment = Align.Right
+  $coli = New ReportLabel(Me.ligne) As "coli"
+  $coli.Font = Font["Sans Serif,5"]
+  $coli.Width = "10mm"
+  $coli.Alignment = Align.Right
+  $bout = New ReportLabel(Me.ligne) As "bout"
+  $bout.Font = Font["Sans Serif,5"]
+  $bout.Width = "10mm"
+  $bout.Alignment = Align.Right
+  $montcons = New ReportLabel(Me.ligne) As "montcons"
+  $montcons.Font = Font["Sans Serif,5"]
+  $montcons.Width = "15mm"
+  $montcons.Alignment = Align.Right
+  $cu = New ReportLabel(Me.ligne) As "cu"
+  $cu.Font = Font["Sans Serif,5"]
+  $cu.Width = "10mm"
+  $cu.Alignment = Align.Right
+  $pourc = New ReportLabel(Me.ligne) As "pourc"
+  $pourc.Font = Font["Sans Serif,5"]
+  $pourc.Width = "10mm"
+  $pourc.Alignment = Align.Right
+  $ve = New ReportLabel(Me.ligne) As "ve"
+  $ve.Font = Font["Sans Serif,5"]
+  $ve.Width = "10mm"
+  $ve.Alignment = Align.Right
+  $ap = New ReportLabel(Me.ligne) As "ap"
+  $ap.Font = Font["Sans Serif,5"]
+  $ap.Width = "10mm"
+  $ap.Alignment = Align.Right
+  'recape des frais gestion/droit
+  Me.rfrais.Height = "4mm"
+'  Me.rfrais.Padding.Bottom = "1mm"
+  Me.gest.Text = ""
+  lab = New ReportLabel(Me.rfrais)
+  lab.Text = "  Gestion : "
+  lab.Font = Font["Sans Serif,5"]
+  lab.Width = "23mm"
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000"]
+  $gestion = New ReportLabel(Me.rfrais)
+  $gestion.Width = "16mm"
+  $gestion.Font = Font["Sans Serif,5"]
+  $gestion.Text = Format(cal.gestion, "0.00") & "   "
+  $gestion.Alignment = Align.Right
+  $gestion.Border = ReportBorder["Right:1pt #000000"]
+  $gestion.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $gestion.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  
+  lab = New ReportLabel(Me.rfrais)
+  lab.Text = "  Accise : "
+  lab.Font = Font["Sans Serif,5"]
+  lab.Width = "23mm"
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
+  $accise = New ReportLabel(Me.rfrais)
+  $accise.Width = "16mm"
+  $accise.Font = Font["Sans Serif,5"]
+  $accise.Alignment = Align.Right
+  $accise.Text = cal.ascise & "   "
+  $accise.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $accise.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  
+  lab = New ReportLabel(Me.rfrais)
+  lab.Text = "  Régie : "
+  lab.Font = Font["Sans Serif,5"]
+  lab.Width = "22mm"
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
+  $regie = New ReportLabel(Me.rfrais)
+  $regie.Width = "16mm"
+  $regie.Font = Font["Sans Serif,5"]
+  $regie.Alignment = Align.Right
+  $regie.Text = cal.droit & "   "
+  $regie.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $regie.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  
+  lab = New ReportLabel(Me.rfrais)
+  lab.Text = "  Sécu : "
+  lab.Font = Font["Sans Serif,5"]
+  lab.Width = "22mm"
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
+  $secu = New ReportLabel(Me.rfrais)
+  $secu.Width = "16mm"
+  $secu.Font = Font["Sans Serif,5"]
+  $secu.Alignment = Align.Right
+  $secu.Text = cal.secu & "   "
+  $secu.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $secu.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  
+  lab = New ReportLabel(Me.rfrais)
+  lab.Width = "25mm"
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $stotart = New ReportLabel(Me.rfrais)
+  $stotart.Width = "25mm"
+  $stotart.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $stotart.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $stotart.Font = Font["Sans Serif,Bold,7"]
+  $stotart.Text = Format(cal.montart + cal.montmo, ",0.00")
+  $stotart.Alignment = Align.Right
+  
+  lab = New ReportLabel(Me.rfrais)
+  lab.Text = "  Poid : "
+  lab.Font = Font["Sans Serif,5"]
+  lab.Width = "30mm"
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
+  $poid = New ReportLabel(Me.rfrais)
+  $poid.Width = "15mm"
+  $poid.Font = Font["Sans Serif,5"]
+  $poid.Alignment = Align.Right
+  $poid.Text = cal.poid() & "    "
+  $poid.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $poid.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab = New ReportLabel(Me.rfrais)
+  lab.Expand = True
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  
+  $totve = New ReportLabel(Me.rfrais)
+  $totve.Width = "13mm"
+  $totve.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $totve.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $totve.Font = Font["Sans Serif,5"]
+  $totve.Text = cal.totvolume
+  $totve.Alignment = Align.Right
+  
+  $totap = New ReportLabel(Me.rfrais)
+  $totap.Width = "13mm"
+  $totap.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  $totap.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $totap.Font = Font["Sans Serif,5"]
+  $totap.Text = cal.totap
+  $totap.Alignment = Align.Right
+  'tva
+  Me.lgtva.Padding.Top = "1mm"
+  Me.lct.Width = "15mm"
+  Me.lct.Font = Font["Sans Serif,8"]
+  Me.lct.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  Me.ltt.Width = "15mm"
+  Me.ltt.Font = Font["Sans Serif,8"]
+  Me.ltt.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  Me.lmtv.Width = "25mm"
+  Me.lmtv.Font = Font["Sans Serif,8"]
+  Me.ltn.Width = "25mm"
+  Me.ltn.Font = Font["Sans Serif,8"]
+  Me.ltoh.Text = ""
+  Me.ltoh.Width = "0mm"
+  Me.ltoh.Border = ReportBorder["Right:0pt #FFFFFF"]
+  Me.ltot.Text = ""
+  Me.ltot.Expand = False
+  Me.ltot.Width = "0mm"
+  Me.ltn.Border = ReportBorder["Right:0pt #000000"]
+  Me.ltoh.Border = ReportBorder["Right:0pt #000000"]
+  modtva([Me.ctx, Me.txtva, Me.mtva, Me.tnet], Me.ptva)
+  modtva([Me.ctx1, Me.txtva1, Me.mtva1, Me.tnet1], Me.ptva1)
+  modtva([Me.ctx2, Me.txtva2, Me.mtva2, Me.tnet2], Me.ptva2)
+  modtva([Me.ctx3, Me.txtva3, Me.mtva3, Me.tnet3], Me.ptva3)
+  modtva([Me.ctx4, Me.txtva4, Me.mtva4, Me.tnet4], Me.ptva4)
+  lab = New ReportLabel(Me.lgtva)
+  lab.Text = Me.delais.Text
+  lab.Expand = True
+  lab.Autoresize = True
+  Me.rtotttc.Children.Clear
+  Me.rtotttc.Height = "0mm"
+  lab.Autoresize = True
+  Me.enttva.Width = "81mm"
+  Me.enttva.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000"]
+  Me.rbasfac.Arrangement = Arrange.Horizontal
+  pan = New ReportPanel(Me.rbasfac)
+  pan.Border = ReportBorder["Left:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  pan.Width = "74mm"
+  pan.Height = "29mm"
+  pan.Arrangement = Arrange.Vertical
+  lab = New ReportLabel(pan)
+  lab.Height = "4mm"
+  lab.Width = "74mm"
+  lab.Font = Font["Sans Serif,8"]
+  lab.Alignment = Align.Center
+  lab.Text = "RETOUR DES EMBALLAGES"
+  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.Border = ReportBorder["Bottom:1pt #000000"]
+  For i = 1 To 5
+    pan1 = New ReportPanel(pan)
+    pan1.Arrangement = Arrange.Horizontal
+    pan1.Height = "5mm"
+    lab = New ReportLabel(pan1)
+    lab.Expand = True
+    If i <> 5 Then lab.Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"] Else lab.Border = ReportBorder["Right:1pt #000000"]
+    lab = New ReportLabel(pan1)
+    lab.Expand = True
+    If i <> 5 Then lab.Border = ReportBorder["Bottom:1pt #000000"]
+  Next
+  'totaux
+  pan = New ReportPanel(Me.rbasfac)
+  pan.Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+  pan.Width = "50mm"
+  pan.Height = "30mm"
+  pan.Arrangement = Arrange.Vertical
+  pan.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  pan1 = New ReportPanel(pan)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Height = "4mm"
+  pan1.Border = ReportBorder["Bottom:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "Gestion/Droit"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Font = Font["Sans Serif,7"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = Format(Utils.totobs([cal.secu, cal.ascise, cal.droit, Str(cal.gestion)]), ",0.00")
+  lab.Font = Font["Sans Serif,Bold,7"]
+  lab.Alignment = Align.Right
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Height = "4mm"
+  pan1.Border = ReportBorder["Bottom:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "TOTAL HT"
+  lab.Font = Font["Sans Serif,7"]
+   lab.Border = ReportBorder["Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = Format(cal.montht, ",0.00")
+  lab.Font = Font["Sans Serif,Bold,7"]
+  lab.Alignment = Align.Right
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Height = "4mm"
+  pan1.Border = ReportBorder["Bottom:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "TVA"
+  lab.Font = Font["Sans Serif,7"]
+   lab.Border = ReportBorder["Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = Format(cal.monttva, ",0.00")
+  lab.Font = Font["Sans Serif,Bold,7"]
+  lab.Alignment = Align.Right
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Height = "4mm"
+  pan1.Border = ReportBorder["Bottom:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "TOTAL TTC"
+  lab.Font = Font["Sans Serif,7"]
+   lab.Border = ReportBorder["Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = Format(cal.montht + cal.monttva, ",0.00")
+  lab.Font = Font["Sans Serif,Bold,7"]
+  lab.Alignment = Align.Right
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Height = "4mm"
+  pan1.Border = ReportBorder["Bottom:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "CONSIGNE"
+  lab.Font = Font["Sans Serif,7"]
+   lab.Border = ReportBorder["Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = cal.consigne
+  lab.Font = Font["Sans Serif,Bold,7"]
+  lab.Alignment = Align.Right
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Height = "4mm"
+  pan1.Border = ReportBorder["Bottom:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "DÉCONSIGNE"
+  lab.Font = Font["Sans Serif,7"]
+   lab.Border = ReportBorder["Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = cal.deconsigne
+  lab.Font = Font["Sans Serif,Bold,7"]
+  lab.Alignment = Align.Right
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Expand = True
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "NET FACTURÉ"
+  lab.Font = Font["Sans Serif,Bold,7"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = Format(cal.montttc, "0.00")
+  lab.Font = Font["Sans Serif,Bold,8"]
+  lab.Alignment = Align.Right
+  
+  'dessin du transport
+  pan = New ReportPanel(Me.rbasfac)
+  pan.Width = "42mm"
+  pan.Height = "27mm"
+  pan.Padding = ReportPadding["Right:1pt;Left: 1pt;Top: 1pt"]
+  pan.Arrangement = Arrange.Vertical
+  pan1 = New ReportPanel(pan)
+  pan1.Height = "20mm"
+  pan1.Arrangement = Arrange.Vertical
+  pan1.Border = ReportBorder["Left: 1pt #000000;Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(pan)
+  lab.Height = "1mm"
+  
+  lab = New ReportLabel(pan1)
+  lab.Text = "5    TRANSPORT :"
+  lab.Height = "4mm"
+  lab.Font = Font["Sans Serif,Bold,6"]
+  
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  
+  lab = New ReportLabel(pan1)
+  lab.Text = "PARCOURS : RO ou               N° VÉHICULE"
+  lab.Font = Font["Sans Serif,4"]
+  
+  lab = New ReportLabel(pan1)
+  lab.Text = "AU MOYEN DE : CAMION ou "
+  lab.Font = Font["Sans Serif,4"]
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Expand = True
+  pan1.Border = ReportBorder["Left: 1pt #000000;Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Text = "14 Attestations "
+  lab.Font = Font["Sans Serif,Bold,4"]
+  
+  pan = New ReportPanel(Me.rbasfac)
+  pan.Expand = True
+  pan.Height = "27mm"
+  pan.Padding = ReportPadding["Top: 1pt"]
+  pan.Arrangement = Arrange.Vertical
+  pan1 = New ReportPanel(pan)
+  pan1.Height = "9mm"
+  pan1.Arrangement = Arrange.Vertical
+  pan1.Border = ReportBorder["Left: 1pt #000000;Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab = New ReportLabel(pan1)
+  lab.Text = "3 Autorité Compétente "
+  lab.Font = Font["Sans Serif,Bold,4"]
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Height = "6mm"
+  pan1.Arrangement = Arrange.Vertical
+  pan1.Border = ReportBorder["Left: 1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "15"
+  lab.Font = Font["Sans Serif,3"]
+  lab = New ReportLabel(pan1)
+  lab.Text = "Cases 1 à 13 certifiées correctes.    Renvoi du 3 ex. demandé oui non "
+  lab.Font = Font["Sans Serif,3"]
+  lab.Expand = True
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Height = "10mm"
+  pan1.Arrangement = Arrange.Vertical
+  pan1.Border = ReportBorder["Left: 1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Height = "3mm"
+  lab.Text = "Entreprise du signataire et n° de téléphone"
+  lab.Font = Font["Sans Serif,4"]
+  lab = New ReportLabel(pan1)
+  lab.Text = Me.rs.Text
+  lab.Font = Font["Sans Serif,4"]
+  lab.Height = "3mm"
+  lab = New ReportLabel(pan1)
+  lab.Text = "Tel : " & Me.tel.Text
+  lab.Font = Font["Sans Serif,4"]
+  lab.Height = "3mm"
+  
+  pan1 = New ReportPanel(pan)
+  pan1.Expand = True
+  pan1.Arrangement = Arrange.Vertical
+  pan1.Border = ReportBorder["Left: 1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(pan1)
+  lab.Expand = True
+  lab.Text = "Nom du signataire :"
+  lab.Font = Font["Sans Serif,4"]
+  
+  Me.Orientation = Printer.Landscape
+  Me.repligne.DataCount += cal.nbdecons
+End
+
+Private Sub modtva(ltva As ReportLabel[], ptva As ReportHBox)
+  
+  ltva[0].Width = "15mm"
+  ltva[1].Width = "15mm"
+  ltva[2].Width = "25mm"
+  ltva[3].Width = "25mm"
+  ptva.Width = "80mm"  
+End
+
+'****************************************************
+'gestion des lignes de facture
+Public Sub palette_data(Index As Integer)
+
+  Dim vri As String[]
+  
+  $Palette.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+  vri = affvri(Index)
+  $Palette.BackGround = ReportBrush.Color(Me.$c1)
+  If Not IsNull(vri) Then $Palette.Data = vri[0] Else $Palette.Data = " "
+
+End
+
+Public Sub bout_data(Index As Integer)
+
+  Dim vri As String[]
+  
+  $bout.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+  vri = affvri(Index)
+  If Not IsNull(vri) Then $bout.Data = vri[2] Else $bout.Data = " "
+
+End
+
+Public Sub coli_data(Index As Integer)
+
+  Dim vri As String[]
+  
+  $coli.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+  vri = affvri(Index)
+  If Not IsNull(vri) Then $coli.Data = vri[1] Else $coli.Data = " "
+
+End
+
+Public Sub montcons_data(Index As Integer)
+
+  Dim vri As String[]
+  
+  $montcons.BackGround = ReportBrush.Color(Me.$c1)
+  vri = affvri(Index)
+  If Not IsNull(vri) Then $montcons.Data = vri[3] Else $montcons.Data = " "
+  Swap Me.$c1, Me.$c2
+
+End
+
+Public Sub cu_data(Index As Integer)
+
+  Dim ky As String
+  Dim vri As String[]
+  
+  $cu.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+  $cu.Data = " "
+  If Index >= $cal.ligne.Count Then Return
+  ky = Format(index + 1, "0000")
+  If Not $cal.aimprimer.Exist(ky) Then Return
+  vri = $cal.aimprimer[ky]
+  $cu.Data = vri[4]
+
+End
+
+Public Sub pourc_data(Index As Integer)
+
+  Dim ky As String
+  Dim vri As String[]
+  
+  $pourc.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+  $pourc.Data = " "
+  If Index >= $cal.ligne.Count Then Return
+  ky = Format(index + 1, "0000")
+  If Not $cal.aimprimer.Exist(ky) Then Return
+  vri = $cal.aimprimer[ky]
+  $pourc.Data = vri[5]
+
+End
+
+Public Sub ve_data(Index As Integer)
+
+  Dim ky As String
+  Dim vri As String[]
+  
+  $ve.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+  $ve.Data = " "
+  ky = Format(index + 1, "0000")
+  If Not $cal.aimprimer.Exist(ky) Then Return
+  vri = $cal.aimprimer[ky]
+  $ve.Data = vri[6]
+
+End
+
+Public Sub ap_data(Index As Integer)
+
+  Dim ky As String
+  Dim vri As String[]
+  
+  $ap.Data = " "
+  $ap.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+  ky = Format(index + 1, "0000")
+  If Not $cal.aimprimer.Exist(ky) Then Return
+  vri = $cal.aimprimer[ky]
+  $ap.Data = vri[7]
+
+End
+'on surcharge les colonnes code+intitule
+Public Sub code_data(Index As Integer)
+
+  Dim ky As String
+  Dim lg As Variant
+  Dim vri As String[]
+  Dim i As Integer
+  
+  If Index < $cal.ligne.Count Then
+    ky = Format(index + 1, "0000")
+    lg = $cal.ligne[ky]
+    Me.code.Data = lg.code
+  Else
+    i = Index - $cal.ligne.Count     'edition de la déconsigne
+    vri = $cal.decons[i]
+    Me.code.Data = vri[4]
+  Endif
+  If $cal.vfac.colon Then
+    Me.$c1 = $cal.vfac.couleur2 
+    Me.$c2 = $cal.vfac.couleur2 + 20
+  Else
+    Me.$c1 = &HFFFFFF
+    Me.$c2 = &HFFFFFF
+  Endif
+  Me.code.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+
+End
+
+Public Sub intitule_Data(Index As Integer)
+
+  Dim ky As String
+  Dim lg As Variant
+  Dim i As Integer
+  Dim vri As String[]
+  
+  If Index < $cal.ligne.Count Then
+    ky = Format(index + 1, "0000")
+    lg = $cal.ligne[ky]
+    Me.intitule.Data = lg.libel
+  Else
+    i = Index - $cal.ligne.Count      'edition de la déconsigne
+    vri = $cal.decons[i]
+    Me.intitule.Data = vri[5]
+  Endif
+  Me.intitule.BackGround = ReportBrush.Color(Me.$c1)
+  Swap Me.$c1, Me.$c2
+
+End
+
+Private Function affvri(Index As Integer) As String[]
+  
+  Dim vri As String[]
+  Dim i As Integer
+  Dim ky As String
+  
+  If Index >= $cal.ligne.Count Then
+    i = Index - $cal.ligne.Count 
+    vri = $cal.decons[i]
+  Else
+    ky = Format(index + 1, "0000")
+    vri = $cal.aimprimer[ky]
+  Endif
+  Return vri
+  
+End

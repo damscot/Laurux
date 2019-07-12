@@ -1,0 +1,305 @@
+' Gambas class file
+
+Public Struct adresse 
+  nom As String
+  adr1 As String
+  adr2 As String
+  cp As String
+  ville As String
+  pays As String
+End Struct
+
+Public Struct reglement
+  numcli As String
+  dte As Date
+  mode As String
+  montant As Float
+End Struct
+
+Public resent As Result                       'bon a éditer
+Public reslig As Result
+Public livraison As Boolean                 'si client à livrer
+Public devise As String                       'devise
+Public gmateriel As Boolean               'Si option matériel est coché
+Public dtmouv As Boolean                'Si date de sortie=date de facture
+Public sms As Boolean                       'si sms
+Public breg As Boolean                      'A cocher si vous souhaitez que le texte de réglement en bas de facture soit celui qui est défini dans les préférences*
+Public treg As String                           ' texte si breg=true*
+Public badr As Boolean                        'si adresse de livraison  
+Public adrfac As Adresse                      'stock l'adresse de facturation
+Public adrliv As Adresse                        'stock l'adresse de livraison
+Public blchif As Boolean = True                   'si le bl est chiffré
+Public colon As Boolean = True                    'si couleur de colonne
+Public ligne2 As Boolean                      'si édition de la 2° ligne article*
+Public entete As Boolean                      'si édition de l'entete*
+Public reserve As Boolean                     'si édition des réserves*
+Public treserve As String                        'texte si reserves*
+Public pied As Boolean                          'si édition du pied de facture*
+Public tpied As String[]                          'texte si pied  
+Public ttc As Boolean                            'si edition en ttc*
+Public recap As Boolean                       'recap total ht bas facture*
+Public sauvpdf As Boolean                     'fichier pdf sauvegardé*
+Public pdf As String                           'fichier pdf ajouté fin facture
+Public remise As Boolean                    'ignore remise
+Public Stock As Boolean                         'impression des stocks sur bl
+Public blrecap As Boolean                     'recap des bl => nb de bl pour ce client*
+Public saisreg As Boolean                     'si saisie reglement activée*
+Public reg As New Reglement[]
+Public lreg As New Reglement
+Public doclet As Boolean                      'edition du tot facture en lettre *
+Public imp As Printer
+Public simpcond As Boolean = False               'impression du conditionnement sur bl => colonne U
+Public coupon As Boolean                  'coupon détachable bas facture*
+Public nblfac As Boolean                    'n ° bl sur facture*
+Public poids As Boolean               'poid sur bl*
+'Public casier As Boolean              'afficher le code casier sur bl => colonne intitule au début*
+Public affref As Boolean              'Masquer les références produits sur les devis*
+Public autoent As Boolean              'auto entrepreneur*
+Public franctva As Boolean              'franchise tva*
+Public mdepo As Boolean                 'multi depot*
+Public libtaxe As String                      'taxe sur doc*
+Public libsire As String                        'siret sur doc*
+Public pxsdec As Boolean                 'prix sans decimal*
+Public libdev As Boolean                   'si libelle bas de devis*
+Public txtlibdev As String                'texte bas de devis*
+Public txtvldev As String                 'texte validité devis*
+Public pdfchemin As String                'chemin des factures pdf*
+Public pdfannu As Boolean                 'dossier annuel des factures pdf*
+Public tab As String                          'contient le M en fin de fichier => Fiches_bl & M
+Public adrlogo As Boolean                 'adresse en logo
+Public lgo As Boolean                        'logo sur facture
+Public rescli As Result                       'fiche client 
+Public couleur As Integer                   'couleur de fond à l'edition
+Public couleur2 As Integer
+Public numeroecr As Integer               'numero ecriture
+Public cheque As Boolean                    'bordereau de cheque
+Public choix As String                        'Selection de l'affichage en fonction de "choix"
+  'choix =>de facture on passe Tp => C=ommande  P=proforma D=devis F=facture  B=BL + de Fin de mois choix="FM" + de archive choix="A"
+  'Envoi mail
+Public condvent As String             'nom et chemein du fichier texte
+Public joinfac As Boolean              'a joindre aux factures
+Public joinsms As Boolean             'a joindre aux sms
+Public AffClient As Boolean               'masquer les coordonnés client si mail
+
+Private $dtedoc As LDate
+Private $dteech As LDate
+Private $numcli As String
+Private $exemplaire As Integer
+Private $numfac As String
+Private $numbl As String
+Private $cdech As String
+
+Property dtedoc As LDate
+Property dteech As LDate
+Property numcli As String
+Property nbexplemplaire As Variant
+Property numbl As String
+Property numfac As String
+
+Event nombre(value As String)
+Event fttc(value As Boolean)
+Event echeance(value As LDate)
+Event modreg(value As String)
+
+Public Sub _new()
+
+  Dim res As Result
+  
+  recap = Start.LocalSettings["/Soc" & Start.Societe & "/Recap"]
+  ttc = Start.LocalSettings["/Soc" & Start.Societe & "/Impttc"]
+  entete = Start.LocalSettings["/Soc" & Start.Societe & "/Entete"]
+  reserve = Start.LocalSettings["/Soc" & Start.Societe & "/Conditions"]
+  If reserve Then 
+    res = Utils.db.Exec("SELECT * FROM Fiches_Tleg")
+    If res.Available Then
+      treserve = res!intitule
+    Endif
+  Endif
+  pied = Start.LocalSettings["/Soc" & Start.Societe & "/Pied"]
+  If pied Then
+    res = Utils.db.Exec("SELECT * from Fiches_LibelFac")
+    If res.Available Then
+      tpied = New String[]
+      tpied = Split(res!txtfac, "\n")
+    Endif
+  Endif
+  ligne2 = Start.LocalSettings["/Soc" & Start.Societe & "/Imp2L"]
+  colon = Start.LocalSettings["/Soc" & Start.Societe & "/Col"]
+  imp = New Printer
+  Stock = Start.LocalSettings["/Soc" & Start.Societe & "/Impstocke"]
+'  pdf = Start.LocalSettings["/Soc" & Start.Societe & "/ImpPDF"]      pris sur la fiche client
+  blrecap = Start.LocalSettings["/Soc" & Start.Societe & "/ImpTotbl"]
+  poids = Start.LocalSettings["/Soc" & Start.Societe & "/Poids"] 
+ ' casier = Start.LocalSettings["/Soc" & Start.Societe & "/Casier"] 
+  breg = Start.LocalSettings["/Soc" & Start.Societe & "/Fht"] 
+  If breg Then treg = Start.LocalSettings["/Soc" & Start.Societe & "/Schmprix"]
+  saisreg = Start.LocalSettings["/Soc" & Start.Societe & "/Rglt"] 
+  If choix = "FM" Then saisreg = False
+  doclet = Start.LocalSettings["/Soc" & Start.Societe & "/Totstring"]
+  coupon = Start.LocalSettings["/Soc" & Start.Societe & "/Coupon"]
+  nblfac = Start.LocalSettings["/Soc" & Start.Societe & "/Impbl"]
+  affref = Start.LocalSettings["/Soc" & Start.Societe & "/AffArt"]
+  autoent = Start.LocalSettings["/Soc" & Start.Societe & "/AutoEnt"]
+  franctva = Start.LocalSettings["/Soc" & Start.Societe & "/Franchise"] 
+  mdepo = Start.LocalSettings["/Soc" & Start.Societe & "/Depots"]
+  libtaxe = Start.LocalSettings["/Soc" & Start.Societe & "/Taxe"] 
+  libsire = Start.LocalSettings["/Soc" & Start.Societe & "/Siret"] 
+  pxsdec = Start.LocalSettings["/Soc" & Start.Societe & "/Prxdec"] 
+  libdev = Start.LocalSettings["/Soc" & Start.Societe & "/Libdevis"]
+  If libdev Then txtlibdev = Start.LocalSettings["/Soc" & Start.Societe & "/Devis2"] Else txtlibdev = ""
+  txtvldev = Start.LocalSettings["/Soc" & Start.Societe & "/Devis"] 
+'  refprddev = Start.LocalSettings["/Soc" & Start.Societe & "/AffArt"]
+  pdfchemin = Start.LocalSettings["/Soc" & Start.Societe & "/Factchemin"]
+  pdfannu = Start.LocalSettings["/Soc" & Start.Societe & "/Pdf3"]
+  couleur = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
+  If Start.R2 = 0 Then couleur2 = couleur Else couleur2 = Val("&H" & Hex(Start.R2) & Hex(Start.G2) & Hex(Start.B2))
+  adrlogo = Start.LocalSettings["/Soc" & Start.Societe & "/glogo3"]
+  lgo = Start.LocalSettings["/Soc" & Start.Societe & "/glogo"]
+  gmateriel = Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"]
+  cheque = Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"]
+  sms = Start.LocalSettings["/Soc" & Start.Societe & "/TxtF"]
+  condvent = Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminV"]
+  joinfac = Start.LocalSettings["/Soc" & Start.Societe & "/Pdf5"]
+  joinsms = Start.LocalSettings["/Soc" & Start.Societe & "/Pdf6"]
+  pdf = Start.LocalSettings["/Soc" & Start.Societe & "/Pdfchemin"]
+  affclient = Start.LocalSettings["/Soc" & Start.Societe & "/AffClient"]
+  
+  Catch
+    Message.Error("Veuillez vérifier vos préférences avant de continer à facturer")
+    
+End
+
+Private Sub calech()
+  
+  Dim res As Result
+  Dim dt As String = $dtedoc.L
+  
+  
+  If $cdech Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Echeances WHERE num=&1", $cdech)
+    If res.Available Then
+      $dteech = New LDate(Utils.Calcech(res!duree, res!jours, res!finmois, dt))
+    Else
+      $dteech = New LDate($dtedoc.G)
+    Endif
+  Else
+    $dteech = New LDate($dtedoc.G)
+  Endif
+  Raise echeance($dteech)
+    
+End
+
+'property
+Private Function numcli_Read() As String
+
+  Return $numcli
+
+End
+
+Private Sub numcli_Write(Value As String)
+
+  Dim res As Result
+  
+  $numcli = Value
+  rescli = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", $numcli)
+  If rescli.Available Then 
+    $exemplaire = rescli!cli_expl
+    Raise nombre(Str($exemplaire))
+    ttc = CBool(rescli!cli_autoent)
+    Raise fttc(ttc)
+    $cdech = rescli!cli_cdech
+    If Object.IsValid($dtedoc) Then
+      calech()
+    Endif
+    sauvpdf = rescli!cli_copie
+    Raise modreg(rescli!cli_reg)
+    adrfac = New Adresse
+    adrliv = New Adresse
+    adrfac.nom = rescli!cli_rs_soc & " " & rescli!cli_nom & " " & rescli!cli_pnm
+    adrfac.adr1 = rescli!cli_adr1
+    adrfac.adr2 = rescli!cli_adr2
+    adrfac.cp = rescli!cli_cd_ptl
+    adrfac.ville = rescli!cli_ville
+    adrfac.pays = rescli!cli_pays
+  Endif
+  
+End
+
+Private Function nbexplemplaire_Read() As Variant
+
+  Return $exemplaire
+
+End
+
+Public Sub newreg() As Variant
+  
+  lreg = New Reglement
+
+End
+
+Public Sub newregt() 
+
+  reg = New Reglement[]
+
+End
+
+Private Sub nbexplemplaire_Write(Value As Variant)
+
+  If value = gb.String Then
+    $exemplaire = Val(value)
+  Else
+    $exemplaire = Value
+  Endif
+
+End
+
+Private Function numbl_Read() As String
+
+  Return $numbl
+
+End
+
+Private Sub numbl_Write(Value As String)
+
+  $numbl = Value
+
+End
+
+Private Function numfac_Read() As String
+
+  Return $numfac
+
+End
+
+Private Sub numfac_Write(Value As String)
+
+  $numfac = Value
+
+End
+
+Private Function dtedoc_Read() As LDate
+
+  Return $dtedoc
+
+End
+
+Private Sub dtedoc_Write(Value As LDate)
+
+'  If $dtedoc <> value Then
+    $dtedoc = value
+    calech
+'  Endif
+  
+End
+
+Private Function dteech_Read() As LDate
+
+  Return $dteech
+
+End
+
+Private Sub dteech_Write(Value As LDate)
+
+  $dteech = value
+
+End
