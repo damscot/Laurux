@@ -439,13 +439,13 @@ Public Sub Button2_Click()
     If Radiobutton3.Value Then $Tri = "mat_marque, lpad(mat_code,15,' ')"
     If Radiobutton4.Value Then $Tri = "mat_serie"
     If Vendus.Value = True And Vendus2.Value = False Then
-      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE mat_code >= &1  and mat_code <= &2 and mat_cli >= &3 and mat_cli <= &4  and mat_marque >= &5 and mat_marque <= &6 order by &9", mat.Text, mat2.Text, Cli.Text, Cli2.Text, Marque.Text, Marque2.Text, Matstocke, Matstocke2, $Tri)
+      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE mat_code >= &1  and mat_code <= &2 and mat_cli >= &3 and mat_cli <= &4  and mat_marque >= &5 and mat_marque <= &6 order by " & $tri, mat.Text, mat2.Text, Cli.Text, Cli2.Text, Marque.Text, Marque2.Text, Matstocke, Matstocke2, $Tri)
     Endif
     If Vendus.value = False And Vendus2.value = True Then
-      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE (mat_code >= &1  and mat_code <= &2 and mat_cli is null and mat_marque >= &5 and mat_marque <= &6 and mat_vendu = &7) or (mat_code >= &1  and mat_code <= &2 and mat_cli is null and mat_marque >= &5 and mat_marque <= &6 and mat_vendu = &8)  order by &9", mat.Text, mat2.Text, Cli.Text, Cli2.Text, Marque.Text, Marque2.Text, Matstocke, Matstocke2, $Tri)
+      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE (mat_code >= &1  and mat_code <= &2 and mat_cli is null and mat_marque >= &5 and mat_marque <= &6 and mat_vendu = &7) or (mat_code >= &1  and mat_code <= &2 and mat_cli is null and mat_marque >= &5 and mat_marque <= &6 and mat_vendu = &8)  order by " & $tri, mat.Text, mat2.Text, Cli.Text, Cli2.Text, Marque.Text, Marque2.Text, Matstocke, Matstocke2, $Tri)
     Endif
     If Vendus.value = True And Vendus2.value = True Then
-      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE (mat_code >= &1  and mat_code <= &2 and mat_cli >= &3 and mat_cli <= &4  and mat_marque >= &5 and mat_marque <= &6) or (mat_code >= &1  and mat_code <= &2 and mat_cli is null  and mat_marque >= &5 and mat_marque <= &6)  order by &9", mat.Text, mat2.Text, Cli.Text, Cli2.Text, Marque.Text, Marque2.Text, Matstocke, Matstocke2, $Tri)
+      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE (mat_code >= &1  and mat_code <= &2 and mat_cli >= &3 and mat_cli <= &4  and mat_marque >= &5 and mat_marque <= &6) or (mat_code >= &1  and mat_code <= &2 and mat_cli is null  and mat_marque >= &5 and mat_marque <= &6)  order by " & $tri, mat.Text, mat2.Text, Cli.Text, Cli2.Text, Marque.Text, Marque2.Text, Matstocke, Matstocke2)
     Endif
     If rResult.Available Then
       Repeat
