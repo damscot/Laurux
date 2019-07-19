@@ -1374,6 +1374,6 @@ Private Sub Maj_Traite()
     Accept = False
   Endif
   Traite = "Fiches_Traites"
-  Utils.db.Exec("insert into  " & Traite & "  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", $vfac.numcli, $vfac.rescli!cli_nom, $vfac.numfac, rglt.Text, $vfac.dteech.G, $vfac.dtedoc.G, Accept, 0)
+  Utils.db.Exec("insert into  " & Traite & "  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", $vfac.numcli, $vfac.rescli!cli_nom, $vfac.numfac, Format($cal.montttc, "0.00"), $vfac.dteech.G, $vfac.dtedoc.G, Accept, 0)
 
 End
