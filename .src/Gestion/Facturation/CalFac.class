@@ -70,6 +70,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
   Dim lignetva1 As Ltva
   Dim numbl As String
   Dim lg As New Compta
+  Dim commentaire As String[]
   
   vfac = vafac
   Select Case vfac.choix
@@ -109,7 +110,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
             If numbl <> vfac.reslig!num_ligbl Then
               ligneart = New Ledit
               ligneart.Index = -1
-              ligneart.libel = "Bon n° " & vfac.reslig!num_ligbl & "du " & LDate(vfac.resent!datebl).L
+              ligneart.libel = "Bon n° " & vfac.reslig!num_ligbl & " du " & LDate(vfac.resent!datebl).L
               ligneart.type = "C"
               ligne.Add(ligneart, numlig)
               numbl = vfac.reslig!num_ligbl 
@@ -136,12 +137,16 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
           remmo = remmo + (Val(ligneart.brht) - Val(ligneart.neht))
           
         Case "P", "C", "R"
-          ligneart = New Ledit
-          ligneart.Index = vfac.reslig.Index
-          ligneart.libel = vfac.reslig!com_ligbl
-          ligneart.type = vfac.reslig!typel_ligbl
-          ligne.Add(ligneart, numlig)
-          
+          commentaire = Split(vfac.reslig!com_ligbl, "\n")
+          For i = 0 To commentaire.Max
+            ligneart = New Ledit
+            ligneart.Index = -1
+            ligneart.libel = commentaire[i]
+            ligneart.type = vfac.reslig!typel_ligbl
+            ligne.Add(ligneart, Format(Val(numlig) + i, "0000"))
+          Next
+          numlig = Format(Val(numlig) + commentaire.Max, "0000")
+        
         Case "T"
           If Not vfac.ligne2 Then
             ligneart = New Ledit
@@ -200,9 +205,9 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
     'ecriture comptable sur la tva
     If Object.IsValid(tva) Then
       For Each lignetva1 In tva
-        lignetva1.tottva = Round(lignetva1.totht * (lignetva1.taux / 100), -2)
+        lignetva1.tottva = lignetva1.totht * (lignetva1.taux / 100)
         tva[lignetva1.num] = lignetva1
-        monttva += lignetva1.tottva
+        monttva += Val(Format(lignetva1.tottva, "0.00"))
         respar = utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", lignetva1.num)
         If respar.Available Then ecriture(respar!compte_cc, lignetva1.tottva, respar!intitule_cc)
       Next 
@@ -210,7 +215,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
     If vfac.ttc Then
       montht = montht - monttva
     Endif
-    montttc = Round(montht + monttva, -2)
+    montttc = Val(Format(montht, "0.00")) + Val(Format(monttva, "0.00"))
     'ecriture client
     ecriture(vfac.numcli, montttc * -1, Left(vfac.adrfac.nom, 35))
     If vfac.doclet And vfac.blchif Then        'si total du doc en lettre
@@ -275,7 +280,7 @@ Private Sub calc(numlig As String)
   Else
     ligneart.puht = vfac.reslig!pu_ligbl
     ligneart.brht = vfac.reslig!brut_ligbl
-    ligneart.neht = vfac.reslig!netht_ligbl
+    ligneart.neht = mult(vfac.reslig!netht_ligbl, 1, "2")
   Endif
   If vfac.ttc Then                     'si edition ttc 
     ligneart.puht = mult(ligneart.puht, txtva, resart!art_nbd)
@@ -294,7 +299,7 @@ Private Sub calc(numlig As String)
       If tva.Exist(vfac.reslig!tx_ligbl) Then
         lignetva = tva[vfac.reslig!tx_ligbl]
         If vfac.ttc Then
-          lignetva.totht += Round(Val(ligneart.neht) / txtva, -2)
+          lignetva.totht += Val(ligneart.neht) / txtva
         Else
           lignetva.totht += Val(ligneart.neht)
         Endif
@@ -304,7 +309,7 @@ Private Sub calc(numlig As String)
         lignetva.num = vfac.reslig!tx_ligbl
         lignetva.taux = vfac.reslig!mtx_ligfac
         If vfac.ttc Then
-          lignetva.totht = Round(Val(ligneart.neht) / txtva, -2)
+          lignetva.totht = Val(ligneart.neht) / txtva
         Else
           lignetva.totht = Val(Utils.cpoint(ligneart.neht))
         Endif

@@ -123,6 +123,8 @@ Public Sub _new()
       tpied = Split(res!txtfac, "\n")
     Endif
   Endif
+  res = Utils.db.Exec("SELECT devise FROM Fiches_Parametres")
+  If res.Available Then devise = res!devise
   ligne2 = Start.LocalSettings["/Soc" & Start.Societe & "/Imp2L"]
   colon = Start.LocalSettings["/Soc" & Start.Societe & "/Col"]
   imp = New Printer

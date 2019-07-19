@@ -56,19 +56,19 @@ Public Sub _new(dra As String, vol As Float, deg As Float, qte As Float, Optiona
     If resdr!ap Then $volap = qte * (vol / 100) * (deg / 100) Else $volap = 0
     $vol = qte * (vol / 100)
     If resdr!ap Then
-      If Not IsNull(resdr!tauxa) Then $fdroit = Round($volap * (resdr!tauxa / 100), -3)
+      If Not IsNull(resdr!tauxa) Then $fdroit = $volap * (resdr!tauxa / 100)
     Else
-      If Not IsNull(resdr!tauxa) Then $fdroit = Round($vol * (resdr!tauxa / 100), -3)
+      If Not IsNull(resdr!tauxa) Then $fdroit = $vol * (resdr!tauxa / 100)
     Endif
     $ftxtvad = Val(Replace(restva!taux_tva, ".", ",")) / 100
     $ftvad = $fdroit * $ftxtvad
     If Not IsNull(resdr!degres) Then
       If deg > resdr!degres Then
         If resdr!ap Then
-          $fsecu = Round($volap * (resdr!tauxss / 100), -3)
+          $fsecu = $volap * (resdr!tauxss / 100)
           $fvolumess = $volap
         Else
-          $fsecu = Round($vol * (resdr!tauxss / 100), -3)
+          $fsecu = $vol * (resdr!tauxss / 100)
           $fvolumess = $vol
         Endif
         respar = Utils.db.Exec("SELECT taux_tva FROM Fiches_Parametres,Fiches_Tvaav WHERE code_tva=tvass")

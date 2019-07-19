@@ -30,6 +30,8 @@ Public Sub _new(cal As Calculconsdroit)
   $cal = cal
   If Not cal.borientation() Or Not cal.vfac.blchif Then Return
   ''on modifi la présentation des factures + rajout des consignes et droits
+  Me.expb.Expand = True
+  Me.expn.Expand = False
   Me.comdsa.Text = "(DSA) COMMUNAUTÉ EUROPÉENNE-DOCUMENT SIMPLIFIÉ D'ACCOMPAGNEMENT COMMERCIAL POUR LE CONTROLE FISCAL DES PRODUITS\nSOUMS A ACCISES EN REGIMES : O DE DROITS ACQUITTÉS  O D'EXONÉRATION DE DROITS   Exemplaire 1 à conserver par le destinataire\n  Exemplaire 2 à conserver par le fournisseur\n\ncontrol.A"
   'corp de facture
   Me.rcolon.Height = "7mm"
@@ -266,6 +268,7 @@ Public Sub _new(cal As Calculconsdroit)
   lab.Text = Me.delais.Text
   lab.Expand = True
   lab.Autoresize = True
+  lab.Font = Font["Sans Serif,7"]
   Me.rtotttc.Children.Clear
   Me.rtotttc.Height = "0mm"
   lab.Autoresize = True
@@ -341,7 +344,7 @@ Public Sub _new(cal As Calculconsdroit)
   lab.Expand = True
   lab.Text = "TVA"
   lab.Font = Font["Sans Serif,7"]
-   lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Border = ReportBorder["Right:1pt #000000"]
   lab = New ReportLabel(pan1)
   lab.Expand = True
   lab.Text = Format(cal.monttva, ",0.00")
@@ -403,7 +406,7 @@ Public Sub _new(cal As Calculconsdroit)
   lab.Border = ReportBorder["Right:1pt #000000"]
   lab = New ReportLabel(pan1)
   lab.Expand = True
-  lab.Text = Format(cal.montttc, "0.00")
+  lab.Text = Format(cal.montttc, ",0.00")
   lab.Font = Font["Sans Serif,Bold,8"]
   lab.Alignment = Align.Right
   
@@ -496,7 +499,16 @@ Public Sub _new(cal As Calculconsdroit)
   lab.Expand = True
   lab.Text = "Nom du signataire :"
   lab.Font = Font["Sans Serif,4"]
-  
+  'affichage des colonnes
+   Me.clr($Palette)
+   Me.clr($bout)
+   Me.clr($coli)
+   Me.clr($montcons)
+   Me.clr($cu)
+   Me.clr($pourc)
+   Me.clr($ve)
+   Me.clr($ap)
+   
   Me.Orientation = Printer.Landscape
   Me.repligne.DataCount += cal.nbdecons
 End
@@ -516,10 +528,8 @@ Public Sub palette_data(Index As Integer)
 
   Dim vri As String[]
   
-  $Palette.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
+  
   vri = affvri(Index)
-  $Palette.BackGround = ReportBrush.Color(Me.$c1)
   If Not IsNull(vri) Then $Palette.Data = vri[0] Else $Palette.Data = " "
 
 End
@@ -528,8 +538,7 @@ Public Sub bout_data(Index As Integer)
 
   Dim vri As String[]
   
-  $bout.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
+  
   vri = affvri(Index)
   If Not IsNull(vri) Then $bout.Data = vri[2] Else $bout.Data = " "
 
@@ -539,8 +548,6 @@ Public Sub coli_data(Index As Integer)
 
   Dim vri As String[]
   
-  $coli.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
   vri = affvri(Index)
   If Not IsNull(vri) Then $coli.Data = vri[1] Else $coli.Data = " "
 
@@ -550,10 +557,8 @@ Public Sub montcons_data(Index As Integer)
 
   Dim vri As String[]
   
-  $montcons.BackGround = ReportBrush.Color(Me.$c1)
   vri = affvri(Index)
   If Not IsNull(vri) Then $montcons.Data = vri[3] Else $montcons.Data = " "
-  Swap Me.$c1, Me.$c2
 
 End
 
@@ -562,8 +567,6 @@ Public Sub cu_data(Index As Integer)
   Dim ky As String
   Dim vri As String[]
   
-  $cu.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
   $cu.Data = " "
   If Index >= $cal.ligne.Count Then Return
   ky = Format(index + 1, "0000")
@@ -578,8 +581,7 @@ Public Sub pourc_data(Index As Integer)
   Dim ky As String
   Dim vri As String[]
   
-  $pourc.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
+  
   $pourc.Data = " "
   If Index >= $cal.ligne.Count Then Return
   ky = Format(index + 1, "0000")
@@ -594,8 +596,6 @@ Public Sub ve_data(Index As Integer)
   Dim ky As String
   Dim vri As String[]
   
-  $ve.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
   $ve.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.aimprimer.Exist(ky) Then Return
@@ -610,8 +610,6 @@ Public Sub ap_data(Index As Integer)
   Dim vri As String[]
   
   $ap.Data = " "
-  $ap.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
   ky = Format(index + 1, "0000")
   If Not $cal.aimprimer.Exist(ky) Then Return
   vri = $cal.aimprimer[ky]
@@ -626,6 +624,7 @@ Public Sub code_data(Index As Integer)
   Dim vri As String[]
   Dim i As Integer
   
+  Me.code.Data = " "
   If Index < $cal.ligne.Count Then
     ky = Format(index + 1, "0000")
     lg = $cal.ligne[ky]
@@ -635,15 +634,6 @@ Public Sub code_data(Index As Integer)
     vri = $cal.decons[i]
     Me.code.Data = vri[4]
   Endif
-  If $cal.vfac.colon Then
-    Me.$c1 = $cal.vfac.couleur2 
-    Me.$c2 = $cal.vfac.couleur2 + 20
-  Else
-    Me.$c1 = &HFFFFFF
-    Me.$c2 = &HFFFFFF
-  Endif
-  Me.code.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
 
 End
 
@@ -654,6 +644,7 @@ Public Sub intitule_Data(Index As Integer)
   Dim i As Integer
   Dim vri As String[]
   
+  Me.intitule.Data = " "
   If Index < $cal.ligne.Count Then
     ky = Format(index + 1, "0000")
     lg = $cal.ligne[ky]
@@ -663,8 +654,6 @@ Public Sub intitule_Data(Index As Integer)
     vri = $cal.decons[i]
     Me.intitule.Data = vri[5]
   Endif
-  Me.intitule.BackGround = ReportBrush.Color(Me.$c1)
-  Swap Me.$c1, Me.$c2
 
 End
 

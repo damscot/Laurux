@@ -500,9 +500,9 @@ Public Sub edite_Click()
   
   Select Case $vfac.choix
     Case "FM"
-      If editefm() Then Return
+      If editefm() Then Me.Close
     Case "F"
-      If editef() Then Return
+      If editef() Then Me.Close
     Case Else
       editebl()
   End Select
@@ -679,6 +679,7 @@ Private Function editefm(Optional courriel As Boolean = False) As Boolean
     Until $vfac.resent.MoveNext()
     If ecriturecompt(cal) Then
       Message.Error("Il y a un problème sur la génération de votre écriture comptable : Client N° " & $vfac.numcli)
+      pgb.Close
       Return True 
     Endif 
     cal.comptmat
@@ -988,7 +989,8 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
   Dim jrnal As String
   
   For Each lg In cal.ecrit
-    tot = tot + (lg.montantd - lg.montantc)
+'     tot = tot + lg.montantd - lg.montantc
+    tot = tot + Val(Format(lg.montantd, "0.00")) - Val(Format(lg.montantc, "0.00"))
   Next
   If Round(tot, -2) <> 0 Then Return True
   If cal.ecrit.Count < 2 Then Return True
@@ -1011,7 +1013,7 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
       rescomp!numdoc = $vfac.numfac
       rescomp!numlot = $vfac.numfac
       rescomp!libelle = lg.libelle
-      tot = Round(lg.montantd - lg.montantc, -2)
+      tot = Val(Format(lg.montantd, "0.00")) - Val(Format(lg.montantc, "0.00"))
       If tot >= 0 Then
         lg.montantd = tot
         lg.montantc = 0
@@ -1044,6 +1046,14 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
     rescomp!numdoc = $vfac.numfac
     rescomp!numlot = $vfac.numfac
     rescomp!libelle = lg.libelle
+    tot = Val(Format(lg.montantd, "0.00")) - Val(Format(lg.montantc, "0.00"))
+    If tot >= 0 Then
+      lg.montantd = tot
+      lg.montantc = 0
+    Else
+      lg.montantc = tot * -1
+      lg.montantd = 0
+    Endif
     rescomp!montantd = lg.montantd
     rescomp!montantc = lg.montantc
     rescomp!validee = True
@@ -1104,7 +1114,7 @@ Private Sub solde(num As String)
        Return
     Endif
     rescomp = utils.db.Edit("Fiches_Comptes", "compte_cc=&1", $vfac.rescli!cli_code)
-    rescomp!solde = Round(resmvt!montantd - resmvt!montantc, -2)
+    rescomp!solde = Val(Format(resmvt!montantd - resmvt!montantc, "0.00"))
     rescomp.Update
   Endif
   
@@ -1290,8 +1300,8 @@ Public Sub transblfac(cal As Calculconsdroit)
   entfac!cpfac = $vfac.resent!cpbl
   entfac!villefac = $vfac.resent!villebl
   entfac!Exofac = $vfac.resent!exobl
-  entfac!remmofac = Round(cal.remmo, -2)
-  entfac!remartfac = Round(cal.remart, -2)
+  entfac!remmofac = Val(Format(cal.remmo, "0.00"))
+  entfac!remartfac = Val(Format(cal.remart, "0.00"))
   entfac!totfac = cal.montht
   entfac!reg = $vfac.resent!reg
   entfac!ech = $vfac.resent!ech

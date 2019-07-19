@@ -154,18 +154,18 @@ Public Sub _new(num As String, choix As String)
         '$cdrt.Add(drt)
         Select Case drt.type
           Case "A", "V"
-            $stotdr = Str(Val($stotdr) + Round(drt.droit, -2))
+            $stotdr = Str(Val($stotdr) + drt.droit)
           Case "B"
             If drt.drsurfac Then
-              $stotasc = Str(Val($stotasc) + Round(drt.droit, -2))
+              $stotasc = Str(Val($stotasc) + drt.droit)
               If Not drt.suspendu Then cassise(drt)
             Endif
         End Select
         If drt.suspendu Then        'prepa de l'ecriture comptable
           cdroits(drt)
         Endif
-        $stotss = Str(Val($stotss) + Round(drt.secu, -2))
-        $ftotht += Round(drt.droit, -2) + Round(drt.secu, -2)
+        $stotss = Str(Val($stotss) + drt.secu)
+        $ftotht += drt.droit + drt.secu
         $ftotv += drt.vol
         $ftotap += drt.volap
       Endif
@@ -216,6 +216,32 @@ Public Sub _new(num As String, choix As String)
   Else
     Message.Error("Erreur sur le paramametrage des consignes client")
   Endif
+  'recalcul du montant de la tva
+  If Object.IsValid(Me.tva) Then
+    Me.monttva = 0
+    For Each lg In Me.tva
+      lg.tottva = Val(Format(lg.totht, "0.00")) * (lg.taux / 100)
+      Me.tva[lg.num] = lg
+      Me.monttva += Val(Format(lg.tottva, "0.00"))
+      res = utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", lg.num)
+      If res.Available Then
+        If Me.ecrit.Exist(res!compte_cc) Then
+          Me.ecrit.Remove(res!compte_cc)
+          Me.ecriture(res!compte_cc, lg.tottva, res!intitule_cc)
+        Else
+          Me.ecriture(res!compte_cc, lg.tottva, res!intitule_cc)
+        Endif
+      Endif
+    Next
+    If Me.ecrit.Exist(Me.vfac.numcli) Then Me.ecrit.Remove(Me.vfac.numcli)
+    $stotasc = Format(Val($stotasc), "0.00")
+    $stotdr = Format(Val($stotdr), "0.00")
+    $stotss = Format(Val($stotss), "0.00")
+    
+    Me.montht = Val(Format(Me.montart + Me.montmo + Val($stotasc) + Val($stotdr) + Val($stotss) + Me.gestion, "0.00"))
+    Me.montttc = Me.montht + montcons + Me.monttva
+    Me.ecriture(Me.vfac.numcli, Me.montttc * -1, Left(Me.vfac.adrfac.nom, 35))
+  Endif
   
  $schoix = choix
 End
@@ -228,7 +254,6 @@ Private Sub cassise(drt As Calculdroit)    'si magasin acquité et séparation q
     If drt.droit <> 0 Then
       res = Utils.db.Exec("SELECT compte_cc,intitule_cc,cdtva_fam,txtva_fam FROM Fiches_Comptes,Fiches_Fam WHERE code_fam=&1 and compte_cc=compt_fam", drt.famille)
       Me.ecriture(res!compte_cc, drt.droit, res!intitule_cc)
-      Me.montht += drt.droit
       res = Utils.db.Exec("SELECT compte_cc,intitule_cc,taux_tva FROM Fiches_Comptes,Fiches_Tvaav WHERE code_tva=&1 AND compte_cc=cc_tva", res!cdtva_fam)
       Me.lignetva = Me.tva[drt.codetva]
       Me.lignetva.totht += drt.droit
@@ -237,13 +262,12 @@ Private Sub cassise(drt As Calculdroit)    'si magasin acquité et séparation q
       Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
       Me.monttva += drt.tvadroit
       Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
-      Me.montttc += (drt.tvadroit + drt.droit)
     Endif
   Else
     If drt.droit <> 0 Then
       res = Utils.db.Exec("SELECT compte_cc,intitule_cc,cdtva_fam,txtva_fam FROM Fiches_Comptes,Fiches_Fam WHERE code_fam=&1 and compte_cc=compt_fam", drt.famille)
       Me.ecriture(drt.cptreg, drt.droit, res!intitule_cc)
-      Me.montht += drt.droit
+'      Me.montht += drt.droit
       res = Utils.db.Exec("SELECT compte_cc,intitule_cc,taux_tva FROM Fiches_Comptes,Fiches_Tvaav WHERE code_tva=&1 AND compte_cc=cc_tva", res!cdtva_fam)
       Me.lignetva.num = drt.cptreg
       Me.lignetva.taux = drt.tauxtvadr
@@ -253,7 +277,6 @@ Private Sub cassise(drt As Calculdroit)    'si magasin acquité et séparation q
       Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
       Me.monttva += drt.tvadroit
       Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
-      Me.montttc += (drt.tvadroit + drt.droit)
     Endif
   Endif
 End
@@ -267,7 +290,7 @@ Private Sub cdroits(drt As Calculdroit)
     If drt.droit <> 0 Then
       res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", drt.cptreg)
       Me.ecriture(drt.cptreg, drt.droit, res!intitule_cc)
-      Me.montht += drt.droit
+'      Me.montht += drt.droit
       res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", drt.codetva)
       Me.lignetva = Me.tva[drt.codetva]
       Me.lignetva.totht += drt.droit
@@ -276,19 +299,16 @@ Private Sub cdroits(drt As Calculdroit)
       Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
       Me.monttva += drt.tvadroit
       Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
-      Me.montttc += (drt.tvadroit + drt.droit)
     Endif
     'enregistrement secu
     If drt.secu <> 0 Then
       respar = Utils.db.Exec("SELECT css,tvass FROM Fiches_Parametres")
       res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", respar!css)
       Me.ecriture(respar!css, drt.secu, res!intitule_cc)
-      Me.montht += drt.secu
       res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", respar!tvass)
       Me.ecriture(res!compte_cc, drt.tvasec, res!intitule_cc)
       Me.monttva += drt.tvasec
       Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvasec + drt.secu) * -1, Me.vfac.resent!nmclibl)
-      Me.montttc += (drt.tvasec + drt.secu)
       Me.lignetva.totht += drt.secu
       Me.lignetva.tottva += drt.tvasec
     Endif
@@ -296,7 +316,6 @@ Private Sub cdroits(drt As Calculdroit)
     If drt.droit <> 0 Then
       res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", drt.cptreg)
       Me.ecriture(drt.cptreg, drt.droit, res!intitule_cc)
-      Me.montht += drt.droit
       res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", drt.codetva)
       Me.lignetva.num = drt.cptreg
       Me.lignetva.taux = drt.tauxtvadr
@@ -306,18 +325,15 @@ Private Sub cdroits(drt As Calculdroit)
       Me.ecriture(res!compte_cc, drt.tvadroit, res!intitule_cc)
       Me.monttva += drt.tvasec
       Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvadroit + drt.droit) * -1, Me.vfac.resent!nmclibl)
-      Me.montttc += (drt.tvadroit + drt.droit)
     Endif
     If drt.secu <> 0 Then
       respar = Utils.db.Exec("SELECT css,tvass FROM Fiches_Parametres")
       res = Utils.db.Exec("SELECT intitule_cc FROM Fiches_Comptes WHERE compte_cc=&1", respar!css)
       Me.ecriture(respar!css, drt.secu, res!intitule_cc)
-      Me.montht += drt.secu
       res = Utils.db.Exec("SELECT intitule_cc,compte_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", respar!tvass)
       Me.ecriture(res!compte_cc, drt.tvasec, res!intitule_cc)
       Me.monttva += drt.tvasec
       Me.ecriture(Me.vfac.resent!cdclibl, (drt.tvasec + drt.secu) * -1, Me.vfac.resent!nmclibl)
-      Me.montttc += (drt.tvasec + drt.secu)
       Me.lignetva.num = respar!css
       Me.lignetva.taux = respar!tvass
       Me.lignetva.totht = drt.droit
@@ -409,7 +425,7 @@ Public Sub comptmat(Optional numfac As String)    'enregistrement de la compta m
   For Each lg In Me.ligne
      If lg.Index = -1 Then Continue
      Me.vfac.reslig.MoveTo(lg.Index)
-     reslig1 = Utils.db.Exec("SELECT suspendu FROM Fiches_Art,Fiches_regie WHERE art_code=code AND art_code=&1", lg.code)
+     reslig1 = Utils.db.Exec("SELECT suspendu FROM Fiches_Art,Fiches_regie WHERE art_dra=code AND art_code=&1", lg.code)
      If reslig1.Available Then
        If reslig1!suspendu Then
          nvign = nvignette()
@@ -493,7 +509,7 @@ End
 
 Private Function consigne_Read() As String
 
-  Return Format(Replace($stotcons, ",", "."), " 0.00 ")
+  Return Format(Replace($stotcons, ",", "."), "0.00")
 
 End
 

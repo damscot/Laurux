@@ -2,8 +2,8 @@
 
 Private $cal As CalFac
 Private $vfac As VarFac
-Public $c1 As Integer        'couleur de colonne
-Public $c2 As Integer
+Private $c1 As Integer        'couleur de colonne
+Private $c2 As Integer
 
 Public Sub _new(vfac As VarFac, cal As CalFac)
 
@@ -23,6 +23,8 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     $c1 = &HFFFFFF
     $c2 = &HFFFFFF
   Endif
+  Me.expb.Expand = False
+  Me.expn.Expand = True
     'lignes de facture
   Me.repligne.DataCount = cal.ligne.Count
   'couleurs entetes
@@ -109,13 +111,20 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
             If i <> vfac.reg.Max Then Me.delais.Text = Me.delais.Text & "\n"
           Else
             Me.delais.Font = Font["Sans Serif,7"]
-            If $vfac.dteech.L = $vfac.dtedoc.L Then
+            If vfac.dteech.D <= vfac.dtedoc.D Then
               Me.delais.Text = "Règlement à réception de facture"
             Else
               Me.delais.Text = "Règlement   " & vfac.reg[i].mode & " au " & vfac.dteech.L
             Endif
           Endif
         Next
+        If vfac.choix = "FM" And Not vfac.breg Then
+          If vfac.dteech.D <= vfac.dtedoc.D Then
+            Me.delais.Text = "Règlement à réception de facture"
+          Else
+            Me.delais.Text = "Règlement   " & vfac.rescli!cli_reg & " au " & vfac.dteech.L
+          Endif
+        Endif
       Endif
       'edition des réserves
       If vfac.reserve Then
@@ -315,7 +324,27 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.rgest.Children.Clear
     Me.rgest.Height = "0mm"
   Endif
-  
+  'affichage des colonnes
+  If $vfac.colon Then 
+    $c1 = $vfac.couleur2 
+    $c2 = $vfac.couleur2 + 20
+  Else
+    $c1 = &HFFFFFF
+    $c2 = &HFFFFFF
+  Endif
+  If Me.pcode.Children.Count > 0 Then clr(Me.code)
+  clr(Me.intitule)
+  If Me.pstk.Children.Count > 0 Then clr(Me.stk)
+  clr(Me.qte)
+  If Me.pun.Children.Count > 0 Then clr(Me.u)
+  If Me.ligchiff.Children.Count > 0 Then
+    clr(Me.puht)
+    clr(Me.bht)
+    If Me.prem.Children.Count > 0 Then clr(Me.rem)
+    clr(Me.nht)
+    clr(Me.tx)
+  Endif
+
 End
 
 Private Sub edtva(ctva As Variant, nb As Integer, i As Integer)
@@ -372,7 +401,7 @@ Private Sub edtva(ctva As Variant, nb As Integer, i As Integer)
         Me.ptva4.Height = "0mm"
       Endif
   End Select
-  
+
 End
 
 '****************************************************
@@ -382,21 +411,11 @@ Public Sub code_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  
-  If $vfac.colon Then 
-    $c1 = $vfac.couleur2 
-    $c2 = $vfac.couleur2 + 20
-  Else
-    $c1 = &HFFFFFF
-    $c2 = &HFFFFFF
-  Endif
-  Me.code.BackGround = ReportBrush.Color($c1)
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
-  Me.code.Data = lg.code
-  Swap $c1, $c2
-  
+  If lg.code Then Me.code.Data = lg.code Else Me.code.Data = " "
+
 End
 
 Public Sub intitule_Data(Index As Integer)
@@ -407,9 +426,7 @@ Public Sub intitule_Data(Index As Integer)
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
-  Me.intitule.BackGround = ReportBrush.Color($c1)
   Me.intitule.Data = lg.libel
-  Swap $c1, $c2
 
 End
 
@@ -418,13 +435,11 @@ Public Sub stk_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
- 
-  Me.stk.BackGround = ReportBrush.Color($c1)
+  Me.stk.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.stk.Data = lg.stk
-  Swap $c1, $c2
 
 End
 
@@ -433,12 +448,12 @@ Public Sub qte_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  Me.qte.BackGround = ReportBrush.Color($c1)
+  Me.qte.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.qte.Data = lg.qte
-  Swap $c1, $c2
+  
 End
 
 Public Sub u_Data(Index As Integer)
@@ -446,12 +461,11 @@ Public Sub u_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  Me.u.BackGround = ReportBrush.Color($c1)
+  Me.u.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.u.Data = lg.unit
-  Swap $c1, $c2
 
 End
 
@@ -460,12 +474,11 @@ Public Sub puht_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  Me.puht.BackGround = ReportBrush.Color($c1)
+  Me.puht.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.puht.Data = lg.puht
-  Swap $c1, $c2
   
 End
 
@@ -474,12 +487,11 @@ Public Sub bht_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  Me.bht.BackGround = ReportBrush.Color($c1)
+  Me.bht.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.bht.Data = lg.brht
-  Swap $c1, $c2
   
 End
 
@@ -488,12 +500,11 @@ Public Sub rem_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  Me.rem.BackGround = ReportBrush.Color($c1)
+  Me.rem.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.rem.Data = lg.rem
-  Swap $c1, $c2
   
 End
 
@@ -502,12 +513,11 @@ Public Sub nht_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  Me.nht.BackGround = ReportBrush.Color($c1)
+  Me.nht.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.nht.Data = lg.neht
-  Swap $c1, $c2
   
 End
 
@@ -516,11 +526,17 @@ Public Sub tx_Data(Index As Integer)
   Dim ky As String
   Dim lg As Variant
   
-  Me.tx.BackGround = ReportBrush.Color($c1)
+  Me.tx.Data = " "
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
   Me.tx.Data = lg.tx
-  Swap $c1, $c2
+  
+End
+
+Public Sub clr(obj As Object)
+
+  Try obj.BackGround = ReportBrush.Color($c1)
+  If Not Error Then Swap $c1, $c2
   
 End

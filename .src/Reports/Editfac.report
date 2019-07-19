@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Report Report
-  #MoveScaled(0,0,128,158)
+  #MoveScaled(0,0,128,189)
   Index = 0
   Text = ("")
   { ReportHBox1 ReportHBox
@@ -366,12 +366,9 @@
   { !repligne ReportVBox
     #MoveScaled(1,53,126,9)
     #Public = True
-    AutoResize = True
     { !ligne ReportHBox
       #MoveScaled(1,1,124,7)
       #Public = True
-      Height = "3mm"
-      AutoResize = True
       { !pcode ReportHBox
         #MoveScaled(1,1,13,5)
         #Public = True
@@ -386,7 +383,6 @@
       { !intitule ReportLabel
         #MoveScaled(14,1,16,5)
         #Public = True
-        Top = "11mm"
         Font = Font["Sans Serif,8"]
         Expand = True
         AutoResize = True
@@ -426,7 +422,6 @@
         #MoveScaled(48,1,85,5)
         #Public = True
         Width = "80mm"
-        Height = "5mm"
         { !puht ReportLabel
           #MoveScaled(1,1,10,3)
           #Public = True
@@ -445,7 +440,6 @@
           #MoveScaled(23,1,11,3)
           #Public = True
           Width = "10mm"
-          Height = "5mm"
           { !rem ReportLabel
             #MoveScaled(1,1,9,1)
             #Public = True
@@ -471,9 +465,9 @@
       }
     }
   }
-  { ReportHBox5 ReportHBox
+  { !expn ReportHBox
     #MoveScaled(1,62,126,7)
-    Expand = True
+    #Public = True
   }
   { !rl1 ReportHBox
     #MoveScaled(1,69,126,5)
@@ -586,334 +580,347 @@
       Alignment = Align.Center
     }
   }
-  { !rfrais ReportHBox
-    #MoveScaled(1,96,126,5)
-    #Public = True
-    Width = "0mm"
-    Height = "0mm"
-  }
-  { !rbasfac ReportPanel
-    #MoveScaled(1,101,126,31)
-    #Public = True
-    AutoResize = True
+  { ReportPanel1 ReportPanel
+    #MoveScaled(1,96,126,67)
+    Expand = True
     Arrangement = Arrange.Vertical
-    { !lgtva ReportVBox
-      #MoveScaled(0,5,126,23)
+    { !expb ReportPanel
+      #MoveScaled(2,1,123,3)
+      #Public = True
+      Expand = True
+      Arrangement = Arrange.Vertical
+    }
+    { !rfrais ReportHBox
+      #MoveScaled(0,4,126,5)
+      #Public = True
+      Width = "0mm"
+      Height = "0mm"
+    }
+    { !rbasfac ReportPanel
+      #MoveScaled(0,9,126,50)
       #Public = True
       AutoResize = True
-      { !enttva ReportHBox
-        #MoveScaled(1,1,124,5)
+      Arrangement = Arrange.Vertical
+      { !lgtva ReportVBox
+        #MoveScaled(0,5,126,23)
         #Public = True
-        Height = "5mm"
         AutoResize = True
+        { !enttva ReportHBox
+          #MoveScaled(1,1,124,5)
+          #Public = True
+          Height = "5mm"
+          AutoResize = True
+          Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+          { !lct ReportLabel
+            #MoveScaled(1,1,22,3)
+            #Public = True
+            Width = "45mm"
+            Font = Font["Sans Serif,9"]
+            Border = ReportBorder["Right:1pt #000000"]
+            Text = ("Code Taxe")
+            Alignment = Align.Center
+          }
+          { !ltt ReportLabel
+            #MoveScaled(23,1,20,3)
+            #Public = True
+            Width = "20mm"
+            Font = Font["Sans Serif,9"]
+            Border = ReportBorder["Right:1pt #000000"]
+            Text = ("Taux TVA")
+            Alignment = Align.Center
+          }
+          { !lmtv ReportLabel
+            #MoveScaled(43,1,20,3)
+            #Public = True
+            Width = "50mm"
+            Font = Font["Sans Serif,9"]
+            Border = ReportBorder["Right:1pt #000000"]
+            Text = ("Montant TVA")
+            Alignment = Align.Center
+          }
+          { !ltn ReportLabel
+            #MoveScaled(63,1,17,3)
+            #Public = True
+            Width = "25mm"
+            Font = Font["Sans Serif,9"]
+            Border = ReportBorder["Right:1pt #000000"]
+            Text = ("Total net HT")
+            Alignment = Align.Center
+          }
+          { !ltoh ReportLabel
+            #MoveScaled(80,1,16,3)
+            #Public = True
+            Width = "21mm"
+            Font = Font["Sans Serif,9"]
+            Border = ReportBorder["Right:1pt #000000"]
+            Text = ("Total TVA")
+            Alignment = Align.Center
+          }
+          { !ltot ReportLabel
+            #MoveScaled(96,1,23,3)
+            #Public = True
+            Font = Font["Sans Serif,Bold,9"]
+            Expand = True
+            Text = ("Total TTC")
+            Alignment = Align.Center
+          }
+        }
+        { !ptva ReportHBox
+          #MoveScaled(1,6,124,4)
+          #Public = True
+          Width = "140mm"
+          Height = "3mm"
+          { !ctx ReportLabel
+            #MoveScaled(1,1,20,2)
+            #Public = True
+            Width = "45mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !txtva ReportLabel
+            #MoveScaled(21,1,21,2)
+            #Public = True
+            Width = "20mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !mtva ReportLabel
+            #MoveScaled(42,1,21,2)
+            #Public = True
+            Width = "50mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+          { !tnet ReportLabel
+            #MoveScaled(63,1,16,2)
+            #Public = True
+            Width = "25mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+        }
+        { !ptva1 ReportHBox
+          #MoveScaled(1,10,124,4)
+          #Public = True
+          Width = "140mm"
+          Height = "3mm"
+          { !ctx1 ReportLabel
+            #MoveScaled(1,1,20,2)
+            #Public = True
+            Width = "45mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !txtva1 ReportLabel
+            #MoveScaled(21,1,21,2)
+            #Public = True
+            Width = "20mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !mtva1 ReportLabel
+            #MoveScaled(42,1,21,2)
+            #Public = True
+            Width = "50mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+          { !tnet1 ReportLabel
+            #MoveScaled(63,1,16,2)
+            #Public = True
+            Width = "25mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+        }
+        { !ptva2 ReportHBox
+          #MoveScaled(1,14,124,4)
+          #Public = True
+          Width = "140mm"
+          Height = "3mm"
+          { !ctx2 ReportLabel
+            #MoveScaled(1,1,20,2)
+            #Public = True
+            Width = "45mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !txtva2 ReportLabel
+            #MoveScaled(21,1,21,2)
+            #Public = True
+            Width = "20mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !mtva2 ReportLabel
+            #MoveScaled(42,1,21,2)
+            #Public = True
+            Width = "50mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+          { !tnet2 ReportLabel
+            #MoveScaled(63,1,16,2)
+            #Public = True
+            Width = "25mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+        }
+        { !ptva3 ReportHBox
+          #MoveScaled(1,18,124,4)
+          #Public = True
+          Width = "140mm"
+          Height = "3mm"
+          { !ctx3 ReportLabel
+            #MoveScaled(1,1,20,2)
+            #Public = True
+            Width = "45mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !txtva3 ReportLabel
+            #MoveScaled(21,1,21,2)
+            #Public = True
+            Width = "20mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !mtva3 ReportLabel
+            #MoveScaled(42,1,21,2)
+            #Public = True
+            Width = "50mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+          { !tnet3 ReportLabel
+            #MoveScaled(63,1,16,2)
+            #Public = True
+            Width = "25mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+        }
+        { !ptva4 ReportHBox
+          #MoveScaled(1,22,124,4)
+          #Public = True
+          Width = "140mm"
+          Height = "3mm"
+          { !ctx4 ReportLabel
+            #MoveScaled(1,1,20,2)
+            #Public = True
+            Width = "45mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !txtva4 ReportLabel
+            #MoveScaled(21,1,21,2)
+            #Public = True
+            Width = "20mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Center
+          }
+          { !mtva4 ReportLabel
+            #MoveScaled(42,1,21,2)
+            #Public = True
+            Width = "50mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+          { !tnet4 ReportLabel
+            #MoveScaled(63,1,16,2)
+            #Public = True
+            Width = "25mm"
+            Font = Font["Sans Serif,8"]
+            Alignment = Align.Right
+          }
+        }
+      }
+    }
+    { !rtotttc ReportHBox
+      #MoveScaled(-1,25,126,6)
+      #Public = True
+      Fixed = True
+      { !delais ReportLabel
+        #MoveScaled(1,1,63,4)
+        #Public = True
+        Width = "115mm"
+        Font = Font["Bold,5"]
+        Alignment = Align.Left
+      }
+      { !ptot ReportHBox
+        #MoveScaled(64,1,60,4)
+        #Public = True
+        Expand = True
         Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
-        { !lct ReportLabel
-          #MoveScaled(1,1,22,3)
+        { !pstot ReportHBox
+          #MoveScaled(1,1,40,2)
           #Public = True
-          Width = "45mm"
-          Font = Font["Sans Serif,9"]
-          Border = ReportBorder["Right:1pt #000000"]
-          Text = ("Code Taxe")
-          Alignment = Align.Center
+          { !tht ReportLabel
+            #MoveScaled(0,0,14,2)
+            #Public = True
+            Width = "25mm"
+            Font = Font["Sans Serif,Bold,9"]
+            Border = ReportBorder["Right:1pt #000000"]
+            Alignment = Align.Right
+          }
+          { !ttva ReportLabel
+            #MoveScaled(14,0,17,2)
+            #Public = True
+            Width = "21mm"
+            Font = Font["Sans Serif,Bold,9"]
+            Border = ReportBorder["Right:1pt #000000"]
+            Alignment = Align.Right
+          }
         }
-        { !ltt ReportLabel
-          #MoveScaled(23,1,20,3)
-          #Public = True
-          Width = "20mm"
-          Font = Font["Sans Serif,9"]
-          Border = ReportBorder["Right:1pt #000000"]
-          Text = ("Taux TVA")
-          Alignment = Align.Center
-        }
-        { !lmtv ReportLabel
-          #MoveScaled(43,1,20,3)
-          #Public = True
-          Width = "50mm"
-          Font = Font["Sans Serif,9"]
-          Border = ReportBorder["Right:1pt #000000"]
-          Text = ("Montant TVA")
-          Alignment = Align.Center
-        }
-        { !ltn ReportLabel
-          #MoveScaled(63,1,17,3)
-          #Public = True
-          Width = "25mm"
-          Font = Font["Sans Serif,9"]
-          Border = ReportBorder["Right:1pt #000000"]
-          Text = ("Total net HT")
-          Alignment = Align.Center
-        }
-        { !ltoh ReportLabel
-          #MoveScaled(80,1,16,3)
-          #Public = True
-          Width = "21mm"
-          Font = Font["Sans Serif,9"]
-          Border = ReportBorder["Right:1pt #000000"]
-          Text = ("Total TVA")
-          Alignment = Align.Center
-        }
-        { !ltot ReportLabel
-          #MoveScaled(96,1,23,3)
+        { !tttc ReportLabel
+          #MoveScaled(41,1,12,2)
           #Public = True
           Font = Font["Sans Serif,Bold,9"]
           Expand = True
-          Text = ("Total TTC")
-          Alignment = Align.Center
-        }
-      }
-      { !ptva ReportHBox
-        #MoveScaled(1,6,124,4)
-        #Public = True
-        Width = "140mm"
-        Height = "3mm"
-        { !ctx ReportLabel
-          #MoveScaled(1,1,20,2)
-          #Public = True
-          Width = "45mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !txtva ReportLabel
-          #MoveScaled(21,1,21,2)
-          #Public = True
-          Width = "20mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !mtva ReportLabel
-          #MoveScaled(42,1,21,2)
-          #Public = True
-          Width = "50mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-        { !tnet ReportLabel
-          #MoveScaled(63,1,16,2)
-          #Public = True
-          Width = "25mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-      }
-      { !ptva1 ReportHBox
-        #MoveScaled(1,10,124,4)
-        #Public = True
-        Width = "140mm"
-        Height = "3mm"
-        { !ctx1 ReportLabel
-          #MoveScaled(1,1,20,2)
-          #Public = True
-          Width = "45mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !txtva1 ReportLabel
-          #MoveScaled(21,1,21,2)
-          #Public = True
-          Width = "20mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !mtva1 ReportLabel
-          #MoveScaled(42,1,21,2)
-          #Public = True
-          Width = "50mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-        { !tnet1 ReportLabel
-          #MoveScaled(63,1,16,2)
-          #Public = True
-          Width = "25mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-      }
-      { !ptva2 ReportHBox
-        #MoveScaled(1,14,124,4)
-        #Public = True
-        Width = "140mm"
-        Height = "3mm"
-        { !ctx2 ReportLabel
-          #MoveScaled(1,1,20,2)
-          #Public = True
-          Width = "45mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !txtva2 ReportLabel
-          #MoveScaled(21,1,21,2)
-          #Public = True
-          Width = "20mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !mtva2 ReportLabel
-          #MoveScaled(42,1,21,2)
-          #Public = True
-          Width = "50mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-        { !tnet2 ReportLabel
-          #MoveScaled(63,1,16,2)
-          #Public = True
-          Width = "25mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-      }
-      { !ptva3 ReportHBox
-        #MoveScaled(1,18,124,4)
-        #Public = True
-        Width = "140mm"
-        Height = "3mm"
-        { !ctx3 ReportLabel
-          #MoveScaled(1,1,20,2)
-          #Public = True
-          Width = "45mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !txtva3 ReportLabel
-          #MoveScaled(21,1,21,2)
-          #Public = True
-          Width = "20mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !mtva3 ReportLabel
-          #MoveScaled(42,1,21,2)
-          #Public = True
-          Width = "50mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-        { !tnet3 ReportLabel
-          #MoveScaled(63,1,16,2)
-          #Public = True
-          Width = "25mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-      }
-      { !ptva4 ReportHBox
-        #MoveScaled(1,22,124,4)
-        #Public = True
-        Width = "140mm"
-        Height = "3mm"
-        { !ctx4 ReportLabel
-          #MoveScaled(1,1,20,2)
-          #Public = True
-          Width = "45mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !txtva4 ReportLabel
-          #MoveScaled(21,1,21,2)
-          #Public = True
-          Width = "20mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Center
-        }
-        { !mtva4 ReportLabel
-          #MoveScaled(42,1,21,2)
-          #Public = True
-          Width = "50mm"
-          Font = Font["Sans Serif,8"]
-          Alignment = Align.Right
-        }
-        { !tnet4 ReportLabel
-          #MoveScaled(63,1,16,2)
-          #Public = True
-          Width = "25mm"
-          Font = Font["Sans Serif,8"]
           Alignment = Align.Right
         }
       }
     }
-  }
-  { !rtotttc ReportHBox
-    #MoveScaled(1,132,126,6)
-    #Public = True
-    { !delais ReportLabel
-      #MoveScaled(1,1,63,4)
+    { !fin ReportHBox
+      #MoveScaled(-5,21,126,12)
       #Public = True
-      Width = "115mm"
-      Font = Font["Bold,5"]
-      Alignment = Align.Left
-    }
-    { !ptot ReportHBox
-      #MoveScaled(64,1,60,4)
-      #Public = True
-      Expand = True
-      Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
-      { !pstot ReportHBox
-        #MoveScaled(1,1,40,2)
+      Font = Font["Sans Serif,6"]
+      { !resvp ReportLabel
+        #MoveScaled(1,1,95,10)
         #Public = True
-        { !tht ReportLabel
-          #MoveScaled(0,0,14,2)
-          #Public = True
-          Width = "25mm"
-          Font = Font["Sans Serif,Bold,10"]
-          Border = ReportBorder["Right:1pt #000000"]
-          Alignment = Align.Right
-        }
-        { !ttva ReportLabel
-          #MoveScaled(14,0,17,2)
-          #Public = True
-          Width = "21mm"
-          Font = Font["Sans Serif,Bold,10"]
-          Border = ReportBorder["Right:1pt #000000"]
-          Alignment = Align.Right
-        }
-      }
-      { !tttc ReportLabel
-        #MoveScaled(41,1,12,2)
-        #Public = True
-        Font = Font["Sans Serif,Bold,10"]
+        Height = "15mm"
+        Font = Font["Sans Serif,4"]
         Expand = True
-        Alignment = Align.Right
       }
-    }
-  }
-  { ReportHBox3 ReportHBox
-    #MoveScaled(1,138,126,12)
-    Font = Font["Sans Serif,6"]
-    { !resvp ReportLabel
-      #MoveScaled(1,1,95,10)
-      #Public = True
-      Height = "15mm"
-      Font = Font["Sans Serif,4"]
-      Expand = True
-    }
-    { !rcoupon ReportVBox
-      #MoveScaled(96,1,25,10)
-      #Public = True
-      Width = "50mm"
-      Height = "15mm"
-      { !joind ReportLabel
-        #MoveScaled(1,1,23,2)
+      { !rcoupon ReportVBox
+        #MoveScaled(96,1,25,10)
         #Public = True
-        Height = "3mm"
-        Font = Font["Sans Serif,7"]
-        Text = ("Joindre au réglement SVP")
-        Alignment = Align.Center
-      }
-      { !Tfac ReportLabel
-        #MoveScaled(1,3,23,2)
-        #Public = True
-        Font = Font["Sans Serif,7"]
-      }
-      { !Tcli ReportLabel
-        #MoveScaled(1,5,23,2)
-        #Public = True
-        Font = Font["Sans Serif,7"]
-      }
-      { !Ttot ReportLabel
-        #MoveScaled(1,7,23,2)
-        #Public = True
-        Font = Font["Sans Serif,7"]
+        Width = "50mm"
+        Height = "15mm"
+        { !joind ReportLabel
+          #MoveScaled(1,1,23,2)
+          #Public = True
+          Height = "3mm"
+          Font = Font["Sans Serif,7"]
+          Text = ("Joindre au réglement SVP")
+          Alignment = Align.Center
+        }
+        { !Tfac ReportLabel
+          #MoveScaled(1,3,23,2)
+          #Public = True
+          Font = Font["Sans Serif,7"]
+        }
+        { !Tcli ReportLabel
+          #MoveScaled(1,5,23,2)
+          #Public = True
+          Font = Font["Sans Serif,7"]
+        }
+        { !Ttot ReportLabel
+          #MoveScaled(1,7,23,2)
+          #Public = True
+          Font = Font["Sans Serif,7"]
+        }
       }
     }
   }
