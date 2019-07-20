@@ -76,6 +76,8 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
   Me.adr2.Text = vfac.adrfac.adr2
   Me.ville1.Text = vfac.adrfac.cp & " " & vfac.adrfac.ville
   Me.pays.Text = vfac.adrfac.pays
+  If vfac.rescli!cli_tel_bur Then Me.telcli.Text = "    Tel : " & vfac.rescli!cli_tel_bur
+  If vfac.rescli!cli_pble Then Me.telcli.Text &= "    Portable : " & vfac.rescli!cli_pble
   If $vfac.AffClient And ($vfac.choix = "C" Or $vfac.choix = "D" Or $vfac.choix = "P") Then
     If Message.Question("Voulez-vous masquer les coordonées du client ?", "Oui", "Non") = 1 Then Me.rclient.Children.Clear
   Endif

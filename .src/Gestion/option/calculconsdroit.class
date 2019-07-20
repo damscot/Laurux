@@ -370,7 +370,7 @@ Public Function borientation() As Boolean
   
 End
 
-Public Sub comptmat(Optional numfac As String)    'enregistrement de la compta matiere à l'edition des factures
+Public Sub comptmat(Optional numfac As String, magasin As Boolean)    'enregistrement de la compta matiere à l'edition des factures
 
   Dim res, resvig, reslig1, respar As Result
   Dim drt As Calculdroit
@@ -381,7 +381,7 @@ Public Sub comptmat(Optional numfac As String)    'enregistrement de la compta m
   Utils.db.Begin
   'Facture magasin
   'regarde dans le/les bons si un article est en droit suspendu ==> incremente le n° de vignette
-  If $schoix = "M" Then 
+  If magasin Then 
     resvig = Utils.db.Exec("SELECT suspendu FROM Fiches_HistoLigfac, Fiches_Art,Fiches_regie WHERE num_ligfac=&1 AND art_code=code_ligfac AND Fiches_regie.code=art_dra AND suspendu=True LIMIT 1 ", numfac)
     If resvig.Available Then
       If resvig!suspendu Then

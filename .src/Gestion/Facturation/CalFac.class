@@ -103,9 +103,9 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
     vfac.reslig.MoveFirst
     vfac.resent.MoveFirst
     Repeat
+      numlig = Format(Val(numlig) + 1, "0000")
       Select Case vfac.choix
         Case "FM", "F"     'on renumerote les lignes si facture
-          numlig = Format(Val(numlig) + 1, "0000")
           If vfac.nblfac Then
             If numbl <> vfac.reslig!num_ligbl Then
               ligneart = New Ledit
@@ -118,9 +118,6 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
               vfac.resent.MoveNext()
             Endif
           Endif
-          
-        Case Else
-          numlig = vfac.reslig!numlig_ligbl
       End Select
       
       Select Case vfac.reslig!typel_ligbl
