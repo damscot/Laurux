@@ -224,7 +224,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
       ligne.Add(ligneart, numlig)
     Endif
   Endif
-  If Not vfac.saisreg Then
+  If Not vfac.saisreg And vfac.choix Then
     If vfac.reg.Count = 0 Then
       vfac.lreg.mode = vfac.rescli!cli_reg
       vfac.reg.Add(vfac.lreg)

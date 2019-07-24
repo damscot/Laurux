@@ -32,6 +32,10 @@ Public Sub _new(cal As Calculconsdroit)
   ''on modifi la présentation des factures + rajout des consignes et droits
   Me.expb.Expand = True
   Me.expn.Expand = False
+  Me.Margin.Left = "3mm"
+  Me.Margin.Right = "3mm"
+  If cal.vfac.rescli!cli_tel_bur Then Me.telcli.Text = "    Tel : " & cal.vfac.rescli!cli_tel_bur
+  If cal.vfac.rescli!cli_pble Then Me.telcli.Text &= "    Portable : " & cal.vfac.rescli!cli_pble
   Me.comdsa.Text = "(DSA) COMMUNAUTÉ EUROPÉENNE-DOCUMENT SIMPLIFIÉ D'ACCOMPAGNEMENT COMMERCIAL POUR LE CONTROLE FISCAL DES PRODUITS\nSOUMS A ACCISES EN REGIMES : O DE DROITS ACQUITTÉS  O D'EXONÉRATION DE DROITS   Exemplaire 1 à conserver par le destinataire\n  Exemplaire 2 à conserver par le fournisseur\n\ncontrol.A"
   'corp de facture
   Me.rcolon.Height = "7mm"

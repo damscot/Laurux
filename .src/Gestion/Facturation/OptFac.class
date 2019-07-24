@@ -55,6 +55,7 @@ Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As
   Dtef.Text = dte.L
   $vfac.dtedoc = dte
   
+  propimp.Text = $vfac.imp.Name
   entete.Value = $vfac.entete
   If $vfac.autoent Or $vfac.ttc Then
     Impttc.Value = True
@@ -633,6 +634,7 @@ End
 Public Sub propimp_Click()
 
   $vfac.imp.Configure
+  propimp.Text = $vfac.imp.Name
 
 End
 
@@ -656,10 +658,9 @@ Private Function editefm(Optional courriel As Boolean = False) As Boolean
   
   Dim res, rResult As Result
   Dim cal As Calculconsdroit
-  Dim Filename, sText, sText2 As String
+  Dim sText, sText2 As String
   Dim pgb As ProgBar
   
-  Filename = User.Home & "/tmp/Facture.pdf"
   If testchem() Then Return 
   If verifdate() Then Return 
   res = utils.db.Exec("SELECT * FROM Facturefm")
@@ -671,6 +672,7 @@ Private Function editefm(Optional courriel As Boolean = False) As Boolean
   Repeat
     pgb.Avancement()
     $vfac.numcli = res!code
+    $vfac.imp.OutputFile = ""
     cal = New Calculconsdroit($vfac, $vfac.numbl, "B", res!nom)
     $vfac.resent.MoveFirst          'on lock les bl en facturation fin de mois
     Repeat
@@ -679,12 +681,15 @@ Private Function editefm(Optional courriel As Boolean = False) As Boolean
     Until $vfac.resent.MoveNext()
     If ecriturecompt(cal) Then
       Message.Error("Il y a un problème sur la génération de votre écriture comptable : Client N° " & $vfac.numcli)
+      $vfac.resent.MoveFirst
+      Repeat
+        DocActif.Free_Lock("Facturation", $vfac.resent!numbl)
+      Until $vfac.resent.MoveNext()
       pgb.Close
       Return True 
     Endif 
     cal.comptmat
     $edit = New EditfacB($vfac, cal, cal)
-    Dupli2()
     If courriel Then
       $vfac.imp.NumCopies = 1
       $vfac.imp.OutputFile = User.Home & "/tmp/facture.pdf"
@@ -700,17 +705,20 @@ Private Function editefm(Optional courriel As Boolean = False) As Boolean
       Endif
       sText = "Facture n° : " & $vfac.numfac & " du " & $vfac.dtedoc.L
       EnvMail.Envoi($vfac.rescli!cli_email, sText, sText2, True, User.Home & "/tmp/", "application/pdf", "Facture.pdf")
+      dupli2()
     Else
       $vfac.imp.NumCopies = $vfac.nbexplemplaire
-      $edit.Print($vfac.imp)
-      If $vfac.pdf And $vfac.joinfac Then
-        Impression.Facture($vfac.pdf, 1, $vfac.imp.Name)
-      Endif
-      If $vfac.joinfac Then
-        If $vfac.condvent Then Impression.Facture($vfac.condvent, 1, $vfac.imp.Name)
+      If $vfac.imp.NumCopies > 0 Then
+        $edit.Print($vfac.imp)
+        If $vfac.pdf And $vfac.joinfac Then
+          Impression.Facture($vfac.pdf, 1, $vfac.imp.Name)
+        Endif
+        If $vfac.joinfac Then
+          If $vfac.condvent Then Impression.Facture($vfac.condvent, 1, $vfac.imp.Name)
+        Endif
       Endif
     Endif
-    
+    Dupli2()
     transblfac(cal)
   Until res.MoveNext()
   pgb.Close
@@ -729,6 +737,7 @@ Private Function editef() As Boolean
   Dim i As Integer
   Dim res As Result
 
+  Application.Busy += 1
   If testchem() Then Return True
   If verifdate() Then Return True
   If $vfac.saisreg And totr.Value = 0 Then
@@ -736,6 +745,7 @@ Private Function editef() As Boolean
       Music.Play
     Endif
     Try Message.Warning("Vous n'avez pas saisi le mode de règlement!")
+    Application.Busy -= 1
     Return True
   Endif
   'on garni le tableau des réglements
@@ -757,6 +767,7 @@ Private Function editef() As Boolean
   If $vfac.resent!imp = 0 Then
     If ecriturecompt(cal) Then
       Message.Error("Il y a un problème sur la génération de votre écriture comptable : Bon N° " & $vfac.numbl)
+      Application.Busy -= 1
       Return True 
     Endif
     cal.comptmat()
@@ -764,18 +775,19 @@ Private Function editef() As Boolean
     $vfac.numfac = $vfac.resent!numfac
   Endif
   $edit = New EditfacB($vfac, cal, cal)
-'  $vfac.imp.OutputFile = Filename
   $vfac.imp.NumCopies = $vfac.nbexplemplaire
-  $edit.Print($vfac.imp)
-  If $vfac.pdf Then
-    Impression.Facture($vfac.pdf, 1, $vfac.imp.Name)
-  Endif
-  If $vfac.joinfac Then
-    If $vfac.condvent Then Impression.Facture($vfac.condvent, 1, $vfac.imp.Name)
+  If $vfac.imp.NumCopies > 0 Then 
+    $edit.Print($vfac.imp)
+    If $vfac.pdf Then
+      Impression.Facture($vfac.pdf, 1, $vfac.imp.Name)
+    Endif
+    If $vfac.joinfac Then
+      If $vfac.condvent Then Impression.Facture($vfac.condvent, 1, $vfac.imp.Name)
+    Endif
   Endif
   dupli2()
   
-  If $vfac.saisreg Then reglement(cal)
+  Application.Busy -= 1
   
   Me.Close
   
@@ -784,10 +796,8 @@ End
 Private Function editebl() As Boolean
   
   Dim cal As Calculconsdroit
-  Dim Filename As String
   
   $vfac.AffClient = False
-  Filename = User.Home & "/tmp/Facture.pdf"
   cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
   $vfac.resent.MoveFirst
   If $vfac.choix = "B" And $vfac.resent!imp = 0 Then
@@ -798,9 +808,9 @@ Private Function editebl() As Boolean
   Endif
 
   $edit = New EditfacB($vfac, cal, cal)
-  $vfac.imp.OutputFile = Filename
   $vfac.imp.NumCopies = $vfac.nbexplemplaire
-  $edit.Print($vfac.imp)
+  If $vfac.imp.NumCopies > 0 Then $edit.Print($vfac.imp)
+  
   Dupli2()
   Me.Close
   
@@ -1075,8 +1085,9 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
     rescomp!imp = 1
     rescomp!dtefac = $vfac.dtedoc.G
     rescomp.Update
+    If $vfac.saisreg Then reglement(cal)
   Endif
-  If UCase$(Regmt.Text) = "TRAITE" Or If UCase$(Regmt.Text) = "LCR" Then Maj_Traite()
+  If UCase$(Regmt.Text) = "TRAITE" Or If UCase$(Regmt.Text) = "LCR" Then Maj_Traite(cal.montttc)
   utils.db.Commit
 End
 
@@ -1363,7 +1374,7 @@ Public Sub transblfac(cal As Calculconsdroit)
   
 End
 
-Private Sub Maj_Traite()
+Private Sub Maj_Traite(monttc As Float)
 
   Dim Traite As String
   Dim Accept As Boolean = False
@@ -1374,6 +1385,6 @@ Private Sub Maj_Traite()
     Accept = False
   Endif
   Traite = "Fiches_Traites"
-  Utils.db.Exec("insert into  " & Traite & "  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", $vfac.numcli, $vfac.rescli!cli_nom, $vfac.numfac, Format($cal.montttc, "0.00"), $vfac.dteech.G, $vfac.dtedoc.G, Accept, 0)
+  Utils.db.Exec("insert into  " & Traite & "  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", $vfac.numcli, $vfac.rescli!cli_nom, $vfac.numfac, Format(monttc, "0.00"), $vfac.dteech.G, $vfac.dtedoc.G, Accept, 0)
 
 End
