@@ -73,6 +73,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
   Dim commentaire As String[]
   
   vfac = vafac
+  vfac.imp.FullPage = True
   Select Case vfac.choix
     Case "A"
       vfac.resent = utils.db.Exec("SELECT " & entete & " FROM Fiches_HistoFac" & vfac.tab & " WHERE numfac=&1", vfac.numfac)
@@ -110,12 +111,12 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
             If numbl <> vfac.reslig!num_ligbl Then
               ligneart = New Ledit
               ligneart.Index = -1
+              If numbl Then vfac.resent.MoveNext()
               ligneart.libel = "Bon n° " & vfac.reslig!num_ligbl & " du " & LDate(vfac.resent!datebl).L
               ligneart.type = "C"
               ligne.Add(ligneart, numlig)
               numbl = vfac.reslig!num_ligbl 
               numlig = Format(Val(numlig) + 1, "0000")
-              vfac.resent.MoveNext()
             Endif
           Endif
       End Select
@@ -204,7 +205,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
       For Each lignetva1 In tva
         lignetva1.tottva = lignetva1.totht * (lignetva1.taux / 100)
         tva[lignetva1.num] = lignetva1
-        monttva += Val(Format(lignetva1.tottva, "0.00"))
+        monttva += utils.arrondi(lignetva1.tottva, 2) 
         respar = utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", lignetva1.num)
         If respar.Available Then ecriture(respar!compte_cc, lignetva1.tottva, respar!intitule_cc)
       Next 
@@ -212,7 +213,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
     If vfac.ttc Then
       montht = montht - monttva
     Endif
-    montttc = Val(Format(montht, "0.00")) + Val(Format(monttva, "0.00"))
+    montttc = utils.arrondi(montht, 2) + utils.arrondi(monttva, 2)
     'ecriture client
     ecriture(vfac.numcli, montttc * -1, Left(vfac.adrfac.nom, 35))
     If vfac.doclet And vfac.blchif Then        'si total du doc en lettre
@@ -291,7 +292,7 @@ Private Sub calc(numlig As String)
   Endif
   ligne.Add(ligneart, numlig)
   'on rajoute la tva
-  vfac.resent.MoveFirst
+'  vfac.resent.MoveFirst
   If Not vfac.resent!exobl Or vfac.autoent Then            'pas de calcul de tva si exonéré
       If tva.Exist(vfac.reslig!tx_ligbl) Then
         lignetva = tva[vfac.reslig!tx_ligbl]

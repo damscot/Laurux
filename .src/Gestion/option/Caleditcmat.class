@@ -58,6 +58,8 @@ Private Function ctrl() As Boolean
 
   Dim res, resdr, reslig As Result
   Dim err As Boolean
+  Dim vfac As VarFac
+  Dim cal As Calculconsdroit
   
   Textcontrol.Clear
   If calcdate() Then Return True
@@ -91,7 +93,7 @@ Private Function ctrl() As Boolean
       res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE num=&1 AND numlig LIKE &2", reslig!numfac, "%" & reslig!numlig_ligbl)
       If Not res.Available Then 
         Textcontrol.Text &= "Facture bl non trouvé : " & reslig!numfac & " " & LDate(reslig!dtefac).L & " " & reslig!art_code & " " & reslig!art_design & " " & "\n"
-        err = True
+'        err = True
       Endif
     Until reslig.MoveNext()
   Endif
@@ -231,7 +233,7 @@ Private Function Edit(clt As Boolean) As Collection
 
   Dim tabl As New Collection
   Dim dcl As New Declaration
-  Dim res, resreg As Result
+  Dim res, resreg, restx As Result
   Dim cdroit As Calculdroit
   Dim ed As Object
   Dim nbd As Integer

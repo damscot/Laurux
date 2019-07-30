@@ -17,10 +17,10 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
   $cal = cal
   $vfac = vfac
   
-  Me.expb.Expand = False
-  Me.expn.Expand = True
+  Me.expb.Expand = True
+  Me.expn.Expand = False
     'lignes de facture
-  Me.repligne.DataCount = cal.ligne.Count
+  Me.ligne.DataCount = cal.ligne.Count
     'couleurs entetes
   Me.rcolon.BackGround = ReportBrush.Color(vfac.couleur)
   Me.enttva.BackGround = ReportBrush.Color(vfac.couleur)
@@ -52,11 +52,12 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
         Me.site.Text = "site : " & res!site
         Me.mail.Text = "Courriel : " & res!email_sc
         Me.iban.Text = "Iban : " & res!banq & " Bic : " & res!bic
+        Me.Reportadresse.Height = "79mm"
       Endif
     Endif
   Else
     Me.Reportadresse.Border = ReportBorder[""]
-    Me.Reportadresse.Height = "0mm"
+    Me.Reportadresse.Height = "80mm"
     Me.ReportImage1.Width = "0mm"
   Endif
 
@@ -296,6 +297,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Endif
     Me.tart.Text = ""
     Me.tmo.Text = ""
+    Me.repligne.Expand = False
   Endif
   'on efface les 5 lignes en dessous des articles si rien n'est écrit dedant
   If Not (Me.tbl.Text Or Me.nttc.Text Or Me.tbf1.Text) Then 
@@ -321,7 +323,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
   'affichage des colonnes
   If $vfac.colon Then 
     $c1 = $vfac.couleur2 
-    $c2 = $vfac.couleur2 + 20
+    $c2 = $vfac.couleur2 + 10
   Else
     $c1 = &HFFFFFF
     $c2 = &HFFFFFF

@@ -1428,6 +1428,45 @@ Public Function totobs(tot As String[]) As Float
   
 End
 
+Public Function arrondi(montant As Variant, ndec As Integer) As Float
+  
+  Dim retour As Float
+  Dim pfrac, multp, i As Integer
+  Dim ch, ch1 As String
+  Dim tab As String[]
+  Dim neg As Boolean
+  
+  If TypeOf(montant) = gb.String Then
+    montant = Replace(montant, ".", ",")
+    retour = Val(montant)
+  Else
+    retour = montant
+  Endif
+  If retour < 0 Then
+    retour = Abs(retour)
+    neg = True
+  Endif
+  multp = 1
+  For i = 1 To ndec
+    multp = multp * 10
+  Next
+  ch = Str(retour)
+  ch = Str(Val(ch) * multp)
+  tab = Split(ch, ",")
+  If tab.Count = 2 Then
+    ch1 = Left(tab[1], 1)
+    If Val(ch1) >= 5 Then
+      tab[0] = Str(Val(tab[0]) + 1)
+      retour = Val(tab[0]) / multp
+    Else
+      retour = Val(tab[0]) / multp
+    Endif
+  Endif
+  If neg Then retour = retour * -1
+  Return retour
+  
+End
+
 Public Function fam(champs As String, TreeView1 As TreeView) As String
   
   Dim rq As String

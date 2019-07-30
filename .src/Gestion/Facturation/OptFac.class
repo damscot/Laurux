@@ -105,6 +105,7 @@ Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As
       
   End Select
   
+  $option = utils.Option()
   $vfac.numcli = num
   If $vfac.choix = "A" Then
     $vfac.numfac = nfac
@@ -798,7 +799,11 @@ Private Function editebl() As Boolean
   Dim cal As Calculconsdroit
   
   $vfac.AffClient = False
-  cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
+  If $vfac.choix = "A" Then
+    cal = New Calculconsdroit($vfac, $vfac.numbl, "F")
+  Else
+    cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
+  Endif
   $vfac.resent.MoveFirst
   If $vfac.choix = "B" And $vfac.resent!imp = 0 Then
     If testchem() Then Return True
@@ -949,6 +954,7 @@ Private Sub Dupli2()
   $vfac.imp.NumCopies = 1
   $vfac.imp.OutputFile = User.Home & "/tmp/Facture.pdf"
   $edit.Print($vfac.imp)
+  If $vfac.resent!imp = 1 Then Return
   ty = nom()
   If $vfac.sauvpdf Then
     Chemin = $vfac.pdfchemin & "/Fac/" & $vfac.numcli
@@ -996,11 +1002,10 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
   Dim lg As Variant
   Dim tot As Float
   Dim numerodef, numero As Integer
-  Dim jrnal As String
+  Dim jrnal, rint As String
   
   For Each lg In cal.ecrit
-'     tot = tot + lg.montantd - lg.montantc
-    tot = tot + Val(Format(lg.montantd, "0.00")) - Val(Format(lg.montantc, "0.00"))
+    tot = tot + utils.arrondi(lg.montantd - lg.montantc, 2) 
   Next
   If Round(tot, -2) <> 0 Then Return True
   If cal.ecrit.Count < 2 Then Return True
@@ -1023,7 +1028,7 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
       rescomp!numdoc = $vfac.numfac
       rescomp!numlot = $vfac.numfac
       rescomp!libelle = lg.libelle
-      tot = Val(Format(lg.montantd, "0.00")) - Val(Format(lg.montantc, "0.00"))
+      tot = utils.arrondi(lg.montantd - lg.montantc, 2)
       If tot >= 0 Then
         lg.montantd = tot
         lg.montantc = 0
@@ -1056,7 +1061,7 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
     rescomp!numdoc = $vfac.numfac
     rescomp!numlot = $vfac.numfac
     rescomp!libelle = lg.libelle
-    tot = Val(Format(lg.montantd, "0.00")) - Val(Format(lg.montantc, "0.00"))
+    tot = utils.arrondi(lg.montantd - lg.montantc, 2)
     If tot >= 0 Then
       lg.montantd = tot
       lg.montantc = 0
@@ -1242,6 +1247,7 @@ Public Sub transblfac(cal As Calculconsdroit)
   Dim lg As Variant
   Dim Filename As String
   
+'  $option = Utils.Option()
   'ligne de facure 
   utils.db.Begin
   For Each lg In cal.ligne 
@@ -1287,13 +1293,16 @@ Public Sub transblfac(cal As Calculconsdroit)
       Endif
     Endif
     ligfac.Update
-    If $option = "B" Or $option = "T" Then
-      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F',numlig=&3 WHERE num=&2 And type='B' AND numlig=&4", $vfac.numfac, $vfac.reslig!num_ligbl, $vfac.reslig!num_ligbl & cal.ligne.Key & $vfac.reslig!numlig_ligbl)  'on met le n° facture, type à F et on renome le n° ligne dans le fichier ligne de consigne
+    If ($option = "B" Or $option = "T") And lg.type = "A" Then
+      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F',numlig=&3 WHERE num=&2 And type='B' AND numlig LIKE &4", $vfac.numfac, $vfac.reslig!num_ligbl, $vfac.reslig!num_ligbl & cal.ligne.Key, "%" & $vfac.reslig!numlig_ligbl)  'on met le n° facture, type à F et on renome le n° ligne dans le fichier ligne de consigne
       utils.db.Exec("UPDATE Fiches_ligregie SET numlig=&1, type='S' WHERE num=&2 AND numlig=&3 AND type='C'", $vfac.reslig!num_ligbl & cal.ligne.Key, $vfac.numfac, $vfac.reslig!numlig_ligbl) 'on met a jour le n° de ligne pour qu'il corresponde à celui de la facture
     Endif
   Next
-   If $option = "B" Or $option = "T" Then
-     Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F' WHERE num=&2 AND type='B' AND numlig='D'", $vfac.numfac, $vfac.reslig!num_ligbl)  'on met les n°factures sur les lignes de déconsigne
+  If $option = "B" Or $option = "T" Then
+    $vfac.resent.MoveFirst
+    Repeat
+      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F' WHERE num=&2 AND type='B' AND numlig='D'", $vfac.numfac, $vfac.resent!numbl)  'on met les n°factures sur les lignes de déconsigne
+    Until $vfac.resent.MoveNext()
   Endif
   'entete de facture
   $vfac.resent.MoveFirst

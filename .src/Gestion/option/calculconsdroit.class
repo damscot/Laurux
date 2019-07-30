@@ -47,7 +47,7 @@ Public Sub _new(num As String, choix As String)
   Dim numfac, qst As String
   Dim lg As Variant
   
-   $borientation = borientation()
+  $borientation = borientation()
   If Not $borientation Or Not Me.vfac.blchif Then Return
   
   $num = num                                              ' si $schoix=B num de bon =F num facture = FM num client =M num facture
@@ -55,6 +55,8 @@ Public Sub _new(num As String, choix As String)
   If choix = "FM" Then                                   ' facture fin de mois =>regarde dans tous les bons
     $schoix = "B"
   Endif
+  If choix = "A" Then $schoix = "F"
+  Me.vfac.imp.FullPage = False
   If $schoix = "M" Then Return            'Voir pour les consignes magasin+ tard
   Me.vfac.resent.MoveFirst
   For Each lg In Me.ligne
@@ -76,11 +78,11 @@ Public Sub _new(num As String, choix As String)
               vri[2] = Str(reslig1!nb)
           End Select
           $ftotht += reslig1!montant
-          $stotcons = Format(Val($stotcons) + reslig1!montant, ",0.00")
+          $stotcons = Format(utils.arrondi(Val($stotcons) + reslig1!montant, 2), ",0.00")
           montcons += reslig1!montant
           reslig1.MoveNext
        Next
-        vri[3] = Format(montcons, ",0.00")
+        vri[3] = Format(utils.arrondi(montcons, 2), ",0.00")
         $cimp.Add(vri, Me.ligne.Key)
       Endif
     Else
@@ -197,10 +199,10 @@ Public Sub _new(num As String, choix As String)
         Case "B"
           vri[2] = rescons!nb
       End Select
-      vri[3] = Format(rescons!montant, ",0.00")
+      vri[3] = Format(utils.arrondi(rescons!montant, 2), ",0.00")
       $vdecons[i] = vri
       $ftotht += rescons!montant
-      $stotdecons = Format(Val($stotdecons) + rescons!montant, ",0.00")
+      $stotdecons = Format(utils.arrondi(Val($stotdecons) + rescons!montant, 2), ",0.00")
       rescons.MoveNext
     Next
   Endif
@@ -220,9 +222,10 @@ Public Sub _new(num As String, choix As String)
   If Object.IsValid(Me.tva) Then
     Me.monttva = 0
     For Each lg In Me.tva
-      lg.tottva = Val(Format(lg.totht, "0.00")) * (lg.taux / 100)
+      lg.tottva = lg.totht * (lg.taux / 100)
+'      lg.tottva = utils.arrondi(lg.totht * (lg.taux / 100), 2)
       Me.tva[lg.num] = lg
-      Me.monttva += Val(Format(lg.tottva, "0.00"))
+      Me.monttva += utils.arrondi(lg.tottva, 2)
       res = utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", lg.num)
       If res.Available Then
         If Me.ecrit.Exist(res!compte_cc) Then
@@ -234,11 +237,11 @@ Public Sub _new(num As String, choix As String)
       Endif
     Next
     If Me.ecrit.Exist(Me.vfac.numcli) Then Me.ecrit.Remove(Me.vfac.numcli)
-    $stotasc = Format(Val($stotasc), "0.00")
-    $stotdr = Format(Val($stotdr), "0.00")
-    $stotss = Format(Val($stotss), "0.00")
+    $stotasc = Format(utils.arrondi($stotasc, 2), "0.00")
+    $stotdr = Format(utils.arrondi($stotdr, 2), "0.00")
+    $stotss = Format(utils.arrondi($stotss, 2), "0.00")
     
-    Me.montht = Val(Format(Me.montart + Me.montmo + Val($stotasc) + Val($stotdr) + Val($stotss) + Me.gestion, "0.00"))
+    Me.montht = Utils.arrondi(Me.montart, 2) + Utils.arrondi(Me.montmo, 2) + Val($stotasc) + Val($stotdr) + Val($stotss) + Me.gestion
     Me.montttc = Me.montht + montcons + Me.monttva
     Me.ecriture(Me.vfac.numcli, Me.montttc * -1, Left(Me.vfac.adrfac.nom, 35))
   Endif
@@ -445,11 +448,7 @@ Public Sub comptmat(Optional numfac As String, magasin As Boolean)    'enregistr
           res!dtmouv = Me.vfac.reslig!dte_ligbl
           res!num = Me.vfac.numfac
           res!numlig = Me.vfac.reslig!num_ligbl & Me.ligne.Key
-          If Me.vfac.choix = "FM" Then 
-            res!type = "C"    'permet de renuméroter les lignes pour qu'elles s'accordent avec Histoligfac
-          Else
-            res!type = "S"
-          Endif
+          res!type = "S"
           res!codeart = reslig1!art_code
           res!coderegie = reslig1!art_dra
           res!qte = lg.qte
@@ -509,31 +508,31 @@ End
 
 Private Function consigne_Read() As String
 
-  Return Format(Replace($stotcons, ",", "."), "0.00")
+  Return Format(utils.arrondi($stotcons, 2), "0.00")
 
 End
 
 Private Function deconsigne_Read() As String
 
-  Return Format(Replace($stotdecons, ",", "."), "0.00")
+  Return Format(utils.arrondi($stotdecons, 2), "0.00")
 
 End
 
 Private Function droit_Read() As String
 
-  Return Format(Replace($stotdr, ",", "."), "0.00")
+  Return Format(utils.arrondi($stotdr, 2), "0.00")
 
 End
 
 Private Function secu_Read() As String
 
-  Return Format(Replace($stotss, ",", "."), "0.00")
+  Return Format(utils.arrondi($stotss, 2), "0.00")
 
 End
 
 Private Function ascise_Read() As String
 
-  Return Format(Replace($stotasc, ",", "."), "0.00")
+  Return Format(utils.arrondi($stotasc, 2), "0.00")
 
 End
 

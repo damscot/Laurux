@@ -1,8 +1,9 @@
 # Gambas Form File 3.0
 
 { Report Report
-  #MoveScaled(0,0,128,189)
-  Margin = ReportMargin["Left:11mm;Right:18mm"]
+  #MoveScaled(0,0,128,144)
+  Padding = ReportPadding["Top:5mm;Bottom:5mm;Left:9mm;Right:11mm"]
+  AutoResize = True
   Index = 0
   Text = ("")
   { ReportHBox1 ReportHBox
@@ -159,7 +160,6 @@
         #Public = True
         Padding = ReportPadding["Bottom:3mm;Left:5mm"]
         Margin = ReportMargin["Left:3mm"]
-        Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
         { !nom ReportLabel
           #MoveScaled(1,1,83,2)
           #Public = True
@@ -376,6 +376,7 @@
   { !repligne ReportVBox
     #MoveScaled(1,53,126,9)
     #Public = True
+    Expand = True
     { !ligne ReportHBox
       #MoveScaled(1,1,124,7)
       #Public = True
@@ -590,9 +591,9 @@
       Alignment = Align.Center
     }
   }
-  { ReportPanel1 ReportPanel
-    #MoveScaled(1,96,126,67)
-    Expand = True
+  { !ReportPanel1 ReportPanel
+    #MoveScaled(1,96,126,40)
+    #Public = True
     Arrangement = Arrange.Vertical
     { !expb ReportPanel
       #MoveScaled(2,1,123,3)
@@ -607,7 +608,7 @@
       Height = "0mm"
     }
     { !rbasfac ReportPanel
-      #MoveScaled(0,9,126,50)
+      #MoveScaled(1,10,126,29)
       #Public = True
       AutoResize = True
       Arrangement = Arrange.Vertical
@@ -651,7 +652,7 @@
           { !ltn ReportLabel
             #MoveScaled(63,1,17,3)
             #Public = True
-            Width = "25mm"
+            Width = "22mm"
             Font = Font["Sans Serif,9"]
             Border = ReportBorder["Right:1pt #000000"]
             Text = ("Total net HT")
@@ -660,7 +661,7 @@
           { !ltoh ReportLabel
             #MoveScaled(80,1,16,3)
             #Public = True
-            Width = "21mm"
+            Width = "19mm"
             Font = Font["Sans Serif,9"]
             Border = ReportBorder["Right:1pt #000000"]
             Text = ("Total TVA")
@@ -704,7 +705,7 @@
           { !tnet ReportLabel
             #MoveScaled(63,1,16,2)
             #Public = True
-            Width = "25mm"
+            Width = "22mm"
             Font = Font["Sans Serif,8"]
             Alignment = Align.Right
           }
@@ -738,7 +739,7 @@
           { !tnet1 ReportLabel
             #MoveScaled(63,1,16,2)
             #Public = True
-            Width = "25mm"
+            Width = "22mm"
             Font = Font["Sans Serif,8"]
             Alignment = Align.Right
           }
@@ -772,7 +773,7 @@
           { !tnet2 ReportLabel
             #MoveScaled(63,1,16,2)
             #Public = True
-            Width = "25mm"
+            Width = "22mm"
             Font = Font["Sans Serif,8"]
             Alignment = Align.Right
           }
@@ -806,7 +807,7 @@
           { !tnet3 ReportLabel
             #MoveScaled(63,1,16,2)
             #Public = True
-            Width = "25mm"
+            Width = "22mm"
             Font = Font["Sans Serif,8"]
             Alignment = Align.Right
           }
@@ -840,7 +841,7 @@
           { !tnet4 ReportLabel
             #MoveScaled(63,1,16,2)
             #Public = True
-            Width = "25mm"
+            Width = "22mm"
             Font = Font["Sans Serif,8"]
             Alignment = Align.Right
           }
@@ -869,7 +870,7 @@
           { !tht ReportLabel
             #MoveScaled(0,0,14,2)
             #Public = True
-            Width = "25mm"
+            Width = "22mm"
             Font = Font["Sans Serif,Bold,9"]
             Border = ReportBorder["Right:1pt #000000"]
             Alignment = Align.Right
@@ -877,7 +878,7 @@
           { !ttva ReportLabel
             #MoveScaled(14,0,17,2)
             #Public = True
-            Width = "21mm"
+            Width = "19mm"
             Font = Font["Sans Serif,Bold,9"]
             Border = ReportBorder["Right:1pt #000000"]
             Alignment = Align.Right
