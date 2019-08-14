@@ -60,7 +60,9 @@ Private Function ctrl() As Boolean
   Dim err As Boolean
   Dim vfac As VarFac
   Dim cal As Calculconsdroit
+  Dim lg As Variant
   
+  Application.Busy += 1
   Textcontrol.Clear
   If calcdate() Then Return True
   'véririe les entrée de marchandise
@@ -87,14 +89,21 @@ Private Function ctrl() As Boolean
   Endif
   'Vérifie si les articles passés sont en compta mat
   'Bl
-  reslig = utils.db.Exec("SELECT * FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' ORDER by numfac")
+  vfac = New VarFac
+  reslig = utils.db.Exec("SELECT numfac FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' GROUP by numfac")
   If reslig.Available Then
     Repeat
-      res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE num=&1 AND numlig LIKE &2", reslig!numfac, "%" & reslig!numlig_ligbl)
-      If Not res.Available Then 
-        Textcontrol.Text &= "Facture bl non trouvé : " & reslig!numfac & " " & LDate(reslig!dtefac).L & " " & reslig!art_code & " " & reslig!art_design & " " & "\n"
-'        err = True
-      Endif
+      cal = New Calculconsdroit(vfac, reslig!numfac, "F")
+      For Each lg In cal.ligne
+        res = utils.db.Exec("SELECT art_dra,art_volm FROM Fiches_Art WHERE art_code=&1 AND art_dra <> ''", lg.code)
+        If res.Available Then
+          resdr = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE num=&1 and numlig LIKE &2", reslig!numfac, cal.ligne.Key)
+          If Not resdr.Available Then
+            Textcontrol.Text &= "Facture bl non trouvé : " & reslig!numfac & " " & cal.vfac.dtedoc.L & " " & lg.code & " " & lg.libel & " " & "\n"
+            err = True
+          Endif
+        Endif
+      Next
     Until reslig.MoveNext()
   Endif
   'facture
@@ -108,6 +117,7 @@ Private Function ctrl() As Boolean
       Endif
     Until reslig.MoveNext()
   Endif
+  Application.Busy -= 1
   Return err
 
 End
@@ -200,6 +210,7 @@ Public Sub Edition_Click()
   Dim dcl As Declaration
   Dim res As Result
   
+  Application.Busy += 1
   If ctrl() And cloture.Value Then Return
   tabl = Edit(False)
   If cloture.Value Then
@@ -220,6 +231,7 @@ Public Sub Edition_Click()
     Next
     Utils.db.Commit
   Endif
+  Application.Busy -= 1
 End
 
 Public Sub Redition_Click()
@@ -246,7 +258,7 @@ Private Function Edit(clt As Boolean) As Collection
   Filename = User.Home & "/tmp/cmtmat.pdf"
   prt.OutputFile = Filename
   'creation du tableau à passer au report (Ecomptamat)
-  Application.Busy = 1
+  Application.Busy += 1
   'stock debut de periode
   'on prend d'abord l'inventaire début année
   res = Utils.db.Exec("SELECT * FROM Fiches_ligregie, Fiches_regie WHERE dtmouv BETWEEN &1 AND &2 AND Fiches_ligregie.type='I' AND Fiches_regie.code=coderegie AND suspendu=&3 ", $dteinf.D, $dteinf.FinMois.D, suspendu.Value)
@@ -260,6 +272,8 @@ Private Function Edit(clt As Boolean) As Collection
       dcl = decldcl()
       dcl.totvol.vae.vdp = res!volume
       dcl.totvol.vap.vdp = res!volumeap
+      If IsNull(res!tauxa) Then dcl.tarifdr = 0 Else dcl.tarifdr = res!tauxa / 100
+      If IsNull(res!tauxss) Then dcl.tarifss = 0 Else dcl.tarifss = res!tauxss / 100
       tabl.Add(dcl, res!coderegie)
     Until res.MoveNext()
   Endif
@@ -277,6 +291,8 @@ Private Function Edit(clt As Boolean) As Collection
         dcl = decldcl()
         dcl.totvol.vae.ven = res!volume
         dcl.totvol.vap.ven = res!volumeap
+        If IsNull(res!tauxa) Then dcl.tarifdr = 0 Else dcl.tarifdr = res!tauxa / 100
+        If IsNull(res!tauxss) Then dcl.tarifss = 0 Else dcl.tarifss = res!tauxss / 100
         tabl.Add(dcl, res!coderegie)
       Endif
     Until res.MoveNext()
@@ -303,9 +319,12 @@ Private Function Edit(clt As Boolean) As Collection
           dcl.droit = cdroit.droit
           dcl.secu = cdroit.secu
           dcl.volumess = cdroit.volumess
+          If IsNull(res!tauxa) Then dcl.tarifdr = 0 Else dcl.tarifdr = res!tauxa / 100
+          If IsNull(res!tauxss) Then dcl.tarifss = 0 Else dcl.tarifss = res!tauxss / 100
           tabl.Add(dcl, res!coderegie)
         Endif
       Until res.MoveNext()
+     
     Endif
   Else                                                  'calcul des droits avec les montants déjà calculés dans le fichier ligregie
     res = Utils.db.Exec("SELECT SUM(volume) as volume, SUM(volumeap) as volumeap,SUM(montdr) as droit, SUM(montss) as secu, SUM(volumess) as volumess, coderegie FROM Fiches_ligregie, Fiches_regie WHERE dtmouv BETWEEN &1 AND &2 AND cloture=&4 AND (Fiches_ligregie.type='S' OR Fiches_ligregie.type='C') AND Fiches_regie.code=coderegie AND suspendu=&3 GROUP BY coderegie", $dteinf.D, $dteinf.FinMois.D, suspendu.Value, clt)
@@ -338,12 +357,18 @@ Private Function Edit(clt As Boolean) As Collection
     dcl.totvol.vap.vfp = dcl.totvol.vap.vdp + dcl.totvol.vap.ven - dcl.totvol.vap.vso
     If dcl.totvol.vap.vso <> 0 Then
       dcl.qteimp = dcl.totvol.vap.vso
-      dcl.tarifdr = dcl.droit / dcl.totvol.vap.vso 
+      If dcl.tarifdr = 0 Then dcl.tarifdr = dcl.droit / dcl.totvol.vap.vso 
     Else
       dcl.qteimp = dcl.totvol.vae.vso
-      If dcl.totvol.vae.vso <> 0 Then dcl.tarifdr = dcl.droit / dcl.totvol.vae.vso
+      If dcl.totvol.vae.vso <> 0 Then 
+        If dcl.tarifdr = 0 Then dcl.tarifdr = dcl.droit / dcl.totvol.vae.vso
+      Endif
     Endif
-    If dcl.volumess <> 0 Then dcl.tarifss = dcl.secu / dcl.volumess Else dcl.tarifss = 0
+    If dcl.volumess <> 0 And dcl.tarifss = 0 Then 
+      dcl.tarifss = dcl.secu / dcl.volumess 
+    Else 
+      If dcl.volumess = 0 Then dcl.tarifss = 0
+    Endif
     'arrodi totaux et décimal
     nbd = Val(nbdec.Text) * -1
     If math.Value Then
@@ -380,7 +405,7 @@ Private Function Edit(clt As Boolean) As Collection
       Visualiseur.Prog(Filename)
     Endif
   Endif
-  Application.Busy = 0
+  Application.Busy -= 1
   Try pgb.Close
   Return tabl
   

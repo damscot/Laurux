@@ -94,10 +94,18 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
       condent = Left(condent, -4)
      vfac.resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & vfac.tab & " WHERE " & condent & " ORDER BY numbl")
      vfac.reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & vfac.tab & " WHERE " & condlig & "ORDER BY  num_ligbl,numlig_ligbl")
-      
+    
     Case Else
-     vfac.resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & vfac.tab & "  WHERE numbl=&1", vfac.numbl)
-     vfac.reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & vfac.tab & "  WHERE num_ligbl=&1", vfac.numbl)
+      If vfac.numfac Then
+        vfac.resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & vfac.tab & "  WHERE numfac=&1", vfac.numfac)
+        vfac.numbl = vfac.resent!numfac
+        vfac.reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & vfac.tab & "  WHERE num_ligbl=&1", vfac.numbl)
+      Else
+        vfac.resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & vfac.tab & "  WHERE numbl=&1", vfac.numbl)
+        vfac.reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & vfac.tab & "  WHERE num_ligbl=&1", vfac.numbl)
+        vfac.numfac = vfac.resent!numfac
+    Endif
+    
   End Select
   
   If vfac.reslig.Available Then

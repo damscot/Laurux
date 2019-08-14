@@ -1094,6 +1094,8 @@ Private Function ecriturecompt(cal As Calculconsdroit) As Boolean
   Endif
   If UCase$(Regmt.Text) = "TRAITE" Or If UCase$(Regmt.Text) = "LCR" Then Maj_Traite(cal.montttc)
   utils.db.Commit
+  MajSuivis()
+  
 End
 
 Private Sub nfac(ByRef numero As Integer, ByRef numerodef As Integer, ByRef jrnal As String)
@@ -1241,52 +1243,53 @@ Private Sub reglement(cal As Calculconsdroit)
   
 End
 
-Public Sub transblfac(cal As Calculconsdroit)
+Public Sub transblfac(Optional cal As Calculconsdroit)
   
   Dim entfac, ligfac, hmat, sdep As Result
   Dim lg As Variant
   Dim Filename As String
   
+  If IsNull(cal) Then cal = New Calculconsdroit($vfac, $vfac.numcli, "B")
 '  $option = Utils.Option()
   'ligne de facure 
   utils.db.Begin
   For Each lg In cal.ligne 
-    ligfac = utils.db.Create("Fiches_HistoLigfac" & $vfac.tab)
+    ligfac = utils.db.Create("Fiches_HistoLigfac" & cal.vfac.tab)
     If lg.Index > -1 Then
-      $vfac.reslig.MoveTo(lg.Index)
-      ligfac!num_ligfac = $vfac.numfac
+      cal.vfac.reslig.MoveTo(lg.Index)
+      ligfac!num_ligfac = cal.vfac.numfac
       ligfac!numlig_ligfac = cal.ligne.Key
-      ligfac!code_ligfac = $vfac.reslig!code_ligbl
-      ligfac!libel_ligfac = $vfac.reslig!libel_ligbl
-      ligfac!fam_ligfac = $vfac.reslig!fam_ligbl
-      ligfac!pu_ligfac = $vfac.reslig!pu_ligbl
-      ligfac!qte_ligfac = $vfac.reslig!qte_ligbl
-      ligfac!brut_ligfac = $vfac.reslig!brut_ligbl
-      ligfac!rem_ligfac = $vfac.reslig!rem_ligbl
-      ligfac!netht_ligfac = $vfac.reslig!netht_ligbl
-      ligfac!tx_ligfac = $vfac.reslig!tx_ligbl
-      ligfac!nettc_ligfac = $vfac.reslig!nettc_ligbl
-      ligfac!typel_ligfac = $vfac.reslig!typel_ligbl
-      ligfac!tm_ligfac = $vfac.reslig!tm_ligbl
-      ligfac!com_ligfac = $vfac.reslig!com_ligbl
-      ligfac!bloc = $vfac.reslig!block_ligbl
-      ligfac!mtx_ligfac = $vfac.reslig!mtx_ligfac
-      ligfac!mrgart_ligfac = $vfac.reslig!mrgart_ligbl
-      ligfac!mrgmo_ligfac = $vfac.reslig!mrgmo_ligbl
-      ligfac!tour_ligfac = $vfac.reslig!tour_ligbl
-      If $option = "T" Or $option = "P" Then ligfac!tipp_ligfac = $vfac.reslig!tipp_ligbl
-      ligfac!dtligbl_ligfac = $vfac.reslig!dte_ligbl
-      ligfac!numbl_ligfac = $vfac.reslig!num_ligbl
-      If $vfac.gmateriel Then         'on met a jour le numéro de facture sur Fiches_materiels
-        hmat = utils.db.Edit("Fiches_Materiels", "WHERE mat_bl = &1 AND mat_code = &2", $vfac.reslig!num_ligbl, $vfac.reslig!code_ligbl)
+      ligfac!code_ligfac = cal.vfac.reslig!code_ligbl
+      ligfac!libel_ligfac = cal.vfac.reslig!libel_ligbl
+      ligfac!fam_ligfac = cal.vfac.reslig!fam_ligbl
+      ligfac!pu_ligfac = cal.vfac.reslig!pu_ligbl
+      ligfac!qte_ligfac = cal.vfac.reslig!qte_ligbl
+      ligfac!brut_ligfac = cal.vfac.reslig!brut_ligbl
+      ligfac!rem_ligfac = cal.vfac.reslig!rem_ligbl
+      ligfac!netht_ligfac = cal.vfac.reslig!netht_ligbl
+      ligfac!tx_ligfac = cal.vfac.reslig!tx_ligbl
+      ligfac!nettc_ligfac = cal.vfac.reslig!nettc_ligbl
+      ligfac!typel_ligfac = cal.vfac.reslig!typel_ligbl
+      ligfac!tm_ligfac = cal.vfac.reslig!tm_ligbl
+      ligfac!com_ligfac = cal.vfac.reslig!com_ligbl
+      ligfac!bloc = cal.vfac.reslig!block_ligbl
+      ligfac!mtx_ligfac = cal.vfac.reslig!mtx_ligfac
+      ligfac!mrgart_ligfac = cal.vfac.reslig!mrgart_ligbl
+      ligfac!mrgmo_ligfac = cal.vfac.reslig!mrgmo_ligbl
+      ligfac!tour_ligfac = cal.vfac.reslig!tour_ligbl
+      If $option = "T" Or $option = "P" Then ligfac!tipp_ligfac = cal.vfac.reslig!tipp_ligbl
+      ligfac!dtligbl_ligfac = cal.vfac.reslig!dte_ligbl
+      ligfac!numbl_ligfac = cal.vfac.reslig!num_ligbl
+      If cal.vfac.gmateriel Then         'on met a jour le numéro de facture sur Fiches_materiels
+        hmat = utils.db.Edit("Fiches_Materiels", "WHERE mat_bl = &1 AND mat_code = &2", cal.vfac.reslig!num_ligbl, cal.vfac.reslig!code_ligbl)
         If hmat.Available Then
-          hmat!mat_bl = $vfac.numfac
+          hmat!mat_bl = cal.vfac.numfac
           hmat.Update
         Endif
       Endif
     Else
       If lg.type <> "TD" Then
-        ligfac!num_ligfac = $vfac.numfac
+        ligfac!num_ligfac = cal.vfac.numfac
         ligfac!numlig_ligfac = cal.ligne.Key
         ligfac!com_ligfac = lg.libel
         ligfac!typel_ligfac = lg.type
@@ -1294,92 +1297,92 @@ Public Sub transblfac(cal As Calculconsdroit)
     Endif
     ligfac.Update
     If ($option = "B" Or $option = "T") And lg.type = "A" Then
-      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F',numlig=&3 WHERE num=&2 And type='B' AND numlig LIKE &4", $vfac.numfac, $vfac.reslig!num_ligbl, $vfac.reslig!num_ligbl & cal.ligne.Key, "%" & $vfac.reslig!numlig_ligbl)  'on met le n° facture, type à F et on renome le n° ligne dans le fichier ligne de consigne
-      utils.db.Exec("UPDATE Fiches_ligregie SET numlig=&1, type='S' WHERE num=&2 AND numlig=&3 AND type='C'", $vfac.reslig!num_ligbl & cal.ligne.Key, $vfac.numfac, $vfac.reslig!numlig_ligbl) 'on met a jour le n° de ligne pour qu'il corresponde à celui de la facture
+      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F',numlig=&3 WHERE num=&2 And type='B' AND numlig LIKE &4", cal.vfac.numfac, cal.vfac.reslig!num_ligbl, cal.vfac.reslig!num_ligbl & cal.ligne.Key, "%" & cal.vfac.reslig!numlig_ligbl)  'on met le n° facture, type à F et on renome le n° ligne dans le fichier ligne de consigne
+      utils.db.Exec("UPDATE Fiches_ligregie SET numlig=&1, type='S' WHERE num=&2 AND numlig=&3 AND type='C'", cal.vfac.reslig!num_ligbl & cal.ligne.Key, cal.vfac.numfac, cal.vfac.reslig!numlig_ligbl) 'on met a jour le n° de ligne pour qu'il corresponde à celui de la facture
     Endif
   Next
   If $option = "B" Or $option = "T" Then
-    $vfac.resent.MoveFirst
+    cal.vfac.resent.MoveFirst
     Repeat
-      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F' WHERE num=&2 AND type='B' AND numlig='D'", $vfac.numfac, $vfac.resent!numbl)  'on met les n°factures sur les lignes de déconsigne
-    Until $vfac.resent.MoveNext()
+      Utils.db.Exec("UPDATE Fiches_ligcons SET num=&1,type='F' WHERE num=&2 AND type='B' AND numlig='D'", cal.vfac.numfac, cal.vfac.resent!numbl)  'on met les n°factures sur les lignes de déconsigne
+    Until cal.vfac.resent.MoveNext()
   Endif
   'entete de facture
-  $vfac.resent.MoveFirst
-  entfac = utils.db.Create("Fiches_HistoFac" & $vfac.tab)
-  entfac!numfac = $vfac.numfac
-  entfac!datefac = $vfac.dtedoc.G
-  entfac!cdclifac = $vfac.resent!cdclibl
-  entfac!cvclifac = $vfac.resent!cvclibl
-  entfac!nmclifac = $vfac.resent!nmclibl
-  entfac!rmofac = $vfac.resent!rmobl
-  entfac!rartfac = $vfac.resent!rartbl
-  entfac!pnmclifac = $vfac.resent!pnmclibl
-  entfac!adr1fac = $vfac.resent!adr1bl
-  entfac!adr2fac = $vfac.resent!adr2bl
-  entfac!cpfac = $vfac.resent!cpbl
-  entfac!villefac = $vfac.resent!villebl
-  entfac!Exofac = $vfac.resent!exobl
+  cal.vfac.resent.MoveFirst
+  entfac = utils.db.Create("Fiches_HistoFac" & cal.vfac.tab)
+  entfac!numfac = cal.vfac.numfac
+  entfac!datefac = cal.vfac.dtedoc.G
+  entfac!cdclifac = cal.vfac.resent!cdclibl
+  entfac!cvclifac = cal.vfac.resent!cvclibl
+  entfac!nmclifac = cal.vfac.resent!nmclibl
+  entfac!rmofac = cal.vfac.resent!rmobl
+  entfac!rartfac = cal.vfac.resent!rartbl
+  entfac!pnmclifac = cal.vfac.resent!pnmclibl
+  entfac!adr1fac = cal.vfac.resent!adr1bl
+  entfac!adr2fac = cal.vfac.resent!adr2bl
+  entfac!cpfac = cal.vfac.resent!cpbl
+  entfac!villefac = cal.vfac.resent!villebl
+  entfac!Exofac = cal.vfac.resent!exobl
   entfac!remmofac = Val(Format(cal.remmo, "0.00"))
   entfac!remartfac = Val(Format(cal.remart, "0.00"))
   entfac!totfac = cal.montht
-  entfac!reg = $vfac.resent!reg
-  entfac!ech = $vfac.resent!ech
-  entfac!numerobl = $vfac.resent!numbl
-  entfac!acpt = $vfac.resent!acpt
-  entfac!mreg = $vfac.resent!mreg
-  entfac!marge_art = $vfac.resent!marge_art
-  entfac!marge_mo = $vfac.resent!marge_mo
+  entfac!reg = cal.vfac.resent!reg
+  entfac!ech = cal.vfac.resent!ech
+  entfac!numerobl = cal.vfac.resent!numbl
+  entfac!acpt = cal.vfac.resent!acpt
+  entfac!mreg = cal.vfac.resent!mreg
+  entfac!marge_art = cal.vfac.resent!marge_art
+  entfac!marge_mo = cal.vfac.resent!marge_mo
   entfac!totfacttc = cal.montttc
-  entfac!gestfac = $vfac.resent!gestbl
-  entfac!numserie = $vfac.resent!numserie
-  entfac!codep = $vfac.resent!codep
+  entfac!gestfac = cal.vfac.resent!gestbl
+  entfac!numserie = cal.vfac.resent!numserie
+  entfac!codep = cal.vfac.resent!codep
   entfac.Update
   'historique matériel => n'était pas alimenté => reprise que des infos disponibles dans _BlM
   'utile pour réedition de facture et de bl de facture regroupées (+tard)
-  If $vfac.tab = "M" Then
+  If cal.vfac.tab = "M" Then
     Repeat
-      If $vfac.resent!codep Then
+      If cal.vfac.resent!codep Then
         hmat = utils.db.Create("Fiches_HisentMat")
-        hmat!numserie = $vfac.resent!numserie
-        hmat!codep = $vfac.resent!codep
-        hmat!numfac = $vfac.resent!numbl
-        hmat!marque = $vfac.resent!marque
-        hmat!type = $vfac.resent!typemat
-        hmat!design = $vfac.resent!desg1
-        hmat!design2 = $vfac.resent!desg2
+        hmat!numserie = cal.vfac.resent!numserie
+        hmat!codep = cal.vfac.resent!codep
+        hmat!numfac = cal.vfac.resent!numbl
+        hmat!marque = cal.vfac.resent!marque
+        hmat!type = cal.vfac.resent!typemat
+        hmat!design = cal.vfac.resent!desg1
+        hmat!design2 = cal.vfac.resent!desg2
         hmat.Update
       Endif
-    Until $vfac.resent.MoveNext()
+    Until cal.vfac.resent.MoveNext()
   Endif
   'sortie dépots
-   $vfac.resent.MoveFirst
+   cal.vfac.resent.MoveFirst
    Repeat
-      If Not IsNull($vfac.resent!cdep) Then
-        $vfac.reslig.MoveFirst
+      If Not IsNull(cal.vfac.resent!cdep) Then
+        cal.vfac.reslig.MoveFirst
         Repeat
-          If $vfac.reslig!typel = "A" And $vfac.resent!numbl = $vfac.reslig!num_ligbl Then
+          If cal.vfac.reslig!typel = "A" And cal.vfac.resent!numbl = cal.vfac.reslig!num_ligbl Then
             sdep = Utils.db.Create("Fiches_Sdepots")
-            sdep!code = Left$($vfac.resent!cdep, 2)
-            sdep!cart = $vfac.reslig!code_ligbl
-            sdep!date = $vfac.reslig!dtefac
+            sdep!code = Left$(cal.vfac.resent!cdep, 2)
+            sdep!cart = cal.vfac.reslig!code_ligbl
+            sdep!date = cal.vfac.reslig!dtefac
             sdep!type = "S"
-            sdep!qte = $vfac.reslig!qte_ligbl
-            sdep!com = "Facture N° " & $vfac.numfac
+            sdep!qte = cal.vfac.reslig!qte_ligbl
+            sdep!com = "Facture N° " & cal.vfac.numfac
             sdep.Update
           Endif
-        Until $vfac.reslig.MoveNext()
+        Until cal.vfac.reslig.MoveNext()
       Endif
-   Until $vfac.resent.MoveNext()
+   Until cal.vfac.resent.MoveNext()
   utils.db.Commit
-  $vfac.resent.MoveFirst
+  cal.vfac.resent.MoveFirst
   Repeat
     'supprime les adresses de livraison
-    Utils.db.Exec("DELETE FROM Fiches_AdrlivBL WHERE numbl=&1", $vfac.resent!numbl)
+    Utils.db.Exec("DELETE FROM Fiches_AdrlivBL WHERE numbl=&1", cal.vfac.resent!numbl)
   ' on supprime les entetes de Bl et les lignes de Bl
-    Utils.db.Exec("DELETE FROM Fiches_Bl" & $vfac.tab & " WHERE numbl = &1", $vfac.resent!numbl)
-    Utils.db.Exec("DELETE FROM Fiches_Ligbl" & $vfac.tab & " where num_ligbl = &1", $vfac.resent!numbl)
-  Until $vfac.resent.MoveNext()
+    Utils.db.Exec("DELETE FROM Fiches_Bl" & cal.vfac.tab & " WHERE numbl = &1", cal.vfac.resent!numbl)
+    Utils.db.Exec("DELETE FROM Fiches_Ligbl" & cal.vfac.tab & " where num_ligbl = &1", cal.vfac.resent!numbl)
+  Until cal.vfac.resent.MoveNext()
   
 End
 
@@ -1396,4 +1399,19 @@ Private Sub Maj_Traite(monttc As Float)
   Traite = "Fiches_Traites"
   Utils.db.Exec("insert into  " & Traite & "  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", $vfac.numcli, $vfac.rescli!cli_nom, $vfac.numfac, Format(monttc, "0.00"), $vfac.dteech.G, $vfac.dtedoc.G, Accept, 0)
 
+End
+
+'maj du suivis des affaires
+Private Sub MajSuivis()
+
+  Dim rSuivi As Result
+
+  $vfac.resent.MoveFirst
+  Repeat
+    
+    rSuivi = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSuivis") & " WHERE numdev = &1 and code = &2", $vfac.resent!numbl, $vfac.numcli)
+    If rSuivi.Available Then Utils.db.Exec("UPdate  " & Cbase.Table("TabSuivis") & "  SET  numfac= &1, datefac = &2 WHERE numdev = &3 and code = &4", $vfac.numfac, $vfac.dtedoc.G, $vfac.resent!numbl, $vfac.numcli)
+    
+  Until $vfac.resent.MoveNext()
+  
 End
