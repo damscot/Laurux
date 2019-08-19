@@ -90,14 +90,18 @@ Private Function ctrl() As Boolean
   'Vérifie si les articles passés sont en compta mat
   'Bl
   vfac = New VarFac
-  reslig = utils.db.Exec("SELECT numfac FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' GROUP by numfac")
+  reslig = utils.db.Exec("SELECT numfac,cdclibl,dtefac FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' GROUP by numfac,cdclibl,dtefac")
   If reslig.Available Then
     Repeat
+      vfac.numfac = reslig!numfac
+      vfac.numcli = reslig!cdclibl
+      vfac.dtedoc = New LDate(reslig!dtefac)
+      vfac.choix = "F"
       cal = New Calculconsdroit(vfac, reslig!numfac, "F")
       For Each lg In cal.ligne
         res = utils.db.Exec("SELECT art_dra,art_volm FROM Fiches_Art WHERE art_code=&1 AND art_dra <> ''", lg.code)
         If res.Available Then
-          resdr = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE num=&1 and numlig LIKE &2", reslig!numfac, cal.ligne.Key)
+          resdr = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE num=&1 and numlig LIKE &2", reslig!numfac, "%" & cal.ligne.Key)
           If Not resdr.Available Then
             Textcontrol.Text &= "Facture bl non trouvé : " & reslig!numfac & " " & cal.vfac.dtedoc.L & " " & lg.code & " " & lg.libel & " " & "\n"
             err = True

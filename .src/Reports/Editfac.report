@@ -479,6 +479,21 @@
   { !expn ReportHBox
     #MoveScaled(1,62,126,7)
     #Public = True
+    AutoResize = True
+    { !autoent ReportLabel
+      #MoveScaled(1,1,34,5)
+      #Public = True
+      Font = Font["Serif,4"]
+      Text = ("Dispensée d'immatriculation en application de l'article L.123-1-1 du Code du commerce.")
+    }
+    { !francaut ReportLabel
+      #MoveScaled(35,1,45,5)
+      #Public = True
+      Font = Font["Serif,4"]
+      Expand = True
+      Text = ("                                  Entreprise non assujettie à TVA, art. 293 B du Code général des impôts.      ")
+      Alignment = Align.Left
+    }
   }
   { !rl1 ReportHBox
     #MoveScaled(1,69,126,5)
@@ -599,6 +614,7 @@
       #MoveScaled(2,1,123,3)
       #Public = True
       Expand = True
+      AutoResize = True
       Arrangement = Arrange.Vertical
     }
     { !rfrais ReportHBox

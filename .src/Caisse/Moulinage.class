@@ -2524,6 +2524,8 @@ Private Sub genfac()
       utils.db.Commit
       If $soption = "B" Or $soption = "T" Then
         vfac = New VarFac
+        vfac.numfac = snfac
+        vfac.choix = "M"
         ccd = New Calculconsdroit(vfac, snfac, "M")
         ccd.comptmat(snfac, True)
       Endif

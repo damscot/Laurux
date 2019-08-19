@@ -245,6 +245,9 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.enttva.Children.Clear
     Me.enttva.Border = ReportBorder[""]
     Me.enttva.BackGround = ReportBrush.Color(&HFFFFFF)
+  Else
+    If Not vfac.franctva And Not vfac.autoent Then Me.francaut.Text = ""
+    If Not vfac.autoent Then Me.autoent.Text = ""
   Endif
   'pied de facture
   If vfac.pied Then

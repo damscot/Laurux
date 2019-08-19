@@ -132,10 +132,10 @@ Public Sub Maj_Archives()
       PB.Show()
       PB.Avancement("Facture " & Entbonl!numfac, 1)
       Repeat
-        
         If Right(.Cdate_Aff(Entbonl!dtefac), 4) & Mid(.Cdate_Aff(Entbonl!dtefac), 4, 2) Then
           opt = New OptFac("F", Entbonl!cdclibl, Entbonl!numbl, Me.Parent, "0", False, LDate(Entbonl!dtefac))
           opt.transblfac()
+          opt.Delete
         Endif
         If PB.Avancement("Facture " & Entbonl!numfac, 25) = True Then Break
       Until Entbonl.MoveNext()
@@ -148,12 +148,14 @@ Public Sub Maj_Archives()
     If EntBonl.Available Then
       PB = New ProgBar("Cloture mensuelle de facturation matériel", EntBonl.Count)
       PB.Show()
+      PB.Avancement("Facture " & Entbonl!numfac, 1)
       Repeat
-        If PB.Avancement("Facture " & Entbonl!numfac, 25) = True Then Break
         If Right(.Cdate_Aff(Entbonl!dtefac), 4) & Mid(.Cdate_Aff(Entbonl!dtefac), 4, 2) Then
           opt = New OptFac("F", Entbonl!cdclibl, Entbonl!numbl, Me, "0", False, LDate(Entbonl!dtefac), "M")
           opt.transblfac()
+          opt.Delete
         Endif
+        If PB.Avancement("Facture " & Entbonl!numfac, 25) = True Then Break
       Until Entbonl.MoveNext()
       PB.Close()
     Endif

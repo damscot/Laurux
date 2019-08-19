@@ -73,6 +73,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
   Dim commentaire As String[]
   
   vfac = vafac
+  If vfac.choix = "M" Then Return
   vfac.imp.FullPage = True
   Select Case vfac.choix
     Case "A"
@@ -98,7 +99,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
     Case Else
       If vfac.numfac Then
         vfac.resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & vfac.tab & "  WHERE numfac=&1", vfac.numfac)
-        vfac.numbl = vfac.resent!numfac
+        vfac.numbl = vfac.resent!numbl
         vfac.reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & vfac.tab & "  WHERE num_ligbl=&1", vfac.numbl)
       Else
         vfac.resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & vfac.tab & "  WHERE numbl=&1", vfac.numbl)
@@ -301,7 +302,7 @@ Private Sub calc(numlig As String)
   ligne.Add(ligneart, numlig)
   'on rajoute la tva
 '  vfac.resent.MoveFirst
-  If Not vfac.resent!exobl Or vfac.autoent Then            'pas de calcul de tva si exonéré
+  If Not vfac.resent!exobl Or Not vfac.autoent Then            'pas de calcul de tva si exonéré
       If tva.Exist(vfac.reslig!tx_ligbl) Then
         lignetva = tva[vfac.reslig!tx_ligbl]
         If vfac.ttc Then
