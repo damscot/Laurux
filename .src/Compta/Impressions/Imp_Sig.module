@@ -344,7 +344,7 @@ Public Sub Lancement(Detail As Boolean, dteN0 As String, dteN1 As String, dte1 A
               'Else
               'Otot4 = Val(.cpoint(Tab1Rslt!col1))
               'Endif
-              If Left$(compte, 3) = "609" Then Otot4 = "-" & otot4
+              If Left$(compte, 3) = "609" Then Otot4 = otot4 * -1
               imp2 = Format$(Otot4, "0")
               'Posy -= 11
               'Else
