@@ -64,6 +64,7 @@ Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As
   Reserve.Value = $vfac.reserve
   Recap.Value = $vfac.recap
   Rgmt.Value = $vfac.saisreg
+  Imp2L.Value = $vfac.ligne2
   If Rgmt.Value And $vfac.choix = "F" Then 
     RegDef.Visible = True
     Preg.Visible = True
@@ -74,6 +75,7 @@ Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As
     Preg.Visible = False
   Endif
   RegDef.Value = $vfac.breg
+  Coln.Value = $vfac.colon
   'Selection de l'affichage en fonction de "choix"
   'choix =>de facture on passe Tp => C=ommande  P=proforma D=devis F=facture  B=BL + de Fin de mois choix="FM" + de archive choix="A" + "T" bon atelier
   Select Case $vfac.choix

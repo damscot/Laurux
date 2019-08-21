@@ -29,7 +29,7 @@ Public badr As Boolean                        'si adresse de livraison
 Public adrfac As Adresse                      'stock l'adresse de facturation
 Public adrliv As Adresse                        'stock l'adresse de livraison
 Public blchif As Boolean = True                 'si le bl est chiffré
-Public colon As Boolean = True                    'si couleur de colonne
+Public colon As Boolean                         'si couleur de colonne
 Public ligne2 As Boolean                      'si édition de la 2° ligne article*
 Public entete As Boolean                      'si édition de l'entete*
 Public reserve As Boolean                     'si édition des réserves*
@@ -205,7 +205,7 @@ Private Sub numcli_Write(Value As String)
   $numcli = Value
   rescli = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", $numcli)
   If rescli.Available Then 
-    $exemplaire = rescli!cli_expl
+    If IsNull(rescli!cli_expl) Then $exemplaire = 0 Else $exemplaire = rescli!cli_expl
     Raise nombre(Str($exemplaire))
     ttc = CBool(rescli!cli_autoent)
     Raise fttc(ttc)

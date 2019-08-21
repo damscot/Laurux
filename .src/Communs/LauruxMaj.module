@@ -5236,7 +5236,20 @@ Public Sub Maj369()
   
   'Remettre le lettrage à vrais dans le fichier des codes comptables
   Utils.db.Exec("UPDATE Fiches_Comptes SET lettrable = True WHERE lettrable = '-1'")
-  
+ 
+  'il semblerait que ces colonnes manquent dans certaines bases
+  Tab = "Fiches_HistoFacM"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtreg VarChar(12))")
+
+  Tab = "Fiches_BlM"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtreg VarChar(12))")
+
+  Tab = "Fiches_HistoFac"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtreg VarChar(12))")
+
+  Tab = "Fiches_Bl"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtreg VarChar(12))")
+
   Sha1Calc.CalcSha1_all("Fiches_Mvt")
   'Sha1Calc.CalcSha1_all("Fiches_Mvt1") 'A REMETTRE AVANT COMMIT : DO NOT PUSH
   

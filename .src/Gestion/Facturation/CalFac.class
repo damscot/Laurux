@@ -62,7 +62,7 @@ Public nomfm As String
 
 Public Sub _new(vafac As VarFac, Optional nom As String)
 'nom contient la nom du client si la case divers est coché dans facturefm
-  Dim bl, respar As Result
+  Dim bl, respar, res As Result
   Dim condent, condlig As String
   Dim num, i As Integer
   Dim tot As Float
@@ -71,6 +71,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
   Dim numbl As String
   Dim lg As New Compta
   Dim commentaire As String[]
+  Dim artcomp As Boolean
   
   vfac = vafac
   If vfac.choix = "M" Then Return
@@ -133,6 +134,10 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
       Select Case vfac.reslig!typel_ligbl
         Case "A"
           calc(numlig)
+          res = utils.db.Exec("SELECT art_prdcomp,art_impdetail FROM Fiches_Art WHERE art_code=&1", vfac.reslig!code_ligbl)
+          If res.Available Then
+            artcomp = res!art_prdcomp And res!art_impdetail
+          Endif
           montart += Val(ligneart.neht)
           montht += Val(ligneart.neht)
           remart = remart + (Val(ligneart.brht) - Val(ligneart.neht))
@@ -153,7 +158,19 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
             ligne.Add(ligneart, Format(Val(numlig) + i, "0000"))
           Next
           numlig = Format(Val(numlig) + commentaire.Max, "0000")
-        
+          
+        Case "O"          'produits composés
+          If artcomp Then
+            ligneart = New Ledit
+            ligneart.Index = vfac.reslig.Index
+            ligneart.code = vfac.reslig!code_ligbl
+            ligneart.libel = vfac.reslig!libel_ligbl
+            ligneart.type = vfac.reslig!typel_ligbl
+            ligne.Add(ligneart, numlig)
+          Else
+            numlig = Format(Val(numlig) - 1, "0000")
+          Endif
+          
         Case "T"
           If Not vfac.ligne2 Then
             ligneart = New Ledit
@@ -302,7 +319,7 @@ Private Sub calc(numlig As String)
   ligne.Add(ligneart, numlig)
   'on rajoute la tva
 '  vfac.resent.MoveFirst
-  If Not vfac.resent!exobl Or Not vfac.autoent Then            'pas de calcul de tva si exonéré
+  If Not vfac.resent!exobl And Not vfac.autoent Then            'pas de calcul de tva si exonéré
       If tva.Exist(vfac.reslig!tx_ligbl) Then
         lignetva = tva[vfac.reslig!tx_ligbl]
         If vfac.ttc Then

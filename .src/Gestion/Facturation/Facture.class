@@ -478,11 +478,12 @@ Public Sub _New(bfacture As Boolean)
     Artqte.MaxLength = 8
   Endif
   
+   Combocatcli.Add("  ")
    res = Utils.db.Exec("SELECT * FROM Fiches_Typec ")
     If res.Available Then 
       res.MoveFirst
       Repeat
-         Combocatcli.Add(res!code & " " & res!libelle, res!code)
+         Combocatcli.Add(res!code & " " & res!libelle)
       Until res.MoveNext()
     Endif
 
@@ -11695,7 +11696,7 @@ Public Sub Titre()
   If ComboCom = False Then NOB.Text = "Nom client"
   PRB.Text = "Prénom client"
   NUMF.Text = "N° facture"
-  TextTtc.Text = "Ttc"
+  TextTtc.Text = "TTC"
 
 End
 
