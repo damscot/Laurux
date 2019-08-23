@@ -65,6 +65,7 @@ Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As
   Recap.Value = $vfac.recap
   Rgmt.Value = $vfac.saisreg
   Imp2L.Value = $vfac.ligne2
+  totlettre.Value = $vfac.doclet
   If Rgmt.Value And $vfac.choix = "F" Then 
     RegDef.Visible = True
     Preg.Visible = True
@@ -312,6 +313,12 @@ End
 Public Sub var_modreg(value As String)
 
   Regmt.Text = value
+
+End
+
+Public Sub totlettre_Click()
+
+  $vfac.doclet = totlettre.Value
 
 End
 

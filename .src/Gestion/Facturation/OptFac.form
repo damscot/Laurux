@@ -124,13 +124,13 @@
           Text = ("Impression stock sur BL")
         }
         { Imptotbl CheckBox
-          MoveScaled(34,3,27,3)
+          MoveScaled(34,3,21,3)
           Font = Font["-1"]
           ToolTip = ("Cocher le bouton pour avoir, en bas de BL, le total des BL restant a facturer")
           Text = ("Impression récap BL")
         }
         { Blch CheckBox
-          MoveScaled(0,0,18,3)
+          MoveScaled(0,0,11,3)
           Font = Font["Serif,-1"]
           ToolTip = ("A cocher si vous souhaitez imprimer un BL chiffré")
           Text = ("BL chiffré")
@@ -142,7 +142,7 @@
         Visible = False
         AutoResize = True
         { Reserve CheckBox
-          MoveScaled(2,0,26,2)
+          MoveScaled(0,0,22,2)
           Font = Font["Serif,-1"]
           Text = ("Edition des reserves")
         }
@@ -164,6 +164,10 @@
           Font = Font["Serif,-1"]
           ToolTip = ("A cocher si vous souhaitez que le texte de réglement en bas de facture soit celui qui est défini dans les préférences")
           Text = ("Texte règlement issu des préférences")
+        }
+        { totlettre CheckBox
+          MoveScaled(31,0,25,2)
+          Text = ("Total document en lettres")
         }
       }
       { Preg Panel
