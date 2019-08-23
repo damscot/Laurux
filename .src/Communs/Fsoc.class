@@ -36,9 +36,11 @@ Private testerTVA As Boolean = True
 Private cs As String
 Private Lig As String
 Private chkNbase As Boolean = False
+Private $hform As Form
 
-Public Sub _New()
+Public Sub _New(hform As Form)
 
+  $hform = hform
   Utils.Observers(Me)
   Music.Load(Start.Musique)
   Label11.text = Start.LocalSettings["/Soc" & Start.Societe & "/Siret"]
@@ -613,10 +615,8 @@ Public Sub Soclist_Click()
     Syntheses.Message(" Vous venez de sélectionner la société " & Soc & " , " & intitule.Text)
     message.Warning(" Vous venez de sélectionner la société " & Soc & " " & intitule.Text & " ! \n Celle-ci sera donc votre société de travail par défaut...\nLaurux va redémarrer")
     chkNbase = False
-    Utils.fermeTunnel()
-    Utils.db.Close
-    Try Me.close
-    Try Fmenu.delete
+    Me.close
+    $hform.Close
     Start.Main()
   Else
     Maj_Zones()

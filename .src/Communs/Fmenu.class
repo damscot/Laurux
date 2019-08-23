@@ -615,14 +615,18 @@ End
 
 Public Sub Menu26_Click()
 
+  Dim fs As Fsoc
+  
   If Start.LocalSettings["/Soc" & Start.Societe & "/Admin"] Then
     MDP.showmodal()
     If Start.Motdepasse = "OK" Then
-      Fsoc.Show
+      fs = New Fsoc(Me)
+      fs.show
       Start.Motdepasse = ""
     Endif
   Else
-    Fsoc.Show
+     fs = New Fsoc(Me)
+     fs.show
   Endif
 
 End
