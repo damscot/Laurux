@@ -263,8 +263,11 @@ Public Sub Button1_Click()
   posy += 5
   Me.Mouse = Mouse.Wait
   With Utils
-    If TypeClient1.where Then req = " AND " & TypeClient1.where Else req = ""
-    cResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, solde  FROM " & Cbase.Table("TabComptes") & ",Fiches_Cli" & " WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 " & req & " order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
+    If TypeClient1.where And Bclient.Value Then 
+      cResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, solde  FROM " & Cbase.Table("TabComptes") & ",Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4  And " & TypeClient1.where & " order by cast(compte_cc As Char)", cpt.text, cpt2.text, 0, type)
+    Else
+       cResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, solde  FROM " & Cbase.Table("TabComptes") & " WHERE  cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 " & req & " order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
+    Endif
     If cResult.Available Then
       Repeat
         compt = cResult!compte_cc

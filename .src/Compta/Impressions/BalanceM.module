@@ -78,8 +78,11 @@ Public Sub Imprime(cpt As String, cpt2 As String, Type As String, Type2 As Strin
     Balance.mouse = Mouse.wait
     SteResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSoc") & " Where cd_sc = &1", Start.Societe)
     Ste = "Societe " & " " & SteResult!int_sc
-    If Typecl.where Then req = " AND " & typecl.where Else req = ""
-    rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & ", Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and (type_cc =&3 or type_cc =&4) " & req & " order by cast(compte_cc AS char)", cpt, cpt2, Type, Type2)
+    If Typecl.where And Type = "C" Then 
+      rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & ",Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc As Char) >= &1 And cast(compte_cc As Char) <= &2 And (type_cc = &3 Or type_cc = &4)  And " & typecl.where & " order by cast(compte_cc As Char)", cpt, cpt2, Type, Type2)
+    Else
+      rrResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE cast(compte_cc As Char) >= &1 And cast(compte_cc As Char) <= &2 And (type_cc = &3 Or type_cc = &4) order by cast(compte_cc As Char)", cpt, cpt2, Type, Type2)
+    Endif
     If rrResult.Available Then
       pdf.Entete("Impression de la balance " & nom)
       posx = 40

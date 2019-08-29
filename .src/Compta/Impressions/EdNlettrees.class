@@ -378,8 +378,11 @@ Public Sub Button1_Click()
   posy += 5
   Me.Mouse = Mouse.Wait
   With Utils
-    If Bclient.Value Then req = " AND " & TypeClient1.where Else req = ""
-    rrResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, cent_cc  FROM " & Tab2 & ",Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 and lettrable <> false " & req & " order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
+    If Bclient.Value And TypeClient1.where Then 
+      rrResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, cent_cc  FROM " & Tab2 & ",Fiches_Cli WHERE cli_code=compte_cc AND cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 and lettrable <> false  AND " & TypeClient1.where & " order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
+    Else 
+      rrResult = Utils.db.Exec("SELECT  compte_cc, intitule_cc, cent_cc  FROM " & Tab2 & " WHERE  cast(compte_cc as char) >= &1  and cast(compte_cc as char) <= &2  and type_cc =&4 and lettrable <> false order by cast(compte_cc AS char)", cpt.text, cpt2.text, 0, type)
+    Endif
     If rrResult.Available Then
       Repeat
         compt = rrResult!compte_cc
