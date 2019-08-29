@@ -205,7 +205,7 @@ Private Sub numcli_Write(Value As String)
   $numcli = Value
   rescli = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", $numcli)
   If rescli.Available Then 
-    If IsNull(rescli!cli_expl) Then $exemplaire = 0 Else $exemplaire = rescli!cli_expl
+    If IsNull(rescli!cli_expl) Then $exemplaire = 2 Else $exemplaire = rescli!cli_expl
     Raise nombre(Str($exemplaire))
     ttc = CBool(rescli!cli_autoent)
     Raise fttc(ttc)

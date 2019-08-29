@@ -5,6 +5,10 @@ Private $vfac As VarFac
 Private $c1 As Integer        'couleur de colonne
 Private $c2 As Integer
 
+Public lgint As Integer = 44
+
+Const coef As Float = 1.595
+
 Public Sub _new(vfac As VarFac, cal As CalFac)
 
   Dim res As Result
@@ -155,6 +159,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
       Endif
      Me.numero.Text = Me.numero.Text & vfac.numbl & " du " & vfac.dtedoc.L
      If vfac.affref Then    'on affiche pas la colonne code
+      lgint += 25
       Me.pcode.Children.Clear
       Me.pcode.Width = "0mm"
       Me.pcde.Children.Clear
@@ -213,6 +218,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
   Endif
   'affichage ou non des colonnes
   If Not vfac.Stock Then          'affichge du stock
+    lgint += 15
     Me.pstk.Children.Clear
     Me.pstk.Border = ReportBorder[""]
     Me.pstk.Width = "0mm"
@@ -221,6 +227,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.rstk.Width = "0mm"
   Endif
   If Not vfac.simpcond Then       'affichage du conditionnement
+     lgint += 8
     Me.pun.Children.Clear
     Me.pun.Width = "0mm"
     Me.pun.Border = ReportBorder[""]
@@ -286,6 +293,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.ligchiff.Border = ReportBorder[""]
     Me.entchiff.Children.Clear
     Me.entchiff.Width = "0mm"
+    lgint += 80
     Me.entchiff.Border = ReportBorder[""]
     Me.enttva.Children.Clear
     Me.enttva.Border = ReportBorder[""]
@@ -425,7 +433,7 @@ Public Sub intitule_Data(Index As Integer)
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
-  Me.intitule.Data = lg.libel
+  Me.intitule.Data = Left(lg.libel, longueur())
 
 End
 
@@ -538,4 +546,13 @@ Public Sub clr(obj As Object)
   Try obj.BackGround = ReportBrush.Color($c1)
   If Not Error Then Swap $c1, $c2
   
+End
+
+Public Function longueur() As Integer
+
+  Dim nbchar As Integer
+  
+  nbchar = Fix(lgint / coef)
+  Return nbchar
+
 End

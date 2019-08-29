@@ -29,6 +29,7 @@ Public Sub _new(cal As Calculconsdroit)
   
   $cal = cal
   If Not cal.borientation() Or Not cal.vfac.blchif Then Return
+  Me.lgint += 80
   ''on modifi la présentation des factures + rajout des consignes et droits
   Me.Padding = ReportPadding["Left:3mm;Right:3mm"]
   Me.ReportPanel1.Expand = True
@@ -657,11 +658,11 @@ Public Sub intitule_Data(Index As Integer)
   If Index < $cal.ligne.Count Then
     ky = Format(index + 1, "0000")
     lg = $cal.ligne[ky]
-    Me.intitule.Data = lg.libel
+    Me.intitule.Data = Left(lg.libel, Me.longueur())
   Else
     i = Index - $cal.ligne.Count      'edition de la déconsigne
     vri = $cal.decons[i]
-    Me.intitule.Data = vri[5]
+    Me.intitule.Data = Left(vri[5], Me.longueur())
   Endif
 
 End

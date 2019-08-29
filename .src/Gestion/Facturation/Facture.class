@@ -1895,7 +1895,10 @@ End
 '*****************************************************
 Public Sub Colbl_Click()
 
-  If Mouse.Right Then
+  Dim clq As Boolean = False
+  
+  Try clq = Mouse.Right
+  If clq Then
     ColblSelection(True)
   Else
     ColblSelection(False)

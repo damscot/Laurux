@@ -749,7 +749,6 @@ Private Function editef() As Boolean
 
   Application.Busy += 1
   If testchem() Then Return True
-  If verifdate() Then Return True
   If $vfac.saisreg And totr.Value = 0 Then
     If start.son Then
       Music.Play
@@ -775,6 +774,7 @@ Private Function editef() As Boolean
   
   cal = New Calculconsdroit($vfac, $vfac.numbl, "B")
   If $vfac.resent!imp = 0 Then
+    If verifdate() Then Return True
     If ecriturecompt(cal) Then
       Message.Error("Il y a un problème sur la génération de votre écriture comptable : Bon N° " & $vfac.numbl)
       Application.Busy -= 1
@@ -783,6 +783,8 @@ Private Function editef() As Boolean
     cal.comptmat()
   Else
     $vfac.numfac = $vfac.resent!numfac
+    $vfac.dtedoc.G = $vfac.resent!dtefac
+    $vfac.dteech.G = $vfac.resent!ech
   Endif
   $edit = New EditfacB($vfac, cal, cal)
   $vfac.imp.NumCopies = $vfac.nbexplemplaire

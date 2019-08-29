@@ -193,8 +193,8 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
     Until vfac.reslig.MoveNext()
   Endif
   
+  vfac.resent.MoveFirst            'on prend l'adresse de facturation du 1° bl
   If vfac.resent.Available Then
-    vfac.resent.MoveFirst            'on prend l'adresse de facturation du 1° bl
     vfac.adrfac.nom = vfac.resent!cvclibl & " " & vfac.resent!nmclibl & " " & vfac.resent!pnmclibl
     vfac.adrfac.adr1 = vfac.resent!adr1bl
     vfac.adrfac.adr2 = vfac.resent!adr2bl
@@ -245,7 +245,7 @@ Public Sub _new(vafac As VarFac, Optional nom As String)
     If vfac.doclet And vfac.blchif Then        'si total du doc en lettre
       ligneart = New Ledit
       ligneart.Index = -1
-      ligneart.type = "TD"        'pour total document => ne pas enregistrer dans les fichiers
+      ligneart.type = "TD"        'pour total document en lettre => ne pas enregistrer dans les fichiers
       ligneart.libel = "Total document : " & Numtostring.Convertir(montttc, vfac.devise)
       numlig = Format(Val(numlig) + 1, "0000")
       ligne.Add(ligneart, numlig)
