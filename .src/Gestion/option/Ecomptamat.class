@@ -14,7 +14,6 @@ Public Sub _new(tabl As Collection, mois As String, anne As String, edit As Bool
   $tabl = tabl
   $snumed = New String[]
   For Each calc In tabl
-'    Caleditcmat.ddcl = calc
     $snumed.Add(tabl.Key)
   Next
   ReportHlig.DataCount = $snumed.Count
@@ -52,7 +51,7 @@ Public Sub _new(tabl As Collection, mois As String, anne As String, edit As Bool
   dtedecl.Text = Format(dte1, "mmmm yyyy")
   periode.Text = mois & "/" & anne
   
-  'ReportPageBreak1.ForceNewPage = True
+  ReportPageBreak1.ForceNewPage = True
   
 
   Application.Busy = 0
@@ -65,7 +64,6 @@ Public Sub lib_Data(Index As Integer)
   Dim res As Result
   
   res = Utils.db.Exec("SELECT * FROM Fiches_regie WHERE code=&1", $snumed[Index])
-  lib.Font = font["-4"]
   lib.Data = res!nom
 
 End
@@ -74,7 +72,6 @@ End
 Public Sub vaehldp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaehldp.Font = font["-4"]
   vaehldp.Data = convers(Caleditcmat.ddcl.totvol.vae.vdp, "h")
   
 End
@@ -82,7 +79,6 @@ End
 Public Sub vaeldp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaeldp.Font = font["-4"]
   vaeldp.Data = convers(Caleditcmat.ddcl.totvol.vae.vdp, "l")
 
 End
@@ -90,7 +86,6 @@ End
 Public Sub vaecldp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaecldp.Font = font["-4"]
   vaecldp.Data = convers(Caleditcmat.ddcl.totvol.vae.vdp, "c")
 
 End
@@ -99,7 +94,6 @@ End
 Public Sub vaehle_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaehle.Font = font["-4"]
   vaehle.Data = convers(Caleditcmat.ddcl.totvol.vae.ven, "h")
   
 End
@@ -107,7 +101,6 @@ End
 Public Sub vaele_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaele.Font = font["-4"]
   vaele.Data = convers(Caleditcmat.ddcl.totvol.vae.ven, "l")
 
 End
@@ -115,7 +108,6 @@ End
 Public Sub vaecle_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaecle.Font = font["-4"]
   vaecle.Data = convers(Caleditcmat.ddcl.totvol.vae.ven, "c")
 
 End
@@ -124,7 +116,6 @@ End
 Public Sub vaehls_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaehls.Font = font["-4"]
   vaehls.Data = convers(Caleditcmat.ddcl.totvol.vae.vso, "h")
   
 End
@@ -132,7 +123,6 @@ End
 Public Sub vaels_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaels.Font = font["-4"]
   vaels.Data = convers(Caleditcmat.ddcl.totvol.vae.vso, "l")
 
 End
@@ -140,7 +130,6 @@ End
 Public Sub vaecls_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaecls.Font = font["-4"]
   vaecls.Data = convers(Caleditcmat.ddcl.totvol.vae.vso, "c")
 
 End
@@ -149,7 +138,6 @@ End
 Public Sub vaehlfp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaehlfp.Font = font["-4"]
   vaehlfp.Data = convers(Caleditcmat.ddcl.totvol.vae.vfp, "h")
   
 End
@@ -157,7 +145,6 @@ End
 Public Sub vaelfp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaelfp.Font = font["-4"]
   vaelfp.Data = convers(Caleditcmat.ddcl.totvol.vae.vfp, "l")
 
 End
@@ -165,7 +152,6 @@ End
 Public Sub vaeclfp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaeclfp.Font = font["-4"]
   vaeclfp.Data = convers(Caleditcmat.ddcl.totvol.vae.vfp, "c")
 
 End
@@ -174,7 +160,6 @@ End
 Public Sub vaphldp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaphldp.Font = font["-4"]
   vaphldp.Data = convers(Caleditcmat.ddcl.totvol.vap.vdp, "h")
   
 End
@@ -182,7 +167,6 @@ End
 Public Sub vapldp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vapldp.Font = font["-4"]
   vapldp.Data = convers(Caleditcmat.ddcl.totvol.vap.vdp, "l")
 
 End
@@ -190,7 +174,6 @@ End
 Public Sub vapcldp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vapcldp.Font = font["-4"]
   vapcldp.Data = convers(Caleditcmat.ddcl.totvol.vap.vdp, "c")
 
 End
@@ -199,7 +182,6 @@ End
 Public Sub vaphle_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaphle.Font = font["-4"]
   vaphle.Data = convers(Caleditcmat.ddcl.totvol.vap.ven, "h")
   
 End
@@ -207,7 +189,6 @@ End
 Public Sub vaple_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaple.Font = font["-4"]
   vaple.Data = convers(Caleditcmat.ddcl.totvol.vap.ven, "l")
 
 End
@@ -215,7 +196,6 @@ End
 Public Sub vapcle_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vapcle.Font = font["-4"]
   vapcle.Data = convers(Caleditcmat.ddcl.totvol.vap.ven, "c")
 
 End
@@ -224,7 +204,6 @@ End
 Public Sub vaphls_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaphls.Font = font["-4"]
   vaphls.Data = convers(Caleditcmat.ddcl.totvol.vap.vso, "h")
   
 End
@@ -232,7 +211,6 @@ End
 Public Sub vapls_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vapls.Font = font["-4"]
   vapls.Data = convers(Caleditcmat.ddcl.totvol.vap.vso, "l")
 
 End
@@ -240,7 +218,6 @@ End
 Public Sub vapcls_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vapcls.Font = font["-4"]
   vapcls.Data = convers(Caleditcmat.ddcl.totvol.vap.vso, "c")
 
 End
@@ -249,7 +226,6 @@ End
 Public Sub vaphlfp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaphlfp.Font = font["-4"]
   vaphlfp.Data = convers(Caleditcmat.ddcl.totvol.vap.vfp, "h")
   
 End
@@ -257,7 +233,6 @@ End
 Public Sub vaplfp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vaplfp.Font = font["-4"]
   vaplfp.Data = convers(Caleditcmat.ddcl.totvol.vap.vfp, "l")
 
 End
@@ -265,7 +240,6 @@ End
 Public Sub vapclfp_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  vapclfp.Font = font["-4"]
   vapclfp.Data = convers(Caleditcmat.ddcl.totvol.vap.vfp, "c")
 
 End
@@ -273,7 +247,6 @@ End
 Public Sub qihl_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  qihl.Font = font["-4"]
   qihl.Data = convers(Caleditcmat.ddcl.qteimp, "h")
 
 End
@@ -281,7 +254,6 @@ End
 Public Sub qil_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  qil.Font = font["-4"]
   qil.Data = convers(Caleditcmat.ddcl.qteimp, "l")
 
 End
@@ -289,7 +261,6 @@ End
 Public Sub qicl_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  qicl.Font = font["-4"]
   qicl.Data = convers(Caleditcmat.ddcl.qteimp, "c")
 
 End
@@ -297,7 +268,6 @@ End
 Public Sub tarif_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  tarif.Font = font["-4"]
   tarif.Data = Format(Caleditcmat.ddcl.tarifdr, "0.0000")
 
 End
@@ -305,7 +275,6 @@ End
 Public Sub montant_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  montant.Font = font["-3"]
   montant.Data = Format(Caleditcmat.ddcl.droit, "0.00")
 
 End
@@ -313,13 +282,13 @@ End
 Public Sub ReportLlibss_Data(Index As Integer)
 
   If index = 0 Then ReportLlibss.Data = "Sécurité Sociale (taux en litre)" Else ReportLlibss.Data = " "
-
+'  If Index = $snumed.Max Then ReportLlibss.Border = ReportBorder["Bottom:1 pt #000000"]
+  
 End
 
 Public Sub qihlss_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  qihlss.Font = font["-4"]
   qihlss.Data = convers(Caleditcmat.ddcl.volumess, "h")
 
 End
@@ -327,7 +296,6 @@ End
 Public Sub qilss_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  qilss.Font = font["-4"]
   qilss.Data = convers(Caleditcmat.ddcl.volumess, "l")
 
 End
@@ -335,7 +303,6 @@ End
 Public Sub qiclss_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  qiclss.Font = font["-4"]
   qiclss.Data = convers(Caleditcmat.ddcl.volumess, "c")
 
 End
@@ -343,7 +310,6 @@ End
 Public Sub tarifss_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  tarifss.Font = font["-4"]
   tarifss.Data = Format(Caleditcmat.ddcl.tarifss, "0.0000")
 
 End
@@ -351,7 +317,6 @@ End
 Public Sub montss_Data(Index As Integer)
 
   Caleditcmat.ddcl = $tabl[$snumed[Index]]
-  montss.Font = font["-4"]
   montss.Data = Format(Caleditcmat.ddcl.secu, "0.00")
 
 End
@@ -492,6 +457,7 @@ Private Function convers(vol As Float, choix As String) As String
   
   Dim f As Float
   
+   vol = Round(vol, -2)
   Select Case choix
     Case "h"
       vol = vol / 100
@@ -506,7 +472,6 @@ Private Function convers(vol As Float, choix As String) As String
         vol = Fix(f)
       Endif
     Case "c"
-      vol = Round(vol, -2)
       vol = Frac(vol)
       vol = Round(vol * 100)
   End Select

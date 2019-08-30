@@ -11,6 +11,7 @@
     Background = ReportBrush["#DFDFDF"]
     { ReportLabel1 ReportLabel
       #MoveScaled(1,1,134,3)
+      Font = Font["Sans Serif,Bold,11"]
       Text = ("EDITION DE LA DECLARATION MENSUELLE DE LIQUIDATION DES PRODUITS EN DROITS ACQUITTES")
       Alignment = Align.Center
     }
@@ -20,10 +21,12 @@
       { datej ReportLabel
         #MoveScaled(1,1,12,2)
         Width = "35mm"
+        Font = Font["Sans Serif,11"]
         Border = ReportBorder["Right:1px #000000"]
       }
       { Reportnom ReportLabel
         #MoveScaled(13,1,24,2)
+        Font = Font["Sans Serif,11"]
         Expand = True
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Center
@@ -31,7 +34,8 @@
       { pg1 ReportLabel
         #MoveScaled(37,1,20,2)
         Width = "35mm"
-        Text = ("Page")
+        Font = Font["Sans Serif,11"]
+        Text = ("=\"PAGE \" & Page ")
         Alignment = Align.Center
       }
     }
@@ -50,13 +54,13 @@
         Padding = ReportPadding["Top:3mm"]
         { ReportLabel10 ReportLabel
           #MoveScaled(1,1,12,1)
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Padding = ReportPadding["Right:3mm"]
           Text = ("Raison sociale : ")
         }
         { rs ReportLabel
           #MoveScaled(13,1,21,1)
-          Font = Font["Bold,+1"]
+          Font = Font["Sans Serif,Bold,13"]
           Expand = True
         }
       }
@@ -64,13 +68,13 @@
         #MoveScaled(1,4,68,3)
         { ReportLabel8 ReportLabel
           #MoveScaled(1,1,12,1)
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Padding = ReportPadding["Right:3mm"]
           Text = ("Numéro d'identification :   ")
         }
         { ni ReportLabel
           #MoveScaled(13,1,21,1)
-          Font = Font["Bold"]
+          Font = Font["Sans Serif,Bold,11"]
           Expand = True
         }
       }
@@ -78,12 +82,13 @@
         #MoveScaled(1,7,68,3)
         { ReportLabel6 ReportLabel
           #MoveScaled(1,1,12,1)
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Padding = ReportPadding["Right:3mm"]
           Text = ("Lieu où est tenue la comptabilité matiére :")
         }
         { lieu ReportLabel
           #MoveScaled(13,1,21,1)
+          Font = Font["Sans Serif,11"]
           Expand = True
         }
       }
@@ -91,13 +96,13 @@
         #MoveScaled(1,10,68,3)
         { ReportLabel4 ReportLabel
           #MoveScaled(1,1,12,1)
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Padding = ReportPadding["Right:3mm"]
           Text = ("Date du dernier arrêté annuel de la comptabilité matières :")
         }
         { dtedeb ReportLabel
           #MoveScaled(13,1,21,1)
-          Font = Font["Bold"]
+          Font = Font["Sans Serif,Bold,11"]
           Expand = True
         }
       }
@@ -108,21 +113,21 @@
       Fixed = True
       { ReportLabel14 ReportLabel
         #MoveScaled(1,1,77,3)
-        Font = Font["-2"]
+        Font = Font["Sans Serif,10"]
         Padding = ReportPadding["Top:3mm;Bottom:3mm"]
         Text = ("Adresse de l'entrepôt fiscal suspensif des droits d'accises :")
       }
       { adr1 ReportLabel
         #MoveScaled(1,4,77,3)
-        Font = Font["Bold"]
+        Font = Font["Sans Serif,Bold,11"]
       }
       { adr2 ReportLabel
         #MoveScaled(1,7,77,3)
-        Font = Font["Bold"]
+        Font = Font["Sans Serif,Bold,11"]
       }
       { cpvil ReportLabel
         #MoveScaled(1,10,77,3)
-        Font = Font["Bold"]
+        Font = Font["Sans Serif,Bold,11"]
       }
     }
   }
@@ -131,7 +136,7 @@
     Padding = ReportPadding["Bottom:2mm"]
     { ReportLabel20 ReportLabel
       #MoveScaled(1,1,22,4)
-      Font = Font["Bold,+1"]
+      Font = Font["Sans Serif,Bold,11"]
       Padding = ReportPadding["Right:5mm"]
       Expand = True
       Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
@@ -144,7 +149,7 @@
     }
     { dtedecl ReportLabel
       #MoveScaled(31,1,19,4)
-      Font = Font["Bold,+1"]
+      Font = Font["Sans Serif,Bold,11"]
       Padding = ReportPadding["Left:5mm"]
       Expand = True
       Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
@@ -165,7 +170,7 @@
       { ReportLabel23 ReportLabel
         #MoveScaled(1,1,22,3)
         Height = "4mm"
-        Font = Font["-1"]
+        Font = Font["Sans Serif,11"]
         Border = ReportBorder["Bottom:1pt #000000"]
         Text = ("Période traitée ")
         Alignment = Align.Center
@@ -173,13 +178,13 @@
       { periode ReportLabel
         #MoveScaled(1,4,22,5)
         Height = "4mm"
-        Font = Font["Bold,-1"]
+        Font = Font["Sans Serif,Bold,11"]
         Alignment = Align.Center
       }
       { ReportLabel25 ReportLabel
         #MoveScaled(1,9,22,5)
         Height = "4mm"
-        Font = Font["-1"]
+        Font = Font["Sans Serif,11"]
         Border = ReportBorder["Top:1pt #000000"]
         Text = ("Libellé")
         Alignment = Align.Center
@@ -193,7 +198,7 @@
       { ReportLabel26 ReportLabel
         #MoveScaled(1,1,33,4)
         Height = "4mm"
-        Font = Font["Bold"]
+        Font = Font["Sans Serif,Bold,11"]
         Border = ReportBorder["Bottom:1pt #000000"]
         Text = ("VOLUME D'ALCOOL EFFECTIF")
         Alignment = Align.Center
@@ -204,14 +209,14 @@
           #MoveScaled(1,1,9,2)
           Width = "28mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,9"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Vol. début période")
         }
         { ReportLabel28 ReportLabel
           #MoveScaled(10,1,6,2)
           Width = "28mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,9"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Volume entré")
           Alignment = Align.Center
@@ -220,7 +225,7 @@
           #MoveScaled(16,1,7,2)
           Width = "28mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,9"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Volume sorti")
           Alignment = Align.Center
@@ -228,7 +233,7 @@
         { ReportLabel30 ReportLabel
           #MoveScaled(23,1,8,2)
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,9"]
           Expand = True
           Background = ReportBrush["#DFDFDF"]
           Text = ("Vol.fin periode")
@@ -243,7 +248,7 @@
           #MoveScaled(1,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Hl")
           Alignment = Align.Center
@@ -252,7 +257,7 @@
           #MoveScaled(3,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("l")
           Alignment = Align.Center
@@ -261,7 +266,7 @@
           #MoveScaled(5,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("cl")
           Alignment = Align.Center
@@ -270,7 +275,7 @@
           #MoveScaled(7,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Hl")
           Alignment = Align.Center
@@ -279,7 +284,7 @@
           #MoveScaled(9,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("l")
           Alignment = Align.Center
@@ -288,7 +293,7 @@
           #MoveScaled(11,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("cl")
           Alignment = Align.Center
@@ -297,7 +302,7 @@
           #MoveScaled(13,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Hl")
           Alignment = Align.Center
@@ -306,7 +311,7 @@
           #MoveScaled(15,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("l")
           Alignment = Align.Center
@@ -315,6 +320,7 @@
           #MoveScaled(17,1,2,3)
           Width = "10mm"
           Height = "4mm"
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("cl")
           Alignment = Align.Center
@@ -323,7 +329,7 @@
           #MoveScaled(19,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Background = ReportBrush["#DFDFDF"]
           Text = ("Hl")
@@ -333,7 +339,7 @@
           #MoveScaled(21,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Background = ReportBrush["#DFDFDF"]
           Text = ("l")
@@ -342,7 +348,7 @@
         { ReportLabel42 ReportLabel
           #MoveScaled(23,1,2,3)
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,10"]
           Expand = True
           Background = ReportBrush["#DFDFDF"]
           Text = ("cl")
@@ -358,7 +364,7 @@
       { ReportLabel43 ReportLabel
         #MoveScaled(1,1,32,4)
         Height = "4mm"
-        Font = Font["Bold"]
+        Font = Font["Sans Serif,Bold,11"]
         Border = ReportBorder["Bottom:1pt #000000"]
         Text = ("VOLUME D'ALCOOL PUR")
         Alignment = Align.Center
@@ -369,14 +375,14 @@
           #MoveScaled(1,1,9,2)
           Width = "26mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,9"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Vol. début période")
         }
         { ReportLabel45 ReportLabel
           #MoveScaled(10,1,6,2)
           Width = "24mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,9"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Volume entré")
           Alignment = Align.Center
@@ -385,7 +391,7 @@
           #MoveScaled(16,1,7,2)
           Width = "24mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,9"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Volume sorti")
           Alignment = Align.Center
@@ -393,7 +399,7 @@
         { ReportLabel47 ReportLabel
           #MoveScaled(23,1,8,2)
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,9"]
           Expand = True
           Background = ReportBrush["#DFDFDF"]
           Text = ("Vol.fin periode")
@@ -408,7 +414,7 @@
           #MoveScaled(1,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Hl")
           Alignment = Align.Center
@@ -417,7 +423,7 @@
           #MoveScaled(3,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("l")
           Alignment = Align.Center
@@ -426,7 +432,7 @@
           #MoveScaled(5,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("cl")
           Alignment = Align.Center
@@ -435,7 +441,7 @@
           #MoveScaled(7,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Hl")
           Alignment = Align.Center
@@ -444,7 +450,7 @@
           #MoveScaled(9,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("l")
           Alignment = Align.Center
@@ -453,7 +459,7 @@
           #MoveScaled(11,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("cl")
           Alignment = Align.Center
@@ -462,7 +468,7 @@
           #MoveScaled(13,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("Hl")
           Alignment = Align.Center
@@ -471,7 +477,7 @@
           #MoveScaled(15,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["-2"]
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("l")
           Alignment = Align.Center
@@ -480,6 +486,7 @@
           #MoveScaled(17,1,2,3)
           Width = "10mm"
           Height = "4mm"
+          Font = Font["Sans Serif,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Text = ("cl")
           Alignment = Align.Center
@@ -488,7 +495,7 @@
           #MoveScaled(19,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Background = ReportBrush["#DFDFDF"]
           Text = ("Hl")
@@ -498,7 +505,7 @@
           #MoveScaled(21,1,2,3)
           Width = "10mm"
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,10"]
           Border = ReportBorder["Right:1pt #000000"]
           Background = ReportBrush["#DFDFDF"]
           Text = ("l")
@@ -507,7 +514,7 @@
         { ReportLabel59 ReportLabel
           #MoveScaled(23,1,2,3)
           Height = "4mm"
-          Font = Font["Bold,-2"]
+          Font = Font["Sans Serif,Bold,10"]
           Expand = True
           Background = ReportBrush["#DFDFDF"]
           Text = ("cl")
@@ -524,6 +531,7 @@
       #MoveScaled(1,1,16,5)
       Width = "57mm"
       Height = "4mm"
+      Font = Font["Sans Serif,10"]
       Border = ReportBorder["Right:1pt #000000"]
     }
     { ReportHBox17 ReportHBox
@@ -535,7 +543,7 @@
         #MoveScaled(1,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -543,7 +551,7 @@
         #MoveScaled(3,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -551,7 +559,7 @@
         #MoveScaled(5,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -559,7 +567,7 @@
         #MoveScaled(7,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -567,7 +575,7 @@
         #MoveScaled(9,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -575,7 +583,7 @@
         #MoveScaled(11,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -583,7 +591,7 @@
         #MoveScaled(13,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -591,7 +599,7 @@
         #MoveScaled(15,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -599,6 +607,7 @@
         #MoveScaled(17,1,2,3)
         Width = "10mm"
         Height = "4mm"
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -606,7 +615,7 @@
         #MoveScaled(19,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,Bold,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -615,7 +624,7 @@
         #MoveScaled(21,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,Bold,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -623,7 +632,7 @@
       { vaeclfp ReportLabel
         #MoveScaled(23,1,2,3)
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,Bold,8"]
         Expand = True
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -638,7 +647,7 @@
         #MoveScaled(1,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -646,7 +655,7 @@
         #MoveScaled(3,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -654,7 +663,7 @@
         #MoveScaled(5,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -662,7 +671,7 @@
         #MoveScaled(7,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -670,7 +679,7 @@
         #MoveScaled(9,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -678,7 +687,7 @@
         #MoveScaled(11,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -686,7 +695,7 @@
         #MoveScaled(13,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -694,7 +703,7 @@
         #MoveScaled(15,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -702,6 +711,7 @@
         #MoveScaled(17,1,2,3)
         Width = "10mm"
         Height = "4mm"
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -709,7 +719,7 @@
         #MoveScaled(19,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -718,7 +728,7 @@
         #MoveScaled(21,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -726,7 +736,7 @@
       { vapclfp ReportLabel
         #MoveScaled(23,1,2,3)
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Expand = True
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -741,7 +751,7 @@
       #MoveScaled(1,1,16,5)
       Width = "57mm"
       Height = "4mm"
-      Font = Font["Bold,-3"]
+      Font = Font["Sans Serif,Bold,9"]
       Border = ReportBorder["Right:1pt #000000"]
       Text = ("TOTAL GENERAL")
     }
@@ -754,7 +764,7 @@
         #MoveScaled(1,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -762,7 +772,7 @@
         #MoveScaled(3,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -770,7 +780,7 @@
         #MoveScaled(5,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -778,7 +788,7 @@
         #MoveScaled(7,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -786,7 +796,7 @@
         #MoveScaled(9,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -794,7 +804,7 @@
         #MoveScaled(11,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -802,7 +812,7 @@
         #MoveScaled(13,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -810,7 +820,7 @@
         #MoveScaled(15,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -818,7 +828,7 @@
         #MoveScaled(17,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -826,7 +836,7 @@
         #MoveScaled(19,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -835,7 +845,7 @@
         #MoveScaled(21,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -843,7 +853,7 @@
       { vaeclfp2 ReportLabel
         #MoveScaled(23,1,2,3)
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Expand = True
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -858,7 +868,7 @@
         #MoveScaled(1,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -866,7 +876,7 @@
         #MoveScaled(3,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -874,7 +884,7 @@
         #MoveScaled(5,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -882,7 +892,7 @@
         #MoveScaled(7,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -890,7 +900,7 @@
         #MoveScaled(9,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -898,7 +908,7 @@
         #MoveScaled(11,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -906,7 +916,7 @@
         #MoveScaled(13,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -914,7 +924,7 @@
         #MoveScaled(15,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -922,7 +932,7 @@
         #MoveScaled(17,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Alignment = Align.Right
       }
@@ -930,7 +940,7 @@
         #MoveScaled(19,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -939,7 +949,7 @@
         #MoveScaled(21,1,2,3)
         Width = "10mm"
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Border = ReportBorder["Right:1pt #000000"]
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -947,7 +957,7 @@
       { vapclfp2 ReportLabel
         #MoveScaled(23,1,2,3)
         Height = "4mm"
-        Font = Font["Bold,-2"]
+        Font = Font["Sans Serif,8"]
         Expand = True
         Background = ReportBrush["#DFDFDF"]
         Alignment = Align.Right
@@ -956,7 +966,7 @@
   }
   { ReportLabel2 ReportLabel
     #MoveScaled(1,62,136,5)
-    Font = Font["Bold,-1"]
+    Font = Font["Sans Serif,Bold,11"]
     Border = ReportBorder["Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
     Background = ReportBrush["#DFDFDF"]
     Text = ("FIN DE L'EDITION DE LA COMPATIBILTÉ MATIERE")
@@ -971,10 +981,10 @@
     Height = "5mm"
     Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
     Background = ReportBrush["#DFDFDF"]
-    ForceNewPage = True
     { datj1 ReportLabel
       #MoveScaled(1,1,23,2)
       Width = "35mm"
+      Font = Font["Sans Serif,11"]
       Border = ReportBorder["Right:1pt #000000"]
     }
     { ReportLabel7 ReportLabel
@@ -984,6 +994,7 @@
     { pg3 ReportLabel
       #MoveScaled(37,1,17,2)
       Width = "35mm"
+      Font = Font["Sans Serif,11"]
       Border = ReportBorder["Left:1pt #000000"]
       Text = ("=\"PAGE \" & Page ")
       Alignment = Align.Center
