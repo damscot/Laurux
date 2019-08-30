@@ -1134,7 +1134,7 @@ End
 
 Private Sub solde(num As String)
   
-  Dim resmvt, rescomp As Result
+  Dim resmvt As Result
   
   resmvt = utils.db.Exec("SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte=&1", num)
   If resmvt.Available Then 
@@ -1142,9 +1142,7 @@ Private Sub solde(num As String)
        Message.Error("Il y a un problème avec le compte : " & num & " calcul du solde impossible")
        Return
     Endif
-    rescomp = utils.db.Edit("Fiches_Comptes", "compte_cc=&1", $vfac.rescli!cli_code)
-    rescomp!solde = Val(Format(resmvt!montantd - resmvt!montantc, "0.00"))
-    rescomp.Update
+    Utils.db.Exec("UPDATE Fiches_Comptes SET solde=&1 WHERE compte_cc=&2", Val(Format(resmvt!montantd - resmvt!montantc, "0.00")), $vfac.rescli!cli_code)
   Endif
   
 End
