@@ -110,6 +110,7 @@ Public Sub _new()
   Else
     Try FileChooser1.Root = Start.LocalSettings["/dbase/Host"]
   Endif
+  Backtrace.Value = Start.LocalSettings["/dbase/backtrace"]
   If Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"] = False Or If IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"]) Then
     Try Maj.Value = Start.LocalSettings["/dbase/Maj"]
     Maj.Enabled = True
@@ -201,6 +202,7 @@ Public Sub Button1_Click()
     Start.LocalSettings["/dbase/Name"] = File.BaseName(FileChooser1.SelectedPath)
   Endif
   Start.LocalSettings["/dbase/Maj"] = Maj.Value
+  Start.LocalSettings["/dbase/backtrace"] = Backtrace.Value
 
   '# -- Partie variant suivant que l'on utilise un tunnel ssh ou pas
   Start.LocalSettings["/dbase/ssh/Con-ssh"] = Bssh.Value
@@ -411,7 +413,7 @@ End
 
 Public Sub Button2_Click()
 
-  Me.close
+  Me.Close
 
 End
 
@@ -439,6 +441,7 @@ Public Sub Form_Close()
      Start.LocalSettings["/dbase/Name"] = File.BaseName(FileChooser1.SelectedPath)
   Endif
   Start.LocalSettings["/dbase/Maj"] = Maj.Value
+  Start.LocalSettings["/dbase/backtrace"] = Backtrace.Value
   If Bssh.value Then
     Start.LocalSettings["/dbase/ssh/Login"] = Loginssh.Text
     Start.LocalSettings["/dbase/ssh/Hostssh"] = Hostssh.Text

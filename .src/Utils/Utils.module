@@ -123,6 +123,8 @@ Public Sub glb()
     db.Host = Start.LocalSettings["/dbase/Host"]
     db.Name = Start.LocalSettings["/dbase/Name"] & ".sqlite"
   Endif
+  
+  db.Backtrace(Start.LocalSettings["/dbase/backtrace"])
 
 End
 

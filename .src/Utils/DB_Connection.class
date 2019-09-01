@@ -16,6 +16,8 @@ Private Filtering As Boolean
 Private Filter_Error As String
 
 Private Filters As Collection
+Private Show_Backtrace As Boolean
+
 
 
 Public Sub _new()
@@ -29,6 +31,7 @@ Public Sub _new()
   host_id = Left$(Trim$(host_name) & "(" & Trim$(host_id) & ")", 50)
   
   Filters = New Collection
+  Show_Backtrace = False
   'On ne loggue pas par default, on clear en cas de logging au boot pour eventuellement effacer fichier de log existant
   'On devrait activer le log automatique soit depuis les prefs
   'soit depuis les arguments de la ligne de commande
@@ -134,6 +137,12 @@ Public Sub Get_Log() As Boolean
   
   Return log.Enabled
   
+End
+
+Public Sub Backtrace(Enable As Boolean)
+
+Show_Backtrace = Enable
+
 End
 
 Public Sub Get_Filter() As String
@@ -418,6 +427,10 @@ Public Sub Exec(Request As String, ...) As Result
     Return Null
   Endif
 
+  Catch
+    If Show_Backtrace Then Message.Error("Erreur de Requete SQL!\nReq: " & Request & "\n" & Error.Text & "\n ---- Backtrace ---- \n" & Error.Backtrace.Join("\n"))
+    Error.Propagate()
+
 End
 
 
@@ -475,6 +488,10 @@ Public Sub Create(Table As String) As Result
     'Message.Error("La connection a la Base de donnée est inexistante, Vérifier vos paramètres d'accès.") 
     Return Null
   Endif
+  
+  Catch
+    Message.Error("Erreur de creation de Base SQL " & Table & "!\n" & Error.Text & "\n ---- Backtrace ---- \n" & Error.Backtrace.Join("\n"))
+    Error.Propagate()
 
 End
 
@@ -519,6 +536,10 @@ Public Sub Edit(Table As String, Request As String, ...) As Result
     'Message.Error("La connection a la Base de donnée est inexistante, Vérifier vos paramètres d'accès.") 
     Return Null
   Endif
+  
+  Catch
+    Message.Error("Erreur d'edition de Base SQL " & Table & "!\nReq: " & Request & "\n" & Error.Text & "\n ---- Backtrace ---- \n" & Error.Backtrace.Join("\n"))
+    Error.Propagate()
 
 End
 
