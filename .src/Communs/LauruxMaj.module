@@ -5181,11 +5181,12 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_ddate2 datetime)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_cdate datetime)") 'date de creation de l'article
   Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY art_photo TEXT")
-  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_export TINYINT) DEFAULT 0") 'flag d'export article
-  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredu TINYINT) DEFAULT 0") 'flag pour edition de bon de réduction et sa probabilité d'apparition
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (export TINYINT DEFAULT 0)") 'flag d'export article
+  Try Utils.db.Exec("ALTER TABLE Fiches_Fam ADD (export TINYINT DEFAULT 0)") 'flag d'export global par famille
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredu TINYINT DEFAULT 0)") 'flag pour edition de bon de réduction et sa probabilité d'apparition
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredudate DATE)") 'flag de validité du bon de réduction
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_breducond TEXT)") 'condition d'application du bon de réduction
-  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredumnt decimal(15,2)) DEFAULT 0.00") 'montant nécessaire pour que le bon apparaisse
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (art_bredumnt decimal(15,2) DEFAULT 0.00)") 'montant nécessaire pour que le bon apparaisse
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
   If rResult.Available Then
     PB = New ProgBar("Conversion des dates des articles", rResult.Count)
@@ -5233,12 +5234,10 @@ end_utf8:
   PB = New ProgBar("Conversion des dates facture", 4)
   PB.Show()
   PB.Avancement("Table Factures", 1)
-  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac change dtligbl_ligfac dtligbl_ligfac datetime")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac MODIFY typel_ligfac char(2)")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac ADD dtligbl_ligfac datetime")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac ADD numbl_ligfac char(6)")
   PB.Avancement("Table Factures Matériels", 1)
-  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM change dtligbl_ligfac dtligbl_ligfac datetime")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM MODIFY typel_ligfac char(2)")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM ADD dtligbl_ligfac datetime")
   Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM ADD numbl_ligfac char(6)")
@@ -5378,8 +5377,8 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (virembonus Char(8))")
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (virembachat Char(8))")
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (viremtresto Char(8))")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (viremcad Char(8))")
   Try Utils.db.Exec("ALTER TABLE Fiches_Parametres drop version_pos")
-
   Try utils.db.exec("ALTER TABLE Fiches_Parametres ADD ecart decimal(6,2) DEFAULT 0.00")
   'rajout du journal d'od
   Try utils.db.exec("ALTER TABLE Fiches_Parametres ADD jrnod char(2)")

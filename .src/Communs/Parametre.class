@@ -36,7 +36,7 @@ Public Sub _New()
   chn = New Chainage([datec, date1, date2, date3, date4, date5, datepc, Datetdec, datefedec, regulplus, regulmoins, Ecart, Jod, Jreport, Resultplus, Resultmoins, devise, dnclient, dnfournisseur, dnbon, dnfac, coretro, jrnal, jrnal2, Viremc, Viremchq, Virema, jrnal3, mc, mc2, jrnal4, jrnal5, dnart, version])
   chn = New Chainage([frais, cptfrais, tvafrais])
   chn = New Chainage([conscli, consfou, nvign, css, tvass, ident, caution, arretdr])
-  chn = New Chainage([CuTicket, DnTicket, Virembonus, Virembachat, Viremtresto])
+  chn = New Chainage([CuTicket, DnTicket, Virembonus, Virembachat, Viremtresto, Viremcad])
   
   Utils.Observers(Me)
   Me.Center
@@ -63,6 +63,7 @@ Public Sub _New()
   Virembonus.reg = regulplus.reg
   Virembachat.reg = regulplus.reg
   Viremtresto.reg = regulplus.reg
+  Viremcad.reg = regulplus.reg
   cptfrais.reg = regulplus.reg
   consfou.reg = regulplus.reg
   conscli.reg = regulplus.reg
@@ -136,6 +137,7 @@ Public Sub Form_Open()
     Try Virembonus.Text = rResult!virembonus
     Try Virembachat.Text = rResult!virembachat
     Try Viremtresto.Text = rResult!viremtresto
+    Try Viremcad.Text = rResult!viremcad
     Try NfacM.value = rResult!nfac
     Try Version.Text = rResult!version
     Try Frais.Value = rResult!frais
@@ -505,6 +507,7 @@ Public Sub Button2_Click()
     If IsNull(Virembonus.Text) Then b = 1
     If IsNull(Virembachat.Text) Then b = 1
     If IsNull(Viremtresto.Text) Then b = 1
+    If IsNull(Viremcad.Text) Then b = 1
   Endif
   If IsNull(jrnal5.Text) Then b = 1
   If $soption = "B" Or $soption = "T" Then
@@ -517,7 +520,7 @@ Public Sub Button2_Click()
   With utils
     If b <> 1 Then
       Utils.db.Exec("UPdate  " & Tab & "  SET  dteclec = &1, dteclec1 = &2, dteclec2 =&3,  dteclec3 =&4, dteclec4 =&5, dteclec5 =&6,  dtepc =&7, dtetdec =&8, dtefedec =&9, cptrplus =&{10}, cptrmoins =&{11}, jdr =&{12}, cptrsplus =&{13}, cptrsmoins =&{14},dnc = &{15}, dnf = &{16}, dnbon = &{17}, dnfac = &{18}, coretro = &{19}, jrnal = &{20}, jrnal2 = &{21}, jrnal3 = &{22}, devise = &{23}, dtepp = &{24}, dtepec = &{25}, viremc = &{26}, viremchq = &{27}, virema = &{28}, jrnal4 = &{29}, jrnal5 = &{30}, nfac = &{31}, version = &{32}, dnart = &{33}", datec.dte.G, date1.dte.G, date2.dte.G, date3.dte.G, date4.dte.G, date5.dte.G, datepc.dte.G, datetdec.dte.G, datefedec.dte.G, regulplus.Text, regulmoins.Text, Jreport.Text, Resultplus.Text, Resultmoins.Text, dnclient.Text, dnfournisseur.Text, dnbon.Text, dnfac.Text, coretro.Text, jrnal.Text, jrnal2.Text, jrnal3.Text, devise.text, mc.Text, mc2.Text, Viremc.Text, Viremchq.Text, Virema.Text, jrnal4.Text, jrnal5.Text, NfacM.value, Version.text, Left(Dnart.text, 15))
-      Utils.db.Exec("UPdate  " & Tab & "  SET  frais = &1, cptfrais = &2, tvafrais = &3, cutk = &4, dntk = &5, jrnod = &6, ecart = &7, virembonus = &8, virembachat = &9, viremtresto = &{10}", frais.Value, cptfrais.Text, tvafrais.Text, CuTicket.Text, DnTicket.Text, Jod.Text, Ecart.Value, Virembonus.Text, Virembachat.Text, Viremtresto.Text)
+      Utils.db.Exec("UPdate  " & Tab & "  SET  frais = &1, cptfrais = &2, tvafrais = &3, cutk = &4, dntk = &5, jrnod = &6, ecart = &7, virembonus = &8, virembachat = &9, viremtresto = &{10}, viremcad = &{11}", frais.Value, cptfrais.Text, tvafrais.Text, CuTicket.Text, DnTicket.Text, Jod.Text, Ecart.Value, Virembonus.Text, Virembachat.Text, Viremtresto.Text, Viremcad.Text)
       If $soption = "B" Or $soption = "T" Then
          Utils.db.Exec("UPdate  " & Tab & "  SET conscli = &1, consfou = &2, nvign = &3, css = &4, tvass = &5,arrete=&6", conscli.Text, consfou.Text, nvign.Text, css.Text, tvass.Text, arretdr.Text) 
          utils.db.Exec("UPdate Fiches_Societes SET ident=&1, caution=&2", ident.Text, caution.Text)

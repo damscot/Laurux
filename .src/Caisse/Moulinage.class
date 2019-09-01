@@ -39,6 +39,7 @@ Private Vibonus As String
 Private Vibachat As String
 Private Vitresto As String
 Private Viautre As String
+Private Vicadeau As String
 Private jnal As String
 Private jnal3 As String
 Private RegroupBL As Facturergbl
@@ -69,7 +70,7 @@ Public Sub Button1_Click()
   Dim rResult As Result
   Dim chemin As String = "/Sauve"
 
-  If Jnal = "" Or If Vic = "" Or If Vichq = "" Or If Vibonus = "" Or If Vibachat = "" Or If Vitresto = "" Or If Viautre = "" Then
+  If Jnal = "" Or If Vic = "" Or If Vichq = "" Or If Vibonus = "" Or If Vibachat = "" Or If Vitresto = "" Or If Viautre = "" Or If Vicadeau = "" Then
     If start.son Then Music.Play
     Message.Error("Vous devez completer, dans les parametres, les données relatives au journal de caisse \net aux comptes de virements internes avant de faire le moulinage !")
   Else
@@ -2195,6 +2196,7 @@ Public Sub Parametres()
     Vibachat = rJnl!virembachat
     Vitresto = rJnl!viremtresto
     Viautre = rJnl!virema
+    Vicadeau = rJnl!viremcad
   Endif
   rcli = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCliCaisse") & "")
   If rcli.Available Then
@@ -2619,6 +2621,28 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
       Endif
     Until hResult.MoveNext()
   Endif
+  
+' On fait le total des cheques cadeaux
+  MtTot = 0
+  hResult = Utils.db.Exec("SELECT * FROM Fiches_LigTicketz left join Fiches_EntTicketz on Fiches_LigTicketz.numero = Fiches_EntTicketz.numero where Fiches_LigTicketz.type = &1 and Fiches_EntTicketz.statut = &2", "Y", "V")
+  If hResult.Available Then
+    Repeat
+      If LDate(hResult!date).GnT = DateChooser1.Value Then
+        Cptcli = hresult!client
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", hResult!client)
+        Nom = rresult!intitule_cc
+        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where compte = &1 and type = &2", Client, "Y")
+        SldTot = SldTot - Val(utils.cpoint(hResult!montant))
+        If rresult.Available Then
+          MtTot = Val(Utils.cpoint(rResult!montant)) + Val(utils.cpoint(hResult!montant))
+          Utils.db.Exec("UPDATE " & Tab & " set montant = &3, intitule = &4 Where compte = &1 and type = &2", Client, "Y", MtTot, nom)
+        Else
+          Utils.db.Exec("INSERT INTO " & Tab & "(compte, type, montant, intitule) VALUES (&1, &2, &3, &4)", Client, "Y", Val(Utils.cpoint(hResult!montant)), nom)
+        Endif
+        Csolde.Solde_caisse(Client)
+      Endif
+    Until hResult.MoveNext()
+  Endif
 
 
   ' On génère l'écriture de trésorerie pour les especes
@@ -2770,6 +2794,27 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
       Endif
       Csolde.Solde_caisse(Client)
       Csolde.Solde_caisse(Viautre)
+      Maj_Collectif(cptcli, hResult!intitule, libel, hResult!montant)
+    Until hresult.MoveNext()
+  Endif
+  
+  ' On génère l'écriture de trésorerie pour les cheques cadeaux
+  hResult = Utils.db.Exec("SELECT * FROM " & Tab & " where type = &1", "Y")
+  If hresult.Available Then
+    Cptcli = hResult!compte
+    Libel = "Cheque cadeaux caisse " & Datem
+    Repeat
+      If Val(Utils.cpoint(hResult!montant)) > 0 Then
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Vicadeau, "Virements internes cheques cadeaux", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Else
+        Mtd = hResult!montant
+        Mtd = Abs(Mtd)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, hResult!intitule, Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, 0, hResult!montant, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Vicadeau, "Virements internes cheques cadeaux", Utils.Cdate_Dbase(Datem), Nfac, Nfac, Libel, hResult!montant, 0, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+      Endif
+      Csolde.Solde_caisse(Client)
+      Csolde.Solde_caisse(Vicadeau)
       Maj_Collectif(cptcli, hResult!intitule, libel, hResult!montant)
     Until hresult.MoveNext()
   Endif

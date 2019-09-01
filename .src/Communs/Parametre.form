@@ -681,6 +681,11 @@
       ToolTip = ("Ce compte doit exister dans la table des comptes.\nLes règlements autres que espèces, cartes ou chèques seront ventilés dans ce compte.")
       Alignment = Align.Center
     }
+    { Label51 Label
+      MoveScaled(1,17,31,3)
+      Font = Font["Serif,-1"]
+      Text = ("Virement interne cheque entr./resto")
+    }
     { Viremtresto TextReg cpts
       Name = "Viremtresto"
       MoveScaled(38,17,12.125,3)
@@ -690,10 +695,19 @@
       ToolTip = ("Ce compte doit exister dans la table des comptes.\nLes règlements autres que espèces, cartes ou chèques seront ventilés dans ce compte.")
       Alignment = Align.Center
     }
-    { Label51 Label
-      MoveScaled(1,17,31,3)
+    { Label52 Label
+      MoveScaled(1,20,31,3)
       Font = Font["Serif,-1"]
-      Text = ("Virement interne cheque entr./resto")
+      Text = ("Virement interne cheque cadeau")
+    }
+    { Viremcad TextReg cpts
+      Name = "Viremcad"
+      MoveScaled(38,20,12.125,3)
+      Font = Font["Serif,-1"]
+      Background = Color.TextBackground
+      Tag = "24"
+      ToolTip = ("Ce compte doit exister dans la table des comptes.\nLes règlements autres que espèces, cartes ou chèques seront ventilés dans ce compte.")
+      Alignment = Align.Center
     }
     Index = 0
   }

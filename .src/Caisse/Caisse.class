@@ -3465,7 +3465,7 @@ Public Sub Valid_Bavoir()
       Zone = "Bavoir"
     Else
       If Val(Bavoir.Text) > 0 Then
-        Bavoir.Text = Format$(Val(Bavoir.Text), "0.00")
+        Bavoir.Text = Format$(Val(Utils.cpoint(Bavoir.Text)), "0.00")
         mavoir = Val(Bavoir.Text)
       
         rResult = Utils.db.Exec("Select * FROM  " & Cbase.Table("TabAvoirs") & " WHERE lind = &1", lindavoir)
@@ -3550,9 +3550,11 @@ Public Sub Button27_Click()
     Frame4.Visible = False
     'Panel12.visible = False
     ichequecad = 0
+    Frame4.Text = "Nom du client"
     Inpm.SetFocus
   Else
     Frame4.visible = True
+    Frame4.Text = "Numéro de Cheque"
     ichequecad = 1
     If icartef = 1 Then Nmc2.Text = Label1.Text
     Nmc2.SetFocus
@@ -3608,28 +3610,27 @@ Public Sub Valid_Chequecad()
       Zone = "Chequecad"
     Else
       If Val(Chequecad.Text) <> 0 Then
-        Chequecad.Text = Format$(Val(Chequecad.Text), "0.00")
+        Chequecad.Text = Format$(Val(Utils.cpoint(Chequecad.Text)), "0.00")
         Calc_reste(Chequecad.text)
-        Try ColumnView1.Add("Y", "Y")
+        Try ColumnView1.Add("Y" & snmchequecad, "Y")
         If Not Error Then
           ColumnView1.Item[0] = "Y"
           ColumnView1.Item[1] = "Cheque cadeau " & snmchequecad
           ColumnView1.Item[2] = Chequecad.Text
+          ColumnView1.Item[3] = snmchequecad
         Else
           ColumnView1.MoveFirst()
           Repeat
-            If ColumnView1.Item[0] = "Y" Then
-              If Val(Utils.cpoint(Chequecad.Text)) < 0 Then
-                Chequecad.Text = Abs(Val(Utils.cpoint(Chequecad.Text)))
-                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) - Val(Utils.cpoint(Chequecad.Text)), "0.00")
-              Else
-                ColumnView1.Item[2] = Format$(Val(Utils.cpoint(ColumnView1.Item[2])) + Val(Utils.cpoint(Chequecad.Text)), "0.00")
-              Endif
+            If ColumnView1.Item[0] = "Y" And ColumnView1.Item[3] = snmchequecad Then
+              Calc_reste("-" & ColumnView1.Item[2])
+              ColumnView1.Item[2] = Format$(Val(Utils.cpoint(Chequecad.Text)), "0.00")
+              Break
             Endif
           Until ColumnView1.MoveNext()
         Endif
         Chequecad.Clear
         Chequecad.Visible = False
+        Frame4.Text = "Nom du client"
         Valid_Reste()
         If Val(Utils.cpoint(Rticket.Text)) <= 0 Then
           If Val(Utils.cpoint(Rticket.Text)) < 0 Then
