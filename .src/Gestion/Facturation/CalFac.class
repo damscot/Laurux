@@ -293,14 +293,10 @@ Private Sub calc(numlig As String)
   ligneart.type = vfac.reslig!typel_ligbl
   ligneart.stk = mult(resart!art_qte, 1, resart!art_dec)
   If vfac.remise And vfac.choix = "B" Then                      'si ignore_remise on recalcul avec la fiche article
-    ligneart.puht = resart!art_pvht
+    ligneart.puht = utils.arrondi(resart!art_pvht, resart!art_nbd)
     ligneart.brht = mult(ligneart.puht, ligneart.qte, "2")
-    If Trim(ligneart.rem) Then
-      tot = Val(Utils.cpoint(ligneart.brht)) - ((Val(Utils.cpoint(ligneart.rem)) / 100) * Val(Utils.cpoint(ligneart.brht)))
-      ligneart.neht = Utils.CDec(Str(tot), "2")
-     Else
-      ligneart.neht = ligneart.brht
-    Endif
+    ligneart.rem = ""
+    ligneart.neht = ligneart.brht
   Else
     ligneart.puht = vfac.reslig!pu_ligbl
     ligneart.brht = vfac.reslig!brut_ligbl

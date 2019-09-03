@@ -118,6 +118,7 @@ Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As
   $vfac.tab = fichier
   If $vfac.sms And $vfac.choix <> "FM" Then sms.Visible = True Else sms.Visible = False
   If $vfac.choix = "FM" Then visu.Visible = False
+  Me.Height -= (Preg.Height + padliv.Height)
   
 End
 
@@ -886,7 +887,7 @@ Private Function verifdate() As Boolean
           res.MoveFirst
           Repeat
             If Utils.valart(Null, "", res!num) Then
-               Message.Warning("Période CM déjà clôturée sur le BL : " & res!num & " " & $vfac.adrfac.nom & "\n Veuillez changer la date des mouvements")
+               Message.Warning("Période CM déjà clôturée sur le BL : ") '& res!num & " " & $vfac.adrfac.nom & "\n Veuillez changer la date des mouvements")
               Dtef.SetFocus
               Dtef.Select
               Return True
@@ -961,6 +962,7 @@ End
 Private Sub Dupli2()
 
   Dim chemin, ty As String 
+  Dim res As Result
   
   $vfac.imp.NumCopies = 1
   $vfac.imp.OutputFile = User.Home & "/tmp/Facture.pdf"
@@ -982,7 +984,8 @@ Private Sub Dupli2()
     $vfac.imp.OutputFile = chemin & "/" & ty & ".pdf"
     $vfac.imp.NumCopies = 1
     $edit.Print($vfac.imp)
-    Try Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $vfac.numcli, chemin & "/" & ty & ".pdf", $vfac.numcli & "," & ty & ",", "Facs")
+    res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $vfac.numcli, chemin & "/" & ty & ".pdf")
+    If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $vfac.numcli, chemin & "/" & ty & ".pdf", $vfac.numcli & "," & ty & ",", "Facs")
     If $vfac.choix = "F" Or $vfac.choix = "FM" Then copie.Dupli2CPT($vfac.numeroecr, chemin, $vfac.numcli, ty)
 
 End

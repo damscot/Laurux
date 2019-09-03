@@ -1895,10 +1895,7 @@ End
 '*****************************************************
 Public Sub Colbl_Click()
 
-  Dim clq As Boolean = False
-  
-  Try clq = Mouse.Right
-  If clq Then
+  If Mouse.Right Then 
     ColblSelection(True)
   Else
     ColblSelection(False)
@@ -9523,7 +9520,7 @@ Public Sub Bl_Edit()
     otpf = New OptFac(Tp, code.Text, num.Text, Me.Parent, Tottc1.Text, False, LDate(datej.Text), m, courriel.Text)
   Endif
   otpf.ShowModal
-  Colbl_Click
+  ColblSelection(False)
   
 End
 

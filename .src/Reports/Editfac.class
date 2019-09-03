@@ -7,7 +7,7 @@ Private $c2 As Integer
 
 Public lgint As Integer = 44
 
-Const coef As Float = 1.595
+Const coef As Float = 0.538
 
 Public Sub _new(vfac As VarFac, cal As CalFac)
 
@@ -41,7 +41,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
       res = Utils.db.Exec("SELECT * FROM Fiches_Societes WHERE cd_sc=&1", Start.Societe)
       If res.Available Then
         Me.ReportImage1.Width = "0mm"
-        If res!type_sc Then Me.rs.Text = res!type_sc & " " & res!int_sc Else Me.rs.Height = "0mm"
+        If res!type_sc Or res!int_sc Then Me.rs.Text = res!type_sc & " " & res!int_sc Else Me.rs.Height = "0mm"
         If res!adr1_sc Then Me.adr11.Text = res!adr1_sc Else Me.adr11.Height = "0mm"
         If res!adr2_sc Then Me.adr22.Text = res!adr2_sc Else Me.adr22.Height = "0mm"
         If res!cp_sc Or res!burdis_sc Then Me.ville.Text = res!cp_sc & "  " & res!burdis_sc Else Me.ville.Height = "0mm"
@@ -70,7 +70,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.logo.Image = Image.Load(Start.LocalSettings["/Soc" & Start.Societe & "/Logo"])
   Endif
   'adresse client
-  Me.nom.Text = vfac.adrfac.nom
+  Me.nom.Text = Left(vfac.adrfac.nom, 35)
   Me.adr1.Text = vfac.adrfac.adr1
   Me.adr2.Text = vfac.adrfac.adr2
   Me.ville1.Text = vfac.adrfac.cp & " " & vfac.adrfac.ville
@@ -433,7 +433,11 @@ Public Sub intitule_Data(Index As Integer)
   ky = Format(index + 1, "0000")
   If Not $cal.ligne.Exist(ky) Then Return
   lg = $cal.ligne[ky]
-  Me.intitule.Data = Left(lg.libel, longueur())
+  If lg.type <> "TD" Then
+    Me.intitule.Data = Left(lg.libel, longueur())
+  Else
+    Me.intitule.Data = lg.libel
+  Endif
 
 End
 
@@ -552,7 +556,7 @@ Public Function longueur() As Integer
 
   Dim nbchar As Integer
   
-  nbchar = Fix(lgint / coef)
+  nbchar = Fix(lgint * coef)
   Return nbchar
 
 End
