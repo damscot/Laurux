@@ -158,6 +158,13 @@ Public Sub _New()
     Sage.Visible = True
   Endif
 
+  Mreg.Add("  ")
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
+  If rResult.Available Then
+    Repeat
+      Mreg.Add(rResult!code & " " & rResult!libel)
+    Until rResult.MoveNext()
+  Endif
   $grdv = New Gridvi(Tabstrip1, "C")
   $grdv.razcol
   $grdv.dec = "0.000"
@@ -361,6 +368,7 @@ Public Sub Maj_Zones()
 
   Dim rcli As Result
   Dim $Mail As String
+  Dim i As Integer
 
   Randomize
   button2.text = "&Creer"
@@ -423,7 +431,14 @@ Public Sub Maj_Zones()
     Cdech.Text = rcli!cli_cdech
     If Not Cdech.Text Then Cdech.Text = "00"
     Typec.Text = rcli!cli_typec
-    Mreg.Text = rcli!cli_reg
+    Mreg.Text = " "
+    For i = 1 To Mreg.Count - 1
+      If Left(Mreg[i].Text, 2) = rcli!cli_reg
+        Mreg.Text = Mreg[i].Text
+        Break
+      Endif
+    Next
+    
     Recup_Typec(Typec.Text)
     Try Copie.Value = rcli!cli_copie
     Try Nbexpl.Text = rcli!cli_expl

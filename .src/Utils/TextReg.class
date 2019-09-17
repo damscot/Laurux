@@ -63,7 +63,7 @@ Public Sub butb_keypress()
       Me.Editor.Text = $textesc
     
     Case Key.F2
-      If $date And Me.Enabled Or Not Me.ReadOnly Then
+      If $date And (Me.Enabled Or Not Me.ReadOnly) Then
         Me.Editor.Text = LDateC.Select(dte).L
         $text = Me.Editor.Text
       Endif
@@ -146,6 +146,7 @@ Public Sub dte_change(dt As LDate)
   If $date Then Me.Editor.Text = dt.L
 
 End
+
 Private Function frm() As String
   
   Dim i As Integer

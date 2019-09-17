@@ -1,0 +1,348 @@
+' Gambas class file
+
+Private bs As Barselection
+Private $ressel As Result
+Private $res As Result
+
+Public Sub _new()
+
+  Dim ch As Chainage
+'  Utils.Observers(Me)
+  bs = New Barselection("111111111", menu) As "bar1"
+  ch = New Chainage([code, libel, jour, cptint])
+  code.MaxLenght = 2
+  libel.MaxLenght = 20
+  jour.MaxLenght = 2
+  cptint.reg = "[0-9]*"
+  cptint.MaxLenght = 8
+  code.SetFocus
+  $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
+  If $ressel.Available Then
+    affiche()
+  Endif
+  
+End
+
+Private Sub mab()
+  
+  code.Clear
+  libel.Clear
+  jour.Clear
+  cptint.Clear
+  non.Value = True
+  libjo.text = ""
+  libcpt.Text = ""
+  
+End
+
+Private Sub affiche()
+  
+  Dim res As Result
+  
+  If Not Object.IsValid($ressel) Then Return
+  If Not $ressel.Available Then Return
+  code.Text = $ressel!code
+  libel.Text = $ressel!libel
+  jour.Text = $ressel!journal
+  cptint.Text = $ressel!cptint
+  
+  Select Case $ressel!type
+    Case "N"
+      non.Value = True
+    Case "I"
+      interne.Value = True
+    Case "J"
+      journal.Value = True
+      Case "B"
+        borderau.Value = True
+      Case "L"
+        lcr.Value = True
+      Case "A"
+        lcra.Value = True
+      
+  End Select
+  res = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", jour.Text)
+  If res.Available Then libjo.Text = res!libelle_jo Else libjo.Text = ""
+  res = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", cptint.Text)
+  If res.Available Then cptint.Text = res!intitule_cc Else cptint.Text = ""
+  
+End
+
+Public Sub code_LostFocus()
+
+  Dim res As Result
+  
+  If code.Text Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", code.Text)
+    If res.Available And bs.estcreer Then
+      Message.Error("Création impossible\nCode existant")
+      code.SetFocus
+    Endif
+  Endif
+
+End
+'riado button
+Public Sub interne_Click()
+
+  If interne.Value Then
+    pcint.Enabled = True
+    cptint.SetFocus
+  Else
+    pcint.Enabled = False
+  Endif
+
+End
+
+Public Sub rdb_click()
+
+  pcint.Enabled = False
+
+End
+'gestion des boutons de selection
+Public Sub bar1_precedent()
+  
+  If Not Object.IsValid($ressel) Then Return
+  If $ressel.MovePrevious() Then $ressel.MoveFirst
+  affiche
+  
+End
+
+Public Sub bar1_suivant()
+  
+  If Not Object.IsValid($ressel) Then Return
+  If $ressel.MoveNext() Then $ressel.MoveLast
+  affiche
+  
+End
+
+Public Sub bar1_dernier()
+  
+  If Not Object.IsValid($ressel) Then Return
+  $ressel.MoveLast()
+  affiche
+  
+End
+
+Public Sub bar1_premier()
+  
+  If Not Object.IsValid($ressel) Then Return
+  $ressel.MoveFirst()
+  affiche
+  
+End
+
+Public Sub bar1_creer()
+  
+  mab
+  Utils.db.Begin
+  $res = Utils.db.Create("Fiches_Reglements")
+  code.Enabled = True
+  code.SetFocus
+  
+End
+
+Public Sub bar1_modif()
+  
+  Utils.db.Begin
+  $res = Utils.db.Edit("Fiches_Reglements", "code=&1", $ressel!code)
+  
+End
+
+Public Sub bar1_annule(creer As Boolean, anul As Boolean)
+  
+  Utils.db.Rollback
+  code.Enabled = False
+  affiche
+  
+End
+
+Public Sub bar1_valide(creer As Boolean, anul As Boolean)
+  
+  Dim i As Integer
+  
+  i = $ressel.Index
+  If Not code.Text Then
+    Message.Error("Code obligatoire")
+    Utils.db.Rollback
+    code.SetFocus
+    Return
+  Endif
+  If non.Value Then $res!type = "N"
+  If interne.Value Then
+    If Not cptint.Text Then
+      Message.Error("compte interne obligatoire")
+      Utils.db.Rollback
+      cptint.SetFocus
+      Return
+    Else
+      $res!type = "I"
+      $res!cptint = cptint.Text
+    Endif
+  Endif
+  If borderau.Value Then $res!type = "B"
+  If journal.Value Then $res!type = "J"
+  If interne.Value Or borderau.Value Or journal.Value And Not jour.Text Then
+    Message.Error("N° de journal obligatoire")
+    jour.SetFocus
+    Utils.db.Rollback
+    Return
+  Endif
+  If lcr.Value Then $res!type = "L"
+  If lcra.Value Then $res!type = "A"
+  $res!code = code.Text
+  $res!libel = libel.Text
+  Result!journal = jour.Text
+  
+  $res.Update
+  Utils.db.Commit
+  $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
+  $ressel.MoveTo(i)
+  affiche
+  
+End
+
+Public Sub bar1_suprimer()
+
+  Utils.db.Delete("Fiches_Reglements", "code=&1", $ressel!code)
+  $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
+  affiche
+
+End
+
+Public Sub bar1_quitter()
+
+  Me.Close
+
+End
+'lostfocus
+Public Sub jour_LostFocus()
+
+  Dim res As Result
+  
+  If jour.Text Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", jour.Text)
+    If res.Available Then 
+      libjo.Text = res!libelle_jo
+    Else
+      Message.Error("journal innexistant")
+      jour.SetFocus
+    Endif
+  Else
+    libjo.Text = ""
+  Endif
+
+End
+
+Public Sub cptint_LostFocus()
+
+  Dim res As Result
+  
+  If cptint.Text Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", cptint.Text)
+    If res.Available Then 
+     libcpt.Text = res!intitule_cc
+    Else 
+      Message.Error("Compte innexistant")
+      cptint.SetFocus
+    Endif
+  Else
+    libcpt.Text = ""
+  Endif
+  
+End
+'recherche
+
+Public Sub Butint_Click()
+
+  Dim MyForm As TriComptes
+  Dim tri As String
+
+  Tri = "cast(compte_cc AS char)"
+  MyForm = New TriComptes(Tri, "B", "", "")
+  MyForm.Showmodal()
+  If Comptabilite.Bsel = True Then
+    cptint.Text = Comptabilite.sCmpt
+    libcpt.Text = Comptabilite.sDesg
+  Else
+    libcpt.Text = ""
+  Endif
+  cptint.SetFocus
+
+End
+
+Public Sub bar1_recherche()
+  
+  Dim i As Integer
+  
+  If Not Object.IsValid($ressel) Then Return
+  If Not $ressel.Available Then Return
+  If recherche.Tag Then
+    If recherche.Tag <> 1 Then Return
+    recherche.Tag = ""
+    recherche.Clear
+    recherche.Visible = False
+  Else
+    recherche.Tag = 1
+    recherche.Visible = True
+    recherche.Raise
+    i = $ressel.Index
+    $ressel.MoveFirst
+    Repeat
+      recherche.Add($ressel!code, $ressel!libel)
+    Until $ressel.MoveNext()
+  Endif
+  $ressel.MoveTo(i)
+End
+
+Public Sub butjour_Click()
+
+  Dim res As Result
+  
+  If Not Object.IsValid($ressel) Then Return
+  If Not $ressel.Available Then Return
+  If recherche.Tag Then
+    If recherche.Tag <> 2 Then Return
+    recherche.Tag = ""
+    recherche.Clear
+    recherche.Visible = False
+  Else
+    recherche.Tag = 2
+    recherche.Visible = True
+    recherche.Raise
+    res = Utils.db.Exec("SELECT * FROM Fiches_Journaux")
+    res.MoveFirst
+    Repeat
+      recherche.Add(res!code_jo, res!code_jo & " " & res!libelle_jo)
+    Until res.MoveNext()
+  Endif
+
+End
+'gestion listeview
+Public Sub recherche_Activate()
+
+  Select Case Last.Tag
+    Case 1
+      $ressel.MoveFirst()
+      While recherche.Current.Key <> $ressel!code 
+        $ressel.MoveNext()
+      Wend
+      affiche
+    Case 2
+      jour.Text = recherche.Current.Key
+      libjo.Text = recherche.Current.Text
+  End Select
+  recherche.Tag = ""
+  recherche.Clear
+  recherche.Visible = False
+ 
+End
+
+Public Sub recherche_KeyPress()
+
+  If Key.Code = Key.Esc Then
+    recherche.Tag = ""
+    recherche.Clear
+    recherche.Visible = False
+  Endif
+
+End

@@ -108,6 +108,13 @@ Public Sub _new(choix As String, num As String, nfac As String, Optional mttc As
       
   End Select
   
+  regmt.Add(" ")
+  res = utils.db.Exec("SELECT * FROM Fiches_Reglements")
+  If res.Available Then
+    Repeat
+      regmt.Add(res!code & " " & res!libel)
+    Until res.MoveNext()
+  Endif
   $option = utils.Option()
   $vfac.numcli = num
   If $vfac.choix = "A" Then
@@ -313,7 +320,15 @@ End
 
 Public Sub var_modreg(value As String)
 
-  Regmt.Text = value
+  Dim i As Integer
+  
+  Regmt.Text = " "
+  For i = 1 To Regmt.Count - 1
+    If value = Left(regmt[i].Text, 2) Then
+      regmt.Text = regmt[i].Text
+      Break
+    Endif
+  Next
 
 End
 
@@ -605,7 +620,7 @@ Public Sub mail_Click()
     Case Else
    If Not $courriel Then
      Message.Error("Le mail n'est pas renseigné")
-     Me.Close
+'     Me.Close
    Endif
   Tmail = Split($courriel, "|")
   Try sCourriel = Replace$(Tmail[1], " ", "")

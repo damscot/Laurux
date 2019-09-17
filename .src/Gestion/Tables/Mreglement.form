@@ -1,0 +1,94 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,64)
+  Text = ("Saisie automatique des réglements")
+  Resizable = False
+  Spacing = True
+  Margin = True
+  { recherche ColumnView
+    MoveScaled(30,10,32,44)
+    Visible = False
+  }
+  { Label1 Label
+    MoveScaled(3,6,7,3)
+    Text = ("Code :")
+  }
+  { code TextReg
+    MoveScaled(12,6,7,3)
+    Enabled = False
+  }
+  { libel TextReg
+    MoveScaled(26,6,31,3)
+  }
+  { menu Panel
+    MoveScaled(1,54,61,7)
+    Arrangement = Arrange.Horizontal
+  }
+  { Panel1 Panel
+    MoveScaled(2,12,60,39)
+    Border = Border.Plain
+    { Label2 Label
+      MoveScaled(3,2,10,3)
+      Text = ("Journal :")
+    }
+    { jour TextReg
+      MoveScaled(14,2,7,3)
+    }
+    { butjour Button
+      MoveScaled(22,1,4,5)
+      Picture = Picture["Icones/next_frame.png"]
+    }
+    { libjo Label
+      MoveScaled(28,2,27,3)
+    }
+    { Panel2 Frame
+      MoveScaled(1,6,55,31)
+      Text = ("Sélection ")
+      { interne RadioButton
+        MoveScaled(1,8,22,3)
+        Text = ("Par compte interne ")
+      }
+      { borderau RadioButton rdb
+        Name = "borderau"
+        MoveScaled(1,16,20,3)
+        Text = ("Par borderaux")
+      }
+      { journal RadioButton rdb
+        Name = "journal"
+        MoveScaled(1,20,14,3)
+        Text = ("Par journal")
+      }
+      { lcr RadioButton rdb
+        Name = "lcr"
+        MoveScaled(1,24,13,3)
+        Text = ("LCR")
+      }
+      { lcra RadioButton rdb
+        Name = "lcra"
+        MoveScaled(1,28,22,3)
+        Text = ("LCR à l'acceptation")
+      }
+      { pcint Panel
+        MoveScaled(6,11,46,4)
+        Enabled = False
+        { cptint TextReg
+          MoveScaled(0,0,16,3)
+        }
+        { Butint Button
+          MoveScaled(17,0,4,4)
+          Picture = Picture["Icones/next_frame.png"]
+        }
+        { libcpt Label
+          MoveScaled(23,0,22,3)
+        }
+      }
+      { non RadioButton rdb
+        Name = "non"
+        MoveScaled(1,4,27,3)
+        Text = ("Ne pas comptabiliser")
+        Value = True
+      }
+    }
+  }
+}
