@@ -241,7 +241,7 @@ Public Sub button4_Click()
   Else
     respar = Utils.db.Exec("SELECT dtepec FROM Fiches_Parametres")
     dte = Date(Right(respar!dtepec, 4), Val(Left(respar!dtepec, 2)), 1)
-'    dte = DateAdd(dte, gb.Month, 1)  
+    dte = DateAdd(dte, gb.Month, 1)  
   Endif
   If Message.Question("La nouvelle date de début sera : " & Format(dte, "dd.mm.yyyy") & " êtes vous d'accord ?", "Oui", "Non") = 2 Then Return
   Utils.db.Begin

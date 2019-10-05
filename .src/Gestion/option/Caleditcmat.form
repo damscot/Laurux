@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,99,64)
+  MoveScaled(0,0,99,73)
   Text = ("Edition de la compta matiére")
   { HBox1 HBox
     MoveScaled(1,1,34,3)
@@ -114,8 +114,29 @@
     Picture = Picture["Icones/frameprint.png"]
   }
   { detail Button
-    MoveScaled(0,59,18,5)
+    MoveScaled(0,59,13,5)
     Text = ("Detail")
     Picture = Picture["icon:/32/print"]
+  }
+  { Label4 Label
+    MoveScaled(1,67,18,4)
+    Text = ("Édition des stocks :")
+  }
+  { inv Button
+    MoveScaled(19,67,18.3333,4)
+    Text = ("Inventaire")
+  }
+  { invt Button
+    MoveScaled(39,67,18.3333,4)
+    Text = ("Inventaire tournant")
+  }
+  { Button3 Button stdep
+    Name = "Button3"
+    MoveScaled(60,67,18.3333,4)
+    Text = ("Stock de départ")
+  }
+  { stock Button
+    MoveScaled(80,67,18.3333,4)
+    Text = ("Stock")
   }
 }

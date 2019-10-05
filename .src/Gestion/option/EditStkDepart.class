@@ -1,0 +1,180 @@
+' Gambas class file
+
+Public Enum inventaire, tournant, depart, fin 
+Public nomInv As String[] = ["inventaire fin d'année", "inventaire tournant", "stock de départ", "stock de fin"]
+
+Public Struct totalc
+  stk As Float
+  totvol As Float
+  totap As Float
+  totss As Float
+End Struct
+
+Private $soustot As Totalc
+Private $totgen As Totalc
+Private $ind As Integer
+Private $tab As Integer
+Private $resalc As Result
+
+Const champs As String = ""
+
+Public Sub _new(ind As Integer)
+
+  Dim dgr, dra As String
+  
+  Application.Busy += 1
+  ReportHBox1.BackGround = ReportBrush.Color(Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B)))
+  $ind = ind
+  Select Case $ind
+    Case EditStkDepart.inventaire
+      $resalc = Utils.db.Exec("SELECT art_code,art_design,inv_qtecomptee AS qte,art_dra,art_deg,art_volm FROM Fiches_Inv,Fiches_Art WHERE inv_code=art_code AND art_dra IS NOT NULL ORDER BY art_dra,art_deg")
+    Case EditStkDepart.tournant
+      $resalc = Utils.db.Exec("SELECT art_code,art_design,inv_qtecomptee AS qte,art_dra,art_deg,art_volm FROM Fiches_InvT,Fiches_Art WHERE inv_code=art_code AND art_dra IS NOT NULL ORDER BY art_dra,art_deg")
+    Case EditStkDepart.depart
+      $resalc = Utils.db.Exec("SELECT art_code,art_design,art_qte AS qte,art_dra,art_deg,art_volm FROM Fiches_Art WHERE art_dra IS NOT NULL ORDER BY art_dra,art_deg")
+    Case EditStkDepart.fin
+      $resalc = Utils.db.Exec("SELECT art_code,art_design,art_stkdep AS qte,art_dra,art_deg,art_volm FROM Fiches_Art WHERE art_dra IS NOT NULL ORDER BY art_dra,art_deg")
+  End Select
+  
+  If $resalc.Available Then
+    $resalc.MoveFirst
+    libelle.Text = "Édition : " & nomInv[$ind]
+    date.Text = LDate(Now).L
+    entete()
+    dgr = $resalc!art_deg
+    dra = $resalc!art_dra
+    $soustot = New Totalc
+    $totgen = New Totalc
+    
+    Repeat
+      If dgr <> $resalc!art_deg Then
+        soustot()
+        dgr = $resalc!art_deg
+      Endif
+      If dra <> $resalc!art_dra Then
+        totdra()
+        ligne = New ReportHBox(Me)
+        entete()
+        dra = $resalc!art_dra
+      Endif
+
+      edligne()
+    Until $resalc.MoveNext()
+    soustot()
+    totdra()
+    
+  Endif
+  Application.Busy -= 1
+
+End
+
+
+Private Sub entete()
+  
+  Dim res As Result
+  Dim lab As ReportLabel
+  
+  lab = dimention(ligne, "6mm", "100mm", "Serif,Blod,11", Align.Center)
+  res = Utils.db.Exec("SELECT * FROM Fiches_regie WHERE code = &1", $resalc!art_dra)
+  If res.Available Then lab.Text = res!nom
+  
+End
+
+Private Sub soustot()
+  
+  Dim lab As ReportLabel
+  
+  ligne = New ReportHBox(Me)
+  lab = dimention(ligne, "5mm", "100mm", "Serif,9")
+  lab.Expand = True
+  lab.Text = "Sous total"
+  
+  lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($soustot.stk, "0.00")
+  lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($soustot.totvol, "0.00")
+  lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($soustot.totap, "0.00")
+  lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($soustot.totss, "0.00")
+  
+  $totgen.stk += $soustot.stk
+  $totgen.totap += $soustot.totap
+  $totgen.totss += $soustot.totss
+  $totgen.totvol += $soustot.totvol
+  
+  $soustot = New Totalc
+  
+End
+
+Private Sub totdra()
+
+  Dim lab As ReportLabel
+  
+  ligne = New ReportHBox(Me)
+  lab = dimention(ligne, "6mm", "100mm", "Serif,10")
+  lab.Expand = True
+  lab.Text = "TOTAL "
+  
+  lab = dimention(ligne, "6mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($totgen.stk, "0.00")
+  lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($totgen.totvol, "0.00")
+  lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($totgen.totap, "0.00")
+  lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
+  lab.Text = Format($totgen.totss, "0.00")
+  
+  $totgen = New Totalc
+
+End
+
+Private Sub edligne()
+  
+  Dim lab As ReportLabel
+  Dim cdd As Calculdroit
+  
+  cdd = New Calculdroit($resalc!art_dra, $resalc!art_volm, $resalc!art_deg, $resalc!qte)
+  ligne = New ReportHBox(Me)
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6")
+  lab.Text = $resalc!art_code
+  
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6")
+  lab.Expand = True
+  lab.Text = $resalc!art_design
+  
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Center)
+  lab.Text = $resalc!art_deg
+  
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab.Text = $resalc!qte
+  
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab.Text = Format(cdd.vol, "0.00")
+  
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab.Text = Format(cdd.volap, "0.00")
+  
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab.Text = Format(cdd.volumess, "0.00")
+  
+  $soustot.stk += $resalc!qte
+  $soustot.totap += cdd.volap
+  $soustot.totss += cdd.volumess
+  $soustot.totvol += cdd.vol
+  
+End
+
+Private Function dimention(obj As Object, h As String, w As String, f As String, Optional a As Integer) As ReportLabel
+  
+  Dim lab As ReportLabel
+  
+  lab = New ReportLabel(obj)
+  lab.Height = h
+  lab.Width = w
+  lab.Font = Font[f]
+  If a Then lab.Alignment = a
+  Return lab
+  
+End
+

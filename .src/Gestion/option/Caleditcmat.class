@@ -197,7 +197,7 @@ Private Function calcdate() As Boolean
   $dteinf.G = Date(Textanne.Text, Textmois.Value, 1)
   'control si mois déja cloturé
   dte = DateAdd($dteinf.G, gb.Month, 1)
-  res = Utils.db.Exec("SELECT * FROM Fiches_ligregie,Fiches_regie WHERE Fiches_regie.code=coderegie AND suspendu=&2 AND dtmouv=&1 AND (Fiches_ligregie.type='M' OR Fiches_ligregie.type='I')", dte, suspendu.Value)
+  res = Utils.db.Exec("SELECT * FROM Fiches_ligregie,Fiches_regie WHERE Fiches_regie.code=coderegie AND suspendu=&2 AND dtmouv=&1 AND Fiches_ligregie.type='M'", dte, suspendu.Value)
   If res.Available Then
     Textcontrol.Text = "Période déjà cloturée \n"
     If cloture.Value Then Return True
@@ -890,3 +890,41 @@ Private Sub ligne(rpr As Report, volef As Volume, volap As Volume, code As Strin
   
 End
 
+
+Public Sub inv_Click()
+  
+  editinv(EditStkDepart.inventaire)
+
+End
+
+Public Sub invt_Click()
+
+  editinv(EditStkDepart.tournant)
+
+End
+
+Public Sub stdep_Click()
+
+  editinv(EditStkDepart.depart)
+
+End
+
+Public Sub stock_Click()
+
+  
+editinv(EditStkDepart.fin)
+End
+
+Private Sub editinv(choix As Integer)
+
+  Dim Filename As String
+  Dim prt As New Printer
+  Dim rp As EditStkDepart
+  
+  Filename = User.Home & "/tmp/stockmat.pdf"
+  prt.OutputFile = Filename
+  rp = New EditStkDepart(choix)
+  rp.Print(prt)
+  Desktop.Open(Filename)
+
+End
