@@ -132,9 +132,9 @@ Public Sub Button1_Click()
             Endif
             ' Endif
             If IsNull(rResult!numerodef) Or If rResult!numerodef = 0 Then
-              Utils.db.Exec("UPdate  " & Tab & "  SET cloturee =  &1,numerodef = &3, dteval =&5 where numero = &2 and compte = &4", 1, num, numecr, cpt, Format$(Now, "yyyymmdd"))
+              Utils.db.Exec("UPdate  " & Tab & "  SET cloturee =  &1,numerodef = &3, dteval =&5 where numero = &2 and compte = &4 and lind = &6", 1, num, numecr, cpt, Format$(Now, "yyyymmdd"), rResult!lind)
             Else
-              Utils.db.Exec("UPdate  " & Tab & "  SET cloturee =  &1, dteval =&5 where numero = &2 and compte = &4", 1, num, numecr, cpt, Format$(Now, "yyyymmdd"))
+              Utils.db.Exec("UPdate  " & Tab & "  SET cloturee =  &1, dteval =&5 where numero = &2 and compte = &4 and lind = &6", 1, num, numecr, cpt, Format$(Now, "yyyymmdd"), rResult!lind)
             Endif
             If PB.Avancement("Ecriture " & rResult!numero, 30) = True Then Break
           Until rResult.MoveNext()
