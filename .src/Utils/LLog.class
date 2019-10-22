@@ -1,0 +1,81 @@
+' Gambas class file
+
+Inherits ComplexLogger
+
+Public Enum console = 0, file = 1
+
+Public Const Critical As Integer = 0 'Logger.Critical
+Public Const Error As Integer = 1 'Logger.Error
+Public Const Warning As Integer = 2 'Logger.Warning
+Public Const Info As Integer = 3 'Logger.Info
+Public Const Debug As Integer = 4 'Logger.Debug
+Public Const Notice As Integer = 5
+Public Const Verbose As Integer = 6
+Public Const MessageBox As Integer = 7
+Public Const Max As Integer = 8
+
+Private MLevel As Integer
+Private Fileh As FileHandler
+Private LogName As String
+Private LogLevelName As String[] = ["Critical", "Error", "Warning", "Info", "Debug", "Notice", "Verbose", "MessageBox", "Max"]
+
+
+Public Sub _new(Name As String, Enabling As Boolean, Optional MinLevel As Integer = Logger.Info)
+  
+  MLevel = MinLevel
+  LogName = Name
+  
+  Try Mkdir User.Home & "/tmp/Debug"
+  Try Kill User.Home & "/tmp/Debug/" & LogName & ".log"
+  
+  Fileh = New FileHandler(User.Home & "/tmp/Debug/" & LogName & ".log")
+  fileh.RotateAfter(64 * 1024) '64KB
+
+  fileh.Open()
+  Super.addHandler(fileh)
+  Super.Enabled = Enabling
+  Super.Handlers[LLog.console].Level = Start.ConsoleLogLevel
+  Super.Handlers[LLog.file].Level = Start.FileLogLevel
+  Super.Format = "[$(now)] [$(levelname)-$(levelno)] [" & LogName & "] $(message)"
+  
+End
+
+Public Sub Log(sMessage As String, Optional iLevel As Integer = MLevel)
+  
+  Dim bt As String[]
+  Dim bts As String = ""
+  
+  If Super.Enabled = False Then Return
+  
+  bt = System.Backtrace
+  bt = bt.Extract(2, bt.Length - 4)
+  If bt Then
+    bts = bt.Join(",")
+  Endif
+  Super.Log("[" & bts & "] " & sMessage, iLevel)
+  If iLevel = LLog.MessageBox Or Super.Handlers[LLog.console].Level = LLog.MessageBox Or Super.Handlers[LLog.file].Level = LLog.MessageBox Then
+    Message.Error("[" & LogName & "] [" & LogLevelName[iLevel] & "-" & iLevel & "]\n[" & bts & "]\n" & sMessage)
+  Endif
+  Utils.db.Log_Event(bts & ";[" & LogName & "]" & sMessage, iLevel)
+  
+End
+
+Public Sub Level_Id(sLevel As String) As Integer
+  
+  Return LogLevelName.Find(sLevel)
+  
+End
+
+Public Sub Level_Name(iLevel As Integer) As String
+  
+  If iLevel < LLog.Critical Then
+    iLevel = LLog.Critical
+  Else If iLevel >= LLog.Max
+    iLevel = LLog.Max
+  Endif
+  
+  Return LogLevelName[iLevel]
+  
+End
+
+

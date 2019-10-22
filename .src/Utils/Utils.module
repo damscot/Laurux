@@ -1590,3 +1590,28 @@ Public Sub Bip()
   Utils.Play()
 
 End
+
+Public Sub Log(Obj As Variant, sMessage As String, Optional level As Integer = Logger.Info)
+
+  Dim lg As LLog
+  Dim Name As String
+  Dim enabledbydefault As Boolean = False
+  
+  If TypeOf(Obj) = gb.Object Then
+    Name = Object.Class(Obj).Name
+  Else
+    Name = Obj
+  Endif
+  
+  If Start.Arg_Debug Then
+    enabledbydefault = True
+  Endif
+  
+  If Start.LLogColl[Name] = Null Then
+    lg = New LLog(Name, enabledbydefault)
+    Start.LLogColl.Add(lg, Name)
+  Endif
+  
+  Start.LLogColl[Name].Log(sMessage, level)
+
+End

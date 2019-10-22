@@ -2,6 +2,7 @@
 
 Private DB_Con As DB_Connection
 Private Data As String[][]
+Private Dbgmodule As String[]
 
 
 Public Sub _new(dbconnection As DB_Connection)
@@ -34,6 +35,11 @@ Public Sub _new(dbconnection As DB_Connection)
   DirChooser1.Root = User.Home
   DirChooser1.Visible = False
   Enregistrer.Visible = False
+  DebugView.Visible = False
+  DebugView.AddColumn("Module", 200)
+  DebugView.AddColumn("Actif", 100)
+  DebugView.AddColumn("Niv. Console", 150)
+  DebugView.AddColumn("Niv. File", 150)
 
   Refresh()
   
@@ -89,18 +95,7 @@ Public Sub Form_Open()
   Enable.Value = DB_Con.Get_Log()
   FiltresEval.Text = DB_Con.Get_Filter()
   FiltresStatus.Text = DB_Con.Get_Filter_Error()
-  
-  'Dim clac As Integer = Classes.Count
-  'Dim compc As Integer = Components.Count
-  'Dim comp As Variant
-  'Dim cla As Variant
 
-  'For Each cla In Classes
-  '  If cla.Component = Null Then
-  '    ListView1.Add(cla.Name, cla.Name)
-  '  Endif
-  'Next
-  
 End
 
 Public Sub GridView1_Data(Row As Integer, Column As Integer)
@@ -225,4 +220,73 @@ Public Sub Filtres_Click()
   Endif
 
 End
+
+Public Sub Niveau_Click()
+  
+  Dim logd As LLog
+  
+  If DebugView.Visible Then
+    DebugView.Visible = False
+  Else
+    DebugView.Visible = True
+    DebugView.Raise()
+    DebugView.rows.Count = Start.LLogColl.Length
+    Dbgmodule = New String[]
+    For Each logd In Start.LLogColl
+      Dbgmodule.Add(Start.LLogColl.Key)
+    Next
+    DebugView.Refresh()
+  Endif
+  
+End
+
+Public Sub DebugView_Data(Row As Integer, Column As Integer)
+  
+  Select Case Column
+    Case 0
+      DebugView.Data.Text = Dbgmodule[Row]
+    Case 1
+      If Start.LLogColl[Dbgmodule[Row]].Enabled Then
+        DebugView.Data.Text = "*"
+      Else
+        DebugView.Data.Text = ""
+      Endif
+    Case 2
+      DebugView.Data.Text = Start.LLogColl[Dbgmodule[Row]].Level_Name(Start.LLogColl[Dbgmodule[Row]].Handlers[LLog.console].Level) & "-" & Start.LLogColl[Dbgmodule[Row]].Handlers[LLog.console].Level
+    Case 3
+      DebugView.Data.Text = Start.LLogColl[Dbgmodule[Row]].Level_Name(Start.LLogColl[Dbgmodule[Row]].Handlers[LLog.file].Level) & "-" & Start.LLogColl[Dbgmodule[Row]].Handlers[LLog.file].Level
+  End Select
+End
+
+Public Sub DebugView_Click()
+  
+  Dim LevelId As Integer
+  
+  Select Case DebugView.Column
+    Case 1
+      If Start.LLogColl[Dbgmodule[DebugView.Row]].Enabled Then
+        Start.LLogColl[Dbgmodule[DebugView.Row]].Enabled = False
+      Else
+        Start.LLogColl[Dbgmodule[DebugView.Row]].Enabled = True
+      Endif
+    Case 2
+      LevelId = Start.LLogColl[Dbgmodule[DebugView.Row]].Level_Id(Split(DebugView.Current.Text, "-")[0])
+      If LevelId >= LLog.Critical And LevelId < LLog.Max Then
+        Start.LLogColl[Dbgmodule[DebugView.Row]].Handlers[LLog.console].Level = LevelId + 1
+      Else
+        Start.LLogColl[Dbgmodule[DebugView.Row]].Handlers[LLog.console].Level = LLog.Critical
+      Endif
+    Case 3
+      LevelId = Start.LLogColl[Dbgmodule[DebugView.Row]].Level_Id(Split(DebugView.Current.Text, "-")[0])
+      If LevelId >= LLog.Critical And LevelId < LLog.Max Then
+        Start.LLogColl[Dbgmodule[DebugView.Row]].Handlers[LLog.file].Level = LevelId + 1
+      Else
+        Start.LLogColl[Dbgmodule[DebugView.Row]].Handlers[LLog.file].Level = LLog.Critical
+      Endif
+  End Select
+
+  DebugView.Refresh()
+  
+End
+
 

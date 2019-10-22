@@ -44,6 +44,7 @@ Public Arg_Test As String
 Public Arg_Start_Societe As String
 Public Arg_Restore_DB As String
 Public Arg_LogFile As String
+Public Arg_Debug As String
 
 'Timer for Replaying Event
 Public hReplayTimer As Timer
@@ -55,6 +56,10 @@ Public Evl As Integer
 Public Success As Boolean 'valeur de retour du programme par default success => return 0
 Public Exit As Boolean 'autorise la sortie du programme
 
+Public LLogColl As Collection
+Public ConsoleLogLevel As Integer = Logger.Info
+Public FileLogLevel As Integer = Logger.Info
+
 
 Public Sub Main()
 
@@ -63,6 +68,7 @@ Public Sub Main()
   Dim Btunnel As Boolean = True
   Dim Pids As String
   Dim psExist As Process
+  Dim Fichlog As String
   
   Try Start.version_branch = Trim(File.Load("branch.txt"))
   Try Start.version_sha1 = Trim(File.Load("sha1.txt"))
@@ -73,6 +79,14 @@ Public Sub Main()
   
   Parse_Args()
   StartDate = Now
+  
+  'Debug Level on Console and File
+  Try ConsoleLogLevel = Split(Arg_Debug, ",")[LLog.console]
+  Try FileLogLevel = Split(Arg_Debug, ",")[LLog.file]
+  LLogColl = New Collection
+  For Each Fichlog In Dir(User.Home & "/tmp/Debug", "*.log").Sort()
+    Kill User.Home & "/tmp/Debug/" & Fichlog
+  Next
   
   Start.LocalSettings = New Settings(Arg_Config_File, Application.Name & " local configuration")
 
@@ -390,6 +404,7 @@ Public Sub Parse_Args()
   Arg_Log = Args.Has("l", "log", "Active le logging")
   Arg_Replay = Args.Has("r", "replay", "Active le replay")
   Arg_LogFile = Args.Get("", "logfile", "fichier de log (si logging/replay activé)", Application.Name & ".log")
+  Arg_Debug = Args.Get("d", "debug", "niveau de verbosite en console, fichier dans le répertoire Debug", "3,3")
   
   'On fournit le path complet pour que le fichier de log s'enregistre hors du fakeroot
   If Len(Arg_LogFile) <> 0 And Left(Arg_LogFile, 1) <> "/" Then

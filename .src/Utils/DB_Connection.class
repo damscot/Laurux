@@ -6,6 +6,7 @@ Private log As ComplexLogger
 Private logh As Collection
 Private hFile As File
 Private hFilePath As String
+Private level As Integer
 
 Private user_name As String = Left$(User.name, 50)
 Private process_id As Integer = Application.Id
@@ -35,12 +36,12 @@ Public Sub _new()
   'On ne loggue pas par default, on clear en cas de logging au boot pour eventuellement effacer fichier de log existant
   'On devrait activer le log automatique soit depuis les prefs
   'soit depuis les arguments de la ligne de commande
-  Start(Start.Arg_Log, Start.Arg_Log)
+  Start(Start.Arg_Log, Start.Arg_Log, Start.ConsoleLogLevel)
   
 End
 
 
-Public Sub Start(Optional Enabling As Boolean = False, Optional Clear As Boolean = False)
+Public Sub Start(Optional Enabling As Boolean = False, Optional Clear As Boolean = False, Optional iLevel As Integer)
   
   Dim handler, handler_r As LogHandler
   Dim logout As String = ""
@@ -54,8 +55,8 @@ Public Sub Start(Optional Enabling As Boolean = False, Optional Clear As Boolean
   Get_Filter()
   Refresh_Filter()
   If IsNull(Start.Arg_LogFile) Then
-    If Not Exist(User.home & "/tmp") Then Mkdir User.home & "/tmp"
-    hFilePath = User.Home & "/tmp/" & Application.Name & ".log" & logout
+    If Not Exist(User.home & "/tmp/Debug") Then Mkdir User.home & "/tmp/Debug"
+    hFilePath = User.Home & "/tmp/Debug/" & Application.Name & ".log" & logout
   Else
     hFilePath = Start.Arg_LogFile & logout
   Endif
@@ -63,7 +64,7 @@ Public Sub Start(Optional Enabling As Boolean = False, Optional Clear As Boolean
     Try Kill hFilePath
   Endif
   logh = New Collection
-  handler = New FileHandler(hFilePath, Logger.Info)
+  handler = New FileHandler(hFilePath)
   logh.Add(handler, "local")
   log = New ComplexLogger("$(now);$(levelname);$(message)", logh["local"])
   remote_host = Start.LocalSettings["/Soc" & Start.Societe & "/ServerLogIP"]
@@ -77,13 +78,15 @@ Public Sub Start(Optional Enabling As Boolean = False, Optional Clear As Boolean
     remote_port = 0
   Endif
   If (remote_host <> Null) Or (remote_port <> 0) Then
-    handler_r = New NetHandler(remote_host, remote_port, Logger.Info)
+    handler_r = New NetHandler(remote_host, remote_port)
     logh.Add(handler_r, "remote")
     log.addHandler(logh["remote"])
   Endif
   'logger is not enabled before begin is done
   'to avoid logging event during logger start
   log.Enabled = False
+  level = iLevel
+  Set_Level(level)
   log.Begin()
   log.Enabled = Enabling
 
@@ -97,7 +100,7 @@ Public Sub Clear()
   If log <> Null Then
     state = log.Enabled
     log.Close()
-    Start(state, True)
+    Start(state, True, level)
   Endif
   
 End
@@ -110,7 +113,7 @@ Public Sub Refresh()
   If log <> Null Then
     state = log.Enabled
     log.Close()
-    Start(state, False)
+    Start(state, False, level)
   Endif
   
 End
@@ -118,6 +121,14 @@ End
 Public Sub Set_Log(boo As Boolean)
   
   log.Enabled = boo
+  
+End
+
+Public Sub Set_Level(iLevel As Integer)
+  
+  level = iLevel
+  logh["local"].Level = iLevel
+  Try logh["remote"].Level = iLevel
   
 End
 
@@ -556,6 +567,17 @@ Public Sub GUI_Event(hCont As Variant, Source As Variant[], Act As String, Value
     Backtrace.Extract(0, 2)
     If log.Enabled Then
       log.Log("GUI;" & user_name & ";" & host_id & ";" & machine_id & ";" & process_id & ";" & Backtrace.Join(",") & ";" & Request)
+    Endif
+  Endif
+
+End
+
+Public Sub Log_Event(sMessage As String, Optional level As Integer = Logger.Info) 
+  
+
+  If Is_Filtered("Log", sMessage) = True Then
+    If log.Enabled Then
+      log.Log("Log;" & user_name & ";" & host_id & ";" & machine_id & ";" & process_id & ";" & sMessage, level)
     Endif
   Endif
 
