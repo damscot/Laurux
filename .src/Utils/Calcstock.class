@@ -24,9 +24,8 @@
 '# Recalcul des stocks à partir des historiques.
 '################################################
 
-Public Codearticle As String
 Public Bsel As Boolean = False
-Private Tri As String
+Public Bval As String = ""
 
 '*************************
 '* On initialise l'écran *
@@ -173,15 +172,12 @@ End
 '**********************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
 
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "Calcstock", "", "")
+  MyForm = New TriArticles(True, True, "art_code", "", "Fournisseur", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Textbox1.Text = Codearticle
+    Textbox1.Text = Bval
   Endif
 
 End

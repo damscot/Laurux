@@ -78,7 +78,7 @@ Tri As String
 bCentrale As Boolean = False
 sCentraleF As String 'code centrale du fournisseur
 ref_centrale As String
-Public Codearticle As String
+
 Private $four As String
 Private $num As String
 Private Qtecomc As String ' Quantité en commande pour la ligne rappelée pour modification.
@@ -108,6 +108,9 @@ Private $bcrea As Boolean
 Private $fcd As Fourconsdroi
 Private $lastvalidbldoc As String
 Private $lastvalidfour As String
+
+Public Bsel As Boolean = False
+Public Bval As String
 
 
 Public Sub _New()
@@ -3526,24 +3529,23 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
   Dim sFour As String = ""
-  Dim $centrale As String = ""
+  Dim $selection As String = ""
 
   Tab = "Fiches_Art"
-  sel = ""
-  Tri = "art_code"
-  Variables.Bsel = False
   If Tartfourn2.Value = True Then sFour = Codefour.Text
   If Not IsNull(sCentraleF) And If Tartfourn2.Value = True Then
     sFour = sCentraleF
-    $centrale = "Centrale"
+    $selection = "Centrale"
+  Else
+    sFour = Codefour.Text
+    $selection = "Fournisseur"
   Endif
-  MyForm = New TriArticles("", "", Tri, "Receipta", sFour, $centrale)
+  MyForm = New TriArticles(True, False, "art_code", sFour, $selection, Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Cart.text = Variables.ArtCode
+  If Bsel = True Then
+    Cart.text = Bval
     If Not IsNull(Cart.Text) Then
       controlArt(Cart.Text)
     Endif

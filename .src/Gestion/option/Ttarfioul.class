@@ -1,5 +1,8 @@
 ' Gambas class file
 
+Public Bsel As Boolean = False
+Public Bval As String = ""
+
 Private $iCoulFoc As Integer ' Variable pour la couleur du background du focus
 Private $iCoulZns As Integer ' Variable pour la couleur du background du TextBox
 Private $sFrmt As New String[]
@@ -194,10 +197,10 @@ Public Sub button1_Click()
   Dim MyForm As TriArticles
 
   Variables.Bsel = False
-  MyForm = New TriArticles("", "", "art_code", "Receipt", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Textcode.text = Variables.ArtCode
+  If Bsel = True Then
+    Textcode.text = Bval
     Textcode_LostFocus
   Endif
 

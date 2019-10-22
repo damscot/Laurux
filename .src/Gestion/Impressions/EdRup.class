@@ -30,11 +30,14 @@ son As Integer = Start.Son
 PosY As Integer
 PosX As Integer
 Coulfond As New String[]
+
+Public Bsel As Boolean = False
+Public Bval As String
+
 Private artbl As Boolean = False
 Private Origine As String = ""
 Private b As Integer = 0
 Private qtec As Integer = 0
-Private Tri As String
 
 Public Sub _New()
 
@@ -128,22 +131,19 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
 
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "EdRup", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
+  If Bsel = True Then
     b = 0
     If Origine = "1" Then
-      Art.text = Variables.ArtCode
+      Art.text = Bval
       Art2.SetFocus
       Art2.Select
     Else
       If Origine = "2" Then
-        Art2.text = Variables.ArtCode
+        Art2.text = Bval
         Four.SetFocus
         Four.Select
       Endif

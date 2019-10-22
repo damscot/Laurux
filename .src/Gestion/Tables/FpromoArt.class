@@ -38,8 +38,8 @@ Margem As String 'variable pour calcul marge
 Margep As String 'variable pour calcul marge
 Prvt As String 'prix de reveient du produit pour calcul de la marge.
 B As Integer = 0 'flag de controle marge
-Public Codearticle As String
 Public Bsel As Boolean = False
+Public Bval As String
 
 Public Sub _New()
 
@@ -415,11 +415,10 @@ Public Sub SelectionArt()
   Dim MyForm As TriArticles
 
   sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "FpromoArt", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Cart.text = Codearticle
+    Cart.text = Bval
     art_man()
   Endif
 

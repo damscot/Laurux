@@ -186,6 +186,7 @@ Public Codearticle As String
 Public CodeClient As String
 Public numeroFac As String
 Public Bsel As Boolean = False
+Public Bval As String = ""
 Public bRemise As Boolean = False
 Private sel2 As String
 Private hColbl As Boolean = False
@@ -4398,9 +4399,10 @@ Public Sub SelectionArt()
   Endif
   ChkFocus = 2
   Tri = "art_code"
-  MyForm = New TriArticles(Bart.Value, B2art.Value, Tri, "Facture", "", "")
+  MyForm = New TriArticles(Bart.Value, B2art.Value, Tri, "", "Fournisseur", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
+  If Bsel = True Then
+    Variables.$Codearticle = Bval 'variable a supprimer
     Cart.text = Variables.$Codearticle
     Art_Man(Cart.Text)
   Else
@@ -4766,17 +4768,15 @@ Public Sub Art_man(Prod As String)
         Art_Rpl()
         Art_Equ(Cart.Text)
         If Equ = False Then
-          If Not IsNull(Variables.$Codearticle) Then
-            If Not IsNull(Cart.Text) Then
-              If start.son Then
-                Music.Play
-              Endif
-              Try message.Warning(" L'article " & Cart.Text & " n'existe pas ! ")
-              b = 1
-              Cart.Clear
-              Cart.SetFocus
-              Cart.Select
+          If Not IsNull(Cart.Text) Then
+            If start.son Then
+              Music.Play
             Endif
+            Try message.Warning(" L'article " & Cart.Text & " n'existe pas ! ")
+            b = 1
+            Cart.Clear
+            Cart.SetFocus
+            Cart.Select
           Endif
           b = 1
           Cart.Clear
@@ -10398,7 +10398,7 @@ Public Sub Importlig()
         Coldetail.item[4 + i] = "-" & Coldetail3.item[4]
       Else
         If Coldetail3.item[4] <> "" Then
-          Coldetail.item[4 + i] = -Val(.CPoint(Coldetail3.item[4]))
+          Coldetail.item[4 + i] = - Val(.CPoint(Coldetail3.item[4]))
           'Coldetail.item[4] = Format$(Coldetail.item[4], "0.00")
         Endif
       Endif
@@ -10406,7 +10406,7 @@ Public Sub Importlig()
         Coldetail.item[5 + i] = "-" & Format$(Val(.CPoint(Coldetail3.item[5])), "0.00")
       Else
         If Coldetail3.item[5] <> "" Then
-          Coldetail.item[5 + i] = -Val(.CPoint(Coldetail3.item[5]))
+          Coldetail.item[5 + i] = - Val(.CPoint(Coldetail3.item[5]))
           Coldetail.item[5 + i] = Format$(Coldetail.item[5 + i], "0.00")
         Endif
       Endif
@@ -10415,7 +10415,7 @@ Public Sub Importlig()
         Coldetail.item[7 + i] = "-" & Format$(Val(.CPoint(Coldetail3.item[7])), "0.00")
       Else
         If Coldetail3.item[7] <> "" Then
-          Coldetail.item[7 + i] = -Val(Coldetail3.item[7])
+          Coldetail.item[7 + i] = - Val(Coldetail3.item[7])
           Coldetail.item[7 + i] = Format$(Coldetail.item[7 + i], "0.00")
         Endif
       Endif
@@ -10425,7 +10425,7 @@ Public Sub Importlig()
         Coldetail.item[8 + i] = "-" & Format$(Val(.CPoint(Coldetail3.item[11])), "0.00")
       Else
         If Coldetail3.item[11] <> "" Then
-          Coldetail.item[8 + i] = -Val(.CPoint(Coldetail3.item[11]))
+          Coldetail.item[8 + i] = - Val(.CPoint(Coldetail3.item[11]))
           Coldetail.item[8 + i] = Format$(Coldetail.item[8 + i], "0.00")
         Endif
       Endif

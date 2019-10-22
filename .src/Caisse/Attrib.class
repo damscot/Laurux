@@ -1,10 +1,12 @@
 ' Gambas class file
 
-Private btn As Imagebutton
+
 Public Bsel As Boolean = False
-Public Codearticle As String
+Public Bval As String
 Public Libellearticle As String
 Public fnd As String
+
+Private btn As Imagebutton
 Private Touche_P As String
 Private Touche_S As String
 Private CodeA As New String[36]
@@ -210,10 +212,10 @@ Public Sub Button3_Click()
   Dim MyForm As TriArticles
 
   Bsel = False
-  MyForm = New TriArticles(True, "", "art_code", "Attrib", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Cart.text = Codearticle
+    Cart.text = Bval
     Label3.Text = Libellearticle
   Else
     Cart.SetFocus

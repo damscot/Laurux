@@ -66,6 +66,10 @@ sCentrale As String 'Reference centrale du produit
 sCentraleF As String 'code centrale du fournisseur
 Email As String
 Piece As String
+
+Public Bsel As Boolean = False
+Public Bval As String
+
 Private ComCli As Float
 Private Posy As Integer
 Private Org As String = ""
@@ -3683,23 +3687,23 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
   Dim sFour As String = ""
-  Dim $centrale As String = ""
+  Dim $selection As String = ""
 
   Tab = "Fiches_Art"
-  sel = ""
-  Tri = "art_code"
   If Tartfourn2.Value = True Then sFour = Four.Text
   If Not IsNull(sCentraleF) And If Tartfourn2.Value = True Then
     sFour = sCentraleF
-    $centrale = "Centrale"
+    $selection = "Centrale"
+  Else
+    sFour = Four.Text
+    $selection = "Fournisseur"
   Endif
-  MyForm = New TriArticles("", "", Tri, "Commande", sFour, $centrale)
+  MyForm = New TriArticles(True, False, "art_code", sFour, $selection, Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bselection = True Then
-    Cart.text = Variables.ArtCode
+  If Bsel = True Then
+    Cart.text = Bval
     Art_Man()
     Qtecom.SetFocus
     Qtecom.Select

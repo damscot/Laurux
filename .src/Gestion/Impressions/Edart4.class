@@ -9,8 +9,8 @@ Private $rescli As Result
 Private $soption As String
 Private $tarif As TarArt
 
-Public Codearticle As String
 Public Bsel As Boolean = False
+Public Bval As String
 
 Public Sub _new()
 
@@ -447,10 +447,10 @@ Public Sub ToggleButton1_Click()
 
   Dim MyForm As TriArticles
 
-  MyForm = New TriArticles(True, "", "art_code", "Edart4", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Art.text = Codearticle  
+    Art.text = Bval  
   Endif
 End
 
@@ -458,10 +458,10 @@ Public Sub ToggleButton2_Click()
 
    Dim MyForm As TriArticles
 
-  MyForm = New TriArticles(True, "", "art_code", "Edart4", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Art2.text = Codearticle  
+    Art2.text = Bval  
   Endif
 
 End

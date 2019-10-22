@@ -50,8 +50,10 @@ Mrgauche As Float
 Esplargeur As Float
 Esphauteur As Float
 Filename As String = "EtiqArt.ps"
-Tri As String = "art_code"
-sel As String = ""
+
+Public Bsel As Boolean = False
+Public Bval As String
+
 Private Origine As String = ""
 Private b As Integer = 0
 Private IpZebra As String
@@ -141,14 +143,12 @@ Public Sub SelectionArt()
   Dim MyForm As TriArticles
 
   Tab = "Fiches_Art"
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "Etiqcasier", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
+  If Bsel = True Then
     b = 0
     If Origine = "1" Then
-      Art.text = Variables.Codearticle
+      Art.text = Bval
       If Liste.value = True Then
         Art_man()
       Else
@@ -157,7 +157,7 @@ Public Sub SelectionArt()
       Endif
     Else
       If Origine = "2" Then
-        Art2.text = Variables.Codearticle
+        Art2.text = Bval
         Fam.SetFocus
         Fam.Select
       Endif

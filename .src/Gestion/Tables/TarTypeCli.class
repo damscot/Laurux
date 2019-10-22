@@ -1,9 +1,8 @@
 ' Gambas class file
 
-'
 Public Bsel As Boolean = False
+Public Bval As String = ""
 Public CodeClient As String
-Public Codearticle As String
 Private nbdec As String 'variable pour decimale des prix
 Private arr As String
 Private ppublic As String
@@ -298,14 +297,12 @@ End
 Public Sub SelectionArt()
 
   Dim MyForm As TriArticles
-  Dim Tri As String
 
   Bsel = False
-  Tri = "art_code"
-  MyForm = New TriArticles("", "", Tri, "TarTypeCli", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Tart.text = Codearticle
+    Tart.text = Bval
     Tart_LostFocus()
     Tprht.SetFocus
   Else

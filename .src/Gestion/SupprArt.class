@@ -5,8 +5,8 @@ Type As String
 Coulfc As Integer
 Coulfond As New String[]
 son As Integer = Start.Son
-Public Codearticle As String
 Public Bsel As Boolean = False
+Public Bval As String
 Private Tri As String
 Private filename As String
 
@@ -283,15 +283,12 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
 
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "SupprArt", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Art.text = Codearticle
+    Art.text = Bval
     art_man()
   Endif
 

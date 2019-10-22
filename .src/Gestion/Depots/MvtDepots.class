@@ -1,8 +1,8 @@
 ' Gambas class file
 
-Private Tri As String
-Public Codearticle As String
 Public Bsel As Boolean = False
+Public Bval As String
+
 Public B As Boolean = False
 Private Decm As String
 Private Org As String
@@ -192,13 +192,12 @@ Public Sub ToggleButton1_Click()
   Dim MyForm As TriArticles
 
   Tab = "Fiches_Art"
-  Tri = "art_code"
   If Not IsNull(code.text) Then
     If Code.Text = "01" Then
-      MyForm = New TriArticles("True", "", Tri, "Depots", "", "")
+      MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
       MyForm.Showmodal()
       If Bsel = True Then
-        Cart.text = Codearticle
+        Cart.text = Bval
         Art_Man()
         Qte.SetFocus
         Qte.Select

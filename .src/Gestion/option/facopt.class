@@ -3,6 +3,8 @@
 'gére les onglets consigne & régie dans la saisie des factures
 'remontes les totaux consigne & droits
 
+Public Bsel As Boolean = False
+Public Bval As String = ""
 
 'dessin des écrans
 Private $pancons As Panel
@@ -466,10 +468,10 @@ Public Sub rechart_Click()
 
   Dim MyForm As Form
   
-  MyForm = New TriArticles(True, True, "art_code", "Facture", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    $textart.text = Variables.$Codearticle
+  If Bsel = True Then
+    $textart.text = Bval
     textart_LostFocus
   Endif
   

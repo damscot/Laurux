@@ -5,53 +5,53 @@ Private Dbl As Boolean = False
 Private sel As String
 Private Tri2Art As String
 Private Bart As Boolean
-Private B2art As Boolean
+Private BStock As Boolean
 Private Org As String
-Private $Org As String
-Private Origine As String
-Private $Centrale As String = ""
 Private NbEnreg As Integer = 0 ' Enregistrement de départ de la sélection
 Private lg As Integer
 Private chkfocus As Boolean = True
-Private filter As String
+
+
+Private tr As TriGen
+Private Col As Collection
+Private CB1Conv As Collection
 Private Obj As Object
+Public Bsel As Boolean = False
+Public Bval As String = ""
+Private CB1Prev As String 
+
+Private log As LLog 
+
 
 '************************************** Gestion des articles *****************************************************
-Public Sub _new(Barticle As Boolean, B2article As Boolean, TriArticle As String, sOrg As String, sFour As String, Centrale As String, Optional Dispo As Boolean = False, Optional Mat As Boolean = False, Optional ob As Object = Null)
+Public Sub _new(Barticle As Boolean, Bstocke As Boolean, TriArticle As String, Selection As String, Option As String, Optional Dispo As Boolean = False, Optional Mat As Boolean = False, Optional ob As Object = Null)
 
   Utils.Observers(Me)
-  lg = Int(Colart.height / colart.Rows.Height) - 1
   Me.Center
-  Origine = sOrg
   Obj = ob
-  If sOrg = "Me" Then
-    If Object.IsValid(Obj) Then
-      Object.SetProperty(Obj, "Bsel", False)
-      Object.SetProperty(Obj, "Bval", Null)
-    Endif
+  If Object.IsValid(Obj) Then
+    Object.SetProperty(Obj, "Bsel", False)
+    Object.SetProperty(Obj, "Bval", Null)
   Endif
-  If IsNull(sFour) Then CB2.Text = ""
-  If Origine = "Commande" And If Not IsNull(sFour) Then
-    CB2.Text = sFour
-  Else
-    If Origine = "ModifCom" And If Not IsNull(sFour) Then
-      CB2.Text = sFour
-    Else
-      If Origine = "Receipt" And If Not IsNull(sFour) Then
-        CB2.Text = sFour
-      Else
-        If Origine = "Receipta" And If Not IsNull(sFour) Then
-          CB2.Text = sFour
-        Else
-          $Org = "C"
-          Barticle = True
-        Endif
-      Endif
-    Endif
-  Endif
-  $Centrale = Centrale
+  CB2.Text = ""
+  Org = ""
+  Select Case Option
+    Case "Fournisseur"
+      CB2.Text = Selection
+      Org = Option
+    Case "Centrale"
+      CB2.Text = Selection
+      Org = Option
+    Case "Famille"
+      CB2.Text = Selection
+      Org = Option
+    Default
+      CB2.Text = ""
+      Org = ""
+  End Select
+
   Bart = Barticle
-  B2art = B2article
+  BStock = Bstocke
   Tri2Art = TriArticle
   If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = True Then
     Materiel.Value = Mat
@@ -61,230 +61,101 @@ Public Sub _new(Barticle As Boolean, B2article As Boolean, TriArticle As String,
     Materiel.Visible = False
   Endif
   Disponible.Value = Dispo
+  
+  CB1Conv = New Collection
+  CB1.Add("-- Equiv. --")
+  CB1Conv.Add("art_cequ", CB1.List[0])
+  CB1.Add("--  Barre --")
+  CB1Conv.Add("art_cbarre", CB1.List[1])
+  CB1.Add("---  CN8 ---")
+  CB1Conv.Add("art_cn8", CB1.List[2])
+  CB1.Add("-- Casier --")
+  CB1Conv.Add("art_casier", CB1.List[3])
+  CB1.Add("-- Carac. --")
+  CB1Conv.Add("art_crst", CB1.List[4])
+  CB1.Add("-- Four. --")
+  CB1Conv.Add("art_four", CB1.List[5])
+
+  CB1.Text = CB1.List[0]
+  CB1Prev = CB1.Text
+  
+  Update_Req()
+
+End
+
+Public Sub form_Close()
+  
+  Utils.Log(Me, "Selection: " & Bsel & "\tVal: " & Bval, Logger.Debug)
+  
+End
+
+Public Sub Update_Req()
+
+  Dim f As ResultField
+  Dim Req As String
+  Dim Res As Result
+  
+  Col = New Collection
+  
+  Select Case Tri2Art
+    Case "art_code"
+      Req = "select *, CASE WHEN art_suspendu = 1 THEN '&HC0C0C0&' WHEN art_qte > 0 and art_stocke = 1 THEN '&H00FF00&' WHEN art_qte = 0 and art_stocke = 1 THEN '&HF8B9A0&' WHEN art_qte < 0 and art_stocke = 1 THEN '&HFF0000&' WHEN art_stocke = 0 THEN Null ELSE '&H00FFFF&' END as bgcolor from " & Cbase.Table("TabArt")
+      Res = Utils.db.Exec(Req)
+      If Not Res.Available Then Return
+      f = Res.Fields[Tri2Art]
+      Col.Add(f, "---- Code ----")
+      f = Res.Fields["art_design"]
+      Col.Add(f, "----------- Intitule -------------")
+      f = Res.Fields[CB1Conv[CB1.Text]]
+      Col.Add(f, "-" & CB1.Text & "-")
+      f = Res.Fields["art_fam"]
+      Col.Add(f, "- Fam. -")
+      f = Res.Fields["art_pvht"]
+      Col.Add(f, "- PvHT -")
+      f = Res.Fields["art_pvttc"]
+      Col.Add(f, "- PvTTC -")
+      f = Res.Fields["art_qte"]
+      Col.Add(f, "- Qte -")
+    Case "mo_code"
+      Req = "select * from " & Cbase.Table("TabMo")
+      Res = Utils.db.Exec(Req)
+      If Not Res.Available Then Return
+      f = Res.Fields[Tri2Art]
+      Col.Add(f, "-----code-----")
+      f = Res.Fields["mo_design"]
+      Col.Add(f, "-------------------intitule-------------------")
+      f = Res.Fields["mo_fam"]
+      Col.Add(f, "-famille-")
+      f = Res.Fields["mo_valeurht"]
+      Col.Add(f, "-PV HT-")
+      f = Res.Fields["mo_valeurttc"]
+      Col.Add(f, "-PV TTC-")
+      CB1.Enabled = False
+    Default
+      Error.Raise("Unsupported Feature")
+  End Select
+
+  tr = New TriGen(Panel2, Col, Res, Req, 20, Me) As "ColTri"
   Filter_Calc()
-  Triart()
-  If $Org = "C" And If Not IsNull(CB2.Text) Then
-    FourMan()
-    org = "Fournisseur"
-    Deb7()
-  Else
-    If $Org = "C" And If IsNull(CB2.Text) Then
-      Deb7()
-    Else
-      Deb5()
-      CB2.Text = ""
-    Endif
-  Endif
-  Cb1.Text = "Equivalent"
-  CO.Text = "Code"
-  It.Text = "Intitulé"
-  Colart.MoveTo(0, 0)
-  'Try colart.Current.EnsureVisible
-  Colart.SetFocus
 
 End
 
-Public Sub CO_click()
+Public Sub ColTri_MajSel(val As Variant)
 
-End
-
-Public Sub CO_DblClic()
-
-  Art_Dblclk()
-
-End
-
-Public Sub CO_GotFocus()
-
-  Try Utils.ObsGotf(Co)
-  CO.Select
-  CO.SetFocus
-  chkfocus = False
-  sel = ""
-  Cb1.Text = "Equivalent"
-  CO.Text = ""
-  It.Text = "Intitulé"
-  Tri2Art = "art_code"
-  NbEnreg = 0
-  Dbl = ""
-  If $Org = "C" Then
-    Deb7()
-  Else
-    If Not IsNull(CB2.text) Then
-      Deb1()
-    Else
-      Deb5()
-    Endif
-  Endif
-  chkfocus = True
-
-End
-
-Public Sub CO_LostFocus()
-
-  Try Utils.ObsLstf(CO)
-
-End
-
-Public Sub CO_KeyPress()
-
-  Chkinput()
-  If Key.code = Key.Escape Or Key.code = Key.F2 Then Me.close()
-  If key.code = key.Down Then
-    Colart.SetFocus
-    Colart.MoveTo(0, 0)
-  Endif
-  If key.code = key.Right Then IT.SetFocus
-
-End
-
-'Public Sub Cb1_Click()
-
-'End
-
-Public Sub Cb1_DblClick()
-
-  Art_Dblclk()
-
-End
-
-Public Sub Cb1_GotFocus()
-
-  Try Utils.ObsGotf(Cb1)
-  If chkfocus = True Then
-    sel = ""
-    Select Case Cb1.Text
-      Case "Equivalent"
-        Tri2Art = "art_cequ"
-        'Case "Fournisseur"
-        'Tri2Art = "art_cfour"
-      Case "Barre"
-        Tri2Art = "art_cbarre"
-        'Case "Centrale"
-        'Tri2Art = "art_refcentrale"
-      Case "CN8"
-        Tri2Art = "art_cn8"
-      Case "Casier"
-        Tri2Art = "art_casier"
-      Case "Caracteristique"
-        Tri2Art = "art_crst"
-      Case Else
-        Tri2Art = "art_cequ"
-    End Select
-    It.Text = "Intitulé"
-    CO.Text = "Code"
-    NbEnreg = 0
-    Dbl = ""
-    If $Org = "C" Then
-      Deb5()
-    Else
-      If Not IsNull(CB2.text) Then
-        Deb1()
+  If Object.IsValid(Obj) Then
+    If Bsel = True Then
+      If Val Then
+        Object.SetProperty(Obj, "Bsel", Bsel)
+        Object.SetProperty(Obj, "Bval", Val)
       Else
-        Deb5()
+        Stop Event
       Endif
     Endif
-    Cb1.Text = ""
-    Cb1.Select
-  Endif
-
-End
-
-Public Sub Cb1_LostFocus()
-
-  Try Utils.ObsLstf(Cb1)
-
-End
-
-Public Sub Cb1_KeyPress()
-
-  Chkinput()
-  If Key.code = Key.Escape Or Key.code = Key.F2 Then Me.close()
-  If key.code = key.Down Then
-    Colart.SetFocus
-    Colart.MoveTo(0, 0)
-  Endif
-
-End
-
-Public Sub It_GotFocus()
-
-  Try Utils.ObsGotf(it)
-  IT.Select
-  IT.SetFocus
-  sel = ""
-  Cb1.Text = "Equivalent"
-  CO.Text = "Code"
-  It.Text = ""
-  Tri2Art = "art_design"
-  NbEnreg = 0
-  Dbl = ""
-  If $Org = "C" Then
-    Deb7()
   Else
-    If Not IsNull(CB2.text) Then
-      Deb1()
-    Else
-      Deb5()
-    Endif
+    Stop Event
   Endif
-
-End
-
-Public Sub It_DblClick()
-
-  Art_Dblclk()
-
-End
-
-Public Sub It_LostFocus()
-
-  Try Utils.ObsLstf(It)
-
-End
-
-Public Sub It_KeyPress()
-
-  Chkinput()
-  If key.code = key.f2 Or If key.code = key.Escape Then Me.close()
-  If key.code = key.Down Then
-    Colart.SetFocus
-    Colart.MoveTo(0, 0)
-  Endif
-  If key.code = key.Left Then CO.SetFocus
-  If key.code = key.Right Then Cb1.SetFocus
-
-End
-
-Public Sub Art_Dblclk()
-
-  If $Org = "C" Then
-    If Dbl = False Then
-      Deb8()
-      Dbl = True
-    Else
-      Deb7()
-      Dbl = False
-    Endif
-  Else
-    If Not IsNull(CB2.text) Then
-      If Dbl = False Then
-        Deb2()
-        Dbl = True
-      Else
-        Deb1()
-        Dbl = False
-      Endif
-    Else
-      If Dbl = False Then
-        Deb6()
-        Dbl = True
-      Else
-        Deb5()
-        Dbl = False
-      Endif
-    Endif
-  Endif
+  
+  Me.Close()
 
 End
 
@@ -292,438 +163,13 @@ Public Sub ChkInput()
 
   If InStr("\"&", Key.Text) = 0 Then
     sel = utils.Obstch(sel)
-    If Not IsNull(CB2.Text) Then
-      If $Org = "C" Then
-        Deb7()
-      Else
-        Deb1()
-      Endif
-    Else
-      'If $Org = "C" Then
-      Deb5()
-      'Else
-      'Deb7()
-      'Endif
-    Endif
   Else
     Stop Event
   Endif
 
 End
 
-Public Sub triart()
-
-  With ColArt
-    .Columns.count = 7
-    .Columns[0].Width = CO.Width
-    .Columns[1].Width = It.Width
-    .Columns[2].Width = Cb1.Width
-    .Columns[3].Width = FO.Width
-    .Columns[4].Width = PHTX.Width
-    .Columns[4].Alignment = 2
-    .Columns[5].Width = PVXTTC.Width
-    .Columns[5].Alignment = 2
-    .Columns[6].Width = QTESTK.Width - 22
-    .Columns[6].Alignment = 3
-  End With
-
-End
-
-Public Sub colart_Data(Row As Integer, Column As Integer)
-
-  Dim sline As String
-
-  With Utils
-    ArtTable[0] = "art_code"
-    ArtTable[1] = "art_design"
-    If Tri2Art = "art_code" Then
-      ArtTable[2] = "art_cequ"
-    Else
-      If Tri2Art = "art_design" Then
-        ArtTable[2] = "art_cequ"
-      Else
-        If Tri2Art = "art_four" Then
-          ArtTable[2] = "art_cequ"
-        Else
-          If Tri2Art = "art_fam" Then
-            ArtTable[2] = "art_cequ"
-          Else
-            If Tri2Art = "art_casier" Then
-              ArtTable[2] = "art_casier"
-            Else
-              If Tri2Art = "art_crst" Then
-                ArtTable[2] = "art_crst"
-              Else
-                If Tri2Art = "art_cequ" Then
-                  ArtTable[2] = "codequ"
-                Else
-                  If Tri2Art = "art_cbarre" Then
-                    ArtTable[2] = "codeb"
-                  Else
-                    ArtTable[2] = Tri2Art
-                  Endif
-                Endif
-              Endif
-            Endif
-          Endif
-        Endif
-      Endif
-    Endif
-    ArtTable[3] = "art_fam"
-    ArtTable[4] = "art_pvht"
-    ArtTable[5] = "art_pvttc"
-    ArtTable[6] = "art_qte"
-    .rs2.MoveTo(Row)
-    If Arttable[Column] = "art_crst" Then
-      For Each sline In Split(Str(.rs2[Arttable[Column]]), "\n")
-        colart.data.Text = sline
-        Break
-      Next
-    Else
-      Try colart.data.Text = Str(.rs2[Arttable[Column]])
-    Endif
-  End With
-
-End
-
-Public Sub Deb1()
-
-  Dim lpd, tri2 As String
-'  Dim Selection As String
-
-'  Selection = "'" & CB2.text & "'"
-  If Tri2Art = "art_code" Then
-    lpd = "lpad(art_code,15,' ')"
-  Else
-    lpd = Tri2Art
-  Endif
-  If org = "Fournisseur"
-    If Tri2Art = "art_design" Then
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-    Else
-      If Tri2Art = "art_cequ" Then
-        tri2 = "codequ"
-        lpd = "codequ"
-        Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 and art_four = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-      Else
-        If Tri2Art = "art_cbarre" Then
-          tri2 = "codeb"
-          lpd = "codeb"
-          Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 and art_four = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Else
-           Utils.Base2(colart, Utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Endif
-      Endif
-    Endif
-  Endif
-  If org = "Famille"
-    If Tri2Art = "art_design" Then
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_fam = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-    Else
-      If Tri2Art = "art_cequ" Then
-        tri2 = "codequ"
-        lpd = "codequ"
-         Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 and art_fam = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-      Else
-        If Tri2Art = "art_cbarre" Then
-          tri2 = "codeb"
-          lpd = "codeb"
-          Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 and art_fam = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Else
-          Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like  &1  and art_fam = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Endif
-      Endif
-    Endif
-  Endif
-  If org = "Centrale"
-    If Tri2Art = "art_design" Then
-      Utils.Base2(colart, Utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_centrale = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-    Else
-      If Tri2Art = "art_cequ" Then
-        tri2 = "codequ"
-        lpd = "codequ"
-        Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1  and art_centrale = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-      Else
-        If Tri2Art = "art_cbarre" Then
-          tri2 = "codeb"
-          lpd = "codeb"
-          Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 and art_centrale = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Else
-          Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_centrale = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Endif
-      Endif
-    Endif
-  Endif
-  Colart.Refresh
-
-End
-
-Public Sub Deb2()
-
-  Dim lpd, Tri2 As String
-  Dim Selection As String
-
-  Selection = "'" & CB2.text & "'"
-  If Tri2Art = "art_code" Then
-    lpd = "lpad(art_code,15,' ')"
-  Else
-    lpd = Tri2Art
-  Endif
-  If org = "Fournisseur"
-    If Tri2Art = "art_design" Then
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      If Tri2Art = "art_cequ" Then
-        tri2 = "codequ"
-        lpd = "codequ"
-        Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-      Else
-        If Tri2Art = "art_cbarre" Then
-          tri2 = "codeb"
-          lpd = "codeb"
-          Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-        Else
-          Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = " & Selection & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-        Endif
-      Endif
-    Endif
-  Endif
-  If org = "Famille"
-    If Tri2Art = "art_design" Then
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_fam = " & Selection & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%"))
-      If Tri2Art = "art_cequ" Then
-        tri2 = "codequ"
-        lpd = "codequ"
-        Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-      Else
-        If Tri2Art = "art_cbarre" Then
-          tri2 = "codeb"
-          lpd = "codeb"
-          Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-        Else
-          Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Endif
-      Endif
-    Endif
-  Endif
-  If org = "Centrale"
-    If Tri2Art = "art_design" Then
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_centrale = &2 " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      If Tri2Art = "art_cequ" Then
-        tri2 = "codequ"
-        lpd = "codequ"
-        Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-      Else
-        If Tri2Art = "art_cbarre" Then
-          tri2 = "codeb"
-          lpd = "codeb"
-          Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-        Else
-          Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        Endif
-      Endif
-    Endif
-  Endif
-  Colart.Refresh
-
-End
-
-Public Sub Deb5()
-
-  Dim lpd, tri2 As String
-
-  If Tri2Art = "art_code" Then
-    lpd = "lpad(art_code,15,' ')"
-  Else
-    lpd = Tri2Art
-  Endif
-  If Tri2Art = "art_design" Then
-    'If Bart = False Then Utils.Base2(colart, "select art_code, art_design, art_cequ, art_cbarre, art_cfour, art_fam, art_pvht, art_pvttc, art_qte, art_cn8 FROM " & Cbase.Table("TabArt") & " where  " & Tri2Art & " like  \"%" & sel & "%\" and art_qte > " & 0 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "")
-    'If Bart = True Then Utils.Base2(colart, "SELECT art_code, art_design, art_cequ,  art_cbarre, art_cfour, art_fam, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like  \"%" & sel & "%\" " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "")
-    Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_cequ,  art_cbarre, art_cfour, art_fam, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%"))
-
-  Else
-    'If Bart = False Then Utils.Base2(colart, "select art_code, art_design, art_fam, art_cequ, art_cfour,  art_cbarre, art_pvht, art_pvttc, art_qte, art_cn8 FROM " & Cbase.Table("TabArt") & " where  " & Tri2Art & " like  \"" & sel & "%\" and art_qte > " & 0 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "")
-    If Tri2Art = "art_cequ" Then
-      tri2 = "codequ"
-      lpd = "codequ"
-      Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-    Else
-      If Tri2Art = "art_cbarre" Then
-        tri2 = "codeb"
-        lpd = "codeb"
-        Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-      Else
-        'If Bart = True Then Utils.Base2(colart, "SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_qte, art_cn8, art_casier, art_paht, art_pvht, art_crst, art_pvttc FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like  \"%" & sel & "%\" " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "")
-        Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_qte, art_cn8, art_casier, art_paht, art_pvht, art_crst, art_pvttc FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%"))
-      Endif
-    Endif
-    'If Bart = True Then Utils.Base2(colart, "SELECT art_code, art_design, art_fam, art_cequ, art_cfour,  art_cbarre, art_pvht, art_pvttc, art_qte, art_cn8 FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like  \"" & sel & "%\" " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "")
-  Endif
-  Colart.Refresh
-
-End
-
-Public Sub Deb6()
-
-  Dim lpd, tri2 As String
-
-  If Tri2Art = "art_code" Then
-    lpd = "lpad(art_code,15,' ')"
-  Else
-    lpd = Tri2Art
-  Endif
-  If Tri2Art = "art_design" Then
-    If Bart Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_cequ,  art_cbarre, art_cfour, art_fam, art_pvht, art_pvttc, art_qte, art_cn8, art_casier from " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%"))
-  Else
-    If Tri2Art = "art_cequ" Then
-      tri2 = "codequ"
-      lpd = "codequ"
-      Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCequ") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", sel & "%"))
-    Else
-      If Tri2Art = "art_cbarre" Then
-        tri2 = "codeb"
-        lpd = "codeb"
-        Utils.Base2(colart, utils.db.Subst("select * from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2 & " Like &1 " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", sel & "%"))
-      Else
-        If Bart = True Then Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", sel & "%"))
-      Endif
-    Endif
-  Endif
-  Colart.Refresh
-
-End
-
-'On est en provenance des commandes
-Public Sub Deb7()
-
-  Dim lpd As String
-  Dim Fournisseur As String
-
-  Fournisseur = CB2.text
-  If Tri2Art = "art_code" Then
-    lpd = "lpad(art_code,15,' ')"
-  Else
-    lpd = Tri2Art
-  Endif
-  If Tri2Art = "art_design" Then
-    If Not IsNull(CB2.Text) Then
-      If org = "Fournisseur" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-      If org = "Famille" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_fam = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      If org = "Centrale" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_centrale = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-    Else
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%"))
-    Endif
-  Endif
-  If Tri2Art = "art_cbarre" Then
-    'Utils.Base2(colart, "SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like  \"" & sel & "%\" AND art_suspendu <> " & 1 & " and art_centrale = " & $Centrale & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "")
-    If org = "Fournisseur" Then Utils.Base2(colart, utils.db.Subst("select art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2Art & " Like &1 and art_four = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-  Else
-    If Not IsNull(CB2.Text) Then
-      'If org = "Fournisseur" Then Utils.Base2(colart, "select art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8 from " & Cbase.Table("TabCdBarre") & " as e inner join " & Cbase.Table("TabArt") & " as a on a.art_code = e.codep where " & tri2Art & " Like \"" & sel & "%\" and art_four = " & Fournisseur & " AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "")
-      If org = "Fournisseur" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      If org = "Famille" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_fam = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      If org = "Centrale" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_centrale = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-    Else
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " limit " & NbEnreg & ", " & lg & "", "%" & sel & "%"))
-    Endif
-  Endif
-  'Endif
-  Colart.Refresh
-
-End
-
-Public Sub Deb8()
-
-  Dim lpd As String
-  Dim Fournisseur As String
-
-  Fournisseur = CB2.text
-  If Tri2Art = "art_code" Then
-    lpd = "lpad(art_code,15,' ')"
-  Else
-    lpd = Tri2Art
-  Endif
-  If Tri2Art = "art_design" Then
-    If Not IsNull(CB2.Text) Then
-      If org = "Fournisseur" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      If org = "Famille" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_fam = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      If org = "Centrale" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 And art_centrale = &2 And art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & " ", "%" & sel & "%", CB2.Text))
-    Else
-      Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%"))
-    Endif
-  Else
-    If Tri2Art = "art_refcentrale" Then
-      Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 AND art_suspendu <> " & 1 & " and art_centrale = &2 " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", sel & "%", $Centrale))
-    Else
-      If Not IsNull(CB2.Text) Then
-        If org = "Fournisseur" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_four = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.text))
-        If org = "Famille" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_fam = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", sel & "%", CB2.Text))
-        If org = "Centrale" Then Utils.Base2(colart, utils.db.Subst("SELECT art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 and art_centrale = &2 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", "%" & sel & "%", CB2.Text))
-      Else
-        Utils.Base2(colart, utils.db.Subst("SELECT  art_code, art_design, art_fam, art_cequ, art_cfour, art_cbarre, art_refcentrale, art_paht, art_pvht, art_pvttc, art_qte, art_cn8, art_casier  FROM " & Cbase.Table("TabArt") & " where " & Tri2Art & " like &1 AND art_suspendu <> " & 1 & " " & filter & " order by " & lpd & " desc limit " & NbEnreg & ", " & lg & "", sel & "%"))
-      Endif
-    Endif
-  Endif
-  Colart.Refresh
-
-End
-
-Public Sub Colart_MouseWheel()
-
-  If mouse.Delta = -1 Then
-    If Colart.Rows.Count = lg Then NbEnreg = NbEnreg + lg
-  Else
-    If Colart.Rows.Count <= lg Then NbEnreg = NbEnreg - lg
-  Endif
-  Deplacement()
-  'Endif
-  Try Colart.MoveTo(0, 0)
-  'Try Colart.Current.EnsureVisible
-  Try Colart.SetFocus
-
-End
-
-Public Sub Remonter_Click()
-
-  If Colart.Rows.Count <= lg Then NbEnreg = NbEnreg - lg
-  Deplacement()
-  Try Colart.MoveTo(0, 0)
-  'Try Colart.Current.EnsureVisible
-  Try Colart.SetFocus
-
-End
-
-Public Sub Descendre_Click()
-
-  If Colart.Rows.Count = lg Then NbEnreg = NbEnreg + lg
-  Deplacement()
-  Try Colart.MoveTo(0, 0)
-  'Try Colart.Current.EnsureVisible
-  Try Colart.SetFocus
-
-End
-
-Public Sub Remonter_KeyPress()
-
-  If Key.code = Key.Escape Or Key.code = Key.F2 Then
-    Me.Close
-  Endif
-  If key.code = key.PageDown Then Remonter_Click()
-  If key.code = key.PageUp Then Descendre_Click()
-
-End
-
-Public Sub Descendre_KeyPress()
-
-  If Key.code = Key.Escape Or Key.code = Key.F2 Then
-    Me.Close
-  Endif
-  If key.code = key.PageDown Then Remonter_Click()
-  If key.code = key.PageUp Then Descendre_Click()
-
-End
-
-Public Sub Frame1_KeyPress()
+Public Sub TriArticles_KeyPress()
 
   If Key.code = Key.Escape Or Key.code = Key.F2 Then
     Me.Close
@@ -731,168 +177,26 @@ Public Sub Frame1_KeyPress()
 
 End
 
-Public Sub Deplacement()
-
-  If NbEnreg < 0 Then NbEnreg = 0
-  If $Org = "C" Then
-    If Dbl = True Then
-      Deb8()
-    Else
-      Deb7()
-    Endif
-  Else
-    If Not IsNull(CB2.text) Then
-      If Dbl = True Then
-        Deb2()
-      Else
-        Deb1()
-      Endif
-    Else
-      If Dbl = True Then
-        Deb6()
-      Else
-        Deb5()
-      Endif
-    Endif
-  Endif
-
-End
-
-Public Sub colart_Click()
-
-  Variables.Bsel = True
-  Variables.ArtCode = colart[colart.row, 0].Text
-
-  Select Case Origine
-
-    Case "Me"
-      If Object.IsValid(Obj) Then
-        Object.SetProperty(Obj, "Bsel", True)
-        Object.SetProperty(Obj, "Bval", colart[colart.row, 0].Text)
-      Endif
-
-    Case "Facture"
-      Variables.Bsel = True
-      Variables.$Codearticle = colart[colart.row, 0].Text
-
-    Case "Commande"
-      Variables.Bselection = True
-      Variables.ArtCode = colart[colart.row, 0].Text
-
-    Case "ModifCom"
-      ModifCom.Bsel = True
-      ModifCom.Codearticle = colart[colart.row, 0].Text
-
-    Case "EdArt1"
-      EdArt1.Bsel = True
-      EdArt1.Codearticle = colart[colart.row, 0].Text
-
-    Case "EdArt2"
-      EdArt2.Bsel = True
-      EdArt2.Codearticle = colart[colart.row, 0].Text
-
-    Case "EdArt3"
-      EdArt3.Bsel = True
-      EdArt3.Codearticle = colart[colart.row, 0].Text
-      
-    Case "Edart4"
-      Edart4.Bsel = True
-      Edart4.Codearticle = colart[colart.row, 0].Text
-
-    Case "Etigond"
-      Variables.Bsel = True
-      Variables.Codearticle = colart[colart.row, 0].Text
-
-    Case "Etiqart"
-      Variables.Bsel = True
-      Variables.Codearticle = colart[colart.row, 0].Text
-
-    Case "Etiqcasier"
-      Variables.Bsel = True
-      Variables.Codearticle = colart[colart.row, 0].Text
-
-    Case "FpromoArt"
-      FpromoArt.Bsel = True
-      FpromoArt.Codearticle = colart[colart.row, 0].Text
-
-    Case "Prodcomposes"
-      Prodcomposes.Bsel = True
-      Prodcomposes.Codearticle = colart[colart.row, 0].Text
-
-    Case "Mvtex"
-      Mvtex.Bsel = True
-      Mvtex.Codearticle = colart[colart.row, 0].Text
-
-    Case "EdStk"
-      EdStk.Bsel = True
-      EdStk.Codearticle = colart[colart.row, 0].Text
-
-    Case "Histocliart"
-      Histocliart.Bsel = True
-      Histocliart.Bval = colart[colart.row, 0].Text
-
-    Case "Btqart"
-      Btqart.Bsel = True
-      Btqart.Codearticle = colart[colart.row, 0].Text
-
-    Case "SupprArt"
-      SupprArt.Bsel = True
-      SupprArt.Codearticle = colart[colart.row, 0].Text
-
-    Case "Depots"
-      MvtDepots.Bsel = True
-      MvtDepots.Codearticle = colart[colart.row, 0].Text
-
-    Case "TarCli"
-      TarCli.Bsel = True
-      TarCli.Codearticle = colart[colart.row, 0].Text
-
-    Case "TarTypeCli"
-      TarTypeCli.Bsel = True
-      TarTypeCli.Codearticle = colart[colart.row, 0].Text
-
-    Case "Calcstock"
-      Calcstock.Bsel = True
-      Calcstock.Codearticle = colart[colart.row, 0].Text
-
-    Case "Caisse"
-      Caisse.Bsel = True
-      Caisse.Codearticle = colart[colart.row, 0].Text
-      
-    Case "Attrib"
-      Attrib.Bsel = True
-      Attrib.Codearticle = colart[colart.row, 0].Text
-
-  End Select
-  Me.close
-
-End
-
-Public Sub colart_KeyPress()
-
-  If Key.code = Key.Enter Or Key.code = Key.Return Then
-    Colart_Click()
-  Endif
+Public Sub _KeyPress()
 
   If Key.code = Key.Escape Or Key.code = Key.F2 Then
     Me.Close
   Endif
-  If Key.code = Key.Up Then
-    If Colart.Row = 0 Then
-      Descendre_Click()
-    Endif
-  Endif
-  If Key.code = Key.down Then
-    If Colart.Row = lg - 1 Then
-      Remonter_Click()
-    Endif
-  Endif
-  If Key.code = Key.PageDown Then
-    Remonter_Click()
+
+End
+
+Public Sub Panel1_KeyPress()
+
+  If Key.code = Key.Escape Or Key.code = Key.F2 Then
+    Me.Close
   Endif
 
-  If Key.code = Key.PageUp Then
-    Descendre_Click()
+End
+
+Public Sub Panel2_KeyPress()
+
+  If Key.code = Key.Escape Or Key.code = Key.F2 Then
+    Me.Close
   Endif
 
 End
@@ -1006,8 +310,8 @@ Public Sub Colist_Click()
   Fnom.text = Colist.Item[1]
   Colist.clear
   Colist.visible = False
-  Deb1()
-  CB2.SetFocus
+  Filter_Calc()
+  tr.Update()
 
 End
 
@@ -1023,7 +327,6 @@ Public Sub Colist_KeyPress()
   If Key.code = Key.Escape Or Key.code = Key.F2 Then
     Colist.visible = False
     Colist.clear
-    CB2.SetFocus
     Stop Event
   Endif
 
@@ -1052,6 +355,12 @@ Public Sub CB2_LostFocus()
 
 End
 
+Public Sub CB1_Click()
+
+  Update_Req()
+
+End
+
 Public Sub CB2_Click()
 
   CB2.SetFocus
@@ -1063,36 +372,69 @@ End
 
 Public Sub Filter_Calc()
   
-  filter = " "
-  If B2art Then
-    filter &= "and art_stocke = 1 "
-  Endif
+  Dim filter As String
+
+  filter = ""
   
-  If Disponible.Value Then
-    If B2art Then
-      filter &= "and art_qte > 0 "
-    Else
-      filter &= "and ( ( art_stocke = 0 and art_qte = 0 ) or art_qte > 0 ) "
-    Endif
-  Endif
+  Select Case Org
+    Case "Fournisseur"
+      If CB2.Text Then filter &= "art_four = \"" & CB2.Text & "\""
+    Case "Famille"
+      If CB2.Text Then filter &= "art_fam = \"" & CB2.Text & "\""
+    Case "Centrale"
+      If CB2.Text Then filter &= "art_centrale = \"" & CB2.Text & "\""
+    Default
+      Org = ""
+      filter = ""
+  End Select
   
-  If Materiel.Value Then
-    filter &= "and art_mat = 1 "
-  Endif
+  Select Case Tri2Art
+    Case "art_code"
+      If BStock Then
+        If filter <> "" Then
+          filter &= " and "
+        Endif
+        filter &= "art_stocke = 1 "
+      Endif
+      If Disponible.Value Then
+        If filter <> "" Then
+          filter &= " and "
+        Endif
+        If BStock Then
+          filter &= "art_qte > 0 "
+        Else
+          filter &= "( ( art_stocke = 0 and art_qte = 0 ) or art_qte > 0 ) "
+        Endif
+      Endif
+      If Materiel.Value Then
+        If filter <> "" Then
+          filter &= " and "
+        Endif
+        filter &= "art_mat = 1"
+      Endif
+    Default
+      filter = ""
+  End Select
   
+  If filter <> "" Then
+    tr.ExtraSel(filter, "and")
+  Else
+    tr.ExtraSel(filter, "")
+  Endif
+
 End
 
 
 Public Sub Materiel_Click()
 
   Filter_Calc()
-  Deplacement() 'Fake deplacement for updating filter
+  tr.Update()
 
 End
 
 Public Sub Disponible_Click()
 
   Filter_Calc()
-  Deplacement() 'Fake deplacement for updating filter
+  tr.Update()
 
 End

@@ -64,8 +64,8 @@ Private Epuises As String = Start.Epuises
 Private Stockes As String = Start.Stockes
 Private Org As Integer 'flag pour origine ouverture datechooser
 
-Public Codearticle As String
 Public Bsel As Boolean = False
+Public Bval As String
 
 
 Public Sub _New(code As String)
@@ -337,13 +337,10 @@ Public Sub ToggleButton2_Click()
   Dim MyForm As TriArticles
 
   Tab = "Fiches_Art"
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, True, Tri, "Materiel", "", "", Null, Radiobutton2.Value, True)
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, Radiobutton2.Value, True, Me)
   MyForm.Showmodal()
-  
-  If Variables.Bsel Then
-    Codep.Text = Variables.ArtCode
+  If Bsel Then
+    Codep.Text = Bval
     art_Man()
     Code.SetFocus()
   Endif

@@ -1,0 +1,446 @@
+' Gambas class file
+
+Create Static
+
+Private NbEnreg As Integer = 0 ' Enregistrement de départ de la sélection
+Private Col_Def As Collection
+Private Col_Order As String[]
+Private FilterRegex As Collection
+Private Dbl As Boolean = False
+Private Request As String
+Private Tri As String
+Private sel As String
+Private lg As Integer
+Private cl As Integer
+Private Coltri As GridView
+Private Colfil As TextBox[]
+Private Remonter As Button
+Private Descendre As Button
+Private Reset As Button
+Private Obj As Object
+Private Parent As Object
+Private CellHeight As Integer
+Private Win As Window
+Private Res As Result
+Private where As String
+Private comb As String
+Private Extra_sel As String
+Private Extra_comb As String
+Private xoffset As Integer
+Private policewidth As Integer = 10
+
+Event MajSel(Bval As Variant)
+Event Resize()
+
+'************************************** Gestion des Tris générique *****************************************************
+Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null)
+
+  Dim i As Integer = 0
+  Dim offset As Integer = 0
+  Dim f As ResultField
+  Dim filter As TextBox
+  
+  Parent = Par
+  Res = Resu
+  Request = Req
+  If IsNull(Parent) Then
+    Win = New Window(Start.MainWindow)
+    Win.W = 800
+    Win.H = 480
+    Parent = New Form(Win)
+    Parent.W = Win.ClientWidth
+    Parent.H = Win.ClientHeight
+    Parent.Visible = True
+    Win.AutoResize = True
+  Endif
+  Coltri = New GridView(Parent) As "Coltri"
+  Colfil = New TextBox[]
+  Col_Order = New String[]
+  Coltri.Width = Parent.ClientWidth - 40
+  CellHeight = Height
+  cl = Col.Length
+  Col_Def = Col
+  FilterRegex = New Collection
+  Tri = Col_Def[Col_Def.First].name
+  Sel = ""
+  Extra_sel = ""
+  Extra_comb = ""
+  where = ""
+  
+  For Each f In Col_Def
+    filter = New TextBox(Parent) As "Filter"
+    FilterRegex.Add("", Col_Def.Key)
+    filter.Tooltip = Col_Def.Key
+    filter.Width = Len(Col_Def.Key) * policewidth
+    filter.Height = Height
+    filter.X = offset
+    filter.Y = 0
+    filter.Alignment = Align.Center
+    filter.Tag = Col_Def.Key
+    offset = offset + filter.Width
+    filter.Show()
+    Colfil.Add(filter)
+    Col_Order.Add(Col_Def.Key)
+    filter.Text = Col_Def.Key
+  Next
+  filter.Width = filter.Width + Parent.ClientWidth - offset - 40 'optimize la taille pour le dernier champ
+  
+  Remonter = New Button(Parent) As "Remonter"
+  Descendre = New Button(Parent) As "Descendre"
+  Reset = New Button(Parent) As "Reset"
+  Refresh_Height()
+  Reset.Text = "Raz"
+  Reset.Tooltip = "Efface la selection des filtres"
+  Remonter.Picture = Picture.Load("Icones/previous.png")
+  Remonter.Show()
+  Descendre.Picture = Picture.Load("Icones/next.png")
+  Descendre.Show()
+  Reset.Show()
+
+  
+  If ob Then
+    Obj = ob
+  Else
+    Obj = Parent
+  Endif
+  
+  If Object.IsValid(Obj) Then
+    Object.SetProperty(Obj, "Bsel", False)
+    Object.SetProperty(Obj, "Bval", Null)
+  Endif
+  
+  If Object.Type(Parent) <> "Panel" Then
+    Parent.Center
+    Utils.Observers(Parent)
+  Endif
+  
+  Coltri.Columns.count = cl
+  While (i < cl)
+    Coltri.Columns[i].Width = Len(Col_Order[i]) * policewidth
+    'Coltri.Columns[i].Alignment = Align.Center
+    Inc i
+  Wend 
+  
+  Update()
+  Coltri.MoveTo(0, 0)
+  Coltri.SetFocus()
+  xoffset = 0
+  Try Coltri.Current.EnsureVisible
+
+End
+
+Public Sub Refresh_Height()
+  
+  Coltri.Rows.Height = CellHeight
+  Coltri.Height = Parent.Height - CellHeight
+  Coltri.X = 0
+  Coltri.Y = CellHeight
+  lg = Int(Coltri.Height / CellHeight) - 1
+  Remonter.W = 16
+  Descendre.W = 16
+  Remonter.H = 56
+  Descendre.H = 56
+  Reset.W = 40 + 5
+  Reset.H = CellHeight + 5
+  Remonter.X = Parent.ClientWidth - 30
+  Descendre.X = Parent.ClientWidth - 30
+  Remonter.Y = Parent.ClientHeight / 2 - ((Parent.ClientHeight / (4 * Remonter.H)) * Remonter.H)
+  Descendre.Y = Parent.ClientHeight / 2 + ((Parent.ClientHeight / (5 * Descendre.H)) * Descendre.H)
+  Reset.X = Parent.W - 43
+  Reset.Y = 0
+  Update()
+  
+End
+
+Public Sub Show(Optional Modal As Boolean = False)
+  
+  If Win Then
+    If Modal Then
+      Win.ShowModal()
+    Else
+      Win.Show()
+    Endif
+  Endif
+  
+End
+
+Public Sub Close(Selected_Value As String)
+
+  Dim cancel As Boolean = False
+
+  If Object.IsValid(Obj) Then
+    If Selected_Value Then
+      Object.SetProperty(Obj, "Bsel", True)
+      Object.SetProperty(Obj, "Bval", Selected_Value)
+    Else
+      Object.SetProperty(Obj, "Bsel", False)
+      Object.SetProperty(Obj, "Bval", Null)
+    Endif
+    cancel = Raise MajSel(Selected_Value)
+  Endif
+  If Object.Type(Parent) <> "Panel" Then
+    If Not cancel Then Parent.Close()
+  Else
+    If Not cancel Then
+      Coltri.Delete()
+      Remonter.Delete()
+      Descendre.Delete()
+      Reset.Delete()
+      Colfil.Clear()
+      Col_Order.Clear()
+    Endif
+  Endif
+  If Win Then
+    If Not cancel Then Win.Close()
+  Endif
+
+End
+
+Public Sub ExtraSel(Req As String, Comb As String)
+  
+  Extra_sel = Req
+  Extra_comb = Comb
+  NbEnreg = 0
+  Update()
+  
+End
+
+Public Sub Filter_GotFocus()
+
+  If Last.Tag = Last.Text Then
+    Last.Text = ""
+  Endif
+  Update()
+
+End
+
+Public Sub Filter_LostFocus()
+
+  If Last.Text = "" Then
+    Last.Text = Last.Tag  
+  Endif
+  Update()
+
+End
+
+Public Sub GenFilter()
+  
+  Dim f As String
+  
+  Sel = ""
+  For Each f In FilterRegex
+    f = Replace(f, "\"", "")
+    If f Then sel &= Col_Def[FilterRegex.key].name & " like \"%" & f & "%\" and "
+  Next
+  If Sel Then
+    Sel = Left(Sel, Len(Sel) - 5)
+  Endif
+  NbEnreg = 0
+  Update()
+
+End
+
+Public Sub Filter_Change()
+
+  If Last.Tag <> Last.Text Then
+    FilterRegex.Remove(Last.Tag)
+    FilterRegex.Add(Last.Text, Last.Tag)
+  Endif
+  GenFilter()
+  
+End
+
+Public Sub Filter_DblClick()
+
+  If Not Dbl Then
+    Dbl = True
+  Else
+    Dbl = False
+  Endif
+  Tri = Col_Def[Last.Tag].name  
+  Update()
+
+End
+
+Public Sub Coltri_Data(Row As Integer, Column As Integer)
+
+  Dim Frmt As New String[]
+  Dim Frmt2 As String[]
+
+  With Utils
+    .rs2.MoveTo(Row)
+    If .rs2.Available Then
+      Try Coltri.data.Text = Str(.rs2[Col_Def[Col_Order[Column]].name])
+      If .rs2.Fields.Exist("bgcolor") Then
+        If .rs2["bgcolor"] <> Null Then
+          Coltri.Data.Background = Val(.rs2["bgcolor"])
+        Endif
+      Endif
+    Endif
+  End With
+
+End
+
+Public Sub Coltri_Click()
+
+  Close(coltri[coltri.row, 0].Text)
+
+End
+
+
+
+Public Sub Coltri_KeyPress()
+
+  Dim cancel As Boolean = False
+
+  If Key.code = Key.Enter Or Key.code = Key.Return Then
+    Coltri_Click()
+  Endif
+  If Key.code = Key.Up Then
+    If Coltri.Row = 0 Then
+      Remonter_Click()
+    Endif
+  Endif
+  If Key.code = Key.down Then
+    If Coltri.Row = lg - 1 Then
+      Descendre_Click()
+    Endif
+  Endif
+  If Key.code = Key.PageDown Then
+    Descendre_Click()
+  Endif
+
+  If Key.code = Key.PageUp Then
+    Remonter_Click()
+  Endif
+  If Key.code = Key.F2 Then
+    cancel = Raise Resize()
+    If Not cancel Then
+      Refresh_Height()
+    Endif
+  Endif
+  If Key.code = Key.Escape Then
+    Close(Null)
+  Endif
+
+End
+
+Public Sub Coltri_MouseWheel()
+
+  If mouse.Delta = -1 Then
+    If Coltri.Rows.Count = lg Then NbEnreg = NbEnreg + lg
+  Else
+    If Coltri.Rows.Count <= lg Then NbEnreg = NbEnreg - lg
+  Endif
+  Update()
+
+End
+
+Public Sub Coltri_Scroll()
+  
+  Dim f As TextBox
+  Dim x As Integer
+  
+  x = xoffset - Coltri.ScrollX
+  xoffset = Coltri.ScrollX
+  
+  For Each f In Colfil
+    f.X = f.X + x
+  Next
+  
+End
+
+
+
+Public Sub Descendre_Click()
+
+  If Coltri.Rows.Count = lg Then
+    NbEnreg = NbEnreg + lg
+    Update()
+  Endif
+  Try Coltri.MoveTo(0, 0)
+  Try Coltri.Current.EnsureVisible
+  Try Coltri.SetFocus
+
+End
+
+Public Sub Remonter_Click()
+
+  NbEnreg = NbEnreg - lg
+  Update()
+  Try Coltri.MoveTo(0, 0)
+  Try Coltri.Current.EnsureVisible
+  Try Coltri.SetFocus
+
+End
+
+Public Sub Descendre_KeyPress()
+
+  If Key.code = Key.Escape Or Key.code = Key.F2 Then
+    Close(Null)
+  Endif
+  If key.code = key.PageDown Then Descendre_Click()
+  If key.code = key.PageUp Then Remonter_Click()
+
+End
+
+Public Sub Remonter_KeyPress()
+
+  If Key.code = Key.Escape Or Key.code = Key.F2 Then
+    Close(Null)
+  Endif
+  If key.code = key.PageDown Then Descendre_Click()
+  If key.code = key.PageUp Then Remonter_Click()
+
+End
+
+Public Sub Reset_Click()
+  Dim f As TextBox
+  
+  For Each f In Colfil
+    f.Text = f.Tag
+    FilterRegex.Remove(f.Tag)
+    FilterRegex.Add("", f.Tag)
+  Next
+  Tri = Col_Def[Col_Def.First].name
+  Dbl = False
+  GenFilter()
+  
+End
+
+Public Sub Update()
+
+  If NbEnreg < 0 Then NbEnreg = 0
+  
+  If Sel Or Extra_sel Then
+    where = " where "
+    If Sel And Extra_sel Then
+      comb = " " & Extra_comb & " "
+    Else
+      comb = ""
+    Endif
+  Else
+    where = ""
+  Endif
+  
+  If Dbl = True Then
+    Deb4()
+  Else
+    Deb3()
+  Endif
+
+End
+
+Public Sub Deb3()
+
+  Utils.Base2(coltri, Request & where & Extra_sel & comb & Sel & " order by " & Tri & " limit " & NbEnreg & ", " & lg & "")
+  Coltri.Refresh
+
+End
+
+Public Sub Deb4()
+
+  Utils.Base2(coltri, Request & where & Extra_sel & comb & Sel & " order by " & Tri & " desc limit " & NbEnreg & ", " & lg & "")
+  Coltri.Refresh
+
+End

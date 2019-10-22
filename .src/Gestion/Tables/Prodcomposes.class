@@ -39,8 +39,9 @@ iPmp As Float = 0
 Modif As Boolean = False 'Flag pour savoir si composant est en modification
 Nbdec As String 'decimale quantité
 Private Coeff As Float
-Public Codearticle As String
+
 Public Bsel As Boolean = False
+Public Bval As String = ""
 
 Public Sub _New()
 
@@ -458,15 +459,12 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
 
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "Prodcomposes", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Cart.text = Codearticle
+    Cart.text = Bval
     art_man()
   Endif
 
@@ -670,18 +668,15 @@ End
 '****************************************Gestion de la MO **************************************************
 Public Sub SelectionMo()
 
-  Dim sel As String = ""
-  Dim MyForm As TriMo
+  Dim MyForm As TriArticles
 
-  sel = ""
-  Tri = "mo_code"
-  MyForm = New TriMo("Prodcomposes")
+  MyForm = New TriArticles(True, False, "mo_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Cart.text = Variables.$Codemo
+  If Bsel = True Then
+    Cart.text = Bval
     Mo_man()
   Endif
-
+  
 End
 
 Public Sub Mo_man()

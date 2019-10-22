@@ -1,5 +1,8 @@
 ' Gambas class file
 
+Public Bsel As Boolean = False
+Public Bval As String = ""
+
 Private $rescons As Result
 Private $sbloc As String
 Private $inbc As Integer
@@ -362,10 +365,10 @@ Public Sub Butart_Click()
   Dim MyForm As TriArticles
   
   Try $win.Close
-  MyForm = New TriArticles("", "", "art_code", "", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Textart.text = Variables.ArtCode
+  If Bsel = True Then
+    Textart.text = Bval
     Textpal.Select
     Textpal.SetFocus
     selectionart

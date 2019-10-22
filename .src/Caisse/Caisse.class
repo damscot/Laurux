@@ -7039,10 +7039,7 @@ Public Sub SelectionArt()
 
   Dim MyForm As TriArticles
 
-  Bsel = False
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "Me", "", "", Null, False, False, Me)
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
     Cart.text = Bval

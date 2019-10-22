@@ -32,10 +32,10 @@ rfam As Result
 CoulZns As Integer ' Variable pour la couleur du background des zones de saisie et des columnviews
 CoulZnaf As Integer ' Variable pour la couleur du background des columnviews
 CoulFc As Integer ' Variable pour la couleur du focus
-Public Codearticle As String
 Public Bsel As Boolean = False
+Public Bval As String
 Private b As Integer = 0
-Tri As String = ""
+
 
 Public Sub _New()
 
@@ -76,15 +76,12 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
 
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "Btqart", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Art.text = Codearticle
+    Art.text = Bval
     Button4_Click()
   Endif
 

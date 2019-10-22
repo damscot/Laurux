@@ -7,8 +7,10 @@ Private $entre As Float
 Private $sortie As Float
 Private $ca As Float
 Private $marge As Float
-
 Private $soption As String
+
+Public Bsel As Boolean = False
+Public Bval As String
 
 
 Public Sub _new()
@@ -868,11 +870,10 @@ Public Sub Butart_Click()
 
   Dim MyForm As TriArticles
 
-  Variables.Bsel = False
-  MyForm = New TriArticles("", "", "art_code", "Receipt", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Textart.text = Variables.ArtCode
+  If Bsel = True Then
+    Textart.text = Bval
     Textart.SetFocus
   Endif
 

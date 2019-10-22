@@ -25,6 +25,9 @@
 '################################################
 '
 
+Public Bsel As Boolean = False
+Public Bval As String = ""
+
 Private Tab As String
 Private $Org As String
 Private $hform As Form
@@ -181,15 +184,12 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim tri As String = ""
   Dim MyForm As TriArticles
 
-  Tri = "art_code"
-  Variables.Bsel = False
-  MyForm = New TriArticles("", "", Tri, "", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "Famille", Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Code.text = Variables.ArtCode
+  If Bsel = True Then
+    Code.text = Bval
     Art_Man()
     fam_Man
   Endif
@@ -522,7 +522,7 @@ Public Sub Liste_Click()
     listBart.Text = ""
     listBart.Raise
     Button9.Visible = True
-    Try utils.db.Exec("DROP TABLE CFamille")
+    Utils.db.Exec("DROP TABLE IF EXISTS CFamille")
     Utils.db.Exec("CREATE Temporary TABLE " & TabF &
       "(codeart Char(15) Not Null, " &
       "afam Char(5)," &

@@ -33,8 +33,9 @@ p As Float
 son As Integer = Start.Son
 Tri As String
 Private $soption As String
-Public Codearticle As String
+
 Public Bsel As Boolean = False
+Public Bval As String
 
 Public Sub _New()
 
@@ -258,15 +259,12 @@ End
 
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
 
-  sel = ""
-  Tri = "art_code"
-  MyForm = New TriArticles(True, "", Tri, "Mvtex", "", "")
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Cart.text = Codearticle
+    Cart.text = Bval
   Endif
   Cart.SetFocus
   Cart.Select

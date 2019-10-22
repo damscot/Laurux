@@ -90,6 +90,10 @@ Private $bcrea As Boolean
 Private $fcd As Fourconsdroi
 Private $lastvalidbldoc As String
 
+Public Bsel As Boolean = False
+Public Bval As String
+
+
 Public Sub _New()
 
   Dim WidthCol As String
@@ -2562,24 +2566,23 @@ End
 '****************************************Gestion des articles**************************************************
 Public Sub SelectionArt()
 
-  Dim sel As String = ""
   Dim MyForm As TriArticles
   Dim sFour As String = ""
-  Dim $centrale As String = ""
+  Dim $selection As String = ""
 
   Tab = "Fiches_Art"
-  sel = ""
-  Tri = "art_code"
-  Variables.Bsel = False
   If Tartfourn2.Value = True Then sFour = Four.Text
   If Not IsNull(sCentraleF) And If Tartfourn2.Value = True Then
     sFour = sCentraleF
-    $centrale = "Centrale"
+    $selection = "Centrale"
+  Else
+    sFour = Four.Text
+    $selection = "Fournisseur"
   Endif
-  MyForm = New TriArticles("", "", Tri, "Receipt", sFour, $centrale)
+  MyForm = New TriArticles(True, False, "art_code", sFour, $selection, Null, False, False, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Cart.text = Variables.ArtCode
+  If Bsel = True Then
+    Cart.text = Bval
     Art_Man()
   Endif
 

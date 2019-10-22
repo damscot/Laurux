@@ -1,0 +1,72 @@
+' Gambas class file
+
+Public Bsel As Boolean
+Public Bval As String
+
+Private tr As TriGen
+Private Col As Collection
+
+
+Public Sub _new()
+
+  Dim f As ResultField
+  Dim Req As String
+  Dim Res As Result
+  
+  
+  'Req = "select art_code, art_design, art_four, art_fam, art_qte from " & Cbase.Table("TabArt")
+  Req = "select art_code, art_design, art_four, art_fam, art_qte, CASE WHEN art_suspendu = 1 THEN '&HC0C0C0&' WHEN art_qte > 0 and art_stocke = 1 THEN '&H00FF00&' WHEN art_qte = 0 and art_stocke = 1 THEN '&HF8B9A0&' WHEN art_qte < 0 and art_stocke = 1 THEN '&HFF0000&' WHEN art_stocke = 0 THEN Null ELSE '&H00FFFF&' END as bgcolor from " & Cbase.Table("TabArt")
+  
+  
+  Col = New Collection
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  
+  f = Res.Fields["art_code"]
+  Col.Add(f, "-----code-----")
+  f = Res.Fields["art_design"]
+  Col.Add(f, "-----------intitule-----------")
+  f = Res.Fields["art_four"]
+  Col.Add(f, "-fournisseur-")
+  f = Res.Fields["art_fam"]
+  Col.Add(f, "-famille-")
+  f = Res.Fields["art_qte"]
+  Col.Add(f, "-quantite-")
+
+  'tr = New TriGen(Null, Col, Res, Req, 20, Me) As "ColTri"
+  'tr.Show()
+  
+  'tr = New TriGen(Me, Col, Res, Req, 20, Me) As "ColTri"
+  
+  tr = New TriGen(Panel1, Col, Res, Req, 20, Me) As "ColTri"
+  
+End
+
+Public Sub form_Close()
+  
+  Print Bsel
+  Print Bval
+  
+End
+
+Public Sub ColTri_MajSel(val As Variant)
+
+  If val Then
+    TextBox1.Text = Bval
+  Else
+    TextBox1.Text = ""
+    Stop Event
+  Endif
+  
+End
+
+
+Public Sub CheckBox1_Click()
+
+  If CheckBox1.Value Then
+    tr.ExtraSel("art_qte > 0 and art_stocke = 1", "and")
+  Else
+    tr.ExtraSel("", "")
+  Endif
+  
+End
