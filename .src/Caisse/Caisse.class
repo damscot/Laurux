@@ -2288,7 +2288,7 @@ End
 Public Sub ColTka_Click()
 
   Dim Mtk As String
-  Dim RTck As Result
+  Dim RTck, Rarts As Result
   Dim Tab As String
   Dim Clitab As Result
   Dim Caisse As String
@@ -2365,6 +2365,10 @@ Public Sub ColTka_Click()
       If rResult!type = "A" Then
         Totalht = Val(Utils.cpoint(Totalht)) + (Val(utils.cpoint(rResult!mht)))
         Totalht = Format$(Totalht, "0.00")
+        Rarts = Utils.db.Exec("SELECT art_tva FROM " & Cbase.Table("TabArt") & " where art_code = &1", rResult!code)
+        If Rarts.Available Then
+          LigTk.Item[12] = Rarts!art_tva
+        Endif
       Endif
       'verifie si BLs règlé dans ce ticket
       If rResult!type = "BL" Then
@@ -2382,9 +2386,9 @@ Public Sub ColTka_Click()
   'On le supprime de la table des tickets Ent & Lignes
   'il sera enregistre plus tard par la nouvelle caisse
   Tab = "Fiches_EntTicketz"
-  RTck = Utils.db.Exec("SELECT * FROM " & Tab & " where statut = &1 and numero = &2", 1, Numtk)
+  RTck = Utils.db.Exec("SELECT * FROM " & Tab & " where statut = &1 and numero = &2", "1", Numtk)
   If RTck.Available Then
-    Utils.db.Exec("DELETE FROM " & Tab & " where statut = &1 and numero = &2", 1, Numtk)
+    Utils.db.Exec("DELETE FROM " & Tab & " where statut = &1 and numero = &2", "1", Numtk)
     Tab = "Fiches_LigTicketz"
     Utils.db.Exec("DELETE FROM " & Tab & " where numero = &1", Numtk)
   Endif
@@ -5681,7 +5685,7 @@ Public Sub Enrg_Tk(Supprime As Boolean) As String
   Dim smontanttva As String 'montant de la ligne tva
   Dim sqte As String ' quantité
   Dim stype As String ' type de ligne
-  Dim sstatut As Integer = 0 ' si ticket mis en attente
+  Dim sstatut As String = "0" ' si ticket mis en attente
   Dim ssuppr As Integer = 0 ' si ticket est supprime
   Dim sespeces As String
   Dim smespeces As String
@@ -5755,7 +5759,7 @@ Public Sub Enrg_Tk(Supprime As Boolean) As String
   With utils
     'Ticket avec Règlement a enregistrer
     If iAttente = 0 And Supprime = False Then
-      sstatut = 0 'Ticket non en attente
+      sstatut = "0" 'Ticket non en attente
       Repeat
         LigTk.Item.Selected = True
         If LigTk.Item[5] = "BH" Then
@@ -5853,7 +5857,7 @@ Public Sub Enrg_Tk(Supprime As Boolean) As String
       Until LigTk.MoveNext()
     Else
       'Ticket en Attente
-      If iAttente Then sstatut = 1
+      If iAttente Then sstatut = "1"
       'Ticket a supprimer
       If Supprime Then ssuppr = 1
       smht = Totalht
@@ -5983,7 +5987,7 @@ Public Sub Enrg_Tk(Supprime As Boolean) As String
     'Lors de l'enregistrement d'un ticket on supprime le flag ticketz, il sera remis par la génération du livre de caisse
     Utils.db.Exec("Update " & Cbase.Table("TabCaisses") & " set tkz = &2 where code = &1", NCaisse, 0)
     
-    'Client compte on génère le BL depuis le ticket z
+    'Client compte on génère le BL depuis le ticket
     'On rajoute une dernière ligne dans le ticket pour donner le numero de BL associe
     If clicompte = 1 And Supprime = False Then
       numbon = Moulinage.Generation_BL(numero_tk, clicode, False)
@@ -6627,8 +6631,7 @@ Public Sub Button20_Click()
   If Imprimante = "DéfautA4" Or If Imprimante = "Défaut80" Then
     Defaut_Ticketxz(sIntitule, False)
   Else
-    sIntitule = Utils.Replace(sIntitule)
-    Serial_Ticketxz(sIntitule, "x")
+    Message.Warning("Support d'impression serie non disponible")
     Defaut_Ticketxz(sIntitule, False)
   Endif
 
@@ -6698,7 +6701,7 @@ Public Sub Ticketz()
         If Imprimante = "DéfautA4" Or If Imprimante = "Défaut80" Then
           Defaut_Ticketxz(sIntitule, True)
         Else
-          Serial_Ticketxz(sIntitule, "z")
+          Message.Warning("Support d'impression serie non disponible")
           Defaut_Ticketxz(sIntitule, False)
         Endif
         If sDon Then
@@ -6792,222 +6795,6 @@ Public Sub DupliZ(Zfile As String)
     Shell "cd " & User.Home & "" Wait
     Shell "cp " & Zfile & " " & chemin & "/" & "TicketZ_" & Format$(Now, "yyyymmdd-hhnnss") & ".pdf" Wait
     Wait 0.5
-  Endif
-
-End
-
-Public Sub Serial_Ticketxz(sintitule As String, origine As String)
-
-  Dim rTkx, rttva, rTkhv, rTkFam As Result
-  Dim Tabx As String
-  Dim Tabe, Tabl As String
-  Dim Tabr As String
-  Dim sFam As String = 0
-  Dim sFam2 As String = 0
-  Dim sMtfam As String = 0
-  Dim sMtreg As String = 0
-  Dim sreg As String
-  Dim sqte, tintitule As String
-  Dim totcaisse As String = 0
-  Dim totventes As String = 0
-  Dim Fdc As String = "0"
-  Dim Totnbtck, Boncaisse As Integer = 0
-  Dim Pnm, itva As Float = 0
-  Dim sLfam As String
-  Dim Enc As Boolean = False
-  Dim tcheque, tcarte, tespece, tmttc As Float
-
-  Try sLfam = Replace$(rTkFam!libelle, "\n", " ")
-  Tabe = "Fiches_EntTicketz" '& Ncaisse
-  Tabx = "Fiches_Fam" 
-  'Tabx = "Fiches_Ticketx" & Ncaisse
-  'Tabr = "Fiches_Reglts" & Ncaisse
-  Tabl = "Fiches_LigTicketz" '& Ncaisse
-  With Utils
-    rTkx = Utils.db.Exec("select * from  " & Cbase.Table("TabCaisses") & " WHERE code = &1", Ncaisse)
-    Try Fdc = Format$(rTkx!fndc, "0.00")
-    totcaisse = Val(.cpoint(Totcaisse)) + Val(.cpoint(Fdc))
-    rTkx = Utils.db.Exec(" select * from " & Tabe & " where statut = &1 and caisse = &2", "0", Ncaisse)
-    If rTkx.Available Then
-      Entete_Tck("1")
-      If origine = "x" Then
-        Print #Sport, Chr$(&H1B) & "c0" & Chr$(2);
-      Else
-        Print #Sport, Chr$(&H1B) & "c0" & Chr$(1);
-      Endif
-      Totnbtck = rTkx.count
-      If rTkx.Available Then
-        Repeat
-          ' Les clients comptes génère des BL il n'y a donc pas de vente/d'encaissement
-          ' l'encaissement pourra avoir lieu en caisse lors du règlement de BL
-          If rTkx!type = 1 Then Continue
-          If rTkx!savoir = 1 Then
-            Try totventes = Val(.cpoint(Totventes)) - Val(.cpoint(rTkx!mttc))
-          Else
-            Try totventes = Val(.cpoint(Totventes)) + Val(.cpoint(rTkx!mttc))
-          Endif
-          If rTkx!scheque = "V" Then tcheque = tcheque + Val(.cpoint(rTkx!mcheque))
-          If rTkx!scarte = "U" Then tcarte = tcarte + Val(.cpoint(rTkx!mcarte))
-          If rTkx!sespeces = "N" Then tespece = tespece + Val(.cpoint(rTkx!mespeces))
-        Until rTkx.MoveNext()
-      Endif
-      rTkx = Utils.db.Exec(" select * from " & Tabl & " as l inner join " & Tabe & " as e on e.numero = l.numero where e.statut = &1 and e.suppr !=1 and e.caisse = &2 order by l.type", "0", Ncaisse)
-      If rTkx.Available Then
-        Print #Sport, Left$(sintitule, 35)
-        Print #Sport, Mid$(sintitule, 37, Len(sintitule) - 35)
-        Print #Sport, "Caissier(e) " & $caissiere
-        Print #Sport, pointille
-        Print #Sport, "Fond de caisse initial " & Fdc
-        Print #Sport, pointille
-        Print #Sport, "Mouvements hors ventes "
-        Print #sport, ""
-        Repeat
-          If rTkx!type = "F" Or If rTkx!type = "G" Or If rTkx!type = "H" Or If rTkx!type = "P" Then
-            If rTkx!type = "F" Then sreg = "Sortie especes" & rTkx!intitule
-            If rTkx!type = "G" Then sreg = "Entree especes " & rTkx!intitule
-            If rTkx!type = "H" Then sreg = "Entree cheques " & rTkx!intitule
-            If rTkx!type = "P" Then sreg = "Entree cartes " & rTkx!intitule
-            sreg = Left$(sreg, 23)
-            sMtreg = Format$(Val(.cpoint(rTkx!montant)), "0.00")
-            If rTkx!type = "F" Then sMtreg = "-" & sMtreg
-            If rTkx!type = "F" Then
-              totcaisse = Val(.cpoint(Totcaisse)) - Val(.cpoint(rTkx!montant))
-            Else
-              If rTkx!type = "G" Then totcaisse = Val(.cpoint(Totcaisse)) + Val(.cpoint(rTkx!montant))
-            Endif
-            sqte = rTkx!qte
-            If rTkx!type = "F" Or If rTkx!type = "G" Or If rTkx!type = "P" Or If rTkx!type = "H" Then
-              Print #Sport, sreg & Space$(23 - Len(sreg)) & sMTreg & Space$(10 - Len(sMTreg)) & sqte
-            Endif
-          Endif
-        Until rTkx.MoveNext()
-      Endif
-      
-      Print #Sport, pointille
-      rTkx = Utils.db.Exec(" select  sum(replace(mttc, ',', '.')) as tmttc from " & Tabe & " where statut = &1 and suppr = &2 and caisse =&3", "0", 1, NCaisse)
-      If rTkx.Available Then Try tmttc = rTkx!tmttc
-      rTkx = Utils.db.Exec(" select * from " & Tabe & " where statut = &1 and suppr = &2 and caisse =&3", "0", 1, NCaisse)
-      If rTkx.Available Then
-        Print #Sport, " Tickets annulés :  " & Format$(tmttc, "0.00") & " : " & rTkx.Count
-        Print #sport, ""
-        Repeat
-          Print #Sport, " Tickets " & rTkx!numero & " : " & Format$(Val(.cpoint(rTkx!mttc)), "0.00")
-          Print #sport, ""
-        Until rTkx.MoveNext()
-      Endif
-      Print #Sport, pointille
-      rTkhv = Utils.db.Exec(" select count(*) as cnt, l.type, sum(cast(REPLACE(l.montant,',','.') as decimal(7,2))) as totmontant, DATE(e.date) as ddate from " & Tabl & " as l left join " & Tabe & " as e on l.numero = e.numero where l.type is not Null and e.statut = &1 and e.caisse = &2 and e.suppr != 1 group by l.type, DATE(e.date)", "0", Ncaisse)
-      If rTkhv.Available Then
-        Print #Sport, "Mouvements ventes "
-        Print #sport, ""
-        Repeat
-          If rTkhv!type = "N" Then sreg = "Tot. rglts par especes "
-          'If rTkhv!type = "Q" Then sreg = "Tot. rendu monnaie "
-          If rTkhv!type = "U" Then sreg = "Tot. rglts par cartes "
-          If rTkhv!type = "V" Then sreg = "Tot. rglts par cheques "
-          If rTkhv!type = "B" Then sreg = "Tot. bonus utilises "
-          If rTkhv!type = "E" Then sreg = "Tot. autre règlements "
-          If rTkhv!type = "X" Then sreg = "Tot. bons achat "
-          If rTkhv!type = "Y" Then sreg = "Tot. cheques cadeaux "
-          If rTkhv!type = "W" Then sreg = "Tot. rglts par credits "
-          If rTkhv!type = "Z" Then sreg = "Tot. rglts par avoirs "
-          If rTkhv!type = "1" Then sreg = "Tot. Cheques entreprise"
-          If rTkhv!type = "M" Then sreg = "Tot. clients compte "
-          If rTkhv!totmontant <> Null Then
-            sMtreg = Format$(Val(.cpoint(rTkhv!totmontant)), "0.00")
-          Else
-            sMtreg = "0.00"
-          Endif
-          sqte = rTkhv!cnt
-          If Val(sqte) > 0 Then
-            If rTkhv!type = "E" Or If rTkhv!type = "B" Or If rTkhv!type = "N" Or If rTkhv!type = "U" Or If rTkhv!type = "V" Or If rTkhv!type = "X" Or If rTkhv!type = "Y" Or If rTkhv!type = "W" Or If rTkhv!type = "Z" Or If rTkhv!type = "M" Or If rTkhv!type = "1" Then
-              sreg &= " du " & LDate(rTkhv!ddate).L
-              Print #Sport, .Replace(sreg) & Space$(45 - Len(sreg)) & sMTreg & Space$(10 - Len(sMTreg)) & sqte
-            Endif
-          Endif
-        Until rTkhv.MoveNext()
-      Endif
-      
-      totcaisse = Val(.cpoint(Totcaisse)) + tespece
-      Print #Sport, "Total ventes " & Format$(Val(.cpoint(Totventes)), "0.00")
-      Print #Sport, pointille
-      Print #Sport, "Fond de caisse " & Format$(Val(.cpoint(Totcaisse)), "0.00")
-      FndCaisse = Totcaisse
-      Print #Sport, pointille
-      'rTkx = Utils.db.Exec(" select * from " & Tabe & " where type = &1", "1")
-      'If rTkx.Available Then
-        'totventes = 0
-      '  Repeat
-      '    Try totventes = Val(.cpoint(Boncaisse)) + Val(.cpoint(rTkx!mttc))
-      '  Until rTkx.MoveNext()
-      '  Print #Sport, "Total bons de caisse " & Format$(Val(.cpoint(Boncaisse)), "0.00")
-      '  Print #Sport, pointille
-      'Endif
-      If tkz = 1 Then
-        Print #Sport, pointille
-        Print #Sport, "Nombre de tickets : ", Totnbtck
-        Try Pnm = Totventes / Totnbtck
-        If Not Error Then
-          Print #Sport, "Panier moyen : " & Format$(Pnm, "0.00")
-          Print #Sport, pointille
-        Endif
-        Tkz = 0
-      Endif
-      'Recapitulatif TVA sur les ticket avec un encaissement
-      rttva = Utils.db.Exec("select * from  " & Tabl & " as l inner join " & Tabe & " as e on e.numero = l.numero WHERE left(intitule,3) = &1 and e.type = &2 and e.suppr != 1 and e.statut = &3 and e.caisse=&4 order by intitule", "TVA", 0, "0", Ncaisse)
-      If rttva.Available Then
-        Print #Sport, "Recapitulatif TVA"
-        tintitule = rttva!intitule
-        Repeat
-          If tintitule <> rttva!intitule Then
-            Print #Sport, Tintitule, itva
-            itva = 0
-          Endif
-          itva = itva + Val(utils.cpoint(rttva!montant))
-          tintitule = rttva!intitule
-        Until rttva.MoveNext()
-        Print #Sport, Tintitule, itva
-        Print #Sport, pointille
-        Tkz = 0
-      Endif
-      Print #Sport, Chr$(&H1B); "!"; Chr$(2);
-      
-      Print #Sport, pointille
-      rTkx = Utils.db.Exec(" select * from Fiches_Caisses where code = &1", Ncaisse)
-      'pdf.Level2("Total période (sur encaissement)", Format$(Val(.cpoint(rTkx!fndtotp)), "0.00"), "", Posy)
-      ' Posy += 5
-      ' pdf.Lines2(Posy)
-      Print #Sport, "Total général (sur encaissement)" & Format$(Val(.cpoint(rTkx!fndtotg)), "0.00")
-      Print #Sport, pointille
-    
-      rTkFam = Utils.db.Exec("select sum(cast(replace(l.qte,',','.') as decimal(7,2))) as totalfamqte, fam, sum(cast(replace(l.mht,',','.') as decimal(7,2))) as totalfamht, libell_fam from " & Tabl & " as l left join " & Tabe & " as e on l.numero = e.numero left join " & Tabx & " on l.fam = code_fam where l.fam is not Null and l.type = &1 and e.statut = &2 and e.suppr != 1 and e.caisse = &3 group by fam", "A", "0", Ncaisse)
-      If rTkFam.Available Then
-        Print #Sport, "Total ventes HT par familles"
-        Print #sport, ""
-        Repeat
-          sFam = "Famille " & Left$(rTkFam!fam, 2)
-          Print #sport, Utils.Replace(rTkFam!libell_fam) & " " & Format$(Val(utils.cpoint(rTkFam!totalfamht)) / Totventes * 100, "0.00") & " %" & " =>  total: " & rTkFam!totalfamht & " qte: " & rTkFam!totalfamqte
-        Until rTkFam.MoveNext()
-        Print #Sport, pointille
-      Endif
-
-      Print #Sport, ""
-      Print #Sport, pointille
-      Print #Sport, ""
-      Print #Sport, ""
-      Print #Sport, ""
-      If origine <> "x" Then Print #sport, Chr$(&H1B) & "m";
-      Print #sport, Chr$(&H1D) & "V" & Chr$(66) & Chr$(0); ' on coupe le papier
-      
-      sDon = 1
-    Else
-      Message.Info("Aucune donnée n'est a traiter !")
-      sDon = 0
-    Endif
-  End With
-  If origine = "x" Then
-    Print #sport, ""
-    'Entete_Tck("1")
   Endif
 
 End
@@ -7598,9 +7385,9 @@ Public Sub Delete_Reglements_Tk()
           'on ne fait rien sinon "BL" pourrait ci-dessous pris pour une ligne de total de type "B"
         Else If Left(LigTk.Current[5], 1) = "B" Or Left(LigTk.Current[5], 1) = "L" 'Total Ticket
           LigTk.Current.Delete
-        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" Or Left(LigTk.Current[5], 1) = "Z" Or Left(LigTk.Current[5], 1) = "W" Or Left(LigTk.Current[5], 1) = "X" Or Left(LigTk.Current[5], 1) = "Y" Or Left(LigTk.Current[5], 1) = "I" Or Left(LigTk.Current[5], 1) = "E" Or Left(LigTk.Current[5], 1) = "B" Or Left(LigTk.Current[5], 1) = "1" 'Mode de Paiement
+        Else If Left(LigTk.Current[5], 1) = "N" Or Left(LigTk.Current[5], 1) = "Q" Or Left(LigTk.Current[5], 1) = "V" Or Left(LigTk.Current[5], 1) = "U" Or Left(LigTk.Current[5], 1) = "Z" Or Left(LigTk.Current[5], 1) = "W" Or Left(LigTk.Current[5], 1) = "X" Or Left(LigTk.Current[5], 1) = "Y" Or Left(LigTk.Current[5], 1) = "I" Or Left(LigTk.Current[5], 1) = "B" Or Left(LigTk.Current[5], 1) = "1" 'Mode de Paiement
           LigTk.Current.Delete
-        Else If Left(LigTk.Current[5], 2) = "RA" 'Rappel Accompte
+        Else If Left(LigTk.Current[5], 2) = "RA" Or Left(LigTk.Current[5], 2) = "E" 'Rappel Accompte et Règlement Autre "E" simple != "EH"/"EA"
           LigTk.Current.Delete
         Endif
       Endif
@@ -7817,7 +7604,7 @@ Public Sub Ligtk_Delete(Optional Need_Confirmation As Boolean = True)
       Valid_Remtot("0")
 
       'On recalcule le total du ticket
-      Recalc_Tottk()
+      'Recalc_Tottk()
       
       Cart.Text = ""
       Qte.Text = "1"
