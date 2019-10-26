@@ -43,7 +43,7 @@ Private Vicadeau As String
 Private jnal As String
 Private jnal3 As String
 Private RegroupBL As Facturergbl
-
+Private $nfour As String
 
 Public Sub _new()
 
@@ -770,7 +770,7 @@ Public Sub Generation_Bl(Ntk As String, Client As String, Bande_Z_Valide As Bool
   Dim Remart As String
   Dim totalht As Float
   Dim totalttc As Float
-  Dim mrg As Float
+  Dim mrg, marge As Float
   Dim statut As String
   
   If Bande_Z_Valide Then
@@ -831,9 +831,11 @@ Public Sub Generation_Bl(Ntk As String, Client As String, Bande_Z_Valide As Bool
           Remart = Val(Utils.cpoint(Remart)) + Val(Utils.cpoint(artbrut)) - Val(Utils.cpoint(artnet))
           totalht = totalht + Val(Utils.cpoint(artnet))
           totalttc = totalttc + Val(Utils.cpoint(Arttc))
-          'mrg += rltck!marge 'TODO la marge n'est pas dispo sur la ligne en caisse, il faut faire le calcul ici si besoin
+          mrg = Calc_Marge()
+          marge += mrg
+         
           'on enregistre la ligne du Bl
-          Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigbl") & "(num_ligbl, numlig_ligbl,code_ligbl, libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, dec_ligbl, block_ligbl, mrgart_ligbl, dte_ligbl) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", numbon, nmlig, rlTck!code, artdsg, artfam, artpu, qte, artbrut, Artrm, artnet, Arttx, Arttc, "A", Nbd, Bloc, "", LDate(rTck!date).DT) ' TODO calul marge
+          Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigbl") & "(num_ligbl, numlig_ligbl,code_ligbl, libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, dec_ligbl, block_ligbl, mrgart_ligbl, dte_ligbl,mtx_ligfac,four_ligbl) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18},  &{19})", numbon, nmlig, rlTck!code, artdsg, artfam, artpu, qte, artbrut, Artrm, artnet, Arttx, Arttc, "A", Nbd, Bloc, mrg, LDate(rTck!date).DT, Ttva, $nfour) ' TODO calul marge
           If rlTck!type = "S" Then
             rlTck.MovePrevious
             If rlTck!type = "O" Then rlTck.MovePrevious
@@ -856,7 +858,7 @@ Public Sub Generation_Bl(Ntk As String, Client As String, Bande_Z_Valide As Bool
           Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigbl") & " (num_ligbl, numlig_ligbl, com_ligbl, typel_ligbl, block_ligbl) VALUES (&1, &2, &3, &4, &5)", numbon, nmlig, rlTck!intitule, "C", Bloc)
         Endif
       Until rlTck.MoveNext()
-      Utils.db.Exec("UPdate  " & Cbase.Table("TabBl") & "  SET marge_art = &2, remartbl = &3, totalht = &4, totalttc = &5 where numbl = &1", numbon, mrg, Remart, totalht, totalttc)
+      Utils.db.Exec("UPdate  " & Cbase.Table("TabBl") & "  SET marge_art = &2, remartbl = &3, totalht = &4, totalttc = &5 where numbl = &1", numbon, marge, Remart, totalht, totalttc)
     Endif
     
     Return numbon
@@ -1885,6 +1887,7 @@ Public Sub Recup_Art(code As String, qtea As String, mht As String, mttc As Stri
   With utils
     Rarts = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabArt") & " where art_code = &1", Code)
     If Rarts.Available Then
+      $nfour = Rarts!art_four
       Artdsg = Rarts!art_design
       Artdsg2 = Rarts!art_design2
       Artfam = Rarts!art_fam
@@ -1954,7 +1957,6 @@ Public Sub Recup_Art(code As String, qtea As String, mht As String, mttc As Stri
         Endif
       Endif
 
-      Calc_Marge()
     Endif
 
   End With
@@ -2093,18 +2095,20 @@ Public Sub arrondi(montant As String, arrond As String) As String
 
 End
 
-Public Sub Calc_Marge()
+Public Function Calc_Marge() As Float
 
   Dim rMrg As Result
+  Dim mrg As Float
 
   With utils
     If Pmp = 0 Then
       rMrg = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabFam") & " WHERE code_fam = &1", ArtFam)
-      Try Marge = Val(.cpoint(marge)) + Val(.cpoint(Artnet)) / Val(.cpoint(rMrg!coef_fam))
+      If Not IsNull(rMrg!coef_fam) And If Val(.cpoint(rMrg!coef_fam)) <> 0 Then mrg = Val(.cpoint(Artnet)) / Val(.cpoint(rMrg!coef_fam))
     Else
-      Try Marge = Val(.cpoint(marge)) + Val(.cpoint(Artnet)) - (Pmp * Val(.cpoint(qte)))
+      mrg = Val(.cpoint(Artnet)) - (Pmp * Val(.cpoint(qte)))
     Endif
   End With
+  Return mrg
 
 End
 '**********************************************************
