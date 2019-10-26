@@ -899,9 +899,9 @@ Public Sub Moulinage_Acomptes_Avoir(Type As String, jour As String, CptCli As St
       Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, CptCli, "Rappel " & mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, mnt, 0, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
       Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, cpt_avac, "Rappel " & mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, 0, mnt, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
       'Maj_Totalisation(CptCli, icli, - mnt)
-      Maj_Totalisation(cpt_avac, iacom, - mnt)
-      Maj_Totalisation(CptCaisse, icai, - mnt)
-      Maj_Collectif(CptCli, mode & " en Caisse", libelac, - mnt)
+      Maj_Totalisation(cpt_avac, iacom, -mnt)
+      Maj_Totalisation(CptCaisse, icai, -mnt)
+      Maj_Collectif(CptCli, mode & " en Caisse", libelac, -mnt)
     Else If type = "EA" Or type = "EZ" Or type = "W" Then
       If type = "EZ" Then
         mode = "Avoir"
@@ -923,9 +923,9 @@ Public Sub Moulinage_Acomptes_Avoir(Type As String, jour As String, CptCli As St
       Else
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, CptCli, mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, mnt, 0, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, lettree, Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jour, numr, cpt_avac, mode & " en Caisse", date_moulinage.D, Ntk, Ntk, libelac, 0, mnt, 1, 0, 0, 0, 1, date_moulinage.D, numr2)
-        Maj_Totalisation(cpt_avac, iacom, - mnt)
-        Maj_Totalisation(CptCaisse, icai, - mnt) 'on corrige le montant TTC de la caisse
-        Maj_Collectif(CptCli, mode & " en Caisse", libelac, - mnt)
+        Maj_Totalisation(cpt_avac, iacom, -mnt)
+        Maj_Totalisation(CptCaisse, icai, -mnt) 'on corrige le montant TTC de la caisse
+        Maj_Collectif(CptCli, mode & " en Caisse", libelac, -mnt)
       Endif
     Else
       Error.Raise("Type d'avoir, de crédit ou d'accompte non supporté : ", type)
@@ -1942,10 +1942,10 @@ Public Sub Recup_Art(code As String, qtea As String, mht As String, mttc As Stri
       Remises_quantitatives()
       Decimal()
       diffttc = Val(.CPoint(Arttc)) - (Val(.CPoint(Qtea)) * Val(.CPoint(mttc)))
-      If diffttc > 0 Then 'Le prix ttc calculé pour le bon de caisse du client est supérieur au prix public
+      If Abs(diffttc) > 0 Then 'Le prix ttc calculé pour le bon de caisse du client est supérieur au prix public
         'Ceci peut provenir d'un arrondi de TVA puisque le calcul repars du HT pour faire le calcul ttc
         'au dela de 1 centimes par qte d'article on met un message, en dessous on applique une reduction du prix brut pour correspondre au prix public ttc
-        If diffttc > (0.01 * Val(.CPoint(Qtea))) Then
+        If Abs(diffttc) > (0.01 * Val(.CPoint(Qtea))) Then
           Message.Warning("Le prix de vente ttc de l'article\n" & Code & " : " & Artdsg & "\nen caisse (" & mttc & ",remise:" & Artrm & "%) et en gestion (" & Arttc & ") sont incoherent\nLe prix en gestion sera utilisé!")
         Else
           Artbrut = Format(Val(.CPoint(Artbrut)) - diffttc, Nbdec)
@@ -2280,7 +2280,7 @@ Public Sub Verif() As Boolean
               Return False
             Endif
           Endif
-          Maj_Totalisation("658000", "Erreur moulinage caisse", - sDif)
+          Maj_Totalisation("658000", "Erreur moulinage caisse", -sDif)
         Else
           If Val(.cpoint(sTotalD)) > Val(.cpoint(sTotalC)) Then
             sDif = Val(.cpoint(sTotalD)) - Val(.cpoint(sTotalC))
