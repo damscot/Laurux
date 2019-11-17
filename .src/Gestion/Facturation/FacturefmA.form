@@ -119,43 +119,22 @@
     #MoveScaled(71,44)
   }
   { Edit Panel
-    MoveScaled(1,48,76,32)
+    MoveScaled(1,48,76,31)
     Visible = False
     Background = Color.Background
     Border = Border.Plain
     { Date Label
-      MoveScaled(7,1,22.2222,2)
+      MoveScaled(14,1,22.2222,2)
       Font = Font["Serif,-1"]
       Text = ("date du document")
     }
     { Dtef TextBox
-      MoveScaled(30,0.7778,12,2.8889)
+      MoveScaled(37,1,12,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
     }
-    { !Entete CheckBox
-      MoveScaled(4,5,21,2)
-      #Public = True
-      Font = Font["Serif,-1"]
-      Text = ("Edition de l'entete")
-    }
-    { Reserve CheckBox
-      MoveScaled(26,5,23,2)
-      Font = Font["Serif,-1"]
-      Text = ("Edition des reserves")
-    }
-    { Pied CheckBox
-      MoveScaled(50,5,24,2)
-      Font = Font["Serif,-1"]
-      Text = ("Texte pied de facture")
-    }
-    { Rcp CheckBox
-      MoveScaled(4,9,29,2)
-      Font = Font["Serif,-1"]
-      Text = ("Edition du récapitulatif")
-    }
     { HBox3 HBox
-      MoveScaled(14,26,47,4)
+      MoveScaled(14,14,47,4)
       Spacing = True
       { Button14 Button
         MoveScaled(0,0,16,4)
@@ -176,27 +155,6 @@
         Picture = Picture["Icones/exit.png"]
         Cancel = True
       }
-    }
-    { ComboBox1 ComboBox
-      MoveScaled(21,17.7778,21,3)
-      Font = Font["Serif,-1"]
-      List = [("1- Messagerie"), ("2- Serveur exim"), ("3- Serveur FTP"), ("4- Courrier")]
-    }
-    { TextLabel5 TextLabel
-      MoveScaled(6,17.7778,14,3)
-      Font = Font["Serif,-1"]
-      Text = ("Mode d'envoi")
-      Alignment = Align.Left
-    }
-    { Cimp ComboBox
-      MoveScaled(21,13,33,3)
-      Font = Font["Serif,-1"]
-    }
-    { TextLabel6 TextLabel
-      MoveScaled(6,13,14,3)
-      Font = Font["Serif,-1"]
-      Text = ("Imprimante")
-      Alignment = Align.Left
     }
   }
 }

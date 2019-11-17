@@ -121,44 +121,29 @@ Public Sub Maj_Archives()
   Dim Parm As String
   Dim Dppc As String
   Dim PB As ProgBar
-  Dim opt As OptFac
+  Dim opt As ObjFacB
   
   Entbon = "Fiches_Bl"
   Parm = "Fiches_Parametres"
   With Utils
-    Entbonl = Utils.db.Exec("SELECT * FROM " & Entbon & " where imp = &1 and type = &2 and dtefac <= &3 ", 1, "F", Right(dtpc, 4) & Mid(dtpc, 4, 2) & 31)
+    Entbonl = Utils.db.Exec("SELECT * FROM " & Entbon & " where imp = &1 and type = &2 and dtefac <= &3 UNION ALL SELECT * FROM " & Entbon & "M where imp = &1 and type = &2  and dtefac < &3 ", 1, "F", Right(dtpc, 4) & Mid(dtpc, 4, 2) & 31)
     If EntBonl.Available Then
       PB = New ProgBar("Cloture mensuelle de facturation", EntBonl.Count)
       PB.Show()
       PB.Avancement("Facture " & Entbonl!numfac, 1)
       Repeat
         If Right(.Cdate_Aff(Entbonl!dtefac), 4) & Mid(.Cdate_Aff(Entbonl!dtefac), 4, 2) Then
-          opt = New OptFac("F", Entbonl!cdclibl, Entbonl!numbl, Me.Parent, "0", False, LDate(Entbonl!dtefac))
+'          ObjFacB(Entbonl!numbl, ObjFac.facture).transblfac
+          opt = New ObjFacB(Entbonl!numbl, ObjFac.facture)
+          opt.numcli = Entbonl!cdclibl
+          opt.calcul
           opt.transblfac()
-          opt.Delete
         Endif
         If PB.Avancement("Facture " & Entbonl!numfac, 25) = True Then Break
       Until Entbonl.MoveNext()
       PB.Close()
     Endif
 
-    Entbon = "Fiches_BlM"
-    
-    Entbonl = Utils.db.Exec("SELECT * FROM " & Entbon & " where imp = &1 and type = &2  and dtefac < &3  ", 1, "F", Right(dtpc, 4) & Mid(dtpc, 4, 2) & 31)
-    If EntBonl.Available Then
-      PB = New ProgBar("Cloture mensuelle de facturation matériel", EntBonl.Count)
-      PB.Show()
-      PB.Avancement("Facture " & Entbonl!numfac, 1)
-      Repeat
-        If Right(.Cdate_Aff(Entbonl!dtefac), 4) & Mid(.Cdate_Aff(Entbonl!dtefac), 4, 2) Then
-          opt = New OptFac("F", Entbonl!cdclibl, Entbonl!numbl, Me, "0", False, LDate(Entbonl!dtefac), "M")
-          opt.transblfac()
-          opt.Delete
-        Endif
-        If PB.Avancement("Facture " & Entbonl!numfac, 25) = True Then Break
-      Until Entbonl.MoveNext()
-      PB.Close()
-    Endif
     Dtepp = Dtpc
     ' On incrémente la période en cours
     Dppc = Mid(dtpc, 4, 2)

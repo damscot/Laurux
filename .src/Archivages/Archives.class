@@ -1455,11 +1455,9 @@ End
 
 Public Sub Button9_Click()
 
-Dim otpf As OptFac
-  Dim m As String
+  Dim otpf As OptFac
   
-  If Typefac = "E" Then m = "M"
-  otpf = New OptFac("A", code.Text, num.Text, Me.Parent, Tottc.Text, False, LDate(datej), m, sMail)
+  otpf = New OptFac(ObjFac.archive, code.Text, num.Text, Me.Parent, Tottc.Text, False, LDate(datej), sMail)
   otpf.ShowModal
   Colbl_Click
 

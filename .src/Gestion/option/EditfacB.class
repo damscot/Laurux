@@ -2,7 +2,7 @@
 
 Inherits Editfac
 
-Private $cal As Calculconsdroit
+Private $cal As ObjFacB
 
 Private $Palette As ReportLabel
 Private $coli As ReportLabel
@@ -21,14 +21,14 @@ Private $poid As ReportLabel
 Private $totve As ReportLabel
 Private $totap As ReportLabel
 
-Public Sub _new(cal As Calculconsdroit)
+Public Sub _new(cal As ObjFacB)
 
   Dim pan, pan1 As ReportPanel
   Dim lab As ReportLabel
   Dim i As Integer
   
   $cal = cal
-  If Not cal.borientation() Or Not cal.vfac.blchif Then Return
+  If Not cal.borientation() Or Not cal.blchif Then Return
   Me.lgint += 80
   ''on modifi la présentation des factures + rajout des consignes et droits
   Me.Padding = ReportPadding["Left:3mm;Right:3mm"]
@@ -40,8 +40,8 @@ Public Sub _new(cal As Calculconsdroit)
   Me.repligne.Autoresize = True
   Me.repligne.DataCount = cal.ligne.Count
   Me.ligne.DataCount = 1
-  If cal.vfac.rescli!cli_tel_bur Then Me.telcli.Text = "    Tel : " & cal.vfac.rescli!cli_tel_bur
-  If cal.vfac.rescli!cli_pble Then Me.telcli.Text &= "    Portable : " & cal.vfac.rescli!cli_pble
+  If cal.rescli!cli_tel_bur Then Me.telcli.Text = "    Tel : " & cal.rescli!cli_tel_bur
+  If cal.rescli!cli_pble Then Me.telcli.Text &= "    Portable : " & cal.rescli!cli_pble
   Me.comdsa.Text = "(DSA) COMMUNAUTÉ EUROPÉENNE-DOCUMENT SIMPLIFIÉ D'ACCOMPAGNEMENT COMMERCIAL POUR LE CONTROLE FISCAL DES PRODUITS\nSOUMS A ACCISES EN REGIMES : O DE DROITS ACQUITTÉS  O D'EXONÉRATION DE DROITS   Exemplaire 1 à conserver par le destinataire\n  Exemplaire 2 à conserver par le fournisseur\n\ncontrol.A"
   'corp de facture
   Me.rcolon.Height = "7mm"
@@ -151,7 +151,7 @@ Public Sub _new(cal As Calculconsdroit)
   lab.Text = "  Gestion : "
   lab.Font = Font["Sans Serif,5"]
   lab.Width = "23mm"
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000"]
   $gestion = New ReportLabel(Me.rfrais)
   $gestion.Width = "16mm"
@@ -159,14 +159,14 @@ Public Sub _new(cal As Calculconsdroit)
   $gestion.Text = Format(cal.gestion, "0.00") & "   "
   $gestion.Alignment = Align.Right
   $gestion.Border = ReportBorder["Right:1pt #000000"]
-  $gestion.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $gestion.BackGround = ReportBrush.Color(cal.couleur)
   $gestion.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
   
   lab = New ReportLabel(Me.rfrais)
   lab.Text = "  Accise : "
   lab.Font = Font["Sans Serif,5"]
   lab.Width = "23mm"
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
   $accise = New ReportLabel(Me.rfrais)
   $accise.Width = "16mm"
@@ -174,13 +174,13 @@ Public Sub _new(cal As Calculconsdroit)
   $accise.Alignment = Align.Right
   $accise.Text = cal.ascise & "   "
   $accise.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  $accise.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $accise.BackGround = ReportBrush.Color(cal.couleur)
   
   lab = New ReportLabel(Me.rfrais)
   lab.Text = "  Régie : "
   lab.Font = Font["Sans Serif,5"]
   lab.Width = "22mm"
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
   $regie = New ReportLabel(Me.rfrais)
   $regie.Width = "16mm"
@@ -188,13 +188,13 @@ Public Sub _new(cal As Calculconsdroit)
   $regie.Alignment = Align.Right
   $regie.Text = cal.droit & "   "
   $regie.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  $regie.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $regie.BackGround = ReportBrush.Color(cal.couleur)
   
   lab = New ReportLabel(Me.rfrais)
   lab.Text = "  Sécu : "
   lab.Font = Font["Sans Serif,5"]
   lab.Width = "22mm"
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
   $secu = New ReportLabel(Me.rfrais)
   $secu.Width = "16mm"
@@ -202,16 +202,16 @@ Public Sub _new(cal As Calculconsdroit)
   $secu.Alignment = Align.Right
   $secu.Text = cal.secu & "   "
   $secu.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  $secu.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $secu.BackGround = ReportBrush.Color(cal.couleur)
   
   lab = New ReportLabel(Me.rfrais)
   lab.Width = "25mm"
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
   $stotart = New ReportLabel(Me.rfrais)
   $stotart.Width = "25mm"
   $stotart.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  $stotart.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $stotart.BackGround = ReportBrush.Color(cal.couleur)
   $stotart.Font = Font["Sans Serif,Bold,7"]
   $stotart.Text = Format(cal.montart + cal.montmo, ",0.00")
   $stotart.Alignment = Align.Right
@@ -220,7 +220,7 @@ Public Sub _new(cal As Calculconsdroit)
   lab.Text = "  Poid : "
   lab.Font = Font["Sans Serif,5"]
   lab.Width = "30mm"
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000"]
   $poid = New ReportLabel(Me.rfrais)
   $poid.Width = "15mm"
@@ -228,16 +228,16 @@ Public Sub _new(cal As Calculconsdroit)
   $poid.Alignment = Align.Right
   $poid.Text = cal.poid() & "    "
   $poid.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  $poid.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $poid.BackGround = ReportBrush.Color(cal.couleur)
   lab = New ReportLabel(Me.rfrais)
   lab.Expand = True
   lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   
   $totve = New ReportLabel(Me.rfrais)
   $totve.Width = "13mm"
   $totve.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  $totve.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $totve.BackGround = ReportBrush.Color(cal.couleur)
   $totve.Font = Font["Sans Serif,5"]
   $totve.Text = cal.totvolume
   $totve.Alignment = Align.Right
@@ -245,7 +245,7 @@ Public Sub _new(cal As Calculconsdroit)
   $totap = New ReportLabel(Me.rfrais)
   $totap.Width = "13mm"
   $totap.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
-  $totap.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  $totap.BackGround = ReportBrush.Color(cal.couleur)
   $totap.Font = Font["Sans Serif,5"]
   $totap.Text = cal.totap
   $totap.Alignment = Align.Right
@@ -253,10 +253,10 @@ Public Sub _new(cal As Calculconsdroit)
   Me.lgtva.Padding.Top = "1mm"
   Me.lct.Width = "15mm"
   Me.lct.Font = Font["Sans Serif,8"]
-  Me.lct.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  Me.lct.BackGround = ReportBrush.Color(cal.couleur)
   Me.ltt.Width = "15mm"
   Me.ltt.Font = Font["Sans Serif,8"]
-  Me.ltt.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  Me.ltt.BackGround = ReportBrush.Color(cal.couleur)
   Me.lmtv.Width = "25mm"
   Me.lmtv.Font = Font["Sans Serif,8"]
   Me.ltn.Width = "25mm"
@@ -296,7 +296,7 @@ Public Sub _new(cal As Calculconsdroit)
   lab.Font = Font["Sans Serif,8"]
   lab.Alignment = Align.Center
   lab.Text = "RETOUR DES EMBALLAGES"
-  lab.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  lab.BackGround = ReportBrush.Color(cal.couleur)
   lab.Border = ReportBorder["Bottom:1pt #000000"]
   For i = 1 To 5
     pan1 = New ReportPanel(pan)
@@ -315,7 +315,7 @@ Public Sub _new(cal As Calculconsdroit)
   pan.Width = "50mm"
   pan.Height = "30mm"
   pan.Arrangement = Arrange.Vertical
-  pan.BackGround = ReportBrush.Color(cal.vfac.couleur)
+  pan.BackGround = ReportBrush.Color(cal.couleur)
   pan1 = New ReportPanel(pan)
   pan1.Arrangement = Arrange.Horizontal
   pan1.Height = "4mm"
@@ -658,7 +658,7 @@ Public Sub intitule_Data(Index As Integer)
   If Index < $cal.ligne.Count Then
     ky = Format(index + 1, "0000")
     lg = $cal.ligne[ky]
-    If lg.type <> "TD" Then
+    If lg.type <> "TD" And lg.type <> "C" Then
       Me.intitule.Data = Left(lg.libel, Me.longueur())
     Else
       Me.intitule.Data = lg.libel

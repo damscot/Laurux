@@ -822,7 +822,7 @@ Public Sub Button9_Click()
   
   If Colbl.Count <> 0 Then
     If Checentr.Value Then m = "M"
-    otpf = New OptFac("FM", "", "", Me.Parent, " ", False, LDate(datej.Text), m)
+    otpf = New OptFac(ObjFac.finmois, "", "", Me.Parent, " ", False, LDate(datej.Text))
     otpf.Showmodal
     Button1_Click()
   Else

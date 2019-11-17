@@ -2885,9 +2885,8 @@ Private Sub genfac()
   Dim rem As Float
   Dim pu, pxttc, mttc, mht, mtva, mremise As Float
   Dim snfac, snumlig, dnfac As String
-  Dim ccd As Calculconsdroit
+  Dim ccd As ObjFacB
   Dim nbvente As Integer = 0
-  Dim vfac As VarFac
   Dim $soption As String
   Dim lasttk As String
   
@@ -3062,11 +3061,7 @@ Private Sub genfac()
       Endif
       utils.db.Commit
       If $soption = "B" Or $soption = "T" Then
-        vfac = New VarFac
-        vfac.numfac = snfac
-        vfac.choix = "M"
-        ccd = New Calculconsdroit(vfac, snfac, "M")
-        ccd.comptmat(snfac, True)
+        ObjFacB(snfac, "M").comptmat(snfac, True)
       Endif
   Endif
 

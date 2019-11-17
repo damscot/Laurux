@@ -530,16 +530,6 @@ Public Sub Togglebutton1_Click()
 
 End
 
-Public Sub combobox1_Change()
-
-  If Left$(ComboBox1.text, 1) = "4" Then
-    Button14.Text = "Imprimer"
-  Else
-    Button14.text = "Envoyer"
-  Endif
-
-End
-
 Public Sub dtef_LostFocus()
 
   dtef.text = Utils.Cdate_calc(dtef.text)
@@ -623,5 +613,31 @@ End
 Public Sub Button7_Click()
 
   Doc.Open("Cabonnement")
+
+End
+
+Public Sub Button9_Click()
+
+  If Colbl.Count <> 0 Then
+    Edit.Visible = True
+  Else
+    Message.Warning("Veuillez lancer votre traitement avant d'imprimer SVP ! ")
+  Endif
+
+End
+
+Public Sub Button16_Click()
+
+  Edit.Visible = False
+
+End
+
+Public Sub Button14_Click()
+
+  Dim opt As OptFac
+  
+  opt = New OptFac(ObjFac.finmois, "", "", Me.Parent, " ", False, LDate(datej.Text))
+  opt.ShowModal
+  Me.Close
 
 End

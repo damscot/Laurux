@@ -1,7 +1,6 @@
 ' Gambas class file
 
-Private $cal As CalFac
-Private $vfac As VarFac
+Public $vfac As ObjFac
 Private $c1 As Integer        'couleur de colonne
 Private $c2 As Integer
 
@@ -9,7 +8,7 @@ Public lgint As Integer = 44
 
 Const coef As Float = 0.538
 
-Public Sub _new(vfac As VarFac, cal As CalFac)
+Public Sub _new(vfac As ObjFac)
 
   Dim res As Result
   Dim ctva As Variant
@@ -18,13 +17,12 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
   Dim lab As ReportLabel
   Dim img As ReportImage
   
-  $cal = cal
   $vfac = vfac
-  
+  vfac.resent.MoveFirst
   Me.expb.Expand = True
   Me.expn.Expand = False
     'lignes de facture
-  Me.ligne.DataCount = cal.ligne.Count
+  Me.ligne.DataCount = $vfac.ligne.Count
     'couleurs entetes
   Me.rcolon.BackGround = ReportBrush.Color(vfac.couleur)
   Me.enttva.BackGround = ReportBrush.Color(vfac.couleur)
@@ -75,14 +73,15 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
   Me.adr2.Text = vfac.adrfac.adr2
   Me.ville1.Text = vfac.adrfac.cp & " " & vfac.adrfac.ville
   Me.pays.Text = vfac.adrfac.pays
-  If $vfac.AffClient And ($vfac.choix = "C" Or $vfac.choix = "D" Or $vfac.choix = "P") Then
+  If $vfac.AffClient And ($vfac.choix = ObjFac.commande Or $vfac.choix = ObjFac.devis Or $vfac.choix = ObjFac.proforma) Then
     If Message.Question("Voulez-vous masquer les coordonées du client ?", "Oui", "Non") = 1 Then Me.rclient.Children.Clear
   Endif
   Me.rcoupon.Height = "0mm"
   Me.rcoupon.Width = "0mm"
+  
   Select Case vfac.choix
-    Case "F", "FM", "A"
-      If cal.montht < 0 Then
+    Case ObjFac.facture, ObjFac.finmois, ObjFac.abonnement, ObjFac.archive
+      If $vfac.montht < 0 Then
         Me.numero.Text = "Avoir n° " & vfac.numfac & " du " & vfac.dtedoc.L
       Else
         Me.numero.Text = "Facture n° " & vfac.numfac & " du " & vfac.dtedoc.L
@@ -92,7 +91,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
         Me.joind.Text = "Joindre au réglement SVP"
         Me.Tfac.Text = "N° facture : " & vfac.numfac
         Me.Tcli.Text = "Code client : " & vfac.numcli
-        Me.Ttot.Text = "Total TTC : " & Format(cal.montttc, ",0.00") & " " & vfac.devise
+        Me.Ttot.Text = "Total TTC : " & Format($vfac.montttc, ",0.00") & " " & vfac.devise
         Me.rcoupon.Height = "15mm"
         Me.rcoupon.Width = "50mm"
         Me.rcoupon.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
@@ -106,7 +105,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
           If vfac.saisreg Then
             Me.delais.Text = Me.delais.Text & "Règlement " & Format(vfac.reg[i].montant, ",0.00") & " " & vfac.devise & " par " & vfac.reg[i].mode & " au " & vfac.dtedoc.L
             tot += vfac.reg[i].montant
-            If tot = cal.montttc Then Me.delais.Text = Me.delais.Text & "     FACTURE ACQUITTÉE"
+            If tot = $vfac.montttc Then Me.delais.Text = Me.delais.Text & "     FACTURE ACQUITTÉE"
             If i <> vfac.reg.Max Then Me.delais.Text = Me.delais.Text & "\n"
           Else
             Me.delais.Font = Font["Sans Serif,7"]
@@ -117,7 +116,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
             Endif
           Endif
         Next
-        If vfac.choix = "FM" And Not vfac.breg Then
+        If vfac.choix = ObjFac.finmois And Not vfac.breg Then
           If vfac.dteech.D <= vfac.dtedoc.D Then
             Me.delais.Text = "Règlement à réception de facture"
           Else
@@ -130,7 +129,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
         Me.resvp.Text = vfac.treserve
       Endif
       
-    Case "B"
+    Case ObjFac.bl
       Me.numero.Text = "Bon de livraison n° " & vfac.numbl & " du " & vfac.dtedoc.L
       If vfac.blrecap Then     'nb de bl pour ce client
         res = Utils.db.Exec("SELECT * FROM Fiches_Bl WHERE cdclibl=&1", vfac.numcli)
@@ -147,67 +146,67 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
         Me.ville1.Text = vfac.adrliv.cp & " " & vfac.adrliv.ville
         Me.pays.Text = vfac.adrliv.pays
       Endif
-    Case "C"
+    Case ObjFac.commande
        Me.numero.Text = "Commande n° " & vfac.numbl & " du " & vfac.dtedoc.L
-    Case "P"
+    Case ObjFac.proforma
        Me.numero.Text = "Proforma n° " & vfac.numbl & " du " & vfac.dtedoc.L
-    Case "D"
+    Case ObjFac.devis
       If vfac.tab = "M" Then
         Me.numero.Text = "Estimation n° "
       Else
          Me.numero.Text = "Devis n° "
       Endif
-     Me.numero.Text = Me.numero.Text & vfac.numbl & " du " & vfac.dtedoc.L
-     If vfac.affref Then    'on affiche pas la colonne code
-      lgint += 25
-      Me.pcode.Children.Clear
-      Me.pcode.Width = "0mm"
-      Me.pcde.Children.Clear
-      Me.pcde.Width = "0mm"
-     Endif
-     If vfac.libdev Then       'texte bas de devis
-      Me.basdev.Text = vfac.txtlibdev
-    Else
-      Me.rdevis.Width = "0mm"
-    Endif
-    Me.delais.Text = vfac.txtvldev
-    Me.delais.Font = Font["Sans Serif,7"] 
-    Me.signature.Image = Image.Load("Icones/signature.jpg")
-     Case "A"
-       Me.numero.Text = "Duplicata facture n° " & vfac.numfac & " du " & vfac.dtedoc.L
-      Case "T"
-        Me.numero.Text = "Fiche atelier N° " & vfac.numbl & " du " & vfac.dtedoc.L
-        Me.gest.Text = "Matériel récéptionné le " & vfac.dtedoc.L
-        Me.enttva.Children.Clear
-        Me.enttva.Border = ReportBorder[""]
-        Me.enttva.Height = "0mm"
-        Me.lgtva.Children.Clear
-        Me.lgtva.Height = "0mm"
-        Me.rtotttc.Children.Clear
-        Me.rtotttc.Height = "10mm"
-        Me.rtotttc.BackGround = ReportBrush.Color(&H8BB5E0)
-        lab = New ReportLabel(rtotttc)
-        lab.Height = "10mm"
-        lab.Width = "30mm"
-        lab.Text = "signature client   "
-        lab.font = Font["Sans Serif,9"]
-        img = New ReportImage(rtotttc)
-        img.Height = "10mm"
-        img.Width = "10mm"
-        img.Image = Image.Load("Icones/signature.jpg")
-        lab = New ReportLabel(rtotttc)
-        lab.Height = "10mm"
-        lab.Width = "8mm"
-        lab.Text = "   :  "
-        lab.font = Font["Sans Serif,9"]
-        
+      Me.numero.Text = Me.numero.Text & vfac.numbl & " du " & vfac.dtedoc.L
+      If vfac.affref Then    'on affiche pas la colonne code
+        lgint += 25
+        Me.pcode.Children.Clear
+        Me.pcode.Width = "0mm"
+        Me.pcde.Children.Clear
+        Me.pcde.Width = "0mm"
+      Endif
+      If vfac.libdev Then       'texte bas de devis
+        Me.basdev.Text = vfac.txtlibdev
+      Else
+        Me.rdevis.Width = "0mm"
+      Endif
+      Me.delais.Text = vfac.txtvldev
+      Me.delais.Font = Font["Sans Serif,7"] 
+      Me.signature.Image = Image.Load("Icones/signature.jpg")
+    Case ObjFac.archive
+      Me.numero.Text = "Duplicata facture n° " & vfac.numfac & " du " & vfac.dtedoc.L
+    Case "T"
+      Me.numero.Text = "Fiche atelier N° " & vfac.numbl & " du " & vfac.dtedoc.L
+      Me.gest.Text = "Matériel récéptionné le " & vfac.dtedoc.L
+      Me.enttva.Children.Clear
+      Me.enttva.Border = ReportBorder[""]
+      Me.enttva.Height = "0mm"
+      Me.lgtva.Children.Clear
+      Me.lgtva.Height = "0mm"
+      Me.rtotttc.Children.Clear
+      Me.rtotttc.Height = "10mm"
+      Me.rtotttc.BackGround = ReportBrush.Color(&H8BB5E0)
+      lab = New ReportLabel(rtotttc)
+      lab.Height = "10mm"
+      lab.Width = "30mm"
+      lab.Text = "signature client   "
+      lab.font = Font["Sans Serif,9"]
+      img = New ReportImage(rtotttc)
+      img.Height = "10mm"
+      img.Width = "10mm"
+      img.Image = Image.Load("Icones/signature.jpg")
+      lab = New ReportLabel(rtotttc)
+      lab.Height = "10mm"
+      lab.Width = "8mm"
+      lab.Text = "   :  "
+      lab.font = Font["Sans Serif,9"]
   End Select
+  
   client.Text = "Code client " & vfac.numcli
-  If Not vfac.livraison And (vfac.choix <> "F" And vfac.choix <> "FM") Then            'a livrer
+  If Not vfac.livraison And (vfac.choix <> ObjFac.facture And vfac.choix <> ObjFac.finmois And vfac.choix <> ObjFac.archive And vfac.choix <> ObjFac.abonnement) Then            'a livrer
     Me.aliv.Height = "0mm"
   Endif
   'cas matériel et fiche atelier
-  If vfac.tab = "M" And vfac.choix <> "FM" Then
+  If vfac.tab = "M" And vfac.choix <> ObjFac.finmois Then
     $vfac.resent.MoveFirst
     Me.rmateriel.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
     Me.marque.Text = "Marque : " & $vfac.resent!marque
@@ -236,16 +235,16 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.runt.Border = ReportBorder[""]
   Endif
     'affichage de la remise
-  If cal.remart + cal.remmo = 0 Then
+  If $vfac.remart + $vfac.remmo = 0 Then
     Me.prem.Children.Clear
     Me.prem.Width = "0mm"
     Me.rrme.Children.Clear
     Me.rrme.Width = "0mm"
   Endif
   'affichage des totaux ht/tva/ttc
-  Me.tht.Text = Format(cal.montht, ",0.00")
-  Me.ttva.Text = Format(cal.monttva, ",0.00")
-  Me.tttc.Text = Format(cal.montttc, ",0.00") & " " & vfac.devise
+  Me.tht.Text = Format($vfac.montht, ",0.00")
+  Me.ttva.Text = Format($vfac.monttva, ",0.00")
+  Me.tttc.Text = Format($vfac.montttc, ",0.00") & " " & vfac.devise
   If vfac.franctva Or vfac.autoent Then
     Me.pstot.Children.Clear
     Me.pstot.Width = "0mm"
@@ -270,8 +269,8 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.gest.Text = "Gestion : " & Format(Utils.totobs([vfac.resent!gestbl]), "0.00")
   Endif
   If vfac.recap And vfac.tab <> "M" Then
-    If cal.montart <> 0 Then Me.tart.Text = "Total article : " & Format(cal.montart, ",0.00")
-    If cal.montmo <> 0 Then Me.tmo.Text = "Total MO : " & Format(cal.montmo, ",0.00")
+    If $vfac.montart <> 0 Then Me.tart.Text = "Total article : " & Format($vfac.montart, ",0.00")
+    If $vfac.montmo <> 0 Then Me.tmo.Text = "Total MO : " & Format($vfac.montmo, ",0.00")
   Endif
    'edition en ttc
   If vfac.ttc Then
@@ -283,11 +282,11 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
   'Gestion des 5 taux de tva
   ctva = New Ltva
   i = 0
-  For Each ctva In cal.tva
-    edtva(ctva, cal.tva.Count, i)
+  For Each ctva In $vfac.tva
+    edtva(ctva, $vfac.tva.Count, i)
     i += 1
   Next
-  If Not vfac.blchif And (vfac.choix = "B" Or vfac.choix = "T") Then             'bl non chiffré
+  If Not vfac.blchif And (vfac.choix = ObjFac.bl Or vfac.choix = ObjFac.atelier) Then             'bl non chiffré
     Me.ligchiff.Children.Clear
     Me.ligchiff.Width = "0mm"
     Me.ligchiff.Border = ReportBorder[""]
@@ -300,7 +299,7 @@ Public Sub _new(vfac As VarFac, cal As CalFac)
     Me.enttva.Height = "0mm"
     Me.lgtva.Children.Clear
     Me.lgtva.Height = "0mm"
-    If vfac.choix = "B" Then
+    If vfac.choix = ObjFac.bl Then
       Me.rtotttc.Children.Clear
       Me.rtotttc.Border = ReportBorder[""]
       Me.rtotttc.Height = "0"
@@ -419,8 +418,8 @@ Public Sub code_Data(Index As Integer)
   Dim lg As Variant
   
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   If lg.code Then Me.code.Data = lg.code Else Me.code.Data = " "
 
 End
@@ -431,9 +430,9 @@ Public Sub intitule_Data(Index As Integer)
   Dim lg As Variant
   
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
-  If lg.type <> "TD" Then
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
+  If lg.type <> "TD" And lg.type <> "C" Then
     Me.intitule.Data = Left(lg.libel, longueur())
   Else
     Me.intitule.Data = lg.libel
@@ -448,8 +447,8 @@ Public Sub stk_Data(Index As Integer)
   
   Me.stk.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.stk.Data = lg.stk
 
 End
@@ -461,8 +460,8 @@ Public Sub qte_Data(Index As Integer)
   
   Me.qte.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.qte.Data = lg.qte
   
 End
@@ -474,8 +473,8 @@ Public Sub u_Data(Index As Integer)
   
   Me.u.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.u.Data = lg.unit
 
 End
@@ -487,8 +486,8 @@ Public Sub puht_Data(Index As Integer)
   
   Me.puht.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.puht.Data = lg.puht
   
 End
@@ -500,8 +499,8 @@ Public Sub bht_Data(Index As Integer)
   
   Me.bht.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.bht.Data = lg.brht
   
 End
@@ -513,8 +512,8 @@ Public Sub rem_Data(Index As Integer)
   
   Me.rem.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.rem.Data = lg.rem
   
 End
@@ -526,8 +525,8 @@ Public Sub nht_Data(Index As Integer)
   
   Me.nht.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.nht.Data = lg.neht
   
 End
@@ -539,8 +538,8 @@ Public Sub tx_Data(Index As Integer)
   
   Me.tx.Data = " "
   ky = Format(index + 1, "0000")
-  If Not $cal.ligne.Exist(ky) Then Return
-  lg = $cal.ligne[ky]
+  If Not $vfac.ligne.Exist(ky) Then Return
+  lg = $vfac.ligne[ky]
   Me.tx.Data = lg.tx
   
 End

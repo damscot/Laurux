@@ -1,0 +1,1107 @@
+' Gambas class file
+
+Create Static
+
+Public Struct adresse 
+  nom As String
+  adr1 As String
+  adr2 As String
+  cp As String
+  ville As String
+  pays As String
+End Struct
+
+Public Struct reglement
+  numcli As String
+  dte As Date
+  mode As String
+  montant As Float
+End Struct
+
+Public Struct Ledit
+  Index As Integer
+  code As String
+  libel As String
+  stk As String
+  unit As String
+  qte As String
+  puht As String
+  brht As String
+  rem As String
+  neht As String
+  nettc As String
+  tx As String
+  type As String
+End Struct
+
+Public Struct ltva
+  num As String
+  tottva As Float
+  totht As Float
+  tottc As Float
+  taux As String
+End Struct
+
+Public Struct compta 
+  numcpt As String
+  intitule As String
+  libelle As String
+  dte As Date
+  dateech As Date
+  numdoc As String
+  numlot As String
+  montantd As Float
+  montantc As Float
+  dteval As Date
+End Struct
+
+Public Enum sans, bl, facture, archive, commande, proforma, devis, atelier, finmois, abonnement, magasin
+
+Public resent As Result                       'bon a éditer
+Public reslig As Result
+Public livraison As Boolean                 'si client à livrer
+Public devise As String                       'devise
+Public gmateriel As Boolean               'Si option matériel est coché
+Public dtmouv As Boolean                'Si date de sortie=date de facture
+Public sms As Boolean                       'si sms
+Public breg As Boolean                      'A cocher si vous souhaitez que le texte de réglement en bas de facture soit celui qui est défini dans les préférences*
+Public treg As String                           ' texte si breg=true*
+Public badr As Boolean                        'si adresse de livraison  
+Public adrfac As Adresse                      'stock l'adresse de facturation
+Public adrliv As Adresse                        'stock l'adresse de livraison
+Public blchif As Boolean = True                 'si le bl est chiffré
+Public colon As Boolean                         'si couleur de colonne
+Public ligne2 As Boolean                      'si édition de la 2° ligne article*
+Public entete As Boolean                      'si édition de l'entete*
+Public reserve As Boolean                     'si édition des réserves*
+Public treserve As String                        'texte si reserves*
+Public pied As Boolean                          'si édition du pied de facture*
+Public tpied As String[]                          'texte si pied  
+Public ttc As Boolean                            'si edition en ttc*
+Public recap As Boolean                       'recap total ht bas facture*
+Public sauvpdf As Boolean                     'fichier pdf sauvegardé*
+Public pdf As String                           'fichier pdf ajouté fin facture
+Public remise As Boolean                    'ignore remise
+Public Stock As Boolean                         'impression des stocks sur bl
+Public blrecap As Boolean                     'recap des bl => nb de bl pour ce client*
+Public saisreg As Boolean                     'si saisie reglement activée*
+Public reg As New Reglement[]
+Public lreg As New Reglement
+Public doclet As Boolean                      'edition du tot facture en lettre *
+Public imp As Printer
+Public simpcond As Boolean = False               'impression du conditionnement sur bl => colonne U
+Public coupon As Boolean                  'coupon détachable bas facture*
+Public nblfac As Boolean                    'n ° bl sur facture*
+Public poids As Boolean               'poid sur bl*
+'Public casier As Boolean              'afficher le code casier sur bl => colonne intitule au début*
+Public affref As Boolean              'Masquer les références produits sur les devis*
+Public autoent As Boolean              'auto entrepreneur*
+Public franctva As Boolean              'franchise tva*
+Public mdepo As Boolean                 'multi depot*
+Public libtaxe As String                      'taxe sur doc*
+Public libsire As String                        'siret sur doc*
+Public pxsdec As Boolean                 'prix sans decimal*
+Public libdev As Boolean                   'si libelle bas de devis*
+Public txtlibdev As String                'texte bas de devis*
+Public txtvldev As String                 'texte validité devis*
+Public pdfchemin As String                'chemin des factures pdf*
+Public pdfannu As Boolean                 'dossier annuel des factures pdf*
+Public tab As String                          'contient le M en fin de fichier => Fiches_bl & M
+Public adrlogo As Boolean                 'adresse en logo
+Public lgo As Boolean                        'logo sur facture
+Public rescli As Result                       'fiche client 
+Public couleur As Integer                   'couleur de fond à l'edition
+Public couleur2 As Integer
+Public numeroecr As Integer               'numero ecriture
+Public cheque As Boolean                    'bordereau de cheque
+Public intcheque As Boolean               'cpt interne cheque
+Public cptcheque As String                  'n° du compte interne cheque
+Public intcarte As Boolean                  'cpt interne carte
+Public cptcarte As String                     'n° cpt interne carte
+Public intaut As Boolean                      'cpt interne autre
+Public cptaut As String                         'n° cpt interne autre
+Public choix As Integer                        'Selection de l'affichage/calcul en fonction de "choix"
+  'Envoi mail
+Public condvent As String             'nom et chemein du fichier texte
+Public joinfac As Boolean              'a joindre aux factures
+Public joinsms As Boolean             'a joindre aux sms
+Public AffClient As Boolean               'masquer les coordonnés client si mail
+
+Public ligneart As Ledit
+Public lignecom As Compta
+Public lignetva As Ltva
+Public ecrit As Collection
+Public ligne As Collection
+Public tva As Collection
+Public gestion As Float
+Public montart As Float
+Public montmo As Float
+Public remart As Float
+Public remmo As Float
+Public montht As Float
+Public monttva As Float
+Public montttc As Float
+Public nomfm As String
+Public edit As Report
+
+Private $dtedoc As LDate
+Private $dteech As LDate
+Private $numcli As String
+Private $exemplaire As Integer
+Private $numfac As String
+Private $numbl As String
+Private $cdech As String
+
+
+Private $resfam As Result
+Private $restva As Result
+Private $facav As String
+
+Private Const entetef As String = " numfac AS numbl, 'F' AS type, cdclifac AS cdclibl, cvclifac AS cvclibl, nmclifac AS nmclibl, pnmclifac AS pnmclibl, adr1fac AS adr1bl, adr2fac AS adr2bl, cpfac AS cpbl, villefac AS villebl, datefac AS datebl, rmofac AS rmobl, rartfac AS rartbl, exofac AS exobl, remmofac AS remmobl, remartfac  AS remartbl, marge_art, marge_mo,  totfac AS totalht, 1 AS imp, acpt, mreg, reg, ech, numfac, datefac AS dtefac, numserie, codep, mtreg, totfacttc AS totalttc, cdep, False AS livraison, acquitte, gestfac AS gestbl, False  AS retro"
+Private Const detailf As String = " num_ligfac AS num_ligbl, numlig_ligfac AS numlig_ligbl, code_ligfac AS code_ligbl, libel_ligfac AS libel_ligbl, fam_ligfac AS fam_ligbl, pu_ligfac AS pu_ligbl, qte_ligfac AS qte_ligbl, brut_ligfac AS brut_ligbl, rem_ligfac AS rem_ligbl, netht_ligfac AS netht_ligbl, typel_ligfac AS typel_ligbl, tm_ligfac AS tm_ligbl, com_ligfac AS com_ligbl, bloc, mtx_ligfac, mrgart_ligfac AS mrgart_ligbl, mrgmo_ligfac AS mrgmo_ligbl, tx_ligfac AS tx_ligbl, nettc_ligfac AS nettc_ligbl"
+
+Property dtedoc As LDate
+Property dteech As LDate
+Property numcli As String
+Property nbexplemplaire As Variant
+Property numbl As String
+Property numfac As String
+
+Event nombre(value As String)
+Event fttc(value As Boolean)
+Event echeance(value As LDate)
+Event modreg(value As String)
+
+Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte As LDate = LDate(Now))
+
+  Dim res As Result
+  
+  If Not num And choi = ObjFac.sans Then Return
+  choix = choi
+  If choix = ObjFac.archive Then
+    $numfac = num
+    res = utils.db.Exec("SELECT * FROM Fiches_HistoFac WHERE numfac=&1", $numfac)
+    If Not res.Available Then
+      res = utils.db.Exec("SELECT * FROM Fiches_HistoFacM WHERE numfac=&1", $numfac)
+      If res.Available Then tab = "M"
+    Endif
+  Else
+    $numbl = num
+    res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numbl=&1", $numbl)
+    If Not res.Available Then
+      res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numbl=&1", $numbl)
+      If res.Available Then tab = "M"
+    Endif
+  Endif
+ 
+  $dtedoc = dte
+  recap = Start.LocalSettings["/Soc" & Start.Societe & "/Recap"]
+  ttc = Start.LocalSettings["/Soc" & Start.Societe & "/Impttc"]
+  entete = Start.LocalSettings["/Soc" & Start.Societe & "/Entete"]
+  reserve = Start.LocalSettings["/Soc" & Start.Societe & "/Conditions"]
+  If reserve Then 
+    res = Utils.db.Exec("SELECT * FROM Fiches_Tleg")
+    If res.Available Then
+      treserve = res!intitule
+    Endif
+  Endif
+  pied = Start.LocalSettings["/Soc" & Start.Societe & "/Pied"]
+  If pied Then
+    res = Utils.db.Exec("SELECT * from Fiches_LibelFac")
+    If res.Available Then
+      tpied = New String[]
+      tpied = Split(res!txtfac, "\n")
+    Endif
+  Endif
+  res = Utils.db.Exec("SELECT devise FROM Fiches_Parametres")
+  If res.Available Then devise = res!devise
+  ligne2 = Start.LocalSettings["/Soc" & Start.Societe & "/Imp2L"]
+  colon = Start.LocalSettings["/Soc" & Start.Societe & "/Col"]
+  imp = New Printer
+  Stock = Start.LocalSettings["/Soc" & Start.Societe & "/Impstocke"]
+'  pdf = Start.LocalSettings["/Soc" & Start.Societe & "/ImpPDF"]      pris sur la fiche client
+  blrecap = Start.LocalSettings["/Soc" & Start.Societe & "/ImpTotbl"]
+  poids = Start.LocalSettings["/Soc" & Start.Societe & "/Poids"] 
+ ' casier = Start.LocalSettings["/Soc" & Start.Societe & "/Casier"] 
+  breg = Start.LocalSettings["/Soc" & Start.Societe & "/Fht"] 
+  If breg Then treg = Start.LocalSettings["/Soc" & Start.Societe & "/Schmprix"]
+  saisreg = Start.LocalSettings["/Soc" & Start.Societe & "/Rglt"] 
+  If choix = ObjFac.finmois Then saisreg = False
+  doclet = Start.LocalSettings["/Soc" & Start.Societe & "/Totstring"]
+  coupon = Start.LocalSettings["/Soc" & Start.Societe & "/Coupon"]
+  nblfac = Start.LocalSettings["/Soc" & Start.Societe & "/Impbl"]
+  affref = Start.LocalSettings["/Soc" & Start.Societe & "/AffArt"]
+  autoent = Start.LocalSettings["/Soc" & Start.Societe & "/AutoEnt"]
+  franctva = Start.LocalSettings["/Soc" & Start.Societe & "/Franchise"] 
+  mdepo = Start.LocalSettings["/Soc" & Start.Societe & "/Depots"]
+  libtaxe = Start.LocalSettings["/Soc" & Start.Societe & "/Taxe"] 
+  libsire = Start.LocalSettings["/Soc" & Start.Societe & "/Siret"] 
+  pxsdec = Start.LocalSettings["/Soc" & Start.Societe & "/Prxdec"] 
+  libdev = Start.LocalSettings["/Soc" & Start.Societe & "/Libdevis"]
+  If libdev Then txtlibdev = Start.LocalSettings["/Soc" & Start.Societe & "/Devis2"] Else txtlibdev = ""
+  txtvldev = Start.LocalSettings["/Soc" & Start.Societe & "/Devis"] 
+'  refprddev = Start.LocalSettings["/Soc" & Start.Societe & "/AffArt"]
+  pdfchemin = Start.LocalSettings["/Soc" & Start.Societe & "/Factchemin"]
+  pdfannu = Start.LocalSettings["/Soc" & Start.Societe & "/Pdf3"]
+  couleur = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
+  If Start.R2 = 0 Then couleur2 = couleur Else couleur2 = Val("&H" & Hex(Start.R2) & Hex(Start.G2) & Hex(Start.B2))
+  adrlogo = Start.LocalSettings["/Soc" & Start.Societe & "/glogo3"]
+  lgo = Start.LocalSettings["/Soc" & Start.Societe & "/glogo"]
+  gmateriel = Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"]
+  cheque = Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"]
+  sms = Start.LocalSettings["/Soc" & Start.Societe & "/TxtF"]
+  condvent = Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminV"]
+  joinfac = Start.LocalSettings["/Soc" & Start.Societe & "/Pdf5"]
+  joinsms = Start.LocalSettings["/Soc" & Start.Societe & "/Pdf6"]
+  pdf = Start.LocalSettings["/Soc" & Start.Societe & "/Pdfchemin"]
+  affclient = Start.LocalSettings["/Soc" & Start.Societe & "/AffClient"]
+  intcheque = Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"]
+  intcarte = Start.LocalSettings["/Soc" & Start.Societe & "/Carte"]
+  If intcarte Or intcheque Or intaut Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
+    
+  Endif
+  
+  Catch
+    Message.Error("Veuillez vérifier vos préférences avant de continer à facturer")
+    
+End
+
+Private Sub calech()
+  
+  Dim res As Result
+  Dim dt As String = $dtedoc.L
+  
+  
+  If $cdech Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Echeances WHERE num=&1", $cdech)
+    If res.Available Then
+      $dteech = New LDate(Utils.Calcech(res!duree, res!jours, res!finmois, dt))
+    Else
+      $dteech = New LDate($dtedoc.G)
+    Endif
+  Else
+    $dteech = New LDate($dtedoc.G)
+  Endif
+  Raise echeance($dteech)
+    
+End
+
+'property
+Private Function numcli_Read() As String
+
+  Return $numcli
+
+End
+
+Private Sub numcli_Write(Value As String)
+
+  Dim res As Result
+  
+  $numcli = Value
+  rescli = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", $numcli)
+  If rescli.Available Then 
+    If IsNull(rescli!cli_expl) Then $exemplaire = 2 Else $exemplaire = rescli!cli_expl
+    Raise nombre(Str($exemplaire))
+    ttc = CBool(rescli!cli_autoent)
+    Raise fttc(ttc)
+    $cdech = rescli!cli_cdech
+    If Object.IsValid($dtedoc) Then
+      calech()
+    Endif
+    sauvpdf = rescli!cli_copie
+    Raise modreg(rescli!cli_reg)
+    adrfac = New Adresse
+    adrliv = New Adresse
+    adrfac.nom = rescli!cli_rs_soc & " " & rescli!cli_nom & " " & rescli!cli_pnm
+    adrfac.adr1 = rescli!cli_adr1
+    adrfac.adr2 = rescli!cli_adr2
+    adrfac.cp = rescli!cli_cd_ptl
+    adrfac.ville = rescli!cli_ville
+    adrfac.pays = rescli!cli_pays
+  Endif
+  
+End
+
+Private Function nbexplemplaire_Read() As Variant
+
+  Return $exemplaire
+
+End
+
+Public Sub newreg() As Variant
+  
+  lreg = New Reglement
+
+End
+
+Public Sub newregt() 
+
+  reg = New Reglement[]
+
+End
+
+Private Sub nbexplemplaire_Write(Value As Variant)
+
+  If value = gb.String Then
+    $exemplaire = Val(value)
+  Else
+    $exemplaire = Value
+  Endif
+
+End
+
+Private Function numbl_Read() As String
+
+  Return $numbl
+
+End
+
+Private Sub numbl_Write(Value As String)
+
+  $numbl = Value
+
+End
+
+Private Function numfac_Read() As String
+
+  Return $numfac
+
+End
+
+Private Sub numfac_Write(Value As String)
+
+  $numfac = Value
+
+End
+
+Private Function dtedoc_Read() As LDate
+
+  Return $dtedoc
+
+End
+
+Private Sub dtedoc_Write(Value As LDate)
+
+  If $dtedoc.L <> value.L Then
+    $dtedoc = New LDate(value.G)
+    calech
+  Endif
+  
+End
+
+Private Function dteech_Read() As LDate
+
+  Return $dteech
+
+End
+
+Private Sub dteech_Write(Value As LDate)
+
+  $dteech = value
+
+End
+'********************************************************************************************
+'calcul des totaux
+Public Sub calcul(Optional nom As String) 
+'nom contient la nom du client si la case divers est coché dans facturefm
+  Dim bl, respar, res As Result
+  Dim condent, condlig As String
+  Dim num, i As Integer
+  Dim tot As Float
+  Dim numlig As String = "0000"
+  Dim lignetva1 As Ltva
+  Dim numbl As String
+  Dim lg As New Compta
+  Dim commentaire As String[]
+  Dim artcomp As Boolean
+  
+  lignetva = New Ltva
+  ecrit = New Collection
+  ligne = New Collection
+  tva = New Collection
+  montart = 0
+  montht = 0
+  montmo = 0
+  montttc = 0
+  monttva = 0
+  
+'  If choix = ObjFac.magasin Then Return      'facture magasin
+  imp.FullPage = True
+  Select Case choix
+    Case ObjFac.archive
+      resent = utils.db.Exec("SELECT " & entetef & " FROM Fiches_HistoFac" & tab & " WHERE numfac=&1", $numfac)
+      reslig = utils.db.Exec("SELECT " & detailf & " FROM Fiches_HistoLigfac" & tab & " WHERE num_ligfac=&1", $numfac)
+      $dtedoc = New LDate(resent!datebl)
+      $dteech = New LDate(resent!ech)
+    Case ObjFac.finmois
+'      $numcli = nm
+      If rescli!cli_div Then
+        bl = Utils.db.Exec("SELECT * FROM Bl WHERE code=&1 AND nom=&2", $numcli, nom)       'on gére les clients divers
+        nomfm = nom
+      Else
+        bl = Utils.db.Exec("SELECT * FROM Bl WHERE code=&1", $numcli)
+      Endif
+      bl.MoveFirst
+      Repeat
+        condlig = condlig & Utils.db.Subst("num_ligbl=&1 OR ", bl!num)
+        condent = condent & Utils.db.Subst("numbl=&1 OR ", bl!num)
+      Until bl.MoveNext()
+      condlig = Left(condlig, -4)
+      condent = Left(condent, -4)
+      resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & tab & " WHERE " & condent & " ORDER BY numbl")
+      reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & tab & " WHERE " & condlig & "ORDER BY  num_ligbl,numlig_ligbl")
+      calech()
+      
+    Case Else
+      If $numfac Then
+        resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & tab & "  WHERE numfac=&1", $numfac)
+        $numbl = resent!numbl
+        reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & tab & "  WHERE num_ligbl=&1", $numbl)
+      Else
+'        numbl = nm
+        resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & tab & "  WHERE numbl=&1", $numbl)
+        reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & tab & "  WHERE num_ligbl=&1", $numbl)
+        $numfac = resent!numfac
+      Endif
+      If $numfac And resent!imp = 1 Then 
+        $dtedoc = New LDate(resent!datebl)
+        $dteech = New LDate(resent!ech)
+      Endif
+      
+  End Select
+  
+  If reslig.Available Then
+    reslig.MoveFirst
+    resent.MoveFirst
+    Repeat
+      numlig = Format(Val(numlig) + 1, "0000")
+      Select Case choix
+        Case ObjFac.finmois, ObjFac.facture     'on renumerote les lignes si facture
+          If nblfac Then
+            If numbl <> reslig!num_ligbl Then
+              ligneart = New Ledit
+              ligneart.Index = -1
+              If numbl Then resent.MoveNext()
+              ligneart.libel = "Bon n° " & reslig!num_ligbl & " du " & LDate(resent!datebl).L
+              ligneart.type = "C"
+              ligne.Add(ligneart, numlig)
+              numbl = reslig!num_ligbl 
+              numlig = Format(Val(numlig) + 1, "0000")
+            Endif
+          Endif
+      End Select
+      
+      Select Case reslig!typel_ligbl
+        Case "A"
+          calc(numlig)
+          res = utils.db.Exec("SELECT art_prdcomp,art_impdetail FROM Fiches_Art WHERE art_code=&1", reslig!code_ligbl)
+          If res.Available Then
+            artcomp = res!art_prdcomp And res!art_impdetail
+          Endif
+          montart += Val(ligneart.neht)
+          montht += Val(ligneart.neht)
+          remart = remart + (Val(ligneart.brht) - Val(ligneart.neht))
+          
+        Case "M"
+          calc(numlig)
+          montmo += Val(ligneart.neht)
+          montht += Val(ligneart.neht)
+          remmo = remmo + (Val(ligneart.brht) - Val(ligneart.neht))
+          
+        Case "P", "C", "R"
+          commentaire = Split(reslig!com_ligbl, "\n")
+          For i = 0 To commentaire.Max
+            ligneart = New Ledit
+            ligneart.Index = -1
+            ligneart.libel = commentaire[i]
+            ligneart.type = reslig!typel_ligbl
+            ligne.Add(ligneart, Format(Val(numlig) + i, "0000"))
+          Next
+          numlig = Format(Val(numlig) + commentaire.Max, "0000")
+          
+        Case "O"          'produits composés
+          If artcomp Then
+            ligneart = New Ledit
+            ligneart.Index = reslig.Index
+            ligneart.code = reslig!code_ligbl
+            ligneart.libel = reslig!libel_ligbl
+            ligneart.type = reslig!typel_ligbl
+            ligne.Add(ligneart, numlig)
+          Else
+            numlig = Format(Val(numlig) - 1, "0000")
+          Endif
+          
+        Case "T"
+          If Not ligne2 Then
+            ligneart = New Ledit
+            ligneart.Index = reslig.Index
+            ligneart.libel = reslig!libel_ligbl
+            ligneart.type = reslig!typel_ligbl
+            ligne.Add(ligneart, numlig)
+          Else
+            numlig = Format(Val(numlig) - 1, "0000")
+          Endif
+          
+          Case "E"
+            ligneart = New Ledit
+            ligneart.Index = reslig.Index
+            ligneart.libel = "Dont " & reslig!pu_ligbl & " " & reslig!libel_ligbl
+            ligneart.type = reslig!typel_ligbl
+            ligne.Add(ligneart, numlig)
+
+      End Select
+    Until reslig.MoveNext()
+  Endif
+  
+  resent.MoveFirst            'on prend l'adresse de facturation du 1° bl
+  If resent.Available Then
+    adrfac.nom = resent!cvclibl & " " & resent!nmclibl & " " & resent!pnmclibl
+    adrfac.adr1 = resent!adr1bl
+    adrfac.adr2 = resent!adr2bl
+    adrfac.cp = resent!cpbl
+    adrfac.ville = resent!villebl
+    Repeat 
+      If CFloat(resent!gestbl) <> 0 Then
+        gestion = resent!gestbl
+        respar = utils.db.Exec("SELECT cptfrais,tvafrais,taux_tva,cc_tva,intitule_cc,devise FROM Fiches_Parametres,Fiches_Tvaav,Fiches_Comptes WHERE tvafrais=code_tva AND cptfrais=compte_cc")
+        If respar.Available Then
+          devise = respar!devise
+          If Not resent!exobl Or autoent Then            'calcul de tva si pas exonéré
+            If tva.Exist(respar!tvafrais) Then
+              lignetva = tva[respar!tvafrais]
+              lignetva.totht += resent!gestbl
+              lignetva.tottc += resent!gestbl + utils.arrondi(resent!gestbl * (respar!taux_tva / 100), 2)
+              tva[respar!tvafrais] = lignetva
+            Else
+              lignetva = New Ltva
+              lignetva.num = respar!tvafrais
+              lignetva.taux = respar!taux_tva
+              lignetva.totht = resent!gestbl
+              lignetva.tottc = resent!gestbl + utils.arrondi(resent!gestbl * (respar!taux_tva / 100), 2)
+              tva.Add(lignetva, respar!tvafrais)
+            Endif
+          Endif
+        Endif
+        montht += resent!gestbl
+        ecriture(respar!cptfrais, resent!gestbl, respar!intitule_cc)          'ecriture comptable
+        Break
+      Endif
+    Until resent.MoveNext()
+    resent.MoveFirst
+    'ecriture comptable sur la tva
+    If Object.IsValid(tva) Then
+      For Each lignetva1 In tva
+        lignetva1.tottva = lignetva1.tottc - lignetva1.totht
+        tva[lignetva1.num] = lignetva1
+        monttva += lignetva1.tottva
+        respar = utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", lignetva1.num)
+        If respar.Available Then ecriture(respar!compte_cc, lignetva1.tottva, respar!intitule_cc)
+      Next 
+    Endif
+    If ttc Then
+      montht = montht - monttva
+    Endif
+    montttc = utils.arrondi(montht, 2) + utils.arrondi(monttva, 2)
+    'ecriture client
+    ecriture($numcli, montttc * -1, Left(adrfac.nom, 35))
+    If doclet And blchif Then        'si total du doc en lettre
+      ligneart = New Ledit
+      ligneart.Index = -1
+      ligneart.type = "TD"        'pour total document en lettre => ne pas enregistrer dans les fichiers
+      ligneart.libel = "Total document : " & Numtostring.Convertir(montttc, devise)
+      numlig = Format(Val(numlig) + 1, "0000")
+      ligne.Add(ligneart, numlig)
+    Endif
+  Endif
+  If Not saisreg And choix Then
+    If reg.Count = 0 Then
+      lreg.mode = rescli!cli_reg
+      reg.Add(lreg)
+    Endif
+  Endif
+  If montht < 0 Then
+    For Each lg In ecrit
+      lg.libelle = "AVOIR " & rescli!cli_nom
+      ecrit[ecrit.Key] = lg
+    Next
+  Endif
+
+End
+
+Private Sub calc(numlig As String)
+  
+  Dim resart, resfam As Result
+  Dim txtva As Float
+  Dim tot As Float
+  
+  'on crée la ligne à editer
+  If reslig!typel_ligbl = "A" Then
+    resart = Utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_code=&1", reslig!code_ligbl)
+  Else
+    resart = Utils.db.Exec("SELECT mo_code AS art_code, 0 AS art_qte, '0' AS art_dec, '2' AS art_nbd,mo_txht AS art_pvht FROM Fiches_Mo WHERE mo_code=&1", reslig!code_ligbl)
+  Endif
+  ligneart = New Ledit
+  txtva = (reslig!mtx_ligfac / 100) + 1
+  ligneart.Index = reslig.Index                   'renseignements communs
+  ligneart.code = reslig!code_ligbl
+'  If casier Then
+'    ligneart.libel = resart!art_casier & " " & reslig!libel_ligbl
+'  Else
+    ligneart.libel = reslig!libel_ligbl
+ ' Endif
+  ligneart.qte = reslig!qte_ligbl
+  If Val(utils.cpoint(reslig!rem_ligbl)) = 0 Then ligneart.rem = " " Else ligneart.rem = reslig!rem_ligbl
+  ligneart.tx = reslig!tx_ligbl
+  ligneart.type = reslig!typel_ligbl
+  ligneart.stk = mult(resart!art_qte, 1, resart!art_dec)
+  If remise And choix = ObjFac.bl Then                      'si ignore_remise on recalcul avec la fiche article
+    ligneart.puht = mult(resart!art_pvht, 1, resart!art_nbd)
+    ligneart.brht = mult(ligneart.puht, ligneart.qte, "2")
+    ligneart.rem = ""
+    ligneart.neht = ligneart.brht
+    ligneart.nettc = mult(ligneart.neht, txtva, "2")
+  Else
+    ligneart.puht = reslig!pu_ligbl
+    ligneart.brht = mult(reslig!brut_ligbl, 1, 2)
+    ligneart.neht = mult(reslig!netht_ligbl, 1, 2)
+    ligneart.nettc = mult(reslig!nettc_ligbl, 1, 2)
+  Endif
+  If ttc Then                     'si edition ttc 
+    ligneart.puht = mult(ligneart.puht, txtva, resart!art_nbd)
+    ligneart.brht = mult(ligneart.brht, txtva, "2")
+    ligneart.neht = mult(ligneart.neht, txtva, "2")
+  Endif
+  If pxsdec Then              'si facture sans décimal
+    ligneart.puht = mult(ligneart.puht, 1, " resart!art_nbd")
+    ligneart.brht = mult(ligneart.brht, 1, "0")
+    ligneart.neht = mult(ligneart.neht, 1, "0")
+  Endif
+  ligne.Add(ligneart, numlig)
+  'on rajoute la tva
+  resent.MoveFirst
+  If Not resent!exobl And Not autoent Then            'pas de calcul de tva si exonéré
+      If tva.Exist(reslig!tx_ligbl) Then
+        lignetva = tva[reslig!tx_ligbl]
+        If ttc Then
+          lignetva.totht += utils.arrondi(Val(ligneart.neht) / txtva, 2)
+          lignetva.tottc += utils.arrondi(ligneart.neht, 2)
+        Else
+          lignetva.totht += Val(ligneart.neht)
+          lignetva.tottc += Val(ligneart.nettc)
+        Endif
+        tva[reslig!tx_ligbl] = lignetva
+      Else
+        lignetva = New Ltva
+        lignetva.num = reslig!tx_ligbl
+        lignetva.taux = reslig!mtx_ligfac
+        If ttc Then
+          lignetva.totht = utils.arrondi(Val(ligneart.neht) / txtva, 2)
+          lignetva.tottc = utils.arrondi(Val(Utils.cpoint(ligneart.nettc)), 2)
+        Else
+          lignetva.totht = utils.arrondi(ligneart.neht, 2)
+          lignetva.tottc = Utils.arrondi(ligneart.nettc, 2)
+        Endif
+        tva.Add(lignetva, reslig!tx_ligbl)
+      Endif
+  Endif
+  'on prepare l'écriture comptable
+  resfam = Utils.db.Exec("SELECT compt_fam,compt5_fam,intitule_cc FROM Fiches_Fam,Fiches_Comptes WHERE compt_fam=compte_cc AND code_fam=&1", reslig!fam_ligbl)
+  If resfam.Available Then 
+    If resent!retro Then
+      ecriture(resfam!compt5_fam, Val(ligneart.neht), resfam!intitule_cc)
+    Else
+      ecriture(resfam!compt_fam, Val(ligneart.neht), resfam!intitule_cc)
+    Endif
+  Endif
+  
+End
+
+Public Sub ecriture(numcpt As String, tot As Float, intitule As String)
+  
+  If ecrit.Exist(numcpt) Then
+    lignecom = ecrit[numcpt]
+    If tot < 0 Then
+        tot = tot * -1
+        lignecom.montantd += tot
+    Else
+        lignecom.montantc += tot
+    Endif
+  Else
+      lignecom = New Compta
+      lignecom.numcpt = numcpt
+      lignecom.intitule = intitule
+      lignecom.libelle = "FACTURE " & resent!nmclibl
+      lignecom.dte = $dtedoc.G
+      lignecom.dateech = $dteech.G
+      lignecom.numdoc = $numfac
+      lignecom.numlot = $numfac
+      If tot < 0 Then
+        lignecom.montantd = tot * -1
+      Else
+        lignecom.montantc = tot
+      Endif
+      ecrit.Add(lignecom, numcpt)
+  Endif
+  
+End
+
+
+Private Function mult(fac1 As Variant, fac2 As Variant, ndec As String) As String
+  
+  Dim f1, f2 As Float
+  Dim n As Integer
+  Dim nbr As String
+  
+  If IsNull(ndec) Then ndec = "O"
+  If Not IsNull(fac1) Then
+    If TypeOf(fac1) = gb.String Then
+      f1 = Val(Utils.cpoint(fac1))
+    Else
+      f1 = fac1
+    Endif
+  Else 
+    f1 = 0
+  Endif
+  If Not IsNull(fac2) Then
+    If TypeOf(fac2) = gb.String Then
+      f2 = Val(Utils.cpoint(fac2))
+    Else
+      f2 = fac2
+    Endif
+  Else
+    f2 = 0
+  Endif
+  
+  nbr = Str(utils.arrondi(f1 * f2, ndec))
+  nbr = Utils.CDec(ndec, nbr)
+  Return nbr
+  
+End
+
+'fonction sur les dates 
+Public Function verifdate(Optional dtef As Object, Dtech As Object) As Boolean
+  
+  Dim res As Result
+  Dim dte As LDate
+  
+     'gestion des dates
+  If IsNull($dtedoc.L) Then
+    Message.Warning("Attention ! Vous devez mettre une date de facturation", "Ok")
+    Stop Event
+  '  Dtef.SetFocus
+    Return True
+  Endif
+  If Not IsNull($dteech) Then
+    If IsNull($dteech.L) Then
+      Message.Warning("Attention ! Vous devez mettre une date d'échéance", "Ok")
+       Stop Event
+'     Dtech.Text = Dtef.dte.L
+ '    Dtech.SetFocus
+      Return True
+    Endif
+  Endif
+  If (choix = "F" Or choix = "FM") Then
+    res = Utils.db.Exec("SELECT dtepp,dtepec FROM Fiches_Parametres")
+    If res.Available Then
+      dte = New LDate("01." & res!dtepp)
+      If $dtedoc.Avant(dte, True) Then
+        Message.Warning("Attention ! Impression de facture impossible. \nLa date saisie est inférieure à la période précédente. \nVeuillez faire vos clotures SVP !", "Ok")
+        Stop Event
+'        Dtef.SetFocus
+        Return True
+      Endif
+      dte.L = "01." & res!dtepec
+      dte.G = DateAdd(dte.G, gb.Month, 1)
+      If $dtedoc.Apres(dte.FinMois, True) Then
+        Message.Warning("Attention ! Impression de facture impossible. \nLa date saisie est supérieure à la période autorisée. \nVeuillez faire votre cloture mensuelle en facturation SVP", "Ok") 
+        Stop Event
+'        Dtef.SetFocus
+        Return True
+      Endif
+    Endif
+  Endif
+  If dtmouv Then        'on change la date de mouvement article
+    utils.db.Exec("UPDATE Fiches_Ligbl SET dte_ligbl=&1 WHERE num_ligbl=&2 and typel_ligbl='A'", $dtedoc.G, Me.numbl)
+  Endif
+  
+End
+
+'* * * * * * * * * * * * * * * * * * * * * * * * * * Fonctions sur les copies de facture en pdf * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+'on teste la validité des chemins pour la copie de fichier
+Public Function testchem() As Boolean
+  
+  If pdf Then
+    If IsNull(pdfchemin) Then
+      Message.Warning("Le chemin des pdf n'est pas renseigné dans les préférences !")
+      Return True
+    Endif
+    If Not Exist(pdfchemin) Then
+      Try Mkdir pdfchemin
+      If Error Then
+        If start.son Then Music.Play
+        Message.Error("La copie du fichier pdf ne peut pas être effectuée !\nVeuillez vérifier le chemin " & pdfchemin & " dans les préférences SVP.")
+        Return True
+      Endif
+    Endif
+    If Not Exist(pdfchemin & "/Fac") Then
+      Try Mkdir pdfchemin & "/Fac"
+      If Error Then
+        If start.son Then Music.Play
+        Message.Error("La copie du fichier pdf ne peut pas être effectuée !\nVeuillez vérifier le chemin " & pdfchemin & "/Fac dans les préférences SVP.")
+        Return True
+      Endif
+    Endif
+    If Not Access(pdfchemin & "/Fac", gb.Write) Then
+      If start.son Then Music.Play
+      Message.Error("Impossible d'écrire sur le répertoire " & pdfchemin & "/Fac")
+      Return True
+    Endif
+  Else
+    If Not Exist(User.home & "/Impressions") Then
+      Try Mkdir User.home & "/Impressions"
+      If Error Then
+        If start.son Then Music.Play
+        Message.Error("Problème lors de la création d'un répertoire\nMerci de créer manuellement un répertoire nommé 'Impressions'")
+        Return True
+      Endif
+    Endif
+    If Not Access(User.Home & "/Impressions", gb.Write) Then
+      If start.son Then Music.Play
+      Message.Error("Impossible d'écrire sur le répertoire " & User.Home & "/Impressions")
+      Return True
+    Endif
+  Endif
+End
+'chemin de la facture
+Public Sub Dupli2()
+
+  Dim chemin, ty As String 
+  Dim res As Result
+  
+  imp.NumCopies = 1
+  imp.OutputFile = User.Home & "/tmp/Facture.pdf"
+  edit.Print(imp)
+  resent.MoveFirst
+  If resent!imp = 1 Then Return
+  ty = nom()
+  If sauvpdf Then
+    Chemin = pdfchemin & "/Fac/" & $numcli
+    If Not Exist(chemin) Then Try Mkdir chemin
+    Chemin &= "/" & Format(Year($dtedoc.G), "0000")
+    If Not Exist(chemin) Then Try Mkdir chemin
+    If Not pdfannu Then
+      Chemin &= "/" & Format(Month($dteech.G), "00")
+      If Not Exist(chemin) Then Try Mkdir chemin
+      imp.OutputFile = chemin & "/" & ty & ".pdf"
+      imp.NumCopies = 1
+      edit.Print(imp)
+      res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $numcli, chemin & "/" & ty & ".pdf")
+      If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $numcli, chemin & "/" & ty & ".pdf", $numcli & "," & ty & ",", "Facs")
+      If choix = "F" Or choix = "FM" Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
+    Endif
+  Else
+      chemin = User.Home & "/Impressions"
+      imp.OutputFile = chemin & "/" & ty & ".pdf"
+      imp.NumCopies = 1
+      edit.Print(imp)
+  Endif
+    
+End
+
+Private Function nom() As String
+  
+  Dim ty As String
+  Dim reg As RegExp
+  
+  Select Case choix
+    Case ObjFac.facture, ObjFac.finmois, ObjFac.abonnement
+      ty = "F" & $numfac
+    Case ObjFac.bl
+      ty = "B" & $numbl
+    Case ObjFac.commande
+      ty = "C" & $numbl
+    Case ObjFac.proforma
+      ty = "P" & $numbl
+    Case ObjFac.devis
+      ty = "D" & $numbl
+  End Select
+ 
+  reg = New RegExp
+  ty = ty & reg.Replace(adrfac.nom, "[ /']", "")
+  ty = reg.Replace(ty, "[()]", "_")
+  Return ty
+  
+End
+
+'*********************comptabilitée**********************
+Public Function ecriturecompt() As Boolean
+  
+  Dim rescomp, resmvt As Result
+  Dim lg As Compta
+  Dim tot As Float
+  Dim numerodef, numero As Integer
+  Dim jrnal, rint As String
+  
+  For Each lg In ecrit
+    tot = tot + utils.arrondi(lg.montantd - lg.montantc, 2) 
+  Next
+  If Round(tot, -2) <> 0 Then Return True
+  If ecrit.Count < 2 Then Return True
+  nfac(ByRef numero, ByRef numerodef, ByRef jrnal)     'on récupére les numéros de facture+écriture+écriture définitive
+  numeroecr = numero
+  
+  utils.db.Exec("LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE")
+  utils.db.Begin
+  For Each lg In ecrit
+    If $numcli = lg.numcpt Then     'enregistrement de la ligne collectif
+      rescomp = utils.db.Create("Fiches_Mvt")
+      rescomp!jour = jrnal
+      rescomp!numero = numero
+      rescomp!numerodef = numerodef
+      rescomp!compte = rescli!cli_collectif
+      rescomp!collectif = True
+      rescomp!intitule = lg.intitule
+      rescomp!dte = lg.dte
+      rescomp!dateech = lg.dateech
+      rescomp!numdoc = $numfac
+      rescomp!numlot = $numfac
+      rescomp!libelle = lg.libelle
+      tot = utils.arrondi(lg.montantd - lg.montantc, 2)
+      If tot >= 0 Then
+        lg.montantd = tot
+        lg.montantc = 0
+      Else
+        lg.montantc = tot * -1
+        lg.montantd = 0
+      Endif
+      rescomp!montantd = lg.montantd
+      rescomp!montantc = lg.montantc
+      rescomp!validee = True
+      rescomp!provisoire = False
+      rescomp!tresorerie = False
+      rescomp!pointee = False
+      rescomp!lettree = False
+      rescomp!cloturee = True
+      rescomp!relance = 0
+      rescomp!dteval = Now
+      rescomp.Update
+      solde(rescli!cli_collectif)
+    Endif
+    'enregistrement de la ligne normal
+    rescomp = utils.db.Create("Fiches_Mvt")
+    rescomp!jour = jrnal
+    rescomp!numero = numero
+    rescomp!numerodef = numerodef
+    rescomp!compte = lg.numcpt
+    rescomp!intitule = lg.intitule
+    rescomp!dte = lg.dte
+    rescomp!dateech = lg.dateech
+    rescomp!numdoc = $numfac
+    rescomp!numlot = $numfac
+    rescomp!libelle = lg.libelle
+    tot = utils.arrondi(lg.montantd - lg.montantc, 2)
+    If tot >= 0 Then
+      lg.montantd = tot
+      lg.montantc = 0
+    Else
+      lg.montantc = tot * -1
+      lg.montantd = 0
+    Endif
+    rescomp!montantd = lg.montantd
+    rescomp!montantc = lg.montantc
+    rescomp!validee = True
+    rescomp!provisoire = False
+    rescomp!tresorerie = False
+    rescomp!pointee = False
+    rescomp!lettree = False
+    rescomp!cloturee = True
+    rescomp!relance = 0
+    rescomp.Update
+    solde(lg.numcpt)
+  Next
+  Sha1Calc.CalcSha1("Fiches_Mvt", numero)
+  
+  utils.db.Exec("UNLOCK TABLES")
+  If choix = ObjFac.facture Then
+    rescomp = utils.db.Edit("Fiches_Bl", "numbl=&1", $numbl)
+    rescomp!numfac = $numfac
+    rescomp!imp = 1
+    rescomp!dtefac = $dtedoc.G
+    rescomp!dteech = $dteech.G
+    rescomp.Update
+'    If $vfac.saisreg Then reglement(cal)
+  Endif
+  If UCase$(rescli!cli_reg) = "TRAITE" Or If UCase$(rescli!cli_reg) = "LCR" Then Maj_Traite(montttc)
+  utils.db.Commit
+  MajSuivis()
+  
+End
+
+Private Sub nfac(ByRef numero As Integer, ByRef numerodef As Integer, ByRef jrnal As String)
+  
+  Dim n As Integer
+  Dim res As Result
+  
+  utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
+  res = utils.db.Exec("SELECT dnfac,numecriture,numecriture2,jrnal FROM Fiches_Parametres")
+  If res.Available Then
+    If IsNull(res!dnfac) Then n = 1 Else n = Val(res!dnfac) + 1
+    $numfac = Format($dtedoc.G, "yyyy") & Format(n, "000000")
+    numero = res!numecriture + 1
+    numerodef = res!numecriture2 + 1
+    jrnal = res!jrnal
+    Utils.db.Exec("UPDATE Fiches_Parametres SET dnfac=&1, numecriture=&2, numecriture2=&3", Str(n), numero, numerodef)
+  Else
+    Message.Error("Il y a un problème sur la table des paramétres !")
+    utils.db.Exec("UNLOCK TABLES")
+    Me.Close
+  Endif
+  utils.db.Exec("UNLOCK TABLES")
+
+End
+
+Private Sub solde(num As String)
+  
+  Dim resmvt As Result
+  
+  resmvt = utils.db.Exec("SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte=&1", num)
+  If resmvt.Available Then 
+    If IsNull(resmvt!montantd) Or IsNull(resmvt!montantc) Then
+       Message.Error("Il y a un problème avec le compte : " & num & " calcul du solde impossible")
+       Return
+    Endif
+    Utils.db.Exec("UPDATE Fiches_Comptes SET solde=&1 WHERE compte_cc=&2", Val(Format(resmvt!montantd - resmvt!montantc, "0.00")), rescli!cli_code)
+  Endif
+  
+End
+
+'maj du suivis des affaires
+Private Sub MajSuivis()
+
+  Dim rSuivi As Result
+
+  resent.MoveFirst
+  Repeat
+    
+    rSuivi = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSuivis") & " WHERE numdev = &1 and code = &2", resent!numbl, $numcli)
+    If rSuivi.Available Then Utils.db.Exec("UPdate  " & Cbase.Table("TabSuivis") & "  SET  numfac= &1, datefac = &2 WHERE numdev = &3 and code = &4", $numfac, $dtedoc.G, resent!numbl, $numcli)
+    
+  Until resent.MoveNext()
+  
+End
+
+Private Sub Maj_Traite(monttc As Float)
+
+  Dim Traite As String
+  Dim Accept As Boolean = False
+
+  If UCase(rescli!cli_reg) = "TRAITE" Then
+    Accept = True
+  Else
+    Accept = False
+  Endif
+  Traite = "Fiches_Traites"
+  Utils.db.Exec("insert into  " & Traite & "  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", $numcli, rescli!cli_nom, $numfac, Format(monttc, "0.00"), $dteech.G, $dtedoc.G, Accept, 0)
+
+End

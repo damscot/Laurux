@@ -59,7 +59,7 @@ Private Function ctrl() As Boolean
   Dim res, resdr, reslig As Result
   Dim err As Boolean
   Dim vfac As VarFac
-  Dim cal As Calculconsdroit
+  Dim cal As ObjFacB
   Dim lg As Variant
   Dim pb As ProgBar
   
@@ -108,7 +108,7 @@ Private Function ctrl() As Boolean
       vfac.numcli = reslig!cdclibl
       vfac.dtedoc = New LDate(reslig!dtefac)
       vfac.choix = "F"
-      cal = New Calculconsdroit(vfac, reslig!numfac, "F")
+      cal = New ObjFacB(reslig!numfac, "F")
       For Each lg In cal.ligne
         res = utils.db.Exec("SELECT art_dra,art_volm FROM Fiches_Art WHERE art_code=&1 AND art_dra <> ''", lg.code)
         If res.Available Then

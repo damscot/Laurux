@@ -5108,7 +5108,7 @@ end_utf8:
     "cptint char(8)," &
     "type CHAR(1) NOT NULL," &
     "PRIMARY KEY (code))")
-  Endif
+ 
   'type = "I" virement interne J journaux B borderaux L lcr A lcr acceptées N pas de traitement
   'on garni le fichier avec les reseignements des parametres et prefs
   pb.Avancement("Espèces", 1)
@@ -5189,6 +5189,7 @@ end_utf8:
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='35' WHERE cli_reg='Lcr'")
   Endif
+   Endif
   pb.Close
   Utils.db.Commit
   'Modification de la caisse

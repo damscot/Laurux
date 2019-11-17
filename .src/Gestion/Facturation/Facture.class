@@ -249,6 +249,7 @@ Private $inbcol As Integer      'Nb de colis par palette
 Private $inbbout As Integer     'Nb de bouteilles par caisse
 Private $tarif As TarArt
 Private $process As Boolean = False   'test si le programme peut se fermer
+Private $fac As ObjFacB
 
 
 '**********************************************************
@@ -2122,6 +2123,8 @@ Public Sub ColblSelection(bright As Boolean)
             Case "D"
               regroup.Text = "Regr : Decade"
           End Select
+          $fac = New ObjFacB(num.Text, ObjFac.bl)
+          $fac.numcli = rResult!cli_code
           res = Utils.db.Exec("SELECT * FROM Fiches_Typec WHERE code=&1", rResult!cli_typec)
           If res.Available Then
             Combocatcli.Text = res!code & " " & res!libelle
@@ -2518,30 +2521,33 @@ Public Sub calculfindoc()
   Dim res, respar As Result
   Dim tvafrais As Float
 
-  If Not Textfrais.text Then textfrais.Text = "0,00"
-  If utils.totobs([textfrais.Text]) <> 0 Then
-    respar = utils.db.Exec("SELECT tvafrais FROM Fiches_Parametres")
-    If respar.Available Then
-      res = utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva=&1", respar!tvafrais)
-      If res.Available Then
-        tvafrais = Val(textfrais.Text) * (Val(Replace(res!taux_tva, ".", ",")) / 100)
-        Totht1.Text = Format(utils.totobs([Totht.Text, textfrais.Text]), "0.00")
-        Totva1.Text = Format(utils.totobs([Tottva.Text]) + tvafrais, "0.00")
-        Tottc1.Text = Format(utils.totobs([Totht.Text, textfrais.Text, Totva1.Text]), "0.00")
-      Endif
-    Endif
-  Else
-    Totht1.Text = Totht.Text
-    Totva1.Text = Tottva.Text
-    Tottc1.Text = Tottc.Text
-  Endif
-  '  Endif
+' If Not Textfrais.text Then textfrais.Text = "0,00"
+ ' If utils.totobs([textfrais.Text]) <> 0 Then
+  '  respar = utils.db.Exec("SELECT tvafrais FROM Fiches_Parametres")
+   ' If respar.Available Then
+    '  res = utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva=&1", respar!tvafrais)
+     ' If res.Available Then
+      '  tvafrais = Val(textfrais.Text) * (Val(Replace(res!taux_tva, ".", ",")) / 100)
+       ' Totht1.Text = Format(utils.totobs([Totht.Text, textfrais.Text]), "0.00")
+        'Totva1.Text = Format(utils.totobs([Tottva.Text]) + tvafrais, "0.00")
+  '      Tottc1.Text = Format(utils.totobs([Totht.Text, textfrais.Text, Totva1.Text]), "0.00")
+   '   Endif
+    'Endif
+ ' Else
+    If Not Object.IsValid($fac) Then Return
+    
+    $fac.calcul()
+    Totht1.Text = Format($fac.montht, "0.00")
+    Totva1.Text = Format($fac.monttva, "0.00")
+    Tottc1.Text = Format($fac.montttc, "0.00")
+  'Endif
 
-  If $soption = "B" Or $soption = "T" Then
-    Totht1.Text = Format(utils.totobs([Totht1.Text, $opt.texttotcons.Text, $opt.texttotdeco.Text, $opt.texttotdr.Text, $opt.texttotss.Text]), "0.00")
-    Totva1.Text = Format$(Utils.totobs([Totva1.Text]) + $opt.tvadroit, "0.00")
-    Tottc1.Text = Format(utils.totobs([Totht1.Text, Totva1.Text]), "0.00")
-  Endif
+
+  'If $soption = "B" Or $soption = "T" Then
+  '  Totht1.Text = Format(utils.totobs([Totht1.Text, $opt.texttotcons.Text, $opt.texttotdeco.Text, $opt.texttotdr.Text, $opt.texttotss.Text]), "0.00")
+   ' Totva1.Text = Format$(Utils.totobs([Totva1.Text]) + $opt.tvadroit, "0.00")
+    'Tottc1.Text = Format(utils.totobs([Totht1.Text, Totva1.Text]), "0.00")
+  'Endif
 
 End
 '******************************GESTION DU CODE POSTAL*********************************
@@ -9510,17 +9516,32 @@ End
 Public Sub Bl_Edit()
 
   Dim otpf As OptFac
-  Dim m As String
+  Dim choix As Integer
   
-  If bTypeFacture Then m = "M"
- 
+  Select Case tp
+    Case "F", "A"
+      choix = ObjFac.facture
+    Case "B"
+      choix = ObjFac.bl
+    Case "C"
+      choix = ObjFac.commande
+    Case "D"
+      choix = ObjFac.devis
+    Case "P"
+      choix = ObjFac.proforma
+  End Select
+  
   If tp = "F" Then
-    otpf = New OptFac(Tp, code.Text, num.Text, Me.Parent, Tottc1.Text, False, LDate(Now), m, courriel.Text)
+    otpf = New OptFac(choix, code.Text, num.Text, Me.Parent, Tottc1.Text, False, LDate(Now), courriel.Text)
   Else
-    otpf = New OptFac(Tp, code.Text, num.Text, Me.Parent, Tottc1.Text, False, LDate(datej.Text), m, courriel.Text)
+    otpf = New OptFac(choix, code.Text, num.Text, Me.Parent, Tottc1.Text, False, LDate(datej.Text), courriel.Text)
   Endif
   otpf.ShowModal
-  ColblSelection(False)
+  Colbl_Click()
+'  ColblSelection(False)
+'  button4_click()
+'  colbl.Refresh
+'  Wait 0.01
   
 End
 
@@ -9760,17 +9781,9 @@ End
 '**********************************************************
 Public Sub Lig_Archives()
 
-  Dim otpf As OptFac
-  Dim m As String
-
-  If bTypeFacture Then m = "M"
-
-  If tp = "F" Then
-    otpf = New OptFac(Tp, code.Text, num.Text, Me.Parent, Tottc1.Text, False, LDate(datej.Text), m)
-  Else
-    otpf = New OptFac(Tp, code.Text, num.Text, Me.Parent, Tottc1.Text, LDate(Now), False, m)
-  Endif
-  otpf.transblfac()
+  $fac.choix = ObjFac.facture
+  $fac.calcul
+  $fac.transblfac
 
 End
 
