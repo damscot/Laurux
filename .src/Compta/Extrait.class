@@ -380,19 +380,19 @@ Public Sub cpt_LF()
     Endif
   Endif
   If Bclient.Value And Left$(cpt.Text, 3) <> "411" Then
-    Message.Warning("Le compte saisit n'est pas un compte client !")
+    Try Message.Warning("Le compte saisit n'est pas un compte client !", "OK")
     b = 1
   Else
     If Bfournisseur.Value And Left$(cpt.Text, 3) <> "401" Then
-      Message.Warning("Le compte saisit n'est pas un compte fournisseur !")
+      Try Message.Warning("Le compte saisit n'est pas un compte fournisseur !", "OK")
       b = 1
     Else
       If Bgestion.Value And Left$(cpt.Text, 1) <> "6" And Bgestion.Value And Left$(cpt.Text, 1) <> "7" Then
-        Message.Warning("Le compte saisit n'est pas un compte gestion !")
+        Try Message.Warning("Le compte saisit n'est pas un compte gestion !", "OK")
         b = 1
       Else
         If Bbilan.Value And Left$(cpt.Text, 1) <> "1" And Bbilan.Value And Left$(cpt.Text, 1) <> "2" And Bbilan.Value And Left$(cpt.Text, 1) <> "3" And Bbilan.Value And Left$(cpt.Text, 1) <> "4" And Bbilan.Value And Left$(cpt.Text, 1) <> "5" And Bbilan.Value And Left$(cpt.Text, 1) <> "8" And Bbilan.Value And Left$(cpt.Text, 1) <> "9" Then
-          Message.Warning("Le compte saisit n'est pas un compte bilan !")
+          Try Message.Warning("Le compte saisit n'est pas un compte bilan !", "OK")
           b = 1
         Endif
       Endif
