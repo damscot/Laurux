@@ -386,7 +386,7 @@ Private Sub crearequ() As Boolean
       If Combcomm.Current.Text <> " " Then condblm &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
       If Textmarq.Text Then condblm &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
       If Textcentr.Text Then condblm &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
-      If Not Checktfam.Value Then condblm &= utils.fam("fam_ligbl", TreeView1, TreeView1)
+      If Not Checktfam.Value Then condblm &= utils.fam("fam_ligbl", TreeView1)
       If un Then requblm = " UNION ALL "
       requblm &= champblm & " FROM " & fichierblm & " WHERE " & condblm
       TextArea1.Text &= requblm & "\n"
@@ -717,7 +717,7 @@ Private Sub edition()
   lab.BackGround = ReportBrush.Color(coul)
   lab.Alignment = Align.Center
   lab.Fixed = True
-  lab.Font = font["Serif,-1"]
+  lab.Font = font["Serif,11"]
   'edition de l'entete
   hb = New ReportHBox($rpt)
   hb.Height = "4mm"
@@ -726,7 +726,7 @@ Private Sub edition()
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Center
-  lab.Font = font["Serif,-2"]
+  lab.Font = font["Serif,9"]
   lab.Width = "25mm"
   lab.Border = ReportBorder["Right:1pt #000000"]
   If Radiocli.Value Or Radiofam.Value Then lab.Text = "N° Article"
@@ -734,14 +734,14 @@ Private Sub edition()
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Center
-  lab.Font = font["Serif,-2"]
+  lab.Font = font["Serif,9"]
   lab.Expand = True
   lab.Border = ReportBorder["Right:1pt #000000"]
   lab.Text = "Libelle"
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Center
-  lab.Font = font["Serif,-2"]
+  lab.Font = font["Serif,9"]
   lab.Width = "20mm"
   lab.Border = ReportBorder["Right:1pt #000000"]
   lab.Text = "Qte"
@@ -749,7 +749,7 @@ Private Sub edition()
     lab = New ReportLabel(hb)
     lab.Height = "4mm"
     lab.Alignment = Align.Center
-    lab.Font = font["Serif,-2"]
+    lab.Font = font["Serif,9"]
     lab.Width = "20mm"
     lab.Border = ReportBorder["Right:1pt #000000"]
     lab.Text = "CA"
@@ -758,7 +758,7 @@ Private Sub edition()
     lab = New ReportLabel(hb)
     lab.Height = "4mm"
     lab.Alignment = Align.Center
-    lab.Font = font["Serif,-2"]
+    lab.Font = font["Serif,10"]
     lab.Width = "20mm"
     lab.Border = ReportBorder["Right:1pt #000000"]
     lab.Text = "Marge"
@@ -782,7 +782,7 @@ Private Sub edition()
         lab = New ReportLabel($rpt)
         lab.Height = "3mm"
         lab.Alignment = Align.Center
-        lab.Font = font["Serif,-3"]
+        lab.Font = font["Serif,8"]
         lab.Text = res!code & "  " & res!lib
       Else
         afflig(res!code, res!lib)
@@ -823,26 +823,26 @@ Private Sub afflig(code As String, lib As String)
   lab = New ReportLabel(hb)
   lab.Height = "3mm"
   lab.Alignment = Align.Left
-  lab.Font = font["Serif,-5"]
+  lab.Font = font["Serif,5"]
   lab.Width = "25mm"
   lab.Text = code
   lab = New ReportLabel(hb)
   lab.Height = "3mm"
   lab.Alignment = Align.Left
-  lab.Font = font["Serif,-5"]
+  lab.Font = font["Serif,5"]
   lab.Expand = True
   lab.Text = lib
   lab = New ReportLabel(hb)
   lab.Height = "3mm"
   lab.Alignment = Align.Right
-  lab.Font = font["Serif,-5"]
+  lab.Font = font["Serif,5"]
   lab.Width = "20mm"
   lab.Text = Format($res!qte, "0.000")
   If Checkca.Value Then
     lab = New ReportLabel(hb)
     lab.Height = "3mm"
     lab.Alignment = Align.Right
-    lab.Font = font["Serif,-5"]
+    lab.Font = font["Serif,5"]
     lab.Width = "20mm"
     lab.Text = Format($res!ca, "0.00")
   Endif
@@ -850,7 +850,7 @@ Private Sub afflig(code As String, lib As String)
     lab = New ReportLabel(hb)
     lab.Height = "3mm"
     lab.Alignment = Align.Right
-    lab.Font = font["Serif,-5"]
+    lab.Font = font["Serif,5"]
     lab.Width = "20mm"
     lab.Text = Format($res!marge, "0.00")
   Endif
@@ -869,20 +869,20 @@ Private Sub afftot(qte As Float, ca As Float, mrg As Float)
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Center
-  lab.Font = font["Serif,-3"]
+  lab.Font = font["Serif,7"]
   lab.Expand = True
   lab.text = "TOTAL"
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Right
-  lab.Font = font["Serif,Bold,-4"]
+  lab.Font = font["Serif,Bold,6"]
   lab.Width = "20mm"
   lab.Text = Format(qte, "0.000")
   If Checkca.Value Then
     lab = New ReportLabel(hb)
     lab.Height = "4mm"
     lab.Alignment = Align.Right
-    lab.Font = font["Serif,Bold,-4"]
+    lab.Font = font["Serif,Bold,6"]
     lab.Width = "20mm"
     lab.Text = Format(ca, "0.00")
   Endif
@@ -890,7 +890,7 @@ Private Sub afftot(qte As Float, ca As Float, mrg As Float)
     lab = New ReportLabel(hb)
     lab.Height = "4mm"
     lab.Alignment = Align.Right
-    lab.Font = font["Serif,Bold,-4"]
+    lab.Font = font["Serif,Bold,6"]
     lab.Width = "20mm"
     lab.Text = Format(mrg, "0.00")
   Endif
