@@ -186,14 +186,23 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
       If res.Available Then tab = "M"
     Endif
   Else
-    $numbl = num
-    res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numbl=&1", $numbl)
-    If Not res.Available Then
-      res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numbl=&1", $numbl)
-      If res.Available Then tab = "M"
+    If choi = ObjFac.facture Then
+      $numfac = num
+      res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numfac=&1", $numfac)
+      If Not res.Available Then
+        res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numfac=&1", $numfac)
+        If res.Available Then tab = "M"
+      Endif
+    Else
+      $numbl = num
+      res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numbl=&1", $numbl)
+      If Not res.Available Then
+        res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numbl=&1", $numbl)
+        If res.Available Then tab = "M"
+      Endif
     Endif
   Endif
- 
+  
   $dtedoc = dte
   recap = Start.LocalSettings["/Soc" & Start.Societe & "/Recap"]
   ttc = Start.LocalSettings["/Soc" & Start.Societe & "/Impttc"]
