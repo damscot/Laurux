@@ -529,7 +529,7 @@ Public Sub Button2_Click()
     '******************************
     If CheckBox3.Value = True Then
       datej = New LDate(Now)
-      dates = New LDate(DateAdd(Now, gb.Day, - Val(Jours.Text)))
+      dates = New LDate(DateAdd(Now, gb.Day, -Val(Jours.Text)))
 
       pdf.Entete("Ventes en Caisse sur les " & Jours.Text & " derniers jours")
       pdf.Level13V()

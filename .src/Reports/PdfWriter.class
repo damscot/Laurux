@@ -737,7 +737,7 @@ Public Sub Rect(x As Float, y As Float, w As Float, h As Float, Optional style A
   _out(_stringFloat(x * $k, "0.00") & " " &
     _stringFloat(($h - y) * $k, "0.00") & " " &
     _stringFloat(w * $k, "0.00") & " " &
-    _stringFloat(- h * $k, "0.00") & " re " & op)
+    _stringFloat(-h * $k, "0.00") & " re " & op)
 
 End
 
@@ -1028,7 +1028,7 @@ Public Sub Cell(w As Float, Optional h As Float = 0, Optional txt As String = ""
       s = _stringFloat($x * k, "0.00") & " " &
         _stringFloat(($h - $y) * k, "0.00") & " " &
         _stringFloat(w * k, "0.00") & " " &
-        _stringFloat(- h * k, "0.00") & " re " & op & " "
+        _stringFloat(-h * k, "0.00") & " re " & op & " "
     End If
     ' [GB2:ISTY] Else If (IsString(border)) Then
   Else If (TypeOf(border) = gb.String) Then
@@ -1826,7 +1826,7 @@ Public Sub Ellipse2(x0 As Float, y0 As Float, rx As Float, Optional ry As Float 
     x0 *= $k
     y0 = ($h - y0) * $k
     If (angle <> 0) Then
-      a = - Rad(angle)
+      a = -Rad(angle)
       _out("q " &
         _stringFloat(Cos(a), "0.00") & " " &
         _stringFloat(-1 * Sin(a), "0.00") & " " &
@@ -1840,7 +1840,7 @@ Public Sub Ellipse2(x0 As Float, y0 As Float, rx As Float, Optional ry As Float 
     t1 = astart
     a0 = x0 + (rx * Cos(t1))
     b0 = y0 + (ry * Sin(t1))
-    c0 = - rx * Sin(t1)
+    c0 = -rx * Sin(t1)
     d0 = ry * Cos(t1)
     _Point(a0 / $k, $h - (b0 / $k))
     For i = 1 To nSeg
@@ -1848,7 +1848,7 @@ Public Sub Ellipse2(x0 As Float, y0 As Float, rx As Float, Optional ry As Float 
       t1 = (i * dt) + astart
       a1 = x0 + (rx * Cos(t1))
       b1 = y0 + (ry * Sin(t1))
-      c1 = - rx * Sin(t1)
+      c1 = -rx * Sin(t1)
       d1 = ry * Cos(t1)
       _Curve((a0 + (c0 * dtm)) / $k,
         $h - ((b0 + (d0 * dtm)) / $k),
@@ -2392,12 +2392,12 @@ Public Sub Cube(x1 As Float, y1 As Float, Optional a As Float = 10, Optional b A
   x = x1 + a 'x = ($w - $rMargin) / 2 - (a / 2)
   y = y1 + b 'y = ($h - $tMargin) / 2 - (b / 2)
   cubo = [[x + a, y + b, c],
-    [x + a, y + b, - c],
-    [x - a, y + b, - c],
+    [x + a, y + b, -c],
+    [x - a, y + b, -c],
     [x - a, y + b, c],
     [x + a, y - b, c],
-    [x + a, y - b, - c],
-    [x - a, y - b, - c],
+    [x + a, y - b, -c],
+    [x - a, y - b, -c],
     [x - a, y - b, c]]
   senx = Sin(alfax * Pi() / 180)
   cosx = Cos(alfax * Pi() / 180)
@@ -2407,7 +2407,7 @@ Public Sub Cube(x1 As Float, y1 As Float, Optional a As Float = 10, Optional b A
   cosz = Cos(alfaz * Pi() / 180)
   a = cosy * cosz
   b = cosy * senz
-  c = - seny
+  c = -seny
   d = senx * seny * cosz - cosx * senz
   e = senx * seny * senz + cosx * cosz
   f = senx * cosy
@@ -2832,7 +2832,7 @@ Public Sub Clip(x As Float, y As Float, w As Float, h As Float)
     _stringFloat(x * $k, "0,00") & " " &
     _stringFloat(($h - y) * $k, "0,00") & " " &
     _stringFloat(w * $k, "0,00") & " " &
-    _stringFloat(- h * $k, "0,00") & " re W n"
+    _stringFloat(-h * $k, "0,00") & " re W n"
   'set up transformation matrix for gradient
   s &= " " &
     _stringFloat(w * $k, "0.000") & " 0 0 " &
@@ -3301,7 +3301,7 @@ End
 Public Sub Translate(t_x As Float, t_y As Float)
   'translate the coordinate system
 
-  Me.Transform([1.0, 0.0, 0.0, 1.0, t_x * $k, - t_y * $k])
+  Me.Transform([1.0, 0.0, 0.0, 1.0, t_x * $k, -t_y * $k])
 
 End
 
@@ -3428,16 +3428,16 @@ Public Sub CircularText(x As Float, y As Float, r As Float, text As String, Opti
   If (align = "top") Then
     Me.Rotate(d / 2, x, y)
   Else
-    Me.Rotate(- d / 2, x, y)
+    Me.Rotate(-d / 2, x, y)
   End If
   'run through the string
   For i = 0 To (Len(text) - 1)
     If (align = "top") Then
       'rotate matrix half OF the width OF current letter + half of the width of preceding letter
       If (i = 0) Then
-        Me.Rotate(- ((w[i] / 2) / u) * 360, x, y)
+        Me.Rotate(-((w[i] / 2) / u) * 360, x, y)
       Else
-        Me.Rotate(- ((w[i] / 2 + w[i - 1] / 2) / u) * 360, x, y)
+        Me.Rotate(-((w[i] / 2 + w[i - 1] / 2) / u) * 360, x, y)
       End If
       If (fontwidth <> 1) Then
         Me.StartTransform()
@@ -3924,7 +3924,7 @@ Private Function _dounderline(x As Float, y As Float, txt As String) As String
   Return (_stringFloat(x * $k, "0.00") & " " &
     _stringFloat(($h - (y - up / 1000 * $FontSize)) * $k, "0.00") & " " &
     _stringFloat(w * $k, "0.00") & " " &
-    _stringFloat(- ut / 1000 * $FontSizePt, "0.00") & " re f")
+    _stringFloat(-ut / 1000 * $FontSizePt, "0.00") & " re f")
 
 End
 
@@ -4179,12 +4179,12 @@ Private Function _rotate(angle As Float, Optional x As Float = -1, Optional y As
     cy = ($h - y) * $k
     _out("q " & _stringFloat(c, "0.00000") & " " &
       _stringFloat(s, "0.00000") & " " &
-      _stringFloat(- s, "0.00000") & " " &
+      _stringFloat(-s, "0.00000") & " " &
       _stringFloat(c, "0.00000") & " " &
       _stringFloat(cx, "0.00") & " " &
       _stringFloat(cy, "0.00") & " cm 1 0 0 1 " &
-      _stringFloat(- cx, "0.00") & " " &
-      _stringFloat(- cy, "0.00") & " cm")
+      _stringFloat(-cx, "0.00") & " " &
+      _stringFloat(-cy, "0.00") & " cm")
   End If
 
 End
@@ -4603,7 +4603,7 @@ Public Sub Cell2(w As Float, Optional h As Float = 0, Optional txt As String = "
       s = _stringFloat($x * k, "0.00") & " " &
         _stringFloat(($h - $y) * k, "0.00") & " " &
         _stringFloat(w * k, "0.00") & " " &
-        _stringFloat(- h * k, "0.00") & " re " & op & " "
+        _stringFloat(-h * k, "0.00") & " re " & op & " "
     End If
     ' [GB2:ISTY] Else If (IsString(border)) Then
   Else If (TypeOf(border) = gb.String) Then
