@@ -53,8 +53,10 @@ Public Sub Form_Open()
     Wend
   Endif
   
-  selpath = Update_Type(wwwpath, Type.Current.Text)
-  
+  If Type.Current.Text <> "" Then
+    selpath = Update_Type(wwwpath, Type.Current.Text)
+  Endif
+
 End
 
 Public Sub Update_Type(wwwlpath As String, Type As String, Optional Ver As String = Null) As String
@@ -190,7 +192,7 @@ Public Sub Verif_Maj(Optional wwwlpath As String = wwwpath, Optional Update As B
   If Exist(User.Home & "/tmp/ping.txt") Then
     txt = Trim$(File.Load(User.Home & "/tmp/ping.txt"))
   Endif
-  If InStr(txt, "cpanel1") <> 0 Then
+  If InStr(txt, "1 received") <> 0 Then
     Shell "wget -q" & " " & wwwlpath & "/" & version_file & " -P " & User.Home & "/tmp" Wait
     If Exist(User.Home & "/tmp/" & version_file) Then
       VersionWebFull = File.Load(User.Home & "/tmp/" & version_file)
@@ -353,6 +355,8 @@ End
 
 Public Sub ListVersion_Click()
 
-  selpath = Update_Type(wwwpath, Type.Current.Text, ListVersion.Current.Text)
+  If Type.Current.Text <> "" Then
+    selpath = Update_Type(wwwpath, Type.Current.Text, ListVersion.Current.Text)
+  Endif
 
 End
