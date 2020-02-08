@@ -24,24 +24,17 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
   Colal.Columns[4].Text = "Ville"
   Colal.Columns[5].Text = "Code"
   Colal.H = padliv.ClientH
-  'gridview saisie réglement
-  grregl.Columns.Count = 2
-  grregl.Columns[0].Text = "Mode de réglement"
-  grregl.Columns[0].Alignment = Align.Center
-  grregl.Columns[0].Expand = True
-  grregl.Columns[1].Text = "Montant"
-  grregl.Columns[1].Alignment = Align.Center
-  grregl.Columns[1].Width = 80
   
   chaine = New Chainage([Nombl, Adr1BL, Adr2BL, CPBL, VilleBL])
   chaine = New Chainage([Dtef, Dtech])
+  chaine = New Chainage([regl1, regl2])
 
   Dtef.Dat = True
   Dtech.Dat = True
-  Rglt.numerique = True
-  Rglt.nbdec = "2"
-  totr.numerique = True
-  totr.nbdec = "2"
+'  Rglt.numerique = True
+'  Rglt.nbdec = "2"
+'  totr.numerique = True
+'  totr.nbdec = "2"
   CPBL.reg = "[0-9]{0,5}"
   'Affiche les variables modifiables
   $vfac = New ObjFacB(nfac, choix) As "var"
@@ -60,7 +53,7 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
   Rgmt.Value = $vfac.saisreg
   Imp2L.Value = $vfac.ligne2
   totlettre.Value = $vfac.doclet
-  If Rgmt.Value And $vfac.choix = ObjFac.facture Then 
+  If $vfac.choix = ObjFac.facture Or $vfac.choix = ObjFac.archive Then 
     RegDef.Visible = True
     Preg.Visible = True
     Preg.Enabled = True
@@ -71,6 +64,7 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
   Endif
   RegDef.Value = $vfac.breg
   Coln.Value = $vfac.colon
+  
 
   Select Case $vfac.choix
     Case ObjFac.facture, ObjFac.finmois, ObjFac.archive, ObjFac.abonnement
@@ -85,7 +79,7 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
         Pfac1.Visible = False
       Endif
       If $vfac.choix = ObjFac.facture Or $vfac.choix = ObjFac.archive Then
-        Rglt.Text = mttc
+'        Rglt.Text = mttc
       Endif
     
     Case Else
@@ -100,14 +94,6 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
       Pfac.Visible = False
       
   End Select
-  
-  regmt.Add(" ")
-  res = utils.db.Exec("SELECT * FROM Fiches_Reglements")
-  If res.Available Then
-    Repeat
-      regmt.Add(res!code & " " & res!libel)
-    Until res.MoveNext()
-  Endif
  
   $vfac.numcli = num
   If $vfac.choix = ObjFac.archive Then
@@ -115,10 +101,11 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
   Else
     $vfac.numbl = nfac
   Endif
+  'gestion des règlements
+  regl1.Text = $vfac.tsaisreg
   If $vfac.sms And $vfac.choix <> ObjFac.finmois Then sms.Visible = True Else sms.Visible = False
   If $vfac.choix = ObjFac.finmois Then visu.Visible = False
   Me.Height -= (Preg.Height + padliv.Height)
-  
 End
 
 Public Sub Form_Open()
@@ -268,13 +255,12 @@ End
 Public Sub Rgmt_Click()
 
   $vfac.saisreg = Rgmt.Value
-  If $vfac.saisreg Then
-    RegDef.Visible = True
-    Preg.Visible = True
-  Else
-    RegDef.Visible = False
-    Preg.Visible = False
-  Endif
+  
+End
+
+Public Sub regl_lostfocus()
+
+  $vfac.tsaisreg = regl1.Text & "\n" & regl2.Text
 
 End
 
@@ -309,20 +295,6 @@ Public Sub var_fttc(Value As Boolean)
 
 End
 
-
-Public Sub var_modreg(value As String)
-
-  Dim i As Integer
-  
-  Regmt.Text = " "
-  For i = 1 To Regmt.Count - 1
-    If value = Left(regmt[i].Text, 2) Then
-      regmt.Text = regmt[i].Text
-      Break
-    Endif
-  Next
-
-End
 
 Public Sub totlettre_Click()
 
@@ -456,60 +428,6 @@ Public Sub VilleBL_LostFocus()
   $vfac.adrliv.ville = VilleBL.Text
 
 End
-'*************************************************************************************
-'gestion des modes de regelement
-Public Sub ajout_Click()
-
-  If Rglt.Value <> 0 Then
-    grregl.Rows.Count += 1
-    grregl[grregl.Rows.Max, 0].Text = Regmt.Current.Text
-    grregl[grregl.Rows.Max, 0].Alignment = Align.Left
-    grregl[grregl.Rows.Max, 1].Text = Rglt.Text
-    grregl[grregl.Rows.Max, 1].Alignment = Align.Right
-  Endif
-  totr.Value = totreg()
-
-End
-
-Public Sub grregl_KeyPress()
-
-  If Key.Code = Key.Delete Then
-    supreg(grregl.Row)
-  Endif
-
-End
-
-Public Sub grregl_Activate()
-
-  Regmt.Text = grregl[grregl.Row, 0].Text
-  Rglt.Text = grregl[grregl.Row, 1].Text
-  supreg(grregl.Row)
-
-End
-
-Private Sub supreg(row As Integer)
-  
-  Dim i As Integer
-  
-  If grregl.Rows.Count = 0 Then Return
-  
-  grregl.Rows.Remove(row)
-  grregl.Refresh
-  totr.Value = totreg()
-  
-End
-
-Private Function totreg() As Float
-  
-  Dim i As Integer
-  Dim tot As Float
-  
-  For i = 0 To grregl.Rows.Max
-    tot += Val(grregl[i, 1].Text)
-  Next
-  Return tot
-  
-End
 
 '*****************************************************************************************
 'gestion des boutons
@@ -537,12 +455,6 @@ End
 
 Public Sub visu_Click()
 
-'Dim num As String
-'Dim dt As LDate
-
-'dt = New LDate(Now)
-'num = $vfac.numbl
-' ObjFacB(num, $choix).visualisation
   $vfac.visualisation()
 
 End

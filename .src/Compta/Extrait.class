@@ -606,16 +606,13 @@ Public Sub affichage()
     Endif
 
     If Enl.value = True Then
-      $lstex = New Listextcpt(cpt.Text, DteN0.Text, dteN1.Text, "n", True, sTri)
-      'rResult = Utils.db.Exec("SELECT * FROM " & Tab0 & " WHERE compte = &1 and lettree = &2  and validee = &3 order by &4", cpt.text, 0, 1, sTri)
+      $lstex = New Listextcpt(cpt.Text, DteN0.Text, dteN1.Text, "n", sTri)
     Else
       If El.value = True Then
-        $lstex = New Listextcpt(cpt.Text, DteN0.Text, dteN1.Text, "o", True, sTri)
-        'rResult = Utils.db.Exec("SELECT * FROM " & Tab0 & " WHERE compte = &1 and lettree = &2 and validee = &3 order by  &4", cpt.Text, 1, 1, sTri)
+        $lstex = New Listextcpt(cpt.Text, DteN0.Text, dteN1.Text, "o", sTri)
       Else
         If Toutes.value = True Then
-          $lstex = New Listextcpt(cpt.Text, DteN0.Text, dteN1.Text, "t", True, sTri)
-          'rResult = Utils.db.Exec("SELECT * FROM " & Tab0 & " WHERE compte = &1  and validee = &2 order by " & sTri & "", cpt.text, 1)
+          $lstex = New Listextcpt(cpt.Text, DteN0.Text, dteN1.Text, "t", sTri)
         Endif
       Endif
     Endif
@@ -1008,6 +1005,7 @@ Public Sub Tdate_MouseDown()
   Else
     sTri = "dte desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1020,6 +1018,7 @@ Public Sub Tlibelle_MouseDown()
   Else
     sTri = "libelle desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1032,6 +1031,7 @@ Public Sub Tdoc_MouseDown()
   Else
     sTri = "numdoc desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1044,6 +1044,7 @@ Public Sub Tnumero_MouseDown()
   Else
     sTri = "numero desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1056,6 +1057,7 @@ Public Sub Tdebit_MouseDown()
   Else
     sTri = "montantd desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1068,6 +1070,7 @@ Public Sub Tcredit_MouseDown()
   Else
     sTri = "montantc desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1080,6 +1083,7 @@ Public Sub Tjournal_MouseDown()
   Else
     sTri = "jour desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1092,6 +1096,7 @@ Public Sub Tlettree_MouseDown()
   Else
     sTri = "lettree desc"
   Endif
+  clear
   affichage()
   btri = Not btri
 
@@ -1110,7 +1115,7 @@ Public Sub Colcli_Click()
       Until rDoc.MoveNext()
     Endif
   Else
-    Colcli.Sorted = True
+'    Colcli.Sorted = True
   Endif
 
 End

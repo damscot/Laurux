@@ -74,13 +74,13 @@ End
 '*****************************************************
 '*        Gestion des ouvertures des documents       *
 '*****************************************************
-Public Sub Is_Lock(DocType As String, DocNum As String) As Boolean
+Public Sub Is_Lock(DocType As String, DocNum As String, Optional msg As Boolean = True) As Boolean
 
   Dim rParam As Result
   
   rParam = Utils.db.Exec("SELECT * FROM " & Tactive & " where doc_type = &1 and doc_num = &2", DocType, DocNum)
   If rParam.Available Then
-    Message.Info("Lock sur le document " & DocType & " Numéro: " & DocNum & " pris par le process: " & rParam!process_id & ".")
+    If msg Then Message.Info("Lock sur le document " & DocType & " Numéro: " & DocNum & " pris par le process: " & rParam!process_id & ".")
     Return True
   Else
     Return False
@@ -103,7 +103,7 @@ Public Sub Get_Lock(DocType As String, DocNum As String) As Boolean
     bok = False
     If rParam!user_name = user_name And rParam!machine_id = machine_id And rParam!host_id = host_id And rParam!userdb_name = userdb_name Then
       If rParam!process_id = process_id Then
-        Message.Info("Lock sur le document " & DocType & " Numéro: " & DocNum & " déjà pris par le process courant : " & rParam!process_id & ".", "Continuer")
+        Try Message.Info("Lock sur le document " & DocType & " Numéro: " & DocNum & " déjà pris par le process courant : " & rParam!process_id & ".", "Continuer")
         bok = True
       Else
         psExist = Shell "ps -p " & rParam!process_id Wait

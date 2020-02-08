@@ -1,0 +1,273 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,173,93)
+  Font = Font["-1"]
+  Text = ("Saisie des règlements")
+  { Menu1 Menu
+    Text = ("Édition")
+    { editions Menu
+      Text = Shortcut(("Édition saisie"), "s")
+    }
+    { editionb Menu
+      Text = Shortcut(("Édition du bordereau"), "b")
+    }
+    { Rechsom Menu
+      Text = Shortcut(("Recherche d'une somme"), "R")
+    }
+    { Menu3 Menu
+      Enabled = False
+    }
+    { quite Menu
+      Text = Shortcut(("Quitter"), "Q")
+    }
+  }
+  { Menu2 Menu
+    Text = ("Validation")
+    { vldsaisie Menu
+      Text = Shortcut(("Validation de la saisie"), "s")
+    }
+    { vldbordereau Menu
+      Text = Shortcut(("Validation du bordereau"), "b")
+    }
+  }
+  { Panel1 Panel
+    MoveScaled(2,2,48,19)
+    { Label1 Label
+      MoveScaled(0,0,11,3)
+      Text = ("Client :")
+    }
+    { rechcli ToggleButton
+      MoveScaled(40,0,4,3)
+      ToolTip = ("Cliquer pour recuperer votre client.")
+      Picture = Picture["Icones/next_frame.png"]
+    }
+    { nclient Label
+      MoveScaled(0,5,28,3)
+      Background = Color.White
+    }
+    { client TextReg
+      MoveScaled(20,0,20,3)
+    }
+    { Label2 Label
+      MoveScaled(0,10,17,3)
+      Text = ("N° de document :")
+    }
+    { ndoc TextReg sel
+      Name = "ndoc"
+      MoveScaled(18,10,22,3)
+    }
+    { Label3 Label
+      MoveScaled(0,15,16,3)
+      Text = ("N° de lot : ")
+    }
+    { nlot TextReg sel
+      Name = "nlot"
+      MoveScaled(18,15,22,3)
+    }
+    { slde Label
+      MoveScaled(30,5,14,3)
+      Background = Color.White
+      Alignment = Align.Right
+    }
+  }
+  { Panel2 Panel
+    MoveScaled(53,16,47,5)
+    Border = Border.Plain
+    { tdcs RadioButton rdoc
+      Name = "tdcs"
+      MoveScaled(1,1,19,2)
+      Text = ("Tous documents")
+    }
+    { fcts RadioButton rdoc
+      Name = "fcts"
+      MoveScaled(22,1,12,2)
+      Text = ("Hors bl")
+      Value = True
+    }
+    { bl RadioButton rdoc
+      Name = "bl"
+      MoveScaled(36,1,7,2)
+      Text = ("Bl")
+    }
+  }
+  { Panel3 Panel
+    MoveScaled(53,2,47,8)
+    Border = Border.Plain
+    { Label4 Label
+      MoveScaled(1,0,9,3)
+      Text = ("Réglement :")
+    }
+    { nreg TextReg
+      MoveScaled(12,0,8,3)
+    }
+    { rechreg ToggleButton
+      MoveScaled(20,0,4,3)
+      ToolTip = ("Cliquer pour recuperer votre client.")
+      Picture = Picture["Icones/next_frame.png"]
+    }
+    { njournal Label
+      MoveScaled(2,4,43,3)
+      Background = Color.White
+    }
+    { libreg Label
+      MoveScaled(25,0,20,3)
+      Background = Color.White
+    }
+  }
+  { Panel4 Panel
+    MoveScaled(53,11,47,4)
+    Border = Border.Plain
+    { tltr RadioButton
+      MoveScaled(1,1,12,3)
+      Text = ("Tous")
+    }
+    { ltrs RadioButton
+      MoveScaled(16,1,11,3)
+      Text = ("Lettrés")
+    }
+    { nltrs RadioButton
+      MoveScaled(28,1,15,3)
+      Text = ("Non lettrés")
+      Value = True
+    }
+  }
+  { borderaux GridView
+    MoveScaled(109,2,63,87)
+    Font = Font["-3"]
+    Mode = Select.Single
+    Header = GridView.Horizontal
+  }
+  { selection GridView
+    MoveScaled(2,25,106,41)
+    Mode = Select.Single
+    Header = GridView.Both
+  }
+  { totlign TextReg
+    MoveScaled(90,68,17,4)
+    Enabled = False
+    Font = Font["-2"]
+    Alignment = Align.Right
+  }
+  { Label7 Label
+    MoveScaled(72,68,16,4)
+    Text = ("Total :")
+  }
+  { Label8 Label
+    MoveScaled(72,74,16,4)
+    Text = ("Total sélection :")
+  }
+  { totsel TextReg
+    MoveScaled(90,74,17,4)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { Label9 Label
+    MoveScaled(72,85,16,4)
+    Text = ("Total bordereau :")
+  }
+  { totborder TextReg
+    MoveScaled(90,85,17,4)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { Panel5 Panel
+    MoveScaled(3,68,67,21)
+    Background = &HC0C0C0&
+    { Label10 Label
+      MoveScaled(0,11,17,3)
+      Text = ("N° de document :")
+    }
+    { docsaisi TextReg
+      MoveScaled(18,11,22,3)
+    }
+    { Label11 Label
+      MoveScaled(0,16,16,3)
+      Text = ("N° de lot : ")
+    }
+    { lotsaisi TextReg
+      MoveScaled(18,16,22,3)
+    }
+    { Label12 Label
+      MoveScaled(1,2,11,3)
+      Text = ("Montant : ")
+    }
+    { montsaisi TextReg
+      MoveScaled(18,2,14,3)
+      Alignment = Align.Right
+    }
+    { Label13 Label
+      MoveScaled(1,6,11,3)
+      Text = ("Libellé :")
+    }
+    { libsaisi TextReg
+      MoveScaled(18,6,31,3)
+    }
+    { Panel6 Panel
+      MoveScaled(58,1,7,19)
+      Arrangement = Arrange.Vertical
+      { butvalide Button
+        MoveScaled(0,1,7,5)
+        Visible = False
+        ToolTip = ("Valider l'opération")
+        Expand = True
+        Picture = Picture["Icones/button_ok.png"]
+      }
+      { butsup Button
+        MoveScaled(0,6,7,5)
+        Visible = False
+        ToolTip = ("Suppression")
+        Expand = True
+        Picture = Picture["Icones/stock_trash_24.png"]
+      }
+      { butan Button
+        MoveScaled(0,11,7,4)
+        Visible = False
+        ToolTip = ("Abandon")
+        Expand = True
+        Picture = Picture["Icones/back.png"]
+      }
+      { butsortie Button
+        MoveScaled(0,15,7,4)
+        ToolTip = ("Sortie")
+        Expand = True
+        Picture = Picture["Icones/exit.png"]
+      }
+    }
+    { Label5 Label
+      MoveScaled(35,2,6,3)
+      Text = ("Date : ")
+    }
+    { dtereg TextReg
+      MoveScaled(41,2,15,3)
+    }
+  }
+  { Label6 Label
+    MoveScaled(72,80,16,4)
+    Text = ("Total de la saisie :")
+  }
+  { totsai TextReg
+    MoveScaled(90,80,17,4)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { Separator1 Separator
+    MoveScaled(72,78,35,2)
+  }
+  { SwitchSelec SwitchButton
+    MoveScaled(100,18,9,3)
+  }
+  { selfac Label
+    MoveScaled(100,16,9,2)
+    Text = ("Sélection")
+    Alignment = Align.Center
+  }
+  { clienfour ListView
+    MoveScaled(46,1,12,7)
+    Visible = False
+  }
+  { Listreg ListView
+    MoveScaled(77,1,23,23)
+    Visible = False
+  }
+}

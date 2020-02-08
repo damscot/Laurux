@@ -1,0 +1,918 @@
+' Gambas class file
+
+Event RegCaisse(mnt As Float, typ As Integer, ntk As String)
+
+Private Enum dtes, numdocs, numlots, libels, montds, montcs, journals, oks
+Private sel As String[] = ["Date", "Document", "Lot", "Libellé", "Debit", "Crédit", "Jrnal", "Sel"]
+
+Private Enum dteb, numdocb, numlotb, libelb, montcb, etatb
+Private brd As String[] = ["Date", "Document", "Lot", "Libellé", "Montant", "Etat"]
+
+Private $Vecr As VarEcr
+Private $Lecr As New VarEcr
+Private $selec As String[]
+Private $resreg As Result
+Private $resjou As Result
+Private $rescli As Result
+Private $resext As Result
+Private $resbl As Result
+Private $liste As Listextcpt
+Private $letr As String = "n"
+Private $modif As Boolean
+Private $ind As Integer
+Private $typ As Integer
+Private $ntk As String
+
+Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As String)
+
+  Dim ch As Chainage
+  Dim str As String
+  Dim i As Integer
+  Dim coef As Float
+  Dim res As Result
+  
+  Utils.Observers(Me)
+  ch = New Chainage([client, ndoc, nlot])
+  ch = New Chainage([montsaisi, libsaisi, docsaisi, lotsaisi])
+  
+  client.reg = "[0-9]{1,8}"
+  ndoc.MaxLenght = 10
+  nlot.MaxLenght = 10
+  nreg.MaxLenght = 2
+  dtereg.Dat = True
+  dtereg.Text = LDate(Now).L
+  docsaisi.MaxLenght = 10
+  lotsaisi.MaxLenght = 10
+  montsaisi.numerique = True
+  montsaisi.nbdec = "2"
+  totlign.numerique = True
+  totlign.nbdec = "2"
+  totsel.numerique = True
+  totsel.nbdec = "2"
+  totborder.numerique = True
+  totborder.nbdec = "2"
+  totsai.numerique = True
+  totsai.nbdec = "2"
+  
+  coef = selection.Width / 954
+  selection.Columns.Count = sel.Count
+  For i = 0 To sel.Max
+    selection.Columns[i].Text = sel[I]
+    selection.Columns[i].Alignment = Align.Center
+    Select Case i
+      Case numdocs, dtes, numlots, montds, montcs
+        selection.Columns[i].Width = 95 * coef
+      Case journals
+        selection.Columns[i].Width = 45 * coef
+      Case libels
+        selection.Columns[i].Expand = True
+      Case oks
+        selection.Columns[i].Width = 20 * coef
+    End Select
+  Next
+  
+  borderaux.Columns.Count = brd.Count
+  For i = 0 To brd.Max
+    borderaux.Columns[i].Text = brd[I]
+    borderaux.Columns[i].Alignment = Align.Center
+    Select Case i
+      Case dteb, numdocb, numlotb, montcb
+        borderaux.Columns[i].Width = 72 * coef
+      Case libelb
+        borderaux.Columns[i].Expand = True
+      Case etatb
+        borderaux.Columns[i].Width = 35 * coef
+    End Select
+  Next
+  $Vecr = New VarEcr
+  nreg.SetFocus
+  $typ = tpe
+  Select Case $typ
+    Case VarEcr.caisse
+      $ntk = ndc
+      client.Text = ncl
+      affclient()
+      nreg.Text = $rescli!cli_reg
+      nreg_LostFocus
+      client.Enabled = False
+      $Vecr = New VarEcr
+      affsel
+      selection.SetFocus
+      
+  End Select
+  clienfour.Add("1", "Clients")
+  clienfour.Add("2", "Fournisseurs")
+  
+End
+
+Public Sub Form_Close()
+
+  Dim obj As Object
+
+  If DocActif.is_lock("Reglement", nreg.Text, False) Then DocActif.free_lock("Reglement", nreg.Text)
+  If $modif Then
+    If Message.Question("Voulez vous valider la saisie ?", "Oui", "Non") = 1 Then vldsaisie_Click
+  Endif
+  
+End
+
+Public Sub nreg_KeyPress()
+
+  If Key.Code = Key.Tab Or Key.Code = Key.Enter Or Key.Code = Key.Return Then
+    Stop Event
+    If $typ = VarEcr.caisse Then selection.SetFocus Else client.SetFocus
+  Endif
+
+End
+
+Public Sub nreg_GotFocus()
+
+  If Not IsNull($resreg) And If $resreg.Available Then
+    If DocActif.is_lock("Reglement", $resreg!code, False) Then
+      DocActif.free_lock("Reglement", $resreg!code)
+    Endif
+  Endif
+
+End
+'*****gestion des lostfocus*********
+Public Sub nreg_LostFocus()
+
+  Dim res, resext, rescli, rescli1 As Result
+  Dim lst As Listextcpt
+  Dim autre As VarEcr
+  
+  If $modif Then
+    $modif = False
+    If Message.Question("Voulez vous valider la saisie ?", "Oui", "Non") = 1 Then vldsaisie_Click
+  Endif
+  
+  'controle du réglement + recherche du journal
+  borderaux.Rows.Count = 0
+  $modif = False
+  If Not nreg.Text Then Return
+  If DocActif.Get_Lock("Reglement", nreg.Text) = False Then
+    nreg.SetFocus
+    Return
+  Endif
+  $resreg = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code = &1", nreg.Text)
+  If $resreg.Available Then
+    libreg.Text = $resreg!libel
+    $resjou = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", $resreg!journal)
+    If $resjou.Available Then
+      njournal.Text = $resreg!journal & " " & $resjou!libelle_jo & "   " & $resreg!cptint
+    Endif
+    If $typ = VarEcr.caisse Then Return
+    $Lecr = New VarEcr
+    'on garni le bordereau si besoin
+    If $resreg!bordereaux Then
+      res = Utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE compte=&1 AND lettree<>True", $resreg!cptint)
+      If res.Available Then
+        Repeat
+          'la ligne affichée à l'écran corespond au compte tier
+          rescli = Utils.db.Exec("SELECT * FROM Fiches_Mvt,Fiches_Comptes WHERE compte=compte_cc AND (type_cc='C' Or type_cc = 'F') AND coll=False AND numero=&1", res!numero)
+          If rescli.Available Then
+            $Vecr = New VarEcr
+            $Vecr = affectv(rescli, rescli.Index, res!montantc - res!montantd)
+            'recherche des écritures ayants le même n° de lot et cpt client
+            lst = New Listextcpt(rescli!compte)
+            resext = lst.rechechelot(rescli!numlot)
+            If resext.Available Then
+              Repeat
+                If resext!lind = rescli!lind And LDate(resext!dte).L = LDate(rescli!dte).L Then Continue
+                $Vecr.newTbl
+                $Vecr.Tbl.compte = rescli!compte
+                $Vecr.Tbl.dte = New LDate(resext!dte)
+                $Vecr.Tbl.montantc = resext!montantc
+                $Vecr.Tbl.montantd = resext!montantd
+                $Vecr.Tbl.numdoc = resext!numdoc
+                $Vecr.Tbl.numlot = resext!numlot
+                $Vecr.Tbl.lind = resext!lind
+                $Vecr.Tlettrage.Add($Vecr.Tbl)
+              Until resext.MoveNext()
+            Endif
+            'on garde l'écriture compléte pour modif/suppression
+            rescli1 = Utils.db.Exec("SELECT * FROM Fiches_Mvt,Fiches_Comptes WHERE compte=compte_cc AND (type_cc <> 'C' AND type_cc <> 'F') AND numero=&1", res!numero)
+            Repeat
+              If rescli!lind = rescli1!lind And LDate(rescli!dte).L = LDate(rescli1!dte).L Then Continue
+              autre = New VarEcr
+              autre = affectv(rescli1, rescli1.Index, rescli1!montantd - rescli1!montantc)
+              $Vecr.plus(autre)
+            Until rescli1.MoveNext()
+            $Lecr.plus($Vecr)
+            'on a rajouté le tableau des sélections => les écritures du client qui ont le même n° de lot seront montrées comme sélectionnées à l'écran
+            'en même temps on garde les infos nécessaires pour les modifs
+          Else
+            Try Message.Error("Il n'existe pas de compte tiers pour l'écriture ou compte non léttré " & res!numero & " compte " & res!compte & "\nReprise du bordereau impossible ", "OK")
+            Return
+          Endif
+        Until res.MoveNext()
+        affborderau()
+      Endif
+    Endif
+  Else
+    Try Message.Error("Réglement innexistant")
+    nreg.SetFocus
+  Endif
+
+End
+
+Private Function affectv(rescli As Result, ind As Integer, tot As Float) As VarEcr
+  
+  Dim var As VarEcr
+  
+  rescli.MoveTo(ind)
+  tot = Utils.arrondi(tot, 2)
+  var = New VarEcr
+  var.compte = rescli!compte
+  If Not IsNull(rescli!dte) Then var.dte = New LDate(rescli!dte)
+  If Not IsNull(rescli!datee) Then var.dtee = New LDate(rescli!datee)
+  If Not IsNull(rescli!dateech) Then var.dteech = New LDate(rescli!dateech)
+  var.journal = rescli!jour
+  var.intitul = rescli!intitule
+  var.libelle = rescli!libelle
+  var.numdoc = rescli!numdoc
+  var.numlot = rescli!numlot
+  If tot < 0 Then
+    var.montantc = tot * -1
+    var.montantd = 0
+  Else
+    var.montantd = tot
+    var.montantc = 0
+  Endif
+  var.type = VarEcr.Treso
+  var.etat = VarEcr.L_valide
+  var.lind = rescli!lind
+  var.numero = rescli!numero
+  If rescli!coll = 1 Then var.collectif = True
+  Return var
+  
+End
+
+Public Sub client_LostFocus()
+
+  
+  If client.Text Then
+    If IsNull($resreg) Then 
+      nreg.SetFocus
+      Return
+    Endif
+    If affclient() Then affsel()
+    selection.SetFocus
+  Endif
+
+End
+
+Public Sub montsaisi_LostFocus()
+
+  If montsaisi.Value < 0 And Not $resreg!decaissement Then
+    Try Message.Error("Decaissement impossible")
+    montsaisi.SetFocus
+  Endif
+
+End
+
+Private Function affclient() As Boolean
+  
+  $rescli = Utils.db.Exec("SELECT * FROM Fiches_Cli,Fiches_Four,Fiches_Comptes WHERE (cli_code=compte_cc OR fo_code=compte_cc) AND compte_cc=&1", client.Text)
+  If Not $rescli.Available Then
+    Balloon.Delay = 3000
+    If Not Balloon.Visible Then Balloon.Warning("Compte innexistant", client)
+    client.SetFocus
+    Return False
+  Else
+    nclient.Text = $rescli!cli_nom & $rescli!fo_nom
+    slde.text = Format($rescli!solde, "0.00")
+    Return True
+  Endif
+  
+End
+
+Public Sub sel_LostFocus()
+
+  $Vecr = New VarEcr
+  affsel
+
+End
+
+Public Sub tltr_Click()
+
+  $letr = "t"
+  affsel
+
+End
+
+Public Sub sel_gotfocus()
+
+  If Not Object.IsValid($resreg) Or Not nreg.Text Then
+    Message.Error("Vous devez renseigner les régelements")
+    mabl
+    nreg.SetFocus
+  Endif
+
+End
+
+Public Sub ltrs_Click()
+
+  $letr = "o"
+  affsel
+
+End
+
+Public Sub nltrs_Click()
+
+  $letr = "n"
+  affsel
+
+End
+
+Public Sub rdoc_click()
+
+  affsel
+  SwitchSelec_Click
+
+End
+
+Public Sub SwitchSelec_Click()
+
+  If Not bl.Value Then
+    SwitchSelec.Value = False
+  Endif
+  If SwitchSelec.Value Then
+    selfac.Text = "Facture"
+  Else
+    selfac.Text = "Sélection"
+  Endif
+
+End
+'gestion du gridview selection
+'affichage selection
+Private Sub affsel()
+
+  Dim i As Integer
+  Dim tot As Float
+  Dim nb As Integer
+
+  butvalide.Visible = True
+  selection.Clear
+  selection.Rows.Count = 0
+  If tdcs.Value Or bl.Value Then
+    $resbl = Utils.db.Exec("SELECT * FROM Fiches_Bl WHERE cdclibl=&1 AND type='B'", client.Text)
+    If Object.IsValid($resbl) And If $resbl.Available Then
+      selection.Rows.Count = $resbl.Count
+      nb = $resbl.Count
+      $resbl.MoveFirst
+      For i = 0 To $resbl.Max
+        affselligne(i, $resbl!datebl, $resbl!numbl, $resbl!numbl, $resbl!nmclibl, Format($resbl!totalttc, "0.00"), "0,00", "..", 0)
+        tot += Val(Utils.cpoint(selection[i, montds].Text)) - (Val(Utils.cpoint(selection[i, montcs].Text)))
+        $resbl.MoveNext
+      Next
+    Endif
+  Endif
+  
+  $liste = New Listextcpt(Client.Text, LDate(DateAdd(Now, gb.Year, -8)).L, LDate(DateAdd(Now, gb.Year, 8)).L, $letr, "dte DESC")
+  If tdcs.Value Or fcts.Value Then
+    If ndoc.Text Then
+      $resext = $liste.rechedoc(ndoc.Text)
+      client.Text = $resext!compte
+      affclient()
+    Else
+      If client.Text Then
+        If nlot.Text Then
+          $resext = $liste.rechechelot(nlot.Text)
+        Else
+          $resext = $liste.resext
+        Endif
+      Endif
+    Endif
+    If Object.IsValid($resext) And If $resext.Available Then
+      If $Vecr.etat = VarEcr.L_modif Or $Vecr.etat = VarEcr.L_valide Or $Vecr.etat = VarEcr.L_sup Then
+        selection.Rows.Count += $resext.Max
+      Else
+        selection.Rows.Count += $resext.Count
+      Endif
+      $resext.MoveFirst()
+      For i = nb To selection.Rows.Max
+        If $Vecr.etat <> VarEcr.L_sans And If $resext!lind = $Vecr.lind And LDate($resext!dte).L = $Vecr.dte.L Then
+          i -= 1
+          $resext.MoveNext()
+          Continue
+        Endif
+        affselligne(i, $resext!dte, $resext!numdoc, $resext!numlot, $resext!libelle, Format($resext!montantd, "0.00"), Format($resext!montantc, "0.00"), $resext!jour, Str($resext!lind))
+        tot += Val(Utils.cpoint(selection[i, montds].Text)) - (Val(Utils.cpoint(selection[i, montcs].Text)))
+        $resext.MoveNext()
+      Next
+    Endif
+  Endif
+  totlign.Value = tot
+  
+End
+
+Private Sub affselligne(i As Integer, dte As Date, numdoc As String, numlot As String, libel As String, montd As String, montc As String, journal As String, lind As String)
+  
+  Dim coul As Integer
+  
+  If Even(i) Then coul = Color.White - 10 Else coul = Color.White
+  selection[i, dtes].Text = LDate(dte).L
+  selection[i, dtes].Background = coul
+  selection[i, numdocs].Text = numdoc
+  selection[i, numdocs].Background = coul
+  selection[i, numlots].Text = numlot
+  selection[i, numlots].Background = coul
+  selection[i, libels].Text = libel
+  selection[i, libels].Alignment = Align.Left
+  selection[i, libels].Background = coul
+  selection[i, montds].Text = montd
+  selection[i, montds].Alignment = Align.Right
+  selection[i, montds].Background = coul
+  selection[i, montcs].Text = montc
+  selection[i, montcs].Alignment = Align.Right
+  selection[i, montcs].Background = coul
+  selection[i, journals].Text = journal
+  selection[i, journals].Background = coul
+  selection[i, oks].Background = coul
+  selection[i, oks].Picture = Picture[rechsel(i)]
+  selection[i, oks].Text = lind
+
+End
+
+Private Function rechsel(i As Integer) As String
+  
+  Dim j As Integer
+  
+  For j = 0 To $Vecr.Tlettrage.Max
+    If testtbl(i, j) Then
+      Return "icon:/16/apply"
+    Endif
+  Next
+  Return "icon:/16/add"
+  
+End
+
+Public Sub selection_Click()
+
+  Dim i, j As Integer
+  Dim tot As Float
+  
+  i = selection.Row
+  If i < 0 Then Return
+  If selection[i, oks].Picture = Picture["icon:/16/apply"] Then
+    selection[i, oks].Picture = Picture["icon:/16/add"] 
+    For j = 0 To $Vecr.Tlettrage.Max
+       If testtbl(i, j) Then
+         $Vecr.Tlettrage.Remove(j)
+         Break
+       Endif
+    Next
+  Else
+    selection[i, oks].Picture = Picture["icon:/16/apply"] 
+    $Vecr.newTbl
+    $Vecr.Tbl.compte = client.Text
+    $Vecr.Tbl.dte = New LDate(selection[i, dtes].Text)
+    $Vecr.Tbl.montantc = Val(selection[i, montcs].Text)
+    $Vecr.Tbl.montantd = Val(selection[i, montds].Text) 
+    $Vecr.Tbl.numlot = selection[i, numlots].Text 
+    $Vecr.Tbl.numdoc = selection[i, numdocs].Text 
+    $Vecr.Tbl.lind = Val(selection[i, oks].Text)
+    $Vecr.Tlettrage.Add($Vecr.Tbl)
+    docsaisi.Text = selection[i, numdocs].Text 
+    lotsaisi.Text = selection[i, numlots].Text 
+    libsaisi.Text = $resreg!libel & " " & $rescli!intitule_cc 
+  Endif
+  
+  For i = 0 To $Vecr.Tlettrage.Max
+    tot += $Vecr.Tlettrage[i].montantd - $Vecr.Tlettrage[i].montantc
+  Next
+  montsaisi.Value = tot
+  totsel.Value = tot
+
+End
+
+Public Sub selection_Activate()
+
+  Dim ofact As OptFac
+  Dim res As Result
+  
+  If selection.Row < 0 Then Return
+  If selection[selection.Row, journals].Text = ".." Then
+    res = Utils.db.Exec("SELECT numbl FROM Fiches_Bl WHERE numbl=&1  UNION SELECT numbl FROM Fiches_BlM WHERE numbl=&1", selection[selection.Row, numdocs].Text)
+    If res.Available Then ofact = New OptFac(ObjFac.bl, client.Text, selection[selection.Row, numdocs].Text)
+  Else
+    res = Utils.db.Exec("SELECT numbl FROM Fiches_Bl WHERE numfac=&1  UNION SELECT numbl FROM Fiches_BlM WHERE numfac=&1", selection[selection.Row, numdocs].Text)
+    If res.Available Then 
+      ofact = New OptFac(ObjFac.facture, client.Text, selection[selection.Row, numdocs].Text)
+    Else
+      res = Utils.db.Exec("SELECT numfac FROM Fiches_HistoFac WHERE numfac=&1 UNION SELECT numfac FROM Fiches_HistoFacM WHERE numfac=&1", selection[selection.Row, numdocs].Text)
+      If res.Available Then ofact = New OptFac(ObjFac.archive, client.Text, selection[selection.Row, numdocs].Text)
+    Endif
+  Endif
+  If Not IsNull(ofact) Then ofact.ShowModal
+   
+End
+
+Private Function testtbl(i As Integer, j As Integer) As Boolean
+  
+   If selection[i, dtes].Text = $Vecr.Tlettrage[j].dte.L And selection[i, numlots].Text = $Vecr.Tlettrage[j].numlot And Client.Text = $Vecr.Tlettrage[j].compte And $Vecr.Tlettrage[j].montantd = Val(selection[i, montds].Text) And $Vecr.Tlettrage[j].montantc = Val(selection[i, montcs].Text) And $Vecr.Tlettrage[j].numdoc = selection[i, numdocs].Text Then
+     Return True
+   Endif
+   Return False
+  
+End
+
+'gestion du gridview bordereau
+Private Sub affborderau()
+
+  Dim var As VarEcr
+  Dim ind As Integer
+  Dim tots, totb As Float
+  
+  borderaux.Rows.Count = 0
+  For Each var In $Lecr
+    borderaux.Rows.Count += 1
+    ind = borderaux.Rows.Max
+    
+    Select Case var.etat
+      Case VarEcr.L_valide
+        borderaux[ind, etatb].Text = "Val"
+        borderaux[ind, etatb].Background = Color.Blue
+        totb += (var.montantc - var.montantd)
+      
+      Case VarEcr.L_ajou
+        borderaux[ind, etatb].Text = "Ajo"
+        borderaux[ind, etatb].Background = Color.Green
+        tots += (var.montantc - var.montantd)
+        totb += (var.montantc - var.montantd)
+      
+      Case VarEcr.L_modif
+        borderaux[ind, etatb].Text = "Mod"
+        borderaux[ind, etatb].Background = Color.DarkYellow
+        totb += (var.montantc - var.montantd)
+      
+        Case VarEcr.L_sup
+          borderaux[ind, etatb].Text = "Sup"
+          borderaux[ind, etatb].Background = Color.Red
+        
+    End Select
+  
+    borderaux[ind, dteb].Text = var.dte.L
+    borderaux[ind, numdocb].Text = var.numdoc
+'   borderaux[ind, numdocb].Alignment = Align.Left
+    borderaux[ind, numlotb].Text = var.numlot
+    borderaux[ind, libelb].Text = var.intitul
+    borderaux[ind, libelb].Alignment = Align.Left
+    borderaux[ind, montcb].Text = Format(var.montantc - var.montantd, "0.00")
+    borderaux[ind, montcb].Alignment = Align.Right
+     
+  Next
+  totsai.Value = tots
+  totborder.Value = totb
+  
+End
+
+Public Sub borderaux_Activate()
+
+  $ind = borderaux.Row
+  $Vecr = $Lecr.trouve($ind)
+  affdonnes()
+  butsup.Visible = True
+  butan.Visible = True
+
+End
+
+'gestion des bouttons
+Public Sub butvalide_Click()
+
+  If montsaisi.Value = 0 Then Return
+  If SwitchSelec.Value Then 
+    Facture()
+    $Vecr = New VarEcr
+    affsel
+    Return
+  Endif
+
+  If montsaisi.Value < 0 And Not $resreg!decaissement Then
+    Message.Warning("Les réglements négatifs ne sont pas autorisés")
+    montsaisi.SetFocus
+    Return
+  Endif
+  $modif = True
+  $Vecr.numdoc = docsaisi.Text
+  $Vecr.numlot = lotsaisi.Text
+  $Vecr.dte = dtereg.dte
+  $Vecr.libelle = libsaisi.Text
+  If montsaisi.Value < 0 Then
+    $Vecr.montantd = montsaisi.Value * -1
+    $Vecr.montantc = 0
+  Else
+    $Vecr.montantc = montsaisi.Value 
+    $Vecr.montantd = 0
+  Endif
+  Select Case $Vecr.etat
+    Case VarEcr.L_sans 
+      $Vecr.type = VarEcr.Treso
+      $Vecr.compte = client.Text
+      $Vecr.etat = VarEcr.L_ajou
+      $Vecr.intitul = $rescli!intitule_cc
+      $Lecr.plus($Vecr)
+    Case VarEcr.L_ajou
+      $Lecr.modifi($ind, $Vecr)
+    Case Else
+      $Vecr.etat = VarEcr.L_modif
+      $Lecr.modifi($ind, $Vecr)
+  End Select
+  
+  affborderau()
+  mabl()
+  $Vecr = New VarEcr
+  affsel
+  $ind = -1
+  If $typ = VarEcr.caisse Then selection.SetFocus Else client.SetFocus
+  
+End
+
+Public Sub butan_Click()
+
+  butsup.Visible = False
+  butan.Visible = False
+  mabl()
+  $ind = -1
+
+End
+
+Public Sub butsup_Click()
+  
+  Select Case $Vecr.etat
+    Case VarEcr.L_ajou
+      $Lecr.moins($ind)
+    Case Else
+      $Vecr.etat = VarEcr.L_sup
+      $Lecr.modifi($ind, $Vecr)
+  End Select
+  affborderau()
+  mabl()
+  $Vecr = New VarEcr
+  $ind = -1
+  
+End
+
+Public Sub butsortie_Click()
+
+  Me.Close
+
+End
+
+Public Sub rechcli_Click()
+
+  If clienfour.Visible = True Then
+    clienfour.Visible = False
+  Else
+    clienfour.Visible = True
+  Endif
+
+End
+
+Public Sub rechreg_Click()
+
+  Dim res As Result
+  
+  If Listreg.Visible = True Then
+    Listreg.Visible = False
+    Listreg.Clear
+  Else
+    res = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
+    If res.Available Then
+      Listreg.Visible = True
+      Repeat
+        Listreg.Add(res!code, res!code & " " & res!libel)
+      Until res.MoveNext()
+    Endif
+  Endif
+
+End
+
+Public Sub clienfour_Click()
+  
+  Dim MyForm As TriComptes
+
+  Select Case clienfour.Current.Key
+    Case "1"
+       MyForm = New TriComptes("cast(compte_cc AS char)", "C", "", "")
+      Case "2"
+        MyForm = New TriComptes("cast(compte_cc AS char)", "F", "", "")
+  End Select
+
+  MyForm.Showmodal()
+  If Comptabilite.Bsel = True Then
+    client.text = Comptabilite.sCmpt
+    client.SetFocus
+  Endif
+  clienfour.Visible = False
+  
+End
+
+Public Sub Listreg_Click()
+
+  nreg.Text = Listreg.Current.Text
+  nreg.SetFocus
+  Listreg.Clear
+  Listreg.Visible = False
+
+End
+
+'gestion de l'affichage des données
+Private Sub mabl()
+  
+  ndoc.Clear
+  nlot.Clear
+  docsaisi.Clear
+  lotsaisi.Clear
+  montsaisi.Value = 0
+'  dtereg.dte=new LDate(now)
+  libsaisi.Clear
+  totlign.Clear
+  totsel.Clear
+  selection.Rows.Count = 0
+  selection.Refresh
+  butsup.Visible = False
+  butan.Visible = False
+  totlign.Value = 0
+  totsel.Value = 0
+  If $typ <> VarEcr.caisse Then
+    client.Clear
+    nclient.Text = ""
+    slde.Text = ""
+  Else
+    affsel
+  Endif
+  
+End
+
+Private Sub mabreg()
+  
+  nreg.Clear
+  njournal.Text = ""
+  libreg.Text = ""
+  totborder.Value = 0
+  totsai.Value = 0
+  borderaux.Rows.Count = 0
+  borderaux.Refresh
+  
+End
+
+Private Sub affdonnes()
+  
+  client.Text = $Vecr.compte
+  If Not affclient() Then Return
+  docsaisi.Text = $Vecr.numdoc
+  lotsaisi.Text = $Vecr.numlot
+  montsaisi.Value = $Vecr.montantc - $Vecr.montantd
+  libsaisi.Text = $Vecr.libelle
+  affsel
+  
+End
+
+Private Sub Facture()
+
+  Dim fct As OptFac
+  Dim res, resc As Result
+  Dim i As Float
+  
+  If $Vecr.Tlettrage.Count < 1 Then Return
+  Utils.db.Exec("drop Table IF exists Facturefm")
+  Utils.db.Exec("CREATE TABLE Facturefm " &
+    "(code Char(8) NOT NULL," &
+    "nom Char(35)," &
+    "cp Char(5)," &
+    "adr1 Char(35)," &
+    "adr2 Char(35)," &
+    "ville Char(35)," &
+    "totf Char(12)," &
+    "tottc Char(12)," &
+    "gestbl Decimal(6,2)," &
+    "PRIMARY KEY (code, nom)) " & Utils.db.Engine())
+  Utils.db.Exec("drop Table IF exists Bl")
+  Utils.db.Exec("CREATE TABLE Bl" & 
+    "(num Char(12) NOT NULL," &
+    "code Char(10)," &
+    "nom Char(35)," &
+    "date date," &
+    "ht Char(12)," &
+    "ttc Char(12)," &
+    "PRIMARY KEY (num)) " & Utils.db.Engine())
+  
+  resc = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", client.Text)
+  If Not resc.Available Then Return
+  Utils.db.Begin
+  res = Utils.db.Create("Facturefm")
+  res!code = client.Text
+  res!nom = resc!cli_nom
+  res.Update
+  For i = 0 To $Vecr.Tlettrage.Max
+    res = Utils.db.Create("Bl")
+    res!num = $Vecr.Tlettrage[i].numdoc
+    res!code = client.Text
+    res!nom = resc!cli_nom
+    res!date = $Vecr.Tlettrage[i].dte.G
+    res.Update
+  Next
+  res.Update
+  fct = New OptFac(ObjFac.finmois, client.Text, $Vecr.numlot)
+  fct.ShowModal
+  client_LostFocus
+
+End
+
+'validation de la saisie en cours
+Public Sub vldsaisie_Click()
+
+  Dim var As New VarEcr
+  Dim ereg As EcrReg
+  Dim tot As Float
+  Dim choix As Integer
+  
+  If borderaux.Rows.Count = 0 Then Return
+  For Each var In $Lecr
+    Select Case var.etat
+      Case VarEcr.L_valide
+        Continue
+      Case Else
+        ereg = New EcrReg($resjou!code_jo, var, nreg.Text)
+        If ereg.ecriture() Then
+          Message.Error("Impossible de valider cette écriture" & var.compte & " " & var.libelle)
+        Else
+          If var.etat = VarEcr.L_ajou Then 
+            If $resreg!caisse = Mreglement.sans_caisse Then choix = Mreglement.autre Else choix = $resreg!caisse
+            Raise RegCaisse(var.montantc - var.montantd, $resreg!caisse, $ntk, var.numdoc)
+            tot += var.montantc - var.montantd
+          Endif
+        Endif
+        
+    End Select
+  Next
+  
+  Raise RegCaisse(tot, Mreglement.sans_caisse, $ntk, var.numdoc)
+  $modif = False
+  mabl
+  mabreg()
+  nreg.SetFocus
+
+End
+'validation du bordereau
+Public Sub vldbordereau_Click()
+  
+  Dim ereg As EcrReg
+  
+  If borderaux.Rows.Count = 0 Then Return
+  vldsaisie_Click
+  nreg_LostFocus()
+  
+  $Lecr.etat = VarEcr.L_valide
+  $Lecr.type = VarEcr.Treso
+  
+  ereg = New EcrReg($resjou!code_jo, $Lecr, $resreg!code)
+  If ereg.ecriture() Then
+    Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
+  Endif
+  mabl
+  mabreg()
+  
+End
+'editions
+
+Public Sub editions_Click()
+
+  Dim ed As EdReg
+  Dim imp As New Printer
+  
+  If borderaux.Rows.Count = 0 Then Return
+  ed = New EdReg($Lecr, EdReg.ajout, $resreg)
+  imp.OutputFile = User.Home & "/tmp/Bordereau.pdf"
+  ed.Print(imp)
+  Visualiseur.Prog(User.Home & "/tmp/Bordereau.pdf")
+
+End
+
+Public Sub editionb_Click()
+
+  Dim ed As EdReg
+  Dim imp As New Printer
+  
+  If borderaux.Rows.Count = 0 Then Return
+  ed = New EdReg($Lecr, EdReg.tous, $resreg)
+  imp.OutputFile = User.Home & "/tmp/Bordereau.pdf"
+  ed.Print(imp)
+  Visualiseur.Prog(User.Home & "/tmp/Bordereau.pdf")
+
+End
+
+Public Sub quite_Click()
+
+  Me.Close
+
+End
+
+
+Public Sub Rechsom_Click()
+
+  Fmontant.Show
+
+End

@@ -159,9 +159,8 @@ Public Sub visext()
   Endif
   dtei = New LDate(DateAdd(Now, gb.Year, -8))
   dtes = New LDate(DateAdd(Now, gb.Year, 8))
-  lstex = New Listextcpt($rescli!cli_code, dtei.L, dtes.L, "n", True, "dte asc")
+  lstex = New Listextcpt($rescli!cli_code, dtei.L, dtes.L, "n", "dte asc")
   resext = lstex.resext
-'  resext = Utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE compte=&1 AND NOT lettree ORDER BY dte", $rescli!cli_code)
   If resext.Available Then
     resext.MoveFirst
     For i = 0 To resext.Max
@@ -310,7 +309,7 @@ Public Sub Buttonedit_Click()
         If totsel > 0 Then
           pdf.Level7(" ", " ", "Solde de la sélection ", " ", Format(totsel, "0.00"), PosY)
         Else
-          pdf.Level7(" ", " ", "Solde de la sélection ", Format(- totsel, "0.00"), " ", PosY)
+          pdf.Level7(" ", " ", "Solde de la sélection ", Format(-totsel, "0.00"), " ", PosY)
         Endif
         posy += 4
         res = utils.db.Exec("SELECT solde, cli_email FROM Fiches_Comptes left join Fiches_Cli on cli_code = &1 WHERE compte_cc=&1", $inumcli)

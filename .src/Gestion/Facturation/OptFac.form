@@ -172,53 +172,29 @@
         }
       }
       { Preg Panel
-        MoveScaled(1,56,69,14)
-        Visible = False
-        Enabled = False
-        AutoResize = True
-        Border = Border.Plain
-        { HBox9 HBox
-          MoveScaled(0,0,34,3)
+        MoveScaled(0,57,69,10)
+        Arrangement = Arrange.Vertical
+        { HBox2 HBox
+          MoveScaled(1,1,67,3)
           { Label1 Label
-            MoveScaled(11,2,6,1)
-            Font = Font["Serif,-1"]
-            Text = ("Mode de reglement")
-          }
-          { Regmt ComboBox
-            MoveScaled(18,0,17,3)
-            Font = Font["Serif,Bold,-1"]
-            Background = Color.TextBackground
-          }
-        }
-        { HBox6 HBox
-          MoveScaled(0,4,34,3)
-          Spacing = True
-          { Label6 Label
             MoveScaled(0,0,17,3)
-            Font = Font["Serif,-1"]
-            Text = ("Montant")
+            Text = ("Règlement ligne 1 :")
           }
-          { Rglt TextReg
-            MoveScaled(18,0,15,3)
-            Font = Font["Bold,-1"]
-            Background = Color.TextBackground
+          { regl1 TextReg regl
+            Name = "regl1"
+            MoveScaled(18,0,49,3)
           }
         }
-        { grregl GridView
-          MoveScaled(37,0,32,13)
-          Mode = Select.Single
-        }
-        { ajout Button
-          MoveScaled(0,9,14,3)
-          Text = ("Ajouter")
-        }
-        { Label2 Label
-          MoveScaled(15,9,7,3)
-          Text = ("Total :")
-        }
-        { totr TextReg
-          MoveScaled(22,9,13,3)
-          ReadOnly = True
+        { HBox3 HBox
+          MoveScaled(1,5,67,3)
+          { Label2 Label
+            MoveScaled(0,0,17,3)
+            Text = ("Règlement ligne 2 :")
+          }
+          { regl2 TextReg regl
+            Name = "regl2"
+            MoveScaled(18,0,49,3)
+          }
         }
       }
       { HBox1 HBox

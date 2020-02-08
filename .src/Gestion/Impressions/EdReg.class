@@ -1,0 +1,74 @@
+' Gambas class file
+
+Public Enum tous, ajout
+
+Private $ediecr As New VarEcr
+
+Public Sub _new(Lecr As VarEcr, choix As Integer, resreg As Result)     ''Choix=tous => on édite tout les réglements Choix=ajout => on édite que les réglements ajoutés
+
+  Dim qst As String
+  Dim nb As Integer
+  Dim vecr As VarEcr
+  
+  ReportHBox1.BackGround = ReportBrush.Color(Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B)))
+  If choix = EdReg.tous Then qst = InputBox("Vous pouvez entrer un numèro de bordereau ", "Édition des bordereaux")
+  If qst Then
+    borderau.Text = "Bordereau n° : " & qst
+  Endif
+  bdx.Text = "Bordereau de reglement : " & resreg!code & " " & resreg!libel
+  dtbdx.Text = "Le, " & LDate(Now).L
+  For Each vecr In Lecr
+    Select Case choix
+      Case EdReg.ajout
+        If vecr.etat = VarEcr.L_ajou Then $ediecr.plus(vecr)
+      Case EdReg.tous
+        If vecr.etat <> VarEcr.L_sup Then $ediecr.plus(vecr)
+    End Select
+  Next
+  
+  ligne.DataCount = $ediecr.nb()
+  If $ediecr.nb() <= 0 Then Return
+  nbch.Text = $ediecr.nb()
+  tot.Text = Format($ediecr.somme() * -1, "0.00")
+
+End
+
+Public Sub dte_Data(Index As Integer)
+
+  Dim vecr As Variant
+  
+  vecr = $ediecr.trouve(Index)
+  If TypeOf(vecr) = gb.Integer Then Return
+  dte.Data = vecr.dte.L
+
+End
+
+Public Sub cde_Data(Index As Integer)
+
+  Dim vecr As Variant
+  
+  vecr = $ediecr.trouve(Index)
+  If TypeOf(vecr) = gb.Integer Then Return    'si  $ediecr.trouve retourne -1 c'est qu'on a pas trouvé
+  cde.Data = vecr.compte
+
+End
+
+Public Sub nom_Data(Index As Integer)
+
+  Dim vecr As Variant
+  
+  vecr = $ediecr.trouve(Index)
+  If TypeOf(vecr) = gb.Integer Then Return
+  nom.Data = vecr.intitul
+  
+End
+
+Public Sub montant_Data(Index As Integer)
+
+  Dim vecr As Variant
+  
+  vecr = $ediecr.trouve(Index)
+  If TypeOf(vecr) = gb.Integer Then Return
+  montant.Data = Format(vecr.montantc - vecr.montantd, "0.00")
+
+End

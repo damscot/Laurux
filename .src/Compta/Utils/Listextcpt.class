@@ -1,10 +1,17 @@
 ' Gambas class file
 
-Public resext As Result
+Create Static
+
+Property Read resext As Result
+
+Public Ecart As Float
+
+Private $resext As Result
 Private $dtei As LDate
 Private $dtes As LDate
 Private $scpt As String
 Private $jouran As String
+Private $req As String
 
 Public Struct borne
   nomfich As String
@@ -16,7 +23,16 @@ Private $brn As Borne[]
 
 Const champ As String = " montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind "
 
-Public Sub _new(cpt As String, dtei As String, dtes As String, ltr As String, vld As Boolean, stri As String, Optional origin As String, dteech As String)
+Public Sub _call(Optional cpt As String, Optional dtei As String = LDate(DateAdd(Now, gb.Year, -8)).L, Optional dtes As String = LDate(DateAdd(Now, gb.Year, 8)).L, Optional ltr As String = "n", Optional stri As String = " dte", Optional origin As String, Optional dteech As String) As Listextcpt
+
+  Dim lst As Listextcpt
+  
+  lst = New Listextcpt(cpt, dtei, dtes, ltr, stri, origin, dteech)
+  Return lst
+
+End
+
+Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(Now, gb.Year, -8)).L, Optional dtes As String = LDate(DateAdd(Now, gb.Year, 8)).L, Optional ltr As String = "n", Optional stri As String = " dte", Optional origin As String, Optional dteech As String)
 
   Dim res, resf, res1 As Result
   Dim i, prms, der As Integer
@@ -26,6 +42,7 @@ Public Sub _new(cpt As String, dtei As String, dtes As String, ltr As String, vl
   Dim dte As LDate
   Dim ok As Boolean = True
   
+'  If Not cpt Then Return
   $scpt = cpt
   $dtei = New LDate(dtei)
   $dtes = New LDate(dtes)
@@ -37,7 +54,7 @@ Public Sub _new(cpt As String, dtei As String, dtes As String, ltr As String, vl
        Case "o"
           lett = Utils.db.Subst(" AND lettree=&1", True)
         Case "n"
-          lett = Utils.db.Subst(" AND lettree=&1 AND jour<>&2", False, $jouran)
+          lett = Utils.db.Subst(" AND lettree=&1 ", False, $jouran)
         Case "t"
           lett = ""
       End Select
@@ -65,8 +82,8 @@ Public Sub _new(cpt As String, dtei As String, dtes As String, ltr As String, vl
         der = i
       Endif
     Next
-    $dtei.L = dtei
     If Not cpt Then Return
+    $dtei.L = dtei
     'creation de la requete
     If origin = "relance" Then
       cli = " compte LIKE &3 AND collectif is null AND (" & Utils.db.Subst("dateech <= &1 Or dte<=&1", dteech) & " OR dateech is null) "
@@ -80,36 +97,36 @@ Public Sub _new(cpt As String, dtei As String, dtes As String, ltr As String, vl
           'calcul du report a nouveau si nécessaire
           dte = New LDate(DateAdd($dtei.G, gb.Day, -1))
           If i = der Then
-             res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte <= &1 AND compte=&2 AND validee=&3 LIMIT 1", dte.D, cpt, vld) 
+             res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte <= &1 AND compte=&2 AND provisoire=False LIMIT 1", dte.D, cpt) 
           Else
-            res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND compte=&3 AND validee=&4 LIMIT 1", $brn[i].dteinf.D, dte.D, cpt, vld)
+            res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND compte=&3 AND provisoire=False  LIMIT 1", $brn[i].dteinf.D, dte.D, cpt)
           Endif 
           If res1.Available Then
-            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND validee=&5", $dtei.G, $brn[i].dteinf.D, dte.D, cpt, vld)
+            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", $dtei.G, $brn[i].dteinf.D, dte.D, cpt)
             dte = dtsup(i)
-            req = Utils.db.Subst("SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND " & cli & lett & " AND validee=&4", $dtei.D, dte.D, cpt, vld) & req
+            req = Utils.db.Subst("SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.D, cpt) & req
           Else
             'sans calcul du report a nouveau
              ok = False
             dte = dtsup(i)
-            req &= Utils.db.Subst("SELECT" & champ & "FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND " & cli & lett & " AND validee=&4", $dtei.D, dte.D, cpt, vld)
+            req &= Utils.db.Subst("SELECT" & champ & "FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.D, cpt)
           Endif
         Else
           'requete sur année complete
           If $dtei = $brn[i].dteinf Or ltr <> "t" Then
            ok = False
           dte = dtsup(i)
-          req = Utils.db.Subst("SELECT " & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND" & cli & lett & " AND validee=&4", $dtei.D, dte.D, cpt, vld)
+          req = Utils.db.Subst("SELECT " & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND" & cli & lett, $dtei.D, dte.D, cpt)
           Endif
         Endif
       Else
         'requete sur année suivante
         dte = dtsup(i)
-        req &= Utils.db.Subst(" UNION (SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND " & cli & lett & " AND validee=&4 AND jour<>&5)", $dtei.D, dte.D, cpt, vld, $jouran)
+        req &= Utils.db.Subst(" UNION (SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett & "  AND jour<>&4)", $dtei.D, dte.D, cpt, $jouran)
       Endif
     Next
     req &= " ORDER BY " & stri
-    resext = Utils.db.Exec(req) 
+    $req = req
   Endif
   
 End
@@ -127,14 +144,14 @@ Private Function dtsup(ind As Integer) As LDate
   
 End
 
-Public Function litleres(num As String) As Result
+Public Function litleres(num As String) As Result     ''Renvoit une écriture par rapport à son numéro et sa date (recherche dans Mvt ... Mvt5)
   
   Dim res As Result
   Dim i As Integer
   
   i = cherche(num, "numero")
   If i > -1 Then
-    res = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE numero=&1", num)
+    res = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE numero=&1 AND provisoire=False ", num)
     Return res
   Endif
   
@@ -146,18 +163,18 @@ Private Function cherche(num As Variant, chp As String) As Integer
   Dim i As Integer
   Dim dtes As LDate
   
-  resext.MoveFirst
+  $resext.MoveFirst
   Repeat
-    If num = resext[chp] Then
+    If num = $resext[chp] Then
       ok = True 
       Break
     Endif
-  Until resext.MoveNext()
+  Until $resext.MoveNext()
   If ok Then
     ok = False
    For i = 0 To $brn.Max
      dtes = dtsup(i)
-     If Format(resext!dte, "yyyymmdd") >= Format($brn[i].dteinf.G, "yyyymmdd") And Format(resext!dte, "yyyymmdd") <= Format(dtes.G, "yyyymmdd") Then
+     If Format($resext!dte, "yyyymmdd") >= Format($brn[i].dteinf.G, "yyyymmdd") And Format($resext!dte, "yyyymmdd") <= Format(dtes.G, "yyyymmdd") Then
        ok = True
        Break
      Endif
@@ -166,14 +183,14 @@ Private Function cherche(num As Variant, chp As String) As Integer
   If ok Then Return i Else Return -1
 End
 
-Public Sub letcpt(lind As Variant, value As Boolean, numlot As String, choix As String)
+Public Sub letcpt(lind As Variant, value As Boolean, numlot As String, choix As String)     ''Lettrage d'un compte d'écriture par rapport soit à un son numéro de lot soit à lind 
   
   Dim i As Integer
   Dim dtes As Date
   
   If choix = "tresor" Then
     i = cherche(lind, "numero")
-    lind = resext!lind
+    lind = $resext!lind
   Else
     i = cherche(lind, "lind")
   Endif
@@ -188,17 +205,17 @@ Public Sub letcpt(lind As Variant, value As Boolean, numlot As String, choix As 
   Endif
 End
 
-Public Sub letgroupe(Nlot As String, Nlot2 As String, ltr As Boolean, numcpt As String)
+Public Sub letgroupe(Nlot As String, Nlot2 As String, ltr As Boolean, numcpt As String)   ''Lettrage d'un goupe de compte par rapport à son numéro de lot
 
   Dim i As Integer
   
   For i = 0 To $brn.Max
-    Utils.db.Exec("UPDATE " & $brn[i].nomfich & " SET lettree = &1, numlot = &3 WHERE numlot = &2 AND compte = &4", ltr, Nlot, Nlot2, numcpt)
+    Utils.db.Exec("UPDATE " & $brn[i].nomfich & " SET lettree = &1, numlot = &3 WHERE numlot = &2 AND compte = &4 AND provisoire= False ", ltr, Nlot, Nlot2, numcpt)
   Next
 
 End
 
-Private Function ctrl(numlot As String, vald As Boolean, Optional numcpt As String) As Result
+Private Function ctrl(numlot As String, Optional numcpt As String) As Result
   
   Dim res As Result
   Dim req As String
@@ -208,17 +225,17 @@ Private Function ctrl(numlot As String, vald As Boolean, Optional numcpt As Stri
   
   If numcpt Then cpt = numcpt Else cpt = $scpt
   dtes = dtsup(0)
-  req = Utils.db.Subst("SELECT montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM " & $brn[i].nomfich & " WHERE compte = &1 AND numlot = &2 AND validee = &3 AND dte BETWEEN &4 AND &5", cpt, numlot, vald, $brn[i].dteinf.D, dtes.D)
+  req = Utils.db.Subst("SELECT montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM " & $brn[i].nomfich & " WHERE compte = &1 AND numlot = &2 AND provisoire=False AND dte BETWEEN &3 AND &4", cpt, numlot, $brn[i].dteinf.D, dtes.D)
   For i = 1 To $brn.Max
     dtes = dtsup(i)
-    req &= Utils.db.Subst(" UNION (SELECT montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind  FROM " & $brn[i].nomfich & " WHERE compte = &1 and numlot = &2 and validee = &3 AND dte BETWEEN &4 AND &5)", cpt, numlot, vald, $brn[i].dteinf.D, dtes.D)
+    req &= Utils.db.Subst(" UNION (SELECT montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind  FROM " & $brn[i].nomfich & " WHERE compte = &1 and numlot = &2 AND provisoire=False AND dte BETWEEN &3 AND &4)", cpt, numlot, $brn[i].dteinf.D, dtes.D)
   Next
   res = Utils.db.Exec(req)
   Return res
   
 End
 
-Public Function Controle(numlot As String, vald As Boolean, Optional numcpt As String) As Integer
+Public Function Controle(numlot As String, Optional numcpt As String) As Integer    ''contrôle si le solde d'une écriture est à 0. Retour : 1= oui 0= non
 
   Dim LetResult As Result
   Dim TotLd As Float
@@ -227,15 +244,15 @@ Public Function Controle(numlot As String, vald As Boolean, Optional numcpt As S
 
   With Utils
     If Not numcpt Then numcpt = $scpt
-    LetResult = ctrl(numlot, vald, numcpt)
-    'LetResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " Where numlot = &1 and compte = &2 and validee = &3", numlotT, numcpt, 1)
+    LetResult = ctrl(numlot, numcpt)
     If LetResult.Available Then
       Repeat
         TotLd = TotLd + LetResult!montantd
         TotLc = TotLc + LetResult!montantc
       Until LetResult.MoveNext()
-      TotL = TotLd - TotLc
+      TotL = Utils.arrondi(TotLd - TotLc, 2)
     Endif
+    Ecart = TotL
     If TotL = 0 Then
       Return 1
     Else
@@ -243,5 +260,45 @@ Public Function Controle(numlot As String, vald As Boolean, Optional numcpt As S
     Endif
 
   End With
+
+End
+
+Public Function rechechelot(numlot As String, Optional numcpt As String = $scpt) As Result      ''Retourne les lignes d'écritures liées à un numéro de lot
+
+  Dim res As Result 
+  Dim req As String
+  Dim i As Integer
+  
+  req = "SELECT " & champ & "FROM " & $brn[0].nomfich & " WHERE compte=&1 AND numlot=&2 AND provisoire=False "
+  For i = 1 To $brn.Max
+    req &= "UNION SELECT " & champ & "FROM " & $brn[i].nomfich & " WHERE compte=&1 AND numlot=&2 AND provisoire=False "
+  Next
+  
+  res = Utils.db.Exec(req, numcpt, numlot)
+  Return res
+
+End
+
+Public Function rechedoc(numdoc As String) As Result      ''Retourne les lignes d'écritures liées à un numéro de document
+
+  Dim res As Result 
+  Dim req As String
+  Dim i As Integer
+  
+  req = "SELECT " & champ & "FROM " & $brn[0].nomfich & ",Fiches_Comptes  WHERE  numdoc=&1 AND compte_cc=compte AND (type_cc='C' OR type_cc='F')  AND provisoire=False "
+  For i = 1 To $brn.Max
+    req &= "UNION SELECT " & champ & "FROM " & $brn[i].nomfich & ",Fiches_Comptes  WHERE  numdoc=&1 AND compte_cc=compte AND (type_cc='C' OR type_cc='F') AND provisoire=False  "
+  Next
+  
+  res = Utils.db.Exec(req, numdoc)
+  Return res
+
+
+End
+
+Private Function resext_Read() As Result      ''Retourne le résultat de la requête définie par _new
+
+  $resext = Utils.db.Exec($req) 
+  Return $resext
 
 End

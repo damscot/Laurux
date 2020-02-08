@@ -1,0 +1,339 @@
+' Gambas class file
+
+Public resjou As Result       ''Journal 
+Public Vecr As VarEcr         ''Variables passées par _new
+Public numecr As Integer      ''N° de l'écriture
+Public numerodef As Integer   ''N° définitif de l'écriture si vente
+Public numfac As String           ''N° de facture si vente
+
+Private $rescomp As Result
+
+Public Sub _new(njo As String, Ve As VarEcr)
+
+  Dim res As Result
+  
+  If Not njo And ve.type = VarEcr.Vente Then
+    res = utils.db.Exec("SELECT jrnal FROM Fiches_Parametres")
+    njo = res!jrnal
+  Endif
+  resjou = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", njo)
+  If Not resjou.Available Then
+    Error.Raise("Journal innexistant " & njo & "\nImpossible d'enregistrer l'écriture")
+  Endif
+  Vecr = ve
+    
+End
+
+Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat= VarEcr.L_ajout ou L_valide => on ajoute une écriture, si = .L_modif => on modifit, si L_sup on supprime. Si type =VarEcr.vente on réserve un numéro de facture + d'écriture + d'écriture définitif sinon juste un numéro d'écriture.
+
+  Dim var As VarEcr
+  Dim res As Result
+  
+  If Vecr.somme() <> 0 Or Vecr.nb() < 2 Then
+    Message.Error("Abandon d'écriture :\n Client : " & Vecr.compte & " Document : " & Vecr.numdoc & "\n Solde de l'écriture : " & Vecr.somme() & " Nombre de ligne : " & Vecr.nb())
+    Return True 
+  Endif
+  If Vecr.etat = VarEcr.L_ajou Or Vecr.etat = VarEcr.L_valide Or Vecr.etat = VarEcr.L_caisse Then
+    res = Utils.db.LockIncrement("numecriture", "Fiches_Parametres")
+    numecr = res!numecriture
+  Else
+    numecr = Val(Vecr.numero)
+  Endif
+  If Vecr.type = VarEcr.vente Then
+    res = utils.db.LockIncrement("numecriture2", "Fiches_Parametres")
+    numerodef = res!numecriture2
+    res = utils.db.LockIncrement("dnfac", "Fiches_Parametres")
+    numfac = Format(res!dnfac, "000000")
+    res = utils.db.Exec("SELECT nfac FROM Fiches_Parametres")
+    If res!nfac Then
+      numfac = Format(Vecr.dte.G, "yymm") & numfac
+    Else
+      numfac = Format(Vecr.dte.G, "yyyy") & numfac
+    Endif
+  Endif
+  
+  
+  For Each var In Vecr
+    utils.db.Begin
+    Select Case var.etat
+      Case VarEcr.L_ajou, VarEcr.L_valide, VarEcr.L_caisse
+        If var.type = VarEcr.Vente Then
+          If Not var.numdoc Then var.numdoc = numfac
+          If Not var.numlot Then var.numlot = numfac
+        Else
+          If var.type = VarEcr.Treso Then
+            If Not var.numdoc Then var.numdoc = numecr
+            If Not var.numlot Then var.numlot = numecr
+          Endif
+        Endif
+        $rescomp = utils.db.Create("Fiches_Mvt")
+        If ajout(var) Then Return True
+        
+      Case VarEcr.L_modif
+        Modif(var.lind)
+        $rescomp = utils.db.Edit("Fiches_Mvt", "lind=&1", var.lind)
+        If ajout(var) Then Return True
+        
+      Case VarEcr.L_sup
+        sup(var.lind, var.compte)
+    End Select
+   
+  Next
+  utils.db.Exec("LOCK TABLES Fiches_Mvt WRITE,Fiches_MvtM WRITE")
+  Sha1Calc.CalcSha1("Fiches_Mvt", numecr)
+  utils.db.Exec("UNLOCK TABLES")
+
+End
+
+Private Sub ajout(var As VarEcr) As Boolean
+  
+  Dim rescpt As Result
+  Dim tot As Float
+  
+  utils.db.Exec("LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE")
+  rescpt = utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", var.compte)
+  If Not rescpt.Available Then
+    Message.Error("Le compte " & var.compte & " n'existe pas\nImpossible de finir l'écriture " & numecr)
+    Return True
+  Endif
+  If Vecr.type = VarEcr.vente Then
+    $rescomp!dteval = Now
+    $rescomp!cloturee = True
+    $rescomp!numerodef = numerodef
+  Else
+    $rescomp!cloturee = False
+  Endif
+  If var.type = VarEcr.Treso Then $rescomp!datee = Now
+  $rescomp!jour = resjou!code_jo
+  $rescomp!numero = numecr
+  $rescomp!numerop = numecr
+  $rescomp!compte = var.compte
+  $rescomp!intitule = Left(var.intitul, 40)
+  $rescomp!dte = var.dte.G
+  If Not IsNull(var.dteech) Then $rescomp!dateech = var.dteech.G
+  If var.type = VarEcr.vente Then
+    $rescomp!numdoc = numfac
+    If var.numlot Then $rescomp!numlot = var.numlot Else $rescomp!numlot = numfac
+  Else
+    $rescomp!numdoc = var.numdoc
+    $rescomp!numlot = var.numlot
+  Endif
+  $rescomp!libelle = Left(var.libelle, 50)
+  $rescomp!montantd = utils.arrondi(var.montantd, 2)
+  $rescomp!montantc = utils.arrondi(var.montantc, 2)
+  $rescomp!provisoire = False
+  If var.type = VarEcr.Treso Then $rescomp!tresorerie = True Else $rescomp!tresorerie = False
+  $rescomp!pointee = False
+  $rescomp!lettree = False
+  $rescomp!cloturee = True
+  $rescomp!relance = 0
+  $rescomp!validee = True
+  If rescpt!coll = 1 Then $rescomp!collectif = True
+  
+  $rescomp.Update
+  utils.db.Commit
+  
+  solde(var.compte)
+  utils.db.Exec("UNLOCK TABLES")
+  
+   If rescpt!lettrable = True Then
+    Lettrage(var)
+  Endif
+  If var.type = VarEcr.vente And rescpt!type_cc = "C" Then traite(var)
+  If rescpt!coll_cc And (var.etat = VarEcr.L_ajou Or var.etat = VarEcr.L_caisse) Then
+    If collectif(var, rescpt!coll_cc) Then Return True
+  Endif
+  
+  Return False
+  
+End
+
+Private Sub modif(ind As Integer, Optional sup As Boolean)
+  
+  Dim res, rescomp As Result
+  
+  utils.db.Exec("LOCK TABLES Fiches_Mvt WRITE,Fiches_MvtM WRITE")
+  res = utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE lind=&1", ind)
+  rescomp = utils.db.Create("Fiches_MvtM")
+  rescomp!jour = res!jour
+  rescomp!numero = res!numero
+  rescomp!compte = res!compte
+  rescomp!intitule = res!intitule
+  rescomp!dte = res!dte
+  rescomp!numdoc = res!numdoc
+  rescomp!numlot = res!numlot
+  rescomp!libelle = res!libelle
+  rescomp!montantd = res!montantd
+  rescomp!montantc = res!montantc
+  rescomp!validee = res!validee
+  rescomp!provisoire = res!provisoire
+  rescomp!tresorerie = res!tresorerie
+  rescomp!lettree = res!lettree
+  rescomp!cloturee = res!cloturee
+  rescomp!pointee = res!pointee
+  rescomp!numcol = res!numcol
+  rescomp!dateech = res!dateech
+  rescomp!lind2 = res!lind
+  rescomp!control = res!control
+  rescomp!datem = LDate(Now).G
+  If sup Then rescomp!supprimee = True
+  
+  rescomp.Update
+  utils.db.Commit
+  
+  utils.db.Exec("UNLOCK TABLES")
+  
+End
+
+Private Sub sup(ind As Integer, num As String)
+
+  Dim res As Result
+  
+  modif(ind, True)
+  utils.db.Exec("LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE")
+  utils.db.Delete("Fiches_Mvt", "lind=&1", ind)
+  solde(num)
+  utils.db.Exec("UNLOCK TABLES")
+
+End
+
+Private Sub solde(num As String)
+  
+  Dim resmvt As Result
+  
+  resmvt = utils.db.Exec("SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte=&1 AND provisoire=False", num)
+  If resmvt.Available Then 
+    If IsNull(resmvt!montantd) Or IsNull(resmvt!montantc) Then
+       Message.Error("Il y a un problème avec le compte : " & num & " calcul du solde impossible")
+       Return
+    Endif
+    Utils.db.Exec("UPDATE Fiches_Comptes SET solde=&1 WHERE compte_cc=&2", Val(Format(resmvt!montantd - resmvt!montantc, "0.00")), num)
+  Endif
+  
+End
+
+Private Sub collectif(var As VarEcr, cpt As String) As Boolean
+  
+  var.compte = cpt
+  If var.etat = VarEcr.L_ajou Or var.etat = VarEcr.L_caisse Then
+    $rescomp = utils.db.Create("Fiches_Mvt")
+  Else
+    $rescomp = utils.db.Edit("Fiches_Mvt", "lind=&1", var.lind)
+  Endif
+  If ajout(var) Then Return True
+  Return False
+  
+End
+
+Private Sub traite(var As VarEcr)
+
+  Dim Accept As Boolean = False
+  Dim res, res1 As Result
+  Dim tot As Float
+  
+  tot = var.montantd - var.montantc
+  If tot <= 0 Then Return
+  
+  res = utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", var.compte)
+  If res.Available Then
+    If IsNull(res!cli_reg) Then Return
+    res1 = utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", res!cli_reg)
+    If res1.Available Then
+      If res1!lcr = Mreglement.sans_lcr Then Return
+      If res1!lcr = Mreglement.lcr_acc Then Accept = True
+      Utils.db.Exec("insert into Fiches_Traites  (code, nom, numfac, montant, datech, date, acceptee, ecartee) value (&1, &2, &3, &4, &5, &6, &7, &8)", var.compte, res!cli_nom, numfac, Format(tot, "0.00"), var.dteech.G, var.dte.G, Accept, 0)
+    Endif
+  Endif
+
+End
+'gestion du lettrage
+Private Sub Lettrage(var As VarEcr)
+  
+  Dim resext, respart As Result
+  Dim lisext As Listextcpt
+  Dim i As Integer
+  Dim ecrdif As VarEcr
+  Dim nouecr As EcrAuto
+  
+  'on met a jour les num de lot
+  lisext = New Listextcpt(var.compte, LDate(DateAdd(Now, gb.Year, -8)).L, LDate(DateAdd(Now, gb.Year, 8)).L, "t")
+  resext = lisext.resext
+  If var.type = VarEcr.Treso Then
+    For i = 0 To var.Tlettrage.Max
+      lisext.letcpt(var.Tlettrage[i].lind, True, var.numlot, "numlot")
+    Next
+  Endif
+  'on controle si le compte est a 0 pour le lettrer et si l'écart est inférieur à celui des paramétres on passe l'écriture de régule
+  If lisext.Controle(var.numlot) = 0 Then
+    respart = utils.db.Exec("SELECT ecart,jrnod,cptrsplus,cptrsmoins FROM Fiches_Parametres")
+    If Abs(lisext.Ecart) <= CFloat(respart!ecart) Then
+      ecrdif = New VarEcr
+      ecrdif.etat = VarEcr.L_ajou
+      ecrdif.type = VarEcr.Autre
+      ecrdif.plus(diff(var.compte, var, lisext.ecart * -1, respart!jrnod))
+      If lisext.ecart < 0 Then
+        var.compte = respart!cptrsplus
+      Else
+        var.compte = respart!cptrsmoins
+      Endif
+      ecrdif.plus(diff(var.compte, var, lisext.Ecart, respart!jrnod))
+      nouecr = New EcrAuto(respart!jrnod, ecrdif)
+      nouecr.ecriture()
+    Endif
+  Else
+    lisext.letgroupe(var.numlot, var.numlot, True, var.compte)
+  Endif
+  
+End
+
+Private Sub DLettrage(var As VarEcr)
+  
+  Dim resext As Result
+  Dim lisext As Listextcpt
+  Dim i As Integer
+  Dim tot As Float
+  
+  lisext = New Listextcpt(var.compte)
+  resext = lisext.rechechelot(Vecr.numlot)
+  If resext.Available Then
+    Repeat
+      If resext!lettree Then 
+        tot = tot + utils.arrondi(resext!montantd - resext!montantc, 2)
+      Endif
+    Until resext.MoveNext()
+    If tot <> 0 Then
+      If Message.Question("Le lettrage du compte " & var.compte & " " & var.libelle & "\nN'est plus équilibré \nVoulez-vous le supprimer ?", "Oui", "Non") = 1 Then
+        lisext.letgroupe(Vecr.numlot, Vecr.numlot, False, var.compte)
+      Endif
+    Endif
+  Endif
+  
+  
+End
+
+Private Function diff(cpt As String, var As VarEcr, ecart As Float, jour As String) As VarEcr
+  
+  Dim ecrdif As New VarEcr
+  
+  ecrdif.compte = cpt
+  ecrdif.dte = var.dte
+  ecrdif.dtee = var.dtee
+  ecrdif.dteech = var.dteech
+  ecrdif.etat = VarEcr.L_ajou
+  ecrdif.intitul = var.intitul
+  ecrdif.journal = jour
+  ecrdif.libelle = var.libelle
+  If ecart > 0 Then
+    ecrdif.montantd = utils.arrondi(ecart, 2)
+    ecrdif.montantc = 0
+  Else
+    ecrdif.montantc = utils.arrondi(ecart * -1, 2)
+    ecrdif.montantd = 0
+  Endif
+  ecrdif.numdoc = var.numdoc
+  ecrdif.numlot = var.numlot
+  ecrdif.type = VarEcr.Autre
+  
+  Return ecrdif
+  
+End

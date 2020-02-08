@@ -84,7 +84,6 @@ Public Sub Button2_Click()
 
   Dim req As String
   Dim chmp As String = "dte,compte,libelle,numdoc,numero,montantd,montantc,jour,tresorerie"
-  Dim ccol As String = ""
   
   Somme.clear
   Me.Mouse = Mouse.Wait
@@ -97,12 +96,11 @@ Public Sub Button2_Click()
       Mnt.Select
       libelle.Text = ""
     Else
-      If CompteCol.Value Then ccol = " and coll= True"
-      If Btous.Value Then req = "" 
-      If Bclient.value Then req = " and validee = True" & ccol & " and type_cc = 'C'"
-      If Bfournisseur.value Then req = " and validee = True" & ccol & " and type_cc = 'F'"
-      If Bgestion.value Then req = " and validee = True" & ccol & " and type_cc = 'G'"
-      If Bbilan.value Then req = " and validee = True" & ccol & " and type_cc = 'B'"
+      If CompteCol.Value Then req = " and coll =True" Else req = " and coll = False"
+      If Bclient.value Then req = " and validee = 1 and type_cc = 'C'"
+      If Bfournisseur.value Then req &= " and validee = 1 and type_cc = 'F'"
+      If Bgestion.value Then req = " and validee = 1 and type_cc = 'G'"
+      If Bbilan.value Then req = " and validee = 1 and type_cc = 'B'"
       If Cb1.value And Mnt.Text And Not Cb2.value And Not Cb3.Value Then 'on recherche seulement un montant
         libelle.Text = ""
          rResult = Utils.db.Exec("SELECT " & chmp & " FROM Fiches_Mvt LEFT JOIN Fiches_Comptes ON compte = compte_cc WHERE (montantd like '" & Utils.PointBase(Mnt.Text) & "%' or montantc like '" & Utils.PointBase(Mnt.Text) & "%') " & req)

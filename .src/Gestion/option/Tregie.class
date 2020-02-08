@@ -494,10 +494,10 @@ Private Sub modifart()
         frais = res!art_frais
         pxa = res!art_pbht - (res!art_montdr + res!art_montss) + (dr.droit + dr.secu)
       Endif
-      res!art_pbht = Round(pxa, - Val(res!art_nbd))
+      res!art_pbht = Round(pxa, -Val(res!art_nbd))
       pxa = pxa - (pxa * (res!art_tr / 100))
-      res!art_paht = Round(pxa, - Val(res!art_nbd))
-      res!art_prvt = Round(res!art_paht + frais, - Val(res!art_nbd))
+      res!art_paht = Round(pxa, -Val(res!art_nbd))
+      res!art_prvt = Round(res!art_paht + frais, -Val(res!art_nbd))
       Select Case rep
         Case 1
           pxv = res!art_prvt * res!art_coef
@@ -507,8 +507,8 @@ Private Sub modifart()
           coef = Round(pxv / res!art_prvt, -4)
       End Select
       res!art_coef = coef
-      res!art_pvht = Round(pxv, - Val(res!art_nbd))
-      res!art_pvttc = Round(res!art_pvht * tva, - Val(res!art_nbd))
+      res!art_pvht = Round(pxv, -Val(res!art_nbd))
+      res!art_pvttc = Round(res!art_pvht * tva, -Val(res!art_nbd))
       res!art_montdr = dr.droit
       res!art_montss = dr.secu
       posy = pdfaff(pdf, res!art_code, res!art_design, res!art_pbht, res!art_paht, res!art_frais, res!art_montdr, res!art_montss, res!art_prvt, res!art_coef, res!art_pvht, posy)

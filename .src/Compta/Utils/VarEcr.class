@@ -1,0 +1,135 @@
+' Gambas class file
+
+Public Enum L_sans, L_valide, L_ajou, L_modif, L_sup, L_caisse
+Public Enum Autre, Treso, Vente, Caisse
+
+Public Struct TableLettrage
+  compte As String
+  dte As LDate
+  numlot As String
+  numdoc As String
+  montantd As Float
+  montantc As Float
+  lind As Integer
+End Struct
+
+Public numero As String
+Public lind As Integer
+Public dte As LDate
+Public dtee As LDate
+Public dteech As LDate
+Public journal As String
+Public compte As String
+Public intitul As String
+Public libelle As String
+Public numdoc As String
+Public numlot As String
+Public montantd As Float
+Public montantc As Float
+Public type As Integer      ''Vente, tréso ou autre  
+Public etat As Integer    ''L_ajout on ajoute une écriture,L_valide on valide le bordereau,Lmodif on modifie, L_sup on supprime, L_caisse on gére l'écriture de caisse
+Public collectif As Boolean   ''Si compte collectif
+
+Public Tlettrage As New TableLettrage[]
+
+Public Tbl As New TableLettrage
+
+Private $Vecr As New VarEcr[]
+
+  Public Sub _next() As VarEcr
+
+  If Enum.Index = Null Then Enum.Index = -1
+  Enum.Index += 1
+  If $Vecr.Count = Enum.Index Then 
+    Enum.Stop
+  Else
+    Return $Vecr[Enum.Index]
+  Endif
+
+End
+
+Public Sub _new()
+
+End
+
+Public Sub newTbl()
+
+  Tbl = New TableLettrage
+
+End
+
+Public Sub plus(value As VarEcr)    ''Ajout d'une écriture au tableau
+
+  $Vecr.Add(value)
+
+End
+
+Public Function moins(Value As Variant) As Boolean      ''Supprime une écriture du tableau 
+
+  Dim ind As Integer
+  
+  If TypeOf(value) = gb.Integer Then
+    ind = value
+  Else
+    ind = $Vecr.Find(value)
+  Endif
+  If ind > -1 Then
+    $Vecr.Extract(ind, 1)
+    Return True
+  Else
+    Return False
+  Endif
+
+End
+
+Public Function trouve(value As Variant) As Variant     ''Trouve la valeur dans le tableau. Si value est un index on retourne VarEcr[value]. Si value est VarEcr on retourne son index. Si value= -1 c'est qu'on a pas trouvé
+  
+  If TypeOf(value) = gb.Integer Then
+    If value < $Vecr.Count Then Return $Vecr[value] Else Return -1
+  Else
+    Return $Vecr.Find(value)
+  Endif
+  
+End
+
+Public Function reccomp(cpt As String) As Integer     ''Recherche le n° de compte dans le tableau et retourne son index (-1 pas trouvé)
+
+  Dim i As Integer
+  
+  For i = 0 To $Vecr.Max
+    If $Vecr[i].compte = cpt Then Return i
+  Next
+  
+  Return -1
+
+End
+
+Public Function modifi(ind As Integer, value As VarEcr) As Boolean    ''Inscrit la valeur dans le tableau
+  
+  If ind < $Vecr.Count Then
+    $Vecr[ind] = value
+    Return True
+  Else
+    Return False
+  Endif
+  
+End
+
+Public Function somme() As Float    ''Fait la somme du tableau, exclut les comptes colletifs et les écritures supprimées
+  
+  Dim i As Integer
+  Dim tot As Float
+  
+  For i = 0 To $Vecr.Max
+    If Not $Vecr[i].collectif And $Vecr[i].etat <> VarEcr.L_sup Then tot += $Vecr[i].montantd - $Vecr[i].montantc
+  Next
+  tot = Utils.arrondi(tot, 2)
+  Return tot
+  
+End
+
+Public Function nb() As Integer   ''Retourne le nombre féléments du tableau
+  
+  Return $Vecr.Count
+  
+End

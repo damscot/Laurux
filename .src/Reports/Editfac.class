@@ -45,7 +45,7 @@ Public Sub _new(vfac As ObjFac)
         If res!cp_sc Or res!burdis_sc Then Me.ville.Text = res!cp_sc & "  " & res!burdis_sc Else Me.ville.Height = "0mm"
         If res!cap_sc Then Me.cap.Text = "Capital : " & res!cap_sc Else Me.cap.Height = "0mm"
         Me.rcs.Text = "Rcs : " & res!rcs_sc & "  " & res!villerc_sc
-        Me.siret.Text = "Siret : " & res!siret_sc
+        Me.siret.Text = $vfac.libsire & " " & res!siret_sc
         Me.ape.Text = "APE : " & res!ape_sc
         Me.tvaintra.Text = "Tva intra : " & res!tvaintra_sc
         Me.tel.Text = "Tel : " & res!tel_sc
@@ -67,6 +67,10 @@ Public Sub _new(vfac As ObjFac)
   If vfac.lgo Then
     Me.logo.Image = Image.Load(Start.LocalSettings["/Soc" & Start.Societe & "/Logo"])
   Endif
+  'lbelle tva
+  Me.ltt.Text = "Taux " & $vfac.libtaxe
+  Me.lmtv.Text = "Montant " & $vfac.libtaxe
+  Me.ltoh.Text = "Total " & $vfac.libtaxe
   'adresse client
   Me.nom.Text = Left(vfac.adrfac.nom, 35)
   Me.adr1.Text = vfac.adrfac.adr1
@@ -97,33 +101,7 @@ Public Sub _new(vfac As ObjFac)
         Me.rcoupon.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
       Endif
       'reglements
-      If vfac.breg Then
-         Me.delais.Text = vfac.treg
-      Else
-        tot = 0
-        For i = 0 To vfac.reg.Max
-          If vfac.saisreg Then
-            Me.delais.Text = Me.delais.Text & "Règlement " & Format(vfac.reg[i].montant, ",0.00") & " " & vfac.devise & " par " & vfac.reg[i].mode & " au " & vfac.dtedoc.L
-            tot += vfac.reg[i].montant
-            If tot = $vfac.montttc Then Me.delais.Text = Me.delais.Text & "     FACTURE ACQUITTÉE"
-            If i <> vfac.reg.Max Then Me.delais.Text = Me.delais.Text & "\n"
-          Else
-            Me.delais.Font = Font["Sans Serif,7"]
-            If vfac.dteech.D <= vfac.dtedoc.D Then
-              Me.delais.Text = "Règlement à réception de facture"
-            Else
-              Me.delais.Text = "Règlement   " & vfac.reg[i].mode & " au " & vfac.dteech.L
-            Endif
-          Endif
-        Next
-        If vfac.choix = ObjFac.finmois And Not vfac.breg Then
-          If vfac.dteech.D <= vfac.dtedoc.D Then
-            Me.delais.Text = "Règlement à réception de facture"
-          Else
-            Me.delais.Text = "Règlement   " & vfac.rescli!cli_reg & " au " & vfac.dteech.L
-          Endif
-        Endif
-      Endif
+      Me.delais.Text = vfac.tsaisreg
       'edition des réserves
       If vfac.reserve Then
         Me.resvp.Text = vfac.treserve
@@ -256,7 +234,7 @@ Public Sub _new(vfac As ObjFac)
     If Not vfac.autoent Then Me.autoent.Text = ""
   Endif
   'pied de facture
-  If vfac.pied Then
+  If vfac.pied And Not IsNull(vfac.tpied) Then
     If vfac.tpied.Count > 0 Then Me.tbf1.Text = vfac.tpied[0]
     If vfac.tpied.Count > 1 Then Me.tbf2.Text = vfac.tpied[1]
     If vfac.tpied.Count > 2 Then Me.tbf3.Text = vfac.tpied[2]

@@ -76,7 +76,7 @@ Private $lstex As Listextcpt
 
 Public Sub _new(num2 As String)
 
-  $lstex = New Listextcpt("", "01.01.1900", "31.12.9999", "t", True, "") 'pour le cas de rappel d'écriture dans la saisie des reglements
+  $lstex = New Listextcpt("", "01.01.1900", "31.12.9999", "t", "") 'pour le cas de rappel d'écriture dans la saisie des reglements
   numr = num2
   If Not IsNull(num2) Then Ext = True
   Utils.Observers(Me)
@@ -618,9 +618,8 @@ Public Sub Lettrage()
     EcritL.Columns[8].Text = "Numero"
     EcritL.Columns[9].Alignment = 1
     EcritL.Columns[9].Text = "Let"
-    $lstex = New Listextcpt(numcompte.Text, "01.01.1900", "31.12.9999", "n", True, "dte asc")
+    $lstex = New Listextcpt(numcompte.Text, "01.01.1900", "31.12.9999", "n", "dte asc")
     rResult = $lstex.resext
-'    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & "  WHERE compte = &1 and lettree = &2 and validee = &3 or compte = &1 and lettree is null and validee = &3 order by dte", numcompte.Text, 0, 1)
     If rResult.Available Then
       B2 = 3
       EcritL.Visible = True

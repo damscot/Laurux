@@ -1,0 +1,132 @@
+# Gambas Form File 3.0
+
+{ Report Report
+  #MoveScaled(0,0,126,91)
+  Index = 0
+  Text = ("")
+  { ReportHBox1 ReportHBox
+    #MoveScaled(1,1,124,7)
+    Fixed = True
+    Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+    { bdx ReportLabel
+      #MoveScaled(1,1,25,5)
+      Font = Font["Sans Serif,10"]
+      Expand = True
+      Alignment = Align.Center
+    }
+    { dtbdx ReportLabel
+      #MoveScaled(26,1,19,5)
+      Width = "45mm"
+      Font = Font["Sans Serif,10"]
+      Alignment = Align.Center
+    }
+    { ReportLabel2 ReportLabel
+      #MoveScaled(45,1,28,5)
+      Font = Font["Sans Serif,10"]
+      Text = ("=\"PAGE \" & Page ")
+      Alignment = Align.Center
+    }
+  }
+  { ReportPanel1 ReportPanel
+    #MoveScaled(1,8,124,5)
+    Arrangement = Arrange.Vertical
+    { borderau ReportLabel
+      #MoveScaled(4,1,28,4)
+      Font = Font["Sans Serif,9"]
+      Expand = True
+    }
+  }
+  { ReportHBox2 ReportHBox
+    #MoveScaled(1,13,124,8)
+    Fixed = True
+    { ReportLabel4 ReportLabel
+      #MoveScaled(1,1,16,6)
+      Width = "35mm"
+      Font = Font["Sans Serif,Bold,8"]
+      Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+      Text = ("Date")
+      Alignment = Align.Center
+    }
+    { ReportLabel5 ReportLabel
+      #MoveScaled(17,1,22,6)
+      Width = "35mm"
+      Font = Font["Sans Serif,Bold,8"]
+      Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+      Text = ("Code client")
+      Alignment = Align.Center
+    }
+    { ReportLabel6 ReportLabel
+      #MoveScaled(39,1,20,6)
+      Font = Font["Sans Serif,Bold,8"]
+      Expand = True
+      Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+      Text = ("Nom")
+      Alignment = Align.Center
+    }
+    { ReportLabel7 ReportLabel
+      #MoveScaled(59,1,21,6)
+      Width = "35mm"
+      Font = Font["Sans Serif,Bold,8"]
+      Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Right:1pt #000000"]
+      Text = ("Montant")
+      Alignment = Align.Center
+    }
+  }
+  { ligne ReportHBox
+    #MoveScaled(1,21,124,8)
+    { dte ReportLabel
+      #MoveScaled(1,1,16,6)
+      Width = "35mm"
+      Font = Font["Sans Serif,8"]
+      Border = ReportBorder["Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+      Alignment = Align.Center
+    }
+    { cde ReportLabel
+      #MoveScaled(17,1,22,6)
+      Width = "35mm"
+      Font = Font["Sans Serif,8"]
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+    }
+    { nom ReportLabel
+      #MoveScaled(39,1,21,6)
+      Font = Font["Sans Serif,8"]
+      Expand = True
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+    }
+    { montant ReportLabel
+      #MoveScaled(60,1,20,6)
+      Width = "35mm"
+      Font = Font["Sans Serif,8"]
+      Border = ReportBorder["Bottom:1pt #000000;Right:1pt #000000"]
+      Alignment = Align.Right
+    }
+  }
+  { fin ReportHBox
+    #MoveScaled(1,29,124,9)
+    Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+    { ReportLabel8 ReportLabel
+      #MoveScaled(1,1,19,7)
+      Font = Font["Sans Serif,10"]
+      Text = ("Nb de chèques : ")
+    }
+    { nbch ReportLabel
+      #MoveScaled(20,1,8,7)
+      Width = "15mm"
+      Font = Font["Sans Serif,10"]
+      Alignment = Align.Center
+    }
+    { ReportLabel9 ReportLabel
+      #MoveScaled(28,1,22,7)
+      Font = Font["Sans Serif,10"]
+      Expand = True
+      Text = ("TOTAL :")
+    }
+    { tot ReportLabel
+      #MoveScaled(50,1,15,7)
+      Width = "35mm"
+      Font = Font["Sans Serif,10"]
+      Alignment = Align.Right
+    }
+  }
+  Index = 0
+}

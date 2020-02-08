@@ -24,6 +24,8 @@ Private $slstnum As String[]
 Private $clot As Date
 Private $borientation As Boolean
 Private $option As String
+Private $win As Window
+Private $sreg As SaiReg
 
 Property Read aimprimer As Collection
 Property Read consigne As String
@@ -56,7 +58,7 @@ Public Sub _call(Optional num As String, Optional choix As Integer, Optional dte
 
 End
 
-Public Sub calcul(Optional nom As String)
+Public Sub calcul(Optional nom As String)     ''On calcul la facture et on fait la mise en forme
   
   Dim rescons, reslig1, res As Result
   Dim drt As Calculdroit
@@ -384,7 +386,7 @@ Private Sub cdroits(drt As Calculdroit)
   
 End
 
-Public Function borientation() As Boolean
+Public Function borientation() As Boolean     ''regade si la facture doit s'imprimer en mode paysage
   
   Dim res As Result
   Dim lg As Variant
@@ -410,7 +412,7 @@ Public Function borientation() As Boolean
   
 End
 
-Public Sub comptmat(Optional numfac As String, magasin As Boolean)    'enregistrement de la compta matiere à l'edition des factures
+Public Sub comptmat(Optional numfac As String, magasin As Boolean)    ''enregistrement de la compta matiere à l'edition des factures
 
   Dim res, resvig, reslig1, respar As Result
   Dim drt As Calculdroit
@@ -521,7 +523,7 @@ Private Function nvignette() As Integer
   
 End
 
-Public Function poid() As String
+Public Function poid() As String      ''retourne le poid des marchandises
 
   Dim res As Result
   Dim i As Integer
@@ -612,7 +614,7 @@ Private Function clotmat_Read() As Date
 End
 
 '* * * * * * * * * * * * * * * * * * * * * * * * * * les éditions*******************************
-Public Function editefm(Optional courriel As Boolean = False) As Boolean
+Public Function editefm(Optional courriel As Boolean = False) As Boolean        ''Edite les factures fin de mois
   
   Dim res, rResult As Result
   Dim sText, sText2 As String
@@ -637,7 +639,6 @@ Public Function editefm(Optional courriel As Boolean = False) As Boolean
       Until DocActif.get_lock("Facturation", Me.resent!numbl)
     Until Me.resent.MoveNext()
     If Me.ecriturecompt() Then
-      Message.Error("Il y a un problème sur la génération de votre écriture comptable : Client N° " & Me.numcli)
       Me.resent.MoveFirst
       Repeat
         DocActif.Free_Lock("Facturation", Me.resent!numbl)
@@ -687,36 +688,17 @@ Public Function editefm(Optional courriel As Boolean = False) As Boolean
   
 End
 
-Public Function editef() As Boolean
+Public Function editef() As Boolean         ''Edite les factures
   
   Dim i As Integer
   Dim res As Result
 
   Application.Busy += 1
   If Me.testchem() Then Return True
- ' If Me.saisreg And mttc = 0 Then
-  '  If start.son Then
-   '   Music.Play
-   ' Endif
-    'Try Message.Warning("Vous n'avez pas saisi le mode de règlement!")
-   ' Application.Busy -= 1
-    'Return True
-'  Endif
-  'on garni le tableau des réglements
-  If Me.saisreg Then
- '   Me.newregt()
- '   If grregl.Rows.Count = 0 Then ajout_Click
- '   For i = 0 To grregl.Rows.Max
- '     Me.newreg()
- '     Me.lreg.dte = Me.$dtedoc.G
-  '    Me.lreg.mode = grregl[i, 0].Text
-  '    Me.lreg.montant = Val(grregl[i, 1].Text)
- '     Me.lreg.numcli = Me.$numcli
- '     Me.reg.Add(Me.lreg)
- '   Next
-  Endif
+
   Me.AffClient = False
   Me.calcul()
+  Me.resent.MoveFirst()
  
   If Me.resent!imp = 0 Then
     If verifdate() Then Return True
@@ -743,12 +725,26 @@ Public Function editef() As Boolean
     Endif
   Endif
   Me.dupli2()
-  
   Application.Busy -= 1
+  If Me.saisreg Then
+    $win = New Window
+    $sreg = New SaiReg($win, VarEcr.caisse, Me.numcli) As "win"
+    $win.w = $sreg.W
+    $win.H = $sreg.H
+    $win.Border = False
+    $win.Showmodal()
+  Endif
   
 End
 
-Public Function editebl() As Boolean
+Public Sub win_close()
+
+  $sreg.Form_Close()
+  $win.Close
+
+End
+
+Public Function editebl() As Boolean        ''Edite un bl
   
   Application.Busy += 1
   Me.AffClient = False
@@ -771,7 +767,7 @@ Public Function editebl() As Boolean
   
 End
 
-Public Sub visualisation()
+Public Sub visualisation()        ''Visualisation d'un bl ou d'une facture
 
   Dim Filename As String
   
@@ -787,7 +783,7 @@ Public Sub visualisation()
   
 End
 
-Public Sub mail(courriel As String)
+Public Sub mail(courriel As String)       ''Envois de facture par mail
 
   Dim hForm As Commail
   Dim rResult, res As Result
@@ -913,7 +909,7 @@ Private Function verifdate(Optional dtef As Object, dtech As Object) As Boolean
    
 End
 
-Public Sub transblfac()
+Public Sub transblfac()       ''Transfert d'une facture en archive
   
   Dim entfac, ligfac, hmat, sdep As Result
   Dim lg As Variant
@@ -990,7 +986,7 @@ Public Sub transblfac()
   entfac!adr2fac = Me.resent!adr2bl
   entfac!cpfac = Me.resent!cpbl
   entfac!villefac = Me.resent!villebl
-  entfac!Exofac = Me.resent!exobl
+  entfac!exofac = Me.resent!exobl
   entfac!remmofac = Utils.arrondi(Me.remmo, 2)
   entfac!remartfac = utils.arrondi(Me.remart, 2)
   entfac!totfac = Me.montht

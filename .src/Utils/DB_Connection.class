@@ -439,21 +439,32 @@ Public Sub LockIncrement(Field As String, Table As String, Optional p_form As St
   
   Dim rResult As Result
   Dim rResult2 As Result
-  Dim Value As Integer
+  Dim Value, Value1 As Integer
   Dim ctx As Collection
    
   Utils.db.Exec("LOCK TABLES " & Table & " WRITE ")
   With utils
     rResult = Utils.db.Exec("Select " & Field & " FROM " & Table)
     If rResult.Available Then
-      Value = Val(rResult[Field])
+      If TypeOf(rResult[Field]) = gb.Integer Then
+        value = rResult[Field]
+      Else
+        If IsNull(rResult[Field]) Then value = 0 Else Value = Val(rResult[Field])
+      Endif
       Value = Value + 1
-      Utils.db.Exec("Update " & Table & " set " & Field & " = &1", Format(Value, p_form))
+      If TypeOf(rResult[Field]) = gb.Integer Then Utils.db.Exec("Update " & Table & " set " & Field & " = &1", Value) Else Utils.db.Exec("Update " & Table & " set " & Field & " = &1", Format(Value, p_form))
     Endif
   End With
   rResult2 = Utils.db.Exec("Select " & Field & " FROM " & Table)
   If rResult.Available And rResult.Available Then
-    If Val(rResult2[Field]) - Val(rResult[Field]) <> 1 Then
+    If TypeOf(rResult2[Field]) = gb.Integer Then
+        value1 = rResult2[Field]
+        value = rResult[Field]
+      Else
+        Value1 = Val(rResult2[Field])
+        If IsNull(rResult[Field]) Then value = 0 Else Value = Val(rResult[Field])
+      Endif
+    If Value1 - Value <> 1 Then
       Message.Error("Erreur lors de l'increment du champ " & Field & " dans la table " & Table)
     Endif
   Else

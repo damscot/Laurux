@@ -1,0 +1,153 @@
+' Gambas class file
+
+Create Static
+Inherits EcrAuto
+
+Private $resreg As Result 
+
+Public Sub _new(nreg As String)
+
+  $resreg = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", nreg)
+  If Not $resreg.Available Then
+    Error.Raise("Réglement innexistant " & nreg & "\nImpossible d'enregistrer l'écriture")
+  Endif
+  reglement
+
+End
+
+Public Sub _call(njo As String, var As VarEcr, nreg As String) As EcrReg
+
+  Dim ecr As EcrReg
+  
+  ecr = New EcrReg(njo, var, nreg)
+  Return ecr
+
+End
+
+Private Sub reglement()
+  
+  Dim var, cai As VarEcr
+  Dim montantd, montantc, tot As Float
+  Dim cpt As String
+  Dim ind As Integer
+  Dim res As Result
+  
+  Me.Vecr.type = VarEcr.Treso
+  Select Case Me.Vecr.etat
+    
+    Case VarEcr.L_ajou
+      Me.Vecr.plus(Me.Vecr)
+      var = New VarEcr
+      If $resreg!cptint Then
+        var.compte = $resreg!cptint
+      Else
+        var.compte = Me.resjou!cde_banque
+      Endif
+      var.dte = Me.Vecr.dte
+      var.dtee = Me.Vecr.dtee
+      var.dteech = Me.Vecr.dteech
+      var.etat = Me.Vecr.etat
+      var.intitul = Me.Vecr.libelle
+      var.journal = Me.Vecr.journal
+      var.libelle = Me.Vecr.libelle
+      var.montantc = Me.Vecr.montantd
+      var.montantd = Me.Vecr.montantc
+      var.numdoc = Me.Vecr.numdoc
+      var.numero = Me.Vecr.numero
+      var.numlot = Me.Vecr.numlot
+      var.type = Me.Vecr.type
+      Me.Vecr.plus(var)
+     
+  Case VarEcr.L_modif
+    For Each var In Me.Vecr
+      ind = Me.Vecr.trouve(var)
+      res = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", var.compte)
+      If res!coll = 1 Or res!type_cc = "C" Or res!type_cc = "F" Then
+        var.montantc = Me.Vecr.montantc
+        var.montantd = Me.Vecr.montantd
+      Else
+        var.montantc = Me.Vecr.montantd
+        var.montantd = Me.Vecr.montantc
+      Endif
+      var.numdoc = Me.Vecr.numdoc
+      var.numero = Me.Vecr.numero
+      var.numlot = Me.Vecr.numlot
+      var.etat = Me.Vecr.etat
+      var.libelle = Me.Vecr.libelle
+      var.type = Me.Vecr.type
+      var.intitul = Left(Me.Vecr.libelle, 50)
+      var.dte = Me.Vecr.dte
+      Me.Vecr.modifi(ind, var)
+    Next
+    Me.Vecr.plus(Me.Vecr)
+ 
+  Case VarEcr.L_valide
+    For Each var In Me.Vecr
+      ind = Me.Vecr.trouve(var)
+      var.compte = $resreg!cptint
+      Me.Vecr.modifi(ind, var)
+      tot = tot + (var.montantd - var.montantc)
+    Next
+    var = New VarEcr
+    var.compte = Me.resjou!cde_banque
+    If tot < 0 Then
+      var.montantd = tot * -1
+      var.montantc = 0
+    Else
+      var.montantc = tot 
+      var.montantd = 0
+    Endif
+    var.numdoc = ""
+    var.numlot = ""
+    var.dte = LDate(Now)
+    var.type = VarEcr.Treso
+    var.intitul = $resreg!libel & " du " & LDate(Now).L
+    res = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", Me.resjou!cde_banque)
+    var.libelle = res!intitule_cc
+    var.etat = VarEcr.L_valide
+    Me.Vecr.plus(var)
+    
+  Case VarEcr.L_sup
+      For Each var In Me.Vecr
+        ind = Me.Vecr.trouve(var)
+        var.etat = VarEcr.L_sup
+        Me.Vecr.modifi(ind, var)
+      Next
+      Me.Vecr.plus(Me.Vecr)
+      
+  Case VarEcr.L_caisse
+    cpt = Me.Vecr.compte
+    Me.Vecr.plus(Me.Vecr)
+    For Each var In Me.Vecr
+      ind = Me.Vecr.trouve(var)
+      If $resreg!cptint Then
+        var.compte = $resreg!cptint
+      Else
+        var.compte = Me.resjou!cde_banque
+      Endif
+      var.type = VarEcr.Treso
+      Me.Vecr.modifi(ind, var)
+      tot = tot + (var.montantd - var.montantc)
+    Next
+    var = New VarEcr
+    var.compte = cpt
+    var.dte = Me.Vecr.dte
+    var.dtee = Me.Vecr.dtee
+    var.type = VarEcr.Treso
+    var.etat = VarEcr.L_caisse
+    var.intitul = Me.Vecr.intitul
+    var.libelle = Me.Vecr.libelle
+    var.numdoc = Me.Vecr.numdoc
+    var.numlot = Me.Vecr.numlot
+    If tot < 0 Then
+      var.montantd = Round(tot, -2) * -1
+      var.montantc = 0
+    Else
+      var.montantc = Round(tot, -2)
+      var.montantd = 0
+    Endif
+    Me.Vecr.plus(var)
+    
+  End Select
+  
+End

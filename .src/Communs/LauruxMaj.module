@@ -5106,10 +5106,13 @@ end_utf8:
     "libel VarChar(20), " &
     "journal Char(2)," &
     "cptint char(8)," &
-    "type CHAR(1) NOT NULL," &
-    "PRIMARY KEY (code))")
+    "bordereaux Boolean DEFAULT False," &
+    "lcr Integer DEFAULT 0," &
+    "caisse Integer DEFAULT 0," &
+    "decaissement Boolean DEFAULT False," &
+    "regroup Boolean DEFAULT True," &
+    "PRIMARY KEY (code)) ENGINE=InnoDB")
  
-  'type = "I" virement interne J journaux B borderaux L lcr A lcr acceptées N pas de traitement
   'on garni le fichier avec les reseignements des parametres et prefs
   pb.Avancement("Espèces", 1)
   respar = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
@@ -5118,20 +5121,16 @@ end_utf8:
     res = Utils.db.Create("Fiches_Reglements")      '01 especes
     res!code = "01"
     res!libel = "Espèces"
-    res!journal = respar!jrnal3
-    res!type = "J"
+    res!journal = respar!jrnal2
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='01' WHERE cli_reg=&1", "Espèces")
     pb.Avancement("Chéques", 1)
     res = Utils.db.Create("Fiches_Reglements")      '05 Cheques
     res!code = "05"
-    res!libel = utils.Replace("Chèque")
-    res!journal = respar!jrnal2
+    res!libel = "Chèque"
+    res!journal = respar!jrnal3
     If Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"] Then
       res!cptint = respar!viremchq
-      res!type = "I"
-    Else
-      res!type = "B"
     Endif
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='05' WHERE cli_reg=&1", "Chèque")
@@ -5139,12 +5138,9 @@ end_utf8:
     res = Utils.db.Create("Fiches_Reglements")      '10 cartes
     res!code = "10"
     res!libel = "Carte"
-    res!journal = respar!jrnal2
+    res!journal = respar!jrnal3
     If Start.LocalSettings["/Soc" & Start.Societe & "/Carte"] Then
       res!cptint = respar!viremc
-      res!type = "I"
-    Else
-      res!type = "J"
     Endif
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='10' WHERE cli_reg='Carte'")
@@ -5153,10 +5149,7 @@ end_utf8:
     res!code = "15"
     res!libel = "Paypal"
     If respar!virema Then
-      res!journal = respar!jrnal2
-      res!type = "I"
-    Else
-      res!type = "N"
+      res!journal = respar!jrnal3
     Endif
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='15' WHERE cli_reg='Paypal'")
@@ -5164,28 +5157,30 @@ end_utf8:
     res = Utils.db.Create("Fiches_Reglements")      '20 Virement
     res!code = "20"
     res!libel = "Virement"
-    res!type = "N"
+    res!journal = respar!jrnal3
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='20' WHERE cli_reg='Virement'")
     pb.Avancement("Prélèvement", 1)
     res = Utils.db.Create("Fiches_Reglements")      '25 Prelevement
     res!code = "25"
     res!libel = "Prélèvement"
-    res!type = "N"
+    res!journal = respar!jrnal3
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='25' WHERE cli_reg=&1", "Prélèvement")
     pb.Avancement("Traite", 1)
     res = Utils.db.Create("Fiches_Reglements")      '30 Traite acceptées
     res!code = "30"
     res!libel = "Traite"
-    res!type = "A"
+    res!journal = respar!jrnal3
+    res!lcr = Mreglement.lcr_acc
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='30' WHERE cli_reg='Traite'")
     pb.Avancement("Lcr", 1)
     res = Utils.db.Create("Fiches_Reglements")      '35 Traite
     res!code = "35"
     res!libel = "Lcr"
-    res!type = "L"
+    res!lcr = Mreglement.lcr_nacc
+    res!journal = respar!jrnal3
     res.Update
     Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='35' WHERE cli_reg='Lcr'")
   Endif
@@ -5385,7 +5380,7 @@ end_utf8:
         'Pour tout les tickets on applique la date pour chaque ligne
         Try Utils.db.Exec("UPdate Fiches_HisLigTickets SET date = &1 WHERE numero = &2", LDate(rResult!date).DT, rResult!numero)
       Else
-        Message.Error("Conversion de date non implementé! Ceci ne devrait jamais arriver")
+'        Message.Error("Conversion de date non implementé! Ceci ne devrait jamais arriver")
       Endif
       lasttk = rResult!numero
     Until rResult.MoveNext()

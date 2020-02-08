@@ -346,9 +346,8 @@ Public Sub Button1_Click()
     dteN = Right$(dteN1.Text, 4) & Mid$(dteN1.Text, 4, 2) & Left$(dteN1.Text, 2)
     dtei = New LDate(DateAdd(Now, gb.Year, -8))
     dtes = New LDate(DateAdd(Now, gb.Year, 8))
-    lstex = New Listextcpt("411%", dtei.L, dtes.L, "n", True, "dte asc", "relance", dten)
+    lstex = New Listextcpt("411%", dtei.L, dtes.L, "n", "dte asc", "relance", dten)
     rResult = lstex.resext
-'    rResult = Utils.db.Exec("SELECT * FROM " & tab & " where left(compte,3) = &1 and dateech <= &2 and tresorerie = &3 and collectif is null and lettree = &4 or left(compte,3) = &1 and dateech is null and tresorerie = &3 and collectif is null and lettree = &4  or left(compte,3) = &1 and dte <= &2 and tresorerie = &5 and collectif is null and lettree = &4", "411", dteN, 0, 0, 1)
     If rResult.Available Then
      prgb = New ProgBar("Génération des relances", rResult.Count)
      prgb.Show

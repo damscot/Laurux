@@ -1,38 +1,44 @@
 ' Gambas class file
 
-Private bs As Barselection
+Public Enum sans_lcr, lcr_nacc, lcr_acc
+Public Enum sans_caisse, espece, carte, cheque, bon_achat, cheque_cadeaux, autre, cheque_entreprise, bonus, ticket_resto
+Public RegCais As String[] = ["Sans", "Espéce", "Carte", "Chèque", "Bon d'achat", "Chèque cadeaux", "Autres", "Chèque entreprise", "Bonus", "Tickets restaurant"]
+
 Private $ressel As Result
 Private $res As Result
+Private $bars As Barselection
 
 Public Sub _new()
 
+  Dim i As Integer
   Dim ch As Chainage
-'  Utils.Observers(Me)
-  bs = New Barselection("111111111", menu) As "bar1"
-  ch = New Chainage([code, libel, jour, cptint])
+
+  ch = New Chainage([code, libel, jour])
+  Utils.Observers(Me)
+  $bars = New Barselection("001110010", sel) As "bar1"
+  GridView1.Columns.Count = 3
+  GridView1.Columns[0].Text = "Code"
+  GridView1.Columns[0].Alignment = Align.Center
+  GridView1.Columns[0].Width = 70
+  GridView1.Columns[1].Text = "Libéllé"
+  GridView1.Columns[1].Alignment = Align.Center
+  GridView1.Columns[1].Expand = True
+  GridView1.Columns[2].Text = "Journal"
+  GridView1.Columns[2].Alignment = Align.Center
+  GridView1.Columns[2].Width = 70
+  
   code.MaxLenght = 2
   libel.MaxLenght = 20
   jour.MaxLenght = 2
-  cptint.reg = "[0-9]*"
-  cptint.MaxLenght = 8
-  code.SetFocus
+  cptint.reg = "[0-9]{0,9}"
   $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
   If $ressel.Available Then
-    affiche()
+    GridView1.rows.Count = $ressel.Count
   Endif
-  
-End
-
-Private Sub mab()
-  
-  code.Clear
-  libel.Clear
-  jour.Clear
-  cptint.Clear
-  non.Value = True
-  libjo.text = ""
-  libcpt.Text = ""
-  
+  For i = 0 To RegCais.Max
+    Combocais.Add(RegCais[i], i)
+  Next
+  Combocais.Tag = 0
 End
 
 Private Sub affiche()
@@ -41,46 +47,33 @@ Private Sub affiche()
   
   If Not Object.IsValid($ressel) Then Return
   If Not $ressel.Available Then Return
+ 
+  jour.Text = $ressel!journal
+  If $ressel!cptint Then interne.Value = True Else interne.Value = False
+  cptint.Text = $ressel!cptint
   code.Text = $ressel!code
   libel.Text = $ressel!libel
-  jour.Text = $ressel!journal
-  cptint.Text = $ressel!cptint
-  
-  Select Case $ressel!type
-    Case "N"
-      non.Value = True
-    Case "I"
-      interne.Value = True
-    Case "J"
-      journal.Value = True
-      Case "B"
-        borderau.Value = True
-      Case "L"
-        lcr.Value = True
-      Case "A"
-        lcra.Value = True
-      
+  Combocais.Tag = $ressel!caisse
+  regr.Value = $ressel!regroup
+  Combocais.Text = RegCais[$ressel!caisse]
+  Select Case $ressel!lcr
+    Case sans_lcr
+      sanslcr.Value = True
+    Case lcr_acc
+      lcra.Value = True
+    Case lcr_nacc
+      lcr.Value = True
   End Select
+  decaissement.Value = $ressel!decaissement
+  borderau.Value = $ressel!bordereaux
+  
   res = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", jour.Text)
   If res.Available Then libjo.Text = res!libelle_jo Else libjo.Text = ""
   res = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", cptint.Text)
-  If res.Available Then cptint.Text = res!intitule_cc Else cptint.Text = ""
+  If res.Available Then libcpt.Text = res!intitule_cc Else libcpt.Text = ""
   
 End
 
-Public Sub code_LostFocus()
-
-  Dim res As Result
-  
-  If code.Text Then
-    res = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", code.Text)
-    If res.Available And bs.estcreer Then
-      Message.Error("Création impossible\nCode existant")
-      code.SetFocus
-    Endif
-  Endif
-
-End
 'riado button
 Public Sub interne_Click()
 
@@ -99,52 +92,24 @@ Public Sub rdb_click()
 
 End
 'gestion des boutons de selection
-Public Sub bar1_precedent()
-  
-  If Not Object.IsValid($ressel) Then Return
-  If $ressel.MovePrevious() Then $ressel.MoveFirst
-  affiche
-  
-End
-
-Public Sub bar1_suivant()
-  
-  If Not Object.IsValid($ressel) Then Return
-  If $ressel.MoveNext() Then $ressel.MoveLast
-  affiche
-  
-End
-
-Public Sub bar1_dernier()
-  
-  If Not Object.IsValid($ressel) Then Return
-  $ressel.MoveLast()
-  affiche
-  
-End
-
-Public Sub bar1_premier()
-  
-  If Not Object.IsValid($ressel) Then Return
-  $ressel.MoveFirst()
-  affiche
-  
-End
 
 Public Sub bar1_creer()
   
-  mab
+  code.Enabled = True
+  libel.Enabled = True
+  code.SetFocus
   Utils.db.Begin
   $res = Utils.db.Create("Fiches_Reglements")
-  code.Enabled = True
-  code.SetFocus
   
 End
 
 Public Sub bar1_modif()
   
   Utils.db.Begin
+  $ressel.MoveTo(GridView1.Row)
   $res = Utils.db.Edit("Fiches_Reglements", "code=&1", $ressel!code)
+  code.Enabled = False
+  libel.Enabled = True
   
 End
 
@@ -152,7 +117,7 @@ Public Sub bar1_annule(creer As Boolean, anul As Boolean)
   
   Utils.db.Rollback
   code.Enabled = False
-  affiche
+  libel.Enabled = False
   
 End
 
@@ -167,7 +132,7 @@ Public Sub bar1_valide(creer As Boolean, anul As Boolean)
     code.SetFocus
     Return
   Endif
-  If non.Value Then $res!type = "N"
+
   If interne.Value Then
     If Not cptint.Text Then
       Message.Error("compte interne obligatoire")
@@ -175,29 +140,34 @@ Public Sub bar1_valide(creer As Boolean, anul As Boolean)
       cptint.SetFocus
       Return
     Else
-      $res!type = "I"
       $res!cptint = cptint.Text
     Endif
   Endif
-  If borderau.Value Then $res!type = "B"
-  If journal.Value Then $res!type = "J"
-  If interne.Value Or borderau.Value Or journal.Value And Not jour.Text Then
+
+  If Not jour.Text Then
     Message.Error("N° de journal obligatoire")
     jour.SetFocus
     Utils.db.Rollback
     Return
   Endif
-  If lcr.Value Then $res!type = "L"
-  If lcra.Value Then $res!type = "A"
-  $res!code = code.Text
+  $res!lcr = sans_lcr
+  If lcr.Value Then $res!lcr = lcr_nacc
+  If lcra.Value Then $res!lcr = lcr_nacc
+  If code.Enabled Then $res!code = code.Text
   $res!libel = libel.Text
-  Result!journal = jour.Text
-  
+  $res!journal = jour.Text
+  $res!decaissement = decaissement.Value
+  $res!bordereaux = Borderau.Value
+  $res!caisse = Combocais.Index
+  $res!regroup = regr.Value
   $res.Update
   Utils.db.Commit
+  
   $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
   $ressel.MoveTo(i)
-  affiche
+  GridView1.Rows.Count = $ressel.Count
+  code.Enabled = False
+  libel.Enabled = False
   
 End
 
@@ -220,7 +190,7 @@ Public Sub jour_LostFocus()
   Dim res As Result
   
   If jour.Text Then
-    res = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", jour.Text)
+    res = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1 AND type_jo='TR'", jour.Text)
     If res.Available Then 
       libjo.Text = res!libelle_jo
     Else
@@ -250,8 +220,21 @@ Public Sub cptint_LostFocus()
   Endif
   
 End
-'recherche
 
+Public Sub Combocais_Click()
+
+  Dim res As Result
+  
+    If Combocais.Index <> Combocais.Tag And Combocais.Index <> 0 Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE caisse=&1", Combocais.Index)
+    If res.Available Then
+      Message.Warning("Liaison déjà définie")
+      Combocais.Text = RegCais[sans_caisse]
+    Endif
+  Endif
+
+End
+'recherche
 Public Sub Butint_Click()
 
   Dim MyForm As TriComptes
@@ -309,7 +292,7 @@ Public Sub butjour_Click()
     recherche.Tag = 2
     recherche.Visible = True
     recherche.Raise
-    res = Utils.db.Exec("SELECT * FROM Fiches_Journaux")
+    res = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE type_jo='TR'")
     res.MoveFirst
     Repeat
       recherche.Add(res!code_jo, res!code_jo & " " & res!libelle_jo)
@@ -318,7 +301,7 @@ Public Sub butjour_Click()
 
 End
 'gestion listeview
-Public Sub recherche_Activate()
+Public Sub recherche_Click()
 
   Select Case Last.Tag
     Case 1
@@ -346,3 +329,25 @@ Public Sub recherche_KeyPress()
   Endif
 
 End
+
+Public Sub GridView1_Data(Row As Integer, Column As Integer)
+
+  $ressel.MoveTo(row)
+  Select Case Column
+    Case 0
+       GridView1.Data.Text = $ressel!code
+    Case 1
+       GridView1.Data.Text = $ressel!libel
+    Case 2
+       GridView1.Data.Text = $ressel!journal
+  End Select
+ 
+End
+
+Public Sub GridView1_Click()
+
+  $ressel.MoveTo(GridView1.Row)
+  affiche()
+
+End
+

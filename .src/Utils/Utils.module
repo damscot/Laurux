@@ -1478,6 +1478,7 @@ Public Function arrondi(montant As Variant, ndec As Integer) As Float
   For i = 1 To ndec
     multp = multp * 10
   Next
+  If Round(retour, -ndec) = 0 Then retour = 0
   ch = Str(retour)
   ch = Str(Val(ch) * multp)
   tab = Split(ch, ",")

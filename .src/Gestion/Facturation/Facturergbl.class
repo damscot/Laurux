@@ -1242,6 +1242,7 @@ Public Sub Ent_Bl(sclient As String, nbon As String, Fus_art As Boolean, Optiona
   Dim qte, brut, netht, nettc As Float
   Dim tht As String = "0.00"
   Dim ttc As String = "0.00"
+  Dim mrgart, mrgmo As Float
 
   Remmo = 0
   Remart = 0
@@ -1285,15 +1286,18 @@ Public Sub Ent_Bl(sclient As String, nbon As String, Fus_art As Boolean, Optiona
                 brut = Val(utils.cpoint(Ligart!brut_ligbl)) + Val(utils.cpoint(Ligbonl!brut_ligbl))
                 netht = Val(utils.cpoint(Ligart!netht_ligbl)) + Val(utils.cpoint(Ligbonl!netht_ligbl))
                 nettc = Val(utils.cpoint(Ligart!nettc_ligbl)) + Val(utils.cpoint(Ligbonl!nettc_ligbl))
+                If Not IsNull(Entbonl!mrgart_ligbl) Then mrgart += Entbonl!mrgart_ligbl
+                If Not IsNull(Entbonl!mrgmo_ligbl) Then mrgmo += Entbonl!mrgmo_ligbl
                 ' On ne fusionne que les articles identiques avec des remises identiques (la remise reste donc en %)
                 ' rem = Val(.CPoint(brut)) - Val(.CPoint(netht))
-                Utils.db.Exec("UPdate " & LigBon & " SET qte_ligbl = &1, brut_ligbl = &2, rem_ligbl = &3, netht_ligbl = &4, nettc_ligbl = &5, dte_ligbl = &6 WHERE num_ligbl = &7 and code_ligbl = &8 and rem_ligbl = &9 and pu_ligbl = &10", Left$(utils.cpoint(qte), 6), Left$(utils.cpoint(brut), 10), Left$(Ligbonl!rem_ligbl, 6), Left$(utils.cpoint(netht), 10), Left$(utils.cpoint(nettc), 10), Ligbonl!dte_ligbl, Nbon, Ligbonl!code_ligbl, Left$(Ligbonl!rem_ligbl, 6), Ligbonl!pu_ligbl)
+                Utils.db.Exec("UPdate " & LigBon & " SET qte_ligbl = &1, brut_ligbl = &2, rem_ligbl = &3, netht_ligbl = &4, nettc_ligbl = &5, dte_ligbl = &6, mrgart_ligbl=&11,mrgmo_ligbl=&12 WHERE num_ligbl = &7 and code_ligbl = &8 and rem_ligbl = &9 and pu_ligbl = &10", Left$(utils.cpoint(qte), 6), Left$(utils.cpoint(brut), 10), Left$(Ligbonl!rem_ligbl, 6), Left$(utils.cpoint(netht), 10), Left$(utils.cpoint(nettc), 10), Ligbonl!dte_ligbl, Nbon, Ligbonl!code_ligbl, Left$(Ligbonl!rem_ligbl, 6), Ligbonl!pu_ligbl, Format(mrgart, "0.00"), Format(mrgmo, "0.00"))
+                Nlgn = Format$(Val(Nlgn) - 1, "0000")
               Else
-                Utils.db.Exec("INSERT INTO " & Ligbon & "(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl) VALUES (&1,&2,&3,&4,&5,&6,&7,&8,&9,&{10},&{11},&{12},&{13},&{14},&{15},&{16},&{17},&{18})", Nbon, Nlgn, Ligbonl!code_ligbl, Ligbonl!libel_ligbl, Ligbonl!fam_ligbl, Ligbonl!pu_ligbl, Ligbonl!qte_ligbl, Ligbonl!brut_ligbl, Ligbonl!rem_ligbl, Ligbonl!netht_ligbl, Ligbonl!tx_ligbl, Ligbonl!nettc_ligbl, Ligbonl!typel_ligbl, Ligbonl!tm_ligbl, Ligbonl!com_ligbl, Nlgn, TauxTva, Ligbonl!dte_ligbl)
+                Utils.db.Exec("INSERT INTO " & Ligbon & "(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES (&1,&2,&3,&4,&5,&6,&7,&8,&9,&{10},&{11},&{12},&{13},&{14},&{15},&{16},&{17},&{18},&{19},&{20})", Nbon, Nlgn, Ligbonl!code_ligbl, Ligbonl!libel_ligbl, Ligbonl!fam_ligbl, Ligbonl!pu_ligbl, Ligbonl!qte_ligbl, Ligbonl!brut_ligbl, Ligbonl!rem_ligbl, Ligbonl!netht_ligbl, Ligbonl!tx_ligbl, Ligbonl!nettc_ligbl, Ligbonl!typel_ligbl, Ligbonl!tm_ligbl, Ligbonl!com_ligbl, Nlgn, Ligbonl!mtx_ligfac, Ligbonl!dte_ligbl, Ligbonl!mrgart_ligbl, Ligbonl!mrgmo_ligbl)
               Endif
             Endif
-            Try rTva = Utils.db.Exec("select * from " & Cbase.Table("TabTvav") & " where code_tva = &1", Ligbonl!tx_ligbl)
-            If rTva.available Then TauxTva = rTva!taux_tva
+'            Try rTva = Utils.db.Exec("select * from " & Cbase.Table("TabTvav") & " where code_tva = &1", Ligbonl!tx_ligbl)
+'            If rTva.available Then TauxTva = rTva!taux_tva
           Until Ligbonl.MoveNext()
         Endif
         Utils.db.Exec("DELETE FROM " & Ligbon & " where num_ligbl = &1", Bonl!numbl)
