@@ -23,6 +23,7 @@ Private Sub affiche()
     resnum.MoveFirst
     Repeat
       If suspendu(resnum!num) Then
+        If TreeView1.Exist(resnum!num) Then Continue
         If resnum!type = "S" Then
           res = utils.db.Exec("SELECT nmclibl AS lib FROM Fiches_Bl WHERE numfac=&1", resnum!num)
           If Not res.Available Then
@@ -101,7 +102,7 @@ Private Sub Modif()
     Endif
     $bmod = False
     If Len($ancienval) > 0 Then
-      TreeView1.Current.Text = Left(TreeView1.Current.Text, - Len($ancienval)) & Textvig.Text
+      TreeView1.Current.Text = Left(TreeView1.Current.Text, -Len($ancienval)) & Textvig.Text
     Else
       TreeView1.Current.Text = TreeView1.Current.Text & Textvig.Text
     Endif
