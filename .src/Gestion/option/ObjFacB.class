@@ -621,7 +621,7 @@ Public Function editefm(Optional courriel As Boolean = False) As Boolean        
   Dim pgb As ProgBar
   
   If Me.testchem() Then Return 
-  If verifdate() Then Return 
+  If verifdat() Then Return 
   res = utils.db.Exec("SELECT * FROM Facturefm")
   Me.AffClient = False       'option pour affichge client sur les mails
   'on recupere les clients à facturer
@@ -701,7 +701,10 @@ Public Function editef() As Boolean         ''Edite les factures
   Me.resent.MoveFirst()
  
   If Me.resent!imp = 0 Then
-    If verifdate() Then Return True
+    If verifdat() Then 
+      Application.Busy -= 1
+      Return True
+    Endif
     If Me.ecriturecompt() Then
       Message.Error("Il y a un problème sur la génération de votre écriture comptable : Bon N° " & Me.numbl)
       Application.Busy -= 1
@@ -753,7 +756,7 @@ Public Function editebl() As Boolean        ''Edite un bl
   If Me.choix = ObjFac.bl And Me.resent!imp = 0 Then
     If Me.testchem() Then Return True
     If Me.dtmouv Then
-      If verifdate() Then Return True
+      If verifdat() Then Return True
     Endif
   Endif
   If Me.resent!imp = 1 Then Me.choix = ObjFac.facture
@@ -863,50 +866,56 @@ Public Sub mail(courriel As String)       ''Envois de facture par mail
 End
 
 'fonction sur les dates 
-Private Function verifdate(Optional dtef As Object, dtech As Object) As Boolean
+Private Function verifdat(Optional dtef As Object, dtech As Object) As Boolean
   
   Dim res As Result
   Dim dte As LDate
+  Dim vrd As VerifDate
   
      'gestion des dates
  
   If $borientation Then        'on regarde la corespondance date cm et date de mouvement article
-    If Me.dtmouv Then          ' true que si choix="F" ou "B"
-      If Utils.valart(Me.dtedoc.G) Then
-        Message.Warning("Période CM déjà clôturée \n Veuillez changer la date du document")
-'        Dtef.SetFocus
-'        Dtef.Select
-        Return True
-      Endif
+    If Me.dtmouv Then          ' true que si facture ou bl
+      vrd = New VerifDate(Me.dtedoc.G)
+      If vrd.ClotFac() Then Return True
     Else
       If Me.choix = ObjFac.finmois Then         'cas des factures fin de mois ou il faut regarder dans tous les bl
         res = Utils.db.Exec("SELECT * FROM Bl")
         If res.Available Then
           res.MoveFirst
           Repeat
-            If Utils.valart(Null, "", Me.res!num) Then
-               Message.Warning("Période CM déjà clôturée sur le BL : ") '& res!num & " " & adrfac.nom & "\n Veuillez changer la date des mouvements")
-  '            Dtef.SetFocus
-  '            Dtef.Select
-              Return True
-            Endif
+            If datebl(res!num) Then Return True
           Until res.MoveNext()
         Endif
       Endif
       If Me.choix = ObjFac.facture Or Me.choix = ObjFac.bl Then
-        If Utils.valart(Null, "", Me.numbl) Then
-          Message.Warning("Période CM déjà clôturée sur le BL : " & Me.numbl & " " & Me.adrfac.nom & "\n Veuillez changer la date des mouvements")
- '         Dtef.SetFocus
-'          Dtef.Select
-          Return True
-        Endif
+        If datebl(Me.numbl) Then Return True
       Endif
     Endif
   Endif
-  If Super.verifdate(dtef, dtech) Then Return True
+  If Super.verifdat(dtef, dtech) Then Return True
   
   Return False
    
+End
+
+Private Function datebl(num As String) As Boolean
+  
+  Dim vrd As VerifDate
+  Dim reslbl As Result
+   
+  reslbl = Utils.db.Exec("SELECT code_ligbl,dte_ligbl FROM Fiches_Ligbl WHERE num_ligbl=&1", num)
+  If reslbl.Available Then
+    Repeat
+      vrd = New Verifdate(reslbl!dte_ligbl)
+      If vrd.ClotDroi(reslbl!code_ligbl) Then 
+        Message.Info("BL : " & num & " article : " & reslbl!code_ligbl)
+        Return True
+      Endif
+    Until reslbl.MoveNext()
+  Endif
+  Return False
+
 End
 
 Public Sub transblfac()       ''Transfert d'une facture en archive

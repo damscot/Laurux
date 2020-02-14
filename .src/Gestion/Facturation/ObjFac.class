@@ -228,8 +228,8 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
   blrecap = Start.LocalSettings["/Soc" & Start.Societe & "/ImpTotbl"]
   poids = Start.LocalSettings["/Soc" & Start.Societe & "/Poids"] 
  ' casier = Start.LocalSettings["/Soc" & Start.Societe & "/Casier"] 
-  breg = Start.LocalSettings["/Soc" & Start.Societe & "/Fht"] 
-  If breg Then treg = Start.LocalSettings["/Soc" & Start.Societe & "/Schmprix"]
+  breg = Start.LocalSettings["/Soc" & Start.Societe & "/TxtF"] 
+  If breg Then treg = Start.LocalSettings["/Soc" & Start.Societe & "/LTxtF"]
   saisreg = Start.LocalSettings["/Soc" & Start.Societe & "/Rglt"] 
   If choix = ObjFac.finmois Then saisreg = False
   doclet = Start.LocalSettings["/Soc" & Start.Societe & "/Totstring"]
@@ -798,46 +798,25 @@ Private Function mult(fac1 As Variant, fac2 As Variant, ndec As String) As Strin
 End
 
 'fonction sur les dates 
-Public Function verifdate(Optional dtef As Object, Dtech As Object) As Boolean
+Public Function verifdat(Optional dtef As Object, Dtech As Object) As Boolean
   
   Dim res As Result
   Dim dte As LDate
+  Dim vrd As VerifDate
   
      'gestion des dates
   If IsNull($dtedoc.L) Then
     Message.Warning("Attention ! Vous devez mettre une date de facturation", "Ok")
-    Stop Event
-  '  Dtef.SetFocus
     Return True
   Endif
-  If Not IsNull($dteech) Then
-    If IsNull($dteech.L) Then
-      Message.Warning("Attention ! Vous devez mettre une date d'échéance", "Ok")
-       Stop Event
-'     Dtech.Text = Dtef.dte.L
- '    Dtech.SetFocus
-      Return True
-    Endif
+  If IsNull($dteech) And (choix = ObjFac.facture Or choix = ObjFac.finmois Or choix = ObjFac.abonnement) Then
+    Message.Warning("Attention ! Vous devez mettre une date d'échéance", "Ok")
+    Return True
+    
   Endif
-  If (choix = "F" Or choix = "FM") Then
-    res = Utils.db.Exec("SELECT dtepp,dtepec FROM Fiches_Parametres")
-    If res.Available Then
-      dte = New LDate("01." & res!dtepp)
-      If $dtedoc.Avant(dte, True) Then
-        Message.Warning("Attention ! Impression de facture impossible. \nLa date saisie est inférieure à la période précédente. \nVeuillez faire vos clotures SVP !", "Ok")
-        Stop Event
-'        Dtef.SetFocus
-        Return True
-      Endif
-      dte.L = "01." & res!dtepec
-      dte.G = DateAdd(dte.G, gb.Month, 1)
-      If $dtedoc.Apres(dte.FinMois, True) Then
-        Message.Warning("Attention ! Impression de facture impossible. \nLa date saisie est supérieure à la période autorisée. \nVeuillez faire votre cloture mensuelle en facturation SVP", "Ok") 
-        Stop Event
-'        Dtef.SetFocus
-        Return True
-      Endif
-    Endif
+  If (choix = ObjFac.facture Or choix = ObjFac.finmois) Then
+    vrd = New VerifDate($dtedoc.G)
+    If vrd.ClotFac() Then Return True
   Endif
   If dtmouv Then        'on change la date de mouvement article
     utils.db.Exec("UPDATE Fiches_Ligbl SET dte_ligbl=&1 WHERE num_ligbl=&2 and typel_ligbl='A'", $dtedoc.G, Me.numbl)
@@ -916,7 +895,7 @@ Public Sub Dupli2()
       edit.Print(imp)
       res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $numcli, chemin & "/" & ty & ".pdf")
       If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $numcli, chemin & "/" & ty & ".pdf", $numcli & "," & ty & ",", "Facs")
-      If choix = "F" Or choix = "FM" Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
+      If choix = ObjFac.facture Or choix = ObjFac.finmois Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
     Endif
   Else
       chemin = User.Home & "/Impressions"

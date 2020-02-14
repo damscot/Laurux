@@ -334,15 +334,14 @@ End
 Public Sub Maj_colrcp()
 
   Dim qte As Float
+  Dim vrd As VerifDate
 
-  If $soption = "B" Or $soption = "T" Then 
-    If utils.valart(datej.dte.g, Cart.Text) Then
-      Message.Warning("Période CM déjà clôturée \n Veuillez changer la date")
-      datej.SetFocus
-      Return
-    Endif
-  Endif
   If IsNull(Cart.Text) Then Return
+  If $soption = "B" Or $soption = "T" Then 
+    vrd = New VerifDate(datej.dte.g)
+    If vrd.ClotDroi(Cart.Text) Then Return
+  Endif
+  
   If Not Colrcp.Exist(Cart.Text) Then
     Colrcp.Add(Cart.text, Cart.text)
     Colrcp.Item[0] = Cart.text

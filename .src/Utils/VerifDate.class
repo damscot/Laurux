@@ -1,0 +1,154 @@
+' Gambas class file
+
+Create Static
+Inherits LDate
+
+
+Private $opt As String
+Private $respar As Result
+
+Public DateSus As LDate     ''date de clôture de la CM en droit suspendu
+Public DateAcq As LDate     ''date de clôture de la CM en droit acquité
+Public DateCom As LDate    ''date de clôture comptable
+Public DateGes As LDate     ''date de clôture gestion/période en cours
+
+Public Sub _new()
+
+  Dim ressus As Result
+  Dim resacq As Result
+ 
+  $opt = Utils.Option()
+  If $opt = "B" Or $opt = "T" Then $respar = Utils.db.Exec("SELECT dtepc,dtepec,arrete FROM Fiches_Parametres") Else $respar = Utils.db.Exec("SELECT dtepc,dtepec FROM Fiches_Parametres") 
+  DateCom = New LDate($respar!dtepc)
+  DateGes = New LDate("01." & $respar!dtepec)
+  
+  If $opt = "B" Or $opt = "T" Then
+    ressus = utils.db.Exec("SELECT dtmouv FROM Fiches_ligregie,Fiches_regie WHERE Fiches_regie.code=coderegie AND (Fiches_ligregie.type='I' or Fiches_ligregie.type='M') AND  suspendu= True ORDER BY dtmouv DESC LIMIT 1")
+    If ressus.Available Then 
+      DateSus = New LDate(ressus!dtmouv)
+    Else
+      If $respar!arrete Then
+        DateSus = New LDate("01." & $respar!arrete)
+        DateSus = New LDate(DateAdd(DateSus.G, gb.Month, 1))
+      Else
+        Error.Raise("Veuillez compléter la date d'arrété du dernier exercice dans les préférences")
+      Endif
+    Endif
+    resacq = utils.db.Exec("SELECT dtmouv FROM Fiches_ligregie,Fiches_regie WHERE Fiches_regie.code=coderegie AND (Fiches_ligregie.type='I' or Fiches_ligregie.type='M') AND  suspendu= False ORDER BY dtmouv DESC LIMIT 1")
+    If resacq.Available Then
+      DateAcq = New LDate(resacq!dtmouv)
+    Else
+      If $respar!arrete Then
+        DateAcq = New LDate("01." & $respar!arrete)
+        DateAcq = New LDate(DateAdd(DateAcq.G, gb.Month, 1))
+      Else
+        Error.Raise("Veuillez compléter la date d'arrété du dernier exercice dans les préférences")
+      Endif
+    Endif
+  Endif
+
+End
+
+Public Sub _call(Optional DateOrYear As Variant, Optional Month As Integer = 1, Optional Day As Integer = 1, Optional Hour As Integer, Optional Minute As Integer, Optional Second As Integer, Optional Millisecond As Integer) As VerifDate
+
+  Dim vrd As VerifDate
+  
+  vrd = New VerifDate(DateOrYear, Month, Day, Hour, Minute, Second, Millisecond)
+  Return vrd
+
+End
+'******************Fonctions sur les dates de facture *************************************
+Public Function ClotComptable() As Boolean      ''Retourne si la date est inférieur à la derniere date de clôture mensuel comptable
+
+  If Me.Avant(DateCom) Then
+    Message.Warning("Cette période comptable est clôturée : Impossible de valider ce mouvement")
+    Return True
+  Endif
+  Return False
+  
+End
+
+Public Function ClotGestion() As Boolean      ''Retourne si la date est inférieur à la derniere date de clôture mensuel en gestion
+
+  Dim dte As LDate
+
+  dte = New LDate(DateAdd(DateGes.G, gb.Month, 1))
+  If Me.Avant(DateGes, True) Then 
+    Message.Warning("Cette période de facturation est clôturée : Impossible de valider ce mouvement")
+    Return True
+  Endif
+  If Me.Apres(dte, True) Then
+    Message.Warning("Date supérieur à la période clôturée : Impossible de valider ce mouvement")
+    Return True
+  Endif
+  Return False
+
+End
+
+Public Function ClotFac() As Boolean        ''retourne si la date de facture est bonne
+
+  If ClotComptable() Then Return True
+  If ClotGestion() Then Return True
+  Return False
+  
+End
+
+'*********************Fonctions sur les dates de mouvements*******************************
+Public Function ClotSuspendu(Optional nart As String, Optional droi As String) As Boolean  
+  
+  Dim resart, resdroi As Result
+  
+  If $opt <> "B" And $opt <> "T" Then Return False
+  If nart Then
+    resart = Utils.db.Exec("SELECT art_dra FROM Fiches_Art WHERE art_code=&1", nart)
+    If resart.Available Then droi = resart!art_dra
+  Endif
+  If droi Then
+    resdroi = Utils.db.Exec("SELECT * FROM Fiches_regie WHERE code=&1", droi)
+    If resdroi.Available Then
+      If Not resdroi!suspendu Then Return False
+    Else
+      Return False
+    Endif
+  Endif
+  If Me.Avant(DateSus, True) Then 
+    Message.Warning("La CM en droit suspendu est clôturée pour cette période : " & Me.L)
+    Return True
+  Endif
+  Return False
+  
+End
+
+Public Function ClotAcquite(Optional nart As String, Optional droi As String) As Boolean  
+  
+  Dim resart, resdroi As Result
+  
+  If $opt <> "B" And $opt <> "T" Then Return False
+  If nart Then
+    resart = Utils.db.Exec("SELECT art_dra FROM Fiches_Art WHERE art_code=&1", nart)
+    If resart.Available Then droi = resart!art_dra
+  Endif
+  If droi Then
+    resdroi = Utils.db.Exec("SELECT * FROM Fiches_regie WHERE code=&1", droi)
+    If resdroi.Available Then
+      If resdroi!suspendu Then Return False
+    Else
+      Return False
+    Endif
+  Endif
+  If Me.Avant(DateAcq, True) Then 
+    Message.Warning("La CM en droit acquité est clôturée pour cette période : " & Me.L)
+    Return True
+  Endif
+  Return False
+  
+End
+
+
+Public Sub ClotDroi(Optional nart As String, Optional droi As String) As Boolean           ''Si la date de mouvement est dans les bornes  de la CM
+  
+  If ClotSuspendu(nart, droi) Then Return True
+  If ClotAcquite(nart, droi) Then Return True
+  Return False
+  
+End

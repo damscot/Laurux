@@ -250,7 +250,7 @@ Private $inbbout As Integer     'Nb de bouteilles par caisse
 Private $tarif As TarArt
 Private $process As Boolean = False   'test si le programme peut se fermer
 Private $fac As ObjFacB
-
+Private $vdate As VerifDate
 
 '**********************************************************
 '*initialisation écrans et gestion onglet client          *
@@ -393,9 +393,7 @@ Public Sub _New(bfacture As Boolean)
   If $soption = "B" Or $soption = "T" Then
     Coldetail.Columns.count = 23
     modifpanel5
-    If utils.dtcloture() Then
-     Quit
-    Endif
+    $vdate = New VerifDate(Now)
   Else
     Coldetail.Columns.count = 21
     TabStrip1[TabStrip1.Count - 1].Visible = False
@@ -6488,10 +6486,7 @@ Public Sub Button11_Click()
   Else
     If Cart.Text <> "" Then
       If $soption = "B" Or $soption = "T" Then
-        If utils.valart(Now, cart.Text) Then
-          Message.Warning("La comptabilité matiére sur cette période est déjà clôturée")
-          Return
-        Endif
+        If VerifDate.ClotDroi(cart.Text) Then Return
       Endif
       If Val(Artpu.text) = 0 Then
         If start.son Then
@@ -10213,6 +10208,7 @@ Public Sub Button20_Click()
   Dim $dup As Boolean = False
   Dim Lgbl As String
   Dim dtcm As Boolean
+  Dim vrd As VerifDate
 
   If bTypeFacture Then
     Lgbl = "Fiches_LigblM"
@@ -10232,7 +10228,10 @@ Public Sub Button20_Click()
         Coldetail3.MoveFirst()
         Repeat
           If Coldetail3.item.Selected Or Seltot.Value Then
-            dtcm = utils.valart(recdate(variables.numeroFac, Coldetail3.item[0], "F"), Coldetail3.item[1], "")
+            If Coldetail3.item[1] Then 
+              vrd = New VerifDate(recdate(variables.numeroFac, Coldetail3.item[0], "F"))
+              dtcm = vrd.ClotDroi(Coldetail3.item[1])
+            Endif
             If dtcm Then
               Message.Info("Il y a des articles avec une CM clôturée \n La date de mouvement sera donc mise à la date du jour")
               Break

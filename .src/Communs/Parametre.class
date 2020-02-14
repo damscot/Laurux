@@ -531,13 +531,13 @@ Public Sub Button2_Click()
       datec.SetFocus
       datec.Select
     Else
-      Message.Error("Veuillez complèter correctement l'ensemble des zones SVP !")
+      Message.Error("Veuillez compléter correctement l'ensemble des zones SVP !")
     Endif
   End With
 
 End
 
-Public Sub meserrc(txtbox As TextBox)
+Public Sub meserrc(txtbox As TextReg)
 
   b = 1
   If Message.question("ATTENTION ! Ce compte n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then Fcomptes.Show()
@@ -546,7 +546,7 @@ Public Sub meserrc(txtbox As TextBox)
 
 End
 
-Public Sub meserrt(txtbox As TextBox)
+Public Sub meserrt(txtbox As TextReg)
 
   b = 1
   If Message.question("ATTENTION ! Ce compte de TVA n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then FTvav.Show
