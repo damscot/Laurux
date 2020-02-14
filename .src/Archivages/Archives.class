@@ -279,6 +279,9 @@ End
 
 Public Sub Deb2()
 
+  Dim tri1 As String
+  
+  If tri = "datefac" Then tri1 = "datefac,numfac" Else tri1 = tri & ",datefac"
   If facn.value Then
     Colbl.Columns[7].Width = 0
     Factbl[7] = ""
@@ -289,21 +292,21 @@ Public Sub Deb2()
     If dat = 0 Then
       Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFac") & " where " & Tri & " like  \"%" & sel & "%\" order by abs(lpad(" & tri & ",10,' ')) limit " & NbEnreg & ", " & lg & "")
     Else
-      Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFac") & " where " & Tri & " like  \"%" & sel & "%\" order by " & tri & " limit " & NbEnreg & ", " & lg & "")
+      Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFac") & " where " & Tri & " like  \"%" & sel & "%\" order by " & tri1 & " limit " & NbEnreg & ", " & lg & "")
     Endif
   Endif
   If face.value = True Then
     If dat = 0 Then
       Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFacm") & " where " & Tri & " like  \"%" & sel & "%\" order by abs(lpad(" & tri & ",10,' ')) limit " & NbEnreg & ", " & lg & "")
     Else
-      Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFacm") & " where " & Tri & " like  \"%" & sel & "%\" order by " & tri & " limit " & NbEnreg & ", " & lg & "")
+      Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFacm") & " where " & Tri & " like  \"%" & sel & "%\" order by " & tri1 & " limit " & NbEnreg & ", " & lg & "")
     Endif
   Endif
   If fact.value = True Then
     If dat = 0 Then
       Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFac") & " where " & Tri & " like  \"%" & sel & "%\" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFacm") & " where " & Tri & " like  \"" & sel & "%\" order by abs(lpad(" & tri & ",10,' ')) limit " & NbEnreg & ", " & lg & "")
     Else
-      Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFac") & " where " & Tri & " like  \"%" & sel & "%\" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFacm") & " where " & Tri & " like  \"" & sel & "%\" order by " & tri & " limit " & NbEnreg & ", " & lg & "")
+      Utils.Base(colbl, "select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFac") & " where " & Tri & " like  \"%" & sel & "%\" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from " & Cbase.Table("TabHisFacm") & " where " & Tri & " like  \"" & sel & "%\" order by " & tri1 & " limit " & NbEnreg & ", " & lg & "")
     Endif
   Endif
   Colbl.Refresh
