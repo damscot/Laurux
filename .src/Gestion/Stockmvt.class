@@ -81,7 +81,7 @@ Public Sub Buttrait_Click()
   dtinf = New LDate(Textdtinf.Text)
   dtsup = New LDate(Textdtsup.Text)
   
-'  reqstkd = Utils.db.Subst("SELECT art_code as code,CONCAT(art_design,&1) as libelle,<i art_stkdep as qtem, <p art_stkdep as qtep, CAST(&2 as DATE) as dte, '0' as ca, '0' as mrgart, '0' as mrgmo FROM Fiches_Art", " stock de départ", dtinv())
+'  reqstkd = Utils.db.Subst("SELECT art_code as code,CONCAT(art_design,&1) as libelle,CASE WHEN REPLACE(art_stkdep,',','.') < '0' THEN REPLACE(art_stkdep,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(art_stkdep,',','.') > '0' THEN REPLACE(art_stkdep,',','.') ELSE '0' END as qtep, CAST(&2 as DATE) as dte, '0' as ca, '0' as mrgart, '0' as mrgmo FROM Fiches_Art", " stock de départ", dtinv())
   champstkd = "SELECT "
   fichierstkd = " FROM Fiches_Art "
   
@@ -319,42 +319,42 @@ Public Sub Buttrait_Click()
   Endif
   'recherche sans regroupement
   If Radiodetail.Value Then
-    champbl &= ",<p qte_ligbl as qtem, <i qte_ligbl as qtep, <n netht_ligbl as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
-    champfa &= ",<p qte_ligfac as qtem, <i qte_ligfac as qtep, <n netht_ligfac as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
-    champblm &= ",<p qte_ligbl as qtem, <i qte_ligbl as qtep, <n netht_ligbl as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
-    champfam &= ",<p qte_ligfac as qtem, <i qte_ligfac as qtep, <n netht_ligfac as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
-    champfo &= ",<i qte as qtem, <p qte as qtep, <n qte * <n paht as ca,'0'as mrgart,'0' as mrgmo"
-    champex &= ",<n qtem as qtem, <n qtep as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champrd &= ",<n qtem as qtem, <n qtep as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champtck &= ",<p qte as qtem, <i qte as qtep, <n Fiches_HisLigTickets.mht as ca,0 as mrgart,'0' as mrgmo"
+    champbl &= ",CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
+    champfa &= ",CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
+    champblm &= ",CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
+    champfam &= ",CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
+    champfo &= ",CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtep, CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * CASE WHEN paht IS NULL THEN '0' ELSE REPLACE(paht,',','.') END as ca,'0'as mrgart,'0' as mrgmo"
+    champex &= ",CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champrd &= ",CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champtck &= ",CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtep, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca,0 as mrgart,'0' as mrgmo"
     If Radiodeptmp.Value Then
-      champstkd &= ",<i art_stkdep as qtem, <p art_stkdep as qtep, art_pmp * art_stkdep as ca,'0'as mrgart,'0' as mrgmo"
+      champstkd &= ",CASE WHEN REPLACE(art_stkdep,',','.') < '0' THEN REPLACE(art_stkdep,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(art_stkdep,',','.') > '0' THEN REPLACE(art_stkdep,',','.') ELSE '0' END as qtep, art_pmp * art_stkdep as ca,'0'as mrgart,'0' as mrgmo"
     Else
-      champstkd &= ",<i art_stkdep as qtem, <p art_stkdep as qtep, art_paht * art_stkdep as ca,'0'as mrgart,'0' as mrgmo"
+      champstkd &= ",CASE WHEN REPLACE(art_stkdep,',','.') < '0' THEN REPLACE(art_stkdep,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(art_stkdep,',','.') > '0' THEN REPLACE(art_stkdep,',','.') ELSE '0' END as qtep, art_paht * art_stkdep as ca,'0'as mrgart,'0' as mrgmo"
     Endif
     If Radiothepmp.Value Then
-      champstth &= ",<i art_qte as qtem, <p art_qte as qtep, art_pmp * art_qte as ca,'0'as mrgart,'0' as mrgmo"
+      champstth &= ",CASE WHEN REPLACE(art_qte,',','.') < '0' THEN REPLACE(art_qte,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(art_qte,',','.') > '0' THEN REPLACE(art_qte,',','.') ELSE '0' END as qtep, art_pmp * art_qte as ca,'0'as mrgart,'0' as mrgmo"
     Else
-      champstth &= ",<i art_qte as qtem, <p art_qte as qtep, art_paht * art_qte as ca,'0'as mrgart,'0' as mrgmo"
+      champstth &= ",CASE WHEN REPLACE(art_qte,',','.') < '0' THEN REPLACE(art_qte,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(art_qte,',','.') > '0' THEN REPLACE(art_qte,',','.') ELSE '0' END as qtep, art_paht * art_qte as ca,'0'as mrgart,'0' as mrgmo"
     Endif
   Else
-    champbl &= ",SUM(<p qte_ligbl ) as qtem, SUM(<i qte_ligbl ) as qtep, <s netht_ligbl as ca, SUM(mrgart_ligbl) as mrgart, SUM(mrgmo_ligbl) as mrgmo"
-    champfa &= ",SUM(<p qte_ligfac ) as qtem,SUM(<i qte_ligfac ) as qtep, <s netht_ligfac as ca,SUM(mrgart_ligfac) as mrgart,SUM(mrgmo_ligfac) as mrgmo"
-    champblm &= ",SUM(<p qte_ligbl ) as qtem, SUM(<i qte_ligbl ) as qtep, <s netht_ligbl as ca, SUM(mrgart_ligbl) as mrgart, SUM(mrgmo_ligbl) as mrgmo"
-    champfam &= ",SUM(<p qte_ligfac ) as qtem,SUM(<i qte_ligfac ) as qtep, <s netht_ligfac as ca,SUM(mrgart_ligfac) as mrgart,SUM(mrgmo_ligfac) as mrgmo"
-    champfo &= ",SUM(<i qte ) as qtem, SUM(<p qte ) as qtep, SUM(<n qte * <n paht ) as ca,'0'as mrgart,'0' as mrgmo"
-    champex &= ",<s qtem as qtem , <s qtep as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champrd &= ",<s qtem as qtem , <s qtep as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champtck &= ",SUM(<p qte ) as qtem, SUM(<i qte ) as qtep, <s Fiches_HisLigTickets.mht as ca,'0' as mrgart,'0' as mrgmo"
+    champbl &= ",SUM(CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END ) as qtep, SUM(CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END ) as ca, SUM(mrgart_ligbl) as mrgart, SUM(mrgmo_ligbl) as mrgmo"
+    champfa &= ",SUM(CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END ) as qtem,SUM(CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END ) as qtep, SUM(CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END ) as ca,SUM(mrgart_ligfac) as mrgart,SUM(mrgmo_ligfac) as mrgmo"
+    champblm &= ",SUM(CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END ) as qtep, SUM(CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END ) as ca, SUM(mrgart_ligbl) as mrgart, SUM(mrgmo_ligbl) as mrgmo"
+    champfam &= ",SUM(CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END ) as qtem,SUM(CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END ) as qtep, SUM(CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END ) as ca,SUM(mrgart_ligfac) as mrgart,SUM(mrgmo_ligfac) as mrgmo"
+    champfo &= ",SUM(CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END ) as qtep, SUM(CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * CASE WHEN paht IS NULL THEN '0' ELSE REPLACE(paht,',','.') END ) as ca,'0'as mrgart,'0' as mrgmo"
+    champex &= ",SUM(CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qtem , SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END ) as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champrd &= ",SUM(CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qtem , SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END ) as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champtck &= ",SUM(CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END ) as qtep, SUM(CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END ) as ca,'0' as mrgart,'0' as mrgmo"
     If Radiodeptmp.Value Then
-      champstkd &= ",SUM(<i art_stkdep ) as qtem, SUM(<p art_stkdep ) as qtep, SUM( art_pmp * art_stkdep) as ca,'0'as mrgart,'0' as mrgmo"
+      champstkd &= ",SUM(CASE WHEN REPLACE(art_stkdep,',','.') < '0' THEN REPLACE(art_stkdep,',','.') * -1 ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(art_stkdep,',','.') > '0' THEN REPLACE(art_stkdep,',','.') ELSE '0' END ) as qtep, SUM( art_pmp * art_stkdep) as ca,'0'as mrgart,'0' as mrgmo"
     Else
-      champstkd &= ",SUM(<i art_stkdep ) as qtem, SUM(<p art_stkdep ) as qtep, SUM( art_paht * art_stkdep) as ca,'0'as mrgart,'0' as mrgmo"
+      champstkd &= ",SUM(CASE WHEN REPLACE(art_stkdep,',','.') < '0' THEN REPLACE(art_stkdep,',','.') * -1 ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(art_stkdep,',','.') > '0' THEN REPLACE(art_stkdep,',','.') ELSE '0' END ) as qtep, SUM( art_paht * art_stkdep) as ca,'0'as mrgart,'0' as mrgmo"
     Endif
     If Radiothepmp.Value Then
-      champstth &= ",SUM(<i art_qte ) as qtem, SUM(<p art_qte ) as qtep, SUM( art_pmp * art_qte) as ca,'0'as mrgart,'0' as mrgmo"
+      champstth &= ",SUM(CASE WHEN REPLACE(art_qte,',','.') < '0' THEN REPLACE(art_qte,',','.') * -1 ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(art_qte,',','.') > '0' THEN REPLACE(art_qte,',','.') ELSE '0' END ) as qtep, SUM( art_pmp * art_qte) as ca,'0'as mrgart,'0' as mrgmo"
     Else
-      champstth &= ",SUM(<i art_qte ) as qtem, SUM(<p art_qte ) as qtep, SUM( art_paht * art_qte) as ca,'0'as mrgart,'0' as mrgmo"
+      champstth &= ",SUM(CASE WHEN REPLACE(art_qte,',','.') < '0' THEN REPLACE(art_qte,',','.') * -1 ELSE '0' END ) as qtem, SUM(CASE WHEN REPLACE(art_qte,',','.') > '0' THEN REPLACE(art_qte,',','.') ELSE '0' END ) as qtep, SUM( art_paht * art_qte) as ca,'0'as mrgart,'0' as mrgmo"
     Endif
   Endif
   'regroupement par jour / moi / année

@@ -38,18 +38,18 @@ Public Sub _new(snumcli As String, snumart As String)
       i = 0
       Repeat
         res1 = Utils.db.Exec(
-        "SELECT <s qte_ligfac AS qte,<s netht_ligfac as net,code_ligfac as code, libel_ligfac as design " &
+        "SELECT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) AS qte,SUM(CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END ) as net,code_ligfac as code, libel_ligfac as design " &
           "FROM Fiches_HistoFac JOIN Fiches_HistoLigfac ON  numfac=num_ligfac " &
           "WHERE datefac=&1 AND cdclifac=&2 And typel_ligfac IN('A','M') AND code_ligfac=&3 " &
           "GROUP BY code_ligfac,libel_ligfac " &
-        "UNION SELECT <s qte_ligbl AS qte,<s netht_ligbl AS net,code_ligbl as code, libel_ligbl as design " &
+        "UNION SELECT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) AS qte,SUM(CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END ) AS net,code_ligbl as code, libel_ligbl as design " &
           "FROM Fiches_Bl JOIN Fiches_Ligbl ON num_ligbl=numbl WHERE datebl=&1 AND cdclibl=&2 AND typel_ligbl IN('A','M') AND code_ligbl=&3 " &
           "GROUP BY code_ligbl,libel_ligbl " &
-        "UNION SELECT <s qte_ligfac AS qte,<s netht_ligfac as net,code_ligfac as code, libel_ligfac as design " &
+        "UNION SELECT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) AS qte,SUM(CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END ) as net,code_ligfac as code, libel_ligfac as design " &
           "FROM Fiches_HistoFacM JOIN Fiches_HistoLigfacM ON  numfac=num_ligfac " &
           "WHERE datefac=&1 AND cdclifac=&2 And typel_ligfac IN('A','M') AND code_ligfac=&3 " &
           "GROUP BY code_ligfac,libel_ligfac " &
-        "UNION SELECT <s qte_ligbl AS qte,<s netht_ligbl AS net,code_ligbl as code, libel_ligbl as design " &
+        "UNION SELECT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) AS qte,SUM(CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END ) AS net,code_ligbl as code, libel_ligbl as design " &
           "FROM Fiches_BlM JOIN Fiches_LigblM ON num_ligbl=numbl WHERE datebl=&1 AND cdclibl=&2 AND typel_ligbl IN('A','M') AND code_ligbl=&3 " &
           "GROUP BY code_ligbl,libel_ligbl ", res!dte, $snumcli, $snumart)
         GridView1.Rows.Count += res1.count
@@ -96,19 +96,19 @@ Public Sub _new(snumcli As String, snumart As String)
       Repeat
 
         res1 = Utils.db.Exec(
-        "SELECT <s qte_ligfac AS qte,<s netht_ligfac as net,code_ligfac as code, libel_ligfac as design " &
+        "SELECT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) AS qte,SUM(CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END ) as net,code_ligfac as code, libel_ligfac as design " &
           "FROM Fiches_HistoFac JOIN Fiches_HistoLigfac ON  numfac=num_ligfac " &
           "WHERE datefac=&1 AND cdclifac=&2 And typel_ligfac IN('A','M') " &
           "GROUP BY code_ligfac,libel_ligfac " &
-        "UNION SELECT <s qte_ligbl AS qte,<s netht_ligbl AS net,code_ligbl as code, libel_ligbl as design " &
+        "UNION SELECT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) AS qte,SUM(CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END ) AS net,code_ligbl as code, libel_ligbl as design " &
           "FROM Fiches_Bl JOIN Fiches_Ligbl ON num_ligbl=numbl " &
           "WHERE datebl=&1 AND cdclibl=&2 AND typel_ligbl IN('A','M') " &
           "GROUP BY code_ligbl,libel_ligbl "
-        "UNION SELECT <s qte_ligfac AS qte,<s netht_ligfac as net,code_ligfac as code, libel_ligfac as design " &
+        "UNION SELECT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) AS qte,SUM(CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END ) as net,code_ligfac as code, libel_ligfac as design " &
           "FROM Fiches_HistoFacM JOIN Fiches_HistoLigfacM ON  numfac=num_ligfac " &
           "WHERE datefac=&1 AND cdclifac=&2 And typel_ligfac IN('A','M') " &
           "GROUP BY code_ligfac,libel_ligfac " &
-        "UNION SELECT <s qte_ligbl AS qte,<s netht_ligbl AS net,code_ligbl as code, libel_ligbl as design " &
+        "UNION SELECT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) AS qte,SUM(CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END ) AS net,code_ligbl as code, libel_ligbl as design " &
           "FROM Fiches_BlM JOIN Fiches_LigblM ON num_ligbl=numbl " &
           "WHERE datebl=&1 AND cdclibl=&2 AND typel_ligbl IN('A','M') " &
           "GROUP BY code_ligbl,libel_ligbl ", res!dte, $snumcli)

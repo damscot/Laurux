@@ -53,47 +53,47 @@ Public Sub Calc_stock(Art As String, art2 As String)
         ' Puis on sélectionne tous les BL et les factures
         res = Utils.db.Exec( 
         "SELECT" &
-            " <s qte_ligbl * -1 as qte" &
+            " SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte" &
           " FROM" &
             " Fiches_Ligbl JOIN Fiches_Bl ON num_ligbl = numbl" &
           " WHERE" &
             " datebl >= &1 And (type = 'B' OR type = 'F') AND code_ligbl=&2 AND typel_ligbl = 'A'" &
         " UNION(SELECT" &
-            " <s qte_ligbl * -1 as qte" &
+            " SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte" &
           " FROM" &
             " Fiches_LigblM JOIN Fiches_BlM ON num_ligbl=numbl" &
           " WHERE" &
             " datebl >= &1 and (type = 'B' OR type = 'F') AND code_ligbl=&2 AND typel_ligbl = 'A')" &
         " UNION(SELECT" &
-            " <s qte_ligfac * -1 as qte" &
+            " SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte" &
           " FROM" &
             " Fiches_HistoFac JOIN Fiches_HistoLigfac ON num_ligfac=numfac" &
           " WHERE" &
             " datefac >= &1 AND code_ligfac=&2 AND typel_ligfac = 'A')" &
         " UNION(SELECT" &
-            " <s qte_ligfac * -1 as qte" &
+            " SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte" &
           " FROM" &
             " Fiches_HistoFacM JOIN Fiches_HistoLigfacM ON num_ligfac=numfac" &
           " WHERE" &
             " datefac >= &1 AND code_ligfac=&2 AND typel_ligfac = 'A')" &  
         " UNION(SELECT" &
-            " <s qte * &3 as qte" &
+            " SUM(CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END ) * &3 as qte" &
           " FROM" &
             " Fiches_Ligrecpt" &
           " WHERE" &
             " daterecpt>= &1 AND code=&2)" &
         " UNION(SELECT" &
-            " SUM(<n qtep - <n qtem ) as qte" &
+            " SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte" &
           " FROM" &
             " Fiches_Mvtexp" &
           " WHERE" &
             " daterecpt>=&1 AND code=&2)" &
         " UNION(SELECT" &
-            " SUM(<n qtep  - <n qtem ) as qte" &
+            " SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END  - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte" &
           " FROM" &
             " Fiches_Mvtexpdc WHERE daterecpt>=&1 AND code=&2)" & 
         " UNION(SELECT" &
-            " SUM(CASE WHEN type='S' THEN <n qte * -1 ELSE <n qte END) AS qte" &
+            " SUM(CASE WHEN type='S' THEN CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * -1 ELSE CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END END) AS qte" &
           " FROM" &
             " Fiches_Sdepots" &
           " WHERE" &

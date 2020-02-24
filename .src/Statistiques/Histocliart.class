@@ -357,7 +357,7 @@ Private Sub crearequ() As Boolean
     group = "client"
     'bon de livraison
     If CheckDoc.Value Then
-      champbl = "SELECT <n qte_ligbl AS qte, <n netht_ligbl as ca,<n mrgart_ligbl as mrgart,<n mrgmo_ligbl as mrgmo,cdclibl as client"
+      champbl = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo,cdclibl as client"
       fichierbl = "Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art"
       condbl = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (dte_ligbl BETWEEN &1 And &2) AND (cdclibl>=&3 AND cdclibl<=&4) AND (code_ligbl>=&5 AND code_ligbl<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -375,7 +375,7 @@ Private Sub crearequ() As Boolean
     Endif
     'bon de livraison M
     If CheckDocE.Value Then
-      champblm = "SELECT <n qte_ligbl AS qte, <n netht_ligbl as ca,<n mrgart_ligbl as mrgart,<n mrgmo_ligbl mrgmo,cdclibl as client"
+      champblm = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END mrgmo,cdclibl as client"
       fichierblm = "Fiches_BlM,Fiches_LigblM,Fiches_Cli,Fiches_Art"
       condblm = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_BlM.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (dte_ligbl BETWEEN &1 And &2) AND (cdclibl>=&3 AND cdclibl<=&4) AND (code_ligbl>=&5 AND code_ligbl<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -394,7 +394,7 @@ Private Sub crearequ() As Boolean
     Endif
     'factures
     If CheckFacA.Value Then
-      champfa = "SELECT <n qte_ligfac AS qte, <n netht_ligfac as ca,<n mrgart_ligfac as mrgart,<n mrgmo_ligfac as mrgmo,cdclifac as client"
+      champfa = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo,cdclifac as client"
       fichierfa = "Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art"
       condfa = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (dtligbl_ligfac BETWEEN &1 And &2) AND (cdclifac>=&3 AND cdclifac<=&4) AND (code_ligfac>=&5 AND code_ligfac<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -412,7 +412,7 @@ Private Sub crearequ() As Boolean
     Endif
     'factures M
     If CheckFacEA.Value Then
-      champfam = "SELECT <n qte_ligfac AS qte, <n netht_ligfac as ca,<n mrgart_ligfac as mrgart,<n mrgmo_ligfac as mrgmo,cdclifac as client"
+      champfam = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo,cdclifac as client"
       fichierfam = "Fiches_HistoFacM,Fiches_HistoLigfacM,Fiches_Cli,Fiches_Art"
       condfam = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (dtligbl_ligfac BETWEEN &1 And &2) AND (cdclifac>=&3 AND cdclifac<=&4) AND (code_ligfac>=&5 AND code_ligfac<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -430,7 +430,7 @@ Private Sub crearequ() As Boolean
     Endif
     'ticket
     If CheckTk.Value Then
-      champtk = "SELECT <n Fiches_HisLigTickets.qte as qte, <n Fiches_HisLigTickets.mht as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, client"
+      champtk = "SELECT CASE WHEN Fiches_HisLigTickets.qte IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.qte,',','.') END as qte, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, client"
       fichiertk = "(select numero, block, max(type) as max_type from Laurux01.Fiches_HisLigTickets where type IN('A','S') group by numero, block) T1, Fiches_HisEntTickets, Fiches_HisLigTickets, Fiches_Cli, Fiches_Art"
       condtk = utils.db.Subst("Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND art_code=code AND cli_code=client AND T1.numero = Fiches_HisLigTickets.numero and T1.block = Fiches_HisLigTickets.block AND T1.max_type = Fiches_HisLigTickets.type AND suppr != 1 AND Fiches_HisLigTickets.date BETWEEN &1 And &2 AND (client>=&3 AND client<=&4) AND (Fiches_HisLigTickets.code>=&5 AND Fiches_HisLigTickets.code<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -464,7 +464,7 @@ Private Sub crearequ() As Boolean
     group = "article"
     'bon de livraison
     If CheckDoc.Value Then
-      champbl = "SELECT <n qte_ligbl AS qte, <n netht_ligbl as ca,<n mrgart_ligbl as mrgart,<n mrgmo_ligbl as mrgmo,code_ligbl as article"
+      champbl = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo,code_ligbl as article"
       fichierbl = "Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art"
       condbl = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (dte_ligbl BETWEEN &1 And &2) AND (cdclibl>=&3 AND cdclibl<=&4) AND (code_ligbl>=&5 AND code_ligbl<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetcli.Value Then
@@ -481,7 +481,7 @@ Private Sub crearequ() As Boolean
     Endif
     'bon de livraison M
     If CheckDocE.Value Then
-      champblm = "SELECT <n qte_ligbl AS qte, <n netht_ligbl as ca,<n mrgart_ligbl as mrgart,<n mrgmo_ligbl as mrgmo,code_ligbl as article"
+      champblm = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo,code_ligbl as article"
       fichierblm = "Fiches_BlM,Fiches_LigblM,Fiches_Cli,Fiches_Art"
       condblm = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_BlM.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (dte_ligbl BETWEEN &1 And &2) AND (cdclibl>=&3 AND cdclibl<=&4) AND (code_ligbl>=&5 AND code_ligbl<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetcli.Value Then
@@ -499,7 +499,7 @@ Private Sub crearequ() As Boolean
     Endif
     'factures
     If CheckFacA.Value Then
-      champfa = "SELECT <n qte_ligfac AS qte, <n netht_ligfac as ca,<n mrgart_ligfac as mrgart,<n mrgmo_ligfac as mrgmo,code_ligfac as article"
+      champfa = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo,code_ligfac as article"
       fichierfa = "Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art"
       condfa = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (dtligbl_ligfac BETWEEN &1 And &2) AND (cdclifac>=&3 AND cdclifac<=&4) AND (code_ligfac>=&5 AND code_ligfac<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetcli.Value Then
@@ -516,7 +516,7 @@ Private Sub crearequ() As Boolean
     Endif
     'factures M
     If CheckFacEA.Value Then
-      champfam = "SELECT <n qte_ligfac AS qte, <n netht_ligfac as ca,<n mrgart_ligfac as mrgart,<n mrgmo_ligfac as mrgmo,code_ligfac as article"
+      champfam = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo,code_ligfac as article"
       fichierfam = "Fiches_HistoFacM,Fiches_HistoLigfacM,Fiches_Cli,Fiches_Art"
       condfam = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (dtligbl_ligfac BETWEEN &1 And &2) AND (cdclifac>=&3 AND cdclifac<=&4) AND (code_ligfac>=&5 AND code_ligfac<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetcli.Value Then
@@ -533,7 +533,7 @@ Private Sub crearequ() As Boolean
     Endif
     'ticket
     If CheckTk.Value Then
-      champtk = "SELECT <n Fiches_HisLigTickets.qte as qte, <n Fiches_HisLigTickets.mht as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, Fiches_HisLigTickets.code as article"
+      champtk = "SELECT CASE WHEN Fiches_HisLigTickets.qte IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.qte,',','.') END as qte, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, Fiches_HisLigTickets.code as article"
       fichiertk = "(select numero, block, max(type) as max_type from Laurux01.Fiches_HisLigTickets where type IN('A','S') group by numero, block) T1, Fiches_HisEntTickets, Fiches_HisLigTickets, Fiches_Cli, Fiches_Art"
       condtk = utils.db.Subst("Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND art_code=code AND cli_code=client AND T1.numero = Fiches_HisLigTickets.numero and T1.block = Fiches_HisLigTickets.block AND T1.max_type = Fiches_HisLigTickets.type AND suppr != 1 AND Fiches_HisLigTickets.date BETWEEN &1 And &2 AND (client>=&3 AND client<=&4) AND (Fiches_HisLigTickets.code>=&5 AND Fiches_HisLigTickets.code<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetcli.Value Then
@@ -567,7 +567,7 @@ Private Sub crearequ() As Boolean
     group = "famille"
     'bon de livraison
     If CheckDoc.Value Then
-      champbl = "SELECT <n qte_ligbl AS qte, <n netht_ligbl as ca,<n mrgart_ligbl as mrgart,<n mrgmo_ligbl as mrgmo,fam_ligbl as famille"
+      champbl = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo,fam_ligbl as famille"
       fichierbl = "Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art"
       condbl = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (dte_ligbl BETWEEN &1 And &2) AND (cdclibl>=&3 AND cdclibl<=&4) AND (code_ligbl>=&5 AND code_ligbl<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -584,7 +584,7 @@ Private Sub crearequ() As Boolean
     Endif
     'bon de livraison M
     If CheckDocE.Value Then
-      champblm = "SELECT <n qte_ligbl AS qte, <n netht_ligbl as ca,<n mrgart_ligbl as mrgart,<n mrgmo_ligbl as mrgmo,fam_ligbl as famille"
+      champblm = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo,fam_ligbl as famille"
       fichierblm = "Fiches_BlM,Fiches_LigblM,Fiches_Cli,Fiches_Art"
       condblm = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_BlM.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (dte_ligbl BETWEEN &1 And &2) AND (cdclibl>=&3 AND cdclibl<=&4) AND (code_ligbl>=&5 AND code_ligbl<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -602,7 +602,7 @@ Private Sub crearequ() As Boolean
     Endif
     'factures
     If CheckFacA.Value Then
-      champfa = "SELECT <n qte_ligfac AS qte, <n netht_ligfac as ca,<n mrgart_ligfac as mrgart,<n mrgmo_ligfac as mrgmo,fam_ligfac as famille"
+      champfa = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo,fam_ligfac as famille"
       fichierfa = "Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art"
       condfa = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (dtligbl_ligfac BETWEEN &1 And &2) AND (cdclifac>=&3 AND cdclifac<=&4) AND (code_ligfac>=&5 AND code_ligfac<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -619,7 +619,7 @@ Private Sub crearequ() As Boolean
     Endif
     'factures M
     If CheckFacEA.Value Then
-      champfam = "SELECT <n qte_ligfac AS qte, <n netht_ligfac as ca,<n mrgart_ligfac as mrgart,<n mrgmo_ligfac as mrgmo,fam_ligfac as famille"
+      champfam = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo,fam_ligfac as famille"
       fichierfam = "Fiches_HistoFacM,Fiches_HistoLigfacM,Fiches_Cli,Fiches_Art"
       condfam = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (dtligbl_ligfac BETWEEN &1 And &2) AND (cdclifac>=&3 AND cdclifac<=&4) AND (code_ligfac>=&5 AND code_ligfac<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
@@ -636,7 +636,7 @@ Private Sub crearequ() As Boolean
     Endif
     'ticket
     If CheckTk.Value Then
-      champtk = "SELECT <n Fiches_HisLigTickets.qte as qte, <n Fiches_HisLigTickets.mht as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, fam as famille"
+      champtk = "SELECT CASE WHEN Fiches_HisLigTickets.qte IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.qte,',','.') END as qte, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, fam as famille"
       fichiertk = "(select numero, block, max(type) as max_type from Laurux01.Fiches_HisLigTickets where type IN('A','S') group by numero, block) T1, Fiches_HisEntTickets, Fiches_HisLigTickets, Fiches_Cli, Fiches_Art"
       condtk = utils.db.Subst("Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND art_code=code AND cli_code=client AND T1.numero = Fiches_HisLigTickets.numero and T1.block = Fiches_HisLigTickets.block AND T1.max_type = Fiches_HisLigTickets.type AND suppr != 1 AND Fiches_HisLigTickets.date BETWEEN &1 And &2 AND (client>=&3 AND client<=&4) AND (Fiches_HisLigTickets.code>=&5 AND Fiches_HisLigTickets.code<=&6) AND (art_four>=&7 AND art_four<=&8)", dtinf, dtsup, Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
       If Checkdetart.Value Then
