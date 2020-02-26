@@ -633,6 +633,13 @@ Public Function editefm(Optional courriel As Boolean = False) As Boolean        
     Me.numcli = res!code
     Me.imp.OutputFile = ""
     calcul(res!nom)
+    Me.resent.MoveFirst          'on regarde si 1 bon ne vient pas de la caisse
+    Repeat
+      If Not IsNull(Me.resent!numtick) Then
+        Message.Error("Document en attente de moulinage ...\n le BL est noté règlé par le ticket " & Me.resent!numtick)
+        Return True
+      Endif
+    Until Me.resent.MoveNext()
     Me.resent.MoveFirst          'on lock les bl en facturation fin de mois
     Repeat
       Repeat
@@ -777,7 +784,9 @@ Public Sub visualisation()        ''Visualisation d'un bl ou d'une facture
   Filename = User.Home & "/tmp/Facture.pdf"
   
   calcul()
-  
+  If Me.choix = ObjFac.facture And Me.resent!imp = "0" Then
+    Me.choix = ObjFac.bl
+  Endif
   Me.edit = New EditfacB(Me, Me)
   Me.imp.OutputFile = Filename
   Me.edit.Print(Me.imp)

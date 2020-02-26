@@ -273,14 +273,14 @@ End
 
 Private Function affclient() As Boolean
   
-  $rescli = Utils.db.Exec("SELECT * FROM Fiches_Cli,Fiches_Four,Fiches_Comptes WHERE (cli_code=compte_cc OR fo_code=compte_cc) AND compte_cc=&1", client.Text)
+  $rescli = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", client.Text)
   If Not $rescli.Available Then
     Balloon.Delay = 3000
     If Not Balloon.Visible Then Balloon.Warning("Compte innexistant", client)
     client.SetFocus
     Return False
   Else
-    nclient.Text = $rescli!cli_nom & $rescli!fo_nom
+    nclient.Text = $rescli!intitule_cc
     slde.text = Format($rescli!solde, "0.00")
     Return True
   Endif

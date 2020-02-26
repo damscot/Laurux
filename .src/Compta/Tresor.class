@@ -402,10 +402,10 @@ Public Sub compteman()
     numcompte.Text = ""
     Journal.SetFocus
   Endif
-  If Left$(numcompte.Text, 2) = "401" Then
+  If Left$(numcompte.Text, 3) = "401" Then
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " left join " & Cbase.Table("TabFour") & " on fo_code = &2 WHERE compte_cc like '" & numcompte.Text & "%' and coll <> &1  order by compte_cc", 1, numcompte.Text)
   Else
-    If Left$(numcompte.Text, 2) = "411" Then
+    If Left$(numcompte.Text, 3) = "411" Then
       rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " left join " & Cbase.Table("TabCli") & " on cli_code = &2 WHERE compte_cc like '" & numcompte.Text & "%' and coll <> &1  order by compte_cc", 1, numcompte.Text)
     Else
       rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & "  WHERE compte_cc like '" & numcompte.Text & "%' and coll <> &2 and type_cc = &3  order by compte_cc", numcompte.Text, 1, type)
@@ -420,10 +420,10 @@ Public Sub compteman()
       numcompte.Text = rResult!compte_cc
       Intitulcompte.Text = rResult!intitule_cc
       soldecompte.Text = Format$(rResult!solde, "0.00")
-      If Left$(numcompte.Text, 2) = "41" And rResult!cli_nom Then
+      If Left$(numcompte.Text, 3) = "411" And If rResult!cli_nom Then
         Intitulcompte.Text = rResult!cli_rs_soc & " " & rResult!cli_nom & " " & rResult!cli_pnm
       Else
-        If Left$(numcompte.Text, 2) = "40" And rResult!fo_nom Then
+        If Left$(numcompte.Text, 3) = "401" And If rResult!fo_nom Then
           Intitulcompte.Text = rResult!fo_rs_soc & " " & rResult!fo_nom & " " & rResult!fo_pnm
         Endif
       Endif
