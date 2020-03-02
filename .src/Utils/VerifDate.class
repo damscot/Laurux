@@ -77,7 +77,7 @@ Public Function ClotGestion() As Boolean      ''Retourne si la date est inférie
     Message.Warning("Cette période de facturation est clôturée : Impossible de valider ce mouvement")
     Return True
   Endif
-  If Me.Apres(dte, True) Then
+  If Me.Apres(dte.FinMois.FinJour, True) Then
     Message.Warning("Date supérieure à la période clôturée : Impossible de valider ce mouvement")
     Return True
   Endif
