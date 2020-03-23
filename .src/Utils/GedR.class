@@ -137,6 +137,7 @@ Public Function HideTextBox()
     If Bfour.value Then Tab = Cbase.Table("TabFdocs")
     If Bart.value Then Tab = Cbase.Table("TabPdocs")
     If Bautre.value Then Tab = Cbase.Table("TabAdocs")
+    If Bcompta.value Then Tab = Cbase.Table("TabCPTdocs")
     Try Dssr[Dssr.row, 3].Text = Tbxrem.Text
     Utils.db.Exec("Update " & Tab & " set doc2 = &3 where code = &1 AND doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text, Dssr[Dssr.row, 3].Text)
     Tbxrem.Visible = False
