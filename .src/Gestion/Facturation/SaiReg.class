@@ -210,7 +210,7 @@ Public Sub nreg_LostFocus()
       Endif
     Endif
   Else
-    Try Message.Error("Réglement innexistant")
+    Try Message.Error("Réglement inexistant")
     nreg.SetFocus
   Endif
 
@@ -273,7 +273,7 @@ End
 
 Private Function affclient() As Boolean
   
-  $rescli = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", client.Text)
+  $rescli = Utils.db.Exec("SELECT * FROM Fiches_Comptes Left Join Fiches_Cli on compte_cc=cli_code WHERE compte_cc=&1", client.Text)
   If Not $rescli.Available Then
     Balloon.Delay = 3000
     If Not Balloon.Visible Then Balloon.Warning("Compte innexistant", client)
@@ -301,13 +301,23 @@ Public Sub tltr_Click()
 
 End
 
-Public Sub sel_gotfocus()
+Public Sub check_reg() As Boolean
 
   If Not Object.IsValid($resreg) Or Not nreg.Text Then
     Message.Error("Vous devez renseigner les règlements")
     mabl
     nreg.SetFocus
+    Return False
+  Else
+    Return True
   Endif
+
+End
+
+
+Public Sub sel_gotfocus()
+
+  check_reg()
 
 End
 
@@ -373,8 +383,6 @@ Private Sub affsel()
   If tdcs.Value Or fcts.Value Then
     If ndoc.Text Then
       $resext = $liste.rechedoc(ndoc.Text)
-      client.Text = $resext!compte
-      affclient()
     Else
       If client.Text Then
         If nlot.Text Then
@@ -385,6 +393,8 @@ Private Sub affsel()
       Endif
     Endif
     If Object.IsValid($resext) And If $resext.Available Then
+      client.Text = $resext!compte
+      affclient()
       If $Vecr.etat = VarEcr.L_modif Or $Vecr.etat = VarEcr.L_valide Or $Vecr.etat = VarEcr.L_sup Then
         selection.Rows.Count += $resext.Max
       Else
@@ -448,13 +458,13 @@ Private Function rechsel(i As Integer) As String
   
 End
 
-Public Sub selection_Click()
+Public Sub selection_choose(sel As Integer)
 
-  Dim i, j As Integer
+  Dim i As Integer
+  Dim j As Integer
   Dim tot As Float
   
-  i = selection.Row
-  If i < 0 Then Return
+  i = sel
   If selection[i, oks].Picture = Picture["icon:/16/apply"] Then
     selection[i, oks].Picture = Picture["icon:/16/add"] 
     For j = 0 To $Vecr.Tlettrage.Max
@@ -484,6 +494,46 @@ Public Sub selection_Click()
   Next
   montsaisi.Value = tot
   totsel.Value = tot
+End
+
+Public Sub selection_KeyPress()
+  
+  Dim i As Integer
+  
+  i = selection.Row
+  If i < 0 Then Return
+  
+  If Key.Code = Key.Tab Then
+    If i < (selection.Rows.Count - 1) Then
+      selection.Row = i + 1
+    Else
+      selection.Row = 0
+    Endif
+    Stop Event
+  Else If Key.Code = Key.Space
+    i = selection.Row
+    selection_choose(i)
+    If i < (selection.Rows.Count - 1) Then
+      selection.Row = i + 1
+    Else
+      selection.Row = 0
+    Endif
+    Stop Event
+  Endif
+  
+End
+
+Public Sub selection_Click()
+
+  Dim i As Integer
+  
+  If Not check_reg()
+    Return
+  Endif
+  
+  i = selection.Row
+  If i < 0 Then Return
+  selection_choose(i)
 
 End
 
