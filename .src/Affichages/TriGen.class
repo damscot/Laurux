@@ -44,7 +44,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Res = Resu
   Request = Req
   If IsNull(Parent) Then
-    Win = New Window(Start.MainWindow)
+    Win = New Window
     Win.W = 800
     Win.H = 480
     Parent = New Form(Win)
@@ -270,11 +270,14 @@ Public Sub Coltri_Data(Row As Integer, Column As Integer)
   With Utils
     .rs2.MoveTo(Row)
     If .rs2.Available Then
+      If IsNumber(Str(.rs2[Col_Def[Col_Order[Column]].name])) Then coltri.Data.Alignment = Align.Right
       Try Coltri.data.Text = Str(.rs2[Col_Def[Col_Order[Column]].name])
       If .rs2.Fields.Exist("bgcolor") Then
         If .rs2["bgcolor"] <> Null Then
           Coltri.Data.Background = Val(.rs2["bgcolor"])
         Endif
+      Else
+        If Even(row) Then Coltri.Data.Background = Color.White Else Coltri.Data.Background = Color.Background
       Endif
     Endif
   End With
