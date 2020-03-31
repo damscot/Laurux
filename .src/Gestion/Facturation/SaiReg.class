@@ -22,6 +22,11 @@ Private $modif As Boolean
 Private $ind As Integer
 Private $typ As Integer
 Private $ntk As String
+Private $tr As TriGen
+Private $Col As Collection
+
+Public Bsel As Boolean
+Public Bval As String
 
 Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As String)
 
@@ -100,8 +105,6 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
       selection.SetFocus
       
   End Select
-  clienfour.Add("1", "Clients")
-  clienfour.Add("2", "Fournisseurs")
   
 End
 
@@ -211,6 +214,7 @@ Public Sub nreg_LostFocus()
     Endif
   Else
     Try Message.Error("Réglement inexistant")
+    nreg.Clear
     nreg.SetFocus
   Endif
 
@@ -712,11 +716,29 @@ End
 
 Public Sub rechcli_Click()
 
-  If clienfour.Visible = True Then
-    clienfour.Visible = False
-  Else
-    clienfour.Visible = True
-  Endif
+  Dim f As ResultField
+  Dim Req As String
+  Dim Res As Result
+  
+  'req = "SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde,CASE WHEN solde < 0 THEN '&HFF0000' WHEN solde > 0 THEN '&H00FF00' WHEN solde = 0 THEN Null  END as bgcolor FROM Fiches_Comptes  "
+  req = "SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde FROM Fiches_Comptes  "
+  
+  $Col = New Collection
+  res = Utils.db.Exec(Req)
+  If Not res.Available Then Return
+  
+  f = res.Fields["compte_cc"]
+  $Col.Add(f, "-----code-----")
+  f = Res.Fields["intitule_cc"]
+  $Col.Add(f, "-----------intitule-----------")
+  f = Res.Fields["solde"]
+  $Col.Add(f, "-----Solde-----")
+  f = Res.Fields["type_cc"]
+  $Col.Add(f, "Type")
+  
+  $tr = New TriGen(Null, $Col, Res, Req, 20, Me) As "ColTri"
+  $tr.ExtraSel("type_cc = 'C' OR type_cc= 'F' ", "AND")
+  $tr.Show(True)
 
 End
 
@@ -739,32 +761,25 @@ Public Sub rechreg_Click()
 
 End
 
-Public Sub clienfour_Click()
-  
-  Dim MyForm As TriComptes
+Public Sub ColTri_MajSel(val As Variant)
 
-  Select Case clienfour.Current.Key
-    Case "1"
-       MyForm = New TriComptes("cast(compte_cc AS char)", "C", "", "")
-      Case "2"
-        MyForm = New TriComptes("cast(compte_cc AS char)", "F", "", "")
-  End Select
-
-  MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    client.text = Comptabilite.sCmpt
-    client.SetFocus
+  If val Then
+    client.Text = Bval
+  Else
+    client.Text = ""
+    Stop Event
   Endif
-  clienfour.Visible = False
+  client_LostFocus()
   
 End
 
 Public Sub Listreg_Click()
 
   nreg.Text = Listreg.Current.Text
-  nreg.SetFocus
+  client.SetFocus
   Listreg.Clear
   Listreg.Visible = False
+  nreg_LostFocus
 
 End
 
