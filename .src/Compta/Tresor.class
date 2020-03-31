@@ -1650,7 +1650,7 @@ Public Sub Enrg_Ecr()
             Endif
           Endif
         Endif
-        lettrable = $lstex.Controle(numlotT, True, numcpt)
+        lettrable = $lstex.Controle(numlotT, numcpt)
         If Lettrable = 1 Then
 '          rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numlot = &1 and compte = &2", numlotT, numcpt)
 '          If rResult.Available Then
