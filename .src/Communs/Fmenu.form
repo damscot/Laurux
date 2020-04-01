@@ -184,7 +184,7 @@
         Text = ("\"Bordereaux des réglements (ancien\"B\")")
       }
       { brdreg Menu
-        Text = ("Bordereaux des réglements (nouveau)")
+        Text = ("Saisie des règlements")
       }
       { MenuLcr Menu
         Text = Shortcut(("Lcr"), "L")
@@ -1044,7 +1044,7 @@
       Picture = Picture["Icones/Lib.png"]
     }
     { ToolButton1 ToolButton
-      MoveScaled(96,0,8,4)
+      MoveScaled(98,0,8,4)
       Background = &HDDDDDD&
       ToolTip = ("Quitter Laurux")
       Picture = Picture["Icones/stop.png"]
@@ -1149,6 +1149,10 @@
       Enabled = False
       Background = &HDDDDDD&
       ToolTip = ("Quitter Laurux")
+    }
+    { ToolButton9 ToolButton
+      MoveScaled(95,0,4,4)
+      Picture = Picture["Icones/sespeces.png"]
     }
   }
   { HBox1 HBox
@@ -1308,14 +1312,14 @@
           }
         }
         { Expander2 Expander
-          MoveScaled(0,25,25,23)
+          MoveScaled(0,25,25,25)
           Arrangement = Arrange.Fill
           Padding = 2
           Text = ("Saisies")
           TextFont = Font["Bold"]
           Animated = True
           { VBox2 VBox
-            MoveScaled(1,0,23,19)
+            MoveScaled(1,0,23,21)
             Font = Font["Serif,-1"]
             Background = Color.TextBackground
             Spacing = True
@@ -1409,6 +1413,18 @@
                 MoveScaled(3,0,18,2)
                 Expand = True
                 Text = ("Régularisations")
+              }
+            }
+            { HBox20 HBox
+              MoveScaled(1,19,21,2)
+              { PictureBox20 PictureBox
+                MoveScaled(0,0,2,2)
+                Picture = Picture["Icones/sespeces.png"]
+              }
+              { lbsr Label
+                MoveScaled(4,0,15,2)
+                Expand = True
+                Text = ("Saisie des règlements")
               }
             }
           }
