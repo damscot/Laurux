@@ -31,26 +31,23 @@
   }
   { Panel3 Panel
     MoveScaled(2,43,60,54)
-    { interne RadioButton
-      MoveScaled(0,9,22,3)
-      Text = ("Par compte interne ")
-    }
     { pcint Panel
       MoveScaled(6,14,50,9)
       Enabled = False
+      Border = Border.Plain
       { cptint TextReg
-        MoveScaled(0,0,16,3)
+        MoveScaled(0.6667,1,16,3)
       }
       { Butint Button
         MoveScaled(17,0,4,4)
         Picture = Picture["Icones/next_frame.png"]
       }
       { libcpt Label
-        MoveScaled(23,0,26,3)
+        MoveScaled(23,1,26,3)
         Background = Color.White
       }
       { borderau CheckBox
-        MoveScaled(3,5,33,2)
+        MoveScaled(8,6,33,2)
         Text = ("Saisie par bordereaux")
       }
     }
@@ -93,6 +90,10 @@
       MoveScaled(33,0,27,3)
       Text = ("Regroupe les règlements")
       Value = CheckBox.True
+    }
+    { interne CheckBox
+      MoveScaled(1,9,22,2.6667)
+      Text = ("Par compte interne ")
     }
   }
   { GridView1 GridView

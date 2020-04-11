@@ -106,6 +106,7 @@ End
 
 Public Function modifi(ind As Integer, value As VarEcr) As Boolean    ''Inscrit la valeur dans le tableau
   
+  If ind = -1 Then Return False
   If ind < $Vecr.Count Then
     $Vecr[ind] = value
     Return True

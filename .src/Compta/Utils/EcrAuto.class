@@ -38,6 +38,7 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
     numecr = res!numecriture
   Else
     numecr = Val(Vecr.numero)
+    DocActif.Get_Lock("Reglement", numecr)
   Endif
   If Vecr.type = VarEcr.vente Then
     res = utils.db.LockIncrement("numecriture2", "Fiches_Parametres")
@@ -72,16 +73,25 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
       Case VarEcr.L_modif
         Modif(var.lind)
         $rescomp = utils.db.Edit("Fiches_Mvt", "lind=&1", var.lind)
-        If ajout(var) Then Return True
+        If ajout(var) Then
+          DocActif.free_lock("Reglement", numecr)
+          Return True
+        Endif
+        DLettrage(var)
         
       Case VarEcr.L_sup
         sup(var.lind, var.compte)
+        DLettrage(var)
+        
     End Select
    
   Next
+  
   utils.db.Exec("LOCK TABLES Fiches_Mvt WRITE,Fiches_MvtM WRITE")
   Sha1Calc.CalcSha1("Fiches_Mvt", numecr)
   utils.db.Exec("UNLOCK TABLES")
+  
+  If DocActif.Is_lock("Reglement", numecr, False) Then DocActif.free_lock("Reglement", numecr)
 
 End
 
@@ -263,7 +273,7 @@ Private Sub Lettrage(var As VarEcr)
       lisext.letcpt(var.Tlettrage[i].lind, True, var.numlot, "numlot")
     Next
   Endif
-  'on controle si le compte est a 0 pour le lettrer et si l'écart est inférieur à celui des paramétres on passe l'écriture de régule
+  'on control si le compte est a 0 pour le lettrer et si l'écart est inférieur à celui des paramétres on passe l'écriture de régul
   If lisext.Controle(var.numlot) = 0 Then
     respart = utils.db.Exec("SELECT ecart,jrnod,cptrsplus,cptrsmoins FROM Fiches_Parametres")
     If Abs(lisext.Ecart) <= CFloat(respart!ecart) Then
@@ -302,9 +312,9 @@ Private Sub DLettrage(var As VarEcr)
       Endif
     Until resext.MoveNext()
     If tot <> 0 Then
-      If Message.Question("Le lettrage du compte " & var.compte & " " & var.libelle & "\nN'est plus équilibré \nVoulez-vous le supprimer ?", "Oui", "Non") = 1 Then
+'      If Message.Question("Le lettrage du compte " & var.compte & " " & var.libelle & "\nN'est plus équilibré \nVoulez-vous le supprimer ?", "Oui", "Non") = 1 Then
         lisext.letgroupe(Vecr.numlot, Vecr.numlot, False, var.compte)
-      Endif
+'      Endif
     Endif
   Endif
   

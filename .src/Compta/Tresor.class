@@ -359,6 +359,7 @@ Public Sub Movt()
       Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee, Pointee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Journal.Text, numecrit.Text, Cptt.Text, LbCptbanque, .Cdate_Dbase(Datej.Text), numdoc.Text, numlot.Text, libelletresor.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, .Cdate_Dbase(datee.Text), 0)
     Endif
     Sha1Calc.CalcSha1(Cbase.Table("TabMvt"), numecrit.Text)
+    If DocActif.is_lock("Reglement", numecrit.Text, False) Then DocActif.free_lock("Reglement", numecrit.Text)
   End With
 
 End
@@ -1681,6 +1682,7 @@ Public Sub Enrg_Ecr()
         Endif
       Endif
       Sha1Calc.CalcSha1("Fiches_Mvt", Numecrit.Text)
+      If DocActif.is_lock("Reglement", numecrit.Text, False) Then DocActif.free_lock("Reglement", numecrit.Text)
       Montand = 0
       Montanc = 0
       ecrit1.clear
@@ -2033,6 +2035,7 @@ Public Sub Ecrit3()
     Endif
     If Not Error Then
       If Message.Question("Attention ! Vous allez modifier l'écriture n° " & num, "Oui", "Non") = 1 Then
+        DocActif.Get_lock("Reglement", num)
         numecrit.Text = num
         n = 1
         nvlle = 0

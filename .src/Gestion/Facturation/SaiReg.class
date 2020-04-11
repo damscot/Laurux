@@ -8,6 +8,8 @@ Private sel As String[] = ["Date", "Document", "Lot", "Libellé", "Debit", "Cré
 Private Enum dteb, numdocb, numlotb, libelb, montcb, etatb
 Private brd As String[] = ["Date", "Document", "Lot", "Libellé", "Montant", "Etat"]
 
+Private Enum Valide_bordereau, Valide_saisie
+
 Private $Vecr As VarEcr
 Private $Lecr As New VarEcr
 Private $selec As String[]
@@ -24,6 +26,7 @@ Private $typ As Integer
 Private $ntk As String
 Private $tr As TriGen
 Private $Col As Collection
+Private $borderau As Boolean
 
 Public Bsel As Boolean
 Public Bval As String
@@ -35,10 +38,12 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
   Dim i As Integer
   Dim coef As Float
   Dim res As Result
+  Dim obs As Observer
   
   Utils.Observers(Me)
   ch = New Chainage([client, ndoc, nlot])
   ch = New Chainage([montsaisi, libsaisi, docsaisi, lotsaisi])
+  obs = New Observer(client) As "sel"
   
   client.reg = "[0-9]{1,8}"
   ndoc.MaxLenght = 10
@@ -112,7 +117,6 @@ Public Sub Form_Close()
 
   Dim obj As Object
 
-  If DocActif.is_lock("Reglement", nreg.Text, False) Then DocActif.free_lock("Reglement", nreg.Text)
   If $modif Then
     If Message.Question("Voulez vous valider la saisie ?", "Oui", "Non") = 1 Then vldsaisie_Click
   Endif
@@ -128,15 +132,6 @@ Public Sub nreg_KeyPress()
 
 End
 
-Public Sub nreg_GotFocus()
-
-  If Not IsNull($resreg) And If $resreg.Available Then
-    If DocActif.is_lock("Reglement", $resreg!code, False) Then
-      DocActif.free_lock("Reglement", $resreg!code)
-    Endif
-  Endif
-
-End
 '*****gestion des lostfocus*********
 Public Sub nreg_LostFocus()
 
@@ -153,16 +148,26 @@ Public Sub nreg_LostFocus()
   borderaux.Rows.Count = 0
   $modif = False
   If Not nreg.Text Then Return
-  If DocActif.Get_Lock("Reglement", nreg.Text) = False Then
-    nreg.SetFocus
-    Return
-  Endif
   $resreg = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code = &1", nreg.Text)
   If $resreg.Available Then
     libreg.Text = $resreg!libel
+    $borderau = $resreg!bordereaux
     $resjou = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", $resreg!journal)
     If $resjou.Available Then
       njournal.Text = $resreg!journal & " " & $resjou!libelle_jo & "   " & $resreg!cptint
+    Endif
+    If $borderau Then
+      Labvalide.Text = "Bordereau"
+      Labvalide.Tag = Valide_bordereau
+      Labvalide.Tooltip = "Validation et édition du bordereau"
+      valide.Tooltip = "Validation du bordereau " & $resreg!libel
+      edite.Tooltip = "Édition du borderau " & $resreg!libel
+    Else
+      Labvalide.Text = "Saisie"
+      Labvalide.Tag = Valide_saisie
+      Labvalide.Tooltip = "Validation et édition de la saisie"
+      valide.Tooltip = "Validation des écritures modifiées et ajoutées"
+      edite.Tooltip = "Édition des nouvelles écritures"
     Endif
     If $typ = VarEcr.caisse Then Return
     $Lecr = New VarEcr
@@ -260,24 +265,14 @@ Public Sub client_LostFocus()
       nreg.SetFocus
       Return
     Endif
-    If affclient() Then affsel()
-    selection.SetFocus
-  Endif
-
-End
-
-Public Sub montsaisi_LostFocus()
-
-  If montsaisi.Value < 0 And Not $resreg!decaissement Then
-    Try Message.Error("Decaissement impossible")
-    montsaisi.SetFocus
+    If affclient() Then selection.SetFocus
   Endif
 
 End
 
 Private Function affclient() As Boolean
   
-  $rescli = Utils.db.Exec("SELECT * FROM Fiches_Comptes Left Join Fiches_Cli on compte_cc=cli_code WHERE compte_cc=&1", client.Text)
+  $rescli = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1 AND (type_cc='C' OR type_cc='F')", client.Text)
   If Not $rescli.Available Then
     Balloon.Delay = 3000
     If Not Balloon.Visible Then Balloon.Warning("Compte innexistant", client)
@@ -643,12 +638,17 @@ Public Sub butvalide_Click()
     Return
   Endif
 
-  If montsaisi.Value < 0 And Not $resreg!decaissement Then
-    Message.Warning("Les réglements négatifs ne sont pas autorisés")
+  If montsaisi.Value < 0 And (Not $resreg!decaissement Or Not Start.LocalSettings["/Soc" & Start.Societe & "/Decais"]) Then
+    Message.Warning("Les décaissements ne sont pas autorisés")
     montsaisi.SetFocus
     Return
   Endif
   $modif = True
+  Labvalide.Text = "Saisie"
+  Labvalide.Tag = Valide_saisie
+  Labvalide.Tooltip = "Validation et édition de la saisie"
+  valide.Tooltip = "Validation des écritures modifiées et ajoutées"
+  edite.Tooltip = "Édition des nouvelles écritures"
   $Vecr.numdoc = docsaisi.Text
   $Vecr.numlot = lotsaisi.Text
   $Vecr.dte = dtereg.dte
@@ -700,6 +700,7 @@ Public Sub butsup_Click()
     Case Else
       $Vecr.etat = VarEcr.L_sup
       $Lecr.modifi($ind, $Vecr)
+      $modif = True
   End Select
   affborderau()
   mabl()
@@ -719,25 +720,36 @@ Public Sub rechcli_Click()
   Dim f As ResultField
   Dim Req As String
   Dim Res As Result
+  Dim win As New Form
   
-  'req = "SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde,CASE WHEN solde < 0 THEN '&HFF0000' WHEN solde > 0 THEN '&H00FF00' WHEN solde = 0 THEN Null  END as bgcolor FROM Fiches_Comptes  "
-  req = "SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde FROM Fiches_Comptes  "
+  req = "SELECT * FROM (SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde,cli_adr1 AS adr1,cli_adr2 AS adr2,cli_cd_ptl AS cp,cli_ville AS ville FROM Fiches_Comptes JOIN Fiches_Cli ON compte_cc=cli_code " &
+  "UNION SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde,fo_adr1 AS adr1,fo_adr2 AS adr2,fo_cd_ptl AS cp,fo_ville AS ville  FROM Fiches_Comptes JOIN Fiches_Four ON compte_cc = fo_code) AS a "
   
   $Col = New Collection
   res = Utils.db.Exec(Req)
   If Not res.Available Then Return
   
   f = res.Fields["compte_cc"]
-  $Col.Add(f, "-----code-----")
+  $Col.Add(f, "----code----")
   f = Res.Fields["intitule_cc"]
   $Col.Add(f, "-----------intitule-----------")
   f = Res.Fields["solde"]
-  $Col.Add(f, "-----Solde-----")
+  $Col.Add(f, "----Solde----")
+  f = Res.Fields["adr1"]
+  $Col.Add(f, "------------Adresse 1------------")
+  f = Res.Fields["adr2"]
+  $Col.Add(f, "------------Adresse 2------------")
+  f = res.Fields["cp"]
+  $Col.Add(f, "--cp--")
+  f = Res.Fields["ville"]
+  $Col.Add(f, "------ville------")
   f = Res.Fields["type_cc"]
   $Col.Add(f, "Type")
   
-  $tr = New TriGen(Null, $Col, Res, Req, 20, Me) As "ColTri"
-  $tr.ExtraSel("type_cc = 'C' OR type_cc= 'F' ", "AND")
+  win.Width = Me.Width
+  win.Height = 480 
+  win.Show
+  $tr = New TriGen(win, $Col, Res, Req, 20, Me) As "ColTri"
   $tr.Show(True)
 
 End
@@ -761,6 +773,31 @@ Public Sub rechreg_Click()
 
 End
 
+Public Sub valide_Click()
+
+  Select Case Labvalide.Tag
+    Case Valide_saisie
+      vldsaisie_Click
+    Case Valide_bordereau
+      vldbordereau_Click
+      
+  End Select
+
+End
+
+Public Sub edite_Click()
+
+  Select Case Labvalide.Tag
+    Case Valide_saisie
+      editions_Click
+
+    Case Valide_bordereau
+      editionb_Click
+      
+  End Select
+
+End
+
 Public Sub ColTri_MajSel(val As Variant)
 
   If val Then
@@ -770,6 +807,7 @@ Public Sub ColTri_MajSel(val As Variant)
     Stop Event
   Endif
   client_LostFocus()
+  sel_LostFocus
   
 End
 
@@ -927,9 +965,8 @@ Public Sub vldbordereau_Click()
   Dim ereg As EcrReg
   
   If borderaux.Rows.Count = 0 Then Return
-  vldsaisie_Click
   If Not $resreg!bordereaux Then Return
-  nreg_LostFocus()
+'  nreg_LostFocus()
   
   $Lecr.etat = VarEcr.L_valide
   $Lecr.type = VarEcr.Treso
@@ -977,7 +1014,7 @@ Public Sub quite_Click()
 End
 
 
-Public Sub Rechsom_Click()
+Public Sub somme_Click()
 
   Fmontant.Show
 

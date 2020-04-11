@@ -39,6 +39,8 @@ Public Sub _new()
     Combocais.Add(RegCais[i], i)
   Next
   Combocais.Tag = 0
+  decaissement.Enabled = Start.LocalSettings["/Soc" & Start.Societe & "/Decais"] 
+
 End
 
 Private Sub affiche()
@@ -74,7 +76,7 @@ Private Sub affiche()
   
 End
 
-'riado button
+'radio button
 Public Sub interne_Click()
 
   If interne.Value Then
@@ -82,6 +84,8 @@ Public Sub interne_Click()
     cptint.SetFocus
   Else
     pcint.Enabled = False
+    cptint.Clear
+    borderau.Value = False
   Endif
 
 End
@@ -351,3 +355,13 @@ Public Sub GridView1_Click()
 
 End
 
+
+Public Sub borderau_Click()
+
+  If borderau.Value Then
+    cptint.SetFocus
+  Else
+    If Not cptint.Text Then cptint.SetFocus
+  Endif
+
+End

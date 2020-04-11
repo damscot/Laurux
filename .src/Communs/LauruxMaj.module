@@ -5096,6 +5096,10 @@ Public Sub Maj369()
   
 end_utf8:
   
+  Start.LocalSettings["/Soc" & Start.Societe & "/Decais"] = True
+  Start.LocalSettings.Save
+  Start.LocalSettings.Reload
+  
   pb = New ProgBar("Gestion des réglements", 9)
   PB.Show()
   PB.Avancement("Création du fichier des réglements", 1)

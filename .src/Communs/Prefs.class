@@ -142,8 +142,8 @@ Public Sub Form_Open()
     Pvconseille.Background = &HFFEFBF
     Analytique.Background = &HFFEFBF
     Lettrage.Background = &HFFEFBF
-    Carte.Background = &HFFEFBF
-    Cheque.Background = &HFFEFBF
+'    Carte.Background = &HFFEFBF
+'    Cheque.Background = &HFFEFBF
     Pays.Background = &HFFEFBF
     Expfact.Background = &HFFEFBF
     Ech.Background = &HFFEFBF
@@ -373,8 +373,9 @@ Public Sub Form_Open()
   Try Casier.Value = cursettings["/Soc" & Start.Societe & "/Casier"]
   Try Analytique.Value = cursettings["/Soc" & Start.Societe & "/Analytique"]
   Try Lettrage.Value = cursettings["/Soc" & Start.Societe & "/Lettrage"]
-  Try Carte.Value = cursettings["/Soc" & Start.Societe & "/Carte"]
-  Try Cheque.Value = cursettings["/Soc" & Start.Societe & "/Cheque"]
+'  Try Carte.Value = cursettings["/Soc" & Start.Societe & "/Carte"]
+'  Try Cheque.Value = cursettings["/Soc" & Start.Societe & "/Cheque"]
+  Try decais.Value = cursettings["/Soc" & Start.Societe & "/Decais"]
   Try Sage.Value = cursettings["/Soc" & Start.Societe & "/Sage"]
   Try Sauvauto.Value = cursettings["/Soc" & Start.Societe & "/Sauvauto"]
   Try Envoiftp.Value = cursettings["/Soc" & Start.Societe & "/Envoiftp"]
@@ -542,8 +543,9 @@ Public Sub form_close()
   cursettings["/Soc" & Start.Societe & "/Pvcons"] = Pvconseille.Value
   cursettings["/Soc" & Start.Societe & "/Analytique"] = Analytique.Value
   cursettings["/Soc" & Start.Societe & "/Lettrage"] = Lettrage.Value
-  cursettings["/Soc" & Start.Societe & "/Carte"] = Carte.Value
-  cursettings["/Soc" & Start.Societe & "/Cheque"] = Cheque.Value
+'  cursettings["/Soc" & Start.Societe & "/Carte"] = Carte.Value
+'  cursettings["/Soc" & Start.Societe & "/Cheque"] = Cheque.Value
+  cursettings["/Soc" & Start.Societe & "/Decais"] = decais.Value
   cursettings["/Soc" & Start.Societe & "/Pays"] = Pays.text
   cursettings["/Soc" & Start.Societe & "/Expfact"] = Expfact.text
   cursettings["/Soc" & Start.Societe & "/Ech"] = Ech.Text
