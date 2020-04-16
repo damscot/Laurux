@@ -173,6 +173,7 @@ End
 Public Sub Close(Selected_Value As String)
 
   Dim cancel As Boolean = False
+  Dim f As TextReg
 
   If Object.IsValid(Obj) Then
     If Selected_Value Then
@@ -188,12 +189,15 @@ Public Sub Close(Selected_Value As String)
     If Not cancel Then Parent.Close()
   Else
     If Not cancel Then
-'      Coltri.Delete()
       Remonter.Delete()
       Descendre.Delete()
       Reset.Delete()
+      For Each f In Colfil
+        f.Delete()
+      Next
       Colfil.Clear()
       Col_Order.Clear()
+      Coltri.Delete()
     Endif
   Endif
   If Win Then

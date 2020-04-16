@@ -9,6 +9,7 @@ Private Org As String
 Private NbEnreg As Integer = 0 ' Enregistrement de départ de la sélection
 Private lg As Integer
 Private chkfocus As Boolean = True
+Private Coul As LCoul
 
 
 Private tr As TriGen
@@ -79,6 +80,7 @@ Public Sub _new(Barticle As Boolean, Bstocke As Boolean, TriArticle As String, S
   CB1.Text = CB1.List[0]
   CB1Prev = CB1.Text
   
+  Coul = New LCoul
   Update_Req()
 
 End
@@ -97,9 +99,11 @@ Public Sub Update_Req()
   
   Col = New Collection
   
+  
+  
   Select Case Tri2Art
     Case "art_code"
-      Req = "select *, CASE WHEN art_suspendu = 1 THEN '&HC0C0C0&' WHEN art_qte > 0 and art_stocke = 1 THEN '&H00FF00&' WHEN art_qte = 0 and art_stocke = 1 THEN '&HF8B9A0&' WHEN art_qte < 0 and art_stocke = 1 THEN '&HFF0000&' WHEN art_stocke = 0 THEN Null ELSE '&H00FFFF&' END as bgcolor from " & Cbase.Table("TabArt")
+      Req = "select *, " & Coul.Art_DB_bgcolor() & " from " & Cbase.Table("TabArt")
       Res = Utils.db.Exec(Req)
       If Not Res.Available Then Return
       f = Res.Fields[Tri2Art]

@@ -1,0 +1,67 @@
+' Gambas class file
+
+Create Static
+
+Public Struct SColor
+  Bg As String
+  Ft As String
+  Fg As String
+End Struct
+
+Public Art_Stk As SColor 'Color for Article Stocké
+Public Art_NStk As SColor 'Color for Article Non Stocké
+Public Art_Epuise As SColor 'Color for Article Epuisé
+Public Art_Suspendu As SColor 'Color for Article Suspendu
+
+
+Public Sub _New(Optional Montant As Variant = 0, Optional Quantite As Variant = 1, Optional Arr As Variant = LPrix.Arr_001, Optional Cpt As String = "")
+  
+  Dim Val As String[]
+  
+  Art_Stk = New SColor
+  Val = Utils.Fcolr(Start.LocalSettings["/Coul/Stk"])
+  If IsNull(Val) Then
+    Art_Stk.Bg = "&HFFFFFF&"
+  Else
+    Art_Stk.Bg = Val[0]
+    Art_Stk.Ft = Val[1]
+    Art_Stk.Fg = Val[2]
+  Endif
+  
+  Art_NStk = New SColor
+  Val = Utils.Fcolr(Start.LocalSettings["/Coul/Nstk"])
+  If IsNull(Val) Then
+    Art_NStk.Bg = "&HFFFFFF&"
+  Else
+    Art_NStk.Bg = Val[0]
+    Art_NStk.Ft = Val[1]
+    Art_NStk.Fg = Val[2]
+  Endif
+  
+  Art_Epuise = New SColor
+  Val = Utils.Fcolr(Start.LocalSettings["/Coul/Eps"])
+  If IsNull(Val) Then
+    Art_Epuise = "&HFFFFFF&"
+  Else
+    Art_Epuise.Bg = Val[0]
+    Art_Epuise.Ft = Val[1]
+    Art_Epuise.Fg = Val[2]
+  Endif
+  
+  Art_Suspendu = New SColor
+  Val = Utils.Fcolr(Start.LocalSettings["/Coul/Spd"])
+  If IsNull(Val) Then
+    Art_Suspendu.Bg = "&HFFFFFF&"
+  Else
+    Art_Suspendu.Bg = Val[0]
+    Art_Suspendu.Ft = Val[1]
+    Art_Suspendu.Fg = Val[2]
+  Endif
+
+End
+
+Public Sub Art_DB_bgcolor() As String
+
+  Return "Case WHEN art_suspendu = 1 Then '" & Art_Suspendu.Bg & "' WHEN art_qte > 0 and art_stocke = 1 THEN '" & Art_Stk.Bg & "' WHEN art_qte <= 0 and art_stocke = 1 THEN '" & Art_Epuise.Bg & "' WHEN art_stocke = 0 THEN '" & Art_NStk.Bg & "' ELSE '&H00FFFF&' END as bgcolor"
+
+End

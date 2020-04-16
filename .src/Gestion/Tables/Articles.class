@@ -95,6 +95,7 @@ Private Col As Collection
 Private CB1Conv As Collection
 Private CB1Prev As String 
 Private SmallPanel As Integer
+Private Coul As LCoul
 
 
 Public Sub _New()
@@ -212,6 +213,7 @@ Public Sub _New()
   
   SmallPanel = Panel1.Height
   
+  Coul = New LCoul
   Update_Req()
 
 End
@@ -4734,7 +4736,7 @@ Public Sub Update_Req()
   
   Select Case Tri
     Case "art_code"
-      Req = "select *, CASE WHEN art_suspendu = 1 THEN '&HC0C0C0&' WHEN art_qte > 0 and art_stocke = 1 THEN '&H00FF00&' WHEN art_qte = 0 and art_stocke = 1 THEN '&HF8B9A0&' WHEN art_qte < 0 and art_stocke = 1 THEN '&HFF0000&' WHEN art_stocke = 0 THEN Null ELSE '&H00FFFF&' END as bgcolor from " & Cbase.Table("TabArt")
+      Req = "select *, " & Coul.Art_DB_bgcolor() & " from " & Cbase.Table("TabArt")
       Res = Utils.db.Exec(Req)
       If Not Res.Available Then Return
       f = Res.Fields[Tri]
