@@ -45,6 +45,8 @@ Public Arg_Start_Societe As String
 Public Arg_Restore_DB As String
 Public Arg_LogFile As String
 Public Arg_Debug As String
+Public Arg_Devel As Boolean ''Variable pour le mode de développement (breakpoint sans Recursive/Replay Observer)
+
 
 'Timer for Replaying Event
 Public hReplayTimer As Timer
@@ -403,6 +405,7 @@ Public Sub Parse_Args()
   Arg_Pos = Args.Has("p", "pos", "Demarre la Caisse")
   Arg_Log = Args.Has("l", "log", "Active le logging")
   Arg_Replay = Args.Has("r", "replay", "Active le replay")
+  Arg_Devel = Args.Has("", "devel", "Active le mode developpement")
   Arg_LogFile = Args.Get("", "logfile", "fichier de log (si logging/replay activé)", Application.Name & ".log")
   Arg_Debug = Args.Get("d", "debug", "niveau de verbosite en console, fichier dans le répertoire Debug", "3,3")
   

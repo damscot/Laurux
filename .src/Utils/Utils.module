@@ -1002,7 +1002,7 @@ Public Sub Observers(hCont As Form)
   Dim Source As Variant[]
   
   Source = New Variant[]
-  Recursive_Observers(hCont, Source)
+  If Start.Arg_Devel = False Then Recursive_Observers(hCont, Source)
 
   If Start.LocalSettings["/Soc" & Start.Societe & "/Coul_fen"] Then
     Frmt = Utils.FColr(Start.LocalSettings["/Coul/Fnets"])
