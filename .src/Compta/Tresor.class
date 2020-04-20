@@ -74,6 +74,9 @@ Private Sjour As String 'on mémorise le numéro du journal
 Private Ext As Boolean = False
 Private $lstex As Listextcpt
 
+Public Bsel As Boolean
+Public Bval As String
+
 Public Sub _new(num2 As String)
 
   $lstex = New Listextcpt("", "01.01.1900", "31.12.9999", "t", "") 'pour le cas de rappel d'écriture dans la saisie des reglements
@@ -366,14 +369,12 @@ End
 
 Public Sub compte()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Comptabilite.Bsel = False
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Numcompte.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Numcompte.text = Bval
     If Not IsNull(Numcompte.Text) Then
       LF = 0
       numcpt = numcompte.Text

@@ -55,7 +55,9 @@ Private son As Integer = Start.Son
 Private Coulfond As New String[]
 Private PosY As Integer
 Private pdf As Ccompta
-Private Tri As String
+
+Public Bsel As Boolean
+Public Bval As String
 
 '*************************
 '* On initialise l'écran *
@@ -253,13 +255,12 @@ End
 '***************************************
 Public Sub ToggleButton3_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(type, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cpt.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Cpt.text = Bval
     Cpt2.SetFocus
   Endif
 
@@ -270,13 +271,12 @@ End
 '***************************************
 Public Sub ToggleButton2_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cpt2.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Cpt2.text = Bval
     Cpt.SetFocus
   Endif
 

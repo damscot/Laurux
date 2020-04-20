@@ -1,0 +1,73 @@
+' Gambas class file
+
+Create Static
+
+Private $ColElem As Collection
+
+Public Struct elements
+  nom As String       ''nom de la propriete
+  propriete As Variant      '' propriété à appliquer
+  frm As String           ''format de la propriété
+End Struct
+
+Private $elem As Elements[]
+
+Public Sub _new()
+
+  $ColElem = New Collection
+
+End
+
+Public Sub AddChamp(champ As String, nom As String, propriete As String, Optional frm As String)      ''Ajout d'une propriété, frm prend les valeurs de format nombres et dates ou le nombre de décimales après la virgule, jusqu'a 3
+  
+  Dim elem As New Elements
+  
+  elem.nom = nom
+  elem.propriete = propriete
+  elem.frm = frm
+  If $ColElem.Exist(champ) Then
+    $elem = New Elements[]
+    $elem = $ColElem[champ]
+    $elem.Add(elem)
+    $ColElem[champ] = $elem
+  Else
+    $elem = New Elements[]
+    $elem.Add(elem)
+    $ColElem.Add($elem, champ)
+  Endif
+  
+End
+
+Public Sub AppProp(obj As Object, champ As String)    ''applique les propriétés et format sur le champ
+  
+  Dim elem As Elements
+  Dim i As Integer
+  
+  If $ColElem.Exist(champ) Then
+    $elem = $ColElem[champ]
+    For i = 0 To $elem.Max
+      elem = $elem[i]
+      Object.SetProperty(obj, elem.nom, elem.propriete)
+      If elem.frm Then frmt(elem.frm, obj)
+    Next
+  Endif
+  
+End
+
+Private Sub frmt(frm As String, obj As Object)
+  
+  Dim dte As LDate
+  
+  If frm Match "dd" Or frm Match "mm" Or frm Match "yy" Or frm Match "yyyy" Then
+    dte = New LDate(obj.text)
+    obj.text = Format(dte.G, frm)
+  Else 
+    If TypeOf(frm) = gb.String Then
+      obj.text = Format(Val(obj.text), frm)
+    Else
+      obj.texr = Utils.CDec(obj.text, frm)
+    Endif
+  Endif
+  
+End
+

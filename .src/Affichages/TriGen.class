@@ -13,7 +13,7 @@ Private sel As String
 Private lg As Integer
 Private cl As Integer
 Private Coltri As GridView
-Private Colfil As TextBox[]
+Private Colfil As TextReg[]
 Private Remonter As Button
 Private Descendre As Button
 Private Reset As Button
@@ -28,21 +28,25 @@ Private Extra_sel As String
 Private Extra_comb As String
 Private xoffset As Integer
 Private policewidth As Integer = 10
+Private prop As ObjProp
 
 Event MajSel(Bval As Variant)
 Event Resize()
 
 '************************************** Gestion des Tris générique *****************************************************
-Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null)
+Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null, pr As ObjProp = Null)
 
   Dim i As Integer = 0
   Dim offset As Integer = 0
   Dim f As ResultField
-  Dim filter As TextBox
+  Dim filter As TextReg
+  Dim ch As Chainage
   
+  ch = New Chainage([])
   Parent = Par
   Res = Resu
   Request = Req
+  prop = pr
   If IsNull(Parent) Then
     Win = New Window
     Win.W = 800
@@ -54,7 +58,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
     Win.AutoResize = True
   Endif
   Coltri = New GridView(Parent) As "Coltri"
-  Colfil = New TextBox[]
+  Colfil = New TextReg[]
   Col_Order = New String[]
   Coltri.Width = Parent.ClientWidth - 40
   CellHeight = Height
@@ -68,7 +72,8 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   where = ""
   
   For Each f In Col_Def
-    filter = New TextBox(Parent) As "Filter"
+    filter = New TextReg(Parent) As "Filter"
+    ch.add([filter])
     FilterRegex.Add("", Col_Def.Key)
     filter.Tooltip = Col_Def.Key
     filter.Width = Len(Col_Def.Key) * policewidth
@@ -126,6 +131,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Coltri.SetFocus()
   xoffset = 0
   Try Coltri.Current.EnsureVisible
+  Colfil[0].SetFocus
 
 End
 
@@ -182,7 +188,7 @@ Public Sub Close(Selected_Value As String)
     If Not cancel Then Parent.Close()
   Else
     If Not cancel Then
-      Coltri.Delete()
+'      Coltri.Delete()
       Remonter.Delete()
       Descendre.Delete()
       Reset.Delete()
@@ -262,6 +268,12 @@ Public Sub Filter_DblClick()
 
 End
 
+Public Sub Filter_KeyPress()
+
+  If Key.Code = Key.Esc Then Close(Null) 
+
+End
+
 Public Sub Coltri_Data(Row As Integer, Column As Integer)
 
   Dim Frmt As New String[]
@@ -270,8 +282,8 @@ Public Sub Coltri_Data(Row As Integer, Column As Integer)
   With Utils
     .rs2.MoveTo(Row)
     If .rs2.Available Then
-      If IsNumber(Str(.rs2[Col_Def[Col_Order[Column]].name])) Then coltri.Data.Alignment = Align.Right
       Try Coltri.data.Text = Str(.rs2[Col_Def[Col_Order[Column]].name])
+       If Not IsNull(prop) Then prop.AppProp(coltri.Data, Col_Def[Col_Order[Column]].name)
       If .rs2.Fields.Exist("bgcolor") Then
         If .rs2["bgcolor"] <> Null Then
           Coltri.Data.Background = Val(.rs2["bgcolor"])
@@ -341,7 +353,7 @@ End
 
 Public Sub Coltri_Scroll()
   
-  Dim f As TextBox
+  Dim f As TextReg
   Dim x As Integer
   
   x = xoffset - Coltri.ScrollX
@@ -398,7 +410,7 @@ Public Sub Remonter_KeyPress()
 End
 
 Public Sub Reset_Click()
-  Dim f As TextBox
+  Dim f As TextReg
   
   For Each f In Colfil
     f.Text = f.Tag

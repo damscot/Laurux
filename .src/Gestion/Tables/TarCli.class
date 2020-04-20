@@ -134,13 +134,12 @@ End
 '**********************************************************
 Public Sub SelectionClient()
 
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
 
-  bsel = False
-  MyForm = New Triclients("TarCli")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Tclient.text = Codeclient
+    Tclient.text = Bval
     Cli_Man()
   Else
     Tclient.SetFocus
@@ -208,8 +207,8 @@ Public Sub SelectionArt()
 
   Dim MyForm As TriArticles
 
-  Bsel = False
   MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
+  MyForm.Showmodal
   If Bsel = True Then
     Tart.text = Bval
     Art_Man(Tart.Text)

@@ -81,6 +81,9 @@ Private skey As String
 Private $soption As String
 Private $bvign As Boolean
 
+Public Bsel As Boolean
+Public Bval As String
+
 '**********************************************************
 '*initialisation écrans et gestion onglet client          *
 '**********************************************************
@@ -527,14 +530,13 @@ End
 
 Public Sub Togglebutton1_Click()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
 
   If Radiobutton2.Value = False Then Radiobutton2.Value = True
-  Variables.bsel = False
-  MyForm = New Trifours("ValidBR")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    CodeFour.Text = Variables.Cfour
+  If Bsel = True Then
+    CodeFour.Text = Bval
   Else
     CodeFour.SetFocus
   Endif

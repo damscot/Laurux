@@ -8,6 +8,9 @@ Private $ressel As Result
 Private $res As Result
 Private $bars As Barselection
 
+Public Bsel As Boolean
+Public Bval As String
+
 Public Sub _new()
 
   Dim i As Integer
@@ -241,15 +244,13 @@ End
 'recherche
 Public Sub Butint_Click()
 
-  Dim MyForm As TriComptes
-  Dim tri As String
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, "B", "", "")
+  MyForm = New TriCpt(TriCpt.Bilan, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    cptint.Text = Comptabilite.sCmpt
-    libcpt.Text = Comptabilite.sDesg
+  If Bsel = True Then
+    cptint.Text = Bval
+'    libcpt.Text = Comptabilite.sDesg
   Else
     libcpt.Text = ""
   Endif

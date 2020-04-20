@@ -18,6 +18,7 @@ Private Obj As Object
 Public Bsel As Boolean = False
 Public Bval As String = ""
 Private CB1Prev As String 
+Private prop As New ObjProp
 
 Private log As LLog 
 
@@ -110,10 +111,13 @@ Public Sub Update_Req()
       f = Res.Fields["art_fam"]
       Col.Add(f, "- Fam. -")
       f = Res.Fields["art_pvht"]
+      prop.AddChamp(f.Name, "Alignment", Align.Right, "0.000")
       Col.Add(f, "- PvHT -")
       f = Res.Fields["art_pvttc"]
+      prop.AddChamp(f.Name, "Alignment", Align.Right, "0.000")
       Col.Add(f, "- PvTTC -")
       f = Res.Fields["art_qte"]
+      prop.AddChamp(f.Name, "Alignment", Align.Right, "0.000")
       Col.Add(f, "- Qte -")
     Case "mo_code"
       Req = "select * from " & Cbase.Table("TabMo")
@@ -127,14 +131,16 @@ Public Sub Update_Req()
       Col.Add(f, "-famille-")
       f = Res.Fields["mo_valeurht"]
       Col.Add(f, "-PV HT-")
+      prop.AddChamp(f.Name, "Alignment", Align.Right, "0.00")
       f = Res.Fields["mo_valeurttc"]
       Col.Add(f, "-PV TTC-")
+      prop.AddChamp(f.Name, "Alignment", Align.Right, "0.00")
       CB1.Enabled = False
     Default
       Error.Raise("Unsupported Feature")
   End Select
 
-  tr = New TriGen(Panel2, Col, Res, Req, 20, Me) As "ColTri"
+  tr = New TriGen(Panel2, Col, Res, Req, 20, Me, prop) As "ColTri"
   Filter_Calc()
 
 End

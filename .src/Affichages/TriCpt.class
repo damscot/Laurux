@@ -1,0 +1,158 @@
+' Gambas class file
+
+Public Enum Tous, Client, Fournisseur, Client_Fournisseur, Bilan, Gestion, General        ''définition du type de compte à afficher
+Public Enum Avec_Solde, Sans_Solde          ''Affichage avec ou sans le solde
+
+Public Bsel As Boolean = False
+Public Bval As String = ""
+
+Private $obj As Object
+Private $tr As TriGen
+Private $col As Collection
+Private $req As String
+Private $cond As String
+Private $res As Result
+Private $type As Integer
+Private $prop As ObjProp
+
+Public Sub _new(type As Variant, solde As Integer, obj As Object)
+
+Dim f As ResultField
+
+  If TypeOf(type) = gb.String Then
+    Select Case type
+      Case "B"
+        $type = TriCpt.Bilan
+      Case "G"
+        $type = TriCpt.Gestion
+      Case "C"
+        $type = TriCpt.Client
+      Case "F"
+        $type = TriCpt.Fournisseur
+    End Select
+  Else
+    $type = type
+  Endif
+  
+  $prop = New ObjProp
+  $obj = obj
+  If solde = Avec_Solde Then $cond = ",ROUND(solde,2) AS solde "
+  $Col = New Collection
+  
+  Select Case $type
+    Case Tous, Bilan, Gestion, General
+      $req = "SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc,type_cc " & $cond & " FROM Fiches_Comptes"
+      $res = Utils.db.Exec($req)
+      If Not $res.Available Then Return
+      Me.Width = Me.Width / 2.5
+      Panel1.Width = Panel1.Width / 2.5
+      debut()
+      
+    Case Client
+       $req = "SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc,type_cc,cli_adr1, cli_adr2 ,cli_cd_ptl,cli_ville " & $cond & " FROM Fiches_Comptes JOIN Fiches_Cli ON compte_cc=cli_code "
+       $res = Utils.db.Exec($req)
+      If Not $res.Available Then Return
+      debut()
+      f = $Res.Fields["cli_adr1"]
+      $Col.Add(f, "------------Adresse 1------------")
+      f = $Res.Fields["cli_adr2"]
+      $Col.Add(f, "------------Adresse 2------------")
+      f = $res.Fields["cli_cd_ptl"]
+      $Col.Add(f, "--cp--")
+      f = $Res.Fields["cli_ville"]
+      $Col.Add(f, "------ville------")
+      
+    Case Fournisseur
+      $req = "SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc, type_cc,fo_adr1, fo_adr2 ,fo_cd_ptl, fo_ville " & $cond & " FROM Fiches_Comptes JOIN Fiches_Four ON compte_cc = fo_code "
+      $res = Utils.db.Exec($req)
+      If Not $res.Available Then Return
+      debut()
+      f = $Res.Fields["fo_adr1"]
+      $Col.Add(f, "------------Adresse 1------------")
+      f = $Res.Fields["fo_adr2"]
+      $Col.Add(f, "------------Adresse 2------------")
+      f = $res.Fields["fo_cd_ptl"]
+      $Col.Add(f, "--cp--")
+      f = $Res.Fields["fo_ville"]
+      $Col.Add(f, "------ville------")
+      
+    Case Client_Fournisseur
+      $req = "SELECT * FROM (SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc,type_cc,cli_adr1 AS adr1,cli_adr2 AS adr2,cli_cd_ptl AS cp,cli_ville AS ville " & $cond & " FROM Fiches_Comptes JOIN Fiches_Cli ON compte_cc=cli_code " &
+      "UNION SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc,type_cc,fo_adr1 AS adr1,fo_adr2 AS adr2,fo_cd_ptl AS cp,fo_ville AS ville " & $cond & "  FROM Fiches_Comptes JOIN Fiches_Four ON compte_cc = fo_code) AS a "
+      $res = Utils.db.Exec($req)
+      If Not $res.Available Then Return
+     debut()
+      f = $Res.Fields["adr1"]
+      $Col.Add(f, "------------Adresse 1------------")
+      f = $Res.Fields["adr2"]
+      $Col.Add(f, "------------Adresse 2------------")
+      f = $res.Fields["cp"]
+      $Col.Add(f, "--cp--")
+      f = $Res.Fields["ville"]
+      $Col.Add(f, "------ville------")
+      f = $Res.Fields["type_cc"]
+      $prop.AddChamp(f.Name, "Alignment", Align.Center)
+      $Col.Add(f, "Type")
+
+  End Select
+  
+  If solde = Avec_Solde Then 
+    f = $Res.Fields["solde"]
+    $prop.AddChamp(f.Name, "Alignment", Align.Right, "0.00")
+    $Col.Add(f, "----Solde----")
+  Endif
+
+End
+
+Public Sub form_Open()
+
+  Dim cond As String
+  
+  $tr = New TriGen(Panel1, $Col, $res, $req, 20, Me, $prop) As "ColTri"
+  Select Case $obj.Name
+    Case "Lettrage"
+      cond = " lettrable = True AND "
+  End Select
+  
+  Select Case $type
+    Case Bilan
+      $tr.ExtraSel(cond & "type_cc='B'", "AND")
+    Case Gestion
+      $tr.ExtraSel(cond & "type_cc='G'", "AND")
+    Case General
+      $tr.ExtraSel(cond & "type_cc='B' OR type_cc='G'", "AND")
+  End Select
+  
+  $tr.Show(True)
+
+End
+
+Public Sub ColTri_MajSel(val As Variant)
+
+  If Object.IsValid($obj) Then
+    If Bsel = True Then
+      If Val Then
+        Object.SetProperty($obj, "Bsel", Bsel)
+        Object.SetProperty($obj, "Bval", Val)
+      Else
+        Stop Event
+      Endif
+    Endif
+  Else
+    Stop Event
+  Endif
+  
+  Me.Close()
+
+End
+
+Private Sub debut()
+  
+  Dim f As ResultField
+  
+  f = $res.Fields["compte_cc"]
+  $Col.Add(f, "----code----")
+  f = $Res.Fields["intitule_cc"]
+  $Col.Add(f, "-----------intitule-----------")
+  
+End

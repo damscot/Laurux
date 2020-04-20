@@ -152,13 +152,13 @@ End
 
 Public Sub Butcli_Click()
 
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
 
   bsel = False
-  MyForm = New Triclients("Histocliart")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Cli.text = Cclient
+    Cli.text = Bval
     Cli_Man("Cli")
   Else
     Cli.SetFocus
@@ -168,13 +168,12 @@ End
 
 Public Sub Butcli2_Click()
 
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
 
-  bsel = False
-  MyForm = New Triclients("Histocliart")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Cli2.text = Cclient
+    Cli2.text = Bval
     Cli_Man("Cli2")
   Else
     Cli2.SetFocus
@@ -208,21 +207,20 @@ End
 
 Public Sub butfour_click()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
   Dim lst As String
 
   lst = Last.Tag
-  Variables.bsel = False
-  MyForm = New Trifours("Me") 'trifour a mettre a jour avec nouvelle api par obj.
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me) 
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
+  If Bsel = True Then
     Select Case lst
       Case "1"
-        Textfour.Text = Variables.Cfour
+        Textfour.Text = Bval
         Textfour1.setfocus
         Textfour1.Select
       Case "2"
-        Textfour1.Text = Variables.Cfour
+        Textfour1.Text = Bval
         Textmarq.SetFocus
         Textmarq.Select
     End Select

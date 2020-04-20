@@ -167,13 +167,12 @@ End
 '************************************************
 Public Sub SelectionFour()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
 
-  Variables.bsel = False
-  MyForm = New Trifours("Changefour")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    NFour.Text = Variables.Cfour
+  If Bsel = True Then
+    NFour.Text = Bval
   Else
     NFour.SetFocus
   Endif
@@ -185,13 +184,12 @@ End
 
 Public Sub SelectionFour2()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
 
-  Variables.bsel = False
-  MyForm = New Trifours("Changefour")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    AFour2.Text = Variables.Cfour
+  If Bsel = True Then
+    AFour2.Text = Bval
   Else
     AFour2.SetFocus
   Endif
@@ -203,13 +201,13 @@ End
 
 Public Sub SelectionFour3()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
 
   Variables.bsel = False
-  MyForm = New Trifours("Changefour")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    NFour2.Text = Variables.Cfour
+  If Bsel = True Then
+    NFour2.Text = Bval
   Else
     NFour2.SetFocus
   Endif

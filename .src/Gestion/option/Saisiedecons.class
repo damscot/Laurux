@@ -165,14 +165,12 @@ End
 '******************gestion du boton recherche des fournisseurs
 Public Sub Butfour_Click()
 
-   Dim MyForm As Trifours
-   Dim res As Result
+   Dim MyForm As TriCpt
 
-  Variables.bsel = False
-  MyForm = New Trifours("ValidBR")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Textfour.Text = Variables.Cfour
+  If Bsel = True Then
+    Textfour.Text = Bval
     lirefour
     textbl.SetFocus
     textbl.Select

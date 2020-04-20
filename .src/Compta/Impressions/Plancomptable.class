@@ -28,7 +28,9 @@
 Private Filename As String
 Private type As String
 Private PosY As Integer
-Private Tri As String
+
+Public Bsel As Boolean
+Public Bval As String
 
 Public Sub _New()
 
@@ -42,13 +44,12 @@ End
 
 Public Sub ToggleButton2_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cpt2.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Cpt2.text = Bval
     Cpt.SetFocus
   Endif
 
@@ -56,13 +57,12 @@ End
 
 Public Sub ToggleButton3_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cpt.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Cpt.text = Bval
     Cpt2.SetFocus
   Endif
 

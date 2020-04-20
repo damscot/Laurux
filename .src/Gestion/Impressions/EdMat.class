@@ -17,6 +17,7 @@ PosX As Integer
 Public CodeMat As String
 Public CClient As String
 Public Bsel As Boolean = False
+Public Bval As String
 Private Origine As String = "EdMat"
 Private b As Integer = 0
 Tri As String
@@ -65,11 +66,9 @@ End
 Public Sub SelectionProp()
 
   Dim sel As String = ""
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
 
-  sel = ""
-  Tri = "cli_code"
-  MyForm = New Triclients("EdMat")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then
     b = 0

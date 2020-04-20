@@ -24,8 +24,6 @@ Private $modif As Boolean
 Private $ind As Integer
 Private $typ As Integer
 Private $ntk As String
-Private $tr As TriGen
-Private $Col As Collection
 Private $borderau As Boolean
 
 Public Bsel As Boolean
@@ -717,40 +715,17 @@ End
 
 Public Sub rechcli_Click()
 
-  Dim f As ResultField
-  Dim Req As String
-  Dim Res As Result
-  Dim win As New Form
+  Dim win As TriCpt
   
-  req = "SELECT * FROM (SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde,cli_adr1 AS adr1,cli_adr2 AS adr2,cli_cd_ptl AS cp,cli_ville AS ville FROM Fiches_Comptes JOIN Fiches_Cli ON compte_cc=cli_code " &
-  "UNION SELECT compte_cc,intitule_cc,type_cc,ROUND(solde,2) AS solde,fo_adr1 AS adr1,fo_adr2 AS adr2,fo_cd_ptl AS cp,fo_ville AS ville  FROM Fiches_Comptes JOIN Fiches_Four ON compte_cc = fo_code) AS a "
-  
-  $Col = New Collection
-  res = Utils.db.Exec(Req)
-  If Not res.Available Then Return
-  
-  f = res.Fields["compte_cc"]
-  $Col.Add(f, "----code----")
-  f = Res.Fields["intitule_cc"]
-  $Col.Add(f, "-----------intitule-----------")
-  f = Res.Fields["solde"]
-  $Col.Add(f, "----Solde----")
-  f = Res.Fields["adr1"]
-  $Col.Add(f, "------------Adresse 1------------")
-  f = Res.Fields["adr2"]
-  $Col.Add(f, "------------Adresse 2------------")
-  f = res.Fields["cp"]
-  $Col.Add(f, "--cp--")
-  f = Res.Fields["ville"]
-  $Col.Add(f, "------ville------")
-  f = Res.Fields["type_cc"]
-  $Col.Add(f, "Type")
-  
-  win.Width = Me.Width
-  win.Height = 480 
-  win.Show
-  $tr = New TriGen(win, $Col, Res, Req, 20, Me) As "ColTri"
-  $tr.Show(True)
+  win = New TriCpt(TriCpt.Client_Fournisseur, TriCpt.Avec_Solde, Me)
+  win.ShowModal
+   If Bsel Then
+    client.Text = Bval
+  Else
+    client.Text = ""
+  Endif
+  client_LostFocus()
+  sel_LostFocus
 
 End
 
@@ -796,19 +771,6 @@ Public Sub edite_Click()
       
   End Select
 
-End
-
-Public Sub ColTri_MajSel(val As Variant)
-
-  If val Then
-    client.Text = Bval
-  Else
-    client.Text = ""
-    Stop Event
-  Endif
-  client_LostFocus()
-  sel_LostFocus
-  
 End
 
 Public Sub Listreg_Click()

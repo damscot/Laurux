@@ -186,11 +186,9 @@ End
 
 Public Sub compte()
 
-  Dim MyForm As TriComptes
-  Dim Tri As String
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, "C", "", "")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
   If Comptabilite.Bsel = True Then
     Numcompte.text = Comptabilite.sCmpt

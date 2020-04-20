@@ -63,6 +63,7 @@ Private hCfour As Boolean = False
 Private pdf As Cetiquettes
 Private Tableau As String[]
 Public Bsel As Boolean = False
+Public Bval As String
 Public Codepostal As String
 Public Bureaudistributeur As String
 
@@ -1618,15 +1619,14 @@ End
 
 Public Sub ToggleButton1_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
   Type = "G"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Compt.text = Comptabilite.sCmpt
-    intitule.Text = Comptabilite.sDesg
+  If Bsel = True Then
+    Compt.text = Bval
+'    intitule.Text = Comptabilite.sDesg
     Button6.SetFocus
   Endif
 

@@ -36,10 +36,11 @@ Private Tab2 As String
 Private b As Integer
 Private son As Integer = Start.Son
 Private Lettrable As Integer
-Private Tri As String
-Public Bsel As Boolean = False
 Public Desg As String
 Private $lstex As Listextcpt
+
+Public Bsel As Boolean = False
+Public Bval As String
 
 Public Function convBool(bln As Boolean) As String
 
@@ -191,14 +192,13 @@ End
 
 Public Sub Button9_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "Lettrage")
+  MyForm = New TriCpt(Type, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cpt.text = Comptabilite.sCmpt
-    Label2.Text = Comptabilite.sDesg
+  If Bsel = True Then
+    Cpt.text = bval
+'    Label2.Text = Comptabilite.sDesg
     compteman()
     Indexation()
   Endif

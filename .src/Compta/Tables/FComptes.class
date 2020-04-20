@@ -11,6 +11,9 @@ Private Type As String
 Private Type2 As String
 Private Qpostes As Boolean = True
 
+Public Bsel As Boolean
+Public Bval As String
+
 Public Function Cdate_EXT(dte As String) As String
 
   Return (Right$(dte, 2) & "/" & Mid$(dte, 4, 2) & "/" & Left$(dte, 2))
@@ -844,17 +847,15 @@ End
 '**********************************************
 Public Sub ToggleButton1_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
   Type = "G"
   Type2 = "B"
-  Comptabilite.bsel = False
-  MyForm = New TriComptes(Tri, Type, Type2, "")
+  MyForm = New TriCpt(TriCpt.General, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Compt.text = Comptabilite.sCmpt
-    intitule.Text = Comptabilite.sDesg
+  If Bsel = True Then
+    Compt.text = Bval
+'    intitule.Text = Comptabilite.sDesg
     Button6.SetFocus
   Endif
 

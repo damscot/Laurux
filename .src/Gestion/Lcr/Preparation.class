@@ -47,6 +47,7 @@ nv As Boolean = True
 Dte1 As Integer
 Type As String
 Public Bsel As Boolean
+Public Bval As String
 Public sCmpt As String
 Public sdesg As String
 PosX As Integer
@@ -719,13 +720,12 @@ End
 '************************************************
 Public Sub compte()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, "C", "D4")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    Code.text = sCmpt
+    Code.text = Bval
     compteman()
     Nom.SetFocus
   Endif

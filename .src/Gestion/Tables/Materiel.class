@@ -2522,13 +2522,13 @@ End
 
 Public Sub ToggleButton3_Click()
 
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
 
   variables.bsel = False
-  MyForm = New Triclients("Facture")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Cd.text = Variables.$Codeclient
+  If Bsel = True Then
+    Cd.text = Bval
     Maj_Cli()
 Endif
 

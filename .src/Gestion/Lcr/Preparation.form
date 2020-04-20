@@ -3,6 +3,134 @@
 { Form Form
   MoveScaled(0,0,114,84)
   Text = ("Préparation des bordereaux")
+  { TabStrip1 TabStrip
+    MoveScaled(1,46,104,32)
+    Background = Color.Background
+    Index = 0
+    Text = ("LCR")
+    { TextLabel2 TextLabel
+      MoveScaled(1,2,17,3)
+      Font = Font["-1"]
+      Text = ("Client")
+      Alignment = Align.Center
+    }
+    { Code textreg Cmpt
+      Name = "Code"
+      MoveScaled(1,5,17,3.3333)
+      Font = Font["-1"]
+      Background = Color.TextBackground
+      Tag = "1"
+      ReadOnly = True
+    }
+    { TextLabel1 TextLabel
+      MoveScaled(30,2,51,3)
+      Font = Font["-1"]
+      Text = ("Nom")
+      Alignment = Align.Center
+    }
+    { Nom textreg Cmpt
+      Name = "Nom"
+      MoveScaled(28,5,55,3.3333)
+      Font = Font["-1"]
+      Background = Color.TextBackground
+      Tag = "2"
+      ReadOnly = True
+    }
+    { TextLabel3 TextLabel
+      MoveScaled(1,9,17,3)
+      Font = Font["-1"]
+      Text = ("Date facture")
+      Alignment = Align.Center
+    }
+    { dte textreg Cmpt
+      Name = "dte"
+      MoveScaled(1,12,17,3.3333)
+      Font = Font["-1"]
+      Background = Color.TextBackground
+      Tag = "3"
+      Alignment = Align.Center
+      ReadOnly = True
+    }
+    { TextLabel4 TextLabel
+      MoveScaled(28,9,17,3)
+      Font = Font["-1"]
+      Text = ("Date échéance")
+      Alignment = Align.Center
+    }
+    { datee textreg Cmpt
+      Name = "datee"
+      MoveScaled(28,12,17,3.3333)
+      Font = Font["-1"]
+      Background = Color.TextBackground
+      Tag = "4"
+      Alignment = Align.Center
+      ReadOnly = True
+    }
+    { TextLabel10 TextLabel
+      MoveScaled(54,9,17,3)
+      Font = Font["-1"]
+      Text = ("Numéro facture")
+      Alignment = Align.Center
+    }
+    { Numfac textreg Cmpt
+      Name = "Numfac"
+      MoveScaled(54,12,17,3.3333)
+      Font = Font["-1"]
+      Background = Color.TextBackground
+      Tag = "5"
+      Alignment = Align.Center
+      ReadOnly = True
+    }
+    { TextLabel11 TextLabel
+      MoveScaled(81,9,17,3)
+      Font = Font["-1"]
+      Text = ("Montant")
+      Alignment = Align.Center
+    }
+    { Montant textreg Cmpt
+      Name = "Montant"
+      MoveScaled(81,12,17,3.3333)
+      Font = Font["-1"]
+      Background = Color.TextBackground
+      Tag = "6"
+      Alignment = Align.Center
+      ReadOnly = True
+    }
+    { Crej CheckBox
+      MoveScaled(1,18.6667,22,4)
+      Font = Font["-1"]
+      Text = ("Ecartée")
+    }
+    { Button7 Button
+      MoveScaled(18,4.3333,4,4)
+      Visible = False
+      Font = Font["-1"]
+      ToolTip = ("Cliquer pour recuperer votre compte.")
+      Picture = Picture["Icones/next_frame.png"]
+    }
+    { BQ2 ComboBox
+      MoveScaled(54,18,44,3.3333)
+      Font = Font["-1"]
+    }
+    { TextLabel5 TextLabel
+      MoveScaled(29,18,24,4)
+      Font = Font["-1"]
+      Text = ("Affectation banque")
+      Alignment = Align.Right
+    }
+    { Label5 Label
+      MoveScaled(40,22.2222,13,4)
+      Font = Font["-1"]
+      Text = ("Code entrée")
+      Alignment = Align.Left
+    }
+    { Entree2 ComboBox
+      MoveScaled(54,22,44,3.3333)
+      Font = Font["-1"]
+      List = [(""), ("1- Escompte"), ("2- Escompte en valeur"), ("3- Encaissement crédit forfaitaire"), ("4- Encaissement crédit après échéance"), ("5- Cession escompte (Loi Dailly)")]
+    }
+    Index = 0
+  }
   { Mt2 Label
     MoveScaled(51,42,16,4)
     Font = Font["Serif,Bold,Italic"]
@@ -69,14 +197,14 @@
     MoveScaled(1,4,108,3)
     Font = Font["Serif"]
     { CO TextBox
-      MoveScaled(4,0,10,2.875)
+      MoveScaled(4,0,10,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       ToolTip = ("Cliquer sur la colonne pour faire un tri")
       Alignment = Align.Center
     }
     { Inte TextBox
-      MoveScaled(13,0,23,2.875)
+      MoveScaled(13,0,23,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "2"
@@ -84,7 +212,7 @@
       Alignment = Align.Center
     }
     { DA TextBox
-      MoveScaled(36,0,10,2.875)
+      MoveScaled(36,0,10,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "4"
@@ -92,7 +220,7 @@
       Alignment = Align.Center
     }
     { DAE TextBox
-      MoveScaled(46,0,10,2.875)
+      MoveScaled(46,0,10,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "4"
@@ -100,7 +228,7 @@
       Alignment = Align.Center
     }
     { NUM TextBox
-      MoveScaled(56,0,11,2.875)
+      MoveScaled(56,0,11,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "5"
@@ -108,7 +236,7 @@
       Alignment = Align.Center
     }
     { MNT TextBox
-      MoveScaled(67,0,11,2.875)
+      MoveScaled(67,0,11,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "6"
@@ -124,7 +252,7 @@
       Alignment = Align.Center
     }
     { ACC TextBox
-      MoveScaled(95,0,8.625,2.875)
+      MoveScaled(95,0,8.6667,2.8889)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "8"
@@ -157,149 +285,21 @@
     Picture = Picture["Icones/charset.png"]
   }
   { BQ ComboBox
-    MoveScaled(15,0.625,34,2.875)
+    MoveScaled(15,0.6667,34,2.8889)
   }
   { Entree ComboBox
-    MoveScaled(63,0.625,42,2.875)
+    MoveScaled(63,0.6667,42,2.8889)
     List = [(""), ("1- Escompte"), ("2- Escompte en valeur"), ("3- Encaissement crédit forfaitaire"), ("4- Encaissement crédit après échéance"), ("5- Cession escompte (Loi Dailly)")]
   }
   { Label2 Label
-    MoveScaled(50,0.75,13,4)
+    MoveScaled(50,0.7778,13,4)
     Text = ("Code entrée")
     Alignment = Align.Left
   }
   { Label4 Label
-    MoveScaled(1,0.75,14,4)
+    MoveScaled(1,0.7778,14,4)
     Text = ("Code banque")
     Alignment = Align.Left
-  }
-  { TabStrip1 TabStrip
-    MoveScaled(1,46,104,32)
-    Background = Color.Background
-    Index = 0
-    Text = ("LCR")
-    { TextLabel2 TextLabel
-      MoveScaled(1,2,17,3)
-      Font = Font["-1"]
-      Text = ("Client")
-      Alignment = Align.Center
-    }
-    { Code textreg Cmpt
-      Name = "Code"
-      MoveScaled(1,5,17,3.375)
-      Font = Font["-1"]
-      Background = Color.TextBackground
-      Tag = "1"
-      ReadOnly = True
-    }
-    { TextLabel1 TextLabel
-      MoveScaled(30,2,51,3)
-      Font = Font["-1"]
-      Text = ("Nom")
-      Alignment = Align.Center
-    }
-    { Nom textreg Cmpt
-      Name = "Nom"
-      MoveScaled(28,5,55,3.375)
-      Font = Font["-1"]
-      Background = Color.TextBackground
-      Tag = "2"
-      ReadOnly = True
-    }
-    { TextLabel3 TextLabel
-      MoveScaled(1,9,17,3)
-      Font = Font["-1"]
-      Text = ("Date facture")
-      Alignment = Align.Center
-    }
-    { dte textreg Cmpt
-      Name = "dte"
-      MoveScaled(1,12,17,3.375)
-      Font = Font["-1"]
-      Background = Color.TextBackground
-      Tag = "3"
-      Alignment = Align.Center
-      ReadOnly = True
-    }
-    { TextLabel4 TextLabel
-      MoveScaled(28,9,17,3)
-      Font = Font["-1"]
-      Text = ("Date échéance")
-      Alignment = Align.Center
-    }
-    { datee textreg Cmpt
-      Name = "datee"
-      MoveScaled(28,12,17,3.375)
-      Font = Font["-1"]
-      Background = Color.TextBackground
-      Tag = "4"
-      Alignment = Align.Center
-      ReadOnly = True
-    }
-    { TextLabel10 TextLabel
-      MoveScaled(54,9,17,3)
-      Font = Font["-1"]
-      Text = ("Numéro facture")
-      Alignment = Align.Center
-    }
-    { Numfac textreg Cmpt
-      Name = "Numfac"
-      MoveScaled(54,12,17,3.375)
-      Font = Font["-1"]
-      Background = Color.TextBackground
-      Tag = "5"
-      Alignment = Align.Center
-      ReadOnly = True
-    }
-    { TextLabel11 TextLabel
-      MoveScaled(81,9,17,3)
-      Font = Font["-1"]
-      Text = ("Montant")
-      Alignment = Align.Center
-    }
-    { Montant textreg Cmpt
-      Name = "Montant"
-      MoveScaled(81,12,17,3.375)
-      Font = Font["-1"]
-      Background = Color.TextBackground
-      Tag = "6"
-      Alignment = Align.Center
-      ReadOnly = True
-    }
-    { Crej CheckBox
-      MoveScaled(1,18.625,22,4)
-      Font = Font["-1"]
-      Text = ("Ecartée")
-    }
-    { Button7 Button
-      MoveScaled(18,4.375,4,4)
-      Visible = False
-      Font = Font["-1"]
-      ToolTip = ("Cliquer pour recuperer votre compte.")
-      Picture = Picture["Icones/next_frame.png"]
-    }
-    { BQ2 ComboBox
-      MoveScaled(54,18,44,3.375)
-      Font = Font["-1"]
-    }
-    { TextLabel5 TextLabel
-      MoveScaled(29,18,24,4)
-      Font = Font["-1"]
-      Text = ("Affectation banque")
-      Alignment = Align.Right
-    }
-    { Label5 Label
-      MoveScaled(40,22.25,13,4)
-      Font = Font["-1"]
-      Text = ("Code entrée")
-      Alignment = Align.Left
-    }
-    { Entree2 ComboBox
-      MoveScaled(54,22,44,3.375)
-      Font = Font["-1"]
-      List = [(""), ("1- Escompte"), ("2- Escompte en valeur"), ("3- Encaissement crédit forfaitaire"), ("4- Encaissement crédit après échéance"), ("5- Cession escompte (Loi Dailly)")]
-    }
-    Index = 0
   }
   { Panel1 Panel
     MoveScaled(1,32,82,46)
@@ -342,7 +342,7 @@
       }
       { Ech1 textreg Cmpt
         Name = "Ech1"
-        MoveScaled(14,3,13.375,3.375)
+        MoveScaled(14,3,13.3333,3.3333)
         Font = Font["Serif,-1"]
         Tag = "10"
       }
@@ -353,13 +353,13 @@
       }
       { Ech2 textreg Cmpt
         Name = "Ech2"
-        MoveScaled(56,3,13.375,3.375)
+        MoveScaled(56,3,13.3333,3.3333)
         Font = Font["Serif,-1"]
         Tag = "11"
       }
     }
     { Entree3 ComboBox
-      MoveScaled(20,1,42,3.375)
+      MoveScaled(20,1,42,3.3333)
       Font = Font["-1"]
       List = [(""), ("1- Escompte"), ("2- Escompte en valeur"), ("3- Encaissement crédit forfaitaire"), ("4- Encaissement crédit après échéance"), ("5- Cession escompte (Loi Dailly)")]
     }
@@ -371,7 +371,7 @@
     }
     { Dteremise textreg Cmpt
       Name = "Dteremise"
-      MoveScaled(20,6,13.375,3.375)
+      MoveScaled(20,6,13.3333,3.3333)
       Font = Font["-1"]
       Tag = "7"
     }
@@ -383,7 +383,7 @@
     }
     { Refremise textreg Cmpt
       Name = "Refremise"
-      MoveScaled(20,11,13.375,3.375)
+      MoveScaled(20,11,13.3333,3.3333)
       Font = Font["-1"]
       Tag = "8"
     }
@@ -395,7 +395,7 @@
     }
     { Dtevaleur textreg Cmpt
       Name = "Dtevaleur"
-      MoveScaled(20,16,13.375,3.375)
+      MoveScaled(20,16,13.3333,3.3333)
       Font = Font["-1"]
       Tag = "9"
     }

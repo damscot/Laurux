@@ -60,38 +60,36 @@ End
 
 Public Sub ToggleButton5_Click()
 
-  Dim trfr As Trifours
+  Dim trfr As TriCpt
   
-  trfr = New Trifours("fo_code")
+  trfr = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   trfr.ShowModal
-  If Variables.Bsel Then
-    Four.Text = Variables.Cfour
-    Variables.Bsel = False
+  If Bsel Then
+    Four.Text = Bval
   Endif
   
 End
 
 Public Sub ToggleButton6_Click()
 
-    Dim trfr As Trifours
+    Dim trfr As TriCpt
   
-  trfr = New Trifours("fo_code")
+  trfr = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   trfr.ShowModal
-  If Variables.Bsel Then
-    Four2.Text = Variables.Cfour
-    Variables.Bsel = False
+  If Bsel Then
+    Four2.Text = Bval
   Endif
   
 End
 
 Public Sub Butclig_Click()
 
-  Dim trc As Triclients
+  Dim trc As TriCpt
   
-  trc = New Triclients("TarCli")
+  trc = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   trc.ShowModal
-  If TarCli.Bsel Then
-    Textcli.Text = TarCli.CodeClient
+  If Bsel Then
+    Textcli.Text = Bval
     $rescli = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", Textcli.Text)
     TextArea1.Text = $rescli!cli_rs_soc & " " & $rescli!cli_nom & " " & $rescli!cli_pnm & "\n" & $rescli!cli_adr1 & "\n" & $rescli!cli_adr2 & "\n" & $rescli!cli_cd_ptl & " " & $rescli!cli_ville
     Textyp.Text = $rescli!cli_typec

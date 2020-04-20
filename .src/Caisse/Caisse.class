@@ -2611,10 +2611,10 @@ End
 
 Public Sub CliAv_Select_Click()
 
-  Dim hForm As Triclients
+  Dim hForm As TriCpt
   Dim rResult As Result
   
-  hForm = New Triclients("Me", Null, Me)
+  hForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   hForm.Showmodal()
   If Bsel = True Then
     rResult = Utils.db.Exec("select * from " & Cbase.Table("TabCli") & " where cli_code = &1", Bval)
@@ -4449,10 +4449,10 @@ End
 
 Public Sub AcptChClicpt_Click()
   
-  Dim hForm As Triclients
+  Dim hForm As Tricpt
   Dim rResult As Result
   
-  hForm = New Triclients("Me", Null, Me)
+  hForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   hForm.Showmodal()
   If Bsel = True Then
     rResult = Utils.db.Exec("select * from " & Cbase.Table("TabCli") & " where cli_code = &1", Bval)
@@ -6973,7 +6973,7 @@ End
 
 Public Sub Button30_click()
 
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
   Dim MyForm2 As Tribl
   Dim numero_tk As String
 
@@ -6999,14 +6999,14 @@ Public Sub Button30_click()
             Try Utils.db.Exec("Update " & Cbase.Table("TabBl") & " set numtick = &1 where numtick = &2", Null, numero_tk)
             Blexists = Ajout_Reg_Bl(numero_tk)
           Endif
-          MyForm = New Triclients("Me", Null, Me)
+          MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
           MyForm.Showmodal()
           If Bsel = True Then
             Recup_Client(Bval)
           Endif
         Endif
       Case 2
-        MyForm = New Triclients("Me", Null, Me)
+        MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
         MyForm.Showmodal()
         If Bsel = True Then
           MyForm2 = New Tribl(Bval, numero_tk)

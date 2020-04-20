@@ -78,13 +78,12 @@ End
 '************************************
 Public Sub ToggleButton3_Click()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
 
-  Variables.bsel = False
-  MyForm = New Trifours("EdRup")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Four.Text = Variables.Cfour
+  If Bsel = True Then
+    Four.Text = Bval
   Else
     Four.SetFocus
   Endif
@@ -96,13 +95,12 @@ End
 
 Public Sub ToggleButton4_Click()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
 
-  Variables.bsel = False
-  MyForm = New Trifours("EdRup")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Four2.Text = Variables.Cfour
+  If Bsel = True Then
+    Four2.Text = Bval
   Else
     Four2.SetFocus
   Endif

@@ -32,6 +32,9 @@ Private b As String
 Private dnum As Integer
 Private Modif As Integer = 0
 
+Public Bsel As Boolean
+Public Bval As String
+
 Public Sub _New()
 
   Music.Load(Start.Musique)
@@ -586,14 +589,13 @@ End
 '*****************************
 Public Sub Button6_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Compte.text = Comptabilite.sCmpt
-    Intitule.Text = Comptabilite.sdesg
+  If Bsel = True Then
+    Compte.text = Bval
+'    Intitule.Text = Comptabilite.sdesg
     Montant.SetFocus
   Endif
 

@@ -85,6 +85,7 @@ Coulfond As New String[]
 Private sclient As String
 Private sclient2 As String
 Public Bsel As Boolean = False
+Public Bval As String
 Public Cclient As String
 Private ty As String
 Private Ccli As String
@@ -516,14 +517,14 @@ End
 
 Public Sub Togglebutton1_Click()
 
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
 
   If Radiobutton2.Value = False Then Radiobutton2.Value = True
   bsel = False
-  MyForm = New Triclients("FacturefmA")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then
-    codeclient.Text = Cclient
+    codeclient.Text = Bval
   Else
     Codeclient.SetFocus
   Endif

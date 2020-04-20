@@ -835,26 +835,24 @@ End
 
 Public Sub Butcli_Click()
 
-  Dim trc As Triclients
+  Dim trc As TriCpt
   
-  trc = New Triclients("TarCli")
+  trc = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
   trc.ShowModal
-  If TarCli.Bsel Then
-    Textclient.Text = TarCli.CodeClient
-    TarCli.Bsel = False
+  If Bsel Then
+    Textclient.Text = Bval
   Endif
   
 End
 
 Public Sub Butfour_Click()
 
-  Dim trfr As Trifours
+  Dim trfr As TriCpt
   
-  trfr = New Trifours("fo_code")
+  trfr = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   trfr.ShowModal
-  If Variables.Bsel Then
-    Textfour.Text = Variables.Cfour
-    Variables.Bsel = False
+  If Bsel Then
+    Textfour.Text = Bval
   Endif
   
 End

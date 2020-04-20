@@ -157,13 +157,12 @@ End
 '***************************************
 Public Sub Button3_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cp1.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Cp1.text = Bval
     Cp2.SetFocus
   Endif
 
@@ -174,13 +173,12 @@ End
 '***************************************
 Public Sub Button4_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+  MyForm = New TriCpt(Type, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cp2.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Cp2.text = Bval
     Cp1.SetFocus
   Endif
 

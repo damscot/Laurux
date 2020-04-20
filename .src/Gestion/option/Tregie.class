@@ -4,6 +4,9 @@ Private bs As Barselection
 Private resregie As Result
 Private $ind As Integer
 
+Public Bsel As Boolean
+Public Bval As String
+
 Public Sub form_Open()
 
   Dim obs As Observer
@@ -408,12 +411,12 @@ End
 
 Public Sub Buttccomp_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As TriCpt
 
-  MyForm = New TriComptes("cast(compte_cc AS char)", "B", "", "")
+  MyForm = New TriCpt(TriCpt.Bilan, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Textcdc.text = Comptabilite.sCmpt
+  If Bsel = True Then
+    Textcdc.text = Bval
   Endif
 
 End

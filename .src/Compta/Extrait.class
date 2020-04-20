@@ -69,6 +69,7 @@ Private sNumero As String
 Private bTri As Boolean = False
 Private sTri As String
 Public Bsel As Boolean = False
+Public Bval As String
 Public sCmpt As String
 Public sDesg As String
 Private $lstex As Listextcpt
@@ -294,15 +295,15 @@ End
 
 Public Sub Button7_Click()
 
-  Dim MyForm As TriComptes
+  Dim MyForm As Tricpt
 
   clear()
-  Tri = "cast(compte_cc AS char)"
-  MyForm = New TriComptes(Tri, Type, "", "")
+'  Tri = "cast(compte_cc AS char)"
+  MyForm = New TriCpt(type, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
-  If Comptabilite.Bsel = True Then
-    Cpt.text = Comptabilite.sCmpt
-    Nom.Text = Comptabilite.sDesg
+  If Bsel = True Then
+    Cpt.text = Bval
+'    Nom.Text = Comptabilite.sDesg
     compteman()
   Endif
   Cpt.setfocus

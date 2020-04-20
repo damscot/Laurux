@@ -6372,13 +6372,12 @@ End
 
 Public Sub SelectionFour()
 
-  Dim MyForm As Trifours
+  Dim MyForm As TriCpt
 
-  Variables.bsel = False
-  MyForm = New Trifours("Commande")
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    ArtFour.Text = Variables.Cfour
+  If Bsel = True Then
+    ArtFour.Text = Bval
     Frame4.Visible = True
     Frame4.raise
     Frm12()
@@ -10909,14 +10908,14 @@ End
 '**********************************************************
 Public Sub SelectionClient()
 
-  Dim MyForm As Triclients
+  Dim MyForm As TriCpt
 
   variables.bsel = False
   ChkFocus = 2
-  MyForm = New Triclients("Facture")
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Avec_Solde, Me)
   MyForm.Showmodal()
-  If Variables.Bsel = True Then
-    Code.text = Variables.$Codeclient
+  If Bsel = True Then
+    Code.text = Bval
     Courriel.Clear
     Cli_Man()
   Else
