@@ -1264,7 +1264,7 @@ End
 
 Public Sub butedit_Click()
   
-  Dim ressoc, res As Result
+  Dim ressoc, res, resext As Result
   Dim vb, vb1 As ReportVBox
   Dim hb As ReportHBox
   Dim lab As ReportLabel
@@ -1374,14 +1374,14 @@ Public Sub butedit_Click()
   lab.Text = "Solde"
   lab.Alignment = Align.Center
   
-  $lstex.resext.MoveFirst
+  resext = $lstex.resext
   
   Repeat
-    totd += $lstex.resext!montantd
-    totc += $lstex.resext!montantc
+    totd += resext!montantd
+    totc += resext!montantc
     sld = totd - totc
-    ajoulign(sld)
-  Until $lstex.resext.MoveNext()
+    ajoulign(sld, resext)
+  Until resext.MoveNext()
   
   hb = New ReporthBox($rpt)
   hb.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
@@ -1424,11 +1424,12 @@ Public Sub butedit_Click()
   
 End
 
-Private Sub ajoulign(sld As Float)
+Private Sub ajoulign(sld As Float, resext As Result)
   
   Dim lab As ReportLabel
   Dim hb As ReportHBox
   
+  If colcli.Count = 0 Then Return
   hb = New ReporthBox($rpt)
   hb.Height = "4mm"
   
@@ -1436,7 +1437,7 @@ Private Sub ajoulign(sld As Float)
   lab.Width = "30mm"
   lab.Height = "3mm"
   lab.Font = font["Serif,-4"]
-  lab.Text = LDate($lstex.resext!dte).L
+  lab.Text = LDate(resext!dte).L
   lab.Alignment = Align.Left
   lab.Border = ReportBorder["Right:1pt #000000"]
   
@@ -1444,7 +1445,7 @@ Private Sub ajoulign(sld As Float)
   lab.Expand = True
   lab.Height = "3mm"
   lab.Font = font["Serif,-4"]
-  lab.Text = $lstex.resext!libelle
+  lab.Text = resext!libelle
   lab.Alignment = Align.Left
   lab.Border = ReportBorder["Right:1pt #000000"]
   
@@ -1452,7 +1453,7 @@ Private Sub ajoulign(sld As Float)
   lab.Width = "30mm"
   lab.Height = "3mm"
   lab.Font = font["Serif,-4"]
-  lab.Text = Format($lstex.resext!montantd, "0.00")
+  lab.Text = Format(resext!montantd, "0.00")
   lab.Alignment = Align.Right
   lab.Border = ReportBorder["Right:1pt #000000"]
   
@@ -1460,7 +1461,7 @@ Private Sub ajoulign(sld As Float)
   lab.Width = "30mm"
   lab.Height = "3mm"
   lab.Font = font["Serif,-4"]
-  lab.Text = Format($lstex.resext!montantc, "0.00")
+  lab.Text = Format(resext!montantc, "0.00")
   lab.Alignment = Align.Right
   lab.Border = ReportBorder["Right:1pt #000000"]
   

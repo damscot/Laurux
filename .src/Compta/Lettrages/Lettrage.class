@@ -337,7 +337,8 @@ Public Sub affichage()
     If IsNull(rResult) Then Return
     If rResult.Available Then
       Repeat
-        Colcli.Add(rResult!lind, rResult!lind)
+        Print rResult!lind, rResult!compte, .Cdate_Aff(rResult!dte), rResult!numdoc
+        Colcli.Add(rResult!lind & rResult!numero, rResult!lind)
         Colcli.Item[0] = rResult!compte
         Colcli.Item[1] = .Cdate_Aff(rResult!dte)
         Colcli.Item[2] = rResult!libelle
