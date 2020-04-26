@@ -34,11 +34,11 @@ Event MajSel(Bval As Variant)
 Event Resize()
 
 '************************************** Gestion des Tris générique *****************************************************
-Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null, pr As ObjProp = Null)
+Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null)
 
   Dim i As Integer = 0
   Dim offset As Integer = 0
-  Dim f As ResultField
+  Dim f As ObjProp
   Dim filter As TextReg
   Dim ch As Chainage
   
@@ -46,7 +46,6 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Parent = Par
   Res = Resu
   Request = Req
-  prop = pr
   If IsNull(Parent) Then
     Win = New Window
     Win.W = 800
@@ -75,18 +74,19 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
     filter = New TextReg(Parent) As "Filter"
     ch.add([filter])
     FilterRegex.Add("", Col_Def.Key)
-    filter.Tooltip = Col_Def.Key
     filter.Width = Len(Col_Def.Key) * policewidth
     filter.Height = Height
     filter.X = offset
     filter.Y = 0
-    filter.Alignment = Align.Center
-    filter.Tag = Col_Def.Key
     offset = offset + filter.Width
+    f.filter = filter
+    If f.tri Then 
+      Tri = f.name
+      filter.SetFocus
+    Endif
     filter.Show()
     Colfil.Add(filter)
     Col_Order.Add(Col_Def.Key)
-    filter.Text = Col_Def.Key
   Next
   filter.Width = filter.Width + Parent.ClientWidth - offset - 40 'optimize la taille pour le dernier champ
   
@@ -132,6 +132,12 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   xoffset = 0
   Try Coltri.Current.EnsureVisible
   Colfil[0].SetFocus
+  For Each f In Col_Def
+    If f.tri Then
+      f.filter.SetFocus
+      Break
+    Endif
+  Next
 
 End
 
@@ -286,8 +292,8 @@ Public Sub Coltri_Data(Row As Integer, Column As Integer)
   With Utils
     .rs2.MoveTo(Row)
     If .rs2.Available Then
-      Try Coltri.data.Text = Str(.rs2[Col_Def[Col_Order[Column]].name])
-       If Not IsNull(prop) Then prop.AppProp(coltri.Data, Col_Def[Col_Order[Column]].name)
+      Try Coltri.data.Text = Str(Utils.rs2[Col_Def[Col_Order[Column]].name])
+      Col_Def[Col_Order[Column]].AppProp(coltri.Data)
       If .rs2.Fields.Exist("bgcolor") Then
         If .rs2["bgcolor"] <> Null Then
           Coltri.Data.Background = Val(.rs2["bgcolor"])

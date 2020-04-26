@@ -203,7 +203,7 @@ Public Sub _New()
   CB1.Add("-- Carac. --")
   CB1Conv.Add("art_crst", CB1.List[4])
   CB1.Add("-- Pv HT. --")
-  CB1Conv.Add("art_pvttc", CB1.List[5])
+  CB1Conv.Add("art_pvht", CB1.List[5])
   CB1.Add("-- Pv TTC --")
   CB1Conv.Add("art_pvttc", CB1.List[6])
 
@@ -4728,9 +4728,10 @@ End
 
 Public Sub Update_Req()
 
-  Dim f As ResultField
+  Dim f As ObjProp
   Dim Req As String
   Dim Res As Result
+  Dim k As String
   
   Col = New Collection
   
@@ -4739,33 +4740,51 @@ Public Sub Update_Req()
       Req = "select *, " & Coul.Art_DB_bgcolor() & " from " & Cbase.Table("TabArt")
       Res = Utils.db.Exec(Req)
       If Not Res.Available Then Return
-      f = Res.Fields[Tri]
-      Col.Add(f, "---- Code ----")
-      f = Res.Fields["art_design"]
-      Col.Add(f, "----------- Intitule -------------")
-      f = Res.Fields["art_four"]
-      Col.Add(f, "- Fourn. -")
-      f = Res.Fields["art_fam"]
-      Col.Add(f, "- Fam. -")
-      f = Res.Fields["art_qte"]
-      Col.Add(f, "- Qte -")
-      f = Res.Fields[CB1Conv[CB1.Text]]
-      Col.Add(f, "-" & CB1.Text & "-")
+      k = "---- Code ----"
+      f = New ObjProp(Res.Fields[Tri], k)
+      Col.Add(f, k)
+      k = "----------- Intitule -------------"
+      f = New ObjProp(Res.Fields["art_design"], k)
+      Col.Add(f, k)
+      k = "- Fourn. -"
+      f = New ObjProp(Res.Fields["art_four"], k)
+      Col.Add(f, k)
+      k = "- Fam. -"
+      f = New ObjProp(Res.Fields["art_fam"], k)
+      Col.Add(f, k)
+      k = "- Qte -"
+      f = New ObjProp(Res.Fields["art_qte"], k)
+      f.AddChamp("Alignment", Align.Right, "0.000")
+      Col.Add(f, k)
+      k = "-" & CB1.Text & "-"
+      f = New ObjProp(Res.Fields[CB1Conv[CB1.Text]], k)
+      Select Case CB1.Text
+        Case "-- Pv HT. --", "-- Pv TTC --"
+          f.AddChamp("Alignment", Align.Right, "0.000")
+      End Select
+      Col.Add(f, k)
 
     Case "mo_code"
       Req = "select * from " & Cbase.Table("TabMo")
       Res = Utils.db.Exec(Req)
       If Not Res.Available Then Return
-      f = Res.Fields[Tri]
-      Col.Add(f, "-----code-----")
-      f = Res.Fields["mo_design"]
-      Col.Add(f, "-------------------intitule-------------------")
-      f = Res.Fields["mo_fam"]
-      Col.Add(f, "-famille-")
-      f = Res.Fields["mo_valeurht"]
-      Col.Add(f, "-PV HT-")
-      f = Res.Fields["mo_valeurttc"]
-      Col.Add(f, "-PV TTC-")
+      k = "-----code-----"
+      f = New ObjProp(Res.Fields[Tri], k)
+      Col.Add(f, k)
+      k = "-------------------intitule-------------------"
+      f = New ObjProp(Res.Fields["mo_design"], k)
+      Col.Add(f, k)
+      k = "-famille-"
+      f = New ObjProp(Res.Fields["mo_fam"], k)
+      Col.Add(f, k)
+      k = "-PV HT-"
+      f = New ObjProp(Res.Fields["mo_valeurht"], k)
+      f.AddChamp("Alignment", Align.Right, "0.000")
+      Col.Add(f, k)
+      k = "-PV TTC-"
+      f = New ObjProp(Res.Fields["mo_valeurttc"], k)
+      f.AddChamp("Alignment", Align.Right, "0.000")
+      Col.Add(f, k)
       CB1.Enabled = False
     Default
       Error.Raise("Unsupported Feature")

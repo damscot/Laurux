@@ -1,12 +1,51 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,166,59)
+  MoveScaled(0,0,168,59)
   Font = Font["-1"]
   Expand = True
+  Arrangement = Arrange.Vertical
   AutoResize = True
+  { Pchoix Panel
+    MoveScaled(1,1,165,2)
+    Visible = False
+    Arrangement = Arrange.Horizontal
+    { clifou RadioButton
+      MoveScaled(1,0,23,2)
+      Expand = True
+      Text = ("Clients et fournisseurs")
+      Value = True
+    }
+    { cli RadioButton
+      MoveScaled(27,0,17,2)
+      Expand = True
+      Text = ("Clients")
+    }
+    { fou RadioButton
+      MoveScaled(37,0,14,2)
+      Expand = True
+      Text = ("Fournisseurs")
+    }
+    { all RadioButton
+      MoveScaled(54,0,14,2)
+      Visible = False
+      Text = ("Tous")
+    }
+    { gest RadioButton
+      MoveScaled(70,0,14,2)
+      Visible = False
+      Expand = True
+      Text = ("Gestion ")
+    }
+    { bil RadioButton
+      MoveScaled(88,0,15,2)
+      Visible = False
+      Expand = True
+      Text = ("Bilan")
+    }
+  }
   { Panel1 Panel
-    MoveScaled(0,0,166,59)
+    MoveScaled(0,3,168,56)
     Expand = True
     AutoResize = True
   }

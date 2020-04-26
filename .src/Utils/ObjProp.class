@@ -2,56 +2,65 @@
 
 Create Static
 
-Private $ColElem As Collection
-
 Public Struct elements
   nom As String       ''nom de la propriete
   propriete As Variant      '' propriété à appliquer
   frm As String           ''format de la propriété
 End Struct
 
-Private $elem As Elements[]
+Private $elem As New Elements[]
+Private $fieldname As ResultField
+Private $nom As String
+Private $CondFilter As ObjProp
+Private $filter As TextReg
 
-Public Sub _new()
+Public tri As Boolean = False       ''Indique si on tri sur cette colonne a l'ouverture de la recherche
 
-  $ColElem = New Collection
+Property filter As TextReg
+Property Read name As String
+
+
+Public Sub _new(FieldName As ResultField, NomColonne As String)
+
+  $fieldname = FieldName
+  $nom = NomColonne
 
 End
 
-Public Sub AddChamp(champ As String, nom As String, propriete As String, Optional frm As String)      ''Ajout d'une propriété, frm prend les valeurs de format nombres et dates ou le nombre de décimales après la virgule, jusqu'a 3
+Public Sub AddChamp(nom As String, propriete As String, Optional frm As String)      ''Ajout d'une propriété, frm prend les valeurs de format nombres et dates ou le nombre de décimales après la virgule, jusqu'a 3
   
   Dim elem As New Elements
   
   elem.nom = nom
   elem.propriete = propriete
   elem.frm = frm
-  If $ColElem.Exist(champ) Then
-    $elem = New Elements[]
-    $elem = $ColElem[champ]
-    $elem.Add(elem)
-    $ColElem[champ] = $elem
-  Else
-    $elem = New Elements[]
-    $elem.Add(elem)
-    $ColElem.Add($elem, champ)
-  Endif
+  $elem.Add(elem)
   
 End
 
-Public Sub AppProp(obj As Object, champ As String)    ''applique les propriétés et format sur le champ
+Public Sub AppProp(obj As Object)    ''applique les propriétés et format sur le champ
   
   Dim elem As Elements
   Dim i As Integer
   
-  If $ColElem.Exist(champ) Then
-    $elem = $ColElem[champ]
     For i = 0 To $elem.Max
       elem = $elem[i]
       Object.SetProperty(obj, elem.nom, elem.propriete)
       If elem.frm Then frmt(elem.frm, obj)
     Next
-  Endif
   
+End
+
+Public Sub AjoutCondfilter()
+
+  $CondFilter = New ObjProp($fieldname, $nom)
+
+End
+
+Public Sub CondFilter(nom As String, propriete As String)    ''On passe une propiété a la textreg associée 
+
+  $CondFilter.AddChamp(nom, propriete)
+
 End
 
 Private Sub frmt(frm As String, obj As Object)
@@ -71,3 +80,32 @@ Private Sub frmt(frm As String, obj As Object)
   
 End
 
+Private Function name_Read() As String
+
+  Return $fieldname.Name
+
+End
+
+Private Function CondFilter_Read() As ObjProp
+
+  Return $CondFilter
+
+End
+
+Private Function filter_Read() As TextReg
+  
+  Return $filter
+  
+End
+
+Private Sub filter_Write(Value As TextReg)
+
+  $filter = Value
+  If IsNull($CondFilter) Then $CondFilter = New ObjProp($fieldname, $nom)
+  $CondFilter.AddChamp("Text", $Nom)
+  $CondFilter.AddChamp("Tag", $Nom)
+  $CondFilter.AddChamp("Alignment", Align.Center)
+  $CondFilter.AddChamp("Tooltip", $Nom)
+  $CondFilter.AppProp($filter)
+
+End
