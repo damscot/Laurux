@@ -9,7 +9,7 @@ Public Struct elements
 End Struct
 
 Private $elem As New Elements[]
-Private $fieldname As ResultField
+Private $clef As String
 Private $nom As String
 Private $CondFilter As ObjProp
 Private $filter As TextReg
@@ -20,10 +20,21 @@ Property filter As TextReg
 Property Read name As String
 
 
-Public Sub _new(FieldName As ResultField, NomColonne As String)
+Public Sub _new(Clef As Variant, Nom As String)
 
-  $fieldname = FieldName
-  $nom = NomColonne
+  If TypeOf(Clef) = gb.String Then
+    $clef = Clef
+  Else If TypeOf(Clef) = gb.Object Then
+    If Object.Type(Clef) = "ResultField" Then
+      $clef = Clef.Name
+    Else
+      Message.Error("Object property non supporté")
+    Endif
+  Else
+    Message.Error("Object property non supporté")
+  Endif
+  
+  $nom = Nom
 
 End
 
@@ -53,7 +64,7 @@ End
 
 Public Sub AjoutCondfilter()
 
-  $CondFilter = New ObjProp($fieldname, $nom)
+  $CondFilter = New ObjProp($clef, $nom)
 
 End
 
@@ -82,7 +93,7 @@ End
 
 Private Function name_Read() As String
 
-  Return $fieldname.Name
+  Return $clef
 
 End
 
@@ -101,7 +112,7 @@ End
 Private Sub filter_Write(Value As TextReg)
 
   $filter = Value
-  If IsNull($CondFilter) Then $CondFilter = New ObjProp($fieldname, $nom)
+  If IsNull($CondFilter) Then $CondFilter = New ObjProp($clef, $nom)
   $CondFilter.AddChamp("Text", $Nom)
   $CondFilter.AddChamp("Tag", $Nom)
   $CondFilter.AddChamp("Alignment", Align.Center)

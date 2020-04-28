@@ -184,11 +184,17 @@ Sub L_Read() As String
 End
 
 Sub L_Write(lmnt As String)
+  Dim val As Float
 
   If Qte = 0 Then
     Mnt = 0
   Else
-    Mnt = Utils.FloatParse(lmnt) / Qte
+    val = Utils.FloatParse(lmnt)
+    If Not IsNull(val) Then
+      Mnt = Utils.FloatParse(lmnt) / Qte
+    Else
+      Mnt = 0
+    Endif
   Endif
   Raise change(Me)
 

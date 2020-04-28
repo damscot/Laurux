@@ -9,7 +9,9 @@ Private FilterRegex As Collection
 Private Dbl As Boolean = False
 Private Request As String
 Private Tri As String
-Private sel As String
+Private Group As String
+Private Sel As String
+Private Having As String
 Private lg As Integer
 Private cl As Integer
 Private Coltri As GridView
@@ -17,21 +19,29 @@ Private Colfil As TextReg[]
 Private Remonter As Button
 Private Descendre As Button
 Private Reset As Button
+Private Count As ValueBox
 Private Obj As Object
 Private Parent As Object
 Private CellHeight As Integer
 Private Win As Window
 Private Res As Result
 Private where As String
-Private comb As String
+Private has As String
 Private Extra_sel As String
-Private Extra_comb As String
+Private Extra_selcomb As String
+Private Extra_have As String
+Private Extra_havecomb As String
 Private xoffset As Integer
 Private policewidth As Integer = 10
 Private prop As ObjProp
+Private $nup As Boolean
 
 Event MajSel(Bval As Variant)
 Event Resize()
+Event Raz()
+Event Data(id As String, key As String, Data As _Gridview_Data)
+
+Property NoUp As Boolean 
 
 '************************************** Gestion des Tris générique *****************************************************
 Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null)
@@ -60,15 +70,19 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Colfil = New TextReg[]
   Col_Order = New String[]
   Coltri.Width = Parent.ClientWidth - 40
+  Coltri.ScrollBar = Scroll.None
   CellHeight = Height
   cl = Col.Length
   Col_Def = Col
   FilterRegex = New Collection
   Tri = Col_Def[Col_Def.First].name
   Sel = ""
+  Having = ""
   Extra_sel = ""
-  Extra_comb = ""
+  Extra_selcomb = ""
   where = ""
+  has = ""
+  Group = ""
   
   For Each f In Col_Def
     filter = New TextReg(Parent) As "Filter"
@@ -78,6 +92,9 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
     filter.Height = Height
     filter.X = offset
     filter.Y = 0
+    If (filter.X + filter.Width > Parent.ClientWidth - 40) Then
+      Coltri.ScrollBar = Scroll.Horizontal
+    Endif
     offset = offset + filter.Width
     f.filter = filter
     If f.tri Then 
@@ -92,6 +109,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Remonter = New Button(Parent) As "Remonter"
   Descendre = New Button(Parent) As "Descendre"
   Reset = New Button(Parent) As "Reset"
+  Count = New ValueBox(Parent) As "Count"
   Refresh_Height()
   Reset.Text = "Raz"
   Reset.Tooltip = "Efface la selection des filtres"
@@ -100,6 +118,12 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Descendre.Picture = Picture.Load("Icones/next.png")
   Descendre.Show()
   Reset.Show()
+  Count.W = 43
+  Count.H = 16
+  Count.Value = 0
+  Count.Font = Font["Fixed, 8"]
+  Count.Alignment = Align.Center
+  Count.Show()
 
   
   If ob Then
@@ -125,7 +149,6 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
     Inc i
   Wend 
   
-  Update()
   Coltri.MoveTo(0, 0)
   Coltri.SetFocus()
   xoffset = 0
@@ -157,8 +180,10 @@ Public Sub Refresh_Height()
   Descendre.X = Parent.ClientWidth - 30
   Remonter.Y = Parent.ClientHeight / 2 - ((Parent.ClientHeight / (4 * Remonter.H)) * Remonter.H)
   Descendre.Y = Parent.ClientHeight / 2 + ((Parent.ClientHeight / (5 * Descendre.H)) * Descendre.H)
-  Reset.X = Parent.W - 43
+  Reset.X = Parent.W - 42
   Reset.Y = 0
+  Count.X = Parent.W - 41
+  Count.Y = Remonter.Y + ((Descendre.Y - Remonter.Y) / 2) 
   Update()
   
 End
@@ -214,7 +239,24 @@ End
 Public Sub ExtraSel(Req As String, Comb As String)
   
   Extra_sel = Req
-  Extra_comb = Comb
+  Extra_selcomb = Comb
+  NbEnreg = 0
+  Update()
+  
+End
+
+Public Sub ExtraHave(Req As String, Comb As String)
+  
+  Extra_have = Req
+  Extra_havecomb = Comb
+  NbEnreg = 0
+  Update()
+  
+End
+
+Public Sub GroupBy(Grp As String)
+  
+  Group = Grp
   NbEnreg = 0
   Update()
   
@@ -243,12 +285,23 @@ Public Sub GenFilter()
   Dim f As String
   
   Sel = ""
+  Having = ""
   For Each f In FilterRegex
     f = Replace(f, "\"", "")
-    If f Then sel &= Col_Def[FilterRegex.key].name & " like \"%" & f & "%\" and "
+    If f Then
+      'I find only this way to distingish between original columns and group by results is to look on field name
+      If Col_Def[FilterRegex.key].name Match "parse_having_" Then
+        Having &= Col_Def[FilterRegex.key].name & " like \"%" & f & "%\" and "
+      Else
+        sel &= Col_Def[FilterRegex.key].name & " like \"%" & f & "%\" and "
+      Endif
+    Endif
   Next
   If Sel Then
     Sel = Left(Sel, Len(Sel) - 5)
+  Endif
+  If Having Then
+    Having = Left(Having, Len(Having) - 5)
   Endif
   NbEnreg = 0
   Update()
@@ -283,25 +336,34 @@ Public Sub Filter_KeyPress()
 
 End
 
+Public Sub Refresh_Data()
+
+  coltri.Refresh()
+
+End
+
 Public Sub Coltri_Data(Row As Integer, Column As Integer)
 
   Dim Frmt As New String[]
   Dim Frmt2 As String[]
-
-  With Utils
-    .rs2.MoveTo(Row)
-    If .rs2.Available Then
-      Try Coltri.data.Text = Str(Utils.rs2[Col_Def[Col_Order[Column]].name])
-      Col_Def[Col_Order[Column]].AppProp(coltri.Data)
-      If .rs2.Fields.Exist("bgcolor") Then
-        If .rs2["bgcolor"] <> Null Then
-          Coltri.Data.Background = Val(.rs2["bgcolor"])
-        Endif
-      Else
-        If Even(row) Then Coltri.Data.Background = Color.White Else Coltri.Data.Background = Color.Background
+  Dim cancel As Boolean
+  Dim idx As String = ""
+  
+  Res.MoveTo(Row)
+  If Res.Available Then
+    Try Coltri.data.Text = Str(Res[Col_Def[Col_Order[Column]].name])
+    Try idx = Str(Res[Col_Def[Col_Order[0]].name])
+    cancel = Raise Data(idx, Col_Order[Column], Coltri.Data)
+    If cancel Then Return
+    Col_Def[Col_Order[Column]].AppProp(coltri.Data)
+    If Res.Fields.Exist("bgcolor") Then
+      If Res["bgcolor"] <> Null Then
+        Coltri.Data.Background = Val(Res["bgcolor"])
       Endif
+    Else
+      If Even(row) Then Coltri.Data.Background = Color.White Else Coltri.Data.Background = Color.Background
     Endif
-  End With
+  Endif
 
 End
 
@@ -351,14 +413,16 @@ End
 
 Public Sub Coltri_MouseWheel()
 
-  If mouse.Delta = -1 Then
+  If mouse.Delta <= -1 Then
     If Coltri.Rows.Count = lg Then NbEnreg = NbEnreg + lg
-  Else
+    Update()
+  Else If mouse.Delta >= 1 Then
     If Coltri.Rows.Count <= lg Then NbEnreg = NbEnreg - lg
+    Update()
   Endif
-  Update()
 
 End
+
 
 Public Sub Coltri_Scroll()
   
@@ -419,7 +483,12 @@ Public Sub Remonter_KeyPress()
 End
 
 Public Sub Reset_Click()
+
   Dim f As TextReg
+  Dim cancel As Boolean = False
+  
+  cancel = Raise Raz()
+  If cancel Then Return
   
   For Each f In Colfil
     f.Text = f.Tag
@@ -432,39 +501,129 @@ Public Sub Reset_Click()
   
 End
 
+Public Sub Count_Change()
+
+  If Count.Value < 0 Then
+    NbEnreg = 0
+  Else
+    NbEnreg = Count.Value
+  Endif
+  Update()
+  
+End
+
+Public Sub GetAllFiltered() As Result
+  
+  Dim sel_comb As String
+  Dim have_comb As String
+
+  If Extra_sel <> Null And Sel <> Null Then
+    sel_comb = Extra_selcomb
+  Endif
+  If Extra_have <> Null And Having <> Null Then
+    have_comb = Extra_havecomb
+  Endif
+  
+  Return Utils.db.Exec(Request & where & Extra_sel & " " & sel_comb & " " & Sel & " " & Group & " " & has & Extra_have & " " & have_comb & " " & Having & " order by " & Tri)
+  
+End
+
 Public Sub Update()
 
+  Dim Rescnt As Result
+
   If NbEnreg < 0 Then NbEnreg = 0
+  Count.Value = NbEnreg
   
   If Sel Or Extra_sel Then
     where = " where "
-    If Sel And Extra_sel Then
-      comb = " " & Extra_comb & " "
-    Else
-      comb = ""
-    Endif
   Else
     where = ""
   Endif
-  
-  If Dbl = True Then
-    Deb4()
+  If Having Or Extra_have Then
+    has = " having "
   Else
-    Deb3()
+    has = ""
+  Endif
+
+  If $nup Then Return
+
+  If Dbl = True Then
+    DB_Decr()
+  Else
+    DB_Incr()
   Endif
 
 End
 
-Public Sub Deb3()
+Public Sub DB_Incr()
 
-  Utils.Base2(coltri, Request & where & Extra_sel & comb & Sel & " order by " & Tri & " limit " & NbEnreg & ", " & lg & "")
+  Dim sel_comb As String
+  Dim have_comb As String
+
+  If Extra_sel <> Null And Sel <> Null Then
+    sel_comb = Extra_selcomb
+  Endif
+  If Extra_have <> Null And Having <> Null Then
+    have_comb = Extra_havecomb
+  Endif
+
+  Res = Utils.db.Exec(Request & where & Extra_sel & " " & sel_comb & " " & Sel & " " & Group & " " & has & Extra_have & " " & have_comb & " " & Having & " order by " & Tri & " limit " & NbEnreg & ", " & lg & "")
+  If Res.Available Then
+    If Res.count <> 0 Then
+        Coltri.rows.Count = Res.count
+    End If
+  End If
   Coltri.Refresh
 
 End
 
-Public Sub Deb4()
+Public Sub DB_Decr()
 
-  Utils.Base2(coltri, Request & where & Extra_sel & comb & Sel & " order by " & Tri & " desc limit " & NbEnreg & ", " & lg & "")
+  Dim sel_comb As String
+  Dim have_comb As String
+
+  If Extra_sel <> Null And Sel <> Null Then
+    sel_comb = Extra_selcomb
+  Endif
+  If Extra_have <> Null And Having <> Null Then
+    have_comb = Extra_havecomb
+  Endif
+
+  Res = Utils.db.Exec(Request & where & Extra_sel & " " & sel_comb & " " & Sel & " " & Group & " " & has & Extra_have & " " & have_comb & " " & Having & " order by " & Tri & " desc limit " & NbEnreg & ", " & lg & "")
+  If Res.Available Then
+    If Res.count <> 0 Then
+        Coltri.rows.Count = Res.count
+    End If
+  End If
   Coltri.Refresh
 
 End
+
+Sub NoUp_Read() As Boolean
+
+  Return $nup
+  
+End
+
+Sub NoUp_Write(nup As Boolean)
+
+  Dim f As ObjProp
+  
+  If nup Then
+    For Each f In Col_Def
+      Object.Lock(f)
+      Object.Lock(f.filter)
+      Object.Lock(Coltri)
+    Next
+  Else
+    For Each f In Col_Def
+      Object.UnLock(f)
+      Object.UnLock(f.filter)
+      Object.UnLock(Coltri)
+    Next
+  Endif
+  $nup = nup
+
+End
+

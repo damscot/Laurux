@@ -1,0 +1,215 @@
+' Gambas class file
+
+Public Enum TextReg, TextArea, ListEditor, ListView
+
+Private $mode As Integer
+Private $cancel As Boolean = True
+Private $obj As Object
+Private $List As String[]
+Private $Text As String
+
+Event MajOut(Out As Variant)
+
+Property Read L As String[]
+Property Read T As String
+
+
+Public Sub _New(Message As String, Inp As Variant, Optional obj As Object = Null, Optional Tooltip As String = "", Optional Mode As Integer = LBox.TextReg)
+  
+  Dim i As Variant
+  
+  Question.Text = Message
+  Question.Tooltip = Tooltip
+  
+  TextReg1.Hide()
+  TextArea1.Hide()
+  ListEditor1.Hide()
+  ListDesel.Hide()
+  ListSel.Hide()
+  ListInv.Hide()
+  ListFiltre.Hide()
+  ListView1.Hide()
+
+  $mode = Mode
+  $obj = obj
+
+  Select Case $mode
+    Case LBox.TextReg
+      Inp.Hide()
+      TextReg1.reg = Inp.reg
+      TextReg1.dte = Inp.dte
+      TextReg1.dat = Inp.dat
+      TextReg1.numerique = Inp.numerique
+      TextReg1.Text = Inp.Text
+      TextReg1.Show()
+    Case LBox.TextArea
+      TextArea1.Text = Inp
+      TextArea1.Show()
+    Case LBox.ListEditor
+      ListEditor1.List = Inp
+      ListEditor1.Show()
+    Case LBox.ListView
+      For Each i In Inp
+        If Not IsNull(i)
+          If Not ListView1.Exist(Str(i)) Then
+            ListView1.Add(Str(i), Str(i))
+          Endif
+        Endif
+      Next
+      ListDesel.Show()
+      ListSel.Show()
+      ListInv.Show()
+      ListFiltre.Show()
+      ListView1.Show()
+    Default
+      Error.Raise("Mode LBox non supporté")
+  End Select
+  
+Catch
+  If Start.son Then
+    Music.Play
+  Endif
+  Message.Error("Erreur de gestion d'input de LBox")
+
+End
+
+Sub UpdateOut() As Boolean
+
+  Dim cancel As Boolean = False
+
+  Select Case $mode
+    Case LBox.TextReg
+      $Text = TextReg1.Text
+      If Not IsNull($obj) Then
+        $obj.Text = TextReg1.Text
+      Else
+        cancel = Raise MajOut(TextReg1)
+      Endif
+    Case LBox.TextArea
+      $Text = TextArea1.Text
+      If Not IsNull($obj) Then
+        $obj.Text = TextArea1.Text
+      Else
+        cancel = Raise MajOut(TextArea1)
+      Endif
+    Case LBox.ListEditor
+      $List = ListEditor1.List
+      If Not IsNull($obj) Then
+        $obj.List = ListEditor1.List.Copy()
+      Else
+        cancel = Raise MajOut(ListEditor1)
+      Endif
+    Case LBox.ListView
+      $List = ListView1.Selection
+      If Not IsNull($obj) Then
+        $obj.List = ListView1.Selection.Copy()
+      Else
+        cancel = Raise MajOut(ListView1)
+      Endif
+  End Select
+  
+  Return cancel
+  
+End
+'********
+'PROPERTY
+'********
+
+Sub L_Read() As String[]
+
+  Return $List.Copy
+
+End
+
+Sub T_Read() As String
+
+  Return $Text
+
+End
+
+''''''''''''''''
+'Graphic methods
+Public Sub Annuler_Click()
+
+  Me.Close($cancel)
+
+End
+
+Public Sub Valider_Click()
+
+  $cancel = UpdateOut()
+  Me.Close($cancel)
+
+End
+
+Public Sub ListInv_Click()
+
+  Dim i As _Treeview_Item
+
+  If Not ListView1.MoveFirst() Then
+    Repeat
+      i = ListView1.Item
+      If IsNull(i) Then Continue
+      If Not i.Selected Then
+        i.Selected = True
+      Else
+        i.Selected = False
+      Endif
+    Until ListView1.MoveNext()
+  Endif
+
+End
+
+Public Sub ListSelection(Selection As Boolean)
+
+  Dim i As _Treeview_Item
+  Dim r As RegExp
+
+  If ListFiltre.Text = "" Then
+    If Selection = True Then
+      ListView1.SelectAll()
+    Else
+      ListView1.UnselectAll()
+    Endif
+    Return
+  Endif
+  
+  r = New RegExp
+  Try r.Compile(ListFiltre.Text)
+  If Error Then
+    Message.Warning("l'expression régulière est mal formaté: " & Error.Text)
+    Return
+  Endif
+  
+  If Not ListView1.MoveFirst() Then
+    Repeat
+      i = ListView1.Item
+      If IsNull(i) Then Continue
+      If Selection Then
+        r.Exec(i.Text)
+        If r.Count >= 0 Then
+          i.Selected = True
+        Endif
+      Else
+        r.Exec(i.Text)
+        If r.Count >= 0 Then
+          i.Selected = False
+        Endif
+      Endif
+    Until ListView1.MoveNext()
+  Endif
+
+End
+
+Public Sub ListDesel_Click()
+  
+  ListSelection(False)
+  
+End
+
+Public Sub ListSel_Click()
+  
+  ListSelection(True)
+  
+End
+
