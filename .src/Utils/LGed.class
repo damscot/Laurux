@@ -1,0 +1,398 @@
+' Gambas class file
+
+Export
+Create Static
+
+Public Enum Clients, Fournisseurs, Comptabilite, Autres, Articles
+
+Private $index As Integer
+Private $tags As Collection
+Private $type As Integer
+Private $code As String
+Private $url As String
+Private $filename As String
+Private $mime As String
+Private $origin As String
+Private $mht As LPrix
+Private $mttc As LPrix
+Private $dte As LDate
+Private $mimeout As String
+
+Public Bsel As Boolean = False
+Public Bval As String = ""
+
+
+Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres, Optional origin As String = "")
+  
+  Dim Res, Res2 As Result
+  
+  'Creation for Static Class Call
+  $index = lind
+  $type = type
+  $origin = origin
+  $tags = New Collection
+  
+  'Creation d'un object LGed
+  If $index <> 0 Then  
+    Res = Utils.db.Exec("Select * From Docs_Ged where lind = &1", $index)
+    If Res.Available Then
+      Res2 = Utils.db.Exec("Select * From Docs_Tag left join Fiches_Tag on tag_lind = lind where doc_lind = &1", $index)
+      If Res2.Available Then
+        Repeat
+          $tags.Add(Res2!tag, Res2!lind)
+        Until Res2.MoveNext()
+      Endif
+      $type = Res!type
+      $code = Res!code
+      $url = Res!url
+      $filename = Res!filename
+      $mime = Res!mime
+      $origin = Res!origin
+      $dte = New LDate(Res!date)
+      $mht = New LPrix(Res!ht)
+      $mttc = New LPrix(Res!ttc)
+    Endif
+  Endif
+  
+End
+
+
+Public Sub Supprime(Optional Epur As Boolean = True)
+  
+  If $index = 0 Then Return
+
+  Utils.db.Exec("delete FROM Docs_Ged where lind = &1", $index)
+  Utils.db.Exec("delete FROM Docs_Tag where doc_lind = &1", $index)
+  If Epur Then
+    EpurationTags()
+  Endif
+  
+End
+
+Public Sub AddTag(Tag As String) As Integer 'return the index of the tag in DB or zero in case of error
+  
+  Dim Res As Result
+  
+Tag_exists:
+
+  Res = Utils.db.Exec("select * from Fiches_Tag where tag = &1", Tag)
+  If Res.Available Then
+    $tags.Add(Tag, Res!lind)
+    If $index <> 0 Then
+      Utils.db.Exec("insert ignore into Docs_Tag (doc_lind, tag_lind) VALUES (&1, &2)", $index, Res!lind)
+    Endif
+    Return Res!lind
+  Else
+    Utils.db.Exec("insert into Fiches_Tag (tag) VALUES (&1)", Tag)
+    Goto Tag_exists
+  Endif
+  
+End
+
+Public Sub DelAllTag(Optional Epur As Boolean = True) 'delete all tags of the documents
+  
+  $tags.Clear
+  If $index <> 0 Then
+      Utils.db.Exec("delete from Docs_Tag where doc_lind = &1", $index)
+  Endif
+  If Epur Then
+      EpurationTags()
+  Endif
+  
+End
+ 
+Public Sub DelTag(Tag As String, Optional Epur As Boolean = True) As Integer 'return the index of the tag in DB or zero in case of error
+  
+  Dim Res As Result
+  
+  Res = Utils.db.Exec("select * from Fiches_Tag where tag = &1", Tag)
+  If Res.Available Then
+    $tags.Remove(Res!lind)
+    'si le document existe dans la base on supprime la référence au tag
+    If $index <> 0 Then
+      Utils.db.Exec("delete from Docs_Tag where tag_lind = &1 and doc_lind = &2", Res!lind, $index)
+    Endif
+    If Epur Then
+      EpurationTags()
+    Endif
+    Return Res!lind
+  Else
+    Return 0
+  Endif
+  
+End
+
+
+Public Sub EpurationTags() As Integer 'suppression de tous les tags orphelins
+  
+  Dim Res As Result
+  
+  Res = Utils.db.Exec("select t.lind as tagidx, doc_lind, tag_lind, d.lind as docidx FROM Fiches_Tag as t left join Docs_Tag on t.lind = tag_lind left join Docs_Ged as d on d.lind = doc_lind where d.lind is null or doc_lind is null or tag_lind is null")
+  If Res.Available Then
+    Repeat
+      Utils.db.Exec("delete FROM Fiches_Tag where lind = &1", Res!tagidx)
+    Until Res.MoveNext()
+    Return Res.Count
+  Else
+    Return 0
+  Endif
+  
+End
+
+Public Sub EpurationDocs() As Integer 'suppression des documents sans tag
+  
+  Dim Res As Result
+  
+  Res = Utils.db.Exec("Select lind From Docs_Ged left join Docs_Tag On lind = doc_lind where doc_lind Is Null ")
+  If Res.Available Then
+    Repeat
+      Utils.db.Exec("delete FROM Docs_Ged where lind = &1", Res!lind)
+    Until Res.MoveNext()
+    Return Res.Count
+  Else
+    Return 0
+  Endif
+  
+End
+
+
+Public Sub XdgMimeProc_Read()
+
+  Dim sLine As String
+
+  Line Input #Last, sLine
+  
+  $mimeout = sLine
+
+End
+
+Public Sub CurlMimeProc_Read()
+
+  Dim sLine As String
+  Dim regex As RegExp
+
+  Line Input #Last, sLine
+  
+  regex = New RegExp
+  regex.Compile("Content-Type: (.*)")
+  regex.Exec(sLine)
+  If regex.Count >= 1 Then
+    $mimeout = RTrim$(regex[1].Text)
+  Endif
+
+End
+
+Public Sub Get_Mime() As Boolean
+
+  Dim path As String
+  Dim xdgmime As Process
+
+  $mimeout = "" 
+
+  If Left($url, 7) = "file://" Or Left($url, 1) = "/" Then
+    $filename = File.Name($url)
+    If Left($url, 7) = "file://" Then
+      path = Mid($url, 8)
+    Else
+      path = $url
+    Endif
+    xdgmime = Shell "xdg-mime query filetype " & path Wait For Input As "XdgMimeProc"
+    If xdgmime.Value == 0 Then
+      If Not IsNull($mimeout) Then
+        fmime.Text = $mimeout
+        Return False
+      Endif
+    Endif
+  Else
+    Try $filename = File.Name($url)
+    xdgmime = Shell "timeout 5 curl -s -k -I " & $url Wait For Input As "CurlMimeProc"
+    If xdgmime.Value == 0 Then
+      If Not IsNull($mimeout) Then
+        fmime.Text = $mimeout
+        Return False
+      Endif
+    Endif
+  Endif
+
+  Return True
+
+End
+
+Public Sub Commit()
+
+  Dim Res As Result
+  Dim tag As String
+
+  If $index = 0 Then
+    Utils.db.Exec("Insert into Docs_Ged (type, code, origin, url, filename, mime, date, ttc, ht) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9)", $type, $code, $origin, $url, $filename, $mime, $dte, $mttc, $mht)
+    Res = Utils.db.Exec("SELECT * FROM Docs_Ged WHERE lind = LAST_INSERT_ID()")
+    $index = Res!lind
+  Endif
+
+  
+  DelAllTag(False) 'l'epuration en edition graphique sera fait à la fermeture de la fenetre
+  For Each tag In ListTags.List
+    AddTag(tag)
+  Next
+
+  Utils.db.Exec("update Docs_Ged set type = &1, code = &2, origin = &3, url = &4, filename = &5, mime = &6, date = &7, ttc = &8, ht = &9 where lind = &{10}", $type, $code, $origin, $url, $filename, $mime, $dte.DT, $mttc.D, $mht.D, $index)
+  
+End
+
+Public Sub Ouvrir()
+
+  Visualiseur.Prog($url, $mime)
+
+End
+
+''''''''''''''''
+'Graphic methods
+
+Public Sub form_Open()
+
+  Dim tag As Variant
+
+  'on affiche les valeurs dans le formulaire
+  findex.Text = $index
+  ftype.Add("Clients", Clients)
+  ftype.Add("Fournisseurs", Fournisseurs)
+  ftype.Add("Comptabilite", Comptabilite)
+  ftype.Add("Autres", Autres)
+  ftype.Add("Articles", Articles)
+  ftype.Text = ftype[$type].Text
+  fcode.Text = $code
+  furl.reg = ".*"
+  furl.Text = $url
+  forigin.Text = $origin
+  fdte.Text = $dte.LT
+  fdte.Dat = True
+  fMht.Text = $mht.L
+  fMht.numerique = True
+  fMttc.Text = $mttc.L
+  fMttc.numerique = True
+  fmime.Text = $mime
+  'on autorise la modification de l'origine si elle n'a pas été crée au moment de l'objet (creation manuelle)
+  If $origin = "" Then
+    forigin.ReadOnly = False
+  Endif
+  
+  Object.Lock(ListTags)
+  For Each tag In $tags
+    ListTags.Add(tag)
+  Next
+  Object.Unlock(ListTags)
+  
+End
+
+Public Sub form_Close()
+  
+  EpurationTags()
+  
+End
+
+Public Sub ftype_Change()
+  
+  $type = ftype.Index
+   
+End
+
+Public Sub fcode_Change()
+  
+  $code = fcode.Text
+   
+End
+
+Public Sub furl_Change()
+  
+  $url = furl.Text
+   
+End
+
+Public Sub fMht_Change()
+  
+  $mht.L = fMht.Text
+   
+End
+
+Public Sub fMttc_Change()
+  
+  $mttc.L = fMttc.Text
+   
+End
+
+Public Sub fmime_Change()
+  
+  $mime = fmime.Text
+   
+End
+
+Public Sub Existant_Click()
+
+  Dim tr As TriGen
+  Dim prop As ObjProp
+  Dim Col As Collection
+  Dim k As String
+  Dim Req As String
+  Dim Res As Result
+  
+  Req = "select * from Fiches_Tag"
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  
+  Col = New Collection
+  k = "------------- tag --------------"
+  prop = New ObjProp(Res.Fields["tag"], k)
+  Col.Add(prop, k)
+  
+  tr = New TriGen(Null, Col, Res, Req, 20, Me)
+  'simplify Modal version
+  tr.Show(True)
+  
+  If Bsel = True Then
+    ListTags.Add(Bval)
+    Bsel = False
+    Bval = ""
+  Endif
+
+End
+
+Public Sub OuvrirB_Click()
+
+  Ouvrir()
+
+End
+
+Public Sub Supprimer_Click()
+
+  If Message.Question("Voulez-vous confirmer la suppression du document!", "Oui", "Non") = 1 Then
+    Supprime(False)
+    Me.Close()
+  Endif
+
+End
+
+Public Sub Enregistrer_Click()
+  
+  If fdte.dte = Null Then
+    Message.Error("la date ne doit pas etre vide")
+    Return
+  Endif
+  If IsNull(furl) Then
+    Message.Error("l'url du document ne doit pas etre nul")
+    Return
+  Endif
+  
+  If Get_Mime() Then
+    Message.Error("impossible de recupérer le type mime, verifiez l'URL")
+    Return
+  Endif
+  
+  Commit()
+
+End
+
+Public Sub Sortir_Click()
+
+  Me.Close()
+
+End

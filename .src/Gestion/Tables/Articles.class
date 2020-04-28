@@ -93,7 +93,6 @@ Private $opt As Artopt
 Private trb As TriGen
 Private Col As Collection
 Private CB1Conv As Collection
-Private CB1Prev As String 
 Private SmallPanel As Integer
 Private Coul As LCoul
 
@@ -208,7 +207,6 @@ Public Sub _New()
   CB1Conv.Add("art_pvttc", CB1.List[6])
 
   CB1.Text = CB1.List[0]
-  CB1Prev = CB1.Text
   Tri = "art_code"
   
   SmallPanel = Panel1.Height

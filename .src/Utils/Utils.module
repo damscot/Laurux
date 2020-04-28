@@ -1502,6 +1502,9 @@ Public Function FloatParse(Val As String) As Float
   
   $reg = New RegExp
   $reg.Compile("[ ]*([+-]+)[ ]*([ 0-9]+)[ .,]*([ 0-9]*)")
+  If IsNull(val)
+    Return 0
+  Endif
   $reg.Exec(Val)
   If $reg.Count = 3 Then
     Return CFloat($reg[1].Text & Replace($reg[2].Text, " ", "") & "." & Replace($reg[3].Text, " ", ""))
@@ -1522,7 +1525,7 @@ Public Function FloatParse(Val As String) As Float
 Catch
 
   Message.Error("Erreur grave lors de l'interprétation de la valeur " & val)
-  Return Null
+  Return 0
   
 End
 

@@ -1,0 +1,42 @@
+' Gambas class file
+
+Export
+Create Static
+
+Private $text As String
+Private $list As Variant[]
+
+Property Text As String 
+Property List As Variant[]
+
+
+Public Sub New()
+  
+   $text = ""
+   $list = New Variant[]
+  
+End
+
+Private Function Text_Read() As String
+
+  Return $text
+
+End
+
+Private Function Text_Write(Text As String)
+
+  $text = Text
+
+End
+
+Private Function List_Read() As Variant[]
+
+  Return $list
+
+End
+
+Private Function List_Write(List As Variant[])
+
+  $list = List.Copy()
+
+End

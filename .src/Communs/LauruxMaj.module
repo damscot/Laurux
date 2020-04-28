@@ -5030,6 +5030,9 @@ Public Sub Maj369()
   Dim numero As String
   Dim $i As Integer = 0
   Dim val As Variant
+  Dim ld As LDate
+  Dim path_url As String
+  Dim filename As String
   
   'Modification charset to utf8
   rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, t1.COLUMN_TYPE, t1.character_set_name from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.column_type like '%CHAR%' or t1.column_type like 'TEXT') and t1.character_set_name != 'utf8'", "Laurux" & Start.Societe)
@@ -5039,7 +5042,7 @@ Public Sub Maj369()
     Endif
   Endif
   
-  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` ENGINE=InnoDB;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` " & Utils.db.Engine() & ";') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion MYISAM -> InnoDB Engine", rReq.Count)
     PB.Show()
@@ -5050,6 +5053,7 @@ Public Sub Maj369()
     PB.Close()
   Endif
   PB.Close()
+  
   rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Schema", 1)
@@ -5116,7 +5120,7 @@ end_utf8:
     "caisse Integer DEFAULT 0," &
     "decaissement Boolean DEFAULT False," &
     "regroup Boolean DEFAULT True," &
-    "PRIMARY KEY (code)) ENGINE=InnoDB")
+    "PRIMARY KEY (code)) " & Utils.db.Engine())
  
     'on garni le fichier avec les reseignements des parametres et prefs
     pb.Avancement("Espèces", 1)
@@ -5534,6 +5538,63 @@ end_utf8:
   Utils.db.Exec("UPDATE Fiches_Comptes SET lettrable = True WHERE lettrable = '-1'")
   
   PB.Close()
+  
+  PB.Avancement("", 1)
+  
+  Tab = "Docs_Ged"
+  Try Utils.db.EXEC("CREATE TABLE " & Tab &
+    "(type TINYINT, " &
+    "code VARCHAR(15) NOT NULL, " &
+    "origin VARCHAR(15), " &
+    "url TINYTEXT NOT NULL," &
+    "filename TINYTEXT," &
+    "mime TINYTEXT NOT NULL," &
+    "date datetime NOT NULL," &
+    "ttc DECIMAL(12,2)," &
+    "ht DECIMAL(12,2)," &
+    Utils.db.AutoIncrement("lind") & ")")
+  
+  Tab = "Fiches_Tag"
+  Try Utils.db.EXEC("CREATE TABLE " & Tab &
+  "(tag TINYTEXT NOT NULL," &
+  Utils.db.AutoIncrement("lind") & ")")
+  
+  Tab = "Docs_Tag"
+  Try Utils.db.EXEC("CREATE TABLE " & Tab &
+  "(doc_lind INTEGER," &
+  "tag_lind INTEGER," &
+  "PRIMARY KEY (doc_lind, tag_lind)) " & Utils.db.Engine())
+
+  ld = New LDate
+  Try rResult = Utils.db.Exec("SELECT *, '" & LGed.Autres & "' as type FROM Docs_Autres as a UNION SELECT *, '" & LGed.Clients & "' as type FROM Docs_Clients as c UNION SELECT *, '" & LGed.Comptabilite & "' as type FROM Docs_Compta as t UNION SELECT *, '" & LGed.Fournisseurs & "' as type FROM Docs_Fournisseurs as f UNION SELECT *, '" & LGed.Articles & "' as type FROM Docs_Produits as p")
+  If rResult.Available Then
+    PB = New ProgBar("Fusion GED", rResult.Count)
+    PB.Show()
+    Repeat
+      PB.Avancement("Documents " & rResult!doc, 50)
+      path_url = "file://" & rResult!doc
+      filename = File.Name(rResult!doc)
+      Try Utils.db.Exec("INSERT INTO Docs_Ged (type,code,origin,url,filename,mime,date,ttc,ht) values ( &1,&2,&3,&4,&5,&6,&7,&8,&9)", rResult!type, rResult!code, rResult!org, path_url, filename, "application/pdf", ld.DT, "0", "0")
+      r2Result = Utils.db.Exec("SELECT lind FROM Docs_Ged WHERE lind = LAST_INSERT_ID()")
+      For Each txt In Split(rResult!doc2, ",")
+        If IsNull(txt) Then Continue
+        rReq = Utils.db.Exec("Select * From Fiches_Tag where tag = &1", txt)
+        If rReq.Available Then
+          Try Utils.db.Exec("INSERT INTO Docs_Tag (doc_lind, tag_lind) values (&1,&2)", r2Result!lind, rReq!lind)
+        Else
+          Try Utils.db.Exec("INSERT INTO Fiches_Tag (tag) values (&1)", txt)
+          rReq = Utils.db.Exec("SELECT lind FROM Fiches_Tag WHERE lind = LAST_INSERT_ID()")
+          Try Utils.db.Exec("INSERT INTO Docs_Tag (doc_lind, tag_lind) values (&1,&2)", r2Result!lind, rReq!lind)
+        Endif
+      Next
+    Until rResult.MoveNext()
+    PB.Close()
+  Endif
+  Try Utils.db.Exec("DROP TABLE Docs_Autres")
+  Try Utils.db.Exec("DROP TABLE Docs_Clients")
+  Try Utils.db.Exec("DROP TABLE Docs_Compta")
+  Try Utils.db.Exec("DROP TABLE Docs_Fournisseurs")
+  Try Utils.db.Exec("DROP TABLE Docs_Produits")
  
   'il semblerait que ces colonnes manquent dans certaines bases
   Tab = "Fiches_HistoFacM"
