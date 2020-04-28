@@ -9,7 +9,7 @@ Public Struct elements
 End Struct
 
 Private $elem As New Elements[]
-Private $fieldname As ResultField
+Private $clef As String
 Private $nom As String
 Private $name As String
 Private $CondFilter As ObjProp
@@ -32,13 +32,26 @@ Property Read TypeClass As Integer
 Property Height As Integer
 Property Width As Integer
 
-Public Sub _new(FieldName As ResultField, NomColonne As String, Optional TypeClass As Integer = Me.TextReg)
 
-  $fieldname = FieldName
-  If Not IsNull(FieldName) Then $name = FieldName.Name
-  $nom = NomColonne
-  $type = TypeClass
-  If TypeClass = Me.Param Then LecParam($nom)
+Public Sub _new(Clef As Variant, Nom As String, Optional TypeClass As Integer = Me.TextReg)
+
+  If Not IsNull(Clef) Then
+    If TypeOf(Clef) = gb.String Then
+      $clef = Clef
+    Else If TypeOf(Clef) = gb.Object Then
+      If Object.Type(Clef) = "ResultField" Then
+        $clef = Clef.Name
+      Else
+        Message.Error("Object property non supporté")
+      Endif
+    Else
+      Message.Error("Object property non supporté")
+    Endif
+  Endif
+  $nom = Nom
+  If TypeClass = Me.Param Then
+    LecParam($nom)
+  Endif
 
 End
 
@@ -69,7 +82,7 @@ End
 
 Public Sub AjoutCondfilter()
 
-  $CondFilter = New ObjProp($fieldname, $nom)
+  $CondFilter = New ObjProp($clef, $nom)
 
 End
 
@@ -103,7 +116,7 @@ Public Sub LecParam(Nom As String)
   
   Dim e As New Elements
   
-  $conf = New Settings(User.Home & "/.config/gambas3/" & User.Name & Start.Societe)
+  $conf = New Settings(User.Home & "/.config/gambas3/" & Application.Name & "-AutoParams-" & Start.Societe & ".conf")
   AddChamp("Choirech", $conf["/" & Nom & "/Choirech", 0])
   If Not IsNull($conf["/" & Nom & "/Historique"]) Then
     historique = $conf["/" & Nom & "/Historique"]
@@ -136,7 +149,7 @@ End
 
 Private Function name_Read() As String
 
-  Return $name
+  Return $clef
 
 End
 
@@ -155,7 +168,7 @@ End
 Private Sub filter_Write(Value As TextReg)
 
   $filter = Value
-  If IsNull($CondFilter) Then $CondFilter = New ObjProp($fieldname, $nom)
+  If IsNull($CondFilter) Then $CondFilter = New ObjProp($clef, $nom)
   $CondFilter.AddChamp("Text", $Nom)
   $CondFilter.AddChamp("Tag", $Nom)
   $CondFilter.AddChamp("Alignment", Align.Center)

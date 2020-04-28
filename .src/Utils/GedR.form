@@ -1,87 +1,110 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,106,64)
-  { Dssr2 ColumnView
-    MoveScaled(2,17,103,40)
-    Font = Font["Serif,-1"]
-    Background = &HFFFFFF&
-    Mouse = Mouse.Pointing
-    Sorted = True
-    Resizable = True
-    AutoResize = False
-    ScrollBar = Scroll.Vertical
-  }
+  MoveScaled(0,0,138,87)
   { Button2 Button
-    MoveScaled(91,59,12,4)
+    MoveScaled(124,83,12,4)
     ToolTip = ("Quitter")
     Text = ("Quitter")
     Picture = Picture["Icones/exit.png"]
   }
   { TextLabel1 TextLabel
-    MoveScaled(0,0,106,9)
+    MoveScaled(0,0,106,6)
     Text = ("Saisir le ou les mots clés a rechercher puis faites \"Recherche\"<br> Séparer chaque mot clé par une virgule")
     Alignment = Align.Center
   }
-  { TextBox1 TextBox
-    MoveScaled(22,10,50,3.4286)
-  }
-  { P5 PictureBox
-    MoveScaled(72,10,3.4286,3.4286)
-    Background = Color.ButtonBackground
-    ToolTip = ("Cliquez sur l'icône pour rechercher le dossier de destination.")
-    Picture = Picture["Icones/next_frame.png"]
-    Alignment = Align.Center
-    Border = Border.Raised
-  }
   { Button1 Button
-    MoveScaled(2,59,4,4)
+    MoveScaled(2,83,4,4)
     ToolTip = ("Doc HTML")
     Picture = Picture["Icones/khelp.png"]
   }
-  { Dssr GridView
-    MoveScaled(1,17,104,41)
-    Mode = Select.Single
-    Header = GridView.Horizontal
-    AutoResize = False
-    Resizable = False
-  }
-  { Tbxrem TextBox
-    MoveScaled(0,0,2,3)
-    Visible = False
-    Font = Font["Serif,-1"]
-    Background = Color.TextBackground
-    Mouse = Mouse.Pointing
-    ToolTip = ("Code  sur deux caracteres maxi.")
-    MaxLength = 100
-  }
   { HBox1 HBox
-    MoveScaled(1,14,104,3)
-    { Btous RadioButton
+    MoveScaled(1,12,118,3)
+    { Btous RadioButton Select
+      Name = "Btous"
       MoveScaled(1,0,18,3)
-      Visible = False
       Text = ("Tous")
     }
-    { Bclient RadioButton
+    { Bclient RadioButton Select
+      Name = "Bclient"
       MoveScaled(20,0,18,3)
       Text = ("Clients")
       Value = True
     }
-    { Bfour RadioButton
-      MoveScaled(36,0,18,3)
+    { Bfour RadioButton Select
+      Name = "Bfour"
+      MoveScaled(34,0,16,3)
       Text = ("Fournisseurs")
     }
-    { Bart RadioButton
-      MoveScaled(60,1,18,3)
+    { Bart RadioButton Select
+      Name = "Bart"
+      MoveScaled(54,0,16,3)
       Text = ("Articles")
     }
-    { Bautre RadioButton
-      MoveScaled(76,1,18,3)
+    { Bautre RadioButton Select
+      Name = "Bautre"
+      MoveScaled(69,0,13,3)
       Text = ("Autres")
     }
-    { Bcompta RadioButton
-      MoveScaled(86,1,18,3)
+    { Bcompta RadioButton Select
+      Name = "Bcompta"
+      MoveScaled(83,0,18,3)
       Text = ("Comptabilité")
     }
+  }
+  { Panel1 Panel
+    MoveScaled(1,20,136,62)
+  }
+  { TextBox1 TextReg
+    MoveScaled(24,6,69,3)
+  }
+  { CB1 ComboBox
+    MoveScaled(57,16.25,23,3)
+    Font = Font["Serif,-1"]
+    ReadOnly = True
+  }
+  { Selcnt ValueBox
+    MoveScaled(128,16,9,3)
+    ToolTip = ("Nombres de document selectionné")
+    Text = ("sélectionnés")
+  }
+  { Ouvrir Button
+    MoveScaled(7,83,16,4)
+    Text = ("Ouvrir Docs")
+  }
+  { Editer Button
+    MoveScaled(24,83,16,4)
+    Text = ("Editer Doc")
+  }
+  { ChangerUrl Button
+    MoveScaled(72,83,16,4)
+    ToolTip = ("Permet la modification simultanées du chemin d'accès à plusieurs documents.")
+    Text = ("Changer URLs")
+  }
+  { Supprimer Button
+    MoveScaled(41,83,20,4)
+    Text = ("Supprimer Docs")
+  }
+  { SelectAllFil Button
+    MoveScaled(2,16,16,4)
+    Text = ("Sel. Tous")
+  }
+  { DeSelectAllFil Button
+    MoveScaled(19,16,16,4)
+    Text = ("Désel. Tous")
+  }
+  { TextLabel2 TextLabel
+    MoveScaled(128,13,24,4)
+    Text = ("Selection")
+  }
+  { SupprimerTags Button
+    MoveScaled(104,83,16,4)
+    ToolTip = ("Permet de supprimer simultanément des tags à plusieurs documents")
+    Text = ("Supprimer Tags")
+  }
+  { AjoutTags Button
+    MoveScaled(89,83,14,4)
+    ToolTip = ("Permet d'ajouter simultanément des tags à plusieurs documents")
+    Text = ("Ajouter Tags")
   }
 }

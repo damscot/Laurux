@@ -1,10 +1,34 @@
 ' Gambas class file
 
 Private Tableau As String[]
+Private tr As TriGen
+Private Col As Collection
+Private Obj As Object
+Public Bsel As Boolean = False
+Public Bval As String = ""
+Public List As String[]
+Private CB1Conv As Collection
+Private Selected As Integer[]
+Private seltags As String[]
+
+
 
 Public Sub _New()
 
   Me.center
+  
+  CB1Conv = New Collection
+  CB1.Add("-------------- tags ---------------")
+  CB1Conv.Add("parse_having_tags", CB1.List[0])
+  CB1.Add("------------ fichier --------------")
+  CB1Conv.Add("filename", CB1.List[1])
+  CB1.Add("-------------- url ----------------")
+  CB1Conv.Add("url", CB1.List[2])
+
+  CB1.Text = CB1.List[0]
+  Selected = New Integer[]
+
+  Update_Req()
 
 End
 
@@ -14,238 +38,132 @@ Public Sub Button2_Click()
 
 End
 
-Public Sub TextBox1_KeyPress()
+Public Sub TextBox1_Change()
 
-  If Key.code = Key.enter Or Key.code = Key.return Then P5_MouseDown()
+   Filter_Calc()
 
 End
-'********************************** Gestion des documents liès ***************************************************
 
-Public Sub P5_MouseDown()
+Public Sub CB1_Click()
 
-  Dim rDoc As Result
-  Dim Tag As String[]
-  Dim n As Integer = 0
+  Update_Req()
 
-  Dssr.Clear
-  Dssr.Columns.Count = 4
-  Dssr.Columns[0].Width = 100
-  Dssr.Columns[1].Width = 0
-  Dssr.Columns[2].Width = 330
-  Dssr.Columns[3].Width = 330
-  Dssr.Columns[0].Text = "Code/Référence"
-  Dssr.Columns[2].Text = "Nom du fichier"
-  Dssr.Columns[3].Text = "Etiquettes"
-  If Not IsNull(TextBox1.Text) Then
-    Tag = Split(TextBox1.Text, ",")
-  Endif
-  If Btous.value Then
-    rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCdocs") & " where doc2 like  \"%" & Tag[0] & "%\" union select * from " & Cbase.Table("TabFdocs") & " where doc2 like  \"%" & Tag[0] & "%\" union select * from " & Cbase.Table("TabPdocs") & " where doc2 like  \"%" & Tag[0] & "%\" union select * from " & Cbase.Table("TabAdocs") & " where doc2 like  \"%" & Tag[0] & "%\" ")
-  Else
-    If Bclient.value Then
-      rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCdocs") & " where doc2 like  \"%" & Tag[0] & "%\" order by doc2")
-    Else
-      If Bfour.value Then
-        rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabFdocs") & " where doc2 like  \"%" & Tag[0] & "%\" order by doc2")
-      Else
-        If Bart.value Then
-          rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabPdocs") & " where doc2 like  \"%" & Tag[0] & "%\" order by doc2")
-        Else
-          If Bautre.value Then
-            rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabAdocs") & " where doc2 like  \"%" & Tag[0] & "%\" order by doc2")
-          Else
-            If Bcompta.value Then
-              rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCPTdocs") & " where doc2 like  \"%" & Tag[0] & "%\" order by doc2")
-            Endif
-          Endif
-        Endif
-      Endif
-    Endif
-  Endif
-  If rDoc.Available Then
-    tableau = New String[rDoc.Count, 4]
-    Dssr.Rows.count = rDoc.Count
+End
+
+Public Sub Select_Click()
+
+  Filter_Calc()
+
+End
+
+Public Sub SelectAllFil_Click()
+
+  Dim Res As Result
+  Dim i As Integer
+  
+  Res = tr.GetAllFiltered()
+  If Res.Available
     Repeat
-      Tableau[n, 0] = rDoc!code
-      Tableau[n, 1] = rDoc!doc
-      Tag = Split(rDoc!doc, "/")
-      Tableau[n, 2] = Tag[Tag.count - 1]
-      Tableau[n, 3] = rDoc!doc2
-      Inc n
-    Until rDoc.MoveNext()
-  Endif
-Catch
-
-End
-
-Public Sub Dssr_Data(Row As Integer, Column As Integer)
-
-  Try Dssr.Data.Text = tableau[Row, Column]
-
-End
-
-Public Sub Dssr_Activate()
-
-  Dim Attente As Boolean = False
-
-  Try Desktop.Open(Dssr[Dssr.row, 1].Text, Attente)
-  If Error Then Message.Info("Ce fichier n'existe pas ! Peut-être devriez-vous le supprimer de cette liste. ")
-
-End
-
-Public Sub Dssr_MouseDown()
-
-  If Me.mouse = Mouse.Right Then
-    Tbxrem.Clear
-    If Mouse.Right Then
-      If Not Tbxrem.Visible Then
-        Try Dssr.Current.EnsureVisible
-        If Not Error Then
-          ShowTextBox()
-          Tbxrem.SetFocus
-        Endif
-      Else
-        Tbxrem.Visible = False
+      i = Selected.Find(Res!lind)
+      If i = -1 Then
+        Selected.Add(Res!lind)
       Endif
+    Until Res.MoveNext()
+  Endif
+  Selcnt.Value = Selected.Count
+  tr.Refresh_Data()
+  
+End
+
+Public Sub DeSelectAllFil_Click()
+
+  Dim Res As Result
+  Dim i As Integer
+  
+  Res = tr.GetAllFiltered()
+  If Res.Available
+    Repeat
+      i = Selected.Find(Res!lind)
+      If i <> -1 Then
+        Selected.Remove(i)
+      Endif
+    Until Res.MoveNext()
+  Endif
+  Selcnt.Value = Selected.Count
+  tr.Refresh_Data()
+  
+End
+
+Public Sub Ouvrir_Click()
+
+  Dim idx As Integer
+  Dim Res As Result
+  Dim lg As LGed
+  
+  For Each idx In Selected
+    Res = Utils.db.Exec("select * from Docs_Ged where lind = &1", idx) 
+    If Res.Available Then
+      lg = New LGed(Null, idx)
+      lg.Ouvrir()
     Else
-      If Tbxrem.Visible Then Tbxrem.Visible = False
+      Message.Warning("Impossible de trouver le document: " & Str(idx))
     Endif
+  Next
+
+End
+
+Public Sub PB_Epuration()
+
+  Dim PB As ProgBar
+  Dim Orph As Integer
+  
+  PB = New ProgBar("Epuration des documents", 2)
+  PB.Show()
+  Selected.Clear()
+  Selcnt.Value = 0
+  Orph = LGed.EpurationTags()
+  PB.Avancement(Orph & " tags orphelins supprimés", 1)
+  Orph = LGed.EpurationDocs()
+  PB.Avancement(Orph & " docs orphelins supprimés", 1)
+  PB.Close()
+
+End
+
+Public Sub Supprimer_Click()
+
+  Dim idx As Integer
+  Dim Res As Result
+  Dim doc As LGed
+  Dim PB As ProgBar
+  
+  PB = New ProgBar("GED Suppression", Selected.Count, Null, True, "", True)
+  PB.Show()
+  For Each idx In Selected
+    doc = New LGed(Null, idx)
+    doc.Supprime(False)
+    If PB.Avancement("Suppression Doc " & idx, 10) Then Break
+  Next
+  PB.Close()
+
+  PB_Epuration()
+  Update_Req()
+
+End
+
+Public Sub Editer_Click()
+
+  Dim ged As LGed
+  
+  If Selected.Count = 0 Then Return
+  If Selected.Count <> 1 Then
+    Message.Info("Impossible d'éditer plusieurs document à la fois!")
+    Return
   Endif
 
-End
-
-' Affichage du Textbox Tbxrem
-Public Function ShowTextBox()
-
-  With Dssr.Current
-    Tbxrem.Text = .Text
-    Tbxrem.Width = Dssr.Columns.Width
-    Tbxrem.Move(Dssr.X + Dssr[Dssr.row, 3].x, Dssr.Y + Dssr.Rows.Height + Dssr.current.Y, .W, .H)
-    Tbxrem.Text = Dssr[Dssr.row, 3].Text
-    Tbxrem.Visible = True
-  End With
-
-End
-
-'Masquage du Textbox Tbxrem
-Public Function HideTextBox()
-
-  Dim Tab As String
-
-  With Utils
-    If Bclient.value Then Tab = Cbase.Table("TabCdocs")
-    If Bfour.value Then Tab = Cbase.Table("TabFdocs")
-    If Bart.value Then Tab = Cbase.Table("TabPdocs")
-    If Bautre.value Then Tab = Cbase.Table("TabAdocs")
-    If Bcompta.value Then Tab = Cbase.Table("TabCPTdocs")
-    Try Dssr[Dssr.row, 3].Text = Tbxrem.Text
-    Utils.db.Exec("Update " & Tab & " set doc2 = &3 where code = &1 AND doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text, Dssr[Dssr.row, 3].Text)
-    Tbxrem.Visible = False
-
-  End With
-
-End
-
-Public Sub Tbxrem_KeyPress()
-
-  If Key.code = Key.Enter Or Key.code = Key.Return Then
-    HideTextBox()
-  Endif
-
-End
-
-Public Sub Tbxrem2_MouseDown()
-
-  If Tbxrem.Visible Then Tbxrem.Visible = False
-
-End
-
-Public Sub Dssr_KeyPress()
-
-  Dim Tab As String
-
-  If Not Btous.value Then
-    If key.code = key.Delete Then
-      If Bclient.value Then Tab = Cbase.Table("TabCdocs")
-      If Bfour.value Then Tab = Cbase.Table("TabFdocs")
-      If Bart.value Then Tab = Cbase.Table("TabPdocs")
-      If Bautre.value Then Tab = Cbase.Table("TabAdocs")
-      If Bcompta.value Then Tab = Cbase.Table("TabCPTdocs")
-      If Message.Question("Vous allez supprimer le lien sélectionné.", "Oui", "Non") = 1 Then
-        Try Utils.db.Exec("DELETE FROM " & Tab & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-        If Error Then
-          Message.Error("Impossible de supprimer ce document ...")
-        Else
-          If Message.Question("Le lien a été supprimé !\nVoulez-vous supprimer le fichier ?", "Oui", "Non") = 1 Then Try Kill Dssr[Dssr.row, 1].Text
-        Endif
-        P5_MouseDown()
-      Endif
-    Endif
-  Else
-    If Message.Question("Vous allez supprimer le lien sélectionné.", "Oui", "Non") = 1 Then
-      Tab = Cbase.Table("TabCdocs")
-      Try Utils.db.Exec("DELETE FROM " & Tab & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-      Tab = Cbase.Table("TabFdocs")
-      Try Utils.db.Exec("DELETE FROM " & Tab & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-      Tab = Cbase.Table("TabPdocs")
-      Try Utils.db.Exec("DELETE FROM " & Tab & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-      Tab = Cbase.Table("TabAdocs")
-      Try Utils.db.Exec("DELETE FROM " & Tab & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-      Tab = Cbase.Table("TabCPTdocs")
-      Try Utils.db.Exec("DELETE FROM " & Tab & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-      If Error Then
-        Message.Error("Impossible de supprimer ce lien...")
-      Else
-        If Message.Question("Le lien a été supprimé !\nVoulez-vous supprimer le fichier ?", "Oui", "Non") = 1 Then Try Kill Dssr[Dssr.row, 1].Text
-      Endif
-      P5_MouseDown()
-    Endif
-  Endif
-  If Key.code = Key.F3 Then
-    Message.Info(Dssr[Dssr.row, 1].Text)
-  Endif
-
-End
-
-Public Sub Bart_Click()
-
-  Dssr.Rows.Count = 0
-  P5_MouseDown()
-
-End
-
-Public Sub Bautre_Click()
-
-  Dssr.Rows.Count = 0
-  P5_MouseDown()
-
-End
-
-Public Sub Btous_Click()
-
-  Dssr.Rows.Count = 0
-  P5_MouseDown()
-
-End
-
-Public Sub Bclient_Click()
-
-  Dssr.Rows.Count = 0
-  P5_MouseDown()
-
-End
-
-Public Sub Bfour_Click()
-
-  Dssr.Rows.Count = 0
-  P5_MouseDown()
-
-End
-
-Public Sub Bcompta_Click()
-
-  Dssr.Rows.Count = 0
-  P5_MouseDown()
+  ged = New LGed(Null, Selected.First)
+  ged.ShowModal()
+  
+  Update_Req()
 
 End
 
@@ -255,5 +173,284 @@ End
 Public Sub Button1_Click()
 
   Doc.Open("Ged")
+
+End
+
+Sub Filter_Calc()
+  
+  Dim filter As String
+  Dim Tags As String[]
+  Dim Tag As String
+
+  filter = ""
+  
+  If Bclient.Value Then
+    filter &= "type = \"" & LGed.Clients & "\""
+  Else If Bfour.Value Then
+    filter &= "type = \"" & LGed.Fournisseurs & "\""
+  Else If Bcompta.Value Then
+    filter &= "type = \"" & LGed.Comptabilite & "\""
+  Else If Bart.Value Then
+    filter &= "type = \"" & LGed.Articles & "\""
+  Else If Bautre.Value Then
+    filter &= "type = \"" & LGed.Autres & "\""
+  Endif
+  
+  If TextBox1.Text <> Null Then
+    If filter <> "" Then
+      filter &= " and "
+    Endif
+    Tags = Split(TextBox1.Text, ",")
+    For Each Tag In Tags
+      filter &= "tag like \"%" & Tag & "%\"" & " or "
+    Next
+    filter = Left(filter, Len(filter) - 4)
+  Endif
+  
+  If filter <> "" Then
+    tr.ExtraSel(filter, "and")
+  Else
+    tr.ExtraSel(filter, "")
+  Endif
+
+End
+
+Public Sub Update_Req()
+
+  Dim f As ResultField
+  Dim k As String
+  Dim Req As String
+  Dim Res As Result
+  Dim prop As ObjProp
+  
+  Col = New Collection
+  
+  Req = "select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags FROM Docs_Ged left join Docs_Tag on lind=doc_lind Left join Fiches_Tag as t on t.lind = tag_lind"
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  k = "- idx -"
+  prop = New ObjProp(Res.Fields["lind"], k)
+  Col.Add(prop, k)
+  k = "----  code  ----"
+  prop = New ObjProp(Res.Fields["code"], k)
+  Col.Add(prop, k)
+  k = "-----  Date  -----"
+  prop = New ObjProp(Res.Fields["date"], k)
+  Col.Add(prop, k)
+  k = "-" & CB1.Text & "-"
+  prop = New ObjProp(Res.Fields[CB1Conv[CB1.Text]], k)
+  Col.Add(prop, k)
+  k = "-- TTC --"
+  prop = New ObjProp(Res.Fields["ttc"], k)
+  Col.Add(prop, k)
+  k = "-- HT --"
+  prop = New ObjProp(Res.Fields["ht"], k)
+  Col.Add(prop, k)
+  k = "- Orig -"
+  prop = New ObjProp(Res.Fields["origin"], k)
+  Col.Add(prop, k)
+
+  tr = New TriGen(Panel1, Col, Res, Req, 20, Me) As "TriGen"
+  tr.NoUp = True
+  tr.GroupBy("group by doc_lind")
+  Filter_Calc()
+  tr.NoUp = False
+  tr.Update() 
+  TextBox1.SetFocus()
+
+End
+
+'Event Handler
+'''''''''''''''''''''''''''''''''''''''
+Public Sub TriGen_MajSel(val As Variant)
+  
+  Dim Res As Result
+  Dim i As Integer
+
+  If Bsel = True Then
+    If Val Then
+      i = Selected.Find(Val)
+      If i <> -1 Then
+        Selected.Remove(i)
+      Else
+        Selected.Add(Val)
+      Endif
+      Selcnt.Value = Selected.Count
+      tr.Refresh_Data()
+      Bsel = False
+      Val = ""
+    Endif
+  Endif
+  
+  Stop Event
+
+End
+
+Public Sub TriGen_Raz()
+  
+  Selected.Clear()
+  Selcnt.Value = 0
+  
+End
+  
+Public Sub TriGen_Data(id As String, key As String, Data As _GridView_Data)
+  
+  If Selected.Find(Val(id)) <> -1 Then
+    Data.Background = Color.SelectedBackground
+    Stop Event
+  Else
+    'set default display
+    'Stop Event
+  Endif
+  
+  
+End
+
+Public Sub Selcnt_MouseDown()
+
+  
+
+End
+
+Public Sub ChangerUrl_Click()
+
+  Dim idx As Integer
+  Dim i As Integer
+  Dim Res As Result
+  Dim lb As LBox
+  Dim txt As TextReg
+  Dim cancel As Boolean
+  Dim PB As ProgBar
+  Dim minurl As String = ""
+  Dim newurl As String = ""
+
+  If Selected.Length <= 1 Then
+    Message.Error("Le remplacement multiple d'urls necessite la selection de plusieurs documents!\nSinon éditez directement le champ url du document.")
+    Return
+  Else
+    If Message.Warning("Cet outil permet pour la liste des documents selectionnés\nde changer la base de l'url par laquel chaque document sera accédé.\nAttention cet outil ne déplace pas les fichiers, il ne modifie que le champs url de la base de donnée.", "Annuler", "Continuer") = 1 Then Return
+  Endif
+  
+  For Each idx In Selected
+    Res = Utils.db.Exec("select url from Docs_Ged where lind = &1", idx) 
+    If Res.Available Then
+      If minurl = "" Then minurl = Res!url
+      Repeat
+        i = 0
+        While ((i <= Len(Res!url)) And (i <= Len(minurl)))
+          If Left(minurl, i) = Left(Res!url, i) Then
+            Inc i
+          Else
+            If i > 0 Then minurl = Left(minurl, i - 1)
+            Break
+          Endif
+        Wend
+      Until Res.MoveNext()
+    Else
+      Message.Warning("Impossible de trouver une url pour le documents selectionné :" & idx)
+    Endif
+
+    If minurl = "" Then
+      Message.Warning("Impossible de trouver une url commune pour les documents selectionnés")
+      Return
+    Endif
+  Next
+  
+  minurl = File.Dir(minurl) & "/"
+  txt = New TextReg(Me)
+  txt.reg = txt.path
+  txt.Text = minurl
+  lb = New LBox("Veuillez définir la partie commune de l'url a modifier", txt, Null, txt, "", LBox.TextReg)
+  cancel = lb.ShowModal()
+  If cancel Or IsNull(txt.Text) Then Return
+  minurl = txt.Text
+
+  If File.BaseName(minurl) <> Null Then
+    Message.Error("Vous devez saisir la base du répertoire")
+    Return
+  Endif
+
+  txt.reg = txt.path
+  txt.Text = minurl
+  lb = New LBox("Veuillez choisir la chaine qui remplacera\n" & minurl, txt, Null, txt, "", LBox.TextReg)
+  cancel = lb.ShowModal()
+  If cancel Or IsNull(txt.Text) Then Return
+  newurl = txt.Text
+
+  If File.BaseName(newurl) <> Null Then
+    Message.Error("Vous devez saisir la base du répertoire")
+    Return
+  Endif
+
+  PB = New ProgBar("GED renomage URL", Selected.Count, Null, True, "", True)
+  PB.Show()
+  For Each idx In Selected
+    Utils.db.Exec("update Docs_Ged set url = REPLACE(url, &2, &3) where lind = &1", idx, minurl, newurl)
+    If PB.Avancement("Renomage url Doc " & idx, 10) Then Break
+  Next
+  PB.Close()
+
+  Update_Req()
+  
+End
+
+Public Sub SupprimerTags_Click()
+  
+  Dim idx As Integer
+  Dim tags As String[]
+  Dim tag As String
+  Dim orphdoc As Integer[]
+  Dim Res As Result
+  Dim Res2 As Result
+  Dim lb As LBox
+  Dim cancel As Boolean
+  Dim trans As LTrans
+  Dim seltags As String[]
+  Dim PB As ProgBar
+  Dim key As String
+  
+  If Selected.Length <= 1 Then
+    Message.Error("Le suppression de tags multiple necessite la selection de plusieurs documents!\nSinon éditez directement le champ tags du document.")
+    Return
+  Else
+    If Message.Warning("Cet outil permet pour la liste des documents selectionnés\nde supprimer un certain nombre de tags.\nAttention cette opération est définitive.", "Annuler", "Continuer") = 1 Then Return
+  Endif
+
+  tags = New Strings[]
+  For Each idx In Selected
+    Res = Utils.db.Exec("Select tag from Docs_Ged as d left join Docs_Tag on d.lind=doc_lind Left join Fiches_Tag as t on t.lind = tag_lind where d.lind = &1", idx)
+    If Res.Available Then
+      Repeat
+        If tags.Find(Res!tag) = -1 Then
+          tags.Add(Res!tag)
+        Endif
+      Until Res.MoveNext()
+    Endif
+  Next
+  
+  trans = New LTrans
+  lb = New LBox("Veuillez sélectionner les tags à supprimer\nIls seront supprimés pour l'ensemble des documents dans lesquels ils sont présent!\nUtiliser les touches CTRL/ALT/SHIFT pour le controle de la selection.", tags, Null, trans, "", LBox.ListView)
+  cancel = lb.ShowModal()
+  If cancel Or IsNull(trans.List) Then Return
+  seltags = trans.List
+  If seltags.count = 0 Then Return
+  
+  PB = New ProgBar("Suppression tag", seltags.count, Null, True, "", True)
+  PB.Show()
+  For Each tag In seltags
+    Res = Utils.db.Exec("Select lind from Fiches_Tag where tag = &1", tag)
+    If Res.Available Then
+      Repeat
+        For Each idx In Selected
+          Utils.db.Exec("Delete from Docs_Tag where doc_lind = &1 and tag_lind = &2", idx, Res!lind)
+        Next
+      Until Res.MoveNext()
+    Endif
+    If PB.Avancement("Suppression Tag " & tag, 5) Then Break
+  Next
+  PB.Close()
+  
+  PB_Epuration()
+  Update_Req()
 
 End
