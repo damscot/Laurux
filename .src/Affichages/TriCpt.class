@@ -16,9 +16,13 @@ Private $type As Integer
 Private $solde As Integer
 Private $prop As ObjProp
 
+Private $cb As Collection = ["------------Adresse 2------------": "cli_adr2", "-----Status-----": "cli_statut", "-Tel bureau-": "cli_tel_bur", "---Tel dom---": "cli_tel_dom", "----Poste----": "cli_tel_poste", "---Portable---": "cli_pble", "------Mail------": "cli_email"]   ''Collection pour la sélection client  => adresse de facturation
+Private $cb1 As Collection = ["------------Adresse 2------------": "adr2", "-----Status-----": "cli_statut", "-Tel bureau-": "cli_tel_bur", "---Tel dom---": "cli_tel_dom", "----Poste----": "cli_tel_poste", "---Portable---": "cli_pble", "------Mail------": "cli_email"]        ''Collection pour la sélection client  => adresse de livraison
+Private $cb2 As Collection = ["------------Adresse 1------------": "cli_adr1", "-----Status-----": "cli_statut", "-Tel bureau-": "cli_tel_bur", "---Tel dom---": "cli_tel_dom", "----Poste----": "cli_tel_poste", "---Portable---": "cli_pble", "------Mail------": "cli_email", "--Tel perso--": "tel", "Port perso": "portable", "Mail perso": "mail"]      ''Collection pour la sélection client  => contactes
+
 Public Sub _new(type As Variant, solde As Integer, obj As Object)
 
-Dim f As ResultField
+Dim f As String
 
   If TypeOf(type) = gb.String Then
     Select Case type
@@ -45,17 +49,37 @@ Dim f As ResultField
       If $type = Tous Then 
         Pchoix.Visible = True
         all.Visible = True
-        all.Visible = True
+        all.Value = True
         gest.Visible = True
         bil.Visible = True
       Endif
       Tritous
       
     Case Client
-       Tricli
+      Pchoix.Visible = True
+      clifou.Visible = False
+      cli.Visible = False
+      fou.Visible = False
+      pcli.Visible = True
+      pcli.Expand = True
+      cptcli.Visible = True
+      cptcli.Expand = True
+      Pselc.Visible = True
+      For Each f In $cb
+        Cselc.Add($cb.Key)
+      Next
+      cli.Value = True
+      Tricli
       
     Case Fournisseur
-     Trifou
+      Pchoix.Visible = True
+      clifou.Visible = False
+      cli.Visible = False
+      pcli.Visible = True
+      pcli.Expand = True
+      Livr.Visible = False
+      fou.Value = True
+      Trifou
       
     Case Client_Fournisseur
       Pchoix.Visible = True
@@ -121,16 +145,24 @@ End
 Private Sub Tricli()
 
   Dim k As String
+  Dim cond As String
 
-  $req = "SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc,type_cc,cli_adr1, cli_adr2 ,cli_cd_ptl,cli_ville " & $cond & " FROM Fiches_Comptes JOIN Fiches_Cli ON compte_cc=cli_code "
+  For Each k In $cb
+    cond &= "," & k
+  Next
+  cond &= " "
+  $req = "SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc,type_cc,cli_pnm,cli_adr1, cli_cd_ptl,cli_ville " & $cond & cond & " FROM Fiches_Comptes JOIN Fiches_Cli ON compte_cc=cli_code "
   $res = Utils.db.Exec($req)
   If Not $res.Available Then Return
   debut()
+  k = "-------Prénom-------"
+  $prop = New ObjProp($Res.Fields["cli_pnm"], k)
+  $Col.Add($prop, k)
   k = "------------Adresse 1------------"
   $prop = New ObjProp($Res.Fields["cli_adr1"], k)
   $Col.Add($prop, k)
-  k = "------------Adresse 2------------"
-  $prop = New ObjProp($Res.Fields["cli_adr2"], k)
+  k = Cselc.Text
+  $prop = New ObjProp($Res.Fields[$cb[Cselc.Text]], k)
   $Col.Add($prop, k)
   k = "--cp--"
   $prop = New ObjProp($res.Fields["cli_cd_ptl"], k)
@@ -141,11 +173,126 @@ Private Sub Tricli()
 
 End
 
+Private Sub Trilivr()
+  
+  Dim k As String
+  Dim cond As String
+
+  For Each k In $cb1
+    cond &= "," & k
+  Next
+  cond &= " "
+  $req = "SELECT CAST(compte_cc AS char) AS compte_cc,nom,pnm,adr1, adr2 ,cd_ptl,ville " & $cond & cond & " FROM (Fiches_Comptes JOIN Fiches_AdrlivC ON compte_cc=code) JOIN Fiches_Cli ON compte_cc=cli_code "
+  $res = Utils.db.Exec($req)
+  If Not $res.Available Then Return
+  k = "----code----"
+  $prop = New ObjProp($res.Fields["compte_cc"], k)
+  $Col.Add($prop, "----code----")
+  k = "-----------intitule-----------"
+  $prop = New ObjProp($Res.Fields["nom"], k)
+  $prop.tri = True
+  $Col.Add($prop, k)
+  k = "-------Prénom-------"
+  $prop = New ObjProp($Res.Fields["pnm"], k)
+  $Col.Add($prop, k)
+  k = "------------Adresse 1------------"
+  $prop = New ObjProp($Res.Fields["adr1"], k)
+  $Col.Add($prop, k)
+  k = Cselc.Text
+  $prop = New ObjProp($Res.Fields[$cb1[Cselc.Text]], k)
+  $Col.Add($prop, k)
+  k = "--cp--"
+  $prop = New ObjProp($res.Fields["cd_ptl"], k)
+  $Col.Add($prop, k)
+  k = "------ville------"
+  $prop = New ObjProp($Res.Fields["ville"], k)
+  $Col.Add($prop, k)
+  
+End
+
+Private Sub Tricont()
+  
+  Dim k As String
+  Dim cond As String
+  
+  For Each k In $cb2
+    cond &= "," & k
+  Next
+  cond &= " "
+  $req = "SELECT CAST(compte_cc AS char) AS compte_cc,nom, pnm,fonction, intitule_cc, cli_adr1, cli_cd_ptl, cli_ville " & $cond & cond & " FROM (Fiches_Comptes JOIN Fiches_ContactC ON compte_cc=code) JOIN Fiches_Cli ON compte_cc=cli_code "
+  $res = Utils.db.Exec($req)
+  If Not $res.Available Then Return
+  k = "----code----"
+  $prop = New ObjProp($res.Fields["compte_cc"], k)
+  $Col.Add($prop, "----code----")
+  k = "-----------intitule-----------"
+  $prop = New ObjProp($Res.Fields["nom"], k)
+  $prop.tri = True
+  $Col.Add($prop, k)
+  k = "-------Prénom-------"
+  $prop = New ObjProp($Res.Fields["pnm"], k)
+  $Col.Add($prop, k)
+  k = "----------Fonction----------"
+  $prop = New ObjProp($Res.Fields["fonction"], k)
+  $Col.Add($prop, k)
+  k = "-----------Société-----------"
+  $prop = New ObjProp($Res.Fields["intitule_cc"], k)
+  $prop.tri = True
+  $Col.Add($prop, k)
+   k = Cselc.Text
+  $prop = New ObjProp($Res.Fields[$cb2[Cselc.Text]], k)
+  $Col.Add($prop, k)
+  k = "--cp--"
+  $prop = New ObjProp($res.Fields["cli_cd_ptl"], k)
+  $Col.Add($prop, k)
+  k = "------ville------"
+  $prop = New ObjProp($Res.Fields["cli_ville"], k)
+  $Col.Add($prop, k)
+  
+End
+
+Private Sub Tricontfour()
+  
+  Dim k As String
+  
+  $req = "SELECT CAST(compte_cc AS char) AS compte_cc,nom, pnm,fonction, intitule_cc, fo_adr1 ,fo_cd_ptl, fo_ville " & $cond & " FROM (Fiches_Comptes JOIN Fiches_ContactF ON compte_cc=code) JOIN Fiches_Four ON compte_cc=fo_code "
+  $res = Utils.db.Exec($req)
+  If Not $res.Available Then Return
+  k = "----code----"
+  $prop = New ObjProp($res.Fields["compte_cc"], k)
+  $Col.Add($prop, "----code----")
+  k = "-----------intitule-----------"
+  $prop = New ObjProp($Res.Fields["nom"], k)
+  $prop.tri = True
+  $Col.Add($prop, k)
+  k = "-------Prénom-------"
+  $prop = New ObjProp($Res.Fields["pnm"], k)
+  $Col.Add($prop, k)
+  k = "----------Fonction----------"
+  $prop = New ObjProp($Res.Fields["fonction"], k)
+  $Col.Add($prop, k)
+  k = "-----------Société-----------"
+  $prop = New ObjProp($Res.Fields["intitule_cc"], k)
+  $prop.tri = True
+  $Col.Add($prop, k)
+   k = "------------Adresse 1------------"
+  $prop = New ObjProp($Res.Fields["fo_adr1"], k)
+  $Col.Add($prop, k)
+  k = "--cp--"
+  $prop = New ObjProp($res.Fields["fo_cd_ptl"], k)
+  $Col.Add($prop, k)
+  k = "------ville------"
+  $prop = New ObjProp($Res.Fields["fo_ville"], k)
+  $Col.Add($prop, k)
+  
+  
+End
+
 Private Sub Trifou()
   
   Dim k As String
   
-  $req = "SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc, type_cc,fo_adr1, fo_adr2 ,fo_cd_ptl, fo_ville " & $cond & " FROM Fiches_Comptes JOIN Fiches_Four ON compte_cc = fo_code "
+  $req = "SELECT CAST(compte_cc AS char) AS compte_cc,intitule_cc, fo_adr1, fo_adr2 ,fo_cd_ptl, fo_ville " & $cond & " FROM Fiches_Comptes JOIN Fiches_Four ON compte_cc = fo_code "
   $res = Utils.db.Exec($req)
   If Not $res.Available Then Return
   debut()
@@ -213,6 +360,16 @@ Private Sub tricond()
       cond = " lettrable = True AND "
   End Select
   
+  If inact.Value Then cond &= "(cli_actif= '-1' OR cli_actif= True) "
+  If autoe.Value Then
+    If cond Then cond &= "AND "
+    cond &= "(cli_autoent = '-1' OR cli_autoent = True) "
+  Endif
+  If divers.Value Then
+    If cond Then cond &= "AND "
+    cond &= "(cli_div = '-1' OR cli_div = True) "
+  Endif
+  
   Select Case $type
     Case Bilan
       $tr.ExtraSel(cond & "type_cc='B'", "AND")
@@ -220,6 +377,8 @@ Private Sub tricond()
       $tr.ExtraSel(cond & "type_cc='G'", "AND")
     Case General
       $tr.ExtraSel(cond & "type_cc='B' OR type_cc='G'", "AND")
+    Case Client
+      If cond Then $tr.ExtraSel(cond, "AND")
   End Select
   
   $tr.Show(True)
@@ -228,7 +387,11 @@ End
 
 Public Sub clifou_Click()
 
+  $col = New Collection
   Triclifou()
+  pcli.Visible = False
+  cptcli.Visible = False
+  Pselc.Visible = False
   If $solde = Avec_Solde Then slde()
   $type = Client_Fournisseur
   tricond()
@@ -238,10 +401,77 @@ End
 
 Public Sub cli_Click()
 
+  Dim k As String
+  
   $col = New Collection
-  Tricli()
+  If cli.Value Or (Afac.Value And Not fou.Value) Then
+    Cselc.Clear
+    For Each k In $cb
+      Cselc.Add($cb.Key)
+    Next
+    pcli.Visible = True
+    cptcli.Visible = True
+    Livr.Visible = True
+    Pselc.Visible = True
+    If Afac.Value Then Tricli()
+    If Livr.Value Then Trilivr()
+    If contact.Value Then Tricont()
+    $type = Client 
+  Else
+    pcli.Visible = True
+    cptcli.Visible = False
+    Livr.Visible = False
+    Pselc.Visible = False
+    Trifou
+    $type = Fournisseur
+  Endif
+
   If $solde = Avec_Solde Then slde()
-  $type = Client 
+  tricond()
+
+End
+
+Public Sub Livr_Click()
+
+  Dim k As String
+  
+  Cselc.Clear
+  For Each k In $cb1
+    Cselc.Add($cb1.Key)
+  Next
+  $col = New Collection
+  Trilivr()
+  If $solde = Avec_Solde Then slde()
+  tricond()
+
+End
+
+Public Sub contact_Click()
+  
+  Dim k As String
+  
+  $col = New Collection
+  If cli.Value Then 
+    Cselc.Clear
+    For Each k In $cb2
+      Cselc.Add($cb2.Key)
+    Next
+    Tricont()
+  Else
+    If fou.Value Then Tricontfour
+  Endif
+  If $solde = Avec_Solde Then slde()
+  tricond()
+  
+End
+
+Public Sub Cselc_Click()
+
+  $col = New Collection
+  If Afac.Value Then Tricli()
+  If Livr.Value Then Trilivr()
+  If contact.Value Then Tricont()
+  If $solde = Avec_Solde Then slde()
   tricond()
 
 End
@@ -249,7 +479,12 @@ End
 Public Sub fou_Click()
 
   $col = New Collection
-  Trifou()
+  pcli.Visible = True
+  Livr.Visible = False
+  cptcli.Visible = False
+  Pselc.Visible = False
+  If Afac.Value Then Trifou()
+  If contact.Value Then Tricontfour()
   If $solde = Avec_Solde Then slde()
   $type = Fournisseur
   tricond()
@@ -259,6 +494,9 @@ End
 Public Sub gest_Click()
 
   $col = New Collection
+  pcli.Visible = False
+  cptcli.Visible = False
+  Pselc.Visible = False
   Tritous()
   If $solde = Avec_Solde Then slde()
   $type = Gestion
@@ -269,6 +507,9 @@ End
 Public Sub bil_Click()
 
   $col = New Collection
+  pcli.Visible = False
+  cptcli.Visible = False
+  Pselc.Visible = False
   Tritous()
   If $solde = Avec_Solde Then slde()
   $type = Bilan
@@ -279,9 +520,18 @@ End
 Public Sub all_Click()
 
   $col = New Collection
+  pcli.Visible = False
+  cptcli.Visible = False
+  Pselc.Visible = False
   Tritous()
   If $solde = Avec_Solde Then slde()
   $type = Tous
+  tricond()
+
+End
+
+Public Sub cond1_Click()
+
   tricond()
 
 End

@@ -7,7 +7,7 @@
   Arrangement = Arrange.Vertical
   AutoResize = True
   { Pchoix Panel
-    MoveScaled(1,1,165,2)
+    MoveScaled(1,0,165,2)
     Visible = False
     Arrangement = Arrange.Horizontal
     { clifou RadioButton
@@ -16,36 +16,107 @@
       Text = ("Clients et fournisseurs")
       Value = True
     }
-    { cli RadioButton
+    { cli RadioButton cli
+      Name = "cli"
       MoveScaled(27,0,17,2)
       Expand = True
       Text = ("Clients")
     }
     { fou RadioButton
-      MoveScaled(37,0,14,2)
+      MoveScaled(36,0,14,2)
       Expand = True
       Text = ("Fournisseurs")
     }
     { all RadioButton
-      MoveScaled(54,0,14,2)
+      MoveScaled(50,0,14,2)
       Visible = False
       Text = ("Tous")
     }
     { gest RadioButton
-      MoveScaled(70,0,14,2)
+      MoveScaled(58,0,14,2)
       Visible = False
       Expand = True
       Text = ("Gestion ")
     }
     { bil RadioButton
-      MoveScaled(88,0,15,2)
+      MoveScaled(67,0,15,2)
       Visible = False
       Expand = True
       Text = ("Bilan")
     }
+    { pcli Panel
+      MoveScaled(69,0,45,2)
+      Visible = False
+      Background = &HC0C017&
+      Arrangement = Arrange.Horizontal
+      Border = Border.Plain
+      { Afac RadioButton cli
+        Name = "Afac"
+        MoveScaled(1,0,14,2)
+        ToolTip = ("Adresse de facturation")
+        Expand = True
+        Text = ("Facturation")
+        Value = True
+      }
+      { Livr RadioButton
+        MoveScaled(14,0,13,2)
+        ToolTip = ("Adresse de livraison")
+        Expand = True
+        Text = ("Livraison")
+      }
+      { contact RadioButton
+        MoveScaled(29,0,13,2)
+        ToolTip = ("Adresse des contactes")
+        Expand = True
+        Text = ("Contact")
+      }
+    }
+    { cptcli Panel
+      MoveScaled(114,0,48,2)
+      Visible = False
+      Background = Color.TooltipBackground
+      Border = Border.Plain
+      { inact CheckBox cond1
+        Name = "inact"
+        MoveScaled(1,0,10,2)
+        ToolTip = ("Comptes inactifs")
+        Expand = True
+        Text = ("Inactifs")
+      }
+      { divers CheckBox cond1
+        Name = "divers"
+        MoveScaled(12,0,11,2)
+        ToolTip = ("Comptes divers")
+        Expand = True
+        Text = ("Divers")
+      }
+      { autoe CheckBox cond1
+        Name = "autoe"
+        MoveScaled(24,0,20,2)
+        ToolTip = ("Comptes auto entrepreneurs")
+        Expand = True
+        Text = ("Auto entrepreneurs")
+      }
+    }
+  }
+  { Pselc Panel
+    MoveScaled(1,2,161,2.6667)
+    Visible = False
+    { Label1 Label
+      MoveScaled(26,0,36,2)
+      Expand = True
+    }
+    { Cselc ComboBox
+      MoveScaled(63,0.5556,31,2)
+      ReadOnly = True
+    }
+    { Label2 Label
+      MoveScaled(95,1,49,2)
+      Expand = True
+    }
   }
   { Panel1 Panel
-    MoveScaled(0,3,168,56)
+    MoveScaled(0,7,168,52)
     Expand = True
     AutoResize = True
   }
