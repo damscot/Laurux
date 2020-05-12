@@ -26,8 +26,8 @@
 '
 
 Tab As String
-Dtpc As String
-Dtepp As String ' date période précédente en facturation
+Private Dtpc As LDate
+Private Dtepp As LDate ' date période précédente en facturation
 Entbonl As Result
 Remmo As String
 Remart As String
@@ -71,20 +71,19 @@ Public Sub Aff_date()
       Utils.db.Close
       Quit
     Else
-      If rResult!dtepec = "" Or If Left$(rResult!dtepec, 2) = "00" Then
-        Dtpc = Format$(Now, "mm.yyyy")
+      If IsNull(rResult!dtepec) Or If Left$(rResult!dtepec, 2) = "00" Then
+        Dtpc = New LDate(Now)
       Else
-        Dtpc = rResult!dtepec
+        Dtpc = New LDate("01." & rResult!dtepec)
       Endif
-      If rResult!dtepp = "" Or If Left$(rResult!dtepp, 2) = "00" Then
-        Dtepp = Format$(Now, "mm.yyyy")
+      If IsNull(rResult!dtepp) Or If Left$(rResult!dtepp, 2) = "00" Then
+        Dtepp = New LDate(Now)
       Else
-        Dtepp = rResult!dtepp
+        Dtepp = New LDate("01." & rResult!dtepp)
       Endif
-      Dtpc = "01." & Dtpc
-      Dtepp = "01." & Dtepp
-      dateprc.Text = "  " & Format$(Date(Right(dtepp, 4), Mid(dtepp, 4, 2), "01"), "mmmm  yyyy")
-      datecl.Text = "  " & Format$(Date(Right(dtpc, 4), Mid(dtpc, 4, 2), "01"), "mmmm  yyyy")
+
+      Dateprc.Text = "  " & Format(Dtepp.G, "mmmm  yyyy")
+      datecl.Text = "  " & Format(dtpc.G, "mmmm  yyyy")
     Endif
   End With
 
@@ -126,7 +125,7 @@ Public Sub Maj_Archives()
   Entbon = "Fiches_Bl"
   Parm = "Fiches_Parametres"
   With Utils
-    Entbonl = Utils.db.Exec("SELECT * FROM " & Entbon & " where imp = &1 and type = &2 and dtefac <= &3 UNION ALL SELECT * FROM " & Entbon & "M where imp = &1 and type = &2  and dtefac < &3 ", 1, "F", Right(dtpc, 4) & Mid(dtpc, 4, 2) & 31)
+    Entbonl = Utils.db.Exec("SELECT * FROM " & Entbon & " where imp = &1 and type = &2 and dtefac <= &3 UNION ALL SELECT * FROM " & Entbon & "M where imp = &1 and type = &2  and dtefac < &3 ", 1, "F", dtpc.FinMois.D)
     If EntBonl.Available Then
       PB = New ProgBar("Cloture mensuelle de facturation", EntBonl.Count)
       PB.Show()
@@ -146,18 +145,10 @@ Public Sub Maj_Archives()
 
     Dtepp = Dtpc
     ' On incrémente la période en cours
-    Dppc = Mid(dtpc, 4, 2)
-    Dppc = Val(Dppc) + 1
-    Dppc = Format$(Dppc, "00")
-    If Val(dppc) > 12 Then
-      dppc = "01"
-      dtpc = dppc & "." & Str(Val(Right$(dtpc, 4)) + 1)
-    Else
-      dtpc = Dppc & "." & Right$(dtpc, 4)
-    Endif
+    dtpc = New LDate(DateAdd(dtpc.G, gb.Month, 1))
     ' Met à jour la table des parametres
     Parmt = Utils.db.Exec("SELECT * FROM " & Parm & "")
-    Utils.db.Exec("UPdate  " & Parm & "  SET  dtepp  =  &1, dtepec  =  &2", Right(dtepp, 7), Right(dtpc, 7))
+    Utils.db.Exec("UPdate  " & Parm & "  SET  dtepp  =  &1, dtepec  =  &2", Format(dtepp.G, "mm.yyyy"), Format(dtpc.G, "mm.yyyy"))
   End With
 
   Calc_solde()
