@@ -39,6 +39,10 @@ Dim f As String
     $type = type
   Endif
   
+  If Screen.AvailableWidth < Me.Width Then 
+    Me.Width = Screen.AvailableWidth 
+    Me.font = Font["-2"]
+  Endif
   $obj = obj
   $solde = solde
   If solde = Avec_Solde Then $cond = ",ROUND(solde,2) AS solde "
@@ -116,6 +120,12 @@ Public Sub ColTri_MajSel(val As Variant)
 
 End
 
+Public Sub ColTri_ReDim(w As Integer)
+
+  Me.Width = w
+
+End
+
 Private Sub debut()
   
   Dim k As String
@@ -123,7 +133,7 @@ Private Sub debut()
   k = "----code----"
   $prop = New ObjProp($res.Fields["compte_cc"], k)
   $Col.Add($prop, "----code----")
-  k = "-----------intitule-----------"
+  k = "-------------intitule-------------"
   $prop = New ObjProp($Res.Fields["intitule_cc"], k)
   $prop.tri = True
   $Col.Add($prop, k)
@@ -158,16 +168,16 @@ Private Sub Tricli()
   k = "-------Prénom-------"
   $prop = New ObjProp($Res.Fields["cli_pnm"], k)
   $Col.Add($prop, k)
-  k = "------------Adresse 1------------"
+  k = "--------------Adresse 1--------------"
   $prop = New ObjProp($Res.Fields["cli_adr1"], k)
   $Col.Add($prop, k)
   k = Cselc.Text
   $prop = New ObjProp($Res.Fields[$cb[Cselc.Text]], k)
   $Col.Add($prop, k)
-  k = "--cp--"
+  k = "---cp---"
   $prop = New ObjProp($res.Fields["cli_cd_ptl"], k)
   $Col.Add($prop, k)
-  k = "------ville------"
+  k = "---------ville---------"
   $prop = New ObjProp($Res.Fields["cli_ville"], k)
   $Col.Add($prop, k)
 
@@ -188,14 +198,14 @@ Private Sub Trilivr()
   k = "----code----"
   $prop = New ObjProp($res.Fields["compte_cc"], k)
   $Col.Add($prop, "----code----")
-  k = "-----------intitule-----------"
+  k = "------------intitule------------"
   $prop = New ObjProp($Res.Fields["nom"], k)
   $prop.tri = True
   $Col.Add($prop, k)
-  k = "-------Prénom-------"
+  k = "---------Prénom---------"
   $prop = New ObjProp($Res.Fields["pnm"], k)
   $Col.Add($prop, k)
-  k = "------------Adresse 1------------"
+  k = "---------------Adresse 1---------------"
   $prop = New ObjProp($Res.Fields["adr1"], k)
   $Col.Add($prop, k)
   k = Cselc.Text
@@ -225,27 +235,27 @@ Private Sub Tricont()
   k = "----code----"
   $prop = New ObjProp($res.Fields["compte_cc"], k)
   $Col.Add($prop, "----code----")
-  k = "-----------intitule-----------"
+  k = "-------------intitule-------------"
   $prop = New ObjProp($Res.Fields["nom"], k)
   $prop.tri = True
   $Col.Add($prop, k)
-  k = "-------Prénom-------"
+  k = "---------Prénom---------"
   $prop = New ObjProp($Res.Fields["pnm"], k)
   $Col.Add($prop, k)
   k = "----------Fonction----------"
   $prop = New ObjProp($Res.Fields["fonction"], k)
   $Col.Add($prop, k)
-  k = "-----------Société-----------"
+  k = "-------------Société-------------"
   $prop = New ObjProp($Res.Fields["intitule_cc"], k)
   $prop.tri = True
   $Col.Add($prop, k)
    k = Cselc.Text
   $prop = New ObjProp($Res.Fields[$cb2[Cselc.Text]], k)
   $Col.Add($prop, k)
-  k = "--cp--"
+  k = "----cp----"
   $prop = New ObjProp($res.Fields["cli_cd_ptl"], k)
   $Col.Add($prop, k)
-  k = "------ville------"
+  k = "--------ville--------"
   $prop = New ObjProp($Res.Fields["cli_ville"], k)
   $Col.Add($prop, k)
   
@@ -261,27 +271,27 @@ Private Sub Tricontfour()
   k = "----code----"
   $prop = New ObjProp($res.Fields["compte_cc"], k)
   $Col.Add($prop, "----code----")
-  k = "-----------intitule-----------"
+  k = "-------------intitule-------------"
   $prop = New ObjProp($Res.Fields["nom"], k)
   $prop.tri = True
   $Col.Add($prop, k)
-  k = "-------Prénom-------"
+  k = "---------Prénom---------"
   $prop = New ObjProp($Res.Fields["pnm"], k)
   $Col.Add($prop, k)
-  k = "----------Fonction----------"
+  k = "------------Fonction------------"
   $prop = New ObjProp($Res.Fields["fonction"], k)
   $Col.Add($prop, k)
-  k = "-----------Société-----------"
+  k = "-------------Société-------------"
   $prop = New ObjProp($Res.Fields["intitule_cc"], k)
   $prop.tri = True
   $Col.Add($prop, k)
-   k = "------------Adresse 1------------"
+   k = "--------------Adresse 1--------------"
   $prop = New ObjProp($Res.Fields["fo_adr1"], k)
   $Col.Add($prop, k)
   k = "--cp--"
   $prop = New ObjProp($res.Fields["fo_cd_ptl"], k)
   $Col.Add($prop, k)
-  k = "------ville------"
+  k = "---------ville---------"
   $prop = New ObjProp($Res.Fields["fo_ville"], k)
   $Col.Add($prop, k)
   
@@ -296,10 +306,10 @@ Private Sub Trifou()
   $res = Utils.db.Exec($req)
   If Not $res.Available Then Return
   debut()
-  k = "------------Adresse 1------------"
+  k = "--------------Adresse 1--------------"
   $prop = New ObjProp($Res.Fields["fo_adr1"], k)
   $Col.Add($prop, k)
-  k = "------------Adresse 2------------"
+  k = "--------------Adresse 2--------------"
   $prop = New ObjProp($Res.Fields["fo_adr2"], k)
   $Col.Add($prop, k)
   k = "--cp--"
@@ -320,16 +330,16 @@ Private Sub Triclifou()
   $res = Utils.db.Exec($req)
   If Not $res.Available Then Return
   debut()
-  k = "------------Adresse 1------------"
+  k = "--------------Adresse 1--------------"
   $prop = New ObjProp($Res.Fields["adr1"], k)
   $Col.Add($prop, k)
-  k = "------------Adresse 2------------"
+  k = "--------------Adresse 2--------------"
   $prop = New ObjProp($Res.Fields["adr2"], k)
   $Col.Add($prop, k)
   k = "--cp--"
   $prop = New ObjProp($res.Fields["cp"], k)
   $Col.Add($prop, k)
-  k = "------ville------"
+  k = "---------ville---------"
   $prop = New ObjProp($Res.Fields["ville"], k)
   $Col.Add($prop, k)
   k = "Type"
@@ -343,7 +353,7 @@ Private Sub slde()
   
   Dim k As String
   
-  k = "----Solde----"
+  k = "-----Solde-----"
   $prop = New ObjProp($Res.Fields["solde"], k)
   $prop.AddChamp("Alignment", Align.Right, "0.00")
   $Col.Add($prop, k)

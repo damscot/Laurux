@@ -32,6 +32,7 @@ Private prop As ObjProp
 
 Event MajSel(Bval As Variant)
 Event Resize()
+Event ReDim(w As Integer)
 
 '************************************** Gestion des Tris générique *****************************************************
 Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null)
@@ -41,9 +42,13 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Dim f As ObjProp
   Dim filter As TextReg
   Dim ch As Chainage
+  Dim ObjPan As Object
   
   ch = New Chainage([])
   Parent = Par
+  For Each ObjPan In Parent.children
+    Try ObjPan.Delete
+  Next
   Res = Resu
   Request = Req
   If IsNull(Parent) Then
@@ -59,7 +64,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Coltri = New GridView(Parent) As "Coltri"
   Colfil = New TextReg[]
   Col_Order = New String[]
-  Coltri.Width = Parent.ClientWidth - 40
+'  Coltri.Width = Parent.ClientWidth - 40
   CellHeight = Height
   cl = Col.Length
   Col_Def = Col
@@ -72,9 +77,10 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   
   For Each f In Col_Def
     filter = New TextReg(Parent) As "Filter"
+    filter.reg = TextReg.nofilter
     ch.add([filter])
     FilterRegex.Add("", Col_Def.Key)
-    filter.Width = Len(Col_Def.Key) * policewidth
+    filter.Width = filter.Font.TextWidth("    " & Col_Def.Key) + filter.Picture.Width
     filter.Height = Height
     filter.X = offset
     filter.Y = 0
@@ -87,20 +93,11 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
     Colfil.Add(filter)
     Col_Order.Add(Col_Def.Key)
   Next
-  filter.Width = filter.Width + Parent.ClientWidth - offset - 40 'optimize la taille pour le dernier champ
+'  filter.Width = filter.Width + Parent.ClientWidth - offset - 40 'optimize la taille pour le dernier champ
+  Parent.Width = offset + 40
+  Coltri.Width = offset
   
-  Remonter = New Button(Parent) As "Remonter"
-  Descendre = New Button(Parent) As "Descendre"
-  Reset = New Button(Parent) As "Reset"
-  Refresh_Height()
-  Reset.Text = "Raz"
-  Reset.Tooltip = "Efface la selection des filtres"
-  Remonter.Picture = Picture.Load("Icones/previous.png")
-  Remonter.Show()
-  Descendre.Picture = Picture.Load("Icones/next.png")
-  Descendre.Show()
-  Reset.Show()
-
+  
   
   If ob Then
     Obj = ob
@@ -120,8 +117,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   
   Coltri.Columns.count = cl
   While (i < cl)
-    Coltri.Columns[i].Width = Len(Col_Order[i]) * policewidth
-    'Coltri.Columns[i].Alignment = Align.Center
+    Coltri.Columns[i].Width = Colfil[i].Width
     Inc i
   Wend 
   
@@ -140,6 +136,23 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
 
 End
 
+Public Sub _ready()
+
+  Raise ReDim(Coltri.Width + 40)
+  Remonter = New Button(Parent) As "Remonter"
+  Descendre = New Button(Parent) As "Descendre"
+  Reset = New Button(Parent) As "Reset"
+  Refresh_Height()
+  Reset.Text = "Raz"
+  Reset.Tooltip = "Efface la selection des filtres"
+  Remonter.Picture = Picture.Load("Icones/previous.png")
+  Remonter.Show()
+  Descendre.Picture = Picture.Load("Icones/next.png")
+  Descendre.Show()
+  Reset.Show()
+
+End
+
 Public Sub Refresh_Height()
   
   Coltri.Rows.Height = CellHeight
@@ -153,11 +166,11 @@ Public Sub Refresh_Height()
   Descendre.H = 56
   Reset.W = 40 + 5
   Reset.H = CellHeight + 5
-  Remonter.X = Parent.ClientWidth - 30
-  Descendre.X = Parent.ClientWidth - 30
+  Reset.X = coltri.Width + 3
+  Remonter.X = coltri.Width + 3 
+  Descendre.X = coltri.Width + 3
   Remonter.Y = Parent.ClientHeight / 2 - ((Parent.ClientHeight / (4 * Remonter.H)) * Remonter.H)
   Descendre.Y = Parent.ClientHeight / 2 + ((Parent.ClientHeight / (5 * Descendre.H)) * Descendre.H)
-  Reset.X = Parent.W - 43
   Reset.Y = 0
   Update()
   
@@ -285,6 +298,7 @@ End
 
 Public Sub Coltri_Data(Row As Integer, Column As Integer)
 
+  
   Dim Frmt As New String[]
   Dim Frmt2 As String[]
 

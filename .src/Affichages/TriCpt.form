@@ -1,30 +1,26 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,168,59)
+  MoveScaled(0,0,140,59)
   Font = Font["-1"]
-  Expand = True
   Arrangement = Arrange.Vertical
-  AutoResize = True
   { Pchoix Panel
     MoveScaled(1,0,165,2)
     Visible = False
-    Arrangement = Arrange.Horizontal
+    Arrangement = Arrange.Row
+    AutoResize = True
     { clifou RadioButton
       MoveScaled(1,0,23,2)
-      Expand = True
       Text = ("Clients et fournisseurs")
       Value = True
     }
     { cli RadioButton cli
       Name = "cli"
       MoveScaled(27,0,17,2)
-      Expand = True
       Text = ("Clients")
     }
     { fou RadioButton
       MoveScaled(36,0,14,2)
-      Expand = True
       Text = ("Fournisseurs")
     }
     { all RadioButton
@@ -35,13 +31,11 @@
     { gest RadioButton
       MoveScaled(58,0,14,2)
       Visible = False
-      Expand = True
       Text = ("Gestion ")
     }
     { bil RadioButton
       MoveScaled(67,0,15,2)
       Visible = False
-      Expand = True
       Text = ("Bilan")
     }
     { pcli Panel
@@ -49,25 +43,23 @@
       Visible = False
       Background = &HC0C017&
       Arrangement = Arrange.Horizontal
+      AutoResize = True
       Border = Border.Plain
       { Afac RadioButton cli
         Name = "Afac"
         MoveScaled(1,0,14,2)
         ToolTip = ("Adresse de facturation")
-        Expand = True
         Text = ("Facturation")
         Value = True
       }
       { Livr RadioButton
         MoveScaled(14,0,13,2)
         ToolTip = ("Adresse de livraison")
-        Expand = True
         Text = ("Livraison")
       }
       { contact RadioButton
         MoveScaled(29,0,13,2)
         ToolTip = ("Adresse des contactes")
-        Expand = True
         Text = ("Contact")
       }
     }
@@ -75,19 +67,18 @@
       MoveScaled(114,0,48,2)
       Visible = False
       Background = Color.TooltipBackground
+      Arrangement = Arrange.Horizontal
       Border = Border.Plain
       { inact CheckBox cond1
         Name = "inact"
         MoveScaled(1,0,10,2)
         ToolTip = ("Comptes inactifs")
-        Expand = True
         Text = ("Inactifs")
       }
       { divers CheckBox cond1
         Name = "divers"
         MoveScaled(12,0,11,2)
         ToolTip = ("Comptes divers")
-        Expand = True
         Text = ("Divers")
       }
       { autoe CheckBox cond1
@@ -116,8 +107,6 @@
     }
   }
   { Panel1 Panel
-    MoveScaled(0,7,168,52)
-    Expand = True
-    AutoResize = True
+    MoveScaled(0,7,138.5556,52)
   }
 }

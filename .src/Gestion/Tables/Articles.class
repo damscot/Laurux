@@ -4740,10 +4740,10 @@ Public Sub Update_Req()
       Req = "select *, " & Coul.Art_DB_bgcolor() & " from " & Cbase.Table("TabArt")
       Res = Utils.db.Exec(Req)
       If Not Res.Available Then Return
-      k = "---- Code ----"
+      k = Space(3) & "---- Code ----" & Space(3)
       f = New ObjProp(Res.Fields[Tri], k)
       Col.Add(f, k)
-      k = "----------- Intitule -------------"
+      k = Space(9) & "----------- Intitule -------------" & Space(9)
       f = New ObjProp(Res.Fields["art_design"], k)
       Col.Add(f, k)
       k = "- Fourn. -"
@@ -4768,10 +4768,10 @@ Public Sub Update_Req()
       Req = "select * from " & Cbase.Table("TabMo")
       Res = Utils.db.Exec(Req)
       If Not Res.Available Then Return
-      k = "-----code-----"
+      k = Space(3) & "---- Code ----" & Space(3)
       f = New ObjProp(Res.Fields[Tri], k)
       Col.Add(f, k)
-      k = "-------------------intitule-------------------"
+      k = Space(9) & "----------- Intitule -------------" & Space(9)
       f = New ObjProp(Res.Fields["mo_design"], k)
       Col.Add(f, k)
       k = "-famille-"

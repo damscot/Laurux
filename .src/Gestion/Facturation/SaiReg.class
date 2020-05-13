@@ -63,6 +63,10 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
   totsai.nbdec = "2"
   
   coef = selection.Width / 954
+  If Screen.AvailableWidth < Me.Width Then
+    Me.Width = Screen.AvailableWidth 
+    Me.Font = Font["-2"]
+  Endif
   selection.Columns.Count = sel.Count
   For i = 0 To sel.Max
     selection.Columns[i].Text = sel[I]

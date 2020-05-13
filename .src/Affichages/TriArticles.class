@@ -106,15 +106,16 @@ Public Sub Update_Req()
       Req = "select *, " & Coul.Art_DB_bgcolor() & " from " & Cbase.Table("TabArt")
       Res = Utils.db.Exec(Req)
       If Not Res.Available Then Return
-      k = "---- Code ----"
+      k = Space(3) & "---- Code ----" & Space(3)
       prop = New ObjProp(Res.Fields[Tri2Art], k)
       Col.Add(prop, k)
-      k = "----------- Intitule -------------"
+      k = Space(8) & "----------- Intitule -------------" & Space(8)
       prop = New ObjProp(Res.Fields["art_design"], k)
+      prop.tri = True
       Col.Add(prop, k)
       prop = New ObjProp(Res.Fields[CB1Conv[CB1.Text]], "-" & CB1.Text & "-")
       Col.Add(prop, "-" & CB1.Text & "-")
-      k = "- Fam. -"
+      k = "---- Fam. -----"
       prop = New ObjProp(Res.Fields["art_fam"], k)
       Col.Add(prop, k)
       k = "- PvHT -"
