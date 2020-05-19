@@ -59,7 +59,7 @@ Public Sub SyncArt_Click()
   
   Res = Utils.db.Exec("Select * from " & Cbase.Table("TabArt") & " where art_suspendu = &1 and art_pvttc <> 0 and ((art_stocke = 1 and art_qte >= 1) or art_stocke = 0)", 0)
   If Res.Available Then
-    PB = New ProgBar("Mise a jour articles", Res.Count, Null, True, "", True)
+    PB = New ProgBar("Mise à jour articles", Res.Count, Null, True, "", True)
     PB.Show()
     Repeat
       PB.Avancement(Left(Res!art_design, 25), 20)
@@ -137,7 +137,7 @@ Public Sub SyncFam_Click()
   
   Res = Utils.db.Exec("Select * from " & Cbase.Table("TabFam") & " ", 0)
   If Res.Available Then
-    PB = New ProgBar("Mise a jour categories", Res.Count, Null, True, "", True)
+    PB = New ProgBar("Mise à jour categories", Res.Count, Null, True, "", True)
     PB.Show()
     Repeat
       PB.Avancement(Left(Res!libell_fam, 25), 1)
@@ -224,7 +224,7 @@ Public Sub SyncMarques_Click()
   
   Res = Utils.db.Exec("Select * from " & Cbase.Table("TabMarq") & " ")
   If Res.Available Then
-    PB = New ProgBar("Mise a jour marques", Res.Count, Null, True, "", True)
+    PB = New ProgBar("Mise à jour marques", Res.Count, Null, True, "", True)
     PB.Show()
     Repeat
       PB.Avancement(Left(Res!intitule, 20), 5)
@@ -244,6 +244,46 @@ Public Sub SyncMarques_Click()
           OC_Con.Exec("Insert into oc_manufacturer_to_store (manufacturer_id,store_id) Values (&1, &2)", OCRes!manufacturer_id, store_id)
         Endif
       Endif
+    Until Res.MoveNext()
+    PB.Close()
+  Endif
+
+  
+End
+
+Public Sub SyncUsers_Click()
+  
+  Dim Res As Result
+  Dim OCRes, OCRes2 As Result
+  Dim PB As ProgBar
+  Dim store_id As Integer = 0
+  
+  If Not OC_Ready() Then Return
+  
+  Res = Utils.db.Exec("Select * from " & Cbase.Table("TabCli") & " ")
+  If Res.Available Then
+    PB = New ProgBar("Mise à jour clients", Res.Count, Null, True, "", True)
+    PB.Show()
+    Repeat
+      PB.Avancement(Left(Res!cli_nom, 20), 5)
+      OCRes = OC_Con.Exec("Select * from oc_customer where code = &1", Res!cli_code)
+      If OCRes.Available Then
+        OC_Con.Exec("Update oc_customer set lastname = &2, firstname = &3, email = &4 where code = &1", OCRes!code, Left(Res!cli_nom, 31) & " ", Left(Res!cli_pnm, 31) & " ", Left(Res!cli_pnm, 95) & " ")
+      Else
+        OC_Con.Exec("Insert into oc_customer (code, lastname, firstname, email, store_id, customer_group_id, language_id, telephone, fax, password, salt, custom_field, ip, status, safe, token, date_added) Values (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Res!cli_code, Left(Res!cli_nom, 31) & " ", Left(Res!cli_pnm, 31) & " ", Left(Res!cli_pnm, 95) & " ", store_id, 1, 1, "tel", "fax", " ", " ", "[]", "127.0.0.1", 1, 1, " ", LDate.DT)
+      Endif
+      'creer les groupes clients
+      'creer les addresses
+      'OCRes = OC_Con.Exec("Select * from oc_manufacturer where name = &1", Res!intitule)
+      'If OCRes.Available Then
+      '  'default store
+      '  OCRes2 = OC_Con.Exec("Select * from oc_manufacturer_to_store where manufacturer_id = &1", OCRes!manufacturer_id)
+      '  If OCRes2.Available Then
+      '    OC_Con.Exec("Update oc_manufacturer_to_store set store_id = &2 where manufacturer_id = &1", OCRes!manufacturer_id, store_id)
+      '  Else
+      '    OC_Con.Exec("Insert into oc_manufacturer_to_store (manufacturer_id,store_id) Values (&1, &2)", OCRes!manufacturer_id, store_id)
+      '  Endif
+      'Endif
     Until Res.MoveNext()
     PB.Close()
   Endif
