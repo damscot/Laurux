@@ -43,6 +43,7 @@ Public Sub _new()
   Next
   Combocais.Tag = 0
   decaissement.Enabled = Start.LocalSettings["/Soc" & Start.Societe & "/Decais"] 
+  Frame1.Visible = Start.LocalSettings["/Soc" & Start.Societe & "/Lcr"]
 
 End
 
@@ -112,6 +113,7 @@ End
 
 Public Sub bar1_modif()
   
+  If GridView1.Row = -1 Then Return
   Utils.db.Begin
   $ressel.MoveTo(GridView1.Row)
   $res = Utils.db.Edit("Fiches_Reglements", "code=&1", $ressel!code)
@@ -141,8 +143,8 @@ Public Sub bar1_valide(creer As Boolean, anul As Boolean)
   Endif
 
   If interne.Value Then
-    If Not cptint.Text Then
-      Message.Error("compte interne obligatoire")
+    If Left(cptint.Text, 2) <> "58" Then
+      Message.Error("Compte interne obligatoire")
       Utils.db.Rollback
       cptint.SetFocus
       Return
@@ -250,7 +252,6 @@ Public Sub Butint_Click()
   MyForm.Showmodal()
   If Bsel = True Then
     cptint.Text = Bval
-'    libcpt.Text = Comptabilite.sDesg
   Else
     libcpt.Text = ""
   Endif

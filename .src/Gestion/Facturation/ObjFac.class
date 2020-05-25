@@ -330,9 +330,9 @@ Private Sub numcli_Write(Value As String)
   If breg Then
     tsaisreg = treg
   Else
-    res = utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", rescli!cli_reg)
+    res = utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", Left(rescli!cli_reg, 2))
     If res.Available Then
-      If $dtedoc.Avant($dteech) And choix <> ObjFac.archive Then 
+      If $dtedoc.Apres($dteech) And choix <> ObjFac.archive Then 
         tsaisreg = "Règlement à réception de facture par " & res!libel
       Else
         tsaisreg = "Règlement par " & res!libel & " au " & $dteech.L
