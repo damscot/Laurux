@@ -54,6 +54,8 @@ Private Sub TriArticles(fam As Trifam)
     Else
       TreeView1.Add(fm.cle, fm.Text,, fm.parent.cle)
     Endif
+    TreeView1[fm.cle].EnsureVisible
+    TreeView1[fm.cle].Selected = True
   Next
   
 End
