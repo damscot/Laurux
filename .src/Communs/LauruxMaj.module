@@ -5100,11 +5100,11 @@ end_utf8:
   Start.LocalSettings.Save
   Start.LocalSettings.Reload
   
-  pb = New ProgBar("Gestion des réglements", 9)
-  PB.Show()
-  PB.Avancement("Création du fichier des réglements", 1)
   'création de la table Fiches_Reglement
   If Not Utils.db.Tables.Exist("Fiches_Reglements") Then
+    pb = New ProgBar("Gestion des réglements", 9)
+    PB.Show()
+    PB.Avancement("Création du fichier des réglements", 1)
     Utils.db.Exec("CREATE TABLE Fiches_Reglements" &
     " (code Char(2) NOT NULL," &
     "libel VarChar(20), " &
@@ -5117,80 +5117,81 @@ end_utf8:
     "regroup Boolean DEFAULT True," &
     "PRIMARY KEY (code)) ENGINE=InnoDB")
  
-  'on garni le fichier avec les reseignements des parametres et prefs
-  pb.Avancement("Espèces", 1)
-  respar = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
-  Utils.db.Begin
-  If respar.Available Then
-    res = Utils.db.Create("Fiches_Reglements")      '01 especes
-    res!code = "01"
-    res!libel = "Espèces"
-    res!journal = respar!jrnal2
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='01' WHERE cli_reg=&1", "Espèces")
-    pb.Avancement("Chéques", 1)
-    res = Utils.db.Create("Fiches_Reglements")      '05 Cheques
-    res!code = "05"
-    res!libel = "Chèque"
-    res!journal = respar!jrnal3
-    If Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"] Then
-      res!cptint = respar!viremchq
-    Endif
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='05' WHERE cli_reg=&1", "Chèque")
-    pb.Avancement("Carte", 1)
-    res = Utils.db.Create("Fiches_Reglements")      '10 cartes
-    res!code = "10"
-    res!libel = "Carte"
-    res!journal = respar!jrnal3
-    If Start.LocalSettings["/Soc" & Start.Societe & "/Carte"] Then
-      res!cptint = respar!viremc
-    Endif
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='10' WHERE cli_reg='Carte'")
-    pb.Avancement("Paypal", 1)
-    res = Utils.db.Create("Fiches_Reglements")      '15 paypal
-    res!code = "15"
-    res!libel = "Paypal"
-    If respar!virema Then
+    'on garni le fichier avec les reseignements des parametres et prefs
+    pb.Avancement("Espèces", 1)
+    respar = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
+    Utils.db.Begin
+    If respar.Available Then
+      res = Utils.db.Create("Fiches_Reglements")      '01 especes
+      res!code = "01"
+      res!libel = "Espèces"
+      res!journal = respar!jrnal2
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='01' WHERE cli_reg=&1", "Espèces")
+      pb.Avancement("Chéques", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '05 Cheques
+      res!code = "05"
+      res!libel = "Chèque"
       res!journal = respar!jrnal3
+      If Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"] Then
+        res!cptint = respar!viremchq
+      Endif
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='05' WHERE cli_reg=&1", "Chèque")
+      pb.Avancement("Carte", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '10 cartes
+      res!code = "10"
+      res!libel = "Carte"
+      res!journal = respar!jrnal3
+      If Start.LocalSettings["/Soc" & Start.Societe & "/Carte"] Then
+        res!cptint = respar!viremc
+      Endif
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='10' WHERE cli_reg='Carte'")
+      pb.Avancement("Paypal", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '15 paypal
+      res!code = "15"
+      res!libel = "Paypal"
+      If respar!virema Then
+        res!journal = respar!jrnal3
+      Endif
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='15' WHERE cli_reg='Paypal'")
+      pb.Avancement("Virement", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '20 Virement
+      res!code = "20"
+      res!libel = "Virement"
+      res!journal = respar!jrnal3
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='20' WHERE cli_reg='Virement'")
+      pb.Avancement("Prélèvement", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '25 Prelevement
+      res!code = "25"
+      res!libel = "Prélèvement"
+      res!journal = respar!jrnal3
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='25' WHERE cli_reg=&1", "Prélèvement")
+      pb.Avancement("Traite", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '30 Traite acceptées
+      res!code = "30"
+      res!libel = "Traite"
+      res!journal = respar!jrnal3
+      res!lcr = Mreglement.lcr_acc
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='30' WHERE cli_reg='Traite'")
+      pb.Avancement("Lcr", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '35 Traite
+      res!code = "35"
+      res!libel = "Lcr"
+      res!lcr = Mreglement.lcr_nacc
+      res!journal = respar!jrnal3
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='35' WHERE cli_reg='Lcr'")
     Endif
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='15' WHERE cli_reg='Paypal'")
-    pb.Avancement("Virement", 1)
-    res = Utils.db.Create("Fiches_Reglements")      '20 Virement
-    res!code = "20"
-    res!libel = "Virement"
-    res!journal = respar!jrnal3
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='20' WHERE cli_reg='Virement'")
-    pb.Avancement("Prélèvement", 1)
-    res = Utils.db.Create("Fiches_Reglements")      '25 Prelevement
-    res!code = "25"
-    res!libel = "Prélèvement"
-    res!journal = respar!jrnal3
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='25' WHERE cli_reg=&1", "Prélèvement")
-    pb.Avancement("Traite", 1)
-    res = Utils.db.Create("Fiches_Reglements")      '30 Traite acceptées
-    res!code = "30"
-    res!libel = "Traite"
-    res!journal = respar!jrnal3
-    res!lcr = Mreglement.lcr_acc
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='30' WHERE cli_reg='Traite'")
-    pb.Avancement("Lcr", 1)
-    res = Utils.db.Create("Fiches_Reglements")      '35 Traite
-    res!code = "35"
-    res!libel = "Lcr"
-    res!lcr = Mreglement.lcr_nacc
-    res!journal = respar!jrnal3
-    res.Update
-    Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='35' WHERE cli_reg='Lcr'")
+    pb.Close
+    Utils.db.Commit
   Endif
-   Endif
-  pb.Close
-  Utils.db.Commit
+  
   'Modification de la caisse
   PB = New ProgBar("Modification des caisses", 4)
   PB.Show()
