@@ -109,7 +109,7 @@ Public Sub Update_Req()
       k = Space(3) & "---- Code ----" & Space(3)
       prop = New ObjProp(Res.Fields[Tri2Art], k)
       Col.Add(prop, k)
-      k = Space(8) & "----------- Intitule -------------" & Space(8)
+      k = Space(7) & "----------- Intitule -------------" & Space(7)
       prop = New ObjProp(Res.Fields["art_design"], k)
       prop.tri = True
       Col.Add(prop, k)
@@ -177,6 +177,12 @@ Public Sub ColTri_MajSel(val As Variant)
   Endif
   
   Me.Close()
+
+End
+
+Public Sub ColTri_ReDim(w As Integer)
+
+  Me.Width = w
 
 End
 
