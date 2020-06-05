@@ -40,10 +40,11 @@ Property tauxtvass As String
 Property Read volumess As Float
 
 
-Public Sub _new(dra As String, vol As Float, deg As Float, qte As Float, Optional fam As String)   'passage de l'article avec 1 seul resultat
+Public Sub _new(dra As String, vol As Float, deg As Float, qte As Variant, Optional fam As String)   'passage de l'article avec 1 seul resultat
 
   Dim resdr, restva, respar As Result
   
+  If qte Match "," Then qte = Replace(qte, ",", ".")
   If Not dra Then Return
   $sfam = fam
   resdr = Utils.db.Exec("SELECT * FROM Fiches_regie WHERE code=&1", dra)

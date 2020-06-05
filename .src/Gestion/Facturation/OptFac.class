@@ -81,6 +81,7 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
       If $vfac.choix = ObjFac.facture Or $vfac.choix = ObjFac.archive Then
 '        Rglt.Text = mttc
       Endif
+      If $vfac.choix = ObjFac.finmois Then Ftri.Visible = True
     
     Case Else
       If $vfac.choix = ObjFac.bl Then
@@ -435,9 +436,22 @@ End
 'bouton édition
 Public Sub edite_Click()
   
+  Dim tri As String
+  
   Select Case $choix
     Case ObjFac.finmois, ObjFac.abonnement
-      $vfac.editefm()
+      If Tnum.Value Then tri = " code "
+      If Tnom.Value Then
+        If tri Then tri &= ",nom " Else tri = " nom "
+      Endif
+      If Tcp.Value Then
+        If tri Then tri &= ",cp " Else tri = " cp "
+      Endif
+      If Pville.Value Then
+        If tri Then tri &= ",ville " Else tri = " ville "
+      Endif
+      If tri Then tri = " ORDER BY" & tri 
+      $vfac.editefm(False, tri)
       Me.Close
     Case ObjFac.facture
       $vfac.editef()

@@ -257,11 +257,7 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
   affclient = Start.LocalSettings["/Soc" & Start.Societe & "/AffClient"]
   intcheque = Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"]
   intcarte = Start.LocalSettings["/Soc" & Start.Societe & "/Carte"]
-  If intcarte Or intcheque Or intaut Then
-    res = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
-    
-  Endif
-  
+ 
   Catch
     Message.Error("Veuillez vérifier vos préférences avant de continer à facturer")
     

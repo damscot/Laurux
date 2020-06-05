@@ -614,7 +614,7 @@ Private Function clotmat_Read() As Date
 End
 
 '* * * * * * * * * * * * * * * * * * * * * * * * * * les éditions*******************************
-Public Function editefm(Optional courriel As Boolean = False) As Boolean        ''Edite les factures fin de mois
+Public Function editefm(Optional courriel As Boolean = False, tri As String) As Boolean        ''Edite les factures fin de mois
   
   Dim res, rResult As Result
   Dim sText, sText2 As String
@@ -622,11 +622,12 @@ Public Function editefm(Optional courriel As Boolean = False) As Boolean        
   
   If Me.testchem() Then Return 
   If verifdat() Then Return 
-  res = utils.db.Exec("SELECT * FROM Facturefm")
+  
+  res = utils.db.Exec("SELECT * FROM Facturefm" & tri)
   Me.AffClient = False       'option pour affichge client sur les mails
   'on recupere les clients à facturer
   res.MoveFirst
-  pgb = New ProgBar("Edition des factures fin de mois", res.Count)
+  pgb = New ProgBar("Edition des factures fin de mois", res.Count, Windows[Windows.Count - 1], True)
   pgb.Show()
   Repeat
     pgb.Avancement()
