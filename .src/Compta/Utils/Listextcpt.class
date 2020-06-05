@@ -64,6 +64,7 @@ Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(
       If i = 0 Then si = ""
       resf = Utils.db.Exec("SELECT * FROM Fiches_Mvt" & si & " LIMIT 1")
       If resf.Available Or i = 0 Then
+        Print resf!numero, resf!compte
         brn1 = New Borne
         brn1.nomfich = "Fiches_Mvt" & si
         brn1.dtesup = New LDate(res["dteclec" & si])
@@ -268,10 +269,13 @@ Public Function rechechelot(numlot As String, Optional numcpt As String = $scpt)
   Dim res As Result 
   Dim req As String
   Dim i As Integer
+  Dim dte As LDate
   
-  req = "SELECT " & champ & "FROM " & $brn[0].nomfich & " WHERE compte=&1 AND numlot=&2 AND provisoire=False "
+  dte = dtsup(0)
+  req = "SELECT " & champ & "FROM " & $brn[0].nomfich & " WHERE compte=&1 AND numlot=&2 AND provisoire=False " & Utils.db.Subst("AND dte BETWEEN &1 AND &2 ", $brn[0].dteinf.D, dte.D)
   For i = 1 To $brn.Max
-    req &= "UNION SELECT " & champ & "FROM " & $brn[i].nomfich & " WHERE compte=&1 AND numlot=&2 AND provisoire=False "
+    dte = dtsup(i)
+    req &= "UNION SELECT " & champ & "FROM " & $brn[i].nomfich & " WHERE compte=&1 AND numlot=&2 AND provisoire=False " & Utils.db.Subst("AND dte BETWEEN &1 AND &2 ", $brn[i].dteinf.D, dte.D)
   Next
   
   res = Utils.db.Exec(req, numcpt, numlot)
@@ -279,15 +283,18 @@ Public Function rechechelot(numlot As String, Optional numcpt As String = $scpt)
 
 End
 
-Public Function rechedoc(numdoc As String) As Result      ''Retourne les lignes d'écritures liées à un numéro de document
+Public Function rechedoc(numdoc As String, Optional egal As String = " = ") As Result      ''Retourne les lignes d'écritures liées à un numéro de document
 
   Dim res As Result 
   Dim req As String
   Dim i As Integer
+  Dim dte As LDate
   
-  req = "SELECT " & champ & "FROM " & $brn[0].nomfich & ",Fiches_Comptes  WHERE  numdoc=&1 AND compte_cc=compte AND (type_cc='C' OR type_cc='F')  AND provisoire=False "
+  dte = dtsup(0)
+  req = "SELECT " & champ & "FROM " & $brn[0].nomfich & ",Fiches_Comptes  WHERE  numdoc " & egal & " &1 AND compte_cc=compte AND (type_cc='C' OR type_cc='F')  AND provisoire=False " & Utils.db.Subst("AND dte BETWEEN &1 AND &2 ", $brn[0].dteinf.D, dte.D)
   For i = 1 To $brn.Max
-    req &= "UNION SELECT " & champ & "FROM " & $brn[i].nomfich & ",Fiches_Comptes  WHERE  numdoc=&1 AND compte_cc=compte AND (type_cc='C' OR type_cc='F') AND provisoire=False  "
+    dte = dtsup(i)
+    req &= "UNION SELECT " & champ & "FROM " & $brn[i].nomfich & ",Fiches_Comptes  WHERE  numdoc " & egal & " &1 AND compte_cc=compte AND (type_cc='C' OR type_cc='F') AND provisoire=False  " & Utils.db.Subst("AND dte BETWEEN &1 AND &2 ", $brn[i].dteinf.D, dte.D)
   Next
   
   res = Utils.db.Exec(req, numdoc)

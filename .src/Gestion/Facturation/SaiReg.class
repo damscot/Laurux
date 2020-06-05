@@ -42,6 +42,8 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
   ch = New Chainage([client, ndoc, nlot])
   ch = New Chainage([montsaisi, libsaisi, docsaisi, lotsaisi])
   obs = New Observer(client) As "sel"
+  obs = New Observer(ndoc) As "sel"
+  obs = New Observer(nlot) As "sel"
   
   client.reg = "[0-9]{1,8}"
   ndoc.MaxLenght = 10
@@ -129,6 +131,7 @@ Public Sub nreg_KeyPress()
     Stop Event
     If $typ = VarEcr.caisse Then selection.SetFocus Else client.SetFocus
   Endif
+  If Key.Code = Key.F2 Then rechreg_Click()
 
 End
 
@@ -270,6 +273,12 @@ Public Sub client_LostFocus()
 
 End
 
+Public Sub Client_KeyPress()
+
+  If Key.Code = Key.F2 Then rechcli_Click()
+
+End
+
 Private Function affclient() As Boolean
   
   $rescli = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1 AND (type_cc='C' OR type_cc='F')", client.Text)
@@ -293,12 +302,14 @@ Public Sub sel_LostFocus()
 
 End
 
+
 Public Sub tltr_Click()
 
   $letr = "t"
   affsel
 
 End
+
 
 Public Sub check_reg() As Boolean
 
@@ -413,6 +424,7 @@ Private Sub affsel()
     Endif
   Endif
   totlign.Value = tot
+  If selection.Rows.Count > 0 Then selection.SetFocus
   
 End
 
@@ -651,7 +663,7 @@ Public Sub butvalide_Click()
   edite.Tooltip = "Édition des nouvelles écritures"
   $Vecr.numdoc = docsaisi.Text
   $Vecr.numlot = lotsaisi.Text
-  $Vecr.dte = dtereg.dte
+  $Vecr.dte = New Ldate(dtereg.dte.G)
   $Vecr.libelle = libsaisi.Text
   If montsaisi.Value < 0 Then
     $Vecr.montantd = montsaisi.Value * -1
@@ -831,6 +843,7 @@ Private Sub affdonnes()
   If Not affclient() Then Return
   docsaisi.Text = $Vecr.numdoc
   lotsaisi.Text = $Vecr.numlot
+  dtereg.Text = $Vecr.dte.L
   montsaisi.Value = $Vecr.montantc - $Vecr.montantd
   libsaisi.Text = $Vecr.libelle
   affsel
@@ -897,6 +910,7 @@ Public Sub vldsaisie_Click()
   Dim choix As Integer
   
   If borderaux.Rows.Count = 0 Then Return
+  Application.Busy += 1
   For Each var In $Lecr
     Select Case var.etat
       Case VarEcr.L_valide
@@ -921,6 +935,7 @@ Public Sub vldsaisie_Click()
   mabl
   mabreg()
   nreg.SetFocus
+  Application.Busy -= 1
 
 End
 'validation du bordereau
@@ -930,8 +945,8 @@ Public Sub vldbordereau_Click()
   
   If borderaux.Rows.Count = 0 Then Return
   If Not $resreg!bordereaux Then Return
-'  nreg_LostFocus()
-  
+
+  Application.Busy += 1
   $Lecr.etat = VarEcr.L_valide
   $Lecr.type = VarEcr.Treso
   
@@ -941,6 +956,7 @@ Public Sub vldbordereau_Click()
   Endif
   mabl
   mabreg()
+  Application.Busy -= 1
   
 End
 'editions
