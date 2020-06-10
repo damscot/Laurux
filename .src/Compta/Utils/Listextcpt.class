@@ -64,7 +64,6 @@ Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(
       If i = 0 Then si = ""
       resf = Utils.db.Exec("SELECT * FROM Fiches_Mvt" & si & " LIMIT 1")
       If resf.Available Or i = 0 Then
-        Print resf!numero, resf!compte
         brn1 = New Borne
         brn1.nomfich = "Fiches_Mvt" & si
         brn1.dtesup = New LDate(res["dteclec" & si])

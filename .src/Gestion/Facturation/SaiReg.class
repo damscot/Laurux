@@ -40,7 +40,7 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
   
   Utils.Observers(Me)
   ch = New Chainage([client, ndoc, nlot])
-  ch = New Chainage([montsaisi, libsaisi, docsaisi, lotsaisi])
+  ch = New Chainage([montsaisi, libsaisi, docsaisi, lotsaisi, dtereg, butvalide, butsortie])
   obs = New Observer(client) As "sel"
   obs = New Observer(ndoc) As "sel"
   obs = New Observer(nlot) As "sel"
@@ -512,16 +512,14 @@ Public Sub selection_KeyPress()
   Dim i As Integer
   
   i = selection.Row
-  If i < 0 Then Return
+    If i < 0 Then Return
   
-  If Key.Code = Key.Tab Then
-    If i < (selection.Rows.Count - 1) Then
-      selection.Row = i + 1
-    Else
-      selection.Row = 0
-    Endif
+  If Key.Code = Key.Tab Then 
     Stop Event
-  Else If Key.Code = Key.Space
+    dtereg.SetFocus
+  Endif
+
+  If Key.Code = Key.Space
     i = selection.Row
     selection_choose(i)
     If i < (selection.Rows.Count - 1) Then
@@ -695,6 +693,12 @@ Public Sub butvalide_Click()
   
 End
 
+Public Sub butvalide_KeyPress()
+
+  If Key.Code = Key.Enter Or Key.Code = Key.Return Then butvalide_Click()
+
+End
+
 Public Sub butan_Click()
 
   butsup.Visible = False
@@ -724,6 +728,12 @@ End
 Public Sub butsortie_Click()
 
   Me.Close
+
+End
+
+Public Sub butsortie_KeyPress()
+
+  If Key.Code = Key.Enter Or Key.Code = Key.Return Then Me.Close
 
 End
 

@@ -62,6 +62,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
     Win.AutoResize = True
   Endif
   Coltri = New GridView(Parent) As "Coltri"
+  coltri.Mode = Select.Single
   Colfil = New TextReg[]
   Col_Order = New String[]
 '  Coltri.Width = Parent.ClientWidth - 40
@@ -293,7 +294,16 @@ End
 Public Sub Filter_KeyPress()
 
   If Key.Code = Key.Esc Then Close(Null) 
-
+  If Key.Code = Key.Down Then 
+    Stop Event
+    If coltri.Rows.Count > 0 Then
+     coltri.SetFocus
+     coltri.Select
+    Else
+      Return
+    Endif
+  Endif
+  
 End
 
 Public Sub Coltri_Data(Row As Integer, Column As Integer)
@@ -321,6 +331,7 @@ End
 
 Public Sub Coltri_Click()
 
+  If coltri.row = -1 Then Return
   Close(coltri[coltri.row, 0].Text)
 
 End
