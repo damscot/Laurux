@@ -222,8 +222,12 @@ Public Sub Par_lostfocus()
   Dim i, j As Integer
   Dim chaine As String
   
+  If b = 1 Then
+    b = 0
+    Return
+  Endif
+  
   Select Case Last.tag
-
       
     Case 31
         If IsNull(Frais.Text) Then Frais.Text = "0,00"
@@ -233,7 +237,7 @@ Public Sub Par_lostfocus()
     Case 33
         If Not Veriftva(tvafrais.Text) Then
             If Message.question("ATTENTION ! Ce compte de TVA n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then
-              FTvav.Show
+              FTvav.ShowModal
               tvafrais.SetFocus
               tvafrais.Select
             Else
@@ -267,7 +271,7 @@ Public Sub Par_lostfocus()
       Case 38
           If Not Veriftva(tvass.Text) Then
             If Message.question("ATTENTION ! Ce compte de TVA n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then
-              FTvav.Show
+              FTvav.ShowModal
               tvass.SetFocus
               tvass.Select
             Else
@@ -315,6 +319,10 @@ Public Sub cpts_LostFocus()
 
   Dim bcompte As Boolean
 
+  If b = 1 Then 
+    b = 0
+    Return
+  Endif
   B = 1
   If son Then
     Music.Play
@@ -323,7 +331,7 @@ Public Sub cpts_LostFocus()
   If Not bcompte Then
     Stop Event
     If Message.question("ATTENTION ! Le compte " & Last.Text & " n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then
-      Fcomptes.Show()
+      Fcomptes.ShowModal()
       Last.SetFocus
       Try Last.Select
     Else
@@ -378,13 +386,18 @@ Public Sub jrnal_LostFocus()
   Dim Jnal As Result
   Dim jal As String
 
+  If b = 1 Then
+    b = 0
+    Return
+  Endif
+  
   Jnal = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo = &1", Last.Text)
   If Not Jnal.Available Then
     If son Then
       Music.Play
     Endif
     If Message.Question("Le journal " & Last.Text & "  n'existe pas !\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then
-      Fjournaux.show
+      Fjournaux.ShowModal
       Last.SetFocus
       Try Last.Select
     Else
@@ -541,7 +554,7 @@ End
 Public Sub meserrc(txtbox As TextReg)
 
   b = 1
-  If Message.question("ATTENTION ! Ce compte n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then Fcomptes.Show()
+  If Message.question("ATTENTION ! Ce compte n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then Fcomptes.ShowModal()
   txtbox.SetFocus
   txtbox.Select
 
@@ -550,7 +563,7 @@ End
 Public Sub meserrt(txtbox As TextReg)
 
   b = 1
-  If Message.question("ATTENTION ! Ce compte de TVA n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then FTvav.Show
+  If Message.question("ATTENTION ! Ce compte de TVA n'existe pas.\nVoulez-vous le créer ?", "Oui", "Non") = 1 Then FTvav.ShowModal
   txtbox.SetFocus
   txtbox.Select
 
