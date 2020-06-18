@@ -280,7 +280,7 @@ Public Sub calcul(Optional nom As String)     ''On calcul la facture et on fait 
   
 End
 
-Private Sub cassise(drt As Calculdroit)    'si magasin acquité et séparation qq même des droits ==> remonté des droits dans le compte vente de la famille article
+Private Sub cassise(drt As Calculdroit)    ''si magasin acquité et séparation qq même des droits ==> remonté des droits dans le compte vente de la famille article
   
   Dim res As Result
   
@@ -785,6 +785,7 @@ Public Sub visualisation()        ''Visualisation d'un bl ou d'une facture
   Filename = User.Home & "/tmp/Facture.pdf"
   
   calcul()
+  Me.resent.MoveFirst
   If Me.choix = ObjFac.facture And Me.resent!imp = "0" Then
     Me.choix = ObjFac.bl
   Endif

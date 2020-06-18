@@ -165,32 +165,37 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
       If res.Available Then tab = "M"
     Endif
   Else
-    res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numbl=&1", num)
-    If res.Available Then
-      $numbl = res!numbl
-      $numfac = res!numfac
+    If choix = ObjFac.finmois Then
+      tab = num
     Else
-      res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numbl=&1", num)
-      If res.Available Then 
-        tab = "M"
+      res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numbl=&1", num)
+      If res.Available Then
         $numbl = res!numbl
         $numfac = res!numfac
       Else
-        res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numfac=&1", num)
-        If res.Available Then
+        res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numbl=&1", num)
+        If res.Available Then 
+          tab = "M"
           $numbl = res!numbl
           $numfac = res!numfac
         Else
-          res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numfac=&1", $numfac)
-          If res.Available Then 
-            tab = "M"
+          res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numfac=&1", num)
+          If res.Available Then
             $numbl = res!numbl
             $numfac = res!numfac
+          Else
+            res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numfac=&1", $numfac)
+            If res.Available Then 
+              tab = "M"
+              $numbl = res!numbl
+              $numfac = res!numfac
+            Endif
           Endif
         Endif
       Endif
     Endif
   Endif
+
   
   $dtedoc = dte
   recap = Start.LocalSettings["/Soc" & Start.Societe & "/Recap"]

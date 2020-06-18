@@ -187,11 +187,11 @@ Public Sub _new(vfac As ObjFac)
   If vfac.tab = "M" And vfac.choix <> ObjFac.finmois Then
     $vfac.resent.MoveFirst
     Me.rmateriel.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
-    Me.marque.Text = "Marque : " & $vfac.resent!marque
+    If $vfac.resent.Fields.Exist("marque") Then Me.marque.Text = " Marque: " & $vfac.resent!marque
     Me.nserie.Text = "Numéro de série : " & $vfac.resent!numserie
-    Me.livr.Text = "Désignation : " & $vfac.resent!desg1
+     If $vfac.resent.Fields.Exist("desg1") Then Me.livr.Text = "Désignation : " & $vfac.resent!desg1
     Me.livr.Font = Font["Sans Serif,9"]
-    Me.type.Text = "Type : " & $vfac.resent!typemat
+     If $vfac.resent.Fields.Exist("typemat") Then Me.type.Text = "Type : " & $vfac.resent!typemat
   Endif
   'affichage ou non des colonnes
   If Not vfac.Stock Then          'affichge du stock
@@ -243,7 +243,7 @@ Public Sub _new(vfac As ObjFac)
   Endif
   'frais de gestion
   vfac.resent.MoveFirst
-  If Utils.totobs([vfac.resent!gestbl]) <> 0 And vfac.tab <> "M" Then
+  If Utils.totobs([vfac.resent!gestbl]) <> 0 Then
     Me.gest.Text = "Gestion : " & Format(Utils.totobs([vfac.resent!gestbl]), "0.00")
   Endif
   If vfac.recap And vfac.tab <> "M" Then
@@ -304,7 +304,7 @@ Public Sub _new(vfac As ObjFac)
     Me.recap.Children.Clear
     Me.recap.Height = "0mm"
   Endif
-  If Not (Me.gest.Text Or Me.tbf5) Then
+  If Not (Me.gest.Text Or Me.tbf5.Text) Then
     Me.rgest.Children.Clear
     Me.rgest.Height = "0mm"
   Endif

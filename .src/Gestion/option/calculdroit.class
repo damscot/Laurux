@@ -44,7 +44,7 @@ Public Sub _new(dra As String, vol As Float, deg As Float, qte As Variant, Optio
 
   Dim resdr, restva, respar As Result
   
-  If qte Match "," Then qte = Replace(qte, ",", ".")
+  If TypeOf(qte) = gb.String And If qte Match "," Then qte = Replace(qte, ",", ".")
   If Not dra Then Return
   $sfam = fam
   resdr = Utils.db.Exec("SELECT * FROM Fiches_regie WHERE code=&1", dra)

@@ -31,12 +31,8 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
 
   Dtef.Dat = True
   Dtech.Dat = True
-'  Rglt.numerique = True
-'  Rglt.nbdec = "2"
-'  totr.numerique = True
-'  totr.nbdec = "2"
   CPBL.reg = "[0-9]{0,5}"
-  'Affiche les variables modifiables
+  'Affiche les variables modifiables 
   $vfac = New ObjFacB(nfac, choix) As "var"
   $vfac.livraison = livraison
   Dtef.Text = dte.L
