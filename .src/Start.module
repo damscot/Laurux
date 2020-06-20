@@ -86,9 +86,11 @@ Public Sub Main()
   Try ConsoleLogLevel = Split(Arg_Debug, ",")[LLog.console]
   Try FileLogLevel = Split(Arg_Debug, ",")[LLog.file]
   LLogColl = New Collection
-  For Each Fichlog In Dir(User.Home & "/tmp/Debug", "*.log").Sort()
-    Kill User.Home & "/tmp/Debug/" & Fichlog
-  Next
+  If Exist(User.Home & "/tmp/Debug", "*.log") Then
+    For Each Fichlog In Dir(User.Home & "/tmp/Debug", "*.log").Sort()
+      Kill User.Home & "/tmp/Debug/" & Fichlog
+    Next
+  Endif
   
   Start.LocalSettings = New Settings(Arg_Config_File, Application.Name & " local configuration")
 
