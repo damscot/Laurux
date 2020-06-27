@@ -45,8 +45,17 @@ Public Sub _new(TabStrip1 As TabStrip, type As String)        'dessin du gridvie
   but.Height = 24
   but.Text = "Calcul"
   but.AutoResize = True
-'  but.Expand = True
   but.Picture = Picture["Icones/find.png"]
+  
+  If $stype = "F" Then
+    but = New Button(pan) As "sousfam"
+    but.Height = 24
+    but.Text = "Familles"
+    but.Tag = 1
+    $stype = "S"
+    but.AutoResize = True
+    but.Picture = Picture["Icones/down2.png"]
+  Endif
 
   $grdv = New GridView(TabStrip1) As "grdv"
   $grdv.Height = TabStrip1.Height - 30 - 24
@@ -142,6 +151,9 @@ Public Sub bouton_Click()         'lit et affiche les stat
           Case "F"
             req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
             cond = "fam_ligfac=&1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
+          Case "S"
+            req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            cond = "LOCATE(&1,fam_ligfac)= 1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
           Case "A"
             req = "mrgart_ligfac AS marge,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
             cond = "code_ligfac=&1 AND numfac=num_ligfac AND typel_ligfac='A' AND datefac BETWEEN &2 AND &3"
@@ -173,6 +185,9 @@ Public Sub bouton_Click()         'lit et affiche les stat
           Case "F"
             req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
             cond = "fam_ligbl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &2 AND &3"
+          Case "S"
+            req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
+            cond = "LOCATE(&1,fam_ligbl) = 1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &2 AND &3"
           Case "A"
             req = "mrgart_ligbl AS marge,netht_ligbl AS ht,qte_ligbl AS qte"
             cond = "code_ligbl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &2 AND &3"
@@ -225,6 +240,23 @@ Public Sub bouton_Click()         'lit et affiche les stat
 
 End
 
+Public Sub sousfam_click()
+
+  If Last.tag = 0 Then
+    Last.Text = "Familles"
+    Last.Tag = 1
+    Last.Picture = Picture["Icones/up2.png"]
+    $stype = "S"
+  Else
+    Last.Text = "Sous familles"
+    Last.Tag = 0
+    Last.Picture = Picture["Icones/down2.png"]
+    $stype = "F"
+  Endif
+  bouton_Click()
+
+End
+
 Private Sub requete(tab As String, tab1 As String, req As String, cond As String, dateinf As String, datesup As String, i As Integer, j As Integer)
 
   Dim resbl As Result
@@ -242,7 +274,7 @@ Private Sub requete(tab As String, tab1 As String, req As String, cond As String
     Try fsomme = CFloat(Replace($grdv[j, i + 1].Text, ",", ".")) + CFloat(Trim(Replace(resbl!qte, ",", ".")))
     $grdv[j, i + 1].Text = Format(fsomme, "######" & $sdec)
     fsomme = 0
-    If $stype = "F" Or $stype = "C" Then
+    If $stype = "F" Or $stype = "S" Or $stype = "C" Then
       If resbl!type = "A" Then
         Try fsomme = CFloat(Replace($grdv[j, i + 2].Text, ",", ".")) + CFloat(resbl!marge)
       Else
@@ -566,7 +598,7 @@ End
 
 Private Sub code_Write(Value As String)
 
-  $scode = Value
+    $scode = value
 
 End
 
