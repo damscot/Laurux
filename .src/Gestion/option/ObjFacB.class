@@ -851,7 +851,7 @@ Public Sub mail(courriel As String)       ''Envois de facture par mail
   calcul
 '  visufac()
   Me.edit = New EditfacB(Me, Me)
-  Me.imp.OutputFile = "/tmp/Facture.pdf"
+  Me.imp.OutputFile = User.Home & "/tmp/Facture.pdf"
   Me.edit.Print(Me.imp)
   Me.resent.MoveFirst
   If Me.choix = ObjFac.facture And Me.resent!imp = 1 Then sText = "Facture " Else sText = "Bon "

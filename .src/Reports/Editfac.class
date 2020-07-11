@@ -3,6 +3,7 @@
 Public $vfac As ObjFac
 Private $c1 As Integer        'couleur de colonne
 Private $c2 As Integer
+Private $frm As String
 
 Public lgint As Integer = 44
 
@@ -18,6 +19,7 @@ Public Sub _new(vfac As ObjFac)
   Dim img As ReportImage
   
   $vfac = vfac
+  If $vfac.pxsdec Then $frm = ",0" Else $frm = ",0.00"
   vfac.resent.MoveFirst
   Me.expb.Expand = True
   Me.expn.Expand = False
@@ -95,7 +97,7 @@ Public Sub _new(vfac As ObjFac)
         Me.joind.Text = "Joindre au réglement SVP"
         Me.Tfac.Text = "N° facture : " & vfac.numfac
         Me.Tcli.Text = "Code client : " & vfac.numcli
-        Me.Ttot.Text = "Total TTC : " & Format($vfac.montttc, ",0.00") & " " & vfac.devise
+        Me.Ttot.Text = "Total TTC : " & Format($vfac.montttc, $frm) & " " & vfac.devise
         Me.rcoupon.Height = "15mm"
         Me.rcoupon.Width = "50mm"
         Me.rcoupon.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
@@ -220,9 +222,9 @@ Public Sub _new(vfac As ObjFac)
     Me.rrme.Width = "0mm"
   Endif
   'affichage des totaux ht/tva/ttc
-  Me.tht.Text = Format($vfac.montht, ",0.00")
-  Me.ttva.Text = Format($vfac.monttva, ",0.00")
-  Me.tttc.Text = Format($vfac.montttc, ",0.00") & " " & vfac.devise
+  Me.tht.Text = Format($vfac.montht, $frm)
+  Me.ttva.Text = Format($vfac.monttva, $frm)
+  Me.tttc.Text = Format($vfac.montttc, $frm) & " " & vfac.devise
   If vfac.franctva Or vfac.autoent Then
     Me.pstot.Children.Clear
     Me.pstot.Width = "0mm"
@@ -247,8 +249,8 @@ Public Sub _new(vfac As ObjFac)
     Me.gest.Text = "Gestion : " & Format(Utils.totobs([vfac.resent!gestbl]), "0.00")
   Endif
   If vfac.recap And vfac.tab <> "M" Then
-    If $vfac.montart <> 0 Then Me.tart.Text = "Total article : " & Format($vfac.montart, ",0.00")
-    If $vfac.montmo <> 0 Then Me.tmo.Text = "Total MO : " & Format($vfac.montmo, ",0.00")
+    If $vfac.montart <> 0 Then Me.tart.Text = "Total article : " & Format($vfac.montart, $frm)
+    If $vfac.montmo <> 0 Then Me.tmo.Text = "Total MO : " & Format($vfac.montmo, $frm)
   Endif
    'edition en ttc
   If vfac.ttc Then
@@ -337,9 +339,9 @@ Private Sub edtva(ctva As Variant, nb As Integer, i As Integer)
     Case 0
       If nb > 0 Then
         Me.ctx.Text = ctva.num
-        Me.txtva.Text = ctva.taux
-        Me.mtva.Text = Format(ctva.tottva, ",0.00")
-        Me.tnet.Text = Format(ctva.totht, ",0.00")
+        Me.txtva.Text = Format(ctva.taux, "0.00")
+        Me.mtva.Text = Format(ctva.tottva, $frm)
+        Me.tnet.Text = Format(ctva.totht, $frm)
       Else
         Me.ptva.Children.Clear
         Me.ptva.Height = "0mm"
@@ -347,9 +349,9 @@ Private Sub edtva(ctva As Variant, nb As Integer, i As Integer)
     Case 1
       If nb > 1 Then
         Me.ctx1.Text = ctva.num
-        Me.txtva1.Text = ctva.taux
-        Me.mtva1.Text = Format(ctva.tottva, ",0.00")
-        Me.tnet1.Text = Format(ctva.totht, ",0.00")
+        Me.txtva1.Text = Format(ctva.taux, "0.00")
+        Me.mtva1.Text = Format(ctva.tottva, $frm)
+        Me.tnet1.Text = Format(ctva.totht, $frm)
       Else
         Me.ptva1.Children.Clear
         Me.ptva1.Height = "0mm"
@@ -357,9 +359,9 @@ Private Sub edtva(ctva As Variant, nb As Integer, i As Integer)
     Case 2
       If nb > 2 Then
         Me.ctx2.Text = ctva.num
-        Me.txtva2.Text = ctva.taux
-        Me.mtva2.Text = Format(ctva.tottva, ",0.00")
-        Me.tnet2.Text = Format(ctva.totht, ",0.00")
+        Me.txtva2.Text = Format(ctva.taux, "0.00")
+        Me.mtva2.Text = Format(ctva.tottva, $frm)
+        Me.tnet2.Text = Format(ctva.totht, $frm)
       Else
         Me.ptva2.Children.Clear
         Me.ptva2.Height = "0mm"
@@ -367,9 +369,9 @@ Private Sub edtva(ctva As Variant, nb As Integer, i As Integer)
     Case 3
       If nb > 3 Then
         Me.ctx3.Text = ctva.num
-        Me.txtva3.Text = ctva.taux
-        Me.mtva3.Text = Format(ctva.tottva, ",0.00")
-        Me.tnet3.Text = Format(ctva.totht, ",0.00")
+        Me.txtva3.Text = Format(ctva.taux, "0.00")
+        Me.mtva3.Text = Format(ctva.tottva, $frm)
+        Me.tnet3.Text = Format(ctva.totht, $frm)
       Else
         Me.ptva3.Children.Clear
         Me.ptva3.Height = "0mm"
@@ -377,9 +379,9 @@ Private Sub edtva(ctva As Variant, nb As Integer, i As Integer)
     Case 4
       If nb > 4 Then
         Me.ctx4.Text = ctva.num
-        Me.txtva4.Text = ctva.taux
-        Me.mtva4.Text = Format(ctva.tottva, ",0.00")
-        Me.tnet4.Text = Format(ctva.totht, ",0.00")
+        Me.txtva4.Text = Format(ctva.taux, "0.00")
+        Me.mtva4.Text = Format(ctva.tottva, $frm)
+        Me.tnet4.Text = Format(ctva.totht, $frm)
       Else
         Me.ptva4.Children.Clear
         Me.ptva4.Height = "0mm"
