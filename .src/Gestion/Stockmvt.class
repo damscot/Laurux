@@ -121,7 +121,7 @@ Public Sub Buttrait_Click()
   
   champtck = "SELECT "
   fichiertck = " FROM Fiches_HisEntTickets,Fiches_HisLigTickets"
-  contck = Utils.db.Subst(" WHERE Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND Fiches_HisLigTickets.type='A' AND (date BETWEEN &1 AND &2)", dtinf.d, dtsup.d)
+  contck = Utils.db.Subst(" WHERE Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND Fiches_HisLigTickets.type='A' AND (Fiches_HisEntTickets.date BETWEEN &1 AND &2)", dtinf.d, dtsup.d)
   'libelle pour le détail des fichiers
   If Radiodetail.Value Or Checkdetf.Value Then
     libbl = " Factures en cours"
@@ -226,7 +226,7 @@ Public Sub Buttrait_Click()
     champfo &= Utils.db.Subst("Fiches_Ligrecpt.code as code, CONCAT(design, &1) as libelle, daterecpt as dte", libfo)
     champex &= Utils.db.Subst("Fiches_Mvtexp.code as code, CONCAT(art_design, &1) as libelle, daterecpt as dte", libex)
     champrd &= Utils.db.Subst("Fiches_Mvtexpdc.code as code, CONCAT(art_design, &1) as libelle, daterecpt as dte", libprd)
-    champtck &= Utils.db.Subst("Fiches_HisLigTickets.code as code,CONCAT(intitule,&1) as libelle,date as dte", libtck)
+    champtck &= Utils.db.Subst("Fiches_HisLigTickets.code as code,CONCAT(intitule,&1) as libelle,Fiches_HisEntTickets.date as dte", libtck)
     champstkd &= Utils.db.Subst(" art_code as code,CONCAT(art_design,&1) as libelle, CAST(&2 as DATE) as dte", libstkd, dtinv())
     champstth &= Utils.db.Subst(" art_code as code,CONCAT(art_design,&1) as libelle, CAST(&2 as DATE) as dte", libstth, Now)
   Endif
@@ -303,7 +303,7 @@ Public Sub Buttrait_Click()
       champfo &= Utils.db.Subst("Fiches_Ligrecpt.code as code, CONCAT(design, &1) as libelle, daterecpt as dte", libfo)
       champex &= Utils.db.Subst("Fiches_Mvtexp.code as code, CONCAT(art_design, &1) as libelle, daterecpt as dte", libex)
       champrd &= Utils.db.Subst("Fiches_Mvtexpdc.code as code, CONCAT(art_design, &1) as libelle, daterecpt as dte", libprd)
-      champtck &= Utils.db.Subst("Fiches_HisLigTickets.code as code, CONCAT(intitule,&1) as libelle, date as dte", libtck)
+      champtck &= Utils.db.Subst("Fiches_HisLigTickets.code as code, CONCAT(intitule,&1) as libelle, Fiches_HisEntTickets.date as dte", libtck)
       champstkd &= Utils.db.Subst("art_code as code,CONCAT(art_design,&1) as libelle, CAST(&2 as DATE) as dte", libstkd, dtinv())
       champstth &= Utils.db.Subst("art_code as code,CONCAT(art_design,&1) as libelle, CAST(&2 as DATE) as dte", libstth, Now)
     Else
@@ -314,7 +314,7 @@ Public Sub Buttrait_Click()
       champfo &= Utils.db.Subst("code_fam as code, CONCAT(libell_fam,&1) as libelle, daterecpt as dte", libfo)
       champex &= Utils.db.Subst("code_fam as code, CONCAT(libell_fam,&1) as libelle, daterecpt as dte", libex)
       champrd &= Utils.db.Subst("code_fam as code, CONCAT(libell_fam,&1) as libelle, daterecpt as dte", libprd)
-      champtck &= Utils.db.Subst("code_fam as code, CONCAT(libell_fam,&1) as libelle, date as dte", libtck)
+      champtck &= Utils.db.Subst("code_fam as code, CONCAT(libell_fam,&1) as libelle, Fiches_HisEntTickets.date as dte", libtck)
       champstkd &= Utils.db.Subst("code_fam as code, CONCAT(libell_fam,&1) as libelle, CAST(&2 as DATE) as dte", libstkd, dtinv())
       champstth &= Utils.db.Subst("code_fam as code, CONCAT(libell_fam,&1) as libelle, CAST(&2 as DATE) as dte", libstth, Now)
     Endif
