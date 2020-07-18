@@ -3,8 +3,12 @@
 Inherits ButtonBox
 Export
 Create Static
+
+Public Enum commence_par, fini_par, contient
+
 'variables publics
 Public dte As New LDate As "dte"
+Public lke As Integer = contient
 'variables privées
 Private $value As Float
 Private $text As String
@@ -15,6 +19,15 @@ Private $regp As Boolean = False
 Private $numerique As Boolean = False
 Private $date As Boolean = False
 Private $regex As New RegExp
+Private $win As Window             ''Fenetre pour recherche
+Private $grd As GridView          ''Gridview pour la recherche
+Private $champ As String[]
+Private $fichier As String
+Private $rech As Boolean
+Private $y As Float
+Private $x As Float
+Private $objp As Object
+Private $cond As String
 'constantes prédéfinies
 Public Const num As String = "-?[0-9]*[,.]?[0-9]*"       'saisie d'un numérique avec ,
 Public Const chaine As String = "[^%^_]*"                 'saisie d'une chaine en excluant les caractéres spéciaux de recherche BD (a compléter et vérifier)
@@ -25,15 +38,18 @@ Public Const nofilter As String = ".*"
 'comme les paterns sont parfois un peu difficiles à trouver et à mettre au point il serait peut être bien de les mettres en constantes ?
 ' il ne faut pas mettre de caractéres obligatoires dans les paterns par ex dans mail @{1} ne fonctionne pas.
 'propriétés
-Property Value As Float
-Property numerique As Boolean
-Property Dat As Boolean
-Property nbdec As String
-Property reg As String
-Property MaxLenght As Integer
-Property Text As String
-
-
+Property Value As Float       ''gére la valeur numérique de l'objet
+Property numerique As Boolean     ''si cette objet est que numérique
+Property Dat As Boolean               ''si cette objet est une date
+Property nbdec As String            ''le nombre de décimal que contient cette objet
+Property reg As String              ''le regex de cette objet. Il remplace la constante définie ci-dessus
+Property MaxLenght As Integer     '' longueur maximum de l'objet
+Property Text As String     ''gére la valeur alfa de l'objet
+Property recherche As Boolean   ''si on ouvre une fenetre de recherche
+Property conteneur As Object    ''on passe le conteneur dans lequel on veut mettre la fenêtre
+Property condition As String        ''si on veut rajouter une condition à la requete
+Property RechX As Float
+Property RechY As Float
 
 Public Sub _new()
 
@@ -69,6 +85,14 @@ Public Sub butb_keypress()
         $text = Me.Editor.Text
       Endif
       
+    Case Key.Enter, Key.Return, Key.Tab
+      If $rech Then
+        If $grd.Rows.Max > -1 Then
+          Me.Text = $grd[0, 0].Text
+        Endif
+        Try $win.Delete
+      Endif
+      
   End Select
 
 End
@@ -99,19 +123,51 @@ Public Sub butb_change()
   x = Me.Pos
   Me.Editor.Text = $regex.Text
   If Me.Editor.Text Match "." And $numerique Then Me.Editor.Text = Replace(Me.Editor.Text, ".", ",")
-  Me.pos = x
   $text = Me.Editor.Text
+  If $rech Then affgrd()
+  Me.pos = x
   
 End
 
 Public Sub butb_gotfocus()
 
+  Dim i As Integer
+  
   If $numerique And $value <> 0 Then
     Me.Editor.Text = Str($value)
   Endif
   $text = Me.Editor.Text
   $textesc = Me.Editor.Text
-
+  If Not Object.IsValid($win) And $rech Then
+    If Object.IsValid($objp) Then $win = New Window($objp) As "win" Else $win = New Window As "win"
+    $win.x = $x
+    $win.Y = $y
+    $win.Border = False
+    $win.Background = Color.Black
+    '$win.AutoResize = True
+    $grd = New GridView($win) As "grd"
+ '   $grd.AutoResize = True
+    $grd.Padding = 4
+    $grd.Background = Color.White
+    $grd.Columns.Count = $champ.Count
+    $grd.Width = (Me.Font.Size * $champ.Count * 15) 
+    $grd.Height = Me.Font.Size * 15
+    For i = 0 To $champ.Max
+      $grd.Columns[i].Width = $grd.Width / $champ.Count
+    Next
+    $grd.Rows.Height = Me.Font.Height + 3
+    $win.Height = $grd.Height
+    $win.Width = $grd.Width 
+    $win.Show
+    $win.TopOnly = True
+    $grd.x = 0
+    $grd.y = 0
+    $grd.Mode = Select.Single
+    $grd.Show
+    affgrd
+    Me.SetFocus
+  Endif
+  
 End
 
 Public Sub butb_lostfocus()
@@ -132,13 +188,12 @@ Public Sub butb_lostfocus()
     Endif
   Endif
   If $date Then
-'    If Not IsNull(Me.Editor.Text) Then
       dte.L = Me.Editor.Text
       Me.Editor.Text = dte.L
       $text = dte.L
       $textesc = dte.L
-'    Endif
   Endif
+  Try $win.Delete 
 
 End
 
@@ -146,19 +201,6 @@ Public Sub dte_change(dt As LDate)
 
   If $date Then Me.Editor.Text = dt.L
 
-End
-
-Private Function frm() As String
-  
-  Dim i As Integer
-  Dim ch As String
-  
-  If Val($nbdec) = 0 Then Return "0"
-  ch = "0."
-  For i = 1 To Val($nbdec)
-    ch &= "0"
-  Next
-  Return ch
 End
 
 Private Function Value_Read() As Float
@@ -299,6 +341,73 @@ Private Sub MaxLenght_Write(Value As Integer)
 
 End
 
+Private Function recherche_Read() As Boolean
+
+  Return $rech
+
+End
+
+Private Sub recherche_Write(Value As Boolean)
+
+  $rech = value
+
+End
+
+Private Function RechX_Read() As Float
+
+  Return $x
+
+End
+
+Private Sub RechX_Write(Value As Float)
+
+  $x = value
+
+End
+
+Private Function RechY_Read() As Float
+
+  Return $y
+
+End
+
+Private Sub RechY_Write(Value As Float)
+
+  $y = value
+
+End
+
+Private Function conteneur_Read() As Object
+
+  Return $objp
+
+End
+
+Private Sub conteneur_Write(Value As Object)
+
+  $objp = value
+
+End
+
+Private Function condition_Read() As String
+
+  Return $cond
+
+End
+
+Private Sub condition_Write(Value As String)
+
+  $cond = value
+
+End
+
+Public Sub grd_click()
+
+  If $grd.row = -1 Then Return
+  Me.Text = $grd[$grd.Row, 0].Text
+
+End
+
 'fonctions publics
 Public Sub Select(Optional start As Integer, length As Integer)
   
@@ -316,3 +425,60 @@ Public Sub Unselect()
   Me.Editor.Unselect
 
 End
+
+Public Sub champs(fichier As String, ...)   ''Le premier argument est le nom du fichier puis les champs que vous voulez voire dans le gridview. Le 1° champ sera celui retourné
+
+  Dim ch As String
+  
+  $fichier = fichier
+  $champ = Param.All
+
+End
+
+'fonctions privées
+Private Function frm() As String
+  
+  Dim i As Integer
+  Dim ch As String
+  
+  If Val($nbdec) = 0 Then Return "0"
+  ch = "0."
+  For i = 1 To Val($nbdec)
+    ch &= "0"
+  Next
+  Return ch
+End
+
+Private Sub affgrd()
+  
+  Dim res As Result
+  Dim i As Integer
+  Dim value As String
+  
+  If Not Object.IsValid($win) Then Return
+  Select Case lke
+    
+    Case commence_par
+      value = $text & "%"
+    Case fini_par 
+      value = "%" & $text
+    Case contient
+      value = "%" & $text & "%"
+      
+  End Select
+  res = Utils.db.Exec("SELECT " & $champ.Join() & " FROM " & $fichier & " WHERE " & $champ[0] & " LIKE &1 " & $cond, value)
+  If res.Available Then
+    $grd.Rows.Count = res.Count
+    Repeat 
+      For i = 0 To $champ.Max
+        $grd[res.Index, i].Text = res[$champ[i]]
+      Next
+    Until res.MoveNext()
+  Else
+    $grd.Rows.Count = 0
+    $grd.Clear
+  Endif
+  Me.SetFocus
+  
+End
+

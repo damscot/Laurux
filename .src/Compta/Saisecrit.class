@@ -86,6 +86,13 @@ Public Sub _new(num2 As String, Optional ecrmodif As Boolean = False)
   Dim s As String
   Dim spl As New String[7]
 
+  numcompte.recherche = True
+  numcompte.champs("Fiches_Comptes", "compte_cc", "intitule_cc")
+  Numcompte.condition = "AND type_cc='C' "
+  numcompte.conteneur = Me
+  numcompte.RechX = jour.X 
+  numcompte.RechY = jour.Y
+  numcompte.MaxLenght = 8
   Try WidthCol = Start.LocalSettings["/Soc" & Start.Societe & "/Col/LcolS"]
   If Not IsNull(num2) Then Ext = True
   If ecrmodif = True Then bmodif = True
@@ -2741,6 +2748,7 @@ End
 Public Sub Bclient_Click()
 
   Type = "C"
+  numcompte.condition = "AND type_cc='C' "
   Sens_Ecr()
   Tri = "cast(compte_cc AS char)"
   Numcompte.SetFocus
@@ -2750,6 +2758,7 @@ End
 Public Sub Bfournisseur_Click()
 
   Type = "F"
+  numcompte.condition = "AND type_cc='F' "
   Sens_Ecr()
   Tri = "cast(compte_cc AS char)"
   Numcompte.SetFocus
@@ -2759,6 +2768,7 @@ End
 Public Sub Bgestion_Click()
 
   Type = "G"
+  numcompte.condition = "AND type_cc='G' "
   Sens_Ecr()
   Tri = "cast(compte_cc AS char)"
   Numcompte.SetFocus
@@ -2768,6 +2778,7 @@ End
 Public Sub Bbilan_Click()
 
   Type = "B"
+  numcompte.condition = "AND type_cc='B' AND coll= False "
   Sens_Ecr()
   Tri = "cast(compte_cc AS char)"
   Numcompte.SetFocus

@@ -86,6 +86,13 @@ Public Sub _new(num2 As String)
 
   Music.Load(Start.Musique)
   Me.Center
+  numcompte.recherche = True
+  numcompte.champs("Fiches_Comptes", "compte_cc", "intitule_cc")
+  Numcompte.condition = "AND type_cc='C' "
+  numcompte.conteneur = Me
+  numcompte.RechX = jour.X 
+  numcompte.RechY = jour.Y 
+  numcompte.MaxLenght = 8
   nvlle = 1
   cnt = 1
   Prg = "3"
@@ -2315,6 +2322,7 @@ End
 Public Sub Bclient_Click()
 
   Type = "C"
+  numcompte.condition = "AND type_cc='C' "
   If rappel = False Then Credit.Value = True
   Numcompte.SetFocus
 
@@ -2323,6 +2331,7 @@ End
 Public Sub Bfournisseur_Click()
 
   Type = "F"
+  numcompte.condition = "AND type_cc='F' "
   If rappel = False Then Debit.Value = True
   Numcompte.SetFocus
 
@@ -2331,6 +2340,7 @@ End
 Public Sub Bgestion_Click()
 
   Type = "G"
+  numcompte.condition = "AND type_cc='G' "
   If rappel = False Then Debit.Value = True
   Numcompte.SetFocus
 
@@ -2339,6 +2349,7 @@ End
 Public Sub Bbilan_Click()
 
   Type = "B"
+  numcompte.condition = "AND type_cc='B' AND coll= False "
   If rappel = False Then Credit.Value = True
   Numcompte.SetFocus
 

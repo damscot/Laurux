@@ -317,7 +317,7 @@
         Text = ("Code article")
         Alignment = Align.BottomNormal
       }
-      { !Cart TextBox Art
+      { !Cart TextReg Art
         Name = "Cart"
         MoveScaled(10,4,16,3)
         #Public = True
@@ -325,7 +325,6 @@
         Background = Color.TextBackground
         Tag = "1"
         ToolTip = ("Appel fenêtre impression = F3\nAppel fiches produits = F4\nAppel calculette = F5\nImpression automatique = F6\nAppel quantité = F9\nMise à jour désignation dans fiche article = F10\nAppel fiche fournisseur = F11\nCtrl+D = Duplication totale du document\nCtrl+H = Historique total des ventes du client sélectionné\nCtrl+A = Historique des ventes pour le produit/client sélectionné")
-        MaxLength = 15
       }
       { ToggleButton3 ToggleButton
         MoveScaled(26,3.375,4,4)
@@ -1842,13 +1841,12 @@
       Text = ("Prénom")
       Alignment = Align.Center
     }
-    { Code TextBox Entete2
+    { Code TextReg Entete2
       Name = "Code"
       MoveScaled(3,10,12,3)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "2"
-      MaxLength = 8
     }
     { Solde TextBox
       MoveScaled(89,10,12,3)

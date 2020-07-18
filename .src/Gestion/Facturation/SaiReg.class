@@ -46,6 +46,11 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
   obs = New Observer(nlot) As "sel"
   
   client.reg = "[0-9]{1,8}"
+  client.recherche = True
+  client.champs("Fiches_Cli", "cli_code", "cli_nom", "cli_ville")
+  client.conteneur = Me
+  client.RechX = Panel1.x + Panel1.Width
+  client.RechY = Panel1.Y
   ndoc.MaxLenght = 10
   nlot.MaxLenght = 10
   nreg.MaxLenght = 2

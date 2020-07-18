@@ -264,6 +264,19 @@ Public Sub _New(bfacture As Boolean)
   Dim obs As Observer
   Dim i As Integer
 
+  code.recherche = True
+  code.MaxLenght = 8
+  code.champs("Fiches_Cli", "cli_code", "cli_nom", "cli_ville")
+  code.conteneur = TabStrip1
+  code.RechX = code.X + code.Width + 30
+  code.RechY = code.Y - 20
+  cart.recherche = True
+  cart.MaxLenght = 15
+  cart.champs("Fiches_Art", "art_code", "art_design")
+  cart.conteneur = panel3
+  cart.RechX = cart.X + cart.Width + 30
+  cart.RechY = cart.Y - 30
+  cart.lke = TextReg.commence_par
   bTypeFacture = bfacture
   $soption = utils.Option()
   If bTypeFacture Then
