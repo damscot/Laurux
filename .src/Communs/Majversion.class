@@ -149,7 +149,7 @@ Public Sub RecupVersion(Optional b_p_verifmaj As Boolean = True) As String
   rResult = Utils.db.Exec("SELECT * FROM Fiches_Parametres ")
   Version = rResult!version
   version_file = "version.txt"
-  If Start.LocalSettings["/Majver"] And If Not Application.Path = "/usr/bin/" & Application.Name And b_p_verifmaj Then Verif_Maj()
+  If Start.LocalSettings["/Majver"] And If Not (Application.Path = "/usr/bin/" & Application.Name) And b_p_verifmaj Then Verif_Maj()
 
   Return Version
   
@@ -178,6 +178,7 @@ Public Sub Verif_Maj(Optional wwwlpath As String = wwwpath, Optional Update As B
   Dim VersionWebArr As String[]
   Dim VersionApp As String
   Dim VersionAppArr As String[]
+  Dim hClient As HttpClient
   
   VersionApp = Application.Version
   VersionAppArr = Split(VersionApp, ".")
@@ -188,19 +189,27 @@ Public Sub Verif_Maj(Optional wwwlpath As String = wwwpath, Optional Update As B
   If Exist(User.Home & "/tmp/ping.txt") Then Kill User.Home & "/tmp/ping.txt"
   If Exist(User.Home & "/tmp/" & version_file) Then Kill User.Home & "/tmp/" & version_file
   If Exist(User.Home & "/" & Application.Name & ".tar.gz") Then Kill User.Home & "/" & Application.Name & ".tar.gz"
-  Shell "ping -c 1 " & siteurl & " >" & User.Home & "/tmp/ping.txt 2>&1" Wait
+  
+  hClient = New HttpClient 
+  hClient.URL = wwwpath
+  hClient.Async = False
+  hClient.Timeout = 5
+  hClient.Get
+  If hClient.Status < 0 Then
+    Message.Error("Impossible de se connecter au site " & siteurl)
+    Return
+  Else
+    txt = "1 received"
+  Endif
+  
   If Exist(User.Home & "/tmp/ping.txt") Then
     txt = Trim$(File.Load(User.Home & "/tmp/ping.txt"))
   Endif
   If InStr(txt, "1 received") <> 0 Then
-    Shell "wget -q" & " " & wwwlpath & "/" & version_file & " -P " & User.Home & "/tmp" Wait
+    Shell "wget -q" & " " & wwwlpath & "/Stable/" & version_file & " -P " & User.Home & "/tmp" Wait
     If Exist(User.Home & "/tmp/" & version_file) Then
       VersionWebFull = File.Load(User.Home & "/tmp/" & version_file)
-      VersionWeb = Trim$(Split(VersionWebFull, "\n")[0])
-      VersionWeb = Replace(VersionWeb, Application.Name & " ", "")
-      VersionWeb = Replace(VersionWeb, "V", "")
-      VersionWeb = Replace(VersionWeb, "v", "")
-      VersionWebArr = Split(VersionWeb, ".")
+      VersionWebArr = nversion(VersionWebFull)
       VersionWeb = VersionWebArr[0] & "." & VersionWebArr[1]
       If update Then
         If Val(VersionWebArr[1]) > Val(VersionAppArr[1]) Then
@@ -215,15 +224,15 @@ Public Sub Verif_Maj(Optional wwwlpath As String = wwwpath, Optional Update As B
                   Maj(VersionWebFull, wwwlpath)
                 Endif
               Else
-                If Message.Question("Aucune mise à jour de correctif n'est a faire!", "OK", "Forcer") = 2 Then
-                  Maj(VersionWebFull, wwwlpath)
-                Endif
+'                If Message.Question("Aucune mise à jour de correctif n'est a faire!", "OK", "Forcer") = 2 Then
+'                  Maj(VersionWebFull, wwwlpath)
+'                Endif
               Endif
             Endif
           Else
-            If Message.Question("Aucune mise à jour n'est a faire!", "OK", "Forcer") = 2 Then
-              Maj(VersionWebFull, wwwlpath)
-            Endif
+'            If Message.Question("Aucune mise à jour n'est a faire!", "OK", "Forcer") = 2 Then
+'              Maj(VersionWebFull, wwwlpath)
+'            Endif
           Endif
         Endif
       Endif
@@ -249,7 +258,7 @@ Public Sub Maj(FullVersion As String, Optional wwwlpath As String = wwwpath)
   Dim $hform As Form
   Dim hLabel As Label
 
-  $hForm = New Form As "Form"
+  $hForm = New Form As "Form1"
   $hform.Width = 600
   $hform.Height = 400
   $hForm.Border = Border.Etched
@@ -275,7 +284,7 @@ Public Sub Maj(FullVersion As String, Optional wwwlpath As String = wwwpath)
   $hform.Center
   If Exist(User.Home & "/" & version_file) Then Kill User.Home & "/" & version_file
   If Exist(User.Home & "/" & Application.Name & ".tar.gz") Then Kill User.Home & "/" & Application.Name & ".tar.gz"
-  Shell "wget -q" & " " & wwwlpath & "/" & version_file & " -P " & User.Home Wait
+  Shell "wget -q" & " " & wwwlpath & "/Stable/" & version_file & " -P " & User.Home Wait
   If Exist(User.Home & "/" & version_file) Then
     If Message.Question("Attention ! Vous allez mettre à jour votre logiciel " & Application.Name & "\n" & FullVersion & "\nVous devez être connecté au réseau internet. \n Etes-vous d'accord ?", "Oui", "Non") = "1" Then
       Try Move Application.Path & "/" & Application.Name & "3.gambas" To Application.Path & "/" & Application.Name & "3.old.gambas"
@@ -284,7 +293,7 @@ Public Sub Maj(FullVersion As String, Optional wwwlpath As String = wwwpath)
       $hForm.Show
       Wait 1
       $hform.Mouse = Mouse.Wait
-      Shell "wget " & wwwlpath & "/" & Application.Name & ".tar.gz -P " & User.Home & " -o " & User.Home & "/tmp/pb1.txt"
+      Shell "wget " & wwwlpath & "Stable/" & nversion(FullVersion).Join(".") & "/" & Application.Name & ".tar.gz -P " & User.Home & " -o " & User.Home & "/tmp/pb1.txt"
       Avancement(hlb, hpb)
       Shell "cd " & User.Home & " " & "; tar xvfz " & User.Home & "/" & Application.Name & ".tar.gz" Wait
       Wait 2
@@ -305,6 +314,17 @@ Catch
 
 End
 
+Private Function nversion(VersionWebFull As String) As String[]
+  
+  Dim VersionWeb As String
+  
+  VersionWeb = Trim$(Split(VersionWebFull, "\n")[0])
+  VersionWeb = Replace(VersionWeb, Application.Name & " ", "")
+  VersionWeb = Replace(VersionWeb, "V", "")
+  VersionWeb = Replace(VersionWeb, "v", "")
+  Return Split(VersionWeb, ".")
+  
+End
 
 Public Sub Avancement(hlb As Label, hpb As ProgressBar)
 
