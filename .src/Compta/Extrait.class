@@ -1274,14 +1274,14 @@ Public Sub butedit_Click()
   Dim prt As New Printer
   Dim pgb As ProgBar
   
+  If IsNull($lstex.resext) Then Return
+  Try $lstex.resext.MoveFirst
+  If Not $lstex.resext.Available Then Return
+  
   pgb = New ProgBar("Edition en cours", 0)
   pgb.Show
   Filename = User.Home & "/tmp/Extrait.pdf"
   prt.OutputFile = Filename
-  
-  If IsNull($lstex.resext) Then Return
-  Try $lstex.resext.MoveFirst
-  If Not $lstex.resext.Available Then Return
   coul = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
   $rpt = New Report
   vb = New ReportVBox($rpt)
@@ -1332,7 +1332,7 @@ Public Sub butedit_Click()
     Endif
     If Bfournisseur.Value Then
       res = utils.db.Exec("SELECT * FROM Fiches_Four WHERE fo_code=&1", cpt.Text)
-      ajouadr(vb1, res!fo_rs_soc, res!fo_nom & " " & res!fo_pnm, res!fo_adr1, res!fo_adr2 & res!fo_cd_ptl & " " & res!fo_ville)
+      ajouadr(vb1, res!fo_rs_soc, res!fo_nom & " " & res!fo_pnm, res!fo_adr1, res!fo_adr2, res!fo_cd_ptl & " " & res!fo_ville)
     Endif
     
   Endif
