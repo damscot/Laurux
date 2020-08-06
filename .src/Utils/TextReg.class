@@ -405,6 +405,13 @@ Public Sub grd_click()
 
   If $grd.row = -1 Then Return
   Me.Text = $grd[$grd.Row, 0].Text
+  Me.SetFocus
+
+End
+
+Public Sub grd_Mousewheel()
+
+  Me.Editor.SetFocus
 
 End
 
