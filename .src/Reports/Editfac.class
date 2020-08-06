@@ -46,16 +46,16 @@ Public Sub _new(vfac As ObjFac)
         If res!adr2_sc Then Me.adr22.Text = res!adr2_sc Else Me.adr22.Height = "0mm"
         If res!cp_sc Or res!burdis_sc Then Me.ville.Text = res!cp_sc & "  " & res!burdis_sc Else Me.ville.Height = "0mm"
         If res!cap_sc Then Me.cap.Text = "Capital : " & res!cap_sc Else Me.cap.Height = "0mm"
-        Me.rcs.Text = "Rcs : " & res!rcs_sc & "  " & res!villerc_sc
-        Me.siret.Text = $vfac.libsire & " " & res!siret_sc
-        Me.ape.Text = "APE : " & res!ape_sc
-        Me.tvaintra.Text = "Tva intra : " & res!tvaintra_sc
-        Me.tel.Text = "Tel : " & res!tel_sc
-        Me.portable.Text = "Portable : " & res!port_sc
-        Me.fax.Text = "Fax : " & res!fax_sc
-        Me.site.Text = "site : " & res!site
-        Me.mail.Text = "Courriel : " & res!email_sc
-        Me.iban.Text = "Iban : " & res!banq & " Bic : " & res!bic
+        If res!rcs_sc Or res!villerc_sc Then Me.rcs.Text = "Rcs : " & res!rcs_sc & "  " & res!villerc_sc
+        If $vfac.libsire Or res!siret_sc Then Me.siret.Text = $vfac.libsire & " " & res!siret_sc
+        If res!ape_sc Then Me.ape.Text = "APE : " & res!ape_sc
+        If res!tvaintra_sc Then Me.tvaintra.Text = "Tva intra : " & res!tvaintra_sc
+        If res!tel_sc Then Me.tel.Text = "Tel : " & res!tel_sc
+        If res!port_sc Then Me.portable.Text = "Portable : " & res!port_sc
+        If res!fax_sc Then Me.fax.Text = "Fax : " & res!fax_sc
+        If res!site Then Me.site.Text = "site : " & res!site
+        If res!email_sc Then Me.mail.Text = "Courriel : " & res!email_sc
+        If res!banq Or res!bic Then Me.iban.Text = "Iban : " & res!banq & " Bic : " & res!bic
         Me.Reportadresse.Height = "79mm"
       Endif
     Endif
