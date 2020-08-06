@@ -1906,7 +1906,7 @@ End
 '*****************************************************
 '*    Gestion d'une selection d'un bon a la souris   *
 '*****************************************************
-Public Sub Colbl_Click()
+Public Sub Colbl_MouseUp()
 
   If Mouse.Right Then 
     ColblSelection(True)
@@ -8259,7 +8259,7 @@ Public Sub Coldetail_Activate()
 
 End
 
-Public Sub Coldetail_Click()
+Public Sub Coldetail_MouseUp()
   Dim i As Integer
   Dim Pjointe As String
   Dim piece2 As String = Start.LocalSettings["/Soc" & Start.Societe & "/Bexpcheminpj"]
