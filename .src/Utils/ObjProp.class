@@ -63,7 +63,7 @@ Public Sub CondFilter(nom As String, propriete As String)    ''On passe une prop
 
 End
 
-Private Sub frmt(frm As String, obj As Object)
+Private Sub frmt(frm As String, obj As Object)    ''On définit le format du texte, soit date soit numérique
   
   Dim dte As LDate
   
@@ -72,12 +72,16 @@ Private Sub frmt(frm As String, obj As Object)
     obj.text = Format(dte.G, frm)
   Else 
     If TypeOf(frm) = gb.String Then
+      obj.text = Replace(obj.text, ".", ",")
       obj.text = Format(Val(obj.text), frm)
     Else
-      obj.texr = Utils.CDec(obj.text, frm)
+      obj.text = Utils.CDec(obj.text, frm)
     Endif
   Endif
   
+  Catch 
+    obj.text = "#Error"
+    
 End
 
 Private Function name_Read() As String

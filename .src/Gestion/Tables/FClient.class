@@ -3366,19 +3366,20 @@ End
 
 Public Sub Button22_Click()
 
-  Variables.OrgTarCli = "Cli"
-  Variables.$Codeclient = Cd.Text
-  TarCli.Show()
+  Dim tar As TarTypeCli
+  
+  tar = New TarTypeCli(TarTypeCli.client, Null, cd.Text)
+  Tar.ShowModal()
 
 End
 
 Public Sub Button23_Click()
 
   Dim Tcli As String = Left$(Typec.Text, 2)
-
-  Variables.OrgTarTypeCli = "Cli"
-  Variables.$TarTypeCli = Tcli
-  TarTypeCli.Show()
+  Dim tar As TarTypeCli
+  
+  tar = New TarTypeCli(TarTypeCli.type, Null, tcli)
+  Tar.ShowModal()
 
 End
 

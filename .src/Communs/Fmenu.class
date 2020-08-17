@@ -2225,15 +2225,19 @@ End
 
 Public Sub Menu277_Click()
 
-  Variables.OrgTarCli = ""
-  TarCli.Show()
+   Dim tar As TarTypeCli
+  
+  tar = New TarTypeCli(TarTypeCli.client)
+  Tar.Show()
 
 End
 
 Public Sub Menu278_Click()
 
-  Variables.OrgTarTypeCli = ""
-  TarTypeCli.Show()
+  Dim tar As TarTypeCli
+  
+  tar = New TarTypeCli(TarTypeCli.type)
+  Tar.Show()
 
 End
 

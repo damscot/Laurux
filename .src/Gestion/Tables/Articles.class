@@ -4567,24 +4567,22 @@ End
 
 Public Sub Button13_Click() 'Gestion tarif par client
 
+  Dim tar As TarTypeCli
+  
   If Not IsNull(Code.text) Then
-    Variables.OrgTarCli = "Art"
-    Variables.ArtCode = Code.Text
-    Variables.Artintitule = Desg.Text
-    Variables.ArtTva = Txtva.Text
-    TarCli.ShowModal()
+
+    tar = New TarTypeCli(TarTypeCli.client, Null, Null, code.Text)
+    tar.ShowModal
   Endif
 
 End
 
 Public Sub Button6_Click() ' Gestion tarif par type client
 
+  Dim tar As TarTypeCli
   If Not IsNull(Code.text) Then
-    Variables.OrgTarTypeCli = "Art"
-    Variables.ArtCode = Code.Text
-    Variables.Artintitule = Desg.Text
-    Variables.ArtTva = Txtva.Text
-    TarTypeCli.ShowModal()
+    tar = New TarTypeCli(TarTypeCli.type, Null, Null, code.Text)
+    Tar.ShowModal()
   Endif
 
 End

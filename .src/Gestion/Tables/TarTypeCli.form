@@ -1,10 +1,19 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,112,84)
+  MoveScaled(0,0,155,84)
   Background = Color.Background
+  Text = ("Tarif par type client")
+  { Coltype ColumnView
+    MoveScaled(42,0,34,40)
+    Visible = False
+    Font = Font["Serif,-1"]
+    Background = &HFFFFDF&
+    Sorted = True
+    ScrollBar = Scroll.Vertical
+  }
   { HBox1 HBox
-    MoveScaled(8,77,96,4)
+    MoveScaled(19,77,96,4)
     Font = Font["-1"]
     Spacing = True
     { Button1 Button
@@ -30,7 +39,7 @@
       Expand = True
     }
     { Button2 Button
-      MoveScaled(65,0,14.375,4)
+      MoveScaled(65,0,14.3333,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "4"
@@ -38,117 +47,118 @@
       Picture = Picture["Icones/exit.png"]
     }
   }
-  { TypeC TextBox
-    MoveScaled(1,9,20,3)
+  { TypeC TextReg
+    MoveScaled(18,6,20,3)
     Font = Font["-1"]
     Alignment = Align.Left
   }
   { Button4 Button
-    MoveScaled(21,8.375,4,4)
+    MoveScaled(38,5,4,4)
     Picture = Picture["Icones/next_frame.png"]
   }
   { TextLabel29 TextLabel
-    MoveScaled(0,6,24,3)
+    MoveScaled(17,3,24,3)
     Font = Font["-1"]
     Text = ("Type client")
     Alignment = Align.Center
   }
   { TextLabel30 TextLabel
-    MoveScaled(26,6,40,3)
+    MoveScaled(43,3,40,3)
     Font = Font["-1"]
     Text = ("Intitulé")
     Alignment = Align.Center
   }
-  { Tlibelle TextBox
-    MoveScaled(26,9,40,3)
+  { Tlibelle TextReg
+    MoveScaled(43,6,57,3)
     Font = Font["-1"]
     Alignment = Align.Left
+    ReadOnly = True
   }
   { TextLabel32 TextLabel
-    MoveScaled(0,13,24,3)
+    MoveScaled(17,10,24,3)
     Font = Font["-1"]
     Text = ("Code article")
     Alignment = Align.Center
   }
-  { Tart TextBox
-    MoveScaled(1,16,20,3)
+  { Tart TextReg
+    MoveScaled(18,13,20,3)
     Font = Font["-1"]
     Alignment = Align.Left
   }
   { Button5 Button
-    MoveScaled(21,15.375,4,4)
+    MoveScaled(38,12,4,4)
     Picture = Picture["Icones/next_frame.png"]
   }
-  { Tdesign TextBox
-    MoveScaled(26,16,53,3)
+  { Tdesign TextReg
+    MoveScaled(43,13,53,3)
     Font = Font["-1"]
     Alignment = Align.Left
     ReadOnly = True
   }
   { TextLabel33 TextLabel
-    MoveScaled(26,13,53,3)
+    MoveScaled(43,10,53,3)
     Font = Font["-1"]
     Text = ("Désignation")
     Alignment = Align.Center
   }
-  { Tprht TextBox
-    MoveScaled(1,23,12,3)
+  { Tprht TextReg
+    MoveScaled(18,20,12,3)
     Font = Font["-1"]
     Alignment = Align.Right
     ReadOnly = True
   }
   { TextLabel34 TextLabel
-    MoveScaled(1,20,12,3)
+    MoveScaled(18,17,12,3)
     Font = Font["-1"]
     Text = ("Pr HT")
     Alignment = Align.Center
   }
   { TextLabel35 TextLabel
-    MoveScaled(14,20,11,3)
+    MoveScaled(31,17,11,3)
     Font = Font["-1"]
     Text = ("Coeff")
     Alignment = Align.Center
   }
-  { Tcoeff TextBox
-    MoveScaled(14,23,11,3)
+  { Tcoeff TextReg
+    MoveScaled(31,20,11,3)
     Font = Font["-1"]
     Alignment = Align.Right
   }
   { TextLabel36 TextLabel
-    MoveScaled(27,20,12,3)
+    MoveScaled(44,17,12,3)
     Font = Font["-1"]
     Text = ("Pv HT")
     Alignment = Align.Center
   }
-  { Tpvht TextBox
-    MoveScaled(27,23,12,3)
+  { Tpvht TextReg
+    MoveScaled(44,20,12,3)
     Font = Font["-1"]
     Alignment = Align.Right
   }
   { TextLabel37 TextLabel
-    MoveScaled(52,20,12,3)
+    MoveScaled(69,17,12,3)
     Font = Font["-1"]
     Text = ("Pv TTC")
     Alignment = Align.Center
   }
-  { Tpvttc TextBox
-    MoveScaled(52,23,12,3)
+  { Tpvttc TextReg
+    MoveScaled(69,20,12,3)
     Font = Font["-1"]
     Alignment = Align.Right
   }
   { TextLabel38 TextLabel
-    MoveScaled(41,20,10,3)
+    MoveScaled(58,17,10,3)
     Font = Font["-1"]
     Text = ("TVA")
     Alignment = Align.Center
   }
   { TarTva TextLabel
-    MoveScaled(41,23,11,3)
+    MoveScaled(58,20,11,3)
     Font = Font["-1"]
     Alignment = Align.Center
   }
   { Button6 Button
-    MoveScaled(89,15,18,4)
+    MoveScaled(106,12,18,4)
     Font = Font["Bold,-1"]
     Background = Color.ButtonBackground
     Tag = "3"
@@ -157,14 +167,14 @@
     Picture = Picture["Icones/folder_new.png"]
   }
   { TextLabel40 TextLabel
-    MoveScaled(90,20,16,3)
+    MoveScaled(107,17,16,3)
     Font = Font["-1"]
     Text = ("Decimale Prix")
     Alignment = Align.Center
   }
   { Nbd ComboBox Ard
     Name = "Nbd"
-    MoveScaled(92,23,9,3)
+    MoveScaled(109,20,9,3)
     Enabled = False
     Font = Font["-1"]
     Tag = "2"
@@ -172,66 +182,33 @@
     MaxLength = 1
     Sorted = True
   }
-  { Lstart ColumnView
-    MoveScaled(1,29,109,45)
-    Font = Font["Serif,-2"]
-    Resizable = True
-    AutoResize = False
-  }
-  { TextLabel1 TextLabel
-    MoveScaled(23,1,64,4)
-    Font = Font["Bold,+1"]
-    Text = ("Tarif par type client")
-    Alignment = Align.Center
-  }
   { TextLabel2 TextLabel
-    MoveScaled(80,20,11,3)
+    MoveScaled(97,17,11,3)
     Font = Font["-1"]
     Text = ("Remise")
     Alignment = Align.Center
   }
-  { Remise TextBox
-    MoveScaled(80,23,11,3)
+  { Remise TextReg
+    MoveScaled(97,20,11,3)
     Font = Font["-1"]
     ToolTip = ("Il s'agit de la remise calculée sur le prix de vente public")
     Alignment = Align.Right
   }
-  { pvpublic TextBox
-    MoveScaled(66,23,12,3)
+  { pvpublic TextReg
+    MoveScaled(83,20,12,3)
     Font = Font["-1"]
     Alignment = Align.Right
+    ReadOnly = True
   }
   { TextLabel3 TextLabel
-    MoveScaled(66,20,12,3)
+    MoveScaled(83,17,12,3)
     Font = Font["-1"]
     Text = ("Pv  HT public")
     Alignment = Align.Center
   }
-  { HBox2 HBox
-    MoveScaled(1.125,29.125,109,2)
-    { CO TextBox
-      MoveScaled(0.125,0.25,11,1.75)
-      Font = Font["Serif,-2"]
-      Background = Color.Background
-      Text = ("Code")
-      Alignment = Align.Center
-      Border = False
-    }
-    { DSG TextBox
-      MoveScaled(20,0.25,27.5,1.75)
-      Font = Font["Serif,-2"]
-      Background = Color.Background
-      Text = ("Désignation")
-      Alignment = Align.Center
-      Border = False
-    }
-  }
-  { Coltype ColumnView
-    MoveScaled(25,1,34,40)
-    Visible = False
-    Font = Font["Serif,-1"]
-    Background = &HFFFFDF&
-    Sorted = True
-    ScrollBar = Scroll.Vertical
+  { Lstart Panel
+    MoveScaled(1,24,154,51)
+    Background = Color.White
+    Border = Border.Plain
   }
 }

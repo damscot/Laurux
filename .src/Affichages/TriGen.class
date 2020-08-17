@@ -33,6 +33,7 @@ Private prop As ObjProp
 Event MajSel(Bval As Variant)
 Event Resize()
 Event ReDim(w As Integer)
+Event keyPress()
 
 '************************************** Gestion des Tris générique *****************************************************
 Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null)
@@ -112,8 +113,8 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Endif
   
   If Object.Type(Parent) <> "Panel" Then
-    Parent.Center
-    Utils.Observers(Parent)
+    Try Parent.Center
+    Try Utils.Observers(Parent)
   Endif
   
   Coltri.Columns.count = cl
@@ -342,6 +343,8 @@ Public Sub Coltri_KeyPress()
 
   Dim cancel As Boolean = False
 
+  cancel = Raise keyPress()
+  If cancel Then Return
   If Key.code = Key.Enter Or Key.code = Key.Return Then
     Coltri_Click()
   Endif

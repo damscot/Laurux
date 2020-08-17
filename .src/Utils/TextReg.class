@@ -67,9 +67,14 @@ End
 Public Sub butb_click()
 
   If Me.Enabled = False Or Me.ReadOnly Then Return
-  $value = 0
-  Me.Clear
-
+  If Last = $grd Then
+    If $grd.row = -1 Then Return
+    Me.Text = $grd[$grd.Row, 0].Text
+  Else
+    $value = 0
+    Me.Clear
+  Endif
+  
 End
 
 Public Sub butb_keypress()
@@ -145,7 +150,7 @@ Public Sub butb_gotfocus()
     $win.Border = False
     $win.Background = Color.Black
     '$win.AutoResize = True
-    $grd = New GridView($win) As "grd"
+    $grd = New GridView($win) As "butb"
  '   $grd.AutoResize = True
     $grd.Padding = 4
     $grd.Background = Color.White
@@ -401,15 +406,7 @@ Private Sub condition_Write(Value As String)
 
 End
 
-Public Sub grd_click()
-
-  If $grd.row = -1 Then Return
-  Me.Text = $grd[$grd.Row, 0].Text
-  Me.SetFocus
-
-End
-
-Public Sub grd_Mousewheel()
+Public Sub butb_Mousewheel()
 
   Me.Editor.SetFocus
 
