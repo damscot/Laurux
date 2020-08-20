@@ -377,7 +377,7 @@ Public Sub Maj_Zones()
   If colcli.rows.Count Then
     Cd.Text = colcli[colcli.row, 0].Text
     rCli = Utils.db.Exec("select * from " & Cbase.Table("TabCli") & " Left join Fiches_Comptes on compte_cc = cli_code where cli_code = &1", Cd.Text)
-    Lettrable.value = rCli!lettrable
+    If IsNull(Lettrable.value) Then Lettrable.value = False Else Lettrable.value = rCli!lettrable
     CV.Text = rcli!cli_rs_soc
     Nm.Text = rcli!cli_nom
     Pnm.Text = rcli!cli_pnm
@@ -1575,12 +1575,12 @@ Private Sub majchamp(res As Result)
   Endif
   res.Update
   'maj des comptes comptables
-  rescc = utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", cp.Text)
+  rescc = utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", cd.Text)
   If rescc.Available Then
-    rescc = utils.db.Edit("Fiches_Comptes", "compte_cc=&1", cp.Text)
+    rescc = utils.db.Edit("Fiches_Comptes", "compte_cc=&1", cd.Text)
   Else
     rescc = utils.db.Create("Fiches_Comptes")
-    rescc!compte_cc = cp.Text
+    rescc!compte_cc = cd.Text
     rescc!solde = 0
     rescc!soldep = 0
   Endif

@@ -8,7 +8,7 @@ Public Enum commence_par, fini_par, contient
 
 'variables publics
 Public dte As New LDate As "dte"
-Public lke As Integer = contient
+Public lke As Integer = contient      ''Indique à la requete comment doit se comporter le LIKE quand recherche = True
 'variables privées
 Private $value As Float
 Private $text As String
@@ -67,12 +67,14 @@ End
 Public Sub butb_click()
 
   If Me.Enabled = False Or Me.ReadOnly Then Return
-  If Last = $grd Then
-    If $grd.row = -1 Then Return
-    Me.Text = $grd[$grd.Row, 0].Text
+ 
+  If Object.IsValid($grd) And If Last.tag = $grd.Tag Then
+    If Last.row = -1 Then Return
+    Me.Text = $grd[Last.Row, 0].Text
   Else
     $value = 0
-    Me.Clear
+    Me.text = ""
+    If $rech Then affgrd()
   Endif
   
 End
@@ -168,6 +170,7 @@ Public Sub butb_gotfocus()
     $grd.x = 0
     $grd.y = 0
     $grd.Mode = Select.Single
+    $grd.Tag = 0
     $grd.Show
     affgrd
     Me.SetFocus
