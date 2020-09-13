@@ -8,7 +8,7 @@ Public Bsel As Boolean = False
 Public Bval As String = ""
 Public List As String[]
 Private CB1Conv As Collection
-Private Selected As Integer[]
+Private Selected As String[]
 Private seltags As String[]
 
 
@@ -26,7 +26,7 @@ Public Sub _New()
   CB1Conv.Add("url", CB1.List[2])
 
   CB1.Text = CB1.List[0]
-  Selected = New Integer[]
+  Selected = New String[]
 
   Update_Req()
 
@@ -397,6 +397,7 @@ End
 Public Sub SupprimerTags_Click()
   
   Dim idx As Integer
+  Dim part As String[]
   Dim tags As String[]
   Dim tag As String
   Dim orphdoc As Integer[]
@@ -440,11 +441,13 @@ Public Sub SupprimerTags_Click()
   For Each tag In seltags
     Res = Utils.db.Exec("Select lind from Fiches_Tag where tag = &1", tag)
     If Res.Available Then
-      Repeat
-        For Each idx In Selected
-          Utils.db.Exec("Delete from Docs_Tag where doc_lind = &1 and tag_lind = &2", idx, Res!lind)
-        Next
-      Until Res.MoveNext()
+      part = Selected.Copy()
+      While part.Length <> 0
+        'For Each idx In Selected
+          Utils.db.Exec("Delete from Docs_Tag where doc_lind in (" & part.Extract(0, Min(200, part.Length)).Join(",") & ") and tag_lind = &1", Res!lind)
+        'Next
+      Wend
+      
     Endif
     If PB.Avancement("Suppression Tag " & tag, 5) Then Break
   Next
