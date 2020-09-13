@@ -5033,6 +5033,7 @@ Public Sub Maj369()
   Dim ld As LDate
   Dim path_url As String
   Dim filename As String
+  Dim basename As String
   
   'Modification charset to utf8
   rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, t1.COLUMN_TYPE, t1.character_set_name from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.column_type like '%CHAR%' or t1.column_type like 'TEXT') and t1.character_set_name != 'utf8'", "Laurux" & Start.Societe)
@@ -5535,7 +5536,6 @@ end_utf8:
   
   PB.Close()
   
-  PB.Avancement("", 1)
   
   Tab = "Docs_Ged"
   Try Utils.db.EXEC("CREATE TABLE " & Tab &
@@ -5570,10 +5570,12 @@ end_utf8:
       PB.Avancement("Documents " & rResult!doc, 50)
       path_url = "file://" & rResult!doc
       filename = File.Name(rResult!doc)
+      basename = File.BaseName(rResult!doc)
       Try Utils.db.Exec("INSERT INTO Docs_Ged (type,code,origin,url,filename,mime,date,ttc,ht) values ( &1,&2,&3,&4,&5,&6,&7,&8,&9)", rResult!type, rResult!code, rResult!org, path_url, filename, "application/pdf", ld.DT, "0", "0")
       r2Result = Utils.db.Exec("SELECT lind FROM Docs_Ged WHERE lind = LAST_INSERT_ID()")
       For Each txt In Split(rResult!doc2, ",")
         If IsNull(txt) Then Continue
+        If txt = basename Then Continue
         rReq = Utils.db.Exec("Select * From Fiches_Tag where tag = &1", txt)
         If rReq.Available Then
           Try Utils.db.Exec("INSERT INTO Docs_Tag (doc_lind, tag_lind) values (&1,&2)", r2Result!lind, rReq!lind)
