@@ -1036,21 +1036,23 @@ Public Sub Observers(hCont As Form)
 
 End
 
-Public Sub ObsGotf(TBox As Object)
+Public Sub ObsGotf(TBox As Object) As Integer
 
-  Dim CoulFoc As Integer ' Variable pour la couleur du background du focus
+  Dim CoulFoc, coul As Integer ' Variable pour la couleur du background du focus
   Dim Frmt As New String[]
 
   Frmt = FColr(Start.LocalSettings["/Coul/Focus"])
   CoulFoc = Val(Frmt[0])
+  coul = Tbox.background
   If TBox.readonly = False Then
     Try Tbox.Background = CoulFoc
     Tbox.select
   Endif
+  Return coul
 
 End
 
-Public Sub ObsLstf(TBox As Object)
+Public Sub ObsLstf(TBox As Object, Optional coul As Integer = Null)
 
   Dim CoulZns As Integer ' Variable pour la couleur du background du TextBox
   Dim Frmt As New String[]
@@ -1058,7 +1060,11 @@ Public Sub ObsLstf(TBox As Object)
   Frmt = FColr(Start.LocalSettings["/Coul/Znss"])
   CoulZns = Val(Frmt[0])
   If TBox.readonly = False Then
-    Try Tbox.Background = CoulZns
+    If IsNull(coul) Or coul = 0 Then 
+      Try Tbox.Background = CoulZns
+    Else
+      Try TBox.background = coul
+    Endif
   Endif
 
 End

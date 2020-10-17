@@ -2,33 +2,41 @@
 
 Private $text As Object[]
 Private $obs As Observer
+Private $coul As Integer
+
+Property Read tableaux As Object[]
 
 Public Sub _new(value As Object[])
 
   Dim i As Integer
   
   $text = value
+  If IsNull($text) Then $text = New Object[]
   For i = 0 To $text.Max
-    $obs = New Observer($text[i]) As "saisie"
+    $obs = New Observer($text[i], True) As "saisie"
   Next
 
 End
 
 Public Sub saisie_gotfocus()
 
-  Try Utils.ObsGotf(Last)
+  Try $coul = Utils.ObsGotf(Last)
+  Print $coul
 
 End
 
 Public Sub saisie_lostfocus()
 
-  Try Utils.ObsLstf(Last)
+  Try Utils.ObsLstf(Last, $coul)
 
 End
 
 Public Sub saisie_keypress()
 
   Dim i As Integer
+  Dim kctrl As Boolean = Key.Alt Or Key.Control 
+  
+  If kctrl Then Return
   
   Select Case Key.Code
    
@@ -39,17 +47,17 @@ Public Sub saisie_keypress()
         If i = -1 Then i = $text.Max 
         $text[i].setfocus
         Try $text[i].Select
-        Stop Event
+        If Key.Code = Key.BackTab Then Stop Event
       Endif
     
     Case Key.Down, Key.Enter, Key.Return, Key.Tab
       i = recherche(Last)
       If i > -1 Then
-        If Key.Code = Key.tab Then Stop Event
         i = i + 1
         If i > $text.Max Then i = 0
         $text[i].setfocus
         Try $text[i].Select
+        If Key.Code = Key.tab Then Stop Event
       Endif
       
   End Select
@@ -95,5 +103,20 @@ Public Sub modif(anc As Object, nouv As Object)
   
   i = recherche(anc)
   $text[i] = nouv
+
+End
+
+Public Sub sup(value As Object, Optional nb As Integer = 1)
+
+   Dim i As Integer
+   
+  i = recherche(value)
+  If i > -1 Then $text.Extract(i, nb)
+  
+End
+
+Private Function tableaux_Read() As Object[]
+
+  Return $text
 
 End
