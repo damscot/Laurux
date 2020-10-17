@@ -11,28 +11,41 @@ End Struct
 Private $elem As New Elements[]
 Private $fieldname As ResultField
 Private $nom As String
+Private $name As String
 Private $CondFilter As ObjProp
 Private $filter As TextReg
+Private $type As Integer
+Private $h As Integer
+Private $w As Integer
 
 Public tri As Boolean = False       ''Indique si on tri sur cette colonne a l'ouverture de la recherche
+Public cle As Boolean = False       '' Si ce champ est une clé de l'enregistrement. Si aucune clé n'est définie la valeur du 1° champ sera retournée sinon on retourne une collection avec le result.field en clé et la valeur cliquée en donnée.
+
+Public Enum TextReg, TextBox, Button, Label, TextLabel        ''Indique quelle classe doit être créé. A completer selon les besoins
 
 Property filter As TextReg
 Property Read name As String
+Property Read NomControl As String
+Property Read TypeClass As Integer
+Property Height As Integer
+Property Width As Integer
 
-
-Public Sub _new(FieldName As ResultField, NomColonne As String)
+Public Sub _new(FieldName As ResultField, NomColonne As String, Optional TypeClass As Integer = Me.TextReg)
 
   $fieldname = FieldName
+  If Not IsNull(FieldName) Then $name = FieldName.Name
   $nom = NomColonne
+  $type = TypeClass
 
 End
 
-Public Sub AddChamp(nom As String, propriete As String, Optional frm As String)      ''Ajout d'une propriété, frm prend les valeurs de format nombres et dates ou le nombre de décimales après la virgule, jusqu'a 3
+Public Sub AddChamp(nom As String, propriete As Variant, Optional frm As String)      ''Ajout d'une propriété, frm prend les valeurs de format nombres et dates ou le nombre de décimales après la virgule, jusqu'a 3
   
   Dim elem As New Elements
-  
+
   elem.nom = nom
-  elem.propriete = propriete
+  Try elem.propriete = propriete.Join
+  If Error Then elem.propriete = propriete
   elem.frm = frm
   $elem.Add(elem)
   
@@ -86,7 +99,7 @@ End
 
 Private Function name_Read() As String
 
-  Return $fieldname.Name
+  Return $name
 
 End
 
@@ -111,5 +124,44 @@ Private Sub filter_Write(Value As TextReg)
   $CondFilter.AddChamp("Alignment", Align.Center)
   $CondFilter.AddChamp("Tooltip", $Nom & "\n Fléche du bas : Séléction")
   $CondFilter.AppProp($filter)
+
+End
+
+Private Function NomControl_Read() As String
+
+  Return $nom
+
+End
+
+Private Function TypeClass_Read() As Integer
+
+  Return $type
+
+End
+
+Private Function Height_Read() As Integer
+
+  
+  Return $h
+
+End
+
+Private Sub Height_Write(Value As Integer)
+
+  AddChamp("H", Value)
+  $h = Value
+
+End
+
+Private Function Width_Read() As Integer
+
+  Return $w
+
+End
+
+Private Sub Width_Write(Value As Integer)
+
+  AddChamp("W", Value)
+  $w = Value
 
 End

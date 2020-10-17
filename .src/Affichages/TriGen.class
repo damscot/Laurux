@@ -190,7 +190,7 @@ Public Sub Show(Optional Modal As Boolean = False)
   
 End
 
-Public Sub Close(Selected_Value As String)
+Public Sub Close(Selected_Value As Variant)
 
   Dim cancel As Boolean = False
   Dim f As TextReg
@@ -261,6 +261,7 @@ Public Sub GenFilter()
   For Each f In FilterRegex
     f = Replace(f, "\"", "")
     If f Then sel &= Col_Def[FilterRegex.key].name & " like \"%" & f & "%\" and "
+    Print sel
   Next
   If Sel Then
     Sel = Left(Sel, Len(Sel) - 5)
@@ -332,8 +333,23 @@ End
 
 Public Sub Coltri_Click()
 
+  Dim cle As String
+  Dim colret As New Collection
+  Dim ok As Boolean
+  Dim i As Integer
+  
   If coltri.row = -1 Then Return
-  Close(coltri[coltri.row, 0].Text)
+  For i = 0 To col_Order.Max
+    If Col_Def[Col_Order[i]].cle Then
+      colret.Add(coltri[coltri.Row, i].Text, Col_Def[Col_Order[i]].name)
+      ok = True
+    Endif
+  Next
+  If ok Then
+    Close(colret)
+  Else
+    Close(coltri[coltri.row, 0].Text)
+  Endif
 
 End
 
