@@ -531,7 +531,7 @@ Public Sub Maj_Zones()
       Try Arr.Text = Rmat!mat_cdarr
       Try Dpa.Text = Format$(Rmat!mat_dpa, nbdec)
       Try Dfour.Text = Rmat!mat_dfour
-      Try ddate.Text = Rmat!mat_ddate
+      Try ddate.Text = LDate(Rmat!mat_ddate).L
       Try vendu.Value = Rmat!mat_vendu
       Try Matdiv.Value = Rmat!mat_matdiv
       Marque.Text = Rmat!mat_marque

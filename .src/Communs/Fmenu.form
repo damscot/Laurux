@@ -299,15 +299,6 @@
       { Menu88 Menu
         Text = Shortcut(("Commande fournisseur"), "C")
       }
-      { Menu78 Menu
-        Text = Shortcut(("Réception manuelle"), "R")
-      }
-      { Menu89 Menu
-        Text = Shortcut(("Réception automatique"), "a")
-      }
-      { Menu301 Menu
-        Text = Shortcut(("Modification des réceptions"), "M")
-      }
       { Menu295 Menu
         Text = Shortcut(("Validation des réceptions"), "V")
       }
@@ -1044,7 +1035,7 @@
       Picture = Picture["Icones/Lib.png"]
     }
     { ToolButton1 ToolButton
-      MoveScaled(98,0,8,4)
+      MoveScaled(89.4444,0,8,4)
       Background = &HDDDDDD&
       ToolTip = ("Quitter Laurux")
       Picture = Picture["Icones/stop.png"]
@@ -1103,20 +1094,8 @@
       ToolTip = ("Recherche d'une somme")
       Picture = Picture["Icones/montant.png"]
     }
-    { Blm ToolButton
-      MoveScaled(81.1111,0,4,4)
-      Background = &HDDDDDD&
-      ToolTip = ("Entrees manuelles")
-      Picture = Picture["Icones/Blm.png"]
-    }
-    { Bla ToolButton
-      MoveScaled(86.1111,0,4,4)
-      Background = &HDDDDDD&
-      ToolTip = ("Entrees automatiques")
-      Picture = Picture["Icones/Bla.png"]
-    }
     { Mvt ToolButton
-      MoveScaled(91,0,4,4)
+      MoveScaled(81.4444,0,4,4)
       Background = &HDDDDDD&
       ToolTip = ("Regularisations")
       Picture = Picture["Icones/Mvt.png"]
@@ -1150,8 +1129,9 @@
       Background = &HDDDDDD&
       ToolTip = ("Quitter Laurux")
     }
-    { ToolButton9 ToolButton
-      MoveScaled(95,0,4,4)
+    { rglmt ToolButton
+      MoveScaled(85.4444,0,4,4)
+      ToolTip = ("Saisie des règlements")
       Picture = Picture["Icones/sespeces.png"]
     }
   }
@@ -1361,32 +1341,6 @@
                 MoveScaled(2,0,18,2)
                 Expand = True
                 Text = ("Commandes fnrs")
-              }
-            }
-            { HBox9 HBox
-              MoveScaled(1,10,21,2)
-              { PictureBox9 PictureBox
-                MoveScaled(0,0,2,2)
-                Picture = Picture["Icones/Blm.png"]
-                Stretch = True
-              }
-              { lblRcptm Label
-                MoveScaled(3,0,18,2)
-                Expand = True
-                Text = ("Réception manuelle")
-              }
-            }
-            { HBox10 HBox
-              MoveScaled(1,13,21,2)
-              { PictureBox10 PictureBox
-                MoveScaled(0,0,2,2)
-                Picture = Picture["Icones/Bla.png"]
-                Stretch = True
-              }
-              { lblrcptA Label
-                MoveScaled(2,0,18,2)
-                Expand = True
-                Text = ("Réception auto.")
               }
             }
             { HBox22 HBox

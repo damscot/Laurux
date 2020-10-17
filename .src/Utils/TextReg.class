@@ -133,6 +133,7 @@ Public Sub butb_change()
   Me.Editor.Text = $regex.Text
   If Me.Editor.Text Match "." And $numerique Then Me.Editor.Text = Replace(Me.Editor.Text, ".", ",")
   $text = Me.Editor.Text
+  If $numerique And $text Then $value = Val($text)
   If $rech Then affgrd()
   Me.pos = x
   

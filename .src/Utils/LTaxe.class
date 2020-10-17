@@ -10,9 +10,9 @@ Private TypeTaxe As Integer 'Type de Taxe
 
 Private Compte As String 'numero du compte pour le ventilation de la taxe/remise... etc
 
-Public Enum Aucune, Remise, TVA, TEE, TEA, CopiePrivee, CSS, Fixe, Frais, SS, DA, Regie, TxLast 'a complèter par patick chaque taxe s'applique soit sur le montant HT ou sur la quantité
-Public All_Taxes As Integer[] = [LTaxe.TVA, LTaxe.TEE, LTaxe.TEA, LTaxe.CopiePrivee, LTaxe.CSS, LTaxe.Fixe, Frais, SS, DA, Regie] 'Taxes entre HT Net et TTC Net
-Public All_Remises As Integer[] = [LTaxe.Remise] ' Taxe ou Remise entre Brut et Net, le montant de remise s'applique toujours sur le HT Brut
+Public Enum Aucune, Remise, TVA, TEE, TEA, CopiePrivee, CSS, Fixe, Frais, SS, DA, Regie, Consigne, Deconsigne, TxLast 'a complèter par patick chaque taxe s'applique soit sur le montant HT ou sur la quantité
+Public All_Taxes As Integer[] = [LTaxe.TVA, LTaxe.TEE, LTaxe.TEA, LTaxe.CopiePrivee, LTaxe.CSS, LTaxe.Fixe, LTaxe.Consigne, LTaxe.Deconsigne] 'Taxes entre HT Net et TTC Net
+Public All_Remises As Integer[] = [LTaxe.Remise, LTaxe.Frais, LTaxe.SS, LTaxe.DA, LTaxe.Regie] ' Taxe ou Remise entre Brut et Net, le montant de remise s'applique toujours sur le HT Brut
 Property Ttx As Integer 'Retourne / set le type de taxe
 Property Cpt As String 'Retourne / set le compte de ventilation
 Property Lib As String 'libelle de la taxe
@@ -98,7 +98,7 @@ Sub Ttx_Write(Type As Integer)
     TypeTaxe = LTaxe.Aucune
   Else
     TypeTaxe = Type
-    If TypeTaxe = LTaxe.Remise Then
+    If TypeTaxe = LTaxe.Remise Or TypeTaxe = LTaxe.Deconsigne Then
       Mnt = -Mnt
     Endif
   Endif

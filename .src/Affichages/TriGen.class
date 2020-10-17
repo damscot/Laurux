@@ -339,7 +339,8 @@ Public Sub Coltri_Click()
   Dim i As Integer
   
   If coltri.row = -1 Then Return
-  For i = 0 To col_Order.Max
+  colret.Clear
+  For i = 0 To Col_Order.Max
     If Col_Def[Col_Order[i]].cle Then
       colret.Add(coltri[coltri.Row, i].Text, Col_Def[Col_Order[i]].name)
       ok = True

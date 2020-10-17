@@ -91,7 +91,7 @@ Private Function ctrl() As Boolean
     Wait 0.01
   Endif
   res = Utils.db.Exec("SELECT cdclibl as four,numbl as numrecpt,datebl as ddate,art_code,art_dra,art_design FROM Fiches_Bl,Fiches_Ligbl,Fiches_Art WHERE num_ligbl=numbl AND Fiches_Bl.type='B' and art_code=code_ligbl AND art_dra IS NOT NULL AND dte_ligbl < &1 ORDER BY numbl", $dteinf.D)
-'  pb.Avancement(" FACTURES NON VALIDÉES / PÉRIODES PRÉCEDANTES", 1)
+  pb.Avancement(" FACTURES NON VALIDÉES / PÉRIODES PRÉCEDANTES", 1)
   If res.Available Then
     Textcontrol.Text = Textcontrol.Text & "** FACTURES NON VALIDÉES / PÉRIODES PRÉCEDANTES ** \n"
     If err Then ctrlachat(res) Else err = ctrlachat(res)
@@ -99,7 +99,7 @@ Private Function ctrl() As Boolean
   Endif
   'Vérifie si les articles passés sont en compta mat
   'Bl
-  reslig = utils.db.Exec("SELECT numfac,numbl,cdclibl,dtefac FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' GROUP by numfac,cdclibl,dtefac")
+  reslig = utils.db.Exec("SELECT numfac,numbl,cdclibl,dtefac FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' GROUP by numfac,cdclibl,dtefac,numbl")
   pb.Avancement("Facture bl", 1)
   If reslig.Available Then
     Repeat
@@ -121,7 +121,7 @@ Private Function ctrl() As Boolean
   Endif
   'facture
   reslig = utils.db.Exec("SELECT * FROM Fiches_Art,Fiches_HistoLigfac,Fiches_HistoFac WHERE art_code=code_ligfac and numfac=num_ligfac and art_dra <> '' AND dtligbl_ligfac >= &1 ORDER by numfac", $dteinf.D)
-'  pb.Avancement("Facture archive", 1)
+  pb.Avancement("Facture archive", 1)
   If reslig.Available Then
     Repeat
       res = utils.db.Exec("SELECT * FROM Fiches_ligregie WHERE  num=&1 AND numlig LIKE &2", reslig!numfac, "%" & reslig!numlig_ligfac)

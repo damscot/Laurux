@@ -1,19 +1,21 @@
 ' Gambas class file
 
 Public chain As New Chainage(Null)
-Public valide As Boolean = True 
+Public valide As Boolean = True              ''Prend la valeur false lorsque le contenu d'un controle change
 Public MonControle As New Collection        ''On stock les objets (TextReg,boutons, labels ...)
 Public Panel1 As Panel
-Public prx As LPrix
-Public txl As LTaxe
+Public prx As New LPrix
+Public txl As New LTaxe
 Public arrondi As Variant
-Public Tag As Variant
-Public AutresObj As Object[]            ''On stock les objets assignés à la ligne de saisie (Tarifs, consignes ....)
+Public Ind As Integer                        ''Indexe de la ligne
+Public AutresObj As Variant[]            ''On stock les objets associés à la ligne de saisie (Tarifs, consignes ....)
 
 Private $coul As Integer = Color.white
 Private $Height As Integer
 Private $prop As ObjProp[]
 Private $etat As Integer
+Private $dernier As String                   ''Nom du dernier control pour le retour à la ligne
+Private $tag As Variant
 
 Event RetLigne(etat As Integer)    ''retour ligne + création si besoin
 Event SupLig(etat As Integer)          ''Suprime 1 ligne
@@ -28,6 +30,8 @@ Event alt(Value As Integer)            ''combinaison de touche alt + code ascii
 Property Background As Integer
 Property X As Integer
 Property Y As Integer
+Property Dernier As String                ''Nom du dernier control pour le retour à la ligne
+Property Tag As Variant
 
 Public Enum lecture, ecriture, reception
 
@@ -44,7 +48,7 @@ Public Sub _new(Optional prop As ObjProp[], parent As Control, etat As Integer =
   Panel1.W = parent.W
   Panel1.H = parent.Font.H + 4
   Panel1.Arrangement = Arrange.Horizontal
-'  obs = New Observer(Panel1) As "groupe"
+  obs = New Observer(Panel1) As "groupe"
   
   $etat = etat
   For Each obj In prop
@@ -62,8 +66,10 @@ Public Sub _new(Optional prop As ObjProp[], parent As Control, etat As Integer =
         clas = New Label(Panel1)
       Case ObjProp.Button 
         clas = New Button(Panel1) 
+        obs = New Observer(clas) As "groupe"
       Case ObjProp.TextLabel
         clas = New TextLabel(Panel1)
+        obs = New Observer(clas) As "groupe"
     End Select
     If $etat = lecture Then Try clas.enabled = False
     clas.name = obj.NomControl
@@ -72,25 +78,27 @@ Public Sub _new(Optional prop As ObjProp[], parent As Control, etat As Integer =
     If clas.H = 0 And clas.W = 0 Then clas.expand = True
     MonControle.Add(clas, obj.NomControl)
   Next
-  If MonControle[MonControle.Last].Tag = Null Then MonControle[MonControle.Last].Tag = True
+  If Not $dernier Then $dernier = MonControle[MonControle.Last].name
   MonControle[MonControle.First].setfocus
   
 End
 
 Public Sub Delete()
 
-  Dim obj As Object
+  Dim obj As Variant
   
+  chain.tableaux.Clear
+  If Not IsNull(AutresObj) Then
+    For Each obj In AutresObj
+      Try obj.Delete     
+    Next
+    AutresObj.Clear
+  Endif
   For Each obj In Panel1.Children
     Try obj.Delete
-    chain.sup(obj)
   Next
-  Panel1.Delete
-  For Each obj In AutresObj
-    Try obj.Delete
-  Next
-  Try AutresObj.Extract(0, -1)
   MonControle.Clear
+  Panel1.Delete
 
 End
 
@@ -98,6 +106,12 @@ Public Sub groupe_lostfocus()
 
   Raise LostFocus(Me)
   
+End
+
+Public Sub groupe_change()
+
+  valide = False
+
 End
 
 Public Sub groupe_gotfocus()
@@ -128,14 +142,14 @@ Public Sub groupe_keypress()
         ok = Raise RetLigne($etat)
         If ok Then Stop Event
       Else
-        If Last.tag = True Then 
+        If Last.name = $dernier Then 
           ok = Raise RetLigne($etat)
           If ok Then Stop Event
         Endif
       Endif
     
     Case Key.Tab
-       If Last.tag = True Then 
+       If Last.name = $dernier Then 
         ok = Raise RetLigne($etat)
         If ok Then Stop Event
       Endif
@@ -157,10 +171,11 @@ Public Sub groupe_keypress()
         If $etat = ecriture Then Raise Bas($etat)
         Stop Event
         Return
-      Endif
-      If Last.tag = True Then 
-        ok = Raise RetLigne($etat)
-        If ok Then Stop Event
+      Else
+        If Last.name = $dernier Then 
+          ok = Raise RetLigne($etat)
+          If ok Then Stop Event
+        Endif
       Endif
   End Select
   
@@ -205,5 +220,29 @@ End
 Private Sub Y_Write(Value As Integer)
 
   Panel1.Y = value
+
+End
+
+Private Function Dernier_Read() As String
+
+  Return $dernier
+
+End
+
+Private Sub Dernier_Write(Value As String)
+
+  $dernier = value
+
+End
+
+Private Function Tag_Read() As Variant
+
+  Return $tag
+
+End
+
+Private Sub Tag_Write(Value As Variant)
+
+  $tag = Value
 
 End

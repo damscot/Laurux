@@ -2,12 +2,12 @@
 
 Public ligne As New SaiLig[]      ''Tableau des saisies
 Public ind As Integer = -1          ''Index du tableau des saisie
-Public opt As String
+Public opt As String                      ''Quelle option est active 
 
-Public VisibleTuto As Boolean = True
-Public VisibleEntete As Boolean = True
-Public VisibleTot As Boolean = True
-Public VisibleChoi As Boolean = True
+Public VisibleTuto As Boolean = True                  ''Affiche le tuto
+Public VisibleEntete As Boolean = True               ''Affiche l'entete
+Public VisibleTot As Boolean = True                     ''Affiche les totaux
+Public VisibleChoi As Boolean = True                 ''Affiche les choix articles/mo/stock
 
 Public total As SaiLig
 Public entete As SaiLig 
@@ -22,16 +22,16 @@ Public Tableau As ScrollView
 Public Ptot As ScrollView
 
 Public $prop As New ObjProp[]
-Private $parent As Control
+Public $parent As Control
 
 Const Background As Integer = &FFEFDF
 
-Event ajou(Value As Sailig)  ''Est levé lorsque on ajoute une ligne de saisie
+Event ajou(Value As Sailig)   ''Est levé lorsque on ajoute une ligne de saisie
 Event gotfocus(Value As Sailig)
 Event lostfocus(Value As Sailig)
 
 
-Public Sub _new(prop As ObjProp[], Optional parent As Control)
+Public Sub _new(prop As ObjProp[], parent As Control)
 
   $prop = prop
   opt = Utils.Option()
@@ -67,14 +67,14 @@ Public Sub show()
     pchoix.Arrangement = Arrange.Horizontal
     pchoix.Width = $parent.W
     pchoix.Border = Border.Plain
-    mo = New RadioButton(pchoix) As "mo"
+    mo = New RadioButton(pchoix) As "RadioButton1"
     mo.Expand = True
     mo.H = 50
     mo.Text = "MO"
-    art = New RadioButton(pchoix) As "art"
+    art = New RadioButton(pchoix) As "RadioButton2"
     art.Expand = True
     art.Text = "Articles"
-    artstk = New RadioButton(pchoix) As "artstk"
+    artstk = New RadioButton(pchoix) As "RadioButton3"
     artstk.Expand = True
     artstk.Text = "Articles en stock"
     pchoix.H = $parent.Font.Height + 10
@@ -89,7 +89,7 @@ Public Sub show()
     tuto.x = 0
     tuto.Alignment = Align.Center
     tuto.Font = Font["Italic,-1"]
-    tuto.Text = "Alt + Fléche Haut / Alt + Fléche Bas : Déplace la ligne   	Entrée / Tab / Fléche Haut : Zone suivante 		Shift + Tab / Fléche Bas : Zone précedante \n  Ins: Insert une ligne Del / Sup: Supprime une ligne Ctrl + Entrée : Retour à la ligne                                Esc : Rétablit la valeure précedante \n Ctrl + c: Bascule en commentaire \n Code: F2 Recherche Rem: 10 % = Remise en % ou 10 = Remise en valeur"
+    tuto.Text = "Alt + Fléche Haut / Alt + Fléche Bas : Déplace la ligne   	Entrée / Tab / Fléche Haut : Zone suivante 		Shift + Tab / Fléche Bas : Zone précedante \n  Ins: Insert une ligne Del / Sup: Supprime une ligne Ctrl + Entrée : Retour à la ligne                                Esc : Rétablit la valeure précedante \n Code: F2 Recherche Rem: 10 % = Remise en % ou 10 = Remise en valeur"
   Endif
   
   If VisibleEntete Then
@@ -142,38 +142,86 @@ Public Sub Pentete_Scroll()
 
 End
 
-Public Sub ajout(Optional etat As Integer = SaiLig.ecriture)
+Public Sub ajout(Optional etat As Integer = SaiLig.ecriture)          ''Ajoute une ligne de saisie
 
   Dim lg As SaiLig
-  Dim obs As Observer
   Dim obj As Object
   
   lg = New SaiLig($prop, tableau, etat) As "ligne"
+  lg.Ind = ligne.Count
   evenement(lg)
-  lg.Tag = ligne.Count
   ligne.Add(lg)
   If ind > -1 Then HideAutreO(ligne[ind])
   ind = ligne.Max
   If Not Even(ind) Then ligne[ind].Background = Background 
   Raise ajou(ligne[ind])
   ligne[ind].MonControle[$prop[0].NomControl].SetFocus
-  ligne[ind].MonControle[$prop[0].NomControl].Select
+  
+End
+
+Public Sub Delete()               ''supression de toutes les lignes du tableau
+
+  Dim lg As Sailig
+  
+  For Each lg In Me
+    lg.Delete
+  Next
+  ligne.Clear
+  ind = -1
+
+End
+
+Public Sub Extract(i As Integer)          ''supression de la ligne i et renumérotation des index
+
+  Dim lg As Sailig
+  Dim j As Integer
+  
+  Me.ligne[i].Delete
+  Me.ligne.Extract(i)
+  If ligne.Count > 0 Then
+    For j = 0 To ligne.Max
+      ligne[j].Ind = j
+    Next
+    If i < ligne.Count Then Ind = i Else ind = ligne.Max
+    ligne[ind].MonControle[ligne[ind].MonControle.First].SetFocus
+  Else
+    Ind = -1
+  Endif
+
+End
+
+Public Sub Netoyage(nom As String)         ''on supprime les lignes vides, nom est le nom du contrôle qui doit être vide pour être supprimé
+
+  Dim i As Integer
+  Dim lig As Sailig
+  
+  If ligne.Count < 1 Then Return
+  Repeat
+    lig = Me.ligne[i]
+    If Not lig.MonControle[nom].Text Then 
+      Extract(lig.Ind)
+    Else
+      i += 1
+    Endif
+  Until i = ligne.Count
   
 End
 
 Private Sub evenement(lg As Sailig)   ''on rattache tous les évenements des controles de SaiLig ici, ils sont donc accessibles dans les classes héritées de SaiTableau
   
-  Dim obj As Object
+   Dim obj As Object
   
   For Each obj In lg.MonControle
-    Object.Attach(obj, Me, obj.name)
+    Object.Attach(obj, Me, Utils.Accent(obj.name))      'on supprime les carctéres speciaux 
   Next
+  Object.Attach(lg.prx, Me, "LPrix")
+  Object.Attach(lg.txl, Me, "Ltaxe")
   
 End
 
 Private Sub AfficheAutreO(Value As Sailig)      ''on gére l'affichage des éventuels autres objets
   
-  Dim obj As Object
+  Dim obj As Variant
   
   If IsNull(value.AutresObj) Then Return
   For Each obj In value.AutresObj
@@ -184,7 +232,7 @@ End
 
 Private Sub HideAutreO(value As Sailig)
   
-  Dim obj As Object
+  Dim obj As Variant
   
   If IsNull(value.AutresObj) Then Return
   For Each obj In value.AutresObj
@@ -196,7 +244,7 @@ End
 Public Sub ligne_RetLigne(etat As Integer)
 
   If ind = ligne.Max Then 
-   If etat = SaiLig.ecriture And ligne[ind].MonControle[ligne[ind].MonControle.Last].Tag = True Then ajout()
+   If etat = SaiLig.ecriture And ligne[ind].Dernier Then ajout()        'si on n'idique pas le control qui déclanche le retour ligne, on ne créé pas de nouvelles lignes
   Else
     ligne[ind + 1].MonControle[$prop[0].NomControl].SetFocus
     ind += 1
@@ -209,7 +257,7 @@ Public Sub ligne_gotfocus(Value As SaiLig)
 
   HideAutreO(ligne[ind])
   AfficheAutreO(Value)
-  ind = value.Tag
+  ind = value.Ind
   Raise gotfocus(Value)
   
 End
@@ -224,7 +272,7 @@ Public Sub ligne_SupLig(etat As Integer)
 
   Dim i, coul As Integer
   
-  If etat = SaiLig.ecriture And ligne[ind].MonControle[ligne[ind].MonControle.Last].Tag = True Then
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
     If Message.Question("Voulez vous supprimer cette ligne ?", "Oui", "Non") = 1 Then
       If Even(ind) Then coul = ligne[ind].Background Else coul = ligne[ind - 1].Background
       ligne[ind].Delete
@@ -233,7 +281,7 @@ Public Sub ligne_SupLig(etat As Integer)
       Wait 0.01
       For i = ind To ligne.Max
         If Not Even(i) Then ligne[i].Background = Background Else ligne[i].Background = coul
-        ligne[i].Tag = i
+        ligne[i].Ind = i
       Next
       If ind > ligne.Max Then ind = ligne.Max
       If ligne.Count = 0 Then ajout
@@ -249,7 +297,7 @@ Public Sub ligne_InsLig(etat As Integer)
   Dim ls As New SaiLig($prop, tableau) As "ligne"
   Dim i, coul As Integer
   
-  If etat = SaiLig.ecriture And ligne[ind].MonControle[ligne[ind].MonControle.Last].Tag = True Then
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
     evenement(ls)
     If Even(ind) Then coul = ligne[ind].Background Else coul = ligne[ind - 1].Background
 '    ind = ligne.Find(sl)
@@ -258,7 +306,7 @@ Public Sub ligne_InsLig(etat As Integer)
     ls.Panel1.Next = ligne[ind].Panel1
     For i = ind To ligne.Max
       If Not Even(i) Then ligne[i].Background = Background Else ligne[i].Background = coul
-      ligne[i].Tag = i
+      ligne[i].Ind = i
     Next
     ligne[ind].MonControle[$prop[0].NomControl].SetFocus
   Endif
@@ -269,11 +317,11 @@ Public Sub ligne_Haut(etat As Integer)
 
   Dim coul As Integer
   
-  If etat = SaiLig.ecriture And ligne[ind].MonControle[ligne[ind].MonControle.Last].Tag = True Then
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
     If ind > 0 And ligne.Count > 1 Then
       ligne[ind].Panel1.Next = ligne[ind - 1].Panel1
       Swap ligne[ind], ligne[ind - 1]
-      Swap ligne[ind].Tag, ligne[ind - 1].Tag
+      Swap ligne[ind].Ind, ligne[ind - 1].Ind
       ind -= 1
       If Not Even(ind) Then 
         coul = ligne[ind].Background
@@ -293,11 +341,11 @@ Public Sub ligne_Bas(etat As Integer)
 
   Dim coul As Integer
   
-  If etat = SaiLig.ecriture And ligne[ind].MonControle[ligne[ind].MonControle.Last].Tag = True Then
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
     If ind < ligne.Max And ligne.Count > 1 Then
        ligne[ind].Panel1.Previous = ligne[ind + 1].Panel1
       Swap ligne[ind], ligne[ind + 1]
-      Swap ligne[ind].Tag, ligne[ind + 1].Tag
+      Swap ligne[ind].Ind, ligne[ind + 1].Ind
       ind += 1
       If Not Even(ind) Then 
         coul = ligne[ind].Background

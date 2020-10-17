@@ -1,0 +1,223 @@
+' Gambas class file
+
+Inherits LPrix
+
+Private $resdr As Result
+Private $restva As Result
+Private $respar As Result
+Private $vol As Float
+Private $deg As Float
+
+Public opt As Boolean = False       ''Si vrais l'option boissson n'est pas activée
+Public famille As String                    ''Contient le code de la famille d'&rticle
+
+Property Read droit As LPrix        ''Montant des droits sur les alcools
+Property Read secu As LPrix         ''Montant de la taxe sécu 
+Property Read accise As LPrix     ''Montant des droits d'accise lorsque ceux ci sont déjà payé
+Property Read suspendu As Boolean 
+Property Read drsurfac As Boolean
+
+Property code As String                   ''Code droit
+Property volume As Float
+Property degre As Float
+
+
+Public Sub _new(Optional dra As String, vol As Float, deg As Float, fam As String)
+
+  Dim op As String
+
+  famille = fam
+  $vol = vol
+  $deg = deg
+  op = Utils.Option()
+  If op <> "T" And opt <> "B" Then opt = True
+  If dra Then LecDra(dra)
+  
+End
+
+Private Sub LecDra(dra As String)
+
+  Dim lt As LTaxe
+
+  If opt Then Return
+  $resdr = Utils.db.Exec("SELECT * FROM Fiches_regie WHERE code=&1", dra)
+  If $resdr.Available Then
+    $restva = Utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva=&1", $resdr!ttva)
+    If Not $restva.Available Then
+      Error.Raise("Probleme de TVA sur régie n° " & $resdr!code & " " & $resdr!nom)
+    Endif
+    $respar = Utils.db.Exec("SELECT taux_tva FROM Fiches_Parametres,Fiches_Tvaav WHERE code_tva=tvass")
+    If Not $respar.Available Then
+      Error.Raise("probléme TVA sur sécurité social dans les paramétres", "OK")
+    Endif
+  Else
+    Error.Raise("Probleme sur n° régie " & dra, "OK")
+  Endif
+  Me.Cpt = $resdr!cdcompt
+  lt = New LTaxe(Me.taxe_droit().Montant(Me).Mnt, LTaxe.Regie)
+  Me.Add_Taxe(lt) 
+  lt = New LTaxe(Me.secu_droit().Montant(Me).Mnt, LTaxe.SS)
+  Me.Add_Taxe(lt)
+  lt = New LTaxe(Me.accise_droit().Montant(Me).Mnt, LTaxe.DA)
+  Me.Add_Taxe(lt)
+  lt = New LTaxe($restva!taux_tva & "%", LTaxe.TVA)
+  Me.Add_Taxe(lt)
+ 
+End
+
+Public Function volume_total() As LPrix       ''Calcul du volume d'alcool : brut = volume total, net = volume d'alcool pur
+
+  Dim vol As LPrix
+  Dim lt As LTaxe
+  
+  vol = New LPrix($vol / 100, Me.Qte, LPrix.Arr_0001)
+  lt = New LTaxe(Str(100 - $deg) & "%", LTaxe.Remise)
+  vol.Add_Taxe(lt)
+  Return vol
+
+End
+
+Public Function taxe_droit() As LTaxe       ''Calcul des droits sur les alcools en volume ou en volume d'alcool
+  
+  Dim lt As LTaxe
+  
+  lt = New LTaxe(0, LTaxe.Regie)
+  If opt Then Return lt
+  If $resdr!ap Then
+    lt = New LTaxe(volume_total().PuNHT.G * ($resdr!tauxa / 100), LTaxe.Regie)
+  Else
+    lt = New LTaxe(volume_total().PuBHT.G * ($resdr!tauxa / 100), LTaxe.Regie)
+  Endif
+  Return lt
+  
+End
+
+Public Function secu_droit() As LTaxe       ''Calcul de la taxe secu sur les alcools, en volume ou en volume d'alcool
+  
+  Dim lt As LTaxe
+  
+  lt = New LTaxe(0, LTaxe.SS)
+  If opt Then Return lt
+  If Not IsNull($resdr!degres) And If $deg > $resdr!degres Then
+    If $resdr!ap Then
+      lt = New LTaxe(volume_total().PuNHT.G * ($resdr!tauxss / 100), LTaxe.SS)
+    Else
+      lt = New LTaxe(volume_total().PuBHT.G * ($resdr!tauxss / 100), LTaxe.SS)
+    Endif
+  Endif
+  Return lt
+  
+End
+
+Public Function accise_droit() As LTaxe             ''Calcul des droits d'accises lorsqu'ils sont payés mais quand même différenciés sur la facture.
+  
+  Dim lt As LTaxe
+  
+  lt = New LTaxe(0, LTaxe.DA)
+  If opt Then Return lt
+  If $resdr!drfac Then lt = New LTaxe(taxe_droit().Montant(Me).Mnt, LTaxe.DA)
+  Return lt
+ 
+End
+
+Private Function droit_Read() As LPrix
+
+  Dim lp As LPrix
+  Dim lt As LTaxe
+  
+  If opt Then Return Null
+  lp = New LPrix(Me.Mnt, Me.qte, LPrix.Arr_0001)
+  lt = New LTaxe(taxe_droit().Montant(Me, True).Mnt, LTaxe.DA)
+  lp.Add_Taxe(lt)
+  lt = New LTaxe($restva!taux_tva & "%", LTaxe.TVA)
+  lp.Add_Taxe(lt)
+  Return lp
+
+End
+
+Private Function secu_Read() As LPrix
+
+  Dim lp As LPrix
+  Dim lt As LTaxe
+  
+  If opt Then Return Null
+  lp = New LPrix(Me.Mnt, Me.qte, LPrix.Arr_0001)
+  lt = New LTaxe(secu_droit().Montant(Me, True).Mnt, LTaxe.SS)
+  lp.Add_Taxe(lt)
+  lt = New LTaxe($respar!taux_tva & "%", LTaxe.TVA)
+  lp.Add_Taxe(lt)
+  Return lp
+
+End
+
+
+Private Function accise_Read() As LPrix
+
+  Dim lp As LPrix
+  Dim lt As LTaxe
+  
+  If opt Then Return Null
+  lp = New LPrix(Me.Mnt, Me.qte, LPrix.Arr_0001)
+  lt = New LTaxe(accise_droit().Montant(Me, True).Mnt)
+  lp.Add_Taxe(lt)
+  lt = New LTaxe($restva!taux_tva & "%", LTaxe.TVA)
+  lp.Add_Taxe(lt)
+  Return lp
+
+End
+
+Private Function suspendu_Read() As Boolean
+
+  Return $resdr!suspendu
+
+End
+
+Private Function drsurfac_Read() As Boolean
+
+  Return $resdr!drfac
+
+End
+
+Private Function code_Read() As String
+
+  If opt Then Return Null
+  If IsNull($resdr) Then Return Null
+  If Not $resdr.Available Then Return Null
+  Return $resdr!code
+
+End
+
+Private Sub code_Write(Value As String)
+
+  If opt Then Return
+  LecDra(Value)
+
+End
+
+Private Function volume_Read() As Float
+
+  Return $vol
+
+End
+
+Private Sub volume_Write(Value As Float)
+
+  If opt Then Return
+  $vol = Value
+  LecDra($resdr!code)
+
+End
+
+Private Function degre_Read() As Float
+
+  Return $deg
+
+End
+
+Private Sub degre_Write(Value As Float)
+
+  If opt Then Return
+  $deg = Value
+  LecDra($resdr!code)
+
+End

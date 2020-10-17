@@ -324,15 +324,10 @@ End
 
 Public Sub Coldetail_Activate()
 
-  Dim hForm As ModifCom
+  Dim hForm As Commande1
 
-  hForm = New ModifCom(Coldetail.Item[0], Colbl.current[0], Coldetail.Item[1], Coldetail.Item[4], "Reception")
-  If hForm.IsLocked() = False Then
-    hForm.Showmodal
-    skey = Colbl.current[0]
-    recup_bl()
-    skey = ""
-  Endif
+  hForm = New Commande1(Null, Coldetail.Item[0], Colbl.current[0], LDate(Coldetail.Item[1]))
+  hForm.Show
 
 End
 
@@ -664,7 +659,7 @@ Public Sub Gen_ecr(View As Boolean)
                   If ccd.drsurfac Then
                     totalht = Format(utils.totobs([totalht, Str(ccd.droit)]), "0.00")
                   Endif
-                  creadra(ccd, Ligbl!art_code, Ligbl!qte, Ligbl!daterecpt, Ligbl!numrecpt, Ligbl!nligne, Ligbl!art_deg, Ligbl!art_dra)
+'                  creadra(ccd, Ligbl!art_code, Ligbl!qte, Ligbl!daterecpt, Ligbl!numrecpt, Ligbl!nligne, Ligbl!art_deg, Ligbl!art_dra)
                 Endif
               Endif
               Fam = Ligbl!art_fam
@@ -1273,29 +1268,6 @@ Public Sub DateChooser1_Activate()
 
 End
 '*******************************traitement sur les options****************************************
-Private Sub creadra(ccd As Calculdroit, nart As String, qte As String, dte As Date, nbl As String, nlig As String, degre As Float, code As String)
-  
-  Dim res As Result
-  
-  utils.db.Begin
-  res = utils.db.Create("Fiches_ligregie")
-  res!dtmouv = dte
-  res!num = nbl
-  res!numlig = nlig
-  res!type = "E"
-  res!codeart = nart
-  res!coderegie = code
-  res!qte = qte
-  res!volume = ccd.vol
-  res!degres = degre
-  res!volumeap = ccd.volap
-  res!cloture = False
-  res.Update
-  utils.db.Commit
-  If ccd.suspendu Then $bvign = True
-
-End
-
 Private Sub totalconsigne(dte As Date, numbl As String, numfr As String)
   
   Dim res, respar, rescons As Result

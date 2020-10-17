@@ -977,25 +977,6 @@ Public Sub ToolButton5_Click()
 
 End
 
-Public Sub Menu78_Click()
-
-  If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
-    Btunnel = Utils.ControlTunnel()
-    If Not Btunnel Then
-      Message.Error("Problème de réplication ! Saisie de document impossible.")
-      Return
-    Endif
-  Endif
-  Receipt.showModal()
-
-End
-
-Public Sub Blm_Click()
-
-  Menu78_Click()
-
-End
-
 Public Sub Menu79_Click()
 
   If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
@@ -1026,7 +1007,7 @@ Public Sub Menu88_Click()
     Endif
   Endif
 
-  Commande.showModal()
+  Commande1.show()
 
 End
 
@@ -1036,25 +1017,6 @@ Public Sub com_Click()
 
 End
 
-Public Sub Menu89_Click()
-
-  If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
-    Btunnel = Utils.ControlTunnel()
-    If Not Btunnel Then
-      Message.Error("Problème de réplication ! Saisie de document impossible.")
-      Return
-    Endif
-  Endif
-
-  Receipta.showModal()
-
-End
-
-Public Sub Bla_Click()
-
-  Menu89_Click()
-
-End
 
 Public Sub Menu90_Click()
 
@@ -1524,20 +1486,6 @@ End
 Public Sub lblCom_MouseUp()
 
   Menu88_Click()
-  Stop Event
-
-End
-
-Public Sub lblRcptM_MouseUp()
-
-  Menu78_Click()
-  Stop Event
-
-End
-
-Public Sub lblRcptA_MouseUp()
-
-  Menu89_Click()
   Stop Event
 
 End
@@ -2365,21 +2313,6 @@ Public Sub Menu299_Click()
 
 End
 
-
-Public Sub Menu301_Click()
-
-  If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
-    Btunnel = Utils.ControlTunnel()
-    If Not Btunnel Then
-      Message.Error("Problème de réplication ! Saisie de document impossible.")
-      Return
-    Endif
-  Endif
-
-  ModifBR.showModal()
-
-End
-
 Public Sub Menu302_Click()
 
   Dim Myform As Etiqcasier
@@ -2621,7 +2554,7 @@ Public Sub Menu300_Click()
 
 End
 
-Public Sub ToolButton9_Click()
+Public Sub rglmt_Click()
 
   SaiReg.ShowModal
 

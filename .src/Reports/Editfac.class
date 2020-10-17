@@ -33,7 +33,7 @@ Public Sub _new(vfac As ObjFac)
   If vfac.entete Then
     If vfac.adrlogo Then
       Me.Reportadresse.Children.Clear
-      Me.Reportadresse.Border = ReportBorder = [""]
+      Me.Reportadresse.Border = ReportBorder[""]
       Me.Reportadresse.Width = "0mm"
       Me.ReportImage1.Width = "90mm"
       Me.ReportImage1.Image = Image.Load(Start.LocalSettings["/Soc" & Start.Societe & "/Logo2"])

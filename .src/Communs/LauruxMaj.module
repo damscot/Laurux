@@ -5100,6 +5100,41 @@ end_utf8:
   Start.LocalSettings.Save
   Start.LocalSettings.Reload
   
+  'Modifications des achats
+  Try utils.db.Exec("ALTER TABLE Fiches_Materiels ADD dt datetime")
+  res = Utils.db.Exec("SELECT * FROM Fiches_Materiels")
+  If res.Available Then
+    Repeat
+      Try Utils.db.Exec("UPDATE Fiches_Materiels SET dt =&1 WHERE mat_serie = &2 AND mat_code=&3", LDate(res!mat_ddate).G, res!mat_serie, res!mat_code)
+    Until res.MoveNext()
+  Endif
+  Try utils.db.Exec("ALTER TABLE Fiches_Materiels DROP mat_ddate")
+  Try utils.db.Exec("ALTER table Fiches_Materiels CHANGE dt mat_ddate datetime")
+  'création de la table des tarifs à changer
+  Try Utils.db.Exec("CREATE TABLE Fiches_TarTemp" &
+   " (art VarChar(15) NOT NULL," &
+   "temp_type integer DEFAULT 0," &
+   "code VarChar(10)," &
+   "temp_coef DECIMAL(7,4)," &
+    "PRIMARY KEY (art,temp_type,code)) ENGINE=InnoDB")
+  'Modification des CHAR en DECIMAL
+  val = "Fiches_Ligrecpt"
+  For $i = 0 To 1
+    Utils.db.Exec("UPDATE " & val & " SET qte =  REPLACE(qte,',','.'),pbht =  REPLACE(pbht,',','.'),rm =  REPLACE(rm,',','.'),paht =  REPLACE(paht,',','.'),frais =  REPLACE(frais,',','.'), prvt =  REPLACE(prvt,',','.'),pattc =  REPLACE(pattc,',','.')")
+    Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY qte DECIMAL(9,3)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY pbht DECIMAL(12,3)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY rm DECIMAL(6,2)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY paht DECIMAL(12,3)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY frais DECIMAL(12,3)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY prvt DECIMAL(12,3)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY pattc DECIMAL(12,3)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " ADD txconv DECIMAL(10,3)")
+    Try utils.db.Exec("UPDATE " & val & ",Fiches_Art SET txconv= art_txconv WHERE art_code = code")
+    val = "Fiches_Ligcom"
+  Next
+  val = Null
+  $i = 0
+  
   'création de la table Fiches_Reglement
   If Not Utils.db.Tables.Exist("Fiches_Reglements") Then
     pb = New ProgBar("Gestion des réglements", 9)
