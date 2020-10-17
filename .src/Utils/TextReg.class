@@ -8,7 +8,7 @@ Public Enum commence_par, fini_par, contient
 
 'variables publics
 Public dte As New LDate As "dte"
-Public lke As Integer = contient      ''Indique à la requete comment doit se comporter le LIKE quand recherche = True
+Public lke As Integer = contient      ''Indique à la requete comment doit se comporter le LIKE quand recherche = True avec les constantes commence_par, fini_par, contient ce dernier étant par défaut 
 'variables privées
 Private $value As Float
 Private $text As String
@@ -48,8 +48,9 @@ Property Text As String     ''gére la valeur alfa de l'objet
 Property recherche As Boolean   ''si on ouvre une fenetre de recherche
 Property conteneur As Object    ''on passe le conteneur dans lequel on veut mettre la fenêtre
 Property condition As String        ''si on veut rajouter une condition à la requete
-Property RechX As Float
-Property RechY As Float
+Property RechX As Float             ''X de la fenetre de recherche
+Property RechY As Float             ''Y de la fenetre de recherche
+Property Champ As String[]
 
 Public Sub _new()
 
@@ -94,11 +95,12 @@ Public Sub butb_keypress()
       Endif
       
     Case Key.Enter, Key.Return, Key.Tab
-      If $rech Then
+      If $rech And If Object.IsValid($grd) Then
+        Try $win.Delete
         If $grd.Rows.Max > -1 Then
           Me.Text = $grd[0, 0].Text
         Endif
-        Try $win.Delete
+        Me.SetFocus
       Endif
       
   End Select
@@ -147,14 +149,14 @@ Public Sub butb_gotfocus()
   $text = Me.Editor.Text
   $textesc = Me.Editor.Text
   If Not Object.IsValid($win) And $rech Then
-    If Object.IsValid($objp) Then $win = New Window($objp) As "win" Else $win = New Window As "win"
+    If Object.IsValid($objp) Then $win = New Window($objp) As "win" Else $win = New Window(Me) As "win"
     $win.x = $x
-    $win.Y = $y
+    If $y = -1 Then $win.Y = Me.y Else $win.Y = $y
     $win.Border = False
-    $win.Background = Color.Black
-    '$win.AutoResize = True
+'    $win.Background = Color.Black
+'    $win.AutoResize = True
     $grd = New GridView($win) As "butb"
- '   $grd.AutoResize = True
+'    $grd.AutoResize = True
     $grd.Padding = 4
     $grd.Background = Color.White
     $grd.Columns.Count = $champ.Count
@@ -241,7 +243,8 @@ End
 Private Sub Text_Write(Value As String)
 
   If $numerique Then
-    If IsNumber(value) Then
+    If IsNumber(value) Or IsNumber(Replace(value, ".", ",")) Then
+      value = Replace(value, ".", ",")
       $value = Val(value)
     Else
       $value = 0
@@ -490,3 +493,28 @@ Private Sub affgrd()
   
 End
 
+Private Function Champ_Read() As String[]
+
+  Dim value As New String[]
+  Dim i As Integer
+  
+  If Not $fichier Then Return Null
+  value.Add($fichier)
+  For i = 0 To $champ.Max
+    value.Add($champ[i])
+  Next
+  Return value
+
+End
+
+Private Sub Champ_Write(Value As String[])
+
+  Dim i As Integer
+  
+  $champ = New String[]
+  $fichier = value[0]
+  For i = 1 To value.Max
+    $champ.Add(value[i])
+  Next
+  
+End
