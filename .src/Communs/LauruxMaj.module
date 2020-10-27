@@ -5580,6 +5580,7 @@ end_utf8:
       For Each txt In Split(rResult!doc2, ",")
         If IsNull(txt) Then Continue
         If txt = basename Then Continue
+        If txt = rResult!code Then Continue
         rReq = Utils.db.Exec("Select * From Fiches_Tag where tag = &1", txt)
         If rReq.Available Then
           Try Utils.db.Exec("INSERT INTO Docs_Tag (doc_lind, tag_lind) values (&1,&2)", r2Result!lind, rReq!lind)
