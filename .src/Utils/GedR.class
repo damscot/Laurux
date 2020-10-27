@@ -64,9 +64,9 @@ Public Sub SelectAllFil_Click()
   Res = tr.GetAllFiltered()
   If Res.Available
     Repeat
-      i = Selected.Find(Res!lind)
+      i = Selected.Find(Res!doc_lind)
       If i = -1 Then
-        Selected.Add(Res!lind)
+        Selected.Add(Res!doc_lind)
       Endif
     Until Res.MoveNext()
   Endif
@@ -83,7 +83,7 @@ Public Sub DeSelectAllFil_Click()
   Res = tr.GetAllFiltered()
   If Res.Available
     Repeat
-      i = Selected.Find(Res!lind)
+      i = Selected.Find(Res!doc_lind)
       If i <> -1 Then
         Selected.Remove(i)
       Endif
@@ -200,11 +200,12 @@ Sub Filter_Calc()
     If filter <> "" Then
       filter &= " and "
     Endif
+    filter &= "("
     Tags = Split(TextBox1.Text, ",")
     For Each Tag In Tags
-      filter &= "tag like \"%" & Tag & "%\"" & " or "
+      If Not IsNull(Tag) Then filter &= "tag like \"%" & Tag & "%\"" & " or "
     Next
-    filter = Left(filter, Len(filter) - 4)
+    filter = Left(filter, Len(filter) - 4) & ")"
   Endif
   
   If filter <> "" Then
@@ -225,11 +226,11 @@ Public Sub Update_Req()
   
   Col = New Collection
   
-  Req = "select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags FROM Docs_Ged left join Docs_Tag on lind=doc_lind Left join Fiches_Tag as t on t.lind = tag_lind"
+  Req = "select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag left join Docs_Tag as t on lind=t.tag_lind left join Docs_Ged as d on d.lind=t.doc_lind"
   Res = Utils.db.Exec(Req)
   If Not Res.Available Then Return
   k = "- idx -"
-  prop = New ObjProp(Res.Fields["lind"], k)
+  prop = New ObjProp(Res.Fields["doc_lind"], k)
   Col.Add(prop, k)
   k = "----  code  ----"
   prop = New ObjProp(Res.Fields["code"], k)
@@ -454,6 +455,46 @@ Public Sub SupprimerTags_Click()
   PB.Close()
   
   PB_Epuration()
+  Update_Req()
+
+End
+
+Public Sub AjoutTags_Click()
+
+  Dim lb As LBox
+  Dim cancel As Boolean
+  Dim trans As LTrans
+  Dim seltags As String[]
+  Dim idx As String
+  Dim tag As String
+  Dim PB As ProgBar
+  Dim ged As LGed
+
+  If Selected.Length <= 1 Then
+    Message.Error("L'ajout de tags multiple necessite la selection de plusieurs documents!\nSinon éditez directement le champ tags du document.")
+    Return
+  Else
+    If Message.Warning("Cet outil permet pour la liste des documents selectionnés\nd'ajouter un certain nombre de tags.\nAttention cette opération est définitive.", "Annuler", "Continuer") = 1 Then Return
+  Endif
+  
+  trans = New LTrans
+  lb = New LBox("Veuillez sélectionner les tags à ajouter\nIls seront ajouté pour l'ensemble des documents sélectionné.", Null, Null, trans, "", LBox.ListEditor)
+  cancel = lb.ShowModal()
+  If cancel Or IsNull(trans.List) Then Return
+  seltags = trans.List
+  If seltags.count = 0 Then Return
+  
+  PB = New ProgBar("Ajout Tags", seltags.count, Null, True, "", True)
+  PB.Show()
+  For Each idx In Selected
+    For Each tag In seltags
+      ged = New LGed(Null, idx)
+      ged.AddTag(tag)
+    Next
+    If PB.Avancement("Ajout Tags pour doc" & idx, 5) Then Break
+  Next
+  PB.Close()
+  
   Update_Req()
 
 End
