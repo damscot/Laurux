@@ -89,7 +89,6 @@ Public Sub calcul(Optional nom As String)     ''On calcul la facture et on fait 
   $schoix = "B"
   If Me.choix = ObjFac.archive Then $schoix = "F"
 
-  Me.imp.FullPage = False
   Me.resent.MoveFirst
   For Each lg In Me.ligne
     vri = [" ", " ", " ", " ", " ", " ", " ", " "]

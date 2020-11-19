@@ -441,7 +441,6 @@ Public Sub calcul(Optional nom As String)     ''nom contient la nom du client si
   monttva = 0
   
 '  If choix = ObjFac.magasin Then Return      'facture magasin
-  imp.FullPage = True
   Select Case choix
     Case ObjFac.archive
       resent = utils.db.Exec("SELECT " & entetef & " FROM Fiches_HistoFac" & tab & " WHERE numfac=&1", $numfac)

@@ -31,11 +31,10 @@ Public Sub _new(cal As ObjFacB)
   If Not cal.borientation() Or Not cal.blchif Then Return
   Me.lgint += 80
   ''on modifi la présentation des factures + rajout des consignes et droits
-  Me.Padding = ReportPadding["Left:3mm;Right:3mm"]
+  Me.Padding = ReportPadding["Left:5mm;Right:5mm;Bottom:5mm;Top:5mm"]
   Me.ReportPanel1.Expand = True
   Me.expb.Expand = True
   Me.expn.Expand = False
-  Me.Padding = ReportPadding[""]
   Me.repligne.Expand = False
   Me.repligne.Autoresize = True
   Me.repligne.DataCount = cal.ligne.Count
