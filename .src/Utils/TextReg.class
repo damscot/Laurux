@@ -71,6 +71,7 @@ Public Sub butb_click()
   If Object.IsValid($grd) And If Last.tag = $grd.Tag Then
     If Last.row = -1 Then Return
     Me.Text = $grd[Last.Row, 0].Text
+    Desktop.SendKeys("[Return]")
   Else
     $value = 0
     Me.text = ""
