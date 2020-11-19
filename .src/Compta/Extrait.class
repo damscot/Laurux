@@ -52,6 +52,7 @@ Private Cresult As Result
 Private Compt As String
 Private Centr As Boolean
 Private jour As New LDate
+Private $journal As String
 Private Datj As LDate
 Private intitule As String
 Private son As Integer = Start.Son
@@ -346,7 +347,7 @@ Public Sub cpt_LostFocus()
 
   cpt_LF()
   If b = 0 Then compteman()
-  If b <> 0 Then
+  If b <> 0 And cpt.Text Then
     cpt.SetFocus
     cpt.Select
     b = 0
@@ -512,6 +513,7 @@ Public Sub affichage()
   Dim tot As Float
   Dim Tabp As String = "Docs_Compta"
   Dim dt As LDate
+  Dim jour As String
 
   Tab1 = "Ctrln"
   With Utils
@@ -599,6 +601,7 @@ Public Sub affichage()
 
     If Compt = "5" Then
       Compt = ""
+      Centr = rrResult!cent_cc
       If Centr = True Then
         Ctrl.Value = True
       Else
@@ -617,15 +620,29 @@ Public Sub affichage()
         Endif
       Endif
     Endif
+    
     rResult = $lstex.resext
-
     If rResult.Available Then
+    If Centr Then
+      Utils.db.Exec("drop Table IF exists " & Tab1 & "")
+      Utils.db.Exec("CREATE TABLE " & Tab1 &
+        "(compte Char(8) NOT NULL," &
+        "intitule Char(30)," &
+        "jour Char(2)," &
+        "mois Char(6) NOT NULL," &
+        "libelle Char(30) ," &
+        "dte Integer ," &
+        "montantd Decimal(12,2)," &
+        "montantc Decimal(12,2)," &
+        "PRIMARY KEY (compte, mois))" & "ENGINE = MYISAM")
+    Endif
+      
       rResult.MoveFirst
       Repeat
         dt = New LDate(rResult!dte)
         If Ctrl.Value = False Or detail.Value = True Then
  '         If dt.Apres(dte2) and Then
-'          If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
+          If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
             pResult = Utils.db.Exec("SELECT * FROM " & Tabp & " WHERE code = &1", rResult!numero)
             Colcli.Add(rResult.Index, rResult.Index)
             If presult.Available Then
@@ -651,17 +668,17 @@ Public Sub affichage()
             Colcli.Item[10] = rResult!tresorerie
             DebP = DebP + rResult!montantd
             CredP = CredP + rResult!montantc
-'          Else
-'            If .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten0.Text) Then
-'              DebHP = DebHP + rResult!montantd
- '             CredHP = CredHP + rResult!montantc
-  '          Endif
-'          Endif
+          Else
+            If .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten0.Text) Then
+              DebHP = DebHP + rResult!montantd
+              CredHP = CredHP + rResult!montantc
+            Endif
+          Endif
         Else
           If dt.Apres(dte1) And dt.Avant(dte2) Then
  '         If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
-            jour = rResult!jour
-            Datj = dt.L
+            $journal = rResult!jour
+            Datj = New LDate(dt.L)
             montantd = rResult!montantd
             montantc = rResult!montantc
             centralisation()
@@ -733,10 +750,10 @@ Public Sub Centralisation()
   Dim jrs1 As String
 
   Libel = "Centralisation"
-  jrs = Date(Right$(Datj, 4), Format$(Val(Mid$(Datj, 4, 2)), "00"), 01)
-  $Mois = Right$(Datj, 4) & Mid$(Datj, 4, 2)
+  jrs = Date(Right$(Datj.L, 4), Format$(Val(Mid$(Datj.L, 4, 2)), "00"), 01)
+  $Mois = Right$(Datj.L, 4) & Mid$(Datj.L, 4, 2)
   Jrs1 = finmois(jrs)
-  Jrs1 = Right$(Datj, 4) & Format$(Val(Mid$(Datj, 4, 2)), "00") & Jrs1
+  Jrs1 = Right$(Datj.L, 4) & Format$(Val(Mid$(Datj.L, 4, 2)), "00") & Jrs1
   With utils
     CResult = Utils.db.Exec("SELECT * FROM " & Tab1 & " WHERE compte = &1 and mois = &2", cpt.Text, $Mois)
     If CResult.Available Then
@@ -744,7 +761,7 @@ Public Sub Centralisation()
       Mnt1 = montantc + cResult!montantc
       Utils.db.Exec("Update " & Tab1 & " set montantd = &2, montantc = &3, dte = &5 Where compte = &1 and mois = &4", cpt.Text, Mnt, Mnt1, $Mois, Jrs1)
     Else
-      Utils.db.Exec("INSERT INTO " & Tab1 & "(compte,intitule,dte,libelle, montantd, montantc, jour, mois) VALUES (&1, &2, &3, '" & Libel & "', &5, &6, &7, &8)", cpt.Text, intitule, Jrs1, Jrs1, montantd, montantc, jour, $Mois)
+      Utils.db.Exec("INSERT INTO " & Tab1 & "(compte,intitule,dte,libelle, montantd, montantc, jour, mois) VALUES (&1, &2, &3, &4, &5, &6, &7, &8)", cpt.Text, intitule, Jrs1, Libel, montantd, montantc, $journal, $Mois)
     Endif
   End With
 
@@ -1284,6 +1301,7 @@ Public Sub butedit_Click()
   prt.OutputFile = Filename
   coul = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
   $rpt = New Report
+  $rpt.Padding = ReportPadding["Left:5mm;Right:5mm;Bottom:5mm;Top:5mm"]
   vb = New ReportVBox($rpt)
   vb.Fixed = True
   vb.Autoresize = True

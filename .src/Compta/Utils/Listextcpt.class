@@ -102,7 +102,7 @@ Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(
             res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND compte=&3 AND provisoire=False  LIMIT 1", $brn[i].dteinf.D, dte.D, cpt)
           Endif 
           If res1.Available Then
-            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", $dtei.G, $brn[i].dteinf.D, dte.D, cpt)
+            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", DateAdd($dtei.G, gb.Day, -1), $brn[i].dteinf.D, dte.D, cpt)
             dte = dtsup(i)
             req = Utils.db.Subst("SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.D, cpt) & req
           Else
