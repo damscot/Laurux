@@ -67,7 +67,7 @@ Public Sub Envoi2b(Email As String, sujet As String, Corps As String, piece As S
         Exec ["evolution", "mailto:" & Email & "?subject=" & sujet & "\\&body=" & corps & "\\&attach=" & piece]
 
       Case "Kmail"
-        Exec ["kmail -s " & sujet & " --attach " & piece & " --msg " & corps & " " & Email]
+        Shell "kmail -s " & "\"" & sujet & "\"" & " --attach " & piece & " --body " & "\"" & corps & "\"" & " " & Email
 
     End Select
   Else
@@ -104,7 +104,7 @@ Public Sub Envoi3(Email As String, sujet As String, Corps As String, piece As St
         Exec ["evolution", "mailto:" & Email & "?subject=" & sujet & "\\&body=" & corps & "\\&attach=" & piece]
 
       Case "Kmail"
-        Exec ["kmail -s " & sujet & "--attach " & piece & "--msg " & corps & " " & Email]
+        Shell "kmail -s " & "\"" & sujet & "\"" & " --attach " & piece & " --body " & "\"" & corps & "\"" & " " & Email
 
     End Select
   Else
@@ -147,7 +147,9 @@ End
 Public Sub Envoi2(Email As String, sujet As String, Corps As String, piece As String, Optional piece2 As String, Optional piece3 As String[])
 Dim Pjointe, piece4 As String
 Dim i As Integer
+
   If Not IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/Prgmail"]) Then
+
     Select Case Start.LocalSettings["/Soc" & Start.Societe & "/Prgmail"]
       Case "Thunderbird"
         corps = Replace$(corps, ",", "%2C")
@@ -187,8 +189,7 @@ Dim i As Integer
         Exec ["evolution", "mailto:" & Email & "?subject=" & sujet & "\\&body=" & corps & "\\&attach=" & piece]
 
       Case "Kmail"
-        Exec ["kmail -s " & sujet & " --attach " & piece & " --msg " & corps & " " & Email]
-
+        Shell "kmail -s " & "\"" & sujet & "\"" & " --attach " & piece & " --body " & "\"" & corps & "\"" & " " & Email
     End Select
   Else
     Message.Warning("Le gestionnaire de messagerie n'est pas défini dans les préférences !")
