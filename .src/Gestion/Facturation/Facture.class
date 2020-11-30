@@ -8268,9 +8268,9 @@ Public Sub Coldetail_MouseUp()
   'la maintenance des options va devenir de plus en plus difficile et les merges aussi
   'il faut vraiment réfléchir à la manière de gérer ca dans le futur.
   If $soption = "B" Or $soption = "T" Then i = 2 Else i = 0
-  If Not IsNull(Coldetail.item[21 + i]) And If Mouse.Right Then Message.Info("Référence longue = " & Coldetail.item[21 + i])
-  If Coldetail.item[1] = "PJ" And If Mouse.right Then 
-    Pjointe = piece2 & "/" & Coldetail.item[2] 
+  If Not IsNull(Coldetail.Current[21 + i]) And If Mouse.Right Then Message.Info("Référence longue = " & Coldetail.Current[21 + i])
+  If Coldetail.Current[1] = "PJ" And If Mouse.right Then 
+    Pjointe = piece2 & "/" & Coldetail.Current[2] 
     Visualiseur.Prog(Pjointe)
   Endif
   

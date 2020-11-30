@@ -341,7 +341,7 @@ Public Sub Coldetail_MouseUp()
 
   Dim Rentcom As Result
 
-  If Coldetail.Item = Null Then Return
+  If Coldetail.Current = Null Then Return
   
   If Mouse.Right Then
     If Coldetail.count > 0 Then
@@ -351,11 +351,11 @@ Public Sub Coldetail_MouseUp()
           Message.Info(Rentcom!commentaire)
           'Balloon.Warning((Rentcom!commentaire), Coldetail)
         Endif
-        sclient2 = Coldetail.Item[0]
+        sclient2 = Coldetail.Current[0]
       Endif
     Endif
   Else
-    sclient2 = Coldetail.Item[0]
+    sclient2 = Coldetail.Current[0]
   Endif
 
 End
