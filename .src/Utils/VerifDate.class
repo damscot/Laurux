@@ -18,8 +18,8 @@ Public Sub _new()
   Dim resacq As Result
  
   $opt = Utils.Option()
-  If $opt = "B" Or $opt = "T" Then $respar = Utils.db.Exec("SELECT dtepc,dtepec,arrete FROM Fiches_Parametres") Else $respar = Utils.db.Exec("SELECT dtepc,dtepec FROM Fiches_Parametres") 
-  DateCom = New LDate($respar!dtepc)
+  If $opt = "B" Or $opt = "T" Then $respar = Utils.db.Exec("SELECT dtepc,dtepec,arrete,dtefedec FROM Fiches_Parametres") Else $respar = Utils.db.Exec("SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres") 
+  DateCom = New LDate($respar!dtefedec)
   DateGes = New LDate("01." & $respar!dtepec)
   
   If $opt = "B" Or $opt = "T" Then
