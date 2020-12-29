@@ -5038,6 +5038,7 @@ Public Sub Maj369()
       Goto end_utf8
     Endif
   Endif
+  
   rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` ENGINE=InnoDB;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion MYISAM -> InnoDB Engine", rReq.Count)
@@ -5049,11 +5050,11 @@ Public Sub Maj369()
     PB.Close()
   Endif
   PB.Close()
-  
   rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Schema", 1)
     PB.Show()
+    Utils.db.Exec("ALTER DATABASE Laurux" & Start.Societe & " DEFAULT COLLATE utf8_unicode_ci")
     Repeat
       PB.Avancement(rReq!req, 1)
       Try Utils.db.Exec(rReq!req)

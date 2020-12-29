@@ -49,6 +49,7 @@ Public Sub _new()
     Endif
     If $con_ok Then
       Utils.db.Open
+      Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8_unicode_ci")
     Else
       Message.Warning("Le tunnel SSH n'a pu être établi")
     Endif

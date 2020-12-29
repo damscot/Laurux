@@ -164,6 +164,7 @@ Public Sub Form_Open()
   Endif
   If $con_ok Then
     Try Utils.db.Open
+    Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8_unicode_ci")
     'function de restauration a partir de la ligne de commande
     'a n'utiliser que pour des tests
     Start.Restore_Args()

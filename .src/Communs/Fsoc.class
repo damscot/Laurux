@@ -568,6 +568,7 @@ Public Sub Button4_Click()
     Utils.db.Open
     Utils.db.exec("SET NAMES 'utf8'")
     If Not IsNull(Utils.db.Login) Then Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode= NO_ENGINE_SUBSTITUTION " & "; \"" Wait
+    Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8_unicode_ci")
     Fmenu.text = "Laurux : " & "Société " & Code.Text & " " & Civilite.text & " " & intitule.Text
     Start.UnLock()
     Try Me.Close
@@ -604,6 +605,7 @@ Public Sub Soclist_Click()
     Utils.db.exec("SET NAMES 'utf8'")
     cs = Soclist.Item[0]
     If Not IsNull(Utils.db.Login) Then Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode= NO_ENGINE_SUBSTITUTION " & "; \"" Wait
+    Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8_unicode_ci")
     Maj_Zones()
     soc = code.Text
     Start.LocalSettings["/Soc"] = soc

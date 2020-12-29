@@ -1491,6 +1491,7 @@ Public Sub Fill_DataBase(Tab As String, filepath As String)
   
   Kill fTemp
   Rmdir sTemp
+  Utils.db.Exec("ALTER DATABASE " & Tab & " DEFAULT COLLATE utf8_unicode_ci")
   
 End
 

@@ -9,32 +9,33 @@ Private Valid As Integer[][]
 Private Datain As String[][]
 Private Found As Boolean[]
 
+Private Enum tabl, format, name, type, long, def, ValNul, collation, PrimK, Valide
+Private EntMysql As String[] = ["Table", "Format", "Champ", "Type", "Long.", "Def.", "Null", "Collation", "Clée", "Valid."]
 
 Public Sub _new(dbconnection As DB_Connection)
+  Dim i As Integer
   
   DB_Con = dbconnection
 
   GridView1.Header = GridView.Both
   GridView1.ScrollBar = Scroll.Both
-  GridView1.Columns.Count = 9
-  GridView1.Columns[0].Text = "Table"
-  GridView1.Columns[0].Width = 180
-  GridView1.Columns[1].Text = "Format"
-  GridView1.Columns[1].Width = 100
-  GridView1.Columns[2].Text = "Champ"
-  GridView1.Columns[2].Width = 180
-  GridView1.Columns[3].Text = "Type"
-  GridView1.Columns[3].Width = 100
-  GridView1.Columns[4].Text = "Long."
-  GridView1.Columns[4].Width = 50
-  GridView1.Columns[5].Text = "Def."
-  GridView1.Columns[5].Width = 50
-  GridView1.Columns[6].Text = "collation"
-  GridView1.Columns[6].Width = 150
-  GridView1.Columns[7].Text = "Prim."
-  GridView1.Columns[7].Width = 50
-  GridView1.Columns[8].Text = "Valid"
-  GridView1.Columns[8].Width = 50
+  GridView1.Columns.Count = EntMysql.Count
+  
+  For i = 0 To EntMysql.Max
+    GridView1.Columns[i].Text = EntMysql[i]
+    GridView1.Columns[i].Alignment = Align.Center
+  Next
+
+  GridView1.Columns[tabl].Expand = True
+  GridView1.Columns[format].Width = 100
+  GridView1.Columns[name].Width = 180
+  GridView1.Columns[type].Width = 100
+  GridView1.Columns[long].Width = 50
+  GridView1.Columns[def].Width = 50
+  GridView1.Columns[collation].Width = 150
+  GridView1.Columns[PrimK].Width = 50
+  GridView1.Columns[Valide].Width = 50
+  GridView1.Columns[ValNul].Width = 80
   
 End
 
@@ -61,7 +62,8 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
   Dim $hfileout As File
   Dim $hfilein As File
   Dim $found As Boolean
-  
+  Dim res As Result
+  Dim obj As Object
   GridView1.Clear()
   
   Data = New String[][]
@@ -85,24 +87,23 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
   
   For Each $table In DB_Con.Tables
     $primary = $table.PrimaryKey
+    res = Utils.db.Exec("DESCRIBE " & $table.Name)
     For Each $field In $table.Fields
-      $curline = New String[]
-      $curline.Add($table.Name) '#0
-      $curline.Add($table.type) '#1
-      $curline.Add($field.Name) '#2
-      $curline.Add($field.type) '#3
-      $curline.Add($field.Length) '#4
-      $curline.Add($field.Default) '#5
-      $curline.Add($field.Collation) '#6
-      If $primary.Exist($field.Name) Then
-        $curline.Add("*") '#7
-      Else
-        $curline.Add("") '#7
-      Endif
+      $curline = New String[EntMysql.Count]
+      $curline[tabl] = $table.Name '#0
+      $curline[format] = $table.Type '#1
+      $curline[name] = $field.Name '#2
+      $curline[type] = res!Type '#3
+      $curline[long] = $field.Length '#4
+      $curline[def] = res!Default '#5
+      $curline[ValNul] = res!Null
+      $curline[collation] = $field.Collation '#7
+      $curline[PrimK] = res!Key '#8
 
       'Valid Flag
-      $curline.Add("?") '#8
-      $valid = [-1, -1, -1, -1, -1, -1, -1, -1, -1]
+      $curline[Valide] = "?" '#9
+      $valid = New Integer[EntMysql.Count]
+      $valid.Fill(-1)
       $expline = New String[]
       $expline = $curline.Copy()
       
@@ -111,13 +112,16 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
         $found = False
         For Each $elem In Datain
           'On recherche dans les données de référence
-          If $table.Name = $elem[0] Then
-            If $field.Name = $elem[2] Then
+          If Trim($table.Name) = Trim($elem[tabl]) Then
+            If Trim($elem[Name]) = "supprimee" Then
+              Print "supprimee"
+            Endif
+            If Trim($field.Name) = Trim($elem[Name]) Then
               Found[$j] = True
               $found = True
               $k = 0
               'on verifie tous les champs
-              While $k < 9
+              While $k < EntMysql.Count
                 If $curline[$k] = $elem[$k] Or $elem[$k] = "?" Then
                   $valid[$k] = 1
                 Else
@@ -147,6 +151,7 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
         Print #$hfileout, $curline.Join(";")
       Endif
       $i = $i + 1
+      res.MoveNext()
     Next
   Next
 
@@ -177,6 +182,7 @@ Public Sub Refresh_Data_Missing() As Boolean
   Dim elem As String[]
   Dim $i As Integer = 0
   Dim $j As Integer = 0
+  Dim $valid As New Integer[]
   
   GridView1.Clear()
 
@@ -188,7 +194,9 @@ Public Sub Refresh_Data_Missing() As Boolean
       If Found[$j] = False Then
         Data.Add(elem)
         Data_Expected.Add(elem)
-        Valid.Add([2, 2, 2, 2, 2, 2, 2, 2, 2])
+        $valid = New Integer[EntMysql.Count]
+        $Valid.Fill(2)
+        Valid.Add($valid)
         $i = $i + 1
       Endif
       $j = $j + 1
@@ -226,33 +234,33 @@ Public Sub GridView1_Data(Row As Integer, Column As Integer)
 
   If Valid[Row][Column] = 1 Then
     If Not IsNull(Datain) Then
-      If Column = 8 Then
+      If Column = valide Then
         Data[Row][Column] = "OK"
       Endif
       GridView1.data.Background = Color.Green
     Endif
   Else If Valid[Row][Column] = 0 Then
     If Not IsNull(Datain) Then
-      If Column = 8 Then
+      If Column = valide Then
         Data[Row][Column] = "ERR"
       Endif
       GridView1.data.Background = Color.Red
     Endif
   Else If Valid[Row][Column] = 2 Then
     If Not IsNull(Datain) Then
-      If Column = 8 Then
+      If Column = valide Then
         Data[Row][Column] = "ABS"
       Endif
       GridView1.data.Background = Color.Pink
     Endif
   Else
     If Not IsNull(Datain) Then
-      If Column = 8 Then
+      If Column = valide Then
         Data[Row][Column] = "SUP"
       Endif
       GridView1.data.Background = Color.Orange
     Else
-      If Column = 8 Then
+      If Column = valide Then
         Data[Row][Column] = "?"
       Endif
     Endif
@@ -337,12 +345,141 @@ End
 
 Public Sub Corriger_Click()
 
+  Dim i, j As Integer
+  Dim res As Result
+  Dim req As String
+  Dim pb As ProgBar
+  Dim egn As Boolean
+  
   If IsNull(Datain) Then
     Message.Error("Vous devez d'abord lancer un contrôle ou une recherche de champ absent, pour faire cette opération!")
     Return
   Endif
   If Message.Warning("Une tentative de correction de la base de donnée va être tenté!\nUne sauvegarde préalable est indispensable!", "Annuler", "Corriger") = 1 Then Return
-
-  Message.Info("Non implementé")
-
+  
+  pb = New ProgBar("Correction de la base", Valid.Count, Null, True, "", True)
+  pb.Show
+  For i = 0 To Valid.Max
+    If pb.Avancement("Table : " & Data_Expected[i][tabl] & " Champ : " & Data_Expected[i][name]) Then Break
+    For j = 0 To EntMysql.Max
+      If Valid[i][j] = 1 Or Valid[i][j] = -1 Then Continue
+      Select Case Valid[i][j] 
+        Case 0      'on modifi les champs
+          Select Case j
+            Case format   'On teste ENGINE
+              res = Utils.db.Exec("SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2", "Laurux" & Start.Societe, Data_Expected[i][tabl])
+              If res!ENGINE <> Data_Expected[i][J] Then
+                Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & "ENGINE=" & Data_Expected[i][J])
+              Endif
+            
+            Case type
+              Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type])
+            
+            Case def
+              Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " DEFAULT " & Data_Expected[i][def])
+            
+            Case ValNul 
+              If Data_Expected[i][ValNul] = "YES" Then
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NULL")
+              Else
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NOT NULL")
+              Endif
+            
+            Case collation
+              'on teste collation par default sur la table 
+              res = Utils.db.Exec("SELECT TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2", "Laurux" & Start.Societe, Data_Expected[i][tabl])
+              If res!TABLE_COLLATION <> Data_Expected[i][collation] Then
+                Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " CHARACTER SET utf8 COLLATE " & Data_Expected[i][collation])
+              Endif
+              'on modifie collation sur le champ
+              Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " CHARACTER SET utf8 COLLATE " & Data_Expected[i][collation])
+            
+            Case PrimK      'on gére les clées
+              'on rajoute la clée
+              If Data_Expected[i][PrimK] = "PRI" Then
+                RecPri(Data_Expected[i][tabl])
+              Endif
+              If Data_Expected[i][PrimK] = "MUL" Then
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " ADD KEY (" & Data_Expected[i][name] & ");")
+              Endif
+              'on supprime les clées
+              If Data[i][PrimK] = "MUL" And (IsNull(Data_Expected[i][PrimK]) Or Data_Expected[i][PrimK] = "PRI") Then
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " DROP KEY " & Data_Expected[i][name])
+              Endif
+              If IsNull(Data_Expected[i][PrimK]) Or Data_Expected[i][PrimK] = "MUL" Then
+                If data[i][PrimK] = "PRI" Then
+                  RecPri(Data_Expected[i][tabl])
+                Endif
+              Endif
+          End Select
+        
+        Case 2        'on rajoute les champs
+          egn = False
+          res = Utils.db.Exec("SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2", "Laurux" & Start.Societe, Data_Expected[i][tabl])
+          If Not res.Available Then 
+            'on créer la table si besoin
+             req = "CREATE TABLE " & Data_Expected[i][tabl] & " (" & Data_Expected[i][name] & " " & Data_Expected[i][type]
+             egn = True
+         Else
+            'ou on rajoute un champ
+            req = "ALTER TABLE " & Data_Expected[i][tabl] & " ADD " & Data_Expected[i][name] & " " & Data_Expected[i][type]
+         Endif
+         If Not IsNull(Data_Expected[i][collation]) Then req &= " COLLATE " & Data_Expected[i][collation]
+         If Not IsNull(Data_Expected[i][def]) Then req &= " DEFAULT " & Data_Expected[i][def]
+         If Data_Expected[i][ValNul] = "NO" Then req &= " NOT NULL"
+         If egn Then req &= ") ENGINE = " & Data_Expected[i][format]
+         Utils.db.Exec(req)
+         If Data_Expected[i][PrimK] = "MUL" Then Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & "ADD KEY (" & Data_Expected[i][name] & ")")
+         If Data_Expected[i][PrimK] = "PRI" Then RecPri(Data_Expected[i][tabl], 2)
+         j = EntMysql.Max
+      End Select
+    Next
+  Next
+  
+  Finally
+    pb.Close
+    Refresh_Data()
+    Message.Warning("Continuer à travailler sur Laurux après une réparation de la base pourrait endommager vos données \n Veuillez quitter Laurux")
+  
+  Catch
+    Message.Error("Erreur " & Error.Text & " sur le fichier : " & Data_Expected[i][tabl] & " Champ : " & Data_Expected[i][name])
+    
 End
+
+Private Sub RecPri(NomTable As String, Optional vld As Integer)      ''on redefini les clées primaires sur une table
+
+  Dim i As Integer
+  Dim cle As New String[]
+  Dim ok As Boolean
+  Dim res As Result
+  
+  If vld = 2 Then 
+    'Si un champ avec une clée primaire n'existe pas on ne fait rien, uniquement en création
+    For i = 0 To Valid.Max 
+      If Data_Expected[i][tabl] = NomTable And Data_Expected[i][PrimK] = "PRI" Then
+        res = Utils.db.Exec("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2 AND COLUMN_NAME = &3", "Laurux" & Start.Societe, NomTable, Data_Expected[i][name])
+        If Not res.Available Then 
+          ok = True 
+          Break
+        Endif
+      Endif
+    Next
+  
+    If ok Then Return
+  Endif
+  
+  For i = 0 To Valid.Max
+    If Data_Expected[i][tabl] = NomTable Then
+      If Data_Expected[i][PrimK] = "PRI" Then
+        cle.Add(Data_Expected[i][name])
+        Valid[i][PrimK] = 0
+      Endif
+    Endif
+  Next
+  Try Utils.db.Exec("ALTER TABLE " & NomTable & " DROP PRIMAY KEY")  'on supprime la clée primaire si elle existe
+  If cle.Count > 0 Then
+    Utils.db.Exec("ALTER TABLE " & NomTable & " ADD PRIMARY KEY (" & cle.Join(",") & ")")
+  Endif
+  
+End
+
