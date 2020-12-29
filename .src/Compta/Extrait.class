@@ -682,11 +682,11 @@ Public Sub affichage()
             montantd = rResult!montantd
             montantc = rResult!montantc
             centralisation()
+            Aff()
           Endif
         Endif
       Until rResult.MoveNext()
     Endif
-    Aff()
     montantd = 0
     montantc = 0
     Mnt = 0
