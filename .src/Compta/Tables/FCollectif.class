@@ -212,7 +212,7 @@ Public Sub Button2_Click()
   Else
     rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE compte_cc = &1", Cdcol.Text)
     If Not rResult.Available Then
-      Utils.db.Exec("INSERT INTO " & Tab & "(compte_cc,intitule_cc, type_cc,coll, cent_cc, solde) VALUES ('" & Cdcol.Text & "', '" & Libelcol.Text & "', '" & typeco.Text & "','" & collectif & "','" & Centralise & "', '0,00')")
+      Utils.db.Exec("INSERT INTO " & Tab & "(compte_cc,intitule_cc, type_cc,coll, cent_cc, solde) VALUES ( &1, &2, &3, &4, &5, &6)", Cdcol.Text, Libelcol.Text, typeco.Text, collectif, Centralise, 0)
     Else
       If rResult!coll Then
         If rResult!intitule_cc <> libelcol.Text Then
