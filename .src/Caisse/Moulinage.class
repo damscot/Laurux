@@ -365,14 +365,14 @@ Public Sub Livre_caisse(Optional Ncaisse As String = "", Optional Statut As Stri
           Posy += 5
           pdf.Lines2(Posy)
           
-          rTkFam = Utils.db.Exec("select sum(cast(replace(l.qte,',','.') as decimal(7,2))) as totalfamqte, fam, sum(cast(replace(l.mht,',','.') as decimal(7,2))) as totalfamht, libell_fam from " & Tabl & " as l left join " & Tabe & " as e on l.numero = e.numero left join " & Tabx & " on l.fam = code_fam where l.fam is not Null and l.type = &1 and e.statut = &2 and e.date = l.date and e.suppr != 1 and e.caisse = &3 " & filtredate & " group by fam order by totalfamht", "A", Statut, rCaisse!code)
+          rTkFam = Utils.db.Exec("select sum(cast(replace(l.qte,',','.') as decimal(7,2))) as totalfamqte, fam, sum(cast(replace(l.mht,',','.') as decimal(7,2))) as totalfamht, sum(replace(l.mht,',','.') + replace(l.mtva,',','.')) as totalfamttc, libell_fam from " & Tabl & " as l left join " & Tabe & " as e on l.numero = e.numero left join " & Tabx & " on l.fam = code_fam where l.fam is not Null and l.type = &1 and e.statut = &2 and e.date = l.date and e.suppr != 1 and e.caisse = &3 " & filtredate & " group by fam order by totalfamht", "A", Statut, rCaisse!code)
           If rTkFam.Available Then
             pdf.Level2("Total ventes HT par familles", "", "", Posy)
             Posy += 5
             Repeat
               sFam = "Famille " & Left$(rTkFam!fam, 2)
               If Totventes <> 0 Then
-                pdf.Level2(Utils.Replace(rTkFam!libell_fam) & " " & Format$(Val(utils.cpoint(rTkFam!totalfamht)) / Totventes * 100, "0.00") & " %", rTkFam!totalfamht, rTkFam!totalfamqte, Posy)
+                pdf.Level2(Utils.Replace(rTkFam!libell_fam) & " " & Format$(Val(utils.cpoint(rTkFam!totalfamttc)) / Totventes * 100, "0.00") & " %", rTkFam!totalfamht, rTkFam!totalfamqte, Posy)
               Endif
               Posy += 5
               If posy > 260 Then
