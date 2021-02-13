@@ -93,7 +93,7 @@ Private Function ctrl() As Boolean      'control avant importation
   Dim strs As String[]
   Dim ligne, sperar, jo As String
   Dim err As Boolean = True
-  Dim i As Integer
+  Dim i, lgn As Integer
   Dim res As Result
   
   $stp = False
@@ -154,14 +154,23 @@ Private Function ctrl() As Boolean      'control avant importation
         TextArea1.Text &= "Ecriture N° " & strs[2] & " existe déjà \n"
         err = False
       Endif
+      If Not IsNumber(strs[2]) Then
+        TextArea1.Text &= "Numéro d'écriture " & strs[2] & " non numérique  \n"
+        err = False
+      Endif
     Endif
     'controle des n° de compte
     strs[6] = Trim(strs[6])
     strs[4] = Trim(strs[4])
     If strs[6] Then
       If Len(strs[6]) <= Textcrt.Value And IsNumber(strs[6]) Then
-         If Len(strs[6]) = Textcrt.Value Then jo = strs[6] Else jo = String(Textcrt.Value - Len(strs[6]), "0") & strs[6]
-        jo = Left(strs[4], 3) & jo
+         If Len(strs[6]) = Textcrt.Value Then
+           jo = strs[6] 
+         Else 
+           lgn = Textcrt.Value - Len(strs[6])
+           jo = String$(lgn, "0") & strs[6]
+        Endif
+        jo = Left(strs[4], 3) & jo 
       Else
         If Len(strs[6]) > Textcrt.Value Then
           TextArea1.Text &= "Compte auxiliaire " & strs[6] & " trop long - non bloquant \n"
@@ -199,7 +208,9 @@ Private Sub trat()
   Dim strs As String[]
   Dim ligne, sperar, jo As String
   Dim res, rescol, resrec, respar As Result
-  Dim i, num, numver As Integer
+  Dim i, num As Integer
+  Dim numver As String
+  Dim lgn As Integer
   
   TextArea1.Text = "**** DEBUT DE L'IMPORTATION ****  \n"
   If Checkrnum.Value Then
@@ -224,16 +235,16 @@ Private Sub trat()
     strs[2] = Trim(strs[2])
 
     If Not Checkrnum.Value Then     'on reprend les n° d'ecriture
-      If numver = 0 Then numver = Val(strs[2])
-      If numver <> Val(strs[2]) Then
+      If IsNull(numver) Then numver = strs[2]
+      If numver <> strs[2] Then
         Sha1Calc.CalcSha1("Fiches_Mvt", Str(numver))
-        numver = Val(strs[2])
+        numver = strs[2]
       Endif
       res!numero = Val(strs[2])
     Else                                              'ou on renumérote les écritures
-      If numver <> Val(strs[2]) Then
-        If numver <> 0 Then Sha1Calc.CalcSha1("Fiches_Mvt", Str(num))
-        numver = Val(strs[2])
+      If numver <> strs[2] Then
+        If Not IsNull(numver) Then Sha1Calc.CalcSha1("Fiches_Mvt", Str(num))
+        numver = strs[2]
         respar = Utils.db.Exec("SELECT numecriture FROM Fiches_Parametres")
         If IsNull(respar!numecriture) Then
           num = 1
@@ -244,16 +255,16 @@ Private Sub trat()
       Endif
       res!numero = num
     Endif
-    res!intitule = Trim(strs[5])
+    res!intitule = Left(Trim(strs[5]), 40)
     res!dte = Date(Left(strs[3], 4), Val(Mid(strs[3], 5, 2)), Val(Right(strs[3], 2)))
-    res!numdoc = Trim(strs[8])
+    res!numdoc = Left(Trim(strs[8]), 10)
     If Trim(strs[13]) Then
-      res!numlot = Trim(strs[13])
+      res!numlot = Left(Trim(strs[13]), 10)
       res!lettree = True
     Else
       res!lettree = False
     Endif
-    res!libelle = Trim(strs[10])
+    res!libelle = Left(Trim(strs[10]), 50)
     res!montantd = Val(Trim(Strs[11]))
     res!montantc = Val(Trim(Strs[12]))
     res!validee = True
@@ -277,7 +288,12 @@ Private Sub trat()
       If Len(strs[6]) > Textcrt.Value Or Not IsNumber(strs[6]) Then
         jo = strs[6]
       Else
-        If Len(strs[6]) = Textcrt.Value Then jo = strs[6] Else jo = String(Textcrt.Value - Len(strs[6]), "0") & strs[6]
+        If Len(strs[6]) = Textcrt.Value Then 
+          jo = strs[6] 
+        Else 
+          lgn = Textcrt.Value - Len(strs[6])
+          jo = String(lgn, "0") & strs[6]
+        Endif
         jo = Left(strs[4], 3) & jo
       Endif
     Else
@@ -290,7 +306,7 @@ Private Sub trat()
       res!compte = jo
     Endif
     'on regarde si collectif => si oui on cree l'enregistrement
-    resrec = Utils.db.Exec("SELECT coll_cc FROM Fiches_Comptes WHERE compte_cc=&1", jo)
+    resrec = Utils.db.Exec("SELECT coll_cc FROM Fiches_Comptes WHERE compte_cc=&1", res!compte)
     If resrec.Available Then
       If resrec!coll_cc Then
         rescol = Utils.db.Create("Fiches_Mvt")
