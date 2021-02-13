@@ -1355,6 +1355,7 @@ End
 
 Public Sub Choix1_Click()
 
+  If Choix1.Index = -1 Then Return
   Wait 0.2
   If Choix1.index = "0" Then
     Journaux()
@@ -1362,7 +1363,7 @@ Public Sub Choix1_Click()
     If Choix1.Index = "1" Then
       Ecritnv()
     Else
-      Ecritv()
+      If Choix1.Index = "2" Then Ecritv()
     Endif
   Endif
   Choix1.visible = False
@@ -1954,6 +1955,7 @@ Public Sub ecrit2()
           Repeat
             numecriture = rResult!numero
             Cpt = rResult!compte
+            Utils.db.Exec("INSERT INTO  Fiches_MvtM (jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,pointee, numcol, dateech, lind2, control, datem) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21})", rResult!jour, rResult!numero, rResult!compte, rResult!intitule, rResult!dte, rResult!numdoc, rResult!numlot, rResult!libelle, rResult!montantd, rResult!montantc, rResult!validee, rResult!provisoire, rResult!tresorerie, rResult!lettree, rResult!cloturee, rResult!pointee, rResult!numcol, rResult!dateech, rResult!lind, rResult!control, Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
             If Left(Cpt, 3) <> "512" And If Left(Cpt, 2) <> "53" Then
               Ecrit1.Add(rResult!lind, rResult!lind)
               Ecrit1.Item[0] = rResult!compte
@@ -2167,11 +2169,7 @@ Public Sub Ecrit3()
           Else
             Nlot2 = Nlot
           Endif
-'          rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & "  WHERE numlot = &1 and collectif is null", Nlot)
- '         If rResult.Available Then
           $lstex.letgroupe(Nlot, Nlot2, False, Cptt.Text)
- '           Utils.db.Exec("UPDATE " & Cbase.Table("TabMvt") & " SET lettree = &1, numlot = &3 WHERE numlot =  &2", 0, Nlot, Nlot2)
-'          Endif
         End With
         Numcompte.SetFocus
         ' On passe l'écriture en provisoire
@@ -2241,8 +2239,6 @@ Public Sub Selct_Click()
         numcpt = EcritL.Item[1]
         Libelecrit.Text = EcritL.Item[5]
         $lstex.letcpt(numlet, True, numlotT, "tresor")
-'        Utils.db.Exec("UPDATE " & Cbase.Table("TabMvt") & " SET numlot = &1 where compte = &2 and numero = &3", numlotT, numcompte.Text, numlet)
-'        Sha1Calc.CalcSha1(Cbase.Table("TabMvt"), numlet) 'PATRICKMAG Revoir le lettrage exercice clot avec Sha1
       Endif
     Until EcritL.Movenext()
     numlot.Text = numlotT
