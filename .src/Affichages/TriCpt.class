@@ -367,7 +367,7 @@ Private Sub tricond()
   $tr = New TriGen(Panel1, $Col, $res, $req, 20, Me) As "ColTri"
   Select Case $obj.Name
     Case "Lettrage"
-      cond = " lettrable = True AND "
+      cond = " lettrable = True  "
   End Select
   
   If inact.Value Then cond &= "(cli_actif= '-1' OR cli_actif= True) "
@@ -382,11 +382,14 @@ Private Sub tricond()
   
   Select Case $type
     Case Bilan
-      $tr.ExtraSel(cond & "type_cc='B'", "AND")
+      If cond Then cond &= " AND"
+      $tr.ExtraSel(cond & " type_cc='B'", "AND")
     Case Gestion
-      $tr.ExtraSel(cond & "type_cc='G'", "AND")
+      If cond Then cond &= " AND"
+      $tr.ExtraSel(cond & " type_cc='G'", "AND")
     Case General
-      $tr.ExtraSel(cond & "type_cc='B' OR type_cc='G'", "AND")
+      If cond Then cond &= " AND"
+      $tr.ExtraSel(cond & " type_cc='B' OR type_cc='G'", "AND")
     Case Client
       If cond Then $tr.ExtraSel(cond, "AND")
   End Select

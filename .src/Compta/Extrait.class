@@ -1303,7 +1303,6 @@ Public Sub butedit_Click()
   vb = New ReportVBox($rpt)
   vb.Fixed = True
   vb.Autoresize = True
-'  vb.Border = ReportBorder(
   lab = New ReportLabel(vb)
   lab.Height = "7mm"
   lab.Text = "Impression des extraits de compte au " & Format$(Now, "dd.mm.yyyy")
@@ -1320,28 +1319,28 @@ Public Sub butedit_Click()
     vb1.Expand = True
     lab = New ReportLabel(vb1)
     lab.Text = ressoc!type_sc & " " & ressoc!int_sc
-    lab.Font = font["Serif,Bold,+1"]
+    lab.Font = font["Serif,Bold,15"]
     lab = New ReportLabel(vb1)
     lab.Text = ressoc!adr1_sc
-    lab.Font = font["Serif,-1"]
+    lab.Font = font["Serif,11"]
     lab = New ReportLabel(vb1)
     lab.Text = ressoc!adr2_sc
-    lab.Font = font["Serif,-1"]
+    lab.Font = font["Serif,11"]
     lab = New ReportLabel(vb1)
     lab.Text = ressoc!cp_sc & " " & ressoc!burdis_sc
-    lab.Font = font["Serif,-1"]
+    lab.Font = font["Serif,11"]
     lab = New ReportLabel(vb1)
     lab.Text = ressoc!tel_sc
-    lab.Font = font["Serif,-1"]
+    lab.Font = font["Serif,11"]
     lab = New ReportLabel(vb1)
     lab.Text = ressoc!email_sc
-    lab.Font = font["Serif,-1"]
+    lab.Font = font["Serif,11"]
     lab = New ReportLabel(vb1)
     lab.Text = ressoc!site
-    lab.Font = font["Serif,-1"]
+    lab.Font = font["Serif,11"]
   Endif
+  vb1 = New ReportVBox(hb)
   If Bclient.Value Or Bfournisseur.Value Then
-    vb1 = New ReportVBox(hb)
     If Bclient.Value Then
       res = utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", cpt.Text)
       ajouadr(vb1, res!cli_rs_soc, res!cli_nom & " " & res!cli_pnm, res!cli_adr1, res!cli_adr2, res!cli_cd_ptl & " " & res!cli_ville) 
@@ -1350,7 +1349,8 @@ Public Sub butedit_Click()
       res = utils.db.Exec("SELECT * FROM Fiches_Four WHERE fo_code=&1", cpt.Text)
       ajouadr(vb1, res!fo_rs_soc, res!fo_nom & " " & res!fo_pnm, res!fo_adr1, res!fo_adr2, res!fo_cd_ptl & " " & res!fo_ville)
     Endif
-    
+  Else
+      ajouadr(vb1, nom.Text, "", "", "", "")
   Endif
   hb = New ReporthBox(vb)
   hb.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
@@ -1407,7 +1407,7 @@ Public Sub butedit_Click()
   lab.Expand = True
   lab.Height = "5mm"
   lab.Border = ReportBorder["Right:1pt #000000"]
-  lab.Font = Font["Serif, -2"]
+  lab.Font = Font["Serif, 9"]
   lab.Text = "TOTAL "
   lab.Alignment = Align.Center
   
@@ -1416,7 +1416,7 @@ Public Sub butedit_Click()
   lab.Height = "5mm"
   lab.Border = ReportBorder["Right:1pt #000000"]
   lab.Text = Format(totd, "0.00")
-  lab.Font = Font["Serif, -2"]
+  lab.Font = Font["Serif, 9"]
   lab.Alignment = Align.Right
   
   lab = New ReportLabel(hb)
@@ -1424,14 +1424,14 @@ Public Sub butedit_Click()
   lab.Height = "5mm"
   lab.Border = ReportBorder["Right:1pt #000000"]
   lab.Text = Format(totc, "0.00")
-  lab.Font = Font["Serif, -2"]
+  lab.Font = Font["Serif, 9"]
   lab.Alignment = Align.Right
   
   lab = New ReportLabel(hb)
   lab.Width = "30mm"
   lab.Height = "5mm"
   lab.Text = Format(sld, "0.00")
-  lab.Font = Font["Serif, -2"]
+  lab.Font = Font["Serif, 9"]
   lab.Alignment = Align.Right
   
   $rpt.Print(prt)
@@ -1452,7 +1452,7 @@ Private Sub ajoulign(sld As Float, resext As Result)
   lab = New ReportLabel(hb)
   lab.Width = "30mm"
   lab.Height = "3mm"
-  lab.Font = font["Serif,-4"]
+  lab.Font = font["Serif,7"]
   lab.Text = LDate(resext!dte).L
   lab.Alignment = Align.Left
   lab.Border = ReportBorder["Right:1pt #000000"]
@@ -1460,7 +1460,7 @@ Private Sub ajoulign(sld As Float, resext As Result)
   lab = New ReportLabel(hb)
   lab.Expand = True
   lab.Height = "3mm"
-  lab.Font = font["Serif,-4"]
+  lab.Font = font["Serif,7"]
   lab.Text = resext!libelle
   lab.Alignment = Align.Left
   lab.Border = ReportBorder["Right:1pt #000000"]
@@ -1468,7 +1468,7 @@ Private Sub ajoulign(sld As Float, resext As Result)
   lab = New ReportLabel(hb)
   lab.Width = "30mm"
   lab.Height = "3mm"
-  lab.Font = font["Serif,-4"]
+  lab.Font = font["Serif,7"]
   lab.Text = Format(resext!montantd, "0.00")
   lab.Alignment = Align.Right
   lab.Border = ReportBorder["Right:1pt #000000"]
@@ -1476,7 +1476,7 @@ Private Sub ajoulign(sld As Float, resext As Result)
   lab = New ReportLabel(hb)
   lab.Width = "30mm"
   lab.Height = "3mm"
-  lab.Font = font["Serif,-4"]
+  lab.Font = font["Serif,7"]
   lab.Text = Format(resext!montantc, "0.00")
   lab.Alignment = Align.Right
   lab.Border = ReportBorder["Right:1pt #000000"]
@@ -1484,7 +1484,7 @@ Private Sub ajoulign(sld As Float, resext As Result)
   lab = New ReportLabel(hb)
   lab.Width = "30mm"
   lab.Height = "3mm"
-  lab.Font = font["Serif,-4"]
+  lab.Font = font["Serif,7"]
   lab.Text = Format(sld, "0.00")
   lab.Alignment = Align.Right
   
@@ -1499,26 +1499,30 @@ Private Sub ajouadr(vb1 As ReportVBox, rs As String, nom As String, adr1 As Stri
   lab.Height = "40mm"
   
   lab = New ReportLabel(vb1)
+  lab.Text = cpt.Text
+  lab.Font = Font["Serif,7"]
+  
+  lab = New ReportLabel(vb1)
   lab.Text = rs & " " & nom
-  lab.Font = Font["Serif, Blod, -2"]
+  lab.Font = Font["Serif, Bold, 9"]
   
   lab = New ReportLabel(vb1)
   lab.text = adr1
-  lab.Font = Font["Serif, -2"]
+  lab.Font = Font["Serif, 9"]
    
   lab = New ReportLabel(vb1)
   lab.text = adr2
-  lab.Font = Font["Serif, -2"]
+  lab.Font = Font["Serif, 9"]
    
   lab = New ReportLabel(vb1)
   lab.text = ville
-  lab.Font = Font["Serif, -2"]
+  lab.Font = Font["Serif, 9"]
    
    lab = New ReportLabel(vb1)
    lab.Height = "8mm"
    
   lab = New ReportLabel(vb1)
-  lab.text = "Du : " & dten0.Text & " au : " & dten1.Text
-  lab.Font = Font["Serif, -2"]
+  lab.text = "Du : " & dten0.Text & " au : " & dten1.Text & Space(20)
+  lab.Font = Font["Serif, 9"]
    
 End
