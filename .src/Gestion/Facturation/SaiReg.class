@@ -79,7 +79,9 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
     selection.Columns[i].Text = sel[I]
     selection.Columns[i].Alignment = Align.Center
     Select Case i
-      Case numdocs, dtes, numlots, montds, montcs
+      Case numdocs, numlots
+        selection.Columns[i].Width = 110 * coef
+      Case dtes, montds, montcs
         selection.Columns[i].Width = 95 * coef
       Case journals
         selection.Columns[i].Width = 45 * coef
