@@ -322,14 +322,16 @@ Public Sub Buttrait_Click()
   Endif
   'recherche sans regroupement
   If Radiodetail.Value Then
-    champbl &= ",CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
-    champfa &= ",CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
-    champblm &= ",CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
-    champfam &= ",CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
-    champfo &= ",CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtep, CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * CASE WHEN paht IS NULL THEN '0' ELSE REPLACE(paht,',','.') END as ca,'0'as mrgart,'0' as mrgmo"
-    champex &= ",CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champrd &= ",CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champtck &= ",CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtep, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca,0 as mrgart,'0' as mrgmo"
+    champstkd &= ", ' ' as document"
+    champstth &= ", ' ' as document" 
+    champbl &= ",numbl as document, CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
+    champfa &= ",numfac as document, CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
+    champblm &= ",numbl as document, CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
+    champfam &= ",numfac as document, CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
+    champfo &= ",Fiches_Entrecpt.numrecpt as document, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtep, CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * CASE WHEN paht IS NULL THEN '0' ELSE REPLACE(paht,',','.') END as ca,'0'as mrgart,'0' as mrgmo"
+    champex &= ",' ' as document, CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champrd &= ",' ' as document, CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champtck &= ",Fiches_HisEntTickets.numero as document, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtep, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca,0 as mrgart,'0' as mrgmo"
     If Radiodeptmp.Value Then
       champstkd &= ",CASE WHEN REPLACE(art_stkdep,',','.') < '0' THEN REPLACE(art_stkdep,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(art_stkdep,',','.') > '0' THEN REPLACE(art_stkdep,',','.') ELSE '0' END as qtep, art_pmp * art_stkdep as ca,'0'as mrgart,'0' as mrgmo"
     Else
@@ -509,16 +511,22 @@ Private Sub affiche()
   GridView1.Columns[0].Width = 100
   GridView1.Columns[0].Alignment = Align.Center
   GridView1.Columns[1].Text = "Code"
-  GridView1.Columns[1].Width = 180
+  GridView1.Columns[1].Width = 160
   GridView1.Columns[1].Alignment = Align.Center
   GridView1.Columns[2].Text = "Libelle"
   GridView1.Columns[2].Expand = True
   GridView1.Columns[2].Alignment = Align.Center
+  If Radiodetail.Value Then
+    GridView1.Columns.Count += 1
+    GridView1.Columns[3].Text = "Document"
+    GridView1.Columns[3].Width = 100
+    GridView1.Columns[3].Alignment = Align.Center
+  Endif
   If Radiosortie.Value Or Radiotouta.Value Then
     GridView1.Columns.Count += 1
-    GridView1.Columns[3].Text = "Sorties"
-    GridView1.Columns[3].Width = 120
-    GridView1.Columns[3].Alignment = Align.Center
+    GridView1.Columns[GridView1.Columns.Max].Text = "Sorties"
+    GridView1.Columns[GridView1.Columns.Max].Width = 120
+    GridView1.Columns[GridView1.Columns.Max].Alignment = Align.Center
     sortie.Visible = True
   Endif
   If Radioentre.Value Or Radiotouta.Value Then
@@ -595,6 +603,13 @@ Public Sub GridView1_Data(Row As Integer, Column As Integer)
     GridView1[row, 2].Alignment = Align.Left
     GridView1[row, 2].Background = coul
     i = 2
+    If Radiodetail.Value Then
+      Inc i
+      GridView1[row, i].Background = coul
+      If Not IsNull($res!document) Then
+        GridView1[row, i].Text = $res!document
+      Endif
+    Endif
     If Radiosortie.Value Or Radiotouta.Value Then
       Inc i
       GridView1[row, i].Alignment = Align.Right
@@ -605,7 +620,6 @@ Public Sub GridView1_Data(Row As Integer, Column As Integer)
         GridView1[row, i].Text = Format(0, "0.000")
       Endif
     Endif
-  
     If Radioentre.Value Or Radiotouta.Value Then 
       Inc i
       GridView1[row, i].Alignment = Align.Right
@@ -629,6 +643,25 @@ Public Sub GridView1_Data(Row As Integer, Column As Integer)
       GridView1[row, i].Text = Format(Utils.totobs([$res!mrgart, $res!mrgmo]), "0.00")
     Endif
   Endif
+End
+
+Public Sub GridView1_Activate()
+
+  Dim obj As ObjFacB
+  Dim res As Result
+  
+  If Not Radiodetail.Value Then Return
+  If GridView1[GridView1.Row, 2].Text Match "Factures" Then
+    If GridView1[GridView1.Row, 2].Text Match "en cours" Then
+      obj = New ObjFacB(GridView1[GridView1.Row, 3].Text, ObjFac.bl, LDate(GridView1[GridView1.Row, 0].Text))
+      obj.visualisation
+    Else
+      obj = New ObjFacB(GridView1[GridView1.Row, 3].Text, ObjFac.archive, LDate(GridView1[GridView1.Row, 0].Text))
+      obj.visualisation
+    Endif
+    
+  Endif
+
 End
 
 Private Function dtinv() As Date
