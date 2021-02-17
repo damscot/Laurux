@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.32, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.33, for Linux (x86_64)
 --
 -- Host: localhost    Database: Laurux01
 -- ------------------------------------------------------
--- Server version	5.7.32-0ubuntu0.18.04.1
+-- Server version	5.7.33-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -3016,8 +3016,8 @@ CREATE TABLE `Fiches_Mvt` (
   `numdoc` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `numlot` char(10) COLLATE utf8_unicode_ci DEFAULT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
+  `montantd` decimal(12,2) DEFAULT NULL,
+  `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
@@ -3069,8 +3069,8 @@ CREATE TABLE `Fiches_Mvt1` (
   `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
+  `montantd` decimal(12,2) DEFAULT NULL,
+  `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
@@ -3111,8 +3111,8 @@ CREATE TABLE `Fiches_Mvt2` (
   `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
+  `montantd` decimal(12,2) DEFAULT NULL,
+  `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
@@ -3153,8 +3153,8 @@ CREATE TABLE `Fiches_Mvt3` (
   `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
+  `montantd` decimal(12,2) DEFAULT NULL,
+  `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
@@ -3195,8 +3195,8 @@ CREATE TABLE `Fiches_Mvt4` (
   `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
+  `montantd` decimal(12,2) DEFAULT NULL,
+  `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
@@ -3237,8 +3237,8 @@ CREATE TABLE `Fiches_Mvt5` (
   `numdoc` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `numlot` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `libelle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `montantd` double DEFAULT NULL,
-  `montantc` double DEFAULT NULL,
+  `montantd` decimal(12,2) DEFAULT NULL,
+  `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
@@ -4955,4 +4955,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-29  9:09:06
+-- Dump completed on 2021-02-17 16:42:10
