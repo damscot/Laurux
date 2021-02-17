@@ -51,7 +51,7 @@ Public Sub _new(tabl As Collection, mois As String, anne As String, edit As Bool
   dtedecl.Text = Format(dte1, "mmmm yyyy")
   periode.Text = mois & "/" & anne
   
-  ReportPageBreak1.ForceNewPage = True
+'  ReportPageBreak1.ForceNewPage = True
   
 
   Application.Busy = 0
@@ -480,4 +480,10 @@ Private Function convers(vol As Float, choix As String) As String
   Else
     Return Str(vol)
   Endif
+End
+
+Public Sub ni_Data(Index As Integer)
+
+  
+
 End

@@ -3,6 +3,7 @@
 { Report Report
   #MoveScaled(0,0,144,137)
   Font = Font["Sans Serif,13"]
+  Padding = ReportPadding["Top:3mm;Bottom:3mm;Left:3mm;Right:3mm"]
   Orientation = Printer.Landscape
   Index = 0
   Text = ("Volume sorti")
@@ -940,11 +941,8 @@
       Text = ("=\"PAGE \" & Page ")
     }
   }
-  { ReportPageBreak1 ReportPageBreak
-    #MoveScaled(1,70,142,2)
-  }
   { ReportHBox14 ReportHBox
-    #MoveScaled(1,72,142,7)
+    #MoveScaled(1,70,142,7)
     Border = ReportBorder["Right:1pt #000000"]
     { ReportLlibss ReportLabel
       #MoveScaled(1,1,88,5)
@@ -1000,11 +998,11 @@
     }
   }
   { ReportHBox25 ReportHBox
-    #MoveScaled(1,79,142,2)
+    #MoveScaled(1,77,142,2)
     Height = "10mm"
   }
   { ReportHtot ReportHBox
-    #MoveScaled(1,81,142,7)
+    #MoveScaled(1,79,142,7)
     Height = "6mm"
     Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
     { lib2 ReportLabel
@@ -1248,7 +1246,7 @@
     }
   }
   { ReportLabel2 ReportLabel
-    #MoveScaled(1,88,142,5)
+    #MoveScaled(1,86,142,5)
     Font = Font["Sans Serif,Bold,11"]
     Border = ReportBorder["Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
     Background = ReportBrush["#DFDFDF"]
@@ -1256,11 +1254,11 @@
     Alignment = Align.Center
   }
   { ReportHBox26 ReportHBox
-    #MoveScaled(1,93,142,2)
+    #MoveScaled(1,91,142,2)
     Height = "5mm"
   }
   { ReportHBox24 ReportHBox
-    #MoveScaled(1,95,142,28)
+    #MoveScaled(1,93,142,28)
     { ReportVBox10 ReportVBox
       #MoveScaled(1,1,45,26)
       Width = "85mm"
@@ -1504,15 +1502,14 @@
     }
   }
   { ReportLabel3 ReportLabel
-    #MoveScaled(1,123,142,5)
+    #MoveScaled(1,121,142,5)
     Expand = True
   }
   { ReportHBox23 ReportHBox
-    #MoveScaled(1,128,142,4)
+    #MoveScaled(1,126,142,4)
     Height = "5mm"
     Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
     Background = ReportBrush["#DFDFDF"]
-    ForceNewPage = True
     { datj1 ReportLabel
       #MoveScaled(1,1,23,2)
       Width = "35mm"
