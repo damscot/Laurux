@@ -936,7 +936,10 @@ Public Sub transblfac()       ''Transfert d'une facture en archive
   Dim Filename As String
   
   'si la facture existe on ne fait pas le transfert
-  res = Utils.db.Exec("select * FROM Fiches_HistoFac " & Me.tab & " WHERE numfac=&1", Me.numfac)
+  res = Utils.db.Exec("select * FROM Fiches_HistoFac WHERE numfac=&1", Me.numfac)
+  If Not res.Available Then
+    res = Utils.db.Exec("select * FROM Fiches_HistoFacM WHERE numfac = &1 ", Me.numfac)
+  Endif
   If res.Available Then 
     Message.Warning("La facture n° : " & Me.numfac & " existe déjà dans les archives \n Elle ne sera pas traitée", "Ok")
     Return

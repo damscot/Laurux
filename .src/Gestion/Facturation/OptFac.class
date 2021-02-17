@@ -3,6 +3,7 @@
 Private $vfac As ObjFacB
 Private $courriel As String
 Private $choix As Integer
+Private $dte As LDate
  
 Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc As String, Optional livraison As Boolean, Optional dte As LDate = LDate(Now), Optional courriel As String)
 
@@ -11,6 +12,7 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
  
   $courriel = courriel
   $choix = choix
+  $dte = dte
   'gridview recherche adresse
   Colal.Columns.count = 6
   Colal.Columns[0].Width = 0
@@ -35,8 +37,7 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
   'Affiche les variables modifiables 
   $vfac = New ObjFacB(nfac, choix) As "var"
   $vfac.livraison = livraison
-  Dtef.Text = dte.L
-  $vfac.dtedoc = dte
+  $vfac.dtedoc = New LDate(dte.G)
   
   propimp.Text = $vfac.imp.Name
   entete.Value = $vfac.entete
@@ -107,6 +108,8 @@ End
 
 Public Sub Form_Open()
 
+  Dtef.Text = $dte.L
+  $vfac.dtedoc = $dte
   $vfac.numcli = $vfac.numcli
 
 End

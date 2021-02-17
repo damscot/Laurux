@@ -196,7 +196,6 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
     Endif
   Endif
 
-  
   $dtedoc = dte
   recap = Start.LocalSettings["/Soc" & Start.Societe & "/Recap"]
   ttc = Start.LocalSettings["/Soc" & Start.Societe & "/Impttc"]
@@ -487,6 +486,7 @@ Public Sub calcul(Optional nom As String)     ''nom contient la nom du client si
   If reslig.Available Then
     reslig.MoveFirst
     resent.MoveFirst
+    If IsNull($numcli) Then numcli_Write(resent!cdclibl)
     Repeat
       numlig = Format(Val(numlig) + 1, "0000")
       Select Case choix
@@ -642,6 +642,7 @@ Private Sub calc(numlig As String)
   Dim resart, resfam As Result
   Dim txtva As Float
   Dim tot As Float
+  Dim ind As Integer
   
   'on crée la ligne à editer
   If reslig!typel_ligbl = "A" Then
@@ -687,6 +688,7 @@ Private Sub calc(numlig As String)
   Endif
   ligne.Add(ligneart, numlig)
   'on rajoute la tva
+  ind = resent.Index
   resent.MoveFirst
   If Not resent!exobl And Not autoent Then            'pas de calcul de tva si exonéré
       If tva.Exist(reslig!tx_ligbl) Then
@@ -713,6 +715,7 @@ Private Sub calc(numlig As String)
         tva.Add(lignetva, reslig!tx_ligbl)
       Endif
   Endif
+  resent.MoveTo(ind)
   'on prepare l'écriture comptable
   resfam = Utils.db.Exec("SELECT compt_fam,compt5_fam,intitule_cc FROM Fiches_Fam,Fiches_Comptes WHERE compt_fam=compte_cc AND code_fam=&1", reslig!fam_ligbl)
   If resfam.Available Then 
@@ -802,7 +805,7 @@ Public Function verifdat(Optional dtef As Object, Dtech As Object) As Boolean
     Message.Warning("Attention ! Vous devez mettre une date de facturation", "Ok")
     Return True
   Endif
-  If IsNull($dteech) And (choix = ObjFac.facture Or choix = ObjFac.finmois Or choix = ObjFac.abonnement) Then
+  If IsNull($dteech) And (choix = ObjFac.facture Or choix = ObjFac.abonnement) Then
     Message.Warning("Attention ! Vous devez mettre une date d'échéance", "Ok")
     Return True
     
@@ -868,6 +871,7 @@ Public Sub Dupli2()
 
   Dim chemin, ty As String 
   Dim res As Result
+  Dim imp As New Printer
   
   imp.NumCopies = 1
   imp.OutputFile = User.Home & "/tmp/Facture.pdf"
@@ -883,20 +887,20 @@ Public Sub Dupli2()
     If Not pdfannu Then
       Chemin &= "/" & Format(Month($dteech.G), "00")
       If Not Exist(chemin) Then Try Mkdir chemin
-      imp.OutputFile = chemin & "/" & ty & ".pdf"
-      imp.NumCopies = 1
-      edit.Print(imp)
-      res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $numcli, chemin & "/" & ty & ".pdf")
-      If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $numcli, chemin & "/" & ty & ".pdf", $numcli & "," & ty & ",", "Facs")
-      If choix = ObjFac.facture Or choix = ObjFac.finmois Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
     Endif
+    imp.OutputFile = chemin & "/" & ty & ".pdf"
+    imp.NumCopies = 1
+    edit.Print(imp)
+    res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $numcli, chemin & "/" & ty & ".pdf")
+    If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $numcli, chemin & "/" & ty & ".pdf", $numcli & "," & ty & ",", "Facs")
+    If choix = ObjFac.facture Or choix = ObjFac.finmois Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
   Else
       chemin = User.Home & "/Impressions"
       imp.OutputFile = chemin & "/" & ty & ".pdf"
       imp.NumCopies = 1
       edit.Print(imp)
   Endif
-    
+  
 End
 
 Private Function nom() As String
