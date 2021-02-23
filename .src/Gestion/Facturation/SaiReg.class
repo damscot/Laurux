@@ -235,6 +235,12 @@ Public Sub nreg_LostFocus()
 
 End
 
+Public Sub dtereg_LostFocus()
+
+  libsaisi.Text = libreg.Text & " du " & dtereg.Text
+
+End
+
 Private Function affectv(rescli As Result, ind As Integer, tot As Float) As VarEcr
   
   Dim var As VarEcr
@@ -504,7 +510,7 @@ Public Sub selection_choose(sel As Integer)
     $Vecr.Tlettrage.Add($Vecr.Tbl)
     docsaisi.Text = selection[i, numdocs].Text 
     lotsaisi.Text = selection[i, numlots].Text 
-    libsaisi.Text = $resreg!libel & " " & $rescli!intitule_cc 
+    libsaisi.Text = libreg.Text & " du " & dtereg.Text
   Endif
   
   For i = 0 To $Vecr.Tlettrage.Max
@@ -806,7 +812,8 @@ End
 
 Public Sub Listreg_Click()
 
-  nreg.Text = Listreg.Current.Text
+  If IsNull(Listreg.Item) Then Return
+  nreg.Text = Listreg.Item.Text
   client.SetFocus
   Listreg.Clear
   Listreg.Visible = False

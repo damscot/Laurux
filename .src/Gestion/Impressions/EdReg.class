@@ -40,7 +40,8 @@ Public Sub dte_Data(Index As Integer)
   vecr = $ediecr.trouve(Index)
   If TypeOf(vecr) = gb.Integer Then Return
   dte.Data = vecr.dte.L
-
+  If Even(Index) Then Last.Font = Font["Sans Serif,Italic,8"] Else Last.Font = Font["Sans Serif,8"] 
+  
 End
 
 Public Sub cde_Data(Index As Integer)
@@ -50,6 +51,7 @@ Public Sub cde_Data(Index As Integer)
   vecr = $ediecr.trouve(Index)
   If TypeOf(vecr) = gb.Integer Then Return    'si  $ediecr.trouve retourne -1 c'est qu'on a pas trouvé
   cde.Data = vecr.compte
+  If Even(Index) Then Last.Font = Font["Sans Serif,Italic,8"] Else Last.Font = Font["Sans Serif,8"] 
 
 End
 
@@ -60,6 +62,7 @@ Public Sub nom_Data(Index As Integer)
   vecr = $ediecr.trouve(Index)
   If TypeOf(vecr) = gb.Integer Then Return
   nom.Data = vecr.intitul
+   If Even(Index) Then Last.Font = Font["Sans Serif,Italic,8"] Else Last.Font = Font["Sans Serif,8"] 
   
 End
 
@@ -70,5 +73,6 @@ Public Sub montant_Data(Index As Integer)
   vecr = $ediecr.trouve(Index)
   If TypeOf(vecr) = gb.Integer Then Return
   montant.Data = Format(vecr.montantc - vecr.montantd, "0.00")
+   If Even(Index) Then Last.Font = Font["Sans Serif,Italic,8"] Else Last.Font = Font["Sans Serif,8"] 
 
 End
