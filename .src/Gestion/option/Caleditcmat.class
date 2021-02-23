@@ -99,7 +99,7 @@ Private Function ctrl() As Boolean
   Endif
   'Vérifie si les articles passés sont en compta mat
   'Bl
-  reslig = utils.db.Exec("SELECT numfac,numbl,cdclibl,dtefac FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' GROUP by numfac,cdclibl,dtefac")
+  reslig = utils.db.Exec("SELECT numfac,numbl,cdclibl,dtefac FROM Fiches_Art,Fiches_Ligbl,Fiches_Bl WHERE art_code=code_ligbl and numbl=num_ligbl and imp=1 and art_dra <> '' GROUP by numfac,numbl,cdclibl,dtefac")
   pb.Avancement("Facture bl", 1)
   If reslig.Available Then
     Repeat
