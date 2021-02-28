@@ -16,6 +16,7 @@ Private $mht As LPrix
 Private $mttc As LPrix
 Private $dte As LDate
 Private $mimeout As String
+Private $temp_file As String
 
 Public Bsel As Boolean = False
 Public Bval As String = ""
@@ -29,6 +30,7 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
   $index = lind
   $type = type
   $origin = origin
+  $temp_file = Null
   $tags = New Collection
   
   'Creation d'un object LGed
@@ -371,7 +373,9 @@ Public Sub Supprimer_Click()
 End
 
 Public Sub Enregistrer_Click()
-  
+
+  Dim Nomfichier As String
+
   If fdte.dte = Null Then
     Message.Error("la date ne doit pas etre vide")
     Return
@@ -380,18 +384,124 @@ Public Sub Enregistrer_Click()
     Message.Error("l'url du document ne doit pas etre nul")
     Return
   Endif
-  
+
   If Get_Mime() Then
     Message.Error("impossible de recupérer le type mime, verifiez l'URL")
     Return
   Endif
+
+  If $temp_file <> Null And Exist($temp_file)
   
+    If furl.Text = Null Then
+      If Message.Question("Merci de saisir l'url cible, Voulez-vous celle par défault", "Oui", "Non") = 2 Then Return
+      'TODO
+    Endif
+  
+    If furl.Text Match "file://"
+    
+      Nomfichier = Replace(furl.Text, "file://", "")
+
+      If Nomfichier = Null Then
+        Message.Error("Merci de saisir le nom du fichier cible!")
+        Return
+      Endif
+    
+      If Exist(Nomfichier)
+        If Message.Question("Le fichier\n" & furl.Text & "\nexiste déjà, voulez vous le remplacer", "Oui", "Non") = 2 Then Return
+        Try Kill Nomfichier
+        If Error Then
+          Message.Error("Impossible de supprimer le fichier " & Nomfichier)
+          Return
+        Endif
+      Else
+        If Utils.Mkdir_p(File.Dir(Nomfichier)) Then
+          Message.Error("Impossible de créer le répertoire " & File.Dir(Nomfichier))
+          Return
+        Endif
+      Endif
+
+      Try Copy $temp_file To Nomfichier
+      If Error Then
+        Message.Error("Impossible de copier " & $temp_file & " vers " & Nomfichier & ".")
+      Endif
+
+      Try Kill $temp_file
+      $temp_file = Null
+    
+    Else
+      Message.Error("Le support n'est actuellement disponible que sur les URL de fichier locaux (file://...)") 
+    Endif
+
+  Endif
+
   Commit()
 
 End
 
 Public Sub Sortir_Click()
-
+  
+  If $temp_file <> Null Then
+    If Message.Question("Vous avez modifié le document, Voulez vous sortir sans l'enregister ?", "Oui", "Non") = 2 Then Return
+    Try Kill $temp_file
+  Endif
   Me.Close()
+
+End
+
+Public Sub Scanner_Click()
+
+  If $temp_file <> Null Then 
+    Try Kill $temp_file
+  Endif
+  $temp_file = Temp$()
+  Try Kill User.Home & "/" & "multipageproject.pdf"
+  Try Utils.Rmdir_rf(user.home & "/multipageproject")
+  Try Utils.Mkdir_p(user.home & "/multipageproject")
+  Shell "echo Project created@@@@@@@@@@@@@@@@ > " & user.home & "/multipageproject/xsane-multipage-list" Wait
+  Shell "echo image0001.pnm  >> " & user.home & "/multipageproject/xsane-multipage-list" Wait
+  Exec ["xsane", "-s", "-m"] Wait
+
+  If Exist(User.Home & "/" & "multipageproject.pdf") Then
+    Copy User.Home & "/" & "multipageproject.pdf" To $temp_file
+  Else
+    Message.Error("Il y a un problème de Scan. Vérifiez votre appareil SVP.")
+  Endif
+
+  If Exist($temp_file) And If Stat($temp_file).Size <> 0 Then
+    If Message.Question("Scan terminé. Voulez-vous voir le document scané ?", "Non", "Oui") = 2 Then Visualiseur.Prog($temp_file)
+  Else
+    Message.Error("Le fichier " & $temp_file & " Est vide ou innexistant. Vérifiez votre appareil SVP.")
+  Endif
+
+End
+
+Public Sub Copier_Click()
+
+  Dim l_hform As LBox
+  Dim Nomfichier As String
+  Dim Copiefichier As LTrans
+  Dim cancel As Boolean
+  
+  If $temp_file <> Null Then 
+    Try Kill $temp_file
+  Endif
+  $temp_file = Temp$()
+  Copiefichier = New LTrans
+  l_hform = New LBox("", Null, Null, Copiefichier, "", LBox.FileSelect)
+  cancel = l_hform.ShowModal()
+  If (cancel Or (Copiefichier.List = Null)) Then
+    Try Kill $temp_file
+    $temp_file = Null
+    Return
+  Else
+    If Copiefichier.List.First <> Null And Copiefichier.List.Length = 1 Then
+      Copy Copiefichier.List.First To $temp_file
+    Else
+      Message.Error("Plusieurs fichiers ont été sélectionnés!")
+      Try Kill $temp_file
+      $temp_file = Null
+    Endif
+  Endif
+  
 
 End
