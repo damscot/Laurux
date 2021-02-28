@@ -1617,3 +1617,33 @@ Public Sub Log(Obj As Variant, sMessage As String, Optional level As Integer = L
   Start.LLogColl[Name].Log(sMessage, level)
 
 End
+
+Public Sub Mkdir_p(Dir As String, Optional OwnerShip As String = "rwxr-x---") As Boolean
+  
+  Try Shell "mkdir -p " & Dir Wait
+  Try Chmod Dir To OwnerShip
+
+  If Not Exist(Dir)
+    Return True
+  Endif
+
+  Return False
+  
+End
+
+Public Sub Rmdir_rf(Dir As String) As Boolean
+
+  'A bit of security in Laurux Context.
+  If Dir = Null Or Dir = "/" Or Dir = User.Home Then
+    Return True
+  Endif
+  
+  Try Shell "rm -rf " & Dir Wait
+  
+  If Exist(Dir)
+    Return True
+  Endif
+
+  Return False
+  
+End

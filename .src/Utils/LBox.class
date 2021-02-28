@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Public Enum TextReg, TextArea, ListEditor, ListView
+Public Enum TextReg, TextArea, ListEditor, ListView, FileSelect
 
 Private $mode As Integer
 Private $cancel As Boolean = True
@@ -29,6 +29,7 @@ Public Sub _New(Message As String, Inp As Variant, Optional obj As Object = Null
   ListInv.Hide()
   ListFiltre.Hide()
   ListView1.Hide()
+  FileChooser1.Hide()
 
   $mode = Mode
   $obj = obj
@@ -61,6 +62,11 @@ Public Sub _New(Message As String, Inp As Variant, Optional obj As Object = Null
       ListInv.Show()
       ListFiltre.Show()
       ListView1.Show()
+    Case LBox.FileSelect
+      FileChooser1.Show()
+      Question.Hide()
+      Annuler.Hide()
+      Valider.Hide()
     Default
       Error.Raise("Mode LBox non supporté")
   End Select
@@ -105,6 +111,13 @@ Sub UpdateOut() As Boolean
         $obj.List = ListView1.Selection.Copy()
       Else
         cancel = Raise MajOut(ListView1)
+      Endif
+    Case LBox.FileSelect
+      $List = FileChooser1.SelectedPaths
+      If Not IsNull($obj) Then
+        $obj.List = FileChooser1.SelectedPaths.Copy()
+      Else
+        cancel = Raise MajOut(FileChooser1)
       Endif
   End Select
   
@@ -210,6 +223,18 @@ End
 Public Sub ListSel_Click()
   
   ListSelection(True)
+  
+End
+
+Public Sub FileChooser1_Activate()
+  
+  Valider_Click()
+  
+End
+
+Public Sub FileChooser1_Cancel()
+  
+  Me.Close(True)
   
 End
 
