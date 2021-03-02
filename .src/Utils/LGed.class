@@ -17,6 +17,7 @@ Private $mttc As LPrix
 Private $dte As LDate
 Private $mimeout As String
 Private $temp_file As String
+Private $temp_extension As String
 
 Public Bsel As Boolean = False
 Public Bval As String = ""
@@ -31,6 +32,7 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
   $type = type
   $origin = origin
   $temp_file = Null
+  $temp_extension = Null
   $tags = New Collection
   
   'Creation d'un object LGed
@@ -163,7 +165,7 @@ Public Sub XdgMimeProc_Read()
 
   Line Input #Last, sLine
   
-  $mimeout = sLine
+  $mimeout = RTrim$(sLine)
 
 End
 
@@ -175,7 +177,7 @@ Public Sub CurlMimeProc_Read()
   Line Input #Last, sLine
   
   regex = New RegExp
-  regex.Compile("Content-Type: (.*)")
+  regex.Compile("Type: ([^;]*).*")
   regex.Exec(sLine)
   If regex.Count >= 1 Then
     $mimeout = RTrim$(regex[1].Text)
@@ -183,39 +185,112 @@ Public Sub CurlMimeProc_Read()
 
 End
 
-Public Sub Get_Mime() As Boolean
+Public Sub Get_Mime(url As String) As Boolean
 
   Dim path As String
   Dim xdgmime As Process
 
   $mimeout = "" 
 
-  If Left($url, 7) = "file://" Or Left($url, 1) = "/" Then
-    $filename = File.Name($url)
-    If Left($url, 7) = "file://" Then
-      path = Mid($url, 8)
+  If Left(url, 8) = "file:///" Or Left(url, 1) = "/" Then
+    $filename = File.Name(url)
+    If Left(url, 8) = "file:///" Then
+      path = Mid(url, 8)
     Else
-      path = $url
+      path = url
     Endif
     xdgmime = Shell "xdg-mime query filetype " & path Wait For Input As "XdgMimeProc"
     If xdgmime.Value == 0 Then
       If Not IsNull($mimeout) Then
-        fmime.Text = $mimeout
+        $mime = $mimeout
         Return False
       Endif
     Endif
-  Else
-    Try $filename = File.Name($url)
-    xdgmime = Shell "timeout 5 curl -s -k -I " & $url Wait For Input As "CurlMimeProc"
+  Else If Left(url, 7) = "http://" Or Left(url, 8) = "https://" Then
+    Try $filename = File.Name(url)
+    xdgmime = Shell "timeout 5 curl -s -k -I -o /dev/null -w 'Type: %{content_type}\n' '" & url & "'" Wait For Input As "CurlMimeProc"
     If xdgmime.Value == 0 Then
       If Not IsNull($mimeout) Then
-        fmime.Text = $mimeout
+        $mime = $mimeout
         Return False
       Endif
     Endif
   Endif
 
   Return True
+
+End
+
+Public Sub Get_Default_Extension(Optional Ext As String = "") As String
+  
+  If $temp_file <> Null And $temp_extension <> Null Then
+    'Copie de l'extension du fichier d'origine
+    Return $temp_extension
+  Else
+    'Proposition de l'extension à partir du type mime
+    Select Case $mime
+      Case "application/pdf"
+        Return "pdf"
+      Case "text/html"
+        Return "html"
+      Case "text/plain"
+        Return "txt"
+      Case "text/csv"
+        Return "csv"
+      Case "application/msword"
+        Return "doc"
+      Case "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        Return "docx"
+      Case "application/vnd.ms-excel"
+        Return "xls"
+      Case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        Return "xlsx"
+      Case "application/zip"
+        Return "zip"
+      Case "application/gzip"
+        Return "gz"
+      Case ""
+        'Use pdf as default if no value
+        Return "pdf"
+      Case Else
+        'Sinon utilisation du défault fourni en entrée
+        Return Ext
+    End Select
+  Endif
+  
+End
+
+Public Sub MoveURL(NewUrl As String) As Boolean
+  
+  Dim OldUrl As String
+  
+  OldUrl = $url
+  
+  If (Left(NewUrl, 8) = "file:///" Or Left(NewUrl, 1) = "/") And (Left(OldUrl, 8) = "file:///" Or Left(OldUrl, 1) = "/") Then
+
+    OldUrl = Replace(OldUrl, "file:///", "/")
+    NewUrl = Replace(NewUrl, "file:///", "/")
+    
+    If OldUrl = NewUrl Then Return False
+
+    If Utils.Mkdir_p(File.Dir(NewUrl)) Then
+      Return True
+    Endif
+
+    Try Move OldUrl To NewUrl
+    If Error Then
+      Return True
+    Endif
+    'change URL only if moving file is successfull
+    $url = furl.Text
+  Else
+    If (Left(NewUrl, 8) = "file:///" Or Left(NewUrl, 1) = "/") Or (Left(OldUrl, 8) = "file:///" Or Left(OldUrl, 1) = "/") Then
+      Message.Error("Impossible de transférer le document de \n" & OldUrl & "\nvers\n" & NewUrl & "\nLe transfert doit etre fait manuellement!")
+    Endif
+    'Just update URL without moving file
+    $url = furl.Text
+  Endif
+  Return False
 
 End
 
@@ -243,6 +318,58 @@ End
 Public Sub Ouvrir()
 
   Visualiseur.Prog($url, $mime)
+
+End
+
+
+Public Sub Default_URL(Optional FileName As String) As String
+
+  Dim DefFile As String
+  Dim Extension As String
+  Dim Base As String
+  Dim tag As String
+
+  Base = ""
+
+  Select $type
+    Case LGed.Clients
+      Base &= Start.LocalSettings["/Soc" & Start.Societe & "/Factchemin"]
+    Case LGed.Fournisseurs
+      Base &= Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminF"]
+    Case LGed.Comptabilite
+      Base &= Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminC"]
+    Case LGed.Articles
+      Base &= Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminP"]
+    Case LGed.Autres
+      Base &= Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminA"]
+  End Select
+
+  Base &= "/" & Str$($dte.Year) & "/"
+
+  If $origin = "" Then
+    Base &= "/Docs/"
+  Else
+    Base &= "/" & $origin & "/"
+  Endif
+  
+  Extension = File.Ext(FileName)
+  FileName = File.BaseName(FileName)
+
+  If FileName = "" Then
+    DefFile = Base & $dte.FT & "_" & Str($code) & "_"
+    For Each tag In $tags
+      If (Len(Base) + Len(DefFile) + Len(Left(tag, 8)) + Len(Extension) + 2) < 255 Then
+        DefFile &= "_" & Left(tag, 8)
+      Endif
+    Next
+    DefFile &= "." & Get_Default_Extension()
+  Else
+    DefFile = Base & FileName & "." & Extension
+  Endif
+  
+  DefFile = Replace(DefFile, "//", "/")
+  
+  Return "file://" & DefFile
 
 End
 
@@ -294,37 +421,35 @@ End
 Public Sub ftype_Change()
   
   $type = ftype.Index
-   
+  
 End
 
 Public Sub fcode_Change()
   
   $code = fcode.Text
-   
+  
 End
 
 Public Sub furl_Change()
   
-  $url = furl.Text
-   
 End
 
 Public Sub fMht_Change()
   
   $mht.L = fMht.Text
-   
+  
 End
 
 Public Sub fMttc_Change()
   
   $mttc.L = fMttc.Text
-   
+  
 End
 
 Public Sub fmime_Change()
   
   $mime = fmime.Text
-   
+  
 End
 
 Public Sub Existant_Click()
@@ -375,31 +500,23 @@ End
 Public Sub Enregistrer_Click()
 
   Dim Nomfichier As String
+  Dim oldfile As String
 
   If fdte.dte = Null Then
     Message.Error("la date ne doit pas etre vide")
     Return
   Endif
-  If IsNull(furl) Then
-    Message.Error("l'url du document ne doit pas etre nul")
-    Return
-  Endif
 
-  If Get_Mime() Then
-    Message.Error("impossible de recupérer le type mime, verifiez l'URL")
+  If furl.Text = Null Then
+    Message.Warning("Merci de saisir l'url cible, Vous pouvez selectionner celle par défault")
     Return
   Endif
 
   If $temp_file <> Null And Exist($temp_file)
   
-    If furl.Text = Null Then
-      If Message.Question("Merci de saisir l'url cible, Voulez-vous celle par défault", "Oui", "Non") = 2 Then Return
-      'TODO
-    Endif
-  
-    If furl.Text Match "file://"
+    If Left(furl.Text, 8) = "file:///" Or Left(furl.Text, 1) = "/" Then
     
-      Nomfichier = Replace(furl.Text, "file://", "")
+      Nomfichier = Replace(furl.Text, "file:///", "/")
 
       If Nomfichier = Null Then
         Message.Error("Merci de saisir le nom du fichier cible!")
@@ -420,19 +537,43 @@ Public Sub Enregistrer_Click()
         Endif
       Endif
 
+      If Left($url, 8) = "file:///" Or Left($url, 1) = "/" Then
+        oldfile = Replace($url, "file:///", "/")
+        Try Kill oldfile
+        If Error Then
+          Message.Error("Impossible de supprimer " & oldfile & " !")
+        Endif
+      Endif
       Try Copy $temp_file To Nomfichier
       If Error Then
-        Message.Error("Impossible de copier " & $temp_file & " vers " & Nomfichier & ".")
+        Message.Error("Impossible de copier " & $temp_file & " vers " & Nomfichier)
       Endif
 
       Try Kill $temp_file
       $temp_file = Null
-    
+      $temp_extension = Null
+      $url = furl.Text
     Else
-      Message.Error("Le support n'est actuellement disponible que sur les URL de fichier locaux (file://...)") 
+      Message.Error("Le support n'est actuellement disponible que sur les URL de fichier locaux (file://, /...)") 
+    Endif
+
+  Else
+
+    If $url <> furl.Text Then
+      If MoveURL(furl.Text) Then
+        Message.Error("impossible de déplacer le document d'URL!")
+        furl.Text = $url
+      Endif
+      $url = furl.Text
     Endif
 
   Endif
+  
+  If Get_Mime($url) Then
+    Message.Error("impossible de recupérer le type mime, verifiez l'URL")
+    Return
+  Endif
+  fmime.Text = $mime
 
   Commit()
 
@@ -463,14 +604,20 @@ Public Sub Scanner_Click()
 
   If Exist(User.Home & "/" & "multipageproject.pdf") Then
     Copy User.Home & "/" & "multipageproject.pdf" To $temp_file
+    $temp_extension = "pdf"
   Else
     Message.Error("Il y a un problème de Scan. Vérifiez votre appareil SVP.")
+    $temp_file = Null
+    $temp_extension = Null
+    Return
   Endif
 
   If Exist($temp_file) And If Stat($temp_file).Size <> 0 Then
     If Message.Question("Scan terminé. Voulez-vous voir le document scané ?", "Non", "Oui") = 2 Then Visualiseur.Prog($temp_file)
   Else
     Message.Error("Le fichier " & $temp_file & " Est vide ou innexistant. Vérifiez votre appareil SVP.")
+    $temp_file = Null
+    $temp_extension = Null
   Endif
 
 End
@@ -496,6 +643,7 @@ Public Sub Copier_Click()
   Else
     If Copiefichier.List.First <> Null And Copiefichier.List.Length = 1 Then
       Copy Copiefichier.List.First To $temp_file
+      $temp_extension = File.Ext(Copiefichier.List.First)
     Else
       Message.Error("Plusieurs fichiers ont été sélectionnés!")
       Try Kill $temp_file
@@ -503,5 +651,11 @@ Public Sub Copier_Click()
     Endif
   Endif
   
+
+End
+
+Public Sub DefUrl_Click()
+
+  furl.Text = Default_URL(furl.Text)
 
 End
