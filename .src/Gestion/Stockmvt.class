@@ -92,16 +92,16 @@ Public Sub Buttrait_Click()
   fichierstth = " FROM Fiches_Art"
   
   fichierbl = " FROM Fiches_Bl,Fiches_Ligbl"
-  condbl = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_Bl.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.D, dtsup.D)
+  condbl = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_Bl.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.PDeb.DT, dtsup.PFin.DT)
   champbl = "SELECT "
   
   fichierblm = " FROM Fiches_BlM,Fiches_LigblM"
-  condblm = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_BlM.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.D, dtsup.D)
+  condblm = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_BlM.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.PDeb.DT, dtsup.PFin.DT)
   champblm = "SELECT "
   
   champfa = "SELECT "
   fichierfa = " FROM Fiches_HistoFac,Fiches_HistoLigfac"
-  condfa = Utils.db.Subst(" WHERE numfac=num_ligfac AND typel_ligfac='A' AND (dtligbl_ligfac BETWEEN &1 AND &2)", dtinf.D, dtsup.D)
+  condfa = Utils.db.Subst(" WHERE numfac=num_ligfac AND typel_ligfac='A' AND (dtligbl_ligfac BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
   
   champfam = "SELECT "
   fichierfam = " FROM Fiches_HistoFacM,Fiches_HistoLigfacM"
@@ -109,19 +109,19 @@ Public Sub Buttrait_Click()
   
   champfo = "SELECT "
   fichierfo = " FROM Fiches_Entrecpt,Fiches_Ligrecpt"
-  condfo = Utils.db.Subst(" WHERE Fiches_Entrecpt.four=Fiches_Ligrecpt.four AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND (ddate BETWEEN &1 AND &2)", dtinf.D, dtsup.D)
+  condfo = Utils.db.Subst(" WHERE Fiches_Entrecpt.four=Fiches_Ligrecpt.four AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND (ddate BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
   
   champex = "SELECT "
   fichierex = " FROM Fiches_Mvtexp,Fiches_Art"
-  condex = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexp.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.D, dtsup.D)
+  condex = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexp.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
   
   champrd = "SELECT "
   fichierprd = " FROM Fiches_Mvtexpdc,Fiches_Art"
-  conprd = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexpdc.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.D, dtsup.D)
+  conprd = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexpdc.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
   
   champtck = "SELECT "
   fichiertck = " FROM Fiches_HisEntTickets,Fiches_HisLigTickets"
-  contck = Utils.db.Subst(" WHERE Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND Fiches_HisLigTickets.type='A' AND (Fiches_HisEntTickets.date BETWEEN &1 AND &2)", dtinf.d, dtsup.d)
+  contck = Utils.db.Subst(" WHERE Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND Fiches_HisLigTickets.type='A' AND (Fiches_HisEntTickets.date BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
   'libelle pour le détail des fichiers
   If Radiodetail.Value Or Checkdetf.Value Then
     libbl = " Factures en cours"
@@ -322,16 +322,16 @@ Public Sub Buttrait_Click()
   Endif
   'recherche sans regroupement
   If Radiodetail.Value Then
-    champstkd &= ", ' ' as document"
-    champstth &= ", ' ' as document" 
-    champbl &= ",numbl as document, CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
-    champfa &= ",numfac as document, CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
-    champblm &= ",numbl as document, CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
-    champfam &= ",numfac as document, CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
-    champfo &= ",Fiches_Entrecpt.numrecpt as document, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtep, CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * CASE WHEN paht IS NULL THEN '0' ELSE REPLACE(paht,',','.') END as ca,'0'as mrgart,'0' as mrgmo"
-    champex &= ",' ' as document, CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champrd &= ",' ' as document, CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
-    champtck &= ",Fiches_HisEntTickets.numero as document, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtep, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca,0 as mrgart,'0' as mrgmo"
+    champstkd &= ", ' ' as document,' ' as nom"
+    champstth &= ", ' ' as document, ' ' as nom" 
+    champbl &= ",numbl as document, nmclibl as nom, CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
+    champfa &= ",numfac as document, nmclifac as nom,CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
+    champblm &= ",numbl as document, nmclibl as nom, CASE WHEN REPLACE(qte_ligbl,',','.') > '0' THEN REPLACE(qte_ligbl,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligbl,',','.') < '0' THEN REPLACE(qte_ligbl,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,mrgart_ligbl as mrgart,mrgmo_ligbl as mrgmo"
+    champfam &= ",numfac as document, nmclifac as nom, CASE WHEN REPLACE(qte_ligfac,',','.') > '0' THEN REPLACE(qte_ligfac,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte_ligfac,',','.') < '0' THEN REPLACE(qte_ligfac,',','.') * -1 ELSE '0' END as qtep, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,mrgart_ligfac as mrgart,mrgmo_ligfac as mrgmo"
+    champfo &= ",Fiches_Entrecpt.numrecpt as document, Fiches_Entrecpt.four as nom, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtep, CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * CASE WHEN paht IS NULL THEN '0' ELSE REPLACE(paht,',','.') END as ca,'0'as mrgart,'0' as mrgmo"
+    champex &= ",' ' as document,' ' as nom, CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champrd &= ",' ' as document, ' ' as nom, CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END as qtem, CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END as qtep, '0' as ca,'0'as mrgart,'0' as mrgmo"
+    champtck &= ",Fiches_HisEntTickets.numero as document, ' ' as nom, CASE WHEN REPLACE(qte,',','.') > '0' THEN REPLACE(qte,',','.') ELSE '0' END as qtem, CASE WHEN REPLACE(qte,',','.') < '0' THEN REPLACE(qte,',','.') * -1 ELSE '0' END as qtep, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca,0 as mrgart,'0' as mrgmo"
     If Radiodeptmp.Value Then
       champstkd &= ",CASE WHEN REPLACE(art_stkdep,',','.') < '0' THEN REPLACE(art_stkdep,',','.') * -1 ELSE '0' END as qtem, CASE WHEN REPLACE(art_stkdep,',','.') > '0' THEN REPLACE(art_stkdep,',','.') ELSE '0' END as qtep, art_pmp * art_stkdep as ca,'0'as mrgart,'0' as mrgmo"
     Else
@@ -518,9 +518,13 @@ Private Sub affiche()
   GridView1.Columns[2].Alignment = Align.Center
   If Radiodetail.Value Then
     GridView1.Columns.Count += 1
-    GridView1.Columns[3].Text = "Document"
+    GridView1.Columns[3].Text = "Nom"
     GridView1.Columns[3].Width = 100
     GridView1.Columns[3].Alignment = Align.Center
+    GridView1.Columns.Count += 1
+    GridView1.Columns[4].Text = "Document"
+    GridView1.Columns[4].Width = 100
+    GridView1.Columns[4].Alignment = Align.Center
   Endif
   If Radiosortie.Value Or Radiotouta.Value Then
     GridView1.Columns.Count += 1
@@ -606,6 +610,12 @@ Public Sub GridView1_Data(Row As Integer, Column As Integer)
     If Radiodetail.Value Then
       Inc i
       GridView1[row, i].Background = coul
+      If Not IsNull($res!nom) Then 
+         GridView1[row, i].Text = $res!nom
+         GridView1[row, i].Alignment = Align.Left
+      Endif
+      Inc i
+      GridView1[row, i].Background = coul
       If Not IsNull($res!document) Then
         GridView1[row, i].Text = $res!document
       Endif
@@ -653,10 +663,10 @@ Public Sub GridView1_Activate()
   If Not Radiodetail.Value Then Return
   If GridView1[GridView1.Row, 2].Text Match "Factures" Then
     If GridView1[GridView1.Row, 2].Text Match "en cours" Then
-      obj = New ObjFacB(GridView1[GridView1.Row, 3].Text, ObjFac.bl, LDate(GridView1[GridView1.Row, 0].Text))
+      obj = New ObjFacB(GridView1[GridView1.Row, 4].Text, ObjFac.bl, LDate(GridView1[GridView1.Row, 0].Text))
       obj.visualisation
     Else
-      obj = New ObjFacB(GridView1[GridView1.Row, 3].Text, ObjFac.archive, LDate(GridView1[GridView1.Row, 0].Text))
+      obj = New ObjFacB(GridView1[GridView1.Row, 4].Text, ObjFac.archive, LDate(GridView1[GridView1.Row, 0].Text))
       obj.visualisation
     Endif
     
@@ -685,7 +695,7 @@ Public Sub Butedit_Click()
   Dim lab As ReportLabel
   Dim coul As Integer
   Dim i, j As Integer
-  Dim tot As Float[]
+  Dim tot As New Float[]
   Dim Filename As String
   Dim prt As New Printer
   Dim pgb As ProgBar
@@ -694,8 +704,10 @@ Public Sub Butedit_Click()
   pgb.Show
   Filename = User.Home & "/tmp/stockmvt.pdf"
   prt.OutputFile = Filename
-  
-  tot = New Float[GridView1.Columns.Max - 2]
+  If Radioentre.Value Or Radiotouta.Value Then tot.Add(0)
+  If Radiosortie.Value Or Radiotouta.Value Then tot.Add(0)
+  If Checkca.Value Then tot.Add(0)
+  If Checkmarge.Value Then tot.Add(0)
   coul = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
   $rpt = New Report
   
@@ -737,48 +749,53 @@ Public Sub Butedit_Click()
     If Radiomens.Value Then lab.Text = Format($res!dte, "mm.yyyy")
     If Radioanuel.Value Then lab.Text = Format($res!dte, "yyyy")
     lab.Alignment = Align.Center
-    Inc j
     lab = nlab(hb)
     lab.Text = $res!code
     lab.Alignment = Align.Center
     lab.Font = font["Serif,5"]
-    Inc j
     lab = nlab(hb)
     lab.Text = $res!libelle
     lab.Alignment = Align.Left
     lab.Expand = True
     lab.Font = font["Serif,5"]
+    If Radiodetail.Value Then
+      lab = nlab(hb)
+      lab.Text = $res!nom
+      lab.Font = font["Serif,5"]
+      lab = nlab(hb)
+      lab.Text = $res!document
+      lab.Font = font["Serif,5"]
+    Endif
     If Radiosortie.Value Or Radiotouta.Value Then
-      Inc j
       lab = nlab(hb)
       lab.Alignment = Align.Right
       lab.Font = font["Serif,5"]
       lab.Text = Format(Utils.totobs([$res!qtem]), "0.000")
-      tot[j - 3] += (Utils.totobs([$res!qtem]))
+      tot[j] += (Utils.totobs([$res!qtem]))
+      Inc j
     Endif
     If Radioentre.Value Or Radiotouta.Value Then
-      Inc j
       lab = nlab(hb)
       lab.Alignment = Align.Right
       lab.Font = font["Serif,5"]
         lab.Text = Format(Utils.totobs([$res!qtep]), "0.000")
-        tot[j - 3] += Utils.totobs([$res!qtep])
+        tot[j] += Utils.totobs([$res!qtep])
+      Inc j
     Endif
     If Checkca.Value Then
-      Inc j
       lab = nlab(hb)
       lab.Alignment = Align.Right
       lab.Font = font["Serif,5"]
       lab.Text = Format(Utils.totobs([$res!ca]), "0.00")
-      tot[j - 3] += Utils.totobs([$res!ca])
+      tot[j] += Utils.totobs([$res!ca])
+      Inc j
     Endif
     If Checkmarge.Value Then
-      Inc j
       lab = nlab(hb)
       lab.Alignment = Align.Right
       lab.Font = font["Serif,5"]
       lab.Text = Format(Utils.totobs([$res!mrgart, $res!mrgmo]), "0.00")
-      tot[j - 3] += Utils.totobs([$res!mrgart, $res!mrgmo])
+      tot[j] += Utils.totobs([$res!mrgart, $res!mrgmo])
     Endif
   Next
   'edition du total
@@ -801,7 +818,7 @@ Public Sub Butedit_Click()
     lab.Font = font["Serif,6"]
     lab.Alignment = Align.Right
     lab.Border = ReportBorder["Right:1pt #000000"]
-    lab.Text = Format(tot[i], "0.00")
+    lab.Text = Format(tot[i], "0.000")
   Next
 
   $rpt.Print(prt)
