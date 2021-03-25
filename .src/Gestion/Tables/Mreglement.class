@@ -134,6 +134,14 @@ Public Sub bar1_valide(creer As Boolean, anul As Boolean)
   
   Dim i As Integer
   
+  If Not $bars.estcreer And Not $bars.estmodif Then         'suppression d'un enregistrement
+    Utils.db.Commit
+    $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
+    If $ressel.Available Then GridView1.rows.Count = $ressel.Count Else GridView1.rows.Count = 0
+    affiche
+    Return
+  Endif
+  
   i = $ressel.Index
   If Not code.Text Then
     Message.Error("Code obligatoire")
@@ -161,7 +169,7 @@ Public Sub bar1_valide(creer As Boolean, anul As Boolean)
   Endif
   $res!lcr = sans_lcr
   If lcr.Value Then $res!lcr = lcr_nacc
-  If lcra.Value Then $res!lcr = lcr_nacc
+  If lcra.Value Then $res!lcr = lcr_acc
   If code.Enabled Then $res!code = code.Text
   $res!libel = libel.Text
   $res!journal = jour.Text
@@ -183,9 +191,9 @@ End
 
 Public Sub bar1_suprimer()
 
+  $ressel.MoveTo(GridView1.Row)
+  Utils.db.Begin
   Utils.db.Delete("Fiches_Reglements", "code=&1", $ressel!code)
-  $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
-  affiche
 
 End
 
