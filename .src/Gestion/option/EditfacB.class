@@ -590,7 +590,6 @@ Public Sub pourc_data(Index As Integer)
   Dim ky As String
   Dim vri As String[]
   
-  
   $pourc.Data = " "
   If Index >= $cal.ligne.Count Then Return
   ky = Format(index + 1, "0000")
@@ -657,7 +656,7 @@ Public Sub intitule_Data(Index As Integer)
   If Index < $cal.ligne.Count Then
     ky = Format(index + 1, "0000")
     lg = $cal.ligne[ky]
-    If lg.type <> "TD" And lg.type <> "C" Then
+    If lg.type <> "TD" And lg.type <> "C" And lg.type <> "R" Then
       Me.intitule.Data = Left(lg.libel, Me.longueur())
     Else
       Me.intitule.Data = lg.libel
