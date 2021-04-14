@@ -669,8 +669,8 @@ Public Function editefm(Optional courriel As Boolean = False, tri As String) As 
         sText2 = Variables.sTexte
       Endif
       sText = "Facture n° : " & Me.numfac & " du " & Me.dtedoc.L
-      EnvMail.Envoi(Me.rescli!cli_email, sText, sText2, True, User.Home & "/tmp/", "application/pdf", "Facture.pdf")
       Me.dupli2()
+      EnvMail.Envoi(Me.rescli!cli_email, sText, sText2, True, User.Home & "/tmp/", "application/pdf", "Facture.pdf")
     Else
       Me.imp.NumCopies = Me.nbexplemplaire
       If Me.imp.NumCopies > 0 Then
@@ -682,8 +682,8 @@ Public Function editefm(Optional courriel As Boolean = False, tri As String) As 
           If Me.condvent Then Impression.Facture(Me.condvent, 1, Me.imp.Name)
         Endif
       Endif
+      Me.Dupli2()
     Endif
-    Me.Dupli2()
     transblfac()
   Until res.MoveNext()
   pgb.Close
