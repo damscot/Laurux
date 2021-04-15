@@ -9,8 +9,13 @@ Public Sub _new(Lecr As VarEcr, choix As Integer, resreg As Result)     ''Choix=
   Dim qst As String
   Dim nb As Integer
   Dim vecr As VarEcr
+  Dim res As Result
   
   ReportHBox1.BackGround = ReportBrush.Color(Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B)))
+  ReportHBox3.BackGround = ReportBrush.Color(Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B)))
+  res = Utils.db.Exec("SELECT * FROM Fiches_Societes")
+  If res.Available Then Soc.Text = res!type_sc & " " & res!int_sc
+  qui.Text = User.Name
   If choix = EdReg.tous Then qst = InputBox("Vous pouvez entrer un numèro de bordereau ", "Édition des bordereaux")
   If qst Then
     borderau.Text = "Bordereau n° : " & qst
