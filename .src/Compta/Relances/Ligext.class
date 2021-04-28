@@ -38,14 +38,14 @@ End
 Public Sub CheckBox1_Click()
 
   Dim res As Result
-
+  
   Utils.db.Begin
   $resext.MoveTo($ind)
   If CheckBox1.Value Then
     res = Utils.db.Create("Fiches_relances")
     res!compte = $resext!compte
     res!rs = $rescli!cli_rs_soc
-    res!intitule = $resext!intitule
+    res!intitule = $rescli!cli_nom
     res!adr1 = $rescli!cli_adr1
     res!adr2 = $rescli!cli_adr2
     res!cp = $rescli!cli_cd_ptl

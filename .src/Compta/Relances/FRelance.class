@@ -43,9 +43,15 @@ Public Sub Form_Open()
 
   Tab = "Fiches_Txt_Relances"
   rResult = Utils.db.Exec("SELECT * FROM " & tab & " order by niveau")
-  If rResult.Available Then rResult = Utils.db.Exec("SELECT * FROM " & tab & " Where niveau = &1", 1)
-  Rel1.Text = rResult!libell1
-  Rel2.Text = rResult!libell2
+  If rResult.Available Then 
+    Repeat
+      niveau.Add(rResult!niveau)
+    Until rResult.MoveNext()
+    rResult.MoveFirst()
+    niveau.Text = rResult!niveau
+    Rel1.Text = rResult!libell1
+    Rel2.Text = rResult!libell2
+  Endif
 Catch
 
 End
@@ -61,12 +67,15 @@ Public Sub Button2_Click()
   Dim rResult As Result
   Dim Tab As String
 
+  If Not niveau.Text Then Return
   Tab = "Fiches_Txt_Relances"
-  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE niveau = '" & niveau.Text & "'")
+  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE niveau = &1", niveau.Text)
   If rResult.Available Then
     Utils.db.Exec("UPdate  " & Tab & "  SET   libell1 = &2, libell2 = &3 WHERE niveau =  &1", niveau.Text, Rel1.Text, Rel2.Text)
   Else
     Utils.db.Exec("INSERT INTO " & Tab & "(niveau,libell1, libell2) VALUES (&1, &2, &3)", niveau.Text, Rel1.Text, Rel2.Text)
+    niveau.Add(niveau.Text)
+    
   Endif
 
 End
@@ -77,7 +86,7 @@ Public Sub niveau_Click()
   Dim Tab As String
 
   Tab = "Fiches_Txt_Relances"
-  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE niveau = '" & niveau.Text & "'")
+  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE niveau = &1", niveau.Text)
   If rResult.Available Then
     Rel1.Text = rResult!libell1
     Rel2.Text = rResult!libell2
@@ -108,8 +117,9 @@ Public Sub Button1_Click()
   If son Then
     Music.Play
   Endif
-  If Message.Question("Etes vous sur de vouloir effacer cet enregistrement", "Oui", "Non") = 1 Then
+  If Message.Question("Etes vous sur de vouloir effacer cet enregistrement", "Oui", "Non") = 1 And niveau.Text Then
     Utils.db.Exec("DELETE FROM " & Tab & " WHERE niveau = &1", niveau.Text)
+    niveau.Remove(niveau.Index)
   Endif
   niveau.Text = ""
   Rel1.Text = ""

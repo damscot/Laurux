@@ -58,9 +58,10 @@ Public Sub _new(numcli As Integer, numtag As Integer, devises As String, Scr As 
     res = Utils.db.Exec("SELECT solde FROM Fiches_Comptes WHERE compte_cc=&1", $inumcli)
     solde.Text = Format(res!solde, "0.00 ")
     $lsld = res!solde
-    For i = 0 To 3
-      Combolettre.Add(Str(i))
-    Next
+    res = utils.db.Exec("SELECT * FROM Fiches_Txt_Relances ORDER BY niveau")
+    Repeat
+      Combolettre.Add(res!niveau)
+    Until res.MoveNext()
     i = 0
     res = Utils.db.Exec("SELECT niveau FROM Fiches_relances WHERE compte=&1", $inumcli)
     If res.Available Then
@@ -298,7 +299,7 @@ Public Sub Buttonedit_Click()
             pdf.Entete2(rs2, adr21, adr22, ville2, Pays, "", False)
             pdf.Level5(Jour)
             posy = 110
-            pdf.Level8(Txt1, Posy)
+'            pdf.Level8(Txt1, Posy)
             Posy += 30
             pdf.Level6()
             posy += 6

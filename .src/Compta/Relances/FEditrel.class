@@ -137,6 +137,7 @@ Private Sub affiche()
   Dim lig As Ligcli
   Dim Totc As Float
 
+  If Not utils.db.Tables.Exist("Fiches_relances") Then Return
   res = Utils.db.Exec("SELECT compte FROM Fiches_relances GROUP BY compte ORDER BY compte ASC")
   If res.Available Then
     res.MoveFirst
@@ -559,7 +560,7 @@ Public Sub Impressionr(Org As String)
               pdf.Entete2(rs2, adr21, adr22, ville2, Pays, "", False)
               pdf.Level5(Jour)
               posy = 110
-              pdf.Level8(Txt1, Posy)
+'              pdf.Level8(Txt1, Posy)
               Posy += 30
               pdf.Level6()
               posy += 6
