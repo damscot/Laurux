@@ -10946,6 +10946,7 @@ Public Sub ToggleButton7_MouseDown()
   Dim TabEcr As String
   Dim ecrlet As Result
   Dim TotBl As Float = 0
+  Dim ext As Listextcpt
 
   Utils.Observers(Me)
   Me.Center
@@ -10974,7 +10975,8 @@ Public Sub ToggleButton7_MouseDown()
       Coldetail2.Visible = True
       Coldetail2.Raise
     Endif
-    ecrlet = Utils.db.Exec("SELECT * FROM " & TabEcr & " WHERE compte = &1 and lettree = &2  and validee = &3 order by dte", code.text, 0, 1)
+    ext = New Listextcpt(code.Text)
+    ecrlet = ext.resext
     If ecrlet.Available Then
       Repeat
         Coldetail2.Add(ecrlet!numdoc & ecrlet!lind, ecrlet!numdoc)
