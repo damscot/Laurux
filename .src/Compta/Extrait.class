@@ -642,13 +642,16 @@ Public Sub affichage()
         If Ctrl.Value = False Or detail.Value = True Then
  '         If dt.Apres(dte2) and Then
           If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
-            pResult = Utils.db.Exec("SELECT * FROM " & Tabp & " WHERE code = &1", rResult!numero)
+            Print "Ged TODO fix affichage de document disponible pour " & rResult!numero
             Colcli.Add(rResult.Index, rResult.Index)
-            If presult.Available Then
-              Colcli.Item[0] = "* " & rResult!compte
-            Else
-              Colcli.Item[0] = "  " & rResult!compte
-            Endif
+            Colcli.Item[0] = "? " & rResult!compte
+            'pResult = Utils.db.Exec("SELECT * FROM " & Tabp & " WHERE code = &1", rResult!numero)
+            'Colcli.Add(rResult.Index, rResult.Index)
+            'If presult.Available Then
+            '  Colcli.Item[0] = "* " & rResult!compte
+            'Else
+            '  Colcli.Item[0] = "  " & rResult!compte
+            'Endif
             Colcli.Item[1] = dt.L
             Colcli.Item[2] = rResult!libelle
             Colcli.Item[3] = rResult!numdoc

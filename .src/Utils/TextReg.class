@@ -6,7 +6,7 @@ Create Static
 
 Public Enum commence_par, fini_par, contient        ''Comment se comporte le filtre sur les recherches
 Public Enum Rien, EstRecherche, EstHisto            ''Definit quelle fenetre s'ouvre 
-Public Enum EstText, EstNum, EstDate               ''Definit quel type de données est pris en compte
+Public Enum EstText, EstNum, EstDate, EstDateTime   ''Definit quel type de données est pris en compte
 'variables publics
 Public dte As New LDate As "dte"
 Public lke As Integer = contient      ''Indique à la requete comment doit se comporter le LIKE quand recherche = True avec les constantes commence_par, fini_par, contient ce dernier étant par défaut 
@@ -39,7 +39,8 @@ Public Const compte As String = "[0-9]*"               'saisie d'un compte à la
 Public Const num As String = "-?[0-9]*[,.]?[0-9]*"       'saisie d'un numérique avec ,
 Public Const chaine As String = "[^%^_]*"                 'saisie d'une chaine en excluant les caractéres spéciaux de recherche BD (a compléter et vérifier)
 Public Const mail As String = "[a-zA-Z0-9_.+-]+@?[a-zA-Z0-9.-]*"     'saisie d'une adresse mail peut certainement s'améliorer
-Public Const dts As String = "[0-9]{1,2}[./-]?[0-9]{0,2}[./-]?[0-9]{0,4}"
+Public Const dts As String = "[0-9]{0,2}[./-]?[0-9]{0,2}[./-]?[0-9]{0,4}"
+Public Const dtst As String = "[0-9]{0,2}[./-]?[0-9]{0,2}[./-]?[0-9]{0,4}[ ]?[0-9]{0,2}[:]?[0-9]{0,2}"
 Public Const nofilter As String = ".*" 
 ' a compléter si autre idées par ex : saisie des comptes client ...
 'comme les paterns sont parfois un peu difficiles à trouver et à mettre au point il serait peut être bien de les mettres en constantes ?
@@ -128,6 +129,9 @@ Public Sub butb_keypress()
       If $typedonne = EstDate And (Me.Enabled Or Not Me.ReadOnly) Then
         Me.Editor.Text = LDateC.Select(dte).L
         $text = Me.Editor.Text
+      Else If $typedonne = EstDateTime And (Me.Enabled Or Not Me.ReadOnly) Then
+        Me.Editor.Text = LDateC.Select(dte).LT
+        $text = Me.Editor.Text
       Endif
       
     Case Key.Enter, Key.Return, Key.Tab
@@ -162,6 +166,9 @@ Public Sub butb_DblClick()
   
   If $typedonne = EstDate And (Me.Enabled Or Not Me.ReadOnly) Then
     Me.Editor.Text = LDateC.Select(dte).L
+    $text = Me.Editor.Text
+  Else If $typedonne = EstDateTime And (Me.Enabled Or Not Me.ReadOnly) Then
+    Me.Editor.Text = LDateC.Select(dte).LT
     $text = Me.Editor.Text
   Endif
   
@@ -221,10 +228,19 @@ Public Sub butb_lostfocus()
     Endif
   Endif
   If $typedonne = EstDate Then
+    If Not IsNull(Me.Editor.Text) Then
       dte.L = Me.Editor.Text
       Me.Editor.Text = dte.L
       $text = dte.L
       $textesc = dte.L
+    Endif
+  Else If $typedonne = EstDateTime Then
+    If Not IsNull(Me.Editor.Text) Then
+      dte.LT = Me.Editor.Text
+      Me.Editor.Text = dte.LT
+      $text = dte.LT
+      $textesc = dte.LT
+    Endif
   Endif
   Try $prop.EcriParam(Me.Window.Name & "/" & Me.Name, Me)
   Try $win.Delete
@@ -234,7 +250,11 @@ End
 
 Public Sub dte_change(dt As LDate)
 
-  If $typedonne = EstDate Then Me.Editor.Text = dt.L
+  If $typedonne = EstDate Then 
+    Me.Editor.Text = dt.L
+  Else If $typedonne = EstDateTime Then
+    Me.Editor.Text = dt.LT
+  Endif
 
 End
 
@@ -280,6 +300,12 @@ Private Sub Text_Write(Value As String)
   If $typedonne = EstDate Then
     $text = LDate(value).L
     dte.L = $text
+    Me.Editor.Text = $text
+    $value = 0
+    Return
+  Else If $typedonne = EstDateTime Then
+    $text = LDate(value).LT
+    dte.LT = $text
     Me.Editor.Text = $text
     $value = 0
     Return
@@ -614,6 +640,11 @@ Private Sub Type_Write(Value As Integer)
         Me.value = 0
         If $text Then dte.L = $text
         $text = dte.L
+      Case EstDateTime
+        If Not $regp Then $reg = dtst
+        Me.value = 0
+        If $text Then dte.LT = $text
+        $text = dte.LT
     End Select
     $regex.Compile($reg)
     $typedonne = value

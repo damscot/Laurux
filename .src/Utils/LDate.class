@@ -272,8 +272,9 @@ Private Function Parse(Sdate As String, Optional ParseTime As Boolean = True) As
   Endif
   
 Catch
-
-  Message.Error("Erreur grave lors de l'interprétation de la date " & Sdate)
+  If Sdate <> "" Then
+    Message.Error("Erreur grave lors de l'interprétation de la date " & Sdate)
+  Endif
   Return Null
   
 End
@@ -304,14 +305,18 @@ End
 Sub L_Write(ldate As String)
 
   Dte = Parse(ldate, False)
-  Raise change(Me)
+  If Dte <> Null Then
+    Raise change(Me)
+  Endif
 
 End
 
 Sub LT_Write(ldate As String)
 
   Dte = Parse(ldate)
-  Raise change(Me)
+  If Dte <> Null Then
+    Raise change(Me)
+  Endif
 
 End
 
@@ -324,7 +329,9 @@ End
 Sub D_Write(ddate As String)
 
   Dte = Parse(ddate, False)
-  Raise change(Me)
+  If Dte <> Null Then
+    Raise change(Me)
+  Endif
 
 End
 
@@ -338,7 +345,9 @@ End
 Sub DT_Write(ddate As String)
 
   Dte = Parse(ddate)
-  Raise change(Me)
+  If Dte <> Null Then
+    Raise change(Me)
+  Endif
 
 End
 
@@ -351,7 +360,9 @@ End
 Sub G_Write(gdate As Date)
 
   Dte = gdate
-  Raise change(Me)
+  If Dte <> Null Then
+    Raise change(Me)
+  Endif
 
 End
 
@@ -365,7 +376,9 @@ End
 Sub GnT_Write(gdate As Date)
 
   Dte = Date(Year(gdate), Month(gdate), Day(gdate), 0, 0, 0)
-  Raise change(Me)
+  If Dte <> Null Then
+    Raise change(Me)
+  Endif
 
 End
 
