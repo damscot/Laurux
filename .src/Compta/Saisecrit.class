@@ -3055,36 +3055,73 @@ End
 
 Public Sub Button5_Click()
 
-  Dim hFormc As GedC
-  Dim hFormg As Gged
+  Dim hForm As LGed
+  Dim cancel As Boolean
+  Dim elem As Variant
+  Dim $cpt As String
+  Dim $ht As LPrix
+  Dim $tva As LPrix
 
   If ecrit1.count > 0 Then
-    Select Case Message.Question("Que voulez-vous faire ?\n1- Joindre un fichier existant\n2- Scanner un document\n3 -Sortir", "1", "2", "3")
-      Case 1
-        ecrit1.MoveFirst()
-        ecrit1.Item.Selected = True
-        $cpt = ecrit1.Current[1]
-        If Not IsNull($cpt) Then
-          hFormc = New GedC(Numecrit.text, "CPT", ecrit1.Current[1], " ")
-          hFormc.Showmodal()
+
+    hForm = New LGed(Null, 0, LGed.Comptabilite, "CPT", Numecrit.text)
+    ecrit1.MoveFirst()
+    ecrit1.Item.Selected = True
+    $tva = New LPrix(0)
+    $ht = New LPrix(0)
+    Repeat
+      $cpt = ecrit1.Current[1]
+      If Left$($cpt, 3) = "445" Then
+        'TVA
+        $tva.Add(LPrix(ecrit1.Current[6]))
+        $tva.Sub(LPrix(ecrit1.Current[5]))
+      Else
+        'HT
+        $ht.Add(LPrix(ecrit1.Current[6]))
+        $ht.Sub(LPrix(ecrit1.Current[5]))
+        If Left$($cpt, 3) = "401" Then 'Fournisseur
+          'Add Tag from Fournisseur
+        Else If Left$($cpt, 3) = "411" Then 'Client
+          'Add Tag from Client
         Endif
-
-      Case 2
-        ecrit1.MoveFirst()
-        Repeat
-          ecrit1.Item.Selected = True
-          $cpt = ecrit1.Current[1]
-          If Not IsNull($cpt) Then
-            If Left$($cpt, 3) = "401" Or If Left$($cpt, 3) = "411" Then
-              hFormg = New Gged(Numecrit.text, "CPT", $cpt, "")
-              hFormg.Showmodal()
-            Endif
-          Endif
-        Until ecrit1.MoveNext()
-
-      Case 3
-        'Panel2.Visible = False
-    End Select
+      Endif
+    Until ecrit1.MoveNext()
+    hForm.AddTag(ecrit1.Current[1])
+    hForm.TTC = $ht + $tva
+    'Pour une ecriture en compta / trésorerie le HT = TTC
+    hForm.HT = $ht
+    hForm.DTE = LDate(datej.Text)
+    cancel = hForm.ShowModal()
+    If cancel Then
+      hForm.Delete()
+    Endif
+  
+    ' Select Case Message.Question("Que voulez-vous faire ?\n1- Joindre un fichier existant\n2- Scanner un document\n3 -Sortir", "1", "2", "3")
+    '   Case 1
+    '     ecrit1.MoveFirst()
+    '     ecrit1.Item.Selected = True
+    '     $cpt = ecrit1.Current[1]
+    '     If Not IsNull($cpt) Then
+    '       hFormc = New GedC(Numecrit.text, "CPT", ecrit1.Current[1], " ")
+    '       hFormc.Showmodal()
+    '     Endif
+    ' 
+    '   Case 2
+    '     ecrit1.MoveFirst()
+    '     Repeat
+    '       ecrit1.Item.Selected = True
+    '       $cpt = ecrit1.Current[1]
+    '       If Not IsNull($cpt) Then
+    '         If Left$($cpt, 3) = "401" Or If Left$($cpt, 3) = "411" Then
+    '           hFormg = New Gged(Numecrit.text, "CPT", $cpt, "")
+    '           hFormg.Showmodal()
+    '         Endif
+    '       Endif
+    '     Until ecrit1.MoveNext()
+    ' 
+    '   Case 3
+    '     'Panel2.Visible = False
+    ' End Select
   Endif
 
 End

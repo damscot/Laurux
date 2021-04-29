@@ -18,6 +18,7 @@ Private $reg As String
 Private $regp As Boolean = False
 Private $numerique As Boolean = False
 Private $date As Boolean = False
+Private $datetime As Boolean = False
 Private $regex As New RegExp
 Private $win As Window             ''Fenetre pour recherche
 Private $grd As GridView          ''Gridview pour la recherche
@@ -37,7 +38,8 @@ Public Const compte As String = "[0-9]*"               'saisie d'un compte à la
 Public Const num As String = "-?[0-9]*[,.]?[0-9]*"       'saisie d'un numérique avec ,
 Public Const chaine As String = "[^%^_]*"                 'saisie d'une chaine en excluant les caractéres spéciaux de recherche BD (a compléter et vérifier)
 Public Const mail As String = "[a-zA-Z0-9_.+-]+@?[a-zA-Z0-9.-]*"     'saisie d'une adresse mail peut certainement s'améliorer
-Public Const dts As String = "[0-9]{1,2}[./-]?[0-9]{0,2}[./-]?[0-9]{0,4}"
+Public Const dts As String = "[0-9]{0,2}[./-]?[0-9]{0,2}[./-]?[0-9]{0,4}"
+Public Const dtst As String = "[0-9]{0,2}[./-]?[0-9]{0,2}[./-]?[0-9]{0,4}[ ]?[0-9]{0,2}[:]?[0-9]{0,2}"
 Public Const nofilter As String = ".*" 
 ' a compléter si autre idées par ex : saisie des comptes client ...
 'comme les paterns sont parfois un peu difficiles à trouver et à mettre au point il serait peut être bien de les mettres en constantes ?
@@ -46,6 +48,7 @@ Public Const nofilter As String = ".*"
 Property Value As Float       ''gére la valeur numérique de l'objet
 Property numerique As Boolean     ''si cette objet est que numérique
 Property Dat As Boolean               ''si cette objet est une date
+Property DateTime As Boolean          ''si cette objet est une date avec heure
 Property nbdec As String            ''le nombre de décimal que contient cette objet
 Property reg As String              ''le regex de cette objet. Il remplace la constante définie ci-dessus
 Property MaxLenght As Integer     '' longueur maximum de l'objet
@@ -93,9 +96,14 @@ Public Sub butb_keypress()
       Me.Editor.Text = $textesc
     
     Case Key.F2
-      If $date And (Me.Enabled Or Not Me.ReadOnly) Then
-        Me.Editor.Text = LDateC.Select(dte).L
-        $text = Me.Editor.Text
+      If (Me.Enabled Or Not Me.ReadOnly) Then
+        If $datetime
+          Me.Editor.Text = LDateC.Select(dte).LT
+          $text = Me.Editor.Text
+        Else If $date
+          Me.Editor.Text = LDateC.Select(dte).L
+          $text = Me.Editor.Text
+        Endif
       Endif
       
     Case Key.Enter, Key.Return, Key.Tab
@@ -112,9 +120,14 @@ End
 
 Public Sub butb_DblClick()
   
-  If $date And (Me.Enabled Or Not Me.ReadOnly) Then
-    Me.Editor.Text = LDateC.Select(dte).L
-    $text = Me.Editor.Text
+  If (Me.Enabled Or Not Me.ReadOnly) Then
+    If $datetime
+      Me.Editor.Text = LDateC.Select(dte).LT
+      $text = Me.Editor.Text
+    Else If $date
+      Me.Editor.Text = LDateC.Select(dte).L
+      $text = Me.Editor.Text
+    Endif
   Endif
   
 End
@@ -201,19 +214,32 @@ Public Sub butb_lostfocus()
       Endif
     Endif
   Endif
-  If $date Then
+  If $datetime Then
+    If Not IsNull(Me.Editor.Text) Then
+      dte.LT = Me.Editor.Text
+      Me.Editor.Text = dte.LT
+      $text = dte.LT
+      $textesc = dte.LT
+    Endif
+  Else If $date Then
+    If Not IsNull(Me.Editor.Text) Then
       dte.L = Me.Editor.Text
       Me.Editor.Text = dte.L
       $text = dte.L
       $textesc = dte.L
+    Endif
   Endif
-  Try $win.Delete 
+  Try $win.Delete 'TODO confimer le besoin avec patrickmag
 
 End
 
 Public Sub dte_change(dt As LDate)
 
-  If $date Then Me.Editor.Text = dt.L
+  If $datetime Then
+    Me.Editor.Text = dt.LT
+  Else If $date Then
+    Me.Editor.Text = dt.L
+  Endif
 
 End
 
@@ -255,7 +281,13 @@ Private Sub Text_Write(Value As String)
     Me.Editor.Text = $text
     Return
   Endif
-  If $date Then
+  If $datetime Then
+    $text = LDate(value).LT
+    dte.LT = $text
+    Me.Editor.Text = $text
+    $value = 0
+    Return
+  Else If $date Then
     $text = LDate(value).L
     dte.L = $text
     Me.Editor.Text = $text
@@ -280,7 +312,10 @@ Private Sub numerique_Write(Value As Boolean)
     $regex.Compile($reg)
   Endif
   $numerique = value
-  If $numerique Then $date = False
+  If $numerique Then
+    $date = False
+    $datetime = False
+  Endif
   If $numerique And Val($text) <> Null Then
     $value = Val($text)
     Me.Editor.Text = $text
@@ -291,6 +326,12 @@ End
 Private Function Dat_Read() As Boolean
 
   Return $date
+
+End
+
+Private Function DateTime_Read() As Boolean
+
+  Return $datetime
 
 End
 
@@ -308,6 +349,23 @@ Private Sub Dat_Write(Value As Boolean)
     $text = dte.L
   Endif
   $date = value
+  
+End
+
+Private Sub DateTime_Write(Value As Boolean)
+
+  If $numerique And value Then $value = 0
+  If value Then $numerique = False
+  If $datetime <> value And Not $regp Then
+    If value Then $reg = dtst Else $reg = chaine
+    $regex.Compile($reg)
+  Endif
+  If $datetime And $text Then 
+    dte.LT = $text
+    Me.Editor.Text = dte.LT
+    $text = dte.LT
+  Endif
+  $datetime = value
   
 End
 

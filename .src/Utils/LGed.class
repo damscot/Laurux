@@ -22,8 +22,12 @@ Private $temp_extension As String
 Public Bsel As Boolean = False
 Public Bval As String = ""
 
+Property TTC As LPrix
+Property HT As LPrix
+Property DTE As LDate
 
-Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres, Optional origin As String = "")
+
+Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres, Optional origin As String = "", Optional code As String = "")
   
   Dim Res, Res2 As Result
   
@@ -34,6 +38,11 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
   $temp_file = Null
   $temp_extension = Null
   $tags = New Collection
+  $code = code
+  $dte = LDate()
+  $mht = LPrix(0)
+  $mttc = LPrix(0)
+
   
   'Creation d'un object LGed
   If $index <> 0 Then  
@@ -300,7 +309,7 @@ Public Sub Commit()
   Dim tag As String
 
   If $index = 0 Then
-    Utils.db.Exec("Insert into Docs_Ged (type, code, origin, url, filename, mime, date, ttc, ht) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9)", $type, $code, $origin, $url, $filename, $mime, $dte, $mttc, $mht)
+    Utils.db.Exec("Insert into Docs_Ged (type, code, origin, url, filename, mime, date, ttc, ht) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9)", $type, $code, $origin, $url, $filename, $mime, $dte.DT, $mttc.D, $mht.D)
     Res = Utils.db.Exec("SELECT * FROM Docs_Ged WHERE lind = LAST_INSERT_ID()")
     $index = Res!lind
   Endif
@@ -317,7 +326,9 @@ End
 
 Public Sub Ouvrir()
 
-  Visualiseur.Prog($url, $mime)
+  If $url <> Null Then
+    Visualiseur.Prog($url, $mime)
+  Endif
 
 End
 
@@ -356,8 +367,8 @@ Public Sub Default_URL(Optional FileName As String) As String
   FileName = File.BaseName(FileName)
 
   If FileName = "" Then
-    DefFile = Base & $dte.FT & "_" & Str($code) & "_"
-    For Each tag In $tags
+    DefFile = Base & $dte.FT & "_" & Str($code)
+    For Each tag In ListTags.List
       If (Len(Base) + Len(DefFile) + Len(Left(tag, 8)) + Len(Extension) + 2) < 255 Then
         DefFile &= "_" & Left(tag, 8)
       Endif
@@ -371,6 +382,34 @@ Public Sub Default_URL(Optional FileName As String) As String
   
   Return "file://" & DefFile
 
+End
+
+'********
+'PROPERTY
+'********
+
+Sub TTC_Read() As LPrix
+  Return $mttc
+End
+
+Sub TTC_Write(ttc As LPrix)
+  $mttc = ttc
+End
+
+Sub HT_Read() As LPrix
+  Return $mht
+End
+
+Sub HT_Write(ht As LPrix)
+  $mht = ht
+End
+
+Sub DTE_Read() As LDate
+  Return $dte
+End
+
+Sub DTE_Write(dte As LDate)
+  $dte = dte
 End
 
 ''''''''''''''''
@@ -393,7 +432,7 @@ Public Sub form_Open()
   furl.Text = $url
   forigin.Text = $origin
   fdte.Text = $dte.LT
-  fdte.Dat = True
+  fdte.Datetime = True
   fMht.Text = $mht.L
   fMht.numerique = True
   fMttc.Text = $mttc.L
@@ -452,6 +491,16 @@ Public Sub fmime_Change()
   
 End
 
+Public Sub forigin_Change()
+  
+  $origin = forigin.Text
+  
+End
+
+Public Sub ListTags_Change()
+  
+End
+
 Public Sub Existant_Click()
 
   Dim tr As TriGen
@@ -504,6 +553,11 @@ Public Sub Enregistrer_Click()
 
   If fdte.dte = Null Then
     Message.Error("la date ne doit pas etre vide")
+    Return
+  Endif
+
+  If fcode.Text = Null Then
+    Message.Error("le code ne doit pas etre vide")
     Return
   Endif
 
@@ -576,6 +630,7 @@ Public Sub Enregistrer_Click()
   fmime.Text = $mime
 
   Commit()
+  findex.Text = $index
 
 End
 
