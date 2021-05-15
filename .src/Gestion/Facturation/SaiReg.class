@@ -148,6 +148,7 @@ Public Sub nreg_LostFocus()
   Dim res, resext, rescli, rescli1 As Result
   Dim lst As Listextcpt
   Dim autre As VarEcr
+  Dim pb As ProgBar
   
   If $modif Then
     $modif = False
@@ -185,7 +186,10 @@ Public Sub nreg_LostFocus()
     If $resreg!bordereaux Then
       res = Utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE compte=&1 AND lettree<>True", $resreg!cptint)
       If res.Available Then
+        pb = New ProgBar("Lecture des règlements", res.Count)
+        pb.Show
         Repeat
+          pb.Avancement(" ")
           'la ligne affichée à l'écran corespond au compte tier
           rescli = Utils.db.Exec("SELECT * FROM Fiches_Mvt,Fiches_Comptes WHERE compte=compte_cc AND (type_cc='C' Or type_cc = 'F') AND coll=False AND numero=&1", res!numero)
           If rescli.Available Then
@@ -221,9 +225,11 @@ Public Sub nreg_LostFocus()
             'en même temps on garde les infos nécessaires pour les modifs
           Else
             Try Message.Error("Il n'existe pas de compte tiers pour l'écriture ou compte non léttré " & res!numero & " compte " & res!compte & "\nReprise du bordereau impossible ", "OK")
+            pb.Delete
             Return
           Endif
         Until res.MoveNext()
+        pb.Close
         affborderau()
       Endif
     Endif
@@ -666,6 +672,7 @@ Public Sub butvalide_Click()
     montsaisi.SetFocus
     Return
   Endif
+
   $modif = True
   Labvalide.Text = "Saisie"
   Labvalide.Tag = Valide_saisie
@@ -932,10 +939,13 @@ Public Sub vldsaisie_Click()
   Dim ereg As EcrReg
   Dim tot As Float
   Dim choix As Integer
+  Dim pb As ProgBar
   
   If borderaux.Rows.Count = 0 Then Return
-  Application.Busy += 1
+  pb = New ProgBar("Validation de la saisie", $Lecr.nb())
+  pb.Show
   For Each var In $Lecr
+    pb.Avancement(" ")
     Select Case var.etat
       Case VarEcr.L_valide
         Continue
@@ -953,34 +963,37 @@ Public Sub vldsaisie_Click()
         
     End Select
   Next
+  pb.Close
   
   Raise RegCaisse(tot, Mreglement.sans_caisse, $ntk, var.numdoc)
   $modif = False
   mabl
   mabreg()
   nreg.SetFocus
-  Application.Busy -= 1
 
 End
 'validation du bordereau
 Public Sub vldbordereau_Click()
   
   Dim ereg As EcrReg
+  Dim pb As ProgBar
   
   If borderaux.Rows.Count = 0 Then Return
   If Not $resreg!bordereaux Then Return
 
-  Application.Busy += 1
+  pb = New ProgBar("Validation du bordereau", 1)
+  pb.Show
   $Lecr.etat = VarEcr.L_valide
   $Lecr.type = VarEcr.Treso
   
+  pb.Avancement(" ")
   ereg = New EcrReg($resjou!code_jo, $Lecr, $resreg!code)
   If ereg.ecriture() Then
     Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
   Endif
   mabl
   mabreg()
-  Application.Busy -= 1
+  pb.Close
   
 End
 'editions

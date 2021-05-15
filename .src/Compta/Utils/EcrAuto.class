@@ -59,8 +59,8 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
     Select Case var.etat
       Case VarEcr.L_ajou, VarEcr.L_valide, VarEcr.L_caisse
         If var.type = VarEcr.Vente Then
-          If Not var.numdoc Then var.numdoc = numfac
-          If Not var.numlot Then var.numlot = numfac
+          var.numdoc = numfac
+          var.numlot = numfac
         Else
           If var.type = VarEcr.Treso Then
             If Not var.numdoc Then var.numdoc = numecr
@@ -263,7 +263,7 @@ Private Sub Lettrage(var As VarEcr)
   Dim i As Integer
   Dim ecrdif As VarEcr
   Dim nouecr As EcrAuto
-  
+
   'on met a jour les num de lot
   lisext = New Listextcpt(var.compte, LDate(DateAdd(Now, gb.Year, -8)).L, LDate(DateAdd(Now, gb.Year, 8)).L, "t")
   resext = lisext.resext
