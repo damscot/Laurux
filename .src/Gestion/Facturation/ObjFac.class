@@ -663,7 +663,7 @@ Private Sub calc(numlig As String)
   If Val(utils.cpoint(reslig!rem_ligbl)) = 0 Then ligneart.rem = " " Else ligneart.rem = reslig!rem_ligbl
   ligneart.tx = reslig!tx_ligbl
   ligneart.type = reslig!typel_ligbl
-  ligneart.stk = mult(resart!art_qte, 1, resart!art_dec)
+  If resart.Available Then ligneart.stk = mult(resart!art_qte, 1, resart!art_dec) 
   If remise And choix = ObjFac.bl Then                      'si ignore_remise on recalcul avec la fiche article
     ligneart.puht = mult(resart!art_pvht, 1, resart!art_nbd)
     ligneart.brht = mult(ligneart.puht, ligneart.qte, "2")
@@ -677,12 +677,12 @@ Private Sub calc(numlig As String)
     ligneart.nettc = mult(reslig!nettc_ligbl, 1, 2)
   Endif
   If ttc Then                     'si edition ttc 
-    ligneart.puht = mult(ligneart.puht, txtva, resart!art_nbd)
+    If resart.Available Then ligneart.puht = mult(ligneart.puht, txtva, resart!art_nbd)
     ligneart.brht = mult(ligneart.brht, txtva, "2")
     ligneart.neht = mult(ligneart.neht, txtva, "2")
   Endif
   If pxsdec Then              'si facture sans décimal
-    ligneart.puht = mult(ligneart.puht, 1, resart!art_nbd)
+    If resart.Available Then ligneart.puht = mult(ligneart.puht, 1, resart!art_nbd) 
     ligneart.brht = mult(ligneart.brht, 1, "0")
     ligneart.neht = mult(ligneart.neht, 1, "0")
   Endif

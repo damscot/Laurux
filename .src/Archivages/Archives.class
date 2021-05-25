@@ -1371,6 +1371,7 @@ Public Sub Recup_ligbl(Typef As String)
       If $soption = "B" Or $soption = "T" Then
         $borientation = utils.orientation(num.Text, "F")
       Endif
+      If IsNull(Tottc.Text) Then Tottc.Text = "0"
       Tottva.Text = Format$(Val(.cpoint(Tottc.Text)) - Val(.cpoint(Totht.Text)), "0.00")
       If Prxdec Then
         Totmo.Text = Round(Val(Totmo.Text))
