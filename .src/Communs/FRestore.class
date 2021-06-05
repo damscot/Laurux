@@ -66,7 +66,7 @@ Public Sub Button2_Click()
   Tactive = Cbase.Table("TabActif")
   filename = User.Home & "/tmp/resultat"
   hnew = Open filename For Create
-  Uncp.type = "zlib"
+  Uncp.Type = "zlib"
   Me.Mouse = Mouse.Wait
   Utilisateur = Recup.Utilisateur()
   Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " -e " & "\"" & "show variables Like " & "\\" & "\"" & "version" & "\\" & "\"" & ";\"" & "> " & User.home & "/tmp/resultat 2>&1 " Wait
@@ -200,13 +200,21 @@ Public Sub Verif_Version()
   AppVersion = AppVersionArr[0] & "." & AppVersionArr[1]
   Try Version = rResult!version
   If Error Then
-    Message.Warning("La version de la base restaurée est tres ancienne!\nVeuillez modifier le champ Version du fichier ~/.config/gambas3/" & Application.Name & ".conf et relancer Laurux SVP !")
+    Message.Warning("La version de la base restaurée est tres ancienne!\nVeuillez modifier le champ Version du fichier ~/.config/gambas3/" & Application.Name & ".conf et relancer Laurux SVP !\nLes préférences ne sont pas restaurées")
     Start.UnLock()
     Utils.fermeTunnel()
     Utils.db.Close
     Utils.Exit(False)
   Else If AppVersion <> rResult!version Then
-    Message.Warning("La version de la base restaurée est différente de celle de l'exécutable !\nVeuillez relancer Laurux SVP !")
+    Message.Warning("La version de la base restaurée est différente de celle de l'exécutable !\nVeuillez relancer Laurux SVP !\nLes préférences ne sont pas restaurées")
+    Start.UnLock()
+    Utils.fermeTunnel()
+    Utils.db.Close
+    Utils.Exit(False)
+  Endif
+  If Exist(SauveB.text & "/Laurux.conf") And If Message.Question("Voulez vous restaurer les préférences ? ", "Oui", "Non") = 1 Then
+    If Exist(Start.LocalSettings.Path) Then Kill Start.LocalSettings.Path 
+    Copy SauveB.text & "/Laurux.conf" To Start.LocalSettings.Path
     Start.UnLock()
     Utils.fermeTunnel()
     Utils.db.Close
