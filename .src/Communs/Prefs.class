@@ -1376,6 +1376,10 @@ Public Sub afffam()
     $check[i] = New CheckBox(Panelfam)
     $check[i].Height = 20
     $check[i].Width = 20
+    If i = Val(Textfam.Text) - 1 Then
+      $check[I].Value = True
+      $check[i].Enabled = False
+    Endif
   Next
   Try i = $ipr.Count
   If Error Then
