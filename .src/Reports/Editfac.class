@@ -33,10 +33,10 @@ Public Sub _new(vfac As ObjFac)
   If vfac.entete Then
     If vfac.adrlogo Then
       Me.Reportadresse.Children.Clear
-      Me.Reportadresse.Border = ReportBorder = [""]
+      Me.Reportadresse.Border = ReportBorder[""]
       Me.Reportadresse.Width = "0mm"
       Me.ReportImage1.Width = "90mm"
-      Me.ReportImage1.Image = Image.Load(Start.LocalSettings["/Soc" & Start.Societe & "/Logo2"])
+      Try Me.ReportImage1.Image = Image.Load(Start.LocalSettings["/Soc" & Start.Societe & "/Logo2"])
     Else
       res = Utils.db.Exec("SELECT * FROM Fiches_Societes WHERE cd_sc=&1", Start.Societe)
       If res.Available Then
@@ -67,7 +67,7 @@ Public Sub _new(vfac As ObjFac)
 
   'logo
   If vfac.lgo Then
-    Me.logo.Image = Image.Load(Start.LocalSettings["/Soc" & Start.Societe & "/Logo"])
+    Try Me.logo.Image = Image.Load(Start.LocalSettings["/Soc" & Start.Societe & "/Logo"])
   Endif
   'lbelle tva
   Me.ltt.Text = "Taux " & $vfac.libtaxe
