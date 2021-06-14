@@ -19,7 +19,9 @@ Public Struct Ledit
   unit As String
   qte As String
   puht As String
+  putc As String
   brht As String
+  brtc As String
   rem As String
   neht As String
   nettc As String
@@ -303,8 +305,8 @@ Private Sub numcli_Write(Value As String)
   If rescli.Available Then 
     If IsNull(rescli!cli_expl) Then $exemplaire = 2 Else $exemplaire = rescli!cli_expl
     Raise nombre(Str($exemplaire))
-    ttc = CBool(rescli!cli_autoent)
-    Raise fttc(ttc)
+    autoent = CBool(rescli!cli_autoent) 
+    If autoent Then Raise fttc(True)
     $cdech = rescli!cli_cdech
     If Object.IsValid($dtedoc) Then
       calech()
@@ -577,9 +579,9 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
     gestion = 0
     Repeat 
       If CFloat(resent!gestbl) <> 0 Then
-        gestion = resent!gestbl
         respar = utils.db.Exec("SELECT cptfrais,tvafrais,taux_tva,cc_tva,intitule_cc,devise FROM Fiches_Parametres,Fiches_Tvaav,Fiches_Comptes WHERE tvafrais=code_tva AND cptfrais=compte_cc")
         If respar.Available Then
+          If ttc Then gestion = resent!gestbl + utils.arrondi(resent!gestbl * (respar!taux_tva / 100), 2) Else gestion = resent!gestbl
           devise = respar!devise
           If Not resent!exobl Or autoent Then            'calcul de tva si pas exonéré
             If tva.Exist(respar!tvafrais) Then
@@ -612,9 +614,6 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
         respar = utils.db.Exec("SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva=&1", lignetva1.num)
         If respar.Available Then ecriture(respar!compte_cc, lignetva1.tottva, respar!intitule_cc)
       Next 
-    Endif
-    If ttc Then
-      montht = montht - monttva
     Endif
     montttc = utils.arrondi(montht, 2) + utils.arrondi(monttva, 2)
     'ecriture client
@@ -666,20 +665,19 @@ Private Sub calc(numlig As String)
   If resart.Available Then ligneart.stk = mult(resart!art_qte, 1, resart!art_dec) 
   If remise And choix = ObjFac.bl Then                      'si ignore_remise on recalcul avec la fiche article
     ligneart.puht = mult(resart!art_pvht, 1, resart!art_nbd)
+    ligneart.putc = mult(resart!art_pvht, txtva, "2")
     ligneart.brht = mult(ligneart.puht, ligneart.qte, "2")
+    ligneart.brtc = mult(ligneart.brht, txtva, "2")
     ligneart.rem = ""
     ligneart.neht = ligneart.brht
     ligneart.nettc = mult(ligneart.neht, txtva, "2")
   Else
     ligneart.puht = reslig!pu_ligbl
+    ligneart.putc = mult(reslig!pu_ligbl, txtva, "2")
     ligneart.brht = mult(reslig!brut_ligbl, 1, 2)
+    ligneart.brtc = mult(reslig!brut_ligbl, txtva, "2")
     ligneart.neht = mult(reslig!netht_ligbl, 1, 2)
     ligneart.nettc = mult(reslig!nettc_ligbl, 1, 2)
-  Endif
-  If ttc Then                     'si edition ttc 
-    If resart.Available Then ligneart.puht = mult(ligneart.puht, txtva, resart!art_nbd)
-    ligneart.brht = mult(ligneart.brht, txtva, "2")
-    ligneart.neht = mult(ligneart.neht, txtva, "2")
   Endif
   If pxsdec Then              'si facture sans décimal
     If resart.Available Then ligneart.puht = mult(ligneart.puht, 1, resart!art_nbd) 
@@ -693,25 +691,15 @@ Private Sub calc(numlig As String)
   If Not resent!exobl And Not autoent Then            'pas de calcul de tva si exonéré
       If tva.Exist(reslig!tx_ligbl) Then
         lignetva = tva[reslig!tx_ligbl]
-        If ttc Then
-          lignetva.totht += utils.arrondi(Val(ligneart.neht) / txtva, 2)
-          lignetva.tottc += utils.arrondi(ligneart.neht, 2)
-        Else
-          lignetva.totht += Val(ligneart.neht)
-          lignetva.tottc += Val(ligneart.nettc)
-        Endif
+        lignetva.totht += Val(ligneart.neht)
+        lignetva.tottc += Val(ligneart.nettc)
         tva[reslig!tx_ligbl] = lignetva
       Else
         lignetva = New Ltva
         lignetva.num = reslig!tx_ligbl
         lignetva.taux = reslig!mtx_ligfac
-        If ttc Then
-          lignetva.totht = utils.arrondi(Val(ligneart.neht) / txtva, 2)
-          lignetva.tottc = utils.arrondi(Val(Utils.cpoint(ligneart.nettc)), 2)
-        Else
-          lignetva.totht = utils.arrondi(ligneart.neht, 2)
-          lignetva.tottc = Utils.arrondi(ligneart.nettc, 2)
-        Endif
+        lignetva.totht = utils.arrondi(ligneart.neht, 2)
+        lignetva.tottc = Utils.arrondi(ligneart.nettc, 2)
         tva.Add(lignetva, reslig!tx_ligbl)
       Endif
   Endif

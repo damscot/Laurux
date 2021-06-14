@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Public $vfac As ObjFac
+Public $vfac As ObjFacB
 Private $c1 As Integer        'couleur de colonne
 Private $c2 As Integer
 Private $frm As String
@@ -9,7 +9,7 @@ Public lgint As Integer = 44
 
 Const coef As Float = 0.538
 
-Public Sub _new(vfac As ObjFac)
+Public Sub _new(vfac As ObjFacB)
 
   Dim res As Result
   Dim ctva As Variant
@@ -246,7 +246,7 @@ Public Sub _new(vfac As ObjFac)
   'frais de gestion
   vfac.resent.MoveFirst
   If Utils.totobs([vfac.resent!gestbl]) <> 0 Then
-    Me.gest.Text = "Gestion : " & Format(Utils.totobs([vfac.resent!gestbl]), "0.00")
+    Me.gest.Text = "Gestion : " & Format(Utils.totobs([vfac.gestion]), "0.00")
   Endif
   If vfac.recap And vfac.tab <> "M" Then
     If $vfac.montart <> 0 Then Me.tart.Text = "Total article : " & Format($vfac.montart, $frm)
@@ -468,7 +468,7 @@ Public Sub puht_Data(Index As Integer)
   ky = Format(index + 1, "0000")
   If Not $vfac.ligne.Exist(ky) Then Return
   lg = $vfac.ligne[ky]
-  Me.puht.Data = lg.puht
+  If $vfac.ttc Then Me.puht.Data = lg.putc Else Me.puht.Data = lg.puht
   
 End
 
@@ -481,7 +481,7 @@ Public Sub bht_Data(Index As Integer)
   ky = Format(index + 1, "0000")
   If Not $vfac.ligne.Exist(ky) Then Return
   lg = $vfac.ligne[ky]
-  Me.bht.Data = lg.brht
+  If $vfac.ttc Then Me.bht.Data = lg.brtc Else Me.bht.Data = lg.brht
   
 End
 
@@ -507,7 +507,7 @@ Public Sub nht_Data(Index As Integer)
   ky = Format(index + 1, "0000")
   If Not $vfac.ligne.Exist(ky) Then Return
   lg = $vfac.ligne[ky]
-  Me.nht.Data = lg.neht
+  If $vfac.ttc Then Me.nht.Data = lg.nettc Else Me.nht.Data = lg.neht
   
 End
 
