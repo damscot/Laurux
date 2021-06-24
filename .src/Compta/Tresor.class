@@ -2171,7 +2171,8 @@ Public Sub Ecrit3()
           Endif
           $lstex.letgroupe(Nlot, Nlot2, False, Cptt.Text)
         End With
-        Numcompte.SetFocus
+        'On ne met pas le focus sur le compte en cas d'ouverture d'une ecriture 'Numcompte.SetFocus
+        Selct.SetFocus
         ' On passe l'écriture en provisoire
         Utils.db.Exec("UPDATE  " & Cbase.Table("TabMvt") & "  SET  validee = &2, provisoire = &3 where numero = &1", numecrit.Text, 0, 1)
         Sha1Calc.CalcSha1("Fiches_Mvt", numecrit.Text)

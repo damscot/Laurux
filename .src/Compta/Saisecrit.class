@@ -2612,7 +2612,8 @@ Public Sub Ecrit3()
             numdoc.Text = Ecrit1.Item[3]
             numlot.Text = Ecrit1.Item[4]
             Libelecrit.Text = Ecrit1.Item[2]
-            Numcompte.SetFocus
+            'On selectionne le button de validation plutot que le compte en édition 'Numcompte.SetFocus
+            Button2.SetFocus
             ' On delettre les ecritures portant un numero de lot identique
             If Left(Nlot, 1) = "M" Or Left(Nlot, 1) = "S" Then
               Nlot2 = Mid$(Nlot, 2, (Len(Nlot) - 1))
