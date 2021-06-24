@@ -58,7 +58,6 @@ Private intitule As String
 Private son As Integer = Start.Son
 Private b As Integer
 Private Cloturee As Integer
-Private tresr As Boolean
 Private num As Integer
 Private Tri As String
 Private $Code As String
@@ -1216,9 +1215,9 @@ Public Sub Necrit_Click()
   Dim hForm2 As Tresor
 
   If Journaux.visible = False Then
-    tresr = Colcli.Current[10]
     If Cloturee = 0 Then
-      If tresr = False Then
+      'Verification si l'ecriture est une ecriture de tresorerie
+      If Colcli.Current[10] == "0" Then
         hForm = New Saisecrit(num, Me.Parent, True)
         Try hForm.Showmodal()
       Else
