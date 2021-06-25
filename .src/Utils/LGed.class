@@ -68,6 +68,19 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
   
 End
 
+Public Sub Search(code As String, Optional type As Integer = Autres) As LGed
+  
+  Dim Res As Result
+  Dim Ret As LGed
+  Res = Utils.db.Exec("Select lind From Docs_Ged where code = &1 and type = &2", code, type)
+  If Res.Available Then
+    Ret = New LGed(Null, Res!lind)
+    Return Ret
+  Endif
+
+  Return Null
+  
+End
 
 Public Sub Supprime(Optional Epur As Boolean = True)
   
@@ -194,10 +207,11 @@ Public Sub CurlMimeProc_Read()
 
 End
 
-Public Sub Get_Mime(url As String) As Boolean
+Public Sub Get_Mime(url As String) As String
 
   Dim path As String
   Dim xdgmime As Process
+  Dim mime As String
 
   $mimeout = "" 
 
@@ -211,8 +225,7 @@ Public Sub Get_Mime(url As String) As Boolean
     xdgmime = Shell "xdg-mime query filetype " & path Wait For Input As "XdgMimeProc"
     If xdgmime.Value == 0 Then
       If Not IsNull($mimeout) Then
-        $mime = $mimeout
-        Return False
+        Return $mimeout
       Endif
     Endif
   Else If Left(url, 7) = "http://" Or Left(url, 8) = "https://" Then
@@ -220,13 +233,12 @@ Public Sub Get_Mime(url As String) As Boolean
     xdgmime = Shell "timeout 5 curl -s -k -I -o /dev/null -w 'Type: %{content_type}\n' '" & url & "'" Wait For Input As "CurlMimeProc"
     If xdgmime.Value == 0 Then
       If Not IsNull($mimeout) Then
-        $mime = $mimeout
-        Return False
+        Return $mimeout
       Endif
     Endif
   Endif
 
-  Return True
+  Return Null
 
 End
 
@@ -593,9 +605,11 @@ Public Sub Enregistrer_Click()
 
       If Left($url, 8) = "file:///" Or Left($url, 1) = "/" Then
         oldfile = Replace($url, "file:///", "/")
-        Try Kill oldfile
-        If Error Then
-          Message.Error("Impossible de supprimer " & oldfile & " !")
+        If Exist(oldfile)
+          Try Kill oldfile
+          If Error Then
+            Message.Error("Impossible de supprimer " & oldfile & " !")
+          Endif
         Endif
       Endif
       Try Copy $temp_file To Nomfichier
@@ -608,7 +622,7 @@ Public Sub Enregistrer_Click()
       $temp_extension = Null
       $url = furl.Text
     Else
-      Message.Error("Le support n'est actuellement disponible que sur les URL de fichier locaux (file://, /...)") 
+      Message.Error("Le support de Scan/Copie n'est actuellement disponible que sur les URL de fichier locaux (file://, /...)") 
     Endif
 
   Else
@@ -623,11 +637,15 @@ Public Sub Enregistrer_Click()
 
   Endif
   
-  If Get_Mime($url) Then
+  $mime = Get_Mime($url)
+  If $mime = Null Then
     Message.Error("impossible de recupérer le type mime, verifiez l'URL")
+    fmime.Text = ""
     Return
+  Else
+    fmime.Text = $mime
   Endif
-  fmime.Text = $mime
+  
 
   Commit()
   findex.Text = $index
@@ -673,6 +691,15 @@ Public Sub Scanner_Click()
     Message.Error("Le fichier " & $temp_file & " Est vide ou innexistant. Vérifiez votre appareil SVP.")
     $temp_file = Null
     $temp_extension = Null
+    Return
+  Endif
+  
+  If $mime <> Null Then
+    fmime.Text = "application/pdf"
+  Endif
+  
+  If $url <> Null Then
+    furl.Text = File.Dir(furl.Text) & "/" & File.BaseName(furl.Text) & ".pdf"
   Endif
 
 End
@@ -683,6 +710,7 @@ Public Sub Copier_Click()
   Dim Nomfichier As String
   Dim Copiefichier As LTrans
   Dim cancel As Boolean
+  Dim newmime As String
   
   If $temp_file <> Null Then 
     Try Kill $temp_file
@@ -697,15 +725,28 @@ Public Sub Copier_Click()
     Return
   Else
     If Copiefichier.List.First <> Null And Copiefichier.List.Length = 1 Then
+      newmime = Get_Mime(Copiefichier.List.First)
+      If newmime <> Null And $mime <> Null And newmime <> $mime Then
+        If Message.Question("Le fichier source possède un format d'extension différent du fichier original. Voulez-vous changer pour ce nouveau format ?", "Oui", "Non") = 1 Then
+          fmime.Text = newmime
+          If furl.Text Then
+            furl.Text = File.Dir(furl.Text) & "/" & File.BaseName(furl.Text) & "." & File.Ext(Copiefichier.List.First)
+          Endif
+        Else
+          Try Kill $temp_file
+          $temp_file = Null
+          Return
+        Endif
+      Endif
       Copy Copiefichier.List.First To $temp_file
       $temp_extension = File.Ext(Copiefichier.List.First)
     Else
       Message.Error("Plusieurs fichiers ont été sélectionnés!")
       Try Kill $temp_file
       $temp_file = Null
+      Return
     Endif
   Endif
-  
 
 End
 
