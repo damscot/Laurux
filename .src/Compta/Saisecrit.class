@@ -2676,6 +2676,7 @@ End
 Public Sub DelMvt()
 
   Dim rResult As Result
+  Dim ged As LGed
 
   If son Then
     Music.Play
@@ -2688,6 +2689,10 @@ Public Sub DelMvt()
     Endif
     Utils.db.Exec("UPDATE Fiches_MvtM SET supprimee = &1, datem = &3 WHERE numero =  &2", 1, numecrit.Text, Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
     Ecrit1.Clear
+    ged = LGed.Search(numecrit.Text, LGed.Comptabilite)
+    If ged <> Null Then
+      ged.Supprime()
+    Endif
     Clear()
     Journal.Select
     Journal.SetFocus
@@ -2702,6 +2707,7 @@ End
 Public Sub DelMvt2()
 
   Dim rResult As Result
+  Dim ged As LGed
 
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1 ", numecrit.Text)
   If rResult.Available Then
@@ -2713,7 +2719,7 @@ Public Sub DelMvt2()
 
 End
 
-'************************
+'************************^
 '*  On met tout à  blanc *
 '************************
 Public Sub clear()
@@ -3059,36 +3065,46 @@ Public Sub Button5_Click()
   Dim cancel As Boolean
   Dim elem As Variant
   Dim $cpt As String
+  Dim $ttc As LPrix
   Dim $ht As LPrix
   Dim $tva As LPrix
 
   If ecrit1.count > 0 Then
+    
+    hForm = LGed.Search(Numecrit.text, LGed.Comptabilite)
+    If hForm = Null Then
+      hForm = New LGed(Null, 0, LGed.Comptabilite, "CPT", Numecrit.text)
+    Endif
 
-    hForm = New LGed(Null, 0, LGed.Comptabilite, "CPT", Numecrit.text)
     ecrit1.MoveFirst()
-    ecrit1.Item.Selected = True
+    $ttc = New LPrix(0)
     $tva = New LPrix(0)
     $ht = New LPrix(0)
     Repeat
+      ecrit1.Item.Selected = True
       $cpt = ecrit1.Current[1]
-      If Left$($cpt, 3) = "445" Then
+      If Left$($cpt, 3) = "445" Then 'Compte TVA
         'TVA
         $tva.Add(LPrix(ecrit1.Current[6]))
         $tva.Sub(LPrix(ecrit1.Current[5]))
-      Else
-        'HT
-        $ht.Add(LPrix(ecrit1.Current[6]))
-        $ht.Sub(LPrix(ecrit1.Current[5]))
+      Else If Left$($cpt, 1) = "4" Then 'Compte Tiers
+        $ttc.Add(LPrix(ecrit1.Current[6]))
+        $ttc.Sub(LPrix(ecrit1.Current[5]))
         If Left$($cpt, 3) = "401" Then 'Fournisseur
           'Add Tag from Fournisseur
         Else If Left$($cpt, 3) = "411" Then 'Client
           'Add Tag from Client
         Endif
       Endif
+      hForm.AddTag(ecrit1.Current[1])
     Until ecrit1.MoveNext()
-    hForm.AddTag(ecrit1.Current[1])
-    hForm.TTC = $ht + $tva
-    'Pour une ecriture en compta / trésorerie le HT = TTC
+    'La TVA est saisie en contrepartie du compte Client/Fournisseur son signe permet une addition direct.
+    $ht.Add($ttc)
+    $ht.Add($tva)
+    'Pour la Ged on garde uniquement la valeur absolue du montant ttc/ht
+    $ttc.Abs()
+    $ht.Abs()
+    hForm.TTC = $ttc
     hForm.HT = $ht
     hForm.DTE = LDate(datej.Text)
     cancel = hForm.ShowModal()
@@ -3096,32 +3112,6 @@ Public Sub Button5_Click()
       hForm.Delete()
     Endif
   
-    ' Select Case Message.Question("Que voulez-vous faire ?\n1- Joindre un fichier existant\n2- Scanner un document\n3 -Sortir", "1", "2", "3")
-    '   Case 1
-    '     ecrit1.MoveFirst()
-    '     ecrit1.Item.Selected = True
-    '     $cpt = ecrit1.Current[1]
-    '     If Not IsNull($cpt) Then
-    '       hFormc = New GedC(Numecrit.text, "CPT", ecrit1.Current[1], " ")
-    '       hFormc.Showmodal()
-    '     Endif
-    ' 
-    '   Case 2
-    '     ecrit1.MoveFirst()
-    '     Repeat
-    '       ecrit1.Item.Selected = True
-    '       $cpt = ecrit1.Current[1]
-    '       If Not IsNull($cpt) Then
-    '         If Left$($cpt, 3) = "401" Or If Left$($cpt, 3) = "411" Then
-    '           hFormg = New Gged(Numecrit.text, "CPT", $cpt, "")
-    '           hFormg.Showmodal()
-    '         Endif
-    '       Endif
-    '     Until ecrit1.MoveNext()
-    ' 
-    '   Case 3
-    '     'Panel2.Visible = False
-    ' End Select
   Endif
 
 End

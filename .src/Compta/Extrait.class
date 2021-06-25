@@ -513,6 +513,7 @@ Public Sub affichage()
   Dim Tabp As String = "Docs_Compta"
   Dim dt As LDate
   Dim jour As String
+  Dim ged As LGed
 
   Tab1 = "Ctrln"
   With Utils
@@ -642,16 +643,13 @@ Public Sub affichage()
         If Ctrl.Value = False Or detail.Value = True Then
  '         If dt.Apres(dte2) and Then
           If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
-            Print "Ged TODO fix affichage de document disponible pour " & rResult!numero
             Colcli.Add(rResult.Index, rResult.Index)
-            Colcli.Item[0] = "? " & rResult!compte
-            'pResult = Utils.db.Exec("SELECT * FROM " & Tabp & " WHERE code = &1", rResult!numero)
-            'Colcli.Add(rResult.Index, rResult.Index)
-            'If presult.Available Then
-            '  Colcli.Item[0] = "* " & rResult!compte
-            'Else
-            '  Colcli.Item[0] = "  " & rResult!compte
-            'Endif
+            ged = LGed.Search(rResult!numero, LGed.Comptabilite)
+            If ged <> Null Then
+              Colcli.Item[0] = "* " & rResult!compte
+            Else
+              Colcli.Item[0] = "  " & rResult!compte
+            Endif
             Colcli.Item[1] = dt.L
             Colcli.Item[2] = rResult!libelle
             Colcli.Item[3] = rResult!numdoc
@@ -662,7 +660,6 @@ Public Sub affichage()
             Colcli.Item[7] = rResult!numero
             Colcli.Item[8] = rResult!jour
             If rResult!lettree And rResult!lettree <> "0" Then
-              Print rResult!lettree
               Colcli.Item[9] = "*"
             Else
               Colcli.Item[9] = ""
@@ -1124,15 +1121,12 @@ End
 
 Public Sub Colcli_MouseUp()
 
-  Dim rDoc As Result
+  Dim ged As LGed
 
   If Mouse.Right Then
-    rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCPTdocs") & " where doc2 like \"%" & Colcli.Current[7] & "%\" and doc2 like \"%" & Replace$(Colcli.Current[0], "* ", "") & "%\"")
-    If Not rDoc.Available Then rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCPTdocs") & " where doc2 like \"%" & Colcli.Current[7] & "%\"")
-    If rDoc.Available Then
-      Repeat
-        Desktop.Open(rDoc!doc)
-      Until rDoc.MoveNext()
+    ged = LGed.Search(Colcli.Current[7], LGed.Comptabilite)
+    If ged <> Null Then
+      ged.Ouvrir()
     Endif
   Endif
 
