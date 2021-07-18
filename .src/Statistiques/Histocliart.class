@@ -54,8 +54,8 @@ Public Sub _New()
   Music.Load(Start.Musique)
   
   chn = New Chainage([dten0, dten1, cli, cli2, Texttype, Textart, Textart1, Textfour, Textfour1, Textmarq, Textcentr])
-  dten0.Dat = True
-  dten1.Dat = True
+  dten0.Type = TextReg.EstDate
+  dten1.Type = TextReg.EstDate
   Textfour1.reg = "4{1}0*1*[0-9]{0,5}"
   Textfour.reg = "4{1}0*1*[0-9]{0,5}"
   cli.reg = "4{1}1*1*[0-9]{0,5}"

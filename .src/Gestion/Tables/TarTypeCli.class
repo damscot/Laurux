@@ -27,13 +27,13 @@ Public Sub _new(choix As Integer, Optional cat As String, article As String)
   Tart.conteneur = Me
   Tart.RechX = Coltype.X
   Tart.RechY = Button4.Y
-  Tprht.numerique = True
-  tcoeff.numerique = True
+  Tprht.Type = TextReg.EstNum
+  tcoeff.Type = TextReg.EstNum
   tcoeff.reg = "-?[0-9]*[,.]?[0-9]{0,4}"
-  Tpvht.numerique = True
-  Tpvttc.numerique = True
-  pvpublic.numerique = True
-  remise.numerique = True
+  Tpvht.Type = TextReg.EstNum
+  Tpvttc.Type = TextReg.EstNum
+  pvpublic.Type = TextReg.EstNum
+  remise.Type = TextReg.EstNum
   remise.reg = "-?[0-9]*[,.]?[0-9]{0,2}"
   Lstart.Tooltip = "Appuyez sur Supr pour supprimer cette remise"
   

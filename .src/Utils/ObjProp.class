@@ -17,11 +17,13 @@ Private $filter As TextReg
 Private $type As Integer
 Private $h As Integer
 Private $w As Integer
+Private $conf As Settings
 
+Public historique As New String[10]
 Public tri As Boolean = False       ''Indique si on tri sur cette colonne a l'ouverture de la recherche
 Public cle As Boolean = False       '' Si ce champ est une clé de l'enregistrement. Si aucune clé n'est définie la valeur du 1° champ sera retournée sinon on retourne une collection avec le result.field en clé et la valeur cliquée en donnée.
 
-Public Enum TextReg, TextBox, Button, Label, TextLabel        ''Indique quelle classe doit être créé. A completer selon les besoins
+Public Enum TextReg, TextBox, Button, Label, TextLabel, Param        ''Indique quelle classe doit être créé. A completer selon les besoins, param est pour la lecture des parametres dans un fichier conf dans ce cas NomColonne devient le nom du fichier a lire
 
 Property filter As TextReg
 Property Read name As String
@@ -36,6 +38,7 @@ Public Sub _new(FieldName As ResultField, NomColonne As String, Optional TypeCla
   If Not IsNull(FieldName) Then $name = FieldName.Name
   $nom = NomColonne
   $type = TypeClass
+  If TypeClass = Me.Param Then LecParam($nom)
 
 End
 
@@ -76,6 +79,38 @@ Public Sub CondFilter(nom As String, propriete As String)    ''On passe une prop
 
 End
 
+Public Sub EcriParam(Nom As String, txt As TextReg)
+
+  Dim elem As Elements
+  Dim i As Integer
+  
+  For i = 0 To $elem.Max
+    elem = $elem[i]
+    $conf["/" & Nom & "/" & elem.nom] = Object.GetProperty(txt, elem.nom)
+  Next
+  If txt.Text Then
+    i = historique.Find(txt.Text)
+    If i > -1 Then historique.Remove(i)
+    historique.Insert([txt.Text], 0)
+    historique.Remove(10, -1)
+    $conf["/" & Nom & "/Historique"] = historique
+    $conf.Save
+  Endif
+
+End
+
+Public Sub LecParam(Nom As String)
+  
+  Dim e As New Elements
+  
+  $conf = New Settings(User.Home & "/.config/gambas3/" & User.Name & Start.Societe)
+  AddChamp("Choirech", $conf["/" & Nom & "/Choirech", 0])
+  If Not IsNull($conf["/" & Nom & "/Historique"]) Then
+    historique = $conf["/" & Nom & "/Historique"]
+  Endif
+  
+End
+
 Private Sub frmt(frm As String, obj As Object)    ''On définit le format du texte, soit date soit numérique
   
   Dim dte As LDate
@@ -96,6 +131,8 @@ Private Sub frmt(frm As String, obj As Object)    ''On définit le format du tex
     obj.text = "#Error"
     
 End
+
+
 
 Private Function name_Read() As String
 

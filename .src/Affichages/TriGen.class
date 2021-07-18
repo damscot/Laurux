@@ -79,6 +79,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   
   For Each f In Col_Def
     filter = New TextReg(Parent) As "Filter"
+    filter.Name = f.NomControl
     filter.reg = TextReg.nofilter
     ch.add([filter])
     FilterRegex.Add("", Col_Def.Key)

@@ -4,8 +4,9 @@ Inherits ButtonBox
 Export
 Create Static
 
-Public Enum commence_par, fini_par, contient
-
+Public Enum commence_par, fini_par, contient        ''Comment se comporte le filtre sur les recherches
+Public Enum Rien, EstRecherche, EstHisto            ''Definit quelle fenetre s'ouvre 
+Public Enum EstText, EstNum, EstDate               ''Definit quel type de données est pris en compte
 'variables publics
 Public dte As New LDate As "dte"
 Public lke As Integer = contient      ''Indique à la requete comment doit se comporter le LIKE quand recherche = True avec les constantes commence_par, fini_par, contient ce dernier étant par défaut 
@@ -15,19 +16,20 @@ Private $text As String
 Private $textesc As String
 Private $nbdec As String
 Private $reg As String
+Private $typedonne As Integer
 Private $regp As Boolean = False
-Private $numerique As Boolean = False
-Private $date As Boolean = False
 Private $regex As New RegExp
 Private $win As Window             ''Fenetre pour recherche
 Private $grd As GridView          ''Gridview pour la recherche
 Private $champ As String[]
 Private $fichier As String
 Private $rech As Boolean
+Private $choirech As Integer
 Private $y As Float
 Private $x As Float
 Private $objp As Object
 Private $cond As String
+Private $prop As ObjProp            ''propietes de me pour le fichier setting
 'constantes prédéfinies
 Public Const num As String = "-?[0-9]*[,.]?[0-9]*"       'saisie d'un numérique avec ,
 Public Const chaine As String = "[^%^_]*"                 'saisie d'une chaine en excluant les caractéres spéciaux de recherche BD (a compléter et vérifier)
@@ -39,8 +41,9 @@ Public Const nofilter As String = ".*"
 ' il ne faut pas mettre de caractéres obligatoires dans les paterns par ex dans mail @{1} ne fonctionne pas.
 'propriétés
 Property Value As Float       ''gére la valeur numérique de l'objet
-Property numerique As Boolean     ''si cette objet est que numérique
-Property Dat As Boolean               ''si cette objet est une date
+'Property numerique As Boolean     ''si cette objet est que numérique
+'Property Dat As Boolean               ''si cette objet est une date
+Property Type As Integer             ''Définit le type de données à gérer, par défault EstText
 Property nbdec As String            ''le nombre de décimal que contient cette objet
 Property reg As String              ''le regex de cette objet. Il remplace la constante définie ci-dessus
 Property MaxLenght As Integer     '' longueur maximum de l'objet
@@ -50,7 +53,9 @@ Property conteneur As Object    ''on passe le conteneur dans lequel on veut mett
 Property condition As String        ''si on veut rajouter une condition à la requete
 Property RechX As Float             ''X de la fenetre de recherche
 Property RechY As Float             ''Y de la fenetre de recherche
-Property Champ As String[]
+Property Champ As String[]          ''les champs à afficher dans la fenetre de recherche
+Property Choirech As Integer        ''les choix sur ce qu'on affiche dans la fenetre de rechereche (historique ou recherche)
+Property Name As String
 
 Public Sub _new()
 
@@ -58,9 +63,12 @@ Public Sub _new()
   
   obs = New Observer(Me) As "butb"
   Me.Picture = Picture["icon:/16/clear"]
+  Me.Tooltip &= "CTRL + Down Fenetre historique"
   $reg = chaine
   $regex.Compile($reg)
   $textesc = Me.Editor.Text
+  $prop = New ObjProp(Null, Me.Window.Name & "/" & Me.Name, ObjProp.Param)
+  $prop.AppProp(Me)
 
 End
 
@@ -83,24 +91,62 @@ End
 
 Public Sub butb_keypress()
 
+  Dim ctrl As Boolean = Key.Control
+  
+  If ctrl Then
+    Select Case Key.Code
+      Case Key.Up
+        If $rech Then 
+          If ($choirech = EstHisto Or $choirech = rien) Then
+            $choirech = EstRecherche
+          Else
+            If $choirech = EstRecherche Then $choirech = Rien
+          Endif
+          affwin(True)
+        Endif
+        Stop Event
+      Case Key.Down
+        If $choirech = EstHisto Then $choirech = rien Else $choirech = EstHisto
+        affwin(True)
+        Stop Event
+      
+    End Select
+    Return
+  Endif
+  
   Select Case Key.Code
     Case Key.Esc
       $text = $textesc
       Me.Editor.Text = $textesc
     
     Case Key.F2
-      If $date And (Me.Enabled Or Not Me.ReadOnly) Then
+      If $typedonne = EstDate And (Me.Enabled Or Not Me.ReadOnly) Then
         Me.Editor.Text = LDateC.Select(dte).L
         $text = Me.Editor.Text
       Endif
       
     Case Key.Enter, Key.Return, Key.Tab
-      If $rech And If Object.IsValid($grd) Then
-        Try $win.Delete
-        If $grd.Rows.Max > -1 Then
-          Me.Text = $grd[0, 0].Text
-        Endif
-        Me.SetFocus
+      Select Case $choirech
+        Case EstHisto
+          If Key.Code = Key.tab Then 
+            Me.Text = $grd[$grd.Row, 0].Text
+            Stop Event
+          Endif
+        Case EstRecherche 
+          If $grd.Row > -1 Then Me.Text = $grd[$grd.Row, 0].Text
+          Try $win.Delete
+      End Select
+      
+    Case Key.Up
+      If $choirech <> Rien And Object.IsValid($grd) Then
+        If $grd.Row > 0 Then $grd.Select($grd.row - 1)
+        Stop Event
+      Endif
+    
+    Case Key.Down
+      If $choirech <> Rien And Object.IsValid($grd) Then
+        Stop Event
+        If $grd.Row < $grd.Rows.Max Then $grd.Select($grd.row + 1)
       Endif
       
   End Select
@@ -109,7 +155,7 @@ End
 
 Public Sub butb_DblClick()
   
-  If $date And (Me.Enabled Or Not Me.ReadOnly) Then
+  If $typedonne = EstDate And (Me.Enabled Or Not Me.ReadOnly) Then
     Me.Editor.Text = LDateC.Select(dte).L
     $text = Me.Editor.Text
   Endif
@@ -132,9 +178,9 @@ Public Sub butb_change()
   Endif
   x = Me.Pos
   Me.Editor.Text = $regex.Text
-  If Me.Editor.Text Match "." And $numerique Then Me.Editor.Text = Replace(Me.Editor.Text, ".", ",")
+  If Me.Editor.Text Match "." And $typedonne = EstNum Then Me.Editor.Text = Replace(Me.Editor.Text, ".", ",")
   $text = Me.Editor.Text
-  If $rech Then affgrd()
+  If $rech And $choirech <> Rien Then affgrd()
   Me.pos = x
   
 End
@@ -143,47 +189,18 @@ Public Sub butb_gotfocus()
 
   Dim i As Integer
   
-  If $numerique And $value <> 0 Then
+  If $typedonne = EstNum And $value <> 0 Then
     Me.Editor.Text = Str($value)
   Endif
   $text = Me.Editor.Text
   $textesc = Me.Editor.Text
-  If Not Object.IsValid($win) And $rech Then
-    If Object.IsValid($objp) Then $win = New Window($objp) As "win" Else $win = New Window(Me) As "win"
-    $win.x = $x
-    If $y = -1 Then $win.Y = Me.y Else $win.Y = $y
-    $win.Border = False
-'    $win.Background = Color.Black
-'    $win.AutoResize = True
-    $grd = New GridView($win) As "butb"
-'    $grd.AutoResize = True
-    $grd.Padding = 4
-    $grd.Background = Color.White
-    $grd.Columns.Count = $champ.Count
-    $grd.Width = (Me.Font.Size * $champ.Count * 15) 
-    $grd.Height = Me.Font.Size * 15
-    For i = 0 To $champ.Max
-      $grd.Columns[i].Width = $grd.Width / $champ.Count
-    Next
-    $grd.Rows.Height = Me.Font.Height + 3
-    $win.Height = $grd.Height
-    $win.Width = $grd.Width 
-    $win.Show
-    $win.TopOnly = True
-    $grd.x = 0
-    $grd.y = 0
-    $grd.Mode = Select.Single
-    $grd.Tag = 0
-    $grd.Show
-    affgrd
-    Me.SetFocus
-  Endif
+  affwin()
   
 End
 
 Public Sub butb_lostfocus()
 
-  If $numerique Then
+  If $typedonne = EstNum Then
     If IsNull(Me.Editor.Text) Or Val($text) = Null Then
       $text = "0"
       Me.Editor.Text = "0"
@@ -198,25 +215,27 @@ Public Sub butb_lostfocus()
       Endif
     Endif
   Endif
-  If $date Then
+  If $typedonne = EstDate Then
       dte.L = Me.Editor.Text
       Me.Editor.Text = dte.L
       $text = dte.L
       $textesc = dte.L
   Endif
-  Try $win.Delete 
-
+  Try $prop.EcriParam(Me.Window.Name & "/" & Me.Name, Me)
+  Try $win.Delete
+  
 End
+
 
 Public Sub dte_change(dt As LDate)
 
-  If $date Then Me.Editor.Text = dt.L
+  If $typedonne = EstDate Then Me.Editor.Text = dt.L
 
 End
 
 Private Function Value_Read() As Float
 
-  If $numerique Then
+  If $typedonne = EstNum Then
     Return $value
   Else
     Return 0
@@ -226,7 +245,7 @@ End
 'proprietés
 Private Sub Value_Write(Value As Float)
 
-  If $numerique Then
+  If $typedonne = EstNum Then
     If IsNull(value) Then $value = 0 Else $value = Value
     If IsNull($nbdec) Then $text = Str($value) Else $text = Format($value, frm())
     Me.Editor.Text = $text
@@ -242,7 +261,7 @@ End
 
 Private Sub Text_Write(Value As String)
 
-  If $numerique Then
+  If $typedonne = EstNum Then
     If IsNumber(value) Or IsNumber(Replace(value, ".", ",")) Then
       value = Replace(value, ".", ",")
       $value = Val(value)
@@ -253,7 +272,7 @@ Private Sub Text_Write(Value As String)
     Me.Editor.Text = $text
     Return
   Endif
-  If $date Then
+  If $typedonne = EstDate Then
     $text = LDate(value).L
     dte.L = $text
     Me.Editor.Text = $text
@@ -265,49 +284,6 @@ Private Sub Text_Write(Value As String)
   
 End
 
-Private Function numerique_Read() As Boolean
-
-  Return $numerique
-
-End
-
-Private Sub numerique_Write(Value As Boolean)
-
-  If $numerique <> Value And Not $regp Then
-    If value Then $reg = num Else $reg = chaine
-    $regex.Compile($reg)
-  Endif
-  $numerique = value
-  If $numerique Then $date = False
-  If $numerique And Val($text) <> Null Then
-    $value = Val($text)
-    Me.Editor.Text = $text
-  Endif
-
-End
-
-Private Function Dat_Read() As Boolean
-
-  Return $date
-
-End
-
-Private Sub Dat_Write(Value As Boolean)
-
-  If $numerique And value Then $value = 0
-  If value Then $numerique = False
-  If $date <> value And Not $regp Then
-    If value Then $reg = dts Else $reg = chaine
-    $regex.Compile($reg)
-  Endif
-  If $date And $text Then 
-    dte.L = $text
-    Me.Editor.Text = dte.L
-    $text = dte.L
-  Endif
-  $date = value
-  
-End
 
 Private Function nbdec_Read() As String
 
@@ -318,7 +294,7 @@ End
 Private Sub nbdec_Write(Value As String)
 
   $nbdec = value
-  If $numerique And Val($text) <> Null Then
+  If $typedonne = EstNum And Val($text) <> Null Then
     $value = Val($text)
     If IsNull($nbdec) Then $text = Str($value) Else $text = Format($value, frm())
     Me.Editor.Text = $text
@@ -362,6 +338,7 @@ End
 Private Sub recherche_Write(Value As Boolean)
 
   $rech = value
+  If $rech Then Me.Tooltip &= "\nCTRL + Up Fenetre de recherche"
 
 End
 
@@ -460,6 +437,55 @@ Private Function frm() As String
   Return ch
 End
 
+Private Sub affwin(Optional change As Boolean = False)
+  
+  Dim i As Integer
+  
+  If change Then Try $win.Delete
+  If Not Object.IsValid($win) And $choirech <> Rien Then
+    If Object.IsValid($objp) Then 
+      $win = New Window($objp) As "butb" 
+      $win.x = $x
+      If $y = -1 Then $win.Y = Me.y Else $win.Y = $y
+    Else 
+      $win = New Window(Me.Parent) As "butb"
+      $win.x = Me.X
+      $win.y = Me.y + Me.Height + 3
+    Endif
+    $win.Border = False
+    $grd = New GridView($win) As "butb"
+    $grd.Padding = 4
+    $grd.Background = Color.White
+    $grd.Height = Me.Font.Size * 15
+    If $choirech = EstRecherche Then
+      $grd.Width = (Me.Font.Size * $champ.Count * 15) 
+      $grd.Columns.Count = $champ.Count 
+      For i = 0 To $champ.Max
+        $grd.Columns[i].Width = $grd.Width / $champ.Count
+      Next
+    Else
+      $grd.Columns.Count = 1
+      $grd.Width = (Me.Font.Size * 15) 
+      $grd.Columns[0].Width = $grd.Width 
+    Endif
+    $grd.Rows.Height = Me.Font.Height + 3
+    $win.Height = $grd.Height
+    $win.Width = $grd.Width 
+    $win.Show
+    $win.TopOnly = True
+    $grd.x = 0
+    $grd.y = 0
+    $grd.Mode = Select.Single
+    $grd.Tag = 0
+    $grd.Show
+    affgrd
+    $grd.Select(0)
+  Else
+    If $choirech = Rien Then Try $win.Delete
+  Endif
+  
+End
+
 Private Sub affgrd()
   
   Dim res As Result
@@ -467,27 +493,36 @@ Private Sub affgrd()
   Dim value As String
   
   If Not Object.IsValid($win) Then Return
-  Select Case lke
-    
-    Case commence_par
-      value = $text & "%"
-    Case fini_par 
-      value = "%" & $text
-    Case contient
-      value = "%" & $text & "%"
-      
-  End Select
-  res = Utils.db.Exec("SELECT " & $champ.Join() & " FROM " & $fichier & " WHERE " & $champ[0] & " LIKE &1 " & $cond, value)
-  If res.Available Then
-    $grd.Rows.Count = res.Count
-    Repeat 
-      For i = 0 To $champ.Max
-        $grd[res.Index, i].Text = res[$champ[i]]
-      Next
-    Until res.MoveNext()
+  If $choirech = EstHisto Then
+    $grd.Columns.Count = 1
+    $grd.Rows.Count = $prop.historique.Count
+    For i = 0 To $prop.historique.Max
+      $grd[i, 0].Text = $prop.historique[i]
+    Next
   Else
-    $grd.Rows.Count = 0
-    $grd.Clear
+    $grd.Columns.Count = $champ.Count 
+    Select Case lke
+      
+      Case commence_par
+        value = $text & "%"
+      Case fini_par 
+        value = "%" & $text
+      Case contient
+        value = "%" & $text & "%"
+        
+    End Select
+    res = Utils.db.Exec("SELECT " & $champ.Join() & " FROM " & $fichier & " WHERE " & $champ[0] & " LIKE &1 " & $cond, value)
+    If res.Available Then
+      $grd.Rows.Count = res.Count
+      Repeat 
+        For i = 0 To $champ.Max
+          $grd[res.Index, i].Text = res[$champ[i]]
+        Next
+      Until res.MoveNext()
+    Else
+      $grd.Rows.Count = 0
+      $grd.Clear
+    Endif
   Endif
   Me.SetFocus
   
@@ -517,4 +552,67 @@ Private Sub Champ_Write(Value As String[])
     $champ.Add(value[i])
   Next
   
+End
+
+Private Function Choirech_Read() As Integer
+
+  Return $choirech
+
+End
+
+Private Sub Choirech_Write(Value As Integer)
+
+  $choirech = value
+
+End
+
+Private Function Name_Read() As String
+
+  Return Super.Name
+
+End
+
+Private Sub Name_Write(Value As String)
+
+  Super.Name = value
+  $prop = New ObjProp(Null, Me.Window.Name & "/" & Me.Name, ObjProp.Param)
+  $prop.AppProp(Me)
+
+End
+
+Private Function Type_Read() As Integer
+
+  Return $typedonne
+
+End
+
+Private Sub Type_Write(Value As Integer)
+
+  If value <> $typedonne Then
+    Select Case value
+      Case EstText
+        dte = Null
+        value = 0
+        If Not $regp Then $reg = chaine 
+      Case EstNum
+        If Not $regp Then $reg = num
+        dte = Null
+        If Val($text) <> Null Then
+          $value = Val($text)
+        Else 
+          $value = 0
+          $text = ""
+        Endif
+        Me.Editor.Text = $text
+      Case EstDate
+        If Not $regp Then $reg = dts
+        Me.value = 0
+        If $text Then dte.L = $text
+        $text = dte.L
+    End Select
+    $regex.Compile($reg)
+    $typedonne = value
+    Me.Editor.Text = $text
+  Endif
+
 End

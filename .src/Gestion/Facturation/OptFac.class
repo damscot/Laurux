@@ -31,8 +31,8 @@ Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc A
   chaine = New Chainage([Dtef, Dtech])
   chaine = New Chainage([regl1, regl2])
 
-  Dtef.Dat = True
-  Dtech.Dat = True
+  Dtef.Type = TextReg.EstDate
+  Dtech.Type = TextReg.EstDate
   CPBL.reg = "[0-9]{0,5}"
   'Affiche les variables modifiables 
   $vfac = New ObjFacB(nfac, choix) As "var"

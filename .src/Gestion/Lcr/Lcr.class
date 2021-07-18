@@ -75,9 +75,9 @@ Public Sub _New()
   Music.Load(Start.Musique)
   Me.Center
   code.reg = "4*1*1*[0-9]{0,5}"
-  dte.Dat = True
-  datee.Dat = True
-  montant.numerique = True
+  dte.Type = TextReg.EstDate
+  datee.Type = TextReg.EstDate
+  montant.Type = TextReg.EstNum
   Montant.nbdec = "2"
   ch = New Chainage([code, nom, Dte, datee, numfac, montant, Button3])
   Entete()

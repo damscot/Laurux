@@ -111,7 +111,7 @@ Public Sub edtipp_click()
   txt.Height = 24
   txt.Width = 100
   txt.reg = "[0-9]{0,2}"
-  txt.numerique = True
+  txt.Type = TextReg.EstNum
   txt.Text = Format(Now, "mm")
   $mois = txt.Text
   ch = New Chainage([txt])
@@ -127,7 +127,7 @@ Public Sub edtipp_click()
   txt.Height = 24
   txt.Width = 100
   txt.reg = "[0-9]{0,4}"
-  txt.numerique = True
+  txt.Type = TextReg.EstNum
   txt.Text = Format(Now, "yyyy")
   $anne = txt.Text
   ch.add([txt])

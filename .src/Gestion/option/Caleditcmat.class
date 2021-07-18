@@ -33,12 +33,12 @@ Public Sub _new()
   Dim ch As Chainage
   
   ch = New Chainage([Textmois, Textanne, nbdec])
-  nbdec.numerique = True
+  nbdec.Type = TextReg.EstNum
   nbdec.reg = "[0-9]{0,1}"
-  Textmois.numerique = True
+  Textmois.Type = TextReg.EstNum
   Textmois.reg = "[0-9]{0,2}"
   Textmois.Text = Format(Month(Now), "00")
-  Textanne.numerique = True
+  Textanne.Type = TextReg.EstNum
   Textanne.reg = "[0-9]{0,4}"
   Textanne.Text = Format(Year(Now), "0000")
   Textmois.Select

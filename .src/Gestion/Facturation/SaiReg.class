@@ -54,19 +54,19 @@ Public Sub _new(Optional tpe As Integer, ncl As String, ndc As String, nlt As St
   ndoc.MaxLenght = 10
   nlot.MaxLenght = 10
   nreg.MaxLenght = 2
-  dtereg.Dat = True
+  dtereg.Type = TextReg.EstDate
   dtereg.Text = LDate(Now).L
   docsaisi.MaxLenght = 10
   lotsaisi.MaxLenght = 10
-  montsaisi.numerique = True
+  montsaisi.Type = TextReg.EstNum
   montsaisi.nbdec = "2"
-  totlign.numerique = True
+  totlign.Type = TextReg.EstNum
   totlign.nbdec = "2"
-  totsel.numerique = True
+  totsel.Type = TextReg.EstNum
   totsel.nbdec = "2"
-  totborder.numerique = True
+  totborder.Type = TextReg.EstNum
   totborder.nbdec = "2"
-  totsai.numerique = True
+  totsai.Type = TextReg.EstNum
   totsai.nbdec = "2"
   
   coef = selection.Width / 954
@@ -125,7 +125,7 @@ End
 Public Sub Form_Close()
 
   Dim obj As Object
-
+  
   If $modif Then
     If Message.Question("Voulez vous valider la saisie ?", "Oui", "Non") = 1 Then vldsaisie_Click
   Endif

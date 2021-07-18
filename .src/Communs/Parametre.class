@@ -46,15 +46,15 @@ Public Sub _New()
     Frame1.Visible = True
   Endif
   If $soption = "P" Or $soption = "T" Then Frame3.Visible = True
-  datec.Dat = True
-  Date1.dat = True
-  date2.Dat = True
-  date3.Dat = True
-  date4.Dat = True
-  date5.Dat = True
-  datetdec.Dat = True
-  datepc.Dat = True
-  datefedec.Dat = True
+  datec.Type = TextReg.EstDate
+  Date1.Type = TextReg.EstDate
+  date2.Type = TextReg.EstDate
+  date3.Type = TextReg.EstDate
+  date4.Type = TextReg.EstDate
+  date5.Type = TextReg.EstDate
+  datetdec.Type = TextReg.EstDate
+  datepc.Type = TextReg.EstDate
+  datefedec.Type = TextReg.EstDate
   regulplus.reg = "[0-9]{1,8}"
   Regulmoins.reg = regulplus.reg
   Resultplus.reg = regulplus.reg
@@ -76,12 +76,12 @@ Public Sub _New()
   Jrnal3.reg = Jod.reg
   Jrnal4.reg = Jod.reg
   Jrnal5.reg = Jod.reg
-  Ecart.numerique = True
+  Ecart.Type = TextReg.EstNum
   Ecart.nbdec = "2"
-  frais.numerique = True
+  frais.Type = TextReg.EstNum
   frais.nbdec = "2"
   version.reg = "[0-9]{0,2}[.]?[0-9]{0,2}"
-  coretro.numerique = True
+  coretro.Type = TextReg.EstNum
   coretro.nbdec = "2"
   
 End

@@ -62,9 +62,9 @@ Public Sub _New()
   Colrcp.Columns[3].Alignment = 2
   Colrcp.Columns[4].Text = "Commentaire"
   Colrcp.Columns[4].Alignment = 1
-  datej.Dat = True
+  datej.Type = TextReg.EstDate
   datej.dte.G = Now
-  Qterecue.numerique = True
+  Qterecue.Type = TextReg.EstNum
   $ch = New Chainage([datej, Cart, Dart, qterecue, Comment, Button1])
   $soption = utils.Option()
   

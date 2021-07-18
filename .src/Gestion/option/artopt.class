@@ -54,57 +54,57 @@ Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As TextBox, PaUA A
   obs = New Observer(Textnbc) As "cmpt"
   obs = New Observer(Textcee) As "cmpt"
   obs = New Observer(Textdeg) As "cmpt"
-  Texttrs.numerique = True 
+  Texttrs.Type = TextReg.EstNum 
   Texttrs.nbdec = "3"
   
-  Texttrsa.numerique = True
+  Texttrsa.Type = TextReg.EstNum
   Texttrsa.nbdec = "3"
   
-  Texttrsr.numerique = True
+  Texttrsr.Type = TextReg.EstNum
   texttrsr.nbdec = "3"
   
-  Texttsu.numerique = True
+  Texttsu.Type = TextReg.EstNum
   Texttsu.nbdec = "2"
   
-  Textremv.numerique = True
+  Textremv.Type = TextReg.EstNum
   Textremv.nbdec = "2"
   
-  Textvol.numerique = True
+  Textvol.Type = TextReg.EstNum
   textvol.nbdec = "2"
   
-  Textdeg.numerique = True
+  Textdeg.Type = TextReg.EstNum
   Textdeg.nbdec = "2"
   
-  Textncp.numerique = True
+  Textncp.Type = TextReg.EstNum
   Textncp.nbdec = "0"
   
-  Textstot.numerique = True
+  Textstot.Type = TextReg.EstNum
   
-  Textprxrpp.numerique = True
+  Textprxrpp.Type = TextReg.EstNum
   
-  Textnbc.numerique = True
+  Textnbc.Type = TextReg.EstNum
   Textnbc.nbdec = "0"
   
-  Textdra.numerique = True
+  Textdra.Type = TextReg.EstNum
   Textdra.nbdec = "3"
   
-  Textvss.numerique = True
+  Textvss.Type = TextReg.EstNum
   Textvss.nbdec = "3"
   
-  Textmdr.numerique = True
+  Textmdr.Type = TextReg.EstNum
   Textmdr.nbdec = "3"
   
-  Textmss.numerique = True
+  Textmss.Type = TextReg.EstNum
   Textmss.nbdec = "3"
   
-  Texttrspp.numerique = True
+  Texttrspp.Type = TextReg.EstNum
   Texttrspp.nbdec = "3"
   
-  Textcee.numerique = True
+  Textcee.Type = TextReg.EstNum
   Textcee.nbdec = "3"
   
-  Textprxr.numerique = True
-  Textpa.numerique = True
+  Textprxr.Type = TextReg.EstNum
+  Textpa.Type = TextReg.EstNum
   
   chn = New Chainage([Texttrs, Texttrsa, texttrsr, Texttsu, Textremv, Textcdr, textvol, Textdeg, Textcp, Textncp, textcc, Textnbc, textcb])
   If $schoix = "T" Then chn.add([Texttrspp, Textcee])

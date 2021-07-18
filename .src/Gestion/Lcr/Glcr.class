@@ -28,8 +28,8 @@ Public Sub _New()
   Utils.Observers(Me)
   If Start.LocalSettings["/Soc" & Start.Societe & "/Coul_fen"] = 0 Then Me.Background = Val(Frmt[0])
   Music.Load(Start.Musique)
-  Ech1.Dat = True
-  Ech2.Dat = True
+  Ech1.Type = TextReg.EstDate
+  Ech2.Type = TextReg.EstDate
   ch = New Chainage([Ech1, Ech2])
   Me.Center
 
