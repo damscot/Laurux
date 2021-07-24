@@ -417,11 +417,7 @@ Public Sub Button5_Click()
     Colcli.MoveFirst()
     Repeat
       If Colcli.Item[8] = "*" Then
-'        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE lind = &1 ", Colcli.Item[9])
-'        If rResult.Available Then
-        $lstex.letcpt(Val(Colcli.Item[9]), True, numlot.Text, "lettrage")
- '         Utils.db.Exec("Update " & Tab & " SET numlot = &1 where lind = &2 ", numlot.Text, Colcli.Item[9])
-        'Endif
+        $lstex.letcpt(Val(Colcli.Item[9]), False, numlot.Text, "lettrage")
       Endif
     Until Colcli.Movenext()
     If Totselection.Text <> "0,00" Then
@@ -433,18 +429,13 @@ Public Sub Button5_Click()
       affichage()
       clear()
     Else
-      Lettrable = $lstex.Controle(numlot.Text)
       Colcli.MoveFirst
       If Lettrable = 1 And IsNull(numlot.text) Then numlot.Text = Colcli.Current[4]
       Repeat
-        If Colcli.Item[8] = "*" And Lettrable = 1 Then
+        If Colcli.Item[8] = "*" Then
           Compt = Colcli.Item[0]
           num = Colcli.Item[7]
-'          rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE compte = &1 and lind =&2 ", Compt, Colcli.Item[9])
- '         If rResult.Available Then
           $lstex.letcpt(Val(Colcli.Item[9]), True, numlot.Text, "lettrage")
-'            Utils.db.Exec("Update " & Tab & " SET numlot = &1, lettree = &2 where lind = &3 ", numlot.Text, 1, Colcli.Item[9])
-         ' Endif
         Endif
       Until Colcli.Movenext()
       Colcli.Clear
