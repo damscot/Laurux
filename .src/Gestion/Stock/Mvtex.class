@@ -699,7 +699,7 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
       res = utils.db.Exec("SELECT art_dra,art_volm,art_deg FROM Fiches_Art WHERE art_code=&1 AND art_dra IS NOT NULL", Colrcp.Item[0])
       If res.Available Then
         If IsNull(Colrcp.Item[3]) Then
-          qte = utils.totobs(Colrcp.Item[4]) * -1
+          qte = utils.totobs([Colrcp.Item[2]]) * -1
         Else 
           qte = utils.totobs([Colrcp.Item[3]])
         Endif
