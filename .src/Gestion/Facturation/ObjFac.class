@@ -476,7 +476,7 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
 '        numbl = nm
         resent = Utils.db.Exec("SELECT * FROM Fiches_Bl" & tab & "  WHERE numbl=&1", $numbl)
         reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligbl" & tab & "  WHERE num_ligbl=&1", $numbl)
-        $numfac = resent!numfac
+        If resent.Available Then $numfac = resent!numfac
       Endif
       If $numfac And resent!imp = 1 Then 
         $dtedoc = New LDate(resent!datebl)
@@ -570,7 +570,7 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
   Endif
   
   resent.MoveFirst            'on prend l'adresse de facturation du 1° bl
-  If resent.Available Then
+  If resent.Available And Not IsNull(adrfac) Then
     adrfac.nom = resent!cvclibl & " " & resent!nmclibl & " " & resent!pnmclibl
     adrfac.adr1 = resent!adr1bl
     adrfac.adr2 = resent!adr2bl

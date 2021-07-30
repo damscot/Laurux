@@ -1586,6 +1586,7 @@ Public Sub Button2_Click()
       DocActif.Get_Lock("Facturation", $numbl)
     Endif
     Utils.db.Exec("UNLOCK TABLES")
+    $fac = New ObjFacB($numbl, ObjFac.bl)
     If $soption = "B" Or $soption = "T" Then
       $opt.numbl = $numbl
     Endif
@@ -2120,6 +2121,7 @@ Public Sub ColblSelection(bright As Boolean)
           Try Courriel.Text = rResult!email
         Endif
         rResult = Utils.db.Exec("select * from " & Cbase.Table("TabCli") & " where cli_code = &1", Code.text)
+        $fac = New ObjFacB(num.Text, ObjFac.bl)
         If rResult.Available Then
           If $soption = "P" Or $soption = "T" Then Texttr1.Text = rResult!cli_tipp
           If $soption = "B" Or $soption = "T" Then
@@ -2136,7 +2138,6 @@ Public Sub ColblSelection(bright As Boolean)
             Case "D"
               regroup.Text = "Regr : Decade"
           End Select
-          $fac = New ObjFacB(num.Text, ObjFac.bl)
           $fac.numcli = rResult!cli_code
           res = Utils.db.Exec("SELECT * FROM Fiches_Typec WHERE code=&1", rResult!cli_typec)
           If res.Available Then
@@ -10804,6 +10805,7 @@ Public Sub Cli_man()
     'Courriel.add(Clitab!cli_email, 0)
     Button4_Click()
     Recup_type()
+    $fac.numcli = code.Text
     If Start.LocalSettings["/Soc" & Start.Societe & "/Affaire"] Then ChiffreA()
     Try colbl[colbl.row, 4].Text = Code.Text
     Try colbl[colbl.row, 5].Text = Nom.Text
