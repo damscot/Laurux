@@ -114,7 +114,7 @@ Public Sub Button2_Click()
     Else
       If (Cb2.Value Or Cb3.Value) And libelle.Text And Not Cb1.Value Then 'on recherche seulement les libelles
         Mnt.Text = ""
-        rResult = Utils.db.Exec("SELECT " & chmp & " FROM Fiches_Mvt LEFT JOIN Fiches_Comptes ON compte = compte_cc where " & libeldoc & " like '" & libelle.Text & "%' " & req & "order by dte")
+        rResult = Utils.db.Exec("SELECT " & chmp & " FROM Fiches_Mvt LEFT JOIN Fiches_Comptes ON compte = compte_cc where " & libeldoc & " like '" & libelle.Text & "%' " & req & " order by dte")
       Endif
     Endif
     If Cb1.Value And (Cb2.Value Or Cb3.Value) And Not Mnt.Text Then 'on controle qu'un montant soit saisit
