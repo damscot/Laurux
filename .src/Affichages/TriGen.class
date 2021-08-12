@@ -29,6 +29,7 @@ Private Extra_comb As String
 Private xoffset As Integer
 Private policewidth As Integer = 10
 Private prop As ObjProp
+Private rs2 As Result
 
 Event MajSel(Bval As Variant)
 Event Resize()
@@ -315,20 +316,19 @@ Public Sub Coltri_Data(Row As Integer, Column As Integer)
   Dim Frmt As New String[]
   Dim Frmt2 As String[]
 
-  With Utils
-    .rs2.MoveTo(Row)
-    If .rs2.Available Then
-      Try Coltri.data.Text = Str(Utils.rs2[Col_Def[Col_Order[Column]].name])
-      Col_Def[Col_Order[Column]].AppProp(coltri.Data)
-      If .rs2.Fields.Exist("bgcolor") Then
-        If .rs2["bgcolor"] <> Null Then
-          Coltri.Data.Background = Val(.rs2["bgcolor"])
-        Endif
-      Else
-        If Even(row) Then Coltri.Data.Background = Color.White Else Coltri.Data.Background = Color.Background
+
+  rs2.MoveTo(Row)
+  If rs2.Available Then
+    Try Coltri.data.Text = Str(rs2[Col_Def[Col_Order[Column]].name])
+    Col_Def[Col_Order[Column]].AppProp(coltri.Data)
+    If rs2.Fields.Exist("bgcolor") Then
+      If rs2["bgcolor"] <> Null Then
+        Coltri.Data.Background = Val(rs2["bgcolor"])
       Endif
+    Else
+      If Even(row) Then Coltri.Data.Background = Color.White Else Coltri.Data.Background = Color.Background
     Endif
-  End With
+  Endif
 
 End
 
@@ -353,7 +353,6 @@ Public Sub Coltri_Click()
   Endif
 
 End
-
 
 
 Public Sub Coltri_KeyPress()
@@ -502,14 +501,18 @@ End
 
 Public Sub Deb3()
 
-  Utils.Base2(coltri, Request & where & Extra_sel & comb & Sel & " order by " & Tri & " limit " & NbEnreg & ", " & lg & "")
+  rs2 = Utils.db.Exec(Request & where & Extra_sel & comb & Sel & " order by " & Tri & " limit " & NbEnreg & ", " & lg)
+  coltri.rows.count = 0
+  If rs2.Available Then coltri.rows.Count = rs2.count
   Coltri.Refresh
 
 End
 
 Public Sub Deb4()
 
-  Utils.Base2(coltri, Request & where & Extra_sel & comb & Sel & " order by " & Tri & " desc limit " & NbEnreg & ", " & lg & "")
+  rs2 = Utils.db.Exec(Request & where & Extra_sel & comb & Sel & " order by " & Tri & " desc limit " & NbEnreg & ", " & lg)
+   coltri.rows.count = 0
+  If rs2.Available Then coltri.rows.Count = rs2.count
   Coltri.Refresh
 
 End

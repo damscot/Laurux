@@ -121,9 +121,9 @@ Private Sub frmt(frm As String, obj As Object)    ''On définit le format du tex
   Else 
     If TypeOf(frm) = gb.String Then
       obj.text = Replace(obj.text, ".", ",")
-      obj.text = Format(Val(obj.text), frm)
+      If obj.text Then obj.text = Format(Val(obj.text), frm)
     Else
-      obj.text = Utils.CDec(obj.text, frm)
+      If obj.text Then obj.text = Utils.CDec(obj.text, frm)
     Endif
   Endif
   
