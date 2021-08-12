@@ -10805,7 +10805,7 @@ Public Sub Cli_man()
     'Courriel.add(Clitab!cli_email, 0)
     Button4_Click()
     Recup_type()
-    $fac.numcli = code.Text
+    If Object.IsValid($fac) Then $fac.numcli = code.Text
     If Start.LocalSettings["/Soc" & Start.Societe & "/Affaire"] Then ChiffreA()
     Try colbl[colbl.row, 4].Text = Code.Text
     Try colbl[colbl.row, 5].Text = Nom.Text

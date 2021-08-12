@@ -190,8 +190,7 @@ Public Sub Ex1()
   Tab = "Fiches_Parametres"
   With utils
     rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec ' On recupere la date de fin d'exercice
-    dteN0.Text = .Calc_mois(dte)
+    dteN0.Text = LDate(rResult!dteclec).L   ' On recupere la date de fin d'exercice
     jour = Format$(Now, "dd.mm.yyyy")
     If Right$(jour, 4) & Mid$(jour, 4, 2) & Left$(jour, 2) < Right$(dteN0.Text, 4) & Mid$(dteN0.Text, 4, 2) & Left$(dteN0.Text, 2) Then
       Exo()
@@ -215,10 +214,8 @@ Public Sub Exo()
   Tab = "Fiches_Parametres"
   With utils
     rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec1
-    dteN0.Text = .Calc_mois(dte)
-    dte = rResult!dteclec
-    dteN1.Text = .Cdate_aff(dte)
+    dteN0.Text = LDate(DateAdd(rResult!dteclec1, gb.Day, 1)).L
+    dteN1.Text = LDate(rResult!dteclec).L
     dte1 = dteN0.Text
     dte2 = dteN1.Text
   End With
