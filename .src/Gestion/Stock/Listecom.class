@@ -112,24 +112,27 @@ Public Sub _new(snumcli As String, snumart As String)
           "FROM Fiches_BlM JOIN Fiches_LigblM ON num_ligbl=numbl " &
           "WHERE datebl=&1 AND cdclibl=&2 AND typel_ligbl IN('A','M') " &
           "GROUP BY code_ligbl,libel_ligbl ", res!dte, $snumcli)
-        If Not res1.Available Then Return
+        If res1.Available Then 
         res1.MoveFirst
-        For k = 0 To res1.Max
-          design = res1!design
-          If GridView1.Rows.Count = 0 Then ajouart(res1!code)
-          i = rechart(res1!code)
-          If i = -2 Then
-            ajouart(res1!code)
+          For k = 0 To res1.Max
+            design = res1!design
+            If GridView1.Rows.Count = 0 Then ajouart(res1!code)
             i = rechart(res1!code)
-          Endif
-          j = 1 + (res.Index * 3)
-          GridView1[i, j].Text = Format(res!dte, "dd/mm/yyyy")
+            If i = -2 Then
+              ajouart(res1!code)
+              i = rechart(res1!code)
+            Endif
+            j = 1 + (res.Index * 3)
+            GridView1[i, j].Text = Format(res!dte, "dd/mm/yyyy")
+            Inc j
+            GridView1[i, j].Text = Format(res1!qte, "0.000")
+            Inc j
+            Try GridView1[i, j].Text = Format(res1!net / res1!qte, "0.000")
+            res1.MoveNext
+          Next
+        Else
           Inc j
-          GridView1[i, j].Text = Format(res1!qte, "0.000")
-          Inc j
-          Try GridView1[i, j].Text = Format(res1!net / res1!qte, "0.000")
-          res1.MoveNext
-        Next
+        Endif
         res.MoveNext
       Until j >= GridView1.Columns.Max
     Endif
