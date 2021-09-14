@@ -86,6 +86,7 @@ Public Sub Main()
   Try ConsoleLogLevel = Split(Arg_Debug, ",")[LLog.console]
   Try FileLogLevel = Split(Arg_Debug, ",")[LLog.file]
   LLogColl = New Collection
+  Try Mkdir User.Home & "/tmp/Debug"
   If Exist(User.Home & "/tmp/Debug", "*.log") Then
     For Each Fichlog In Dir(User.Home & "/tmp/Debug", "*.log").Sort()
       Kill User.Home & "/tmp/Debug/" & Fichlog
