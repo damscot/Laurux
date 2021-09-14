@@ -5036,7 +5036,7 @@ Public Sub Maj369()
   Dim basename As String
   
   'Modification charset to utf8
-  rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, t1.COLUMN_TYPE, t1.character_set_name from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.column_type like '%CHAR%' or t1.column_type like 'TEXT') and t1.character_set_name != 'utf8'", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, UPPER(t1.COLUMN_TYPE), UPPER(t1.character_set_name) from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (UPPER(t1.column_type) like '%CHAR%' or UPPER(t1.column_type) like 'TEXT') and UPPER(t1.character_set_name) != 'UTF8'", "Laurux" & Start.Societe)
   If rReq.Count = 0 Then
     If Message.Warning("Il semble que la conversion UTF8 de la base de donnée a déjà été effectué\nAttention, executer deux fois la conversion peux corrompre les données de type texte!\nVoulez-vous quand même lancer la conversion?", "Non", "Oui") = 1 Then
       Goto end_utf8
