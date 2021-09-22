@@ -135,7 +135,7 @@ End
 Public Sub nreg_KeyPress()
 
   If Key.Code = Key.Tab Or Key.Code = Key.Enter Or Key.Code = Key.Return Then
-    Stop Event
+    If Key.Code = Key.Tab Then Stop Event
     If $typ = VarEcr.caisse Then selection.SetFocus Else client.SetFocus
   Endif
   If Key.Code = Key.F2 Then rechreg_Click()
@@ -156,7 +156,7 @@ Public Sub nreg_LostFocus()
   Endif
   
   'controle du réglement + recherche du journal
-  borderaux.Rows.Count = 0
+  borderaux.Rows.Count = 0  
   $modif = False
   If Not nreg.Text Then Return
   $resreg = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code = &1", nreg.Text)
@@ -672,13 +672,8 @@ Public Sub butvalide_Click()
     montsaisi.SetFocus
     Return
   Endif
-
-  $modif = True
-  Labvalide.Text = "Saisie"
-  Labvalide.Tag = Valide_saisie
-  Labvalide.Tooltip = "Validation et édition de la saisie"
-  valide.Tooltip = "Validation des écritures modifiées et ajoutées"
-  edite.Tooltip = "Édition des nouvelles écritures"
+  
+  modsb()
   $Vecr.numdoc = docsaisi.Text
   $Vecr.numlot = lotsaisi.Text
   $Vecr.dte = New Ldate(dtereg.dte.G)
@@ -736,12 +731,23 @@ Public Sub butsup_Click()
     Case Else
       $Vecr.etat = VarEcr.L_sup
       $Lecr.modifi($ind, $Vecr)
-      $modif = True
+      modsb()
   End Select
   affborderau()
   mabl()
   $Vecr = New VarEcr
   $ind = -1
+  
+End
+
+Private Sub modsb()
+  
+  $modif = True
+  Labvalide.Text = "Saisie"
+  Labvalide.Tag = Valide_saisie
+  Labvalide.Tooltip = "Validation et édition de la saisie"
+  valide.Tooltip = "Validation des écritures modifiées, ajoutées et supprimées"
+  edite.Tooltip = "Édition des nouvelles écritures"
   
 End
 
