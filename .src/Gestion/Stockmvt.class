@@ -92,16 +92,16 @@ Public Sub Buttrait_Click()
   fichierstth = " FROM Fiches_Art"
   
   fichierbl = " FROM Fiches_Bl,Fiches_Ligbl"
-  condbl = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_Bl.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.PDeb.DT, dtsup.PFin.DT)
+  condbl = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_Bl.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.DT, dtsup.FinJour.DT)
   champbl = "SELECT "
   
   fichierblm = " FROM Fiches_BlM,Fiches_LigblM"
-  condblm = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_BlM.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.PDeb.DT, dtsup.PFin.DT)
+  condblm = Utils.db.Subst(" WHERE num_ligbl=numbl  AND (dte_ligbl BETWEEN &1 AND &2) AND Fiches_BlM.type IN('A','B','F') AND typel_ligbl = 'A'", dtinf.DT, dtsup.FinJour.DT)
   champblm = "SELECT "
   
   champfa = "SELECT "
   fichierfa = " FROM Fiches_HistoFac,Fiches_HistoLigfac"
-  condfa = Utils.db.Subst(" WHERE numfac=num_ligfac AND typel_ligfac='A' AND (dtligbl_ligfac BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
+  condfa = Utils.db.Subst(" WHERE numfac=num_ligfac AND typel_ligfac='A' AND (dtligbl_ligfac BETWEEN &1 AND &2)", dtinf.DT, dtsup.FinJour.DT)
   
   champfam = "SELECT "
   fichierfam = " FROM Fiches_HistoFacM,Fiches_HistoLigfacM"
@@ -109,19 +109,19 @@ Public Sub Buttrait_Click()
   
   champfo = "SELECT "
   fichierfo = " FROM Fiches_Entrecpt,Fiches_Ligrecpt"
-  condfo = Utils.db.Subst(" WHERE Fiches_Entrecpt.four=Fiches_Ligrecpt.four AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND (ddate BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
+  condfo = Utils.db.Subst(" WHERE Fiches_Entrecpt.four=Fiches_Ligrecpt.four AND Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt AND (ddate BETWEEN &1 AND &2)", dtinf.DT, dtsup.FinJour.DT)
   
   champex = "SELECT "
   fichierex = " FROM Fiches_Mvtexp,Fiches_Art"
-  condex = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexp.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
+  condex = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexp.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.DT, dtsup.FinJour.DT)
   
   champrd = "SELECT "
   fichierprd = " FROM Fiches_Mvtexpdc,Fiches_Art"
-  conprd = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexpdc.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
+  conprd = Utils.db.Subst(" WHERE Fiches_Art.art_code=Fiches_Mvtexpdc.code AND (daterecpt BETWEEN &1 AND &2)", dtinf.DT, dtsup.FinJour.DT)
   
   champtck = "SELECT "
   fichiertck = " FROM Fiches_HisEntTickets,Fiches_HisLigTickets"
-  contck = Utils.db.Subst(" WHERE Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND Fiches_HisLigTickets.type='A' AND (Fiches_HisEntTickets.date BETWEEN &1 AND &2)", dtinf.PDeb.DT, dtsup.PFin.DT)
+  contck = Utils.db.Subst(" WHERE Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND Fiches_HisLigTickets.type='A' AND (Fiches_HisEntTickets.date BETWEEN &1 AND &2)", dtinf.DT, dtsup.FinJour.DT)
   'libelle pour le détail des fichiers
   If Radiodetail.Value Or Checkdetf.Value Then
     libbl = " Factures en cours"
