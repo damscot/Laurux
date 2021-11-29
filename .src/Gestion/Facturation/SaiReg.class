@@ -24,7 +24,6 @@ Private $modif As Boolean
 Private $ind As Integer
 Private $typ As Integer
 Private $ntk As String
-Private $borderau As Boolean
 
 Public Bsel As Boolean
 Public Bval As String
@@ -127,7 +126,7 @@ Public Sub Form_Close()
   Dim obj As Object
   
   If $modif Then
-    If Message.Question("Voulez vous valider la saisie ?", "Oui", "Non") = 1 Then vldsaisie_Click
+    If Message.Question("Voulez vous valider la saisie ?", "Oui", "Non") = 1 Then valide_Click
   Endif
   
 End
@@ -162,12 +161,11 @@ Public Sub nreg_LostFocus()
   $resreg = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code = &1", nreg.Text)
   If $resreg.Available Then
     libreg.Text = $resreg!libel
-    $borderau = $resreg!bordereaux
     $resjou = Utils.db.Exec("SELECT * FROM Fiches_Journaux WHERE code_jo=&1", $resreg!journal)
     If $resjou.Available Then
       njournal.Text = $resreg!journal & " " & $resjou!libelle_jo & "   " & $resreg!cptint
     Endif
-    If $borderau Then
+    If $resreg!bordereaux Or (Not $resreg!cptint And Not $resreg!bordereaux) Then
       Labvalide.Text = "Bordereau"
       Labvalide.Tag = Valide_bordereau
       Labvalide.Tooltip = "Validation et édition du bordereau"
@@ -743,11 +741,13 @@ End
 Private Sub modsb()
   
   $modif = True
-  Labvalide.Text = "Saisie"
-  Labvalide.Tag = Valide_saisie
-  Labvalide.Tooltip = "Validation et édition de la saisie"
-  valide.Tooltip = "Validation des écritures modifiées, ajoutées et supprimées"
-  edite.Tooltip = "Édition des nouvelles écritures"
+  If $resreg!bordereaux Then
+    Labvalide.Text = "Saisie"
+    Labvalide.Tag = Valide_saisie
+    Labvalide.Tooltip = "Validation et édition de la saisie"
+    valide.Tooltip = "Validation des écritures modifiées, ajoutées et supprimées"
+    edite.Tooltip = "Édition des nouvelles écritures"
+  Endif
   
 End
 
@@ -985,18 +985,18 @@ Public Sub vldbordereau_Click()
   Dim pb As ProgBar
   
   If borderaux.Rows.Count = 0 Then Return
-  If Not $resreg!bordereaux Then Return
 
   pb = New ProgBar("Validation du bordereau", 1)
   pb.Show
   $Lecr.etat = VarEcr.L_valide
   $Lecr.type = VarEcr.Treso
   
-  pb.Avancement(" ")
+  pb.Avancement("Validation")
   ereg = New EcrReg($resjou!code_jo, $Lecr, $resreg!code)
   If ereg.ecriture() Then
     Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
   Endif
+  $modif = False
   mabl
   mabreg()
   pb.Close
