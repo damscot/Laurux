@@ -485,7 +485,7 @@ Private Sub modifart()
       pxv = 0
       restva = utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva=&1", res!art_tva)
       If restva.Available Then
-        tva = 1 + ((Val(Replace(restva!code_tva, ".", ","))) / 100)
+        tva = 1 + ((Val(Replace(restva!taux_tva, ".", ","))) / 100)
       Else
         tva = 0
       Endif
@@ -514,6 +514,7 @@ Private Sub modifart()
       res!art_pvttc = Round(res!art_pvht * tva, -Val(res!art_nbd))
       res!art_montdr = dr.droit
       res!art_montss = dr.secu
+      res!art_frais = frais
       posy = pdfaff(pdf, res!art_code, res!art_design, res!art_pbht, res!art_paht, res!art_frais, res!art_montdr, res!art_montss, res!art_prvt, res!art_coef, res!art_pvht, posy)
       If posy > 280 Then posy = pdfent(pdf)
       
