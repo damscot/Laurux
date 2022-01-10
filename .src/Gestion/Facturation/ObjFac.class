@@ -86,7 +86,6 @@ Public libdev As Boolean                   ''si libelle bas de devis*
 Public txtlibdev As String                ''texte bas de devis*
 Public txtvldev As String                 ''texte validité devis*
 Public pdfchemin As String                ''chemin des factures pdf*
-Public pdfannu As Boolean                 ''dossier annuel des factures pdf*
 Public tab As String                          ''contient le M en fin de fichier => Fiches_bl & M
 Public adrlogo As Boolean                 ''adresse en logo
 Public lgo As Boolean                        ''logo sur facture
@@ -248,7 +247,6 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
   txtvldev = Start.LocalSettings["/Soc" & Start.Societe & "/Devis"] 
 '  refprddev = Start.LocalSettings["/Soc" & Start.Societe & "/AffArt"]
   pdfchemin = Start.LocalSettings["/Soc" & Start.Societe & "/Factchemin"]
-  pdfannu = Start.LocalSettings["/Soc" & Start.Societe & "/Pdf3"]
   couleur = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
   If Start.R2 = 0 Then couleur2 = couleur Else couleur2 = Val("&H" & Hex(Start.R2) & Hex(Start.G2) & Hex(Start.B2))
   adrlogo = Start.LocalSettings["/Soc" & Start.Societe & "/glogo3"]
@@ -872,10 +870,8 @@ Public Sub Dupli2()
     If Not Exist(chemin) Then Try Mkdir chemin
     Chemin &= "/" & Format(Year($dtedoc.G), "0000")
     If Not Exist(chemin) Then Try Mkdir chemin
-    If Not pdfannu Then
-      Chemin &= "/" & Format(Month($dteech.G), "00")
-      If Not Exist(chemin) Then Try Mkdir chemin
-    Endif
+    Chemin &= "/" & Format(Month($dteech.G), "00")
+    If Not Exist(chemin) Then Try Mkdir chemin
     imp.OutputFile = chemin & "/" & ty & ".pdf"
     imp.NumCopies = 1
     edit.Print(imp)

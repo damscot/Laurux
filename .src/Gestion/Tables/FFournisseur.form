@@ -551,44 +551,64 @@
       MoveScaled(29,-2,1,1)
     }
     { Label16 Label
-      MoveScaled(17,5,8,3)
+      MoveScaled(3,1,8,3)
       Font = Font["Serif,-1"]
       Text = ("Compte")
     }
     { Compt TextBox Cmpt3
       Name = "Compt"
-      MoveScaled(26,5,17,3)
+      MoveScaled(11,1,17,3)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "1"
     }
     { ToggleButton1 ToggleButton
-      MoveScaled(43,4.75,3.625,3.625)
+      MoveScaled(29,1,3.625,3.625)
       Picture = Picture["Icones/next_frame.png"]
     }
     { Button6 Button Vnt
       Name = "Button6"
-      MoveScaled(50,4.625,17,4)
+      MoveScaled(34,1,13,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "1"
       Text = Shortcut(("Enregistrer"), "g")
     }
     { Vents ColumnView
-      MoveScaled(18.25,10,56,24)
+      MoveScaled(3,6,49,24)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       ScrollBar = Scroll.Vertical
     }
     { Intitule Label
-      MoveScaled(79,33,1,1)
+      MoveScaled(49,2,2,3)
       Visible = False
       Text = ("Label17")
     }
     { TextLabel3 TextLabel
-      MoveScaled(16,37,66,3)
+      MoveScaled(55,9,17,10)
       Font = Font["-2"]
       Text = ("Pour supprimer une ventilation, sélectionner la ligne et faire \"Suppr\" ")
+    }
+    { Label58 Label
+      MoveScaled(3,32,64,4)
+      Text = ("Libelle des ecritures par défault (utilisation de visual basic possible)")
+    }
+    { LibelDef TextBox
+      MoveScaled(2,36,65,4)
+    }
+    { TextLabel11 TextLabel
+      MoveScaled(77,4,20,2)
+      Font = Font["-2"]
+      Text = ("Tags automatique GED")
+    }
+    { RechTag Button
+      MoveScaled(75,25,23,4)
+      Text = ("Rech. Tag Existant")
+      Picture = Picture["Icones/find.png"]
+    }
+    { ListTags ListEditor
+      MoveScaled(75,6,23,18)
     }
     Index = 3
     Text = ("&Observations")
@@ -739,44 +759,11 @@
       ToolTip = ("Affiche les documents scannés en direct")
       Text = ("Autres documents")
     }
-    { Button18 Button
-      MoveScaled(84,27,5,5)
-      Picture = Picture["Icones/Trombonne.png"]
-    }
     { Dssr GridView
       MoveScaled(0,1,77,39)
       Mode = Select.Single
       Header = GridView.Horizontal
       ScrollBar = Scroll.Vertical
-    }
-    { Panel1 Panel
-      MoveScaled(4,11,70,21)
-      Visible = False
-      Background = Color.Background
-      Border = Border.Etched
-      { Etiquette TextBox
-        MoveScaled(8,15,42,3.375)
-        Font = Font["Serif"]
-      }
-      { TextLabel24 TextLabel
-        MoveScaled(8,11,41,3)
-        Font = Font["Serif"]
-        Text = ("Etiquette (Tag)")
-        Alignment = Align.Center
-      }
-      { Button10 Button
-        MoveScaled(50,14.75,14,4)
-        Font = Font["Bold,-1"]
-        Background = Color.ButtonBackground
-        Text = ("Copier")
-        Picture = Picture["Icones/Trombonne.png"]
-      }
-      { TextLabel26 TextLabel
-        MoveScaled(1,1,68,4)
-        Font = Font["Serif"]
-        Text = ("Le fichier sera copié dans le répertoire défini dans les préférences.<br> Faire Echap pour sortir")
-        Alignment = Align.Center
-      }
     }
     { Tbxrem2 TextBox
       MoveScaled(97,0,2,3)
@@ -865,7 +852,7 @@
     }
     { Button4 Button Btn
       Name = "Button4"
-      MoveScaled(76,0,17,4)
+      MoveScaled(77,0,17,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "5"

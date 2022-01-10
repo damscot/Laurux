@@ -2537,49 +2537,55 @@ End
 
 Public Sub Button5_Click()
 
-  Dim hFormg As Gged
-  Dim hFormc As GedC
-  Dim $cpt, Tab As String
-  Dim dResult As Result
+  Dim hForm As LGed
+  Dim cancel As Boolean
+  Dim $cpt As String
+  Dim $ttc As LPrix
+  Dim $ht As LPrix
+  Dim $tva As LPrix
+  Dim rResult As Result
 
   If ecrit1.count > 0 Then
-    Select Case Message.Question("Que voulez-vous faire ?\n1- Joindre un fichier existant\n2- Scanner un document\n3 -Sortir", "1", "2", "3")
-      Case 1
-        ecrit1.MoveFirst()
-        ecrit1.Item.Selected = True
-        $cpt = ecrit1.Current[0]
-        If Not IsNull($cpt) Then
-          hFormc = New GedC(Numecrit.text, "CPT", ecrit1.Current[0], " ")
-          hFormc.Showmodal()
+    hForm = LGed.Search(Numecrit.text, LGed.Comptabilite)
+    If hForm = Null Then
+      hForm = New LGed(Null, 0, LGed.Comptabilite, "TRE", Numecrit.text)
+    Endif
+    
+    ecrit1.MoveFirst()
+    Repeat
+      ecrit1.Item.Selected = True
+      $cpt = ecrit1.Current[0]
+      If Left$($cpt, 1) = "4" Then 'Compte Tiers
+        If Left$($cpt, 3) = "401" Then 'Fournisseur
+          'Add Tags from Fournisseur
+          rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & $cpt)
+          If rResult.Available Then
+            hForm.AddTags(LGed.String2Array(rResult!tag_def))
+          Endif
+        Else If Left$($cpt, 3) = "411" Then 'Client
+          'Add Tags from Client
+          rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabCli") & " WHERE cli_code = " & $cpt)
+          If rResult.Available Then
+            hForm.AddTags(LGed.String2Array(rResult!tag_def))
+          Endif
         Endif
+      Endif
+      hForm.AddTag($cpt)
+    Until ecrit1.MoveNext()
+    
+    hForm.AddTag(Cptt.Text)
+    'En treso on conserve uniquement le TTC comme montant de l'ecriture
+    $ttc = New LPrix(0)
+    $ttc.Add(LPrix(Soldeecrit.Text))
+    'Pour la Ged on garde uniquement la valeur absolue du montant ttc/ht
+    $ttc.Abs()
+    hForm.TTC = $ttc
+    hForm.DTE = LDate(datej.Text)
+    cancel = hForm.ShowModal()
+    If cancel Then
+      hForm.Delete()
+    Endif
 
-      Case 2
-        ecrit1.MoveFirst()
-        ecrit1.Item.Selected = True
-        $cpt = ecrit1.Current[0]
-        If Left$(ecrit1.Current[0], 3) = "411" Then tab = "Docs_Clients"
-        If Left$(ecrit1.Current[0], 3) = "401" Then tab = "Docs_Fournisseurs"
-        If Not IsNull($cpt) Then
-          hFormg = New Gged(Numecrit.text, "CPT", $cpt, Cptt.text)
-          hFormg.Showmodal()
-          Try Utils.db.Exec("insert into " & Tab & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", ecrit1.Current[0], Variables.$fic, Variables.$doc & "," & ecrit1.Current[0], "")
-          ecrit1.MoveNext()
-          Repeat
-            Try ecrit1.Item.Selected = True
-            If Not Error Then
-              If Left$(ecrit1.Current[0], 3) = "411" Then tab = "Docs_Clients"
-              If Left$(ecrit1.Current[0], 3) = "401" Then tab = "Docs_Fournisseurs"
-              Utils.db.Exec("insert into " & Tab & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", ecrit1.Current[0], Variables.$fic, Variables.$doc & "," & ecrit1.Current[0], "")
-              dResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCPTdocs") & " Where code = &1 and doc = &2", Numecrit.text, Variables.$fic)
-              If dResult.Available Then Utils.db.Exec("update " & Cbase.Table("TabCPTdocs") & " set doc2 = &1 where code = &2 and doc = &3", dResult!doc2 & "," & ecrit1.Current[0], Numecrit.text, Variables.$fic)
-            Endif
-          Until ecrit1.MoveNext()
-        Endif
-
-      Case 3
-        'Panel2.Visible = False
-
-    End Select
   Endif
 
 End

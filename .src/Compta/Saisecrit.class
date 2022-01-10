@@ -324,6 +324,8 @@ End
 Public Sub compteman()
 
   Dim Cmpts As Result
+  Dim libel_var As LVar
+  Dim libel_def As String
 
   B = 0
   If LF = 0 Then
@@ -403,7 +405,9 @@ Public Sub compteman()
             Endif
             If Left$(numcompte.Text, 2) = "40" Or Left$(numcompte.Text, 2) = "41" Then
               numcvtl = numcompte.text
-              Libelecrit.Text = Intitulcompte.Text & " "
+              libel_var = New LVar(["$annee2": LDate(datej.Text).Year2, "$annee": LDate(datej.Text).Year, "$mois": LDate(datej.Text).Month, "$jour": LDate(datej.Text).Day], Intitulcompte.Text & " ")
+              libel_def = libel_var.Evaluate(Cmpts!libel_def)
+              Libelecrit.Text = Left(libel_def, 50)
             Endif
             If Cmpts!solde <> "" Then
               soldecompte.Text = Format$(Cmpts!solde, "0.00")
@@ -427,8 +431,8 @@ Public Sub compteman()
       Endif
     Endif
   Endif
-Catch
-  B = 1
+'Catch
+'  B = 1
 
 End
 
@@ -3063,11 +3067,11 @@ Public Sub Button5_Click()
 
   Dim hForm As LGed
   Dim cancel As Boolean
-  Dim elem As Variant
   Dim $cpt As String
   Dim $ttc As LPrix
   Dim $ht As LPrix
   Dim $tva As LPrix
+  Dim rResult As Result
 
   If ecrit1.count > 0 Then
     
@@ -3091,11 +3095,20 @@ Public Sub Button5_Click()
         $ttc.Add(LPrix(ecrit1.Current[6]))
         $ttc.Sub(LPrix(ecrit1.Current[5]))
         If Left$($cpt, 3) = "401" Then 'Fournisseur
-          'Add Tag from Fournisseur
+          'Add Tags from Fournisseur
+          rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & $cpt)
+          If rResult.Available Then
+            hForm.AddTags(LGed.String2Array(rResult!tag_def))
+          Endif
         Else If Left$($cpt, 3) = "411" Then 'Client
-          'Add Tag from Client
+          'Add Tags from Client
+          rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabCli") & " WHERE cli_code = " & $cpt)
+          If rResult.Available Then
+            hForm.AddTags(LGed.String2Array(rResult!tag_def))
+          Endif
         Endif
       Endif
+      'Pour les ecritures comptables, on ajoute chaque compte de l'ecriture dans les tags
       hForm.AddTag(ecrit1.Current[1])
     Until ecrit1.MoveNext()
     'La TVA est saisie en contrepartie du compte Client/Fournisseur son signe permet une addition direct.

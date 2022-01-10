@@ -14,7 +14,10 @@ Property D As String 'Database Date String Propery
 Property DT As String 'Database DateTime String Propery
 Property Read FinMois As LDate 'retourne le dernier jour du mois
 Property Read FinJour As LDate 'retourne la dernière seconde du meme jour
+Property Read Day As Integer 'retourne le jour uniquement
+Property Read Month As Integer 'retourne le mois uniquement
 Property Read Year As Integer 'retourne l'année uniquement
+Property Read Year2 As Integer 'retourne les deux derniers digit de l'année uniquement
 Property Read F As String 'Filename Date String Propery
 Property Read FT As String 'Filename DateTime String Propery
 
@@ -424,9 +427,27 @@ Sub FinJour_Read() As LDate
   
 End
 
+Sub Day_Read() As Integer
+  
+  Return Day(Dte)
+  
+End
+
+Sub Month_Read() As Integer
+  
+  Return Month(Dte)
+  
+End
+
 Sub Year_Read() As Integer
   
   Return Year(Dte)
+  
+End
+
+Sub Year2_Read() As Integer
+  
+  Return Val(Right(CStr(Year(Dte)), 2))
   
 End
 

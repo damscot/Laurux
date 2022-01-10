@@ -1,0 +1,33 @@
+' Gambas class file
+
+Create Static
+
+Private $context As Collection
+Private $defaut_output As String
+
+
+Public Sub _New(VariableAssignement As Collection, Optional defout As String = "")
+  
+  $defaut_output = defout
+  If IsNull(VariableAssignement) Then
+    $context = New Collection
+  Else
+    $context = VariableAssignement
+  Endif
+  
+End
+
+Public Sub Evaluate(str As String) As String
+  
+  Dim out As String
+  
+  If IsNull(str) Then Return $defaut_output
+  out = $defaut_output
+  Try out = Eval(str, $context)
+  If Error Then
+    Return $defaut_output
+  Endif
+
+  Return out
+  
+End

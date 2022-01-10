@@ -330,6 +330,8 @@ Public Sub CleanChamps()
   Exo.value = False
   cb.Clear
   Lettrable.value = True
+  LibelDef.Text = ""
+  ListTags.List = New String[]
 
 End
 
@@ -1279,6 +1281,24 @@ Public Sub Ventilations()
 
   Dim Tab As String
   Dim rResult As Result
+  Dim tag As String
+  Dim libel_def As String
+  Dim tags As String[]
+  
+  Object.Lock(ListTags)
+  Object.Lock(LibelDef)
+  LibelDef.Text = ""
+  ListTags.List = New String[]
+  If Not IsNull(Cd.Text) Then
+    rResult = Utils.db.Exec("SELECT libel_def, tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & Cd.Text)
+    If rResult.Available Then
+      LibelDef.Text = rResult!libel_def
+      tags = LGed.String2Array(rResult!tag_def)
+      ListTags.List = tags.Copy()
+    Endif
+  Endif
+  Object.Unlock(ListTags)
+  Object.Unlock(LibelDef)
 
   Tab = "Fiches_Four_Vtl"
   Vents.Columns.count = 2
@@ -2506,22 +2526,6 @@ Public Sub CleanChampsCt()
 
 End
 
-'********************************** Gestion des documents liès ***************************************************
-
-Public Sub Button18_MouseDown()
-
-  Dim hFormc As GedC
-
-  If Not IsNull(Cd.Text) Then
-    hFormc = New Gedc("Fournisseur", "F", Cd.Text, "")
-    hFormc.Showmodal()
-    Maj_Dssr()
-  Else
-    Message.Info("Veuillez saisir un client SVP !")
-  Endif
-
-End
-
 Public Sub Dssr_Data(Row As Integer, Column As Integer)
 
   Try Dssr.Data.Text = tableau[Row, Column]
@@ -2758,15 +2762,23 @@ End
 
 Public Sub Button9_Click()
 
-  Dim hForm As Gged
+  Dim hForm As LGed
+  Dim cancel As Boolean
 
   If Not IsNull(Cd.Text) Then
-    hForm = New Gged("Fournisseur", "F", Cd.Text, "")
-    hForm.Showmodal()
+    hForm = New LGed(Null, 0, LGed.Fournisseurs, "", Cd.Text)
+    hForm.TTC = New LPrix(0)
+    hForm.HT = New LPrix(0)
+    hForm.DTE = LDate()
+    cancel = hForm.ShowModal()
+    If cancel Then
+      hForm.Delete()
+      Return
+    Endif
+    Maj_Dssr()
   Else
-    Message.Info("Veuillez saisir un produit avant de scaner SVP !")
+    Message.Info("Veuillez saisir un fournisseur avant de scanner SVP !")
   Endif
-  Maj_Dssr()
 
 End
 
@@ -2800,41 +2812,77 @@ Public Sub Facs3_Click()
 
 End
 
-Public Sub Etiquette_KeyPress()
+Public Sub RechTag_Click()
 
-  If Key.code = Key.Esc Or If Key.code = Key.Escape Then Panel1.Visible = False
+  Dim tr As TriGen
+  Dim prop As ObjProp
+  Dim Col As Collection
+  Dim k As String
+  Dim Req As String
+  Dim Res As Result
+  
+  Req = "select * from Fiches_Tag"
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  
+  Col = New Collection
+  k = "------------- tag --------------"
+  prop = New ObjProp(Res.Fields["tag"], k)
+  Col.Add(prop, k)
+  
+  tr = New TriGen(Null, Col, Res, Req, 20, Me)
+  'simplify Modal version
+  tr.Show(True)
+  
+  If Bsel = True Then
+    ListTags.Add(Bval)
+    Bsel = False
+    Bval = ""
+  Endif
 
 End
 
-Public Sub Button10_Click()
+Public Sub LibelDef_LostFocus()
 
-  Dim rDoc As Result
-  Dim $NmFic As String = Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminF"] & "/Docs" & "/" & cd.Text & "/"
-  Dim Fic As String
-  Dim NmFic As String[]
-  Dim ific As Integer
-
-  Dialog.Filter = FileFilter(True)
-  Dialog.Path = User.home
-  Dialog.Title = "Choix d'un fichier"
-  If Dialog.OpenFile() Then Return
-  Fic = Dialog.Path
-  NmFic = Split(Fic, "/")
-  For ific = 0 To NmFic.Count - 1
-    Fichier = NmFic[ific]
-  Next
-  If Not Exist($NmFic) Then Mkdir $NmFic
-  Shell "cp " & Fic & " " & $NmFic Wait
-  Fichier = $NmFic & Fichier
-  rDoc = Utils.db.Exec("SELECT * from " & Cbase.Table("TabFdocs") & " where code = &1 AND doc = &2 ", Cd.Text, Fichier)
-  If rDoc.Available Then
-    Utils.db.Exec("Update " & Cbase.Table("TabFdocs") & " set doc = &2, doc2 = &3, org = &4 where code = &1 AND doc = &2 ", Cd.Text, Fichier, cd.text & "," & Etiquette.text, "Docs")
-  Else
-    Try Utils.db.Exec("insert into " & Cbase.Table("TabFdocs") & " (code,doc, doc2, org) values ( &1, &2, &3, &4)", Cd.Text, Fichier, cd.text & "," & Etiquette.text, "Docs")
+  'MAJ des libelle d'ecriture pour le client selectionné
+  If Not IsNull(Cd.Text)
+    Utils.db.Exec("UPDATE " & Cbase.Table("TabFour") & " SET libel_def = &2 WHERE fo_code = &1", Cd.Text, Left(LibelDef.Text, 255))
   Endif
-  Maj_Dssr()
-  Panel1.visible = False
-Catch
-  Message.Warning(ERROR.Text)
+
+End
+
+Public Sub Update_ListTags()
+  
+  Dim tag As String
+  Dim tags As String
+  
+  'MAJ des tag pour le client selectionné
+  Object.Lock(ListTags)
+  If Not IsNull(Cd.Text)
+    'On passe par la classe LGED pour supprimer d'éventuel tag interdit
+    tags = LGed.Array2String(ListTags.List)
+    ListTags.List = LGed.String2Array(tags)
+    Utils.db.Exec("UPDATE " & Cbase.Table("TabFour") & " SET tag_def = &2 WHERE fo_code = &1", Cd.Text, tags)
+  Endif
+  Object.UnLock(ListTags)
+  
+End
+
+
+Public Sub ListTags_Add()
+
+  Dim editor As TextBox
+
+  editor = ListTags.Editor
+  If Not IsNull(editor) Then
+    ListTags.Add(editor.Text)
+    Update_ListTags()
+  Endif
+
+End
+
+Public Sub ListTags_LostFocus()
+
+  Update_ListTags()
 
 End

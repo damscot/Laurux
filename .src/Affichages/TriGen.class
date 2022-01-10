@@ -57,9 +57,6 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   
   ch = New Chainage([])
   Parent = Par
-  For Each ObjPan In Parent.children
-    Try ObjPan.Delete
-  Next
   Res = Resu
   Request = Req
   If IsNull(Parent) Then
@@ -71,6 +68,10 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
     Parent.H = Win.ClientHeight
     Parent.Visible = True
     Win.AutoResize = True
+  Else
+    For Each ObjPan In Parent.children
+    Try ObjPan.Delete
+    Next
   Endif
   Coltri = New GridView(Parent) As "Coltri"
   coltri.Mode = Select.Single
@@ -574,6 +575,8 @@ End
 Public Sub Update()
 
   Dim Rescnt As Result
+  'Dim TimeExec As Date
+  'Dim TimeLong As Integer
 
   If NbEnreg < 0 Then NbEnreg = 0
   Count.Value = NbEnreg
@@ -590,12 +593,18 @@ Public Sub Update()
   Endif
 
   If $nup Then Return
+  
+  'TimeExec = Now
 
   If Dbl = True Then
     DB_Decr()
   Else
     DB_Incr()
   Endif
+  
+  'TimeLong = DateDiff(TimeExec, Now, gb.Second)
+  
+  'Print "Update " & TimeLong
 
 End
 

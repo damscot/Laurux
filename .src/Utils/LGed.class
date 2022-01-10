@@ -1,5 +1,11 @@
 ' Gambas class file
 
+'Supprimer Gged et Ggedc class and call
+'Supprimer tous les appels aux anciennes tables Cdocs, Docs_Clients, Docs_Clients Docs_Fournisseurs,... et Cbase.Table("TabCPTdocs")
+'Ajout des tags/libellé par défaut client et fournisseur
+'Revoir les tags d'ecriture comptable
+'Accelerer la selection du Scanner par un scanner par défault
+
 Create Static
 
 Public Enum Clients, Fournisseurs, Comptabilite, Autres, Articles
@@ -94,6 +100,49 @@ Public Sub Supprime(Optional Epur As Boolean = True)
   
 End
 
+Public Sub String2Array(Tagstring As String) As String[] 'return an array of tags based on a comma separated string
+
+  Dim tags As String[]
+  Dim tags_out As String[]
+
+  tags_out = New String[]
+  tags = Split(Tagstring, ",")
+  For Each tag As String In tags
+    If Not IsNull(tag) Then
+      If Not tags_out.Exist(tag) Then
+        tags_out.Push(tag)
+      Endif
+    Endif
+  Next
+  Return tags_out
+
+End
+
+Public Sub Array2String(Tagarray As String[]) As String 'return a comma separated list of tags
+  
+  Dim tags As String
+  Dim present_tags As String[]
+  
+  tags = ""
+  present_tags = New String[]
+  For Each tag As String In Tagarray
+    'on autorise pas les virgules dans le corps du tag
+    tag = Replace(tag, ",", "")
+    If Not IsNull(tag) Then
+      If present_tags.Exist(tag) Then Continue
+      present_tags.Push(tag)
+      tags = tags & tag & ","
+    Endif
+  Next
+  'supprime le dernier séparateur
+  If Not IsNull(tags) Then
+    tags = Left(tags, Len(tags) - 1)
+  Endif
+
+  Return tags
+  
+End
+
 Public Sub AddTag(Tag As String) As Integer 'return the index of the tag in DB or zero in case of error
   
   Dim Res As Result
@@ -111,6 +160,16 @@ Tag_exists:
     Utils.db.Exec("insert into Fiches_Tag (tag) VALUES (&1)", Tag)
     Goto Tag_exists
   Endif
+  
+End
+
+Public Sub AddTags(Tags As String[])
+  
+  For Each Tag As String In Tags
+    If Not IsNull(Tag) Then
+      AddTag(Tag)
+    Endif
+  Next
   
 End
 
@@ -338,7 +397,9 @@ End
 
 Public Sub Ouvrir()
 
-  If $url <> Null Then
+  If $temp_file <> Null And Exist($temp_file)
+    Visualiseur.Prog($temp_file, $mime)
+  Else If $url <> Null Then
     Visualiseur.Prog($url, $mime)
   Endif
 
@@ -626,6 +687,11 @@ Public Sub Enregistrer_Click()
     Endif
 
   Else
+    
+    If IsNull($url) Then
+      Message.Error("Vous devez d'abord Scanner ou copier le fichier depuis une source existante!")
+      Return
+    Endif
 
     If $url <> furl.Text Then
       If MoveURL(furl.Text) Then
@@ -662,18 +728,12 @@ Public Sub Sortir_Click()
 
 End
 
-Public Sub Scanner_Click()
+Public Sub ScannerFinalize()
 
   If $temp_file <> Null Then 
     Try Kill $temp_file
   Endif
   $temp_file = Temp$()
-  Try Kill User.Home & "/" & "multipageproject.pdf"
-  Try Utils.Rmdir_rf(user.home & "/multipageproject")
-  Try Utils.Mkdir_p(user.home & "/multipageproject")
-  Shell "echo Project created@@@@@@@@@@@@@@@@ > " & user.home & "/multipageproject/xsane-multipage-list" Wait
-  Shell "echo image0001.pnm  >> " & user.home & "/multipageproject/xsane-multipage-list" Wait
-  Exec ["xsane", "-s", "-m"] Wait
 
   If Exist(User.Home & "/" & "multipageproject.pdf") Then
     Copy User.Home & "/" & "multipageproject.pdf" To $temp_file
@@ -701,6 +761,38 @@ Public Sub Scanner_Click()
   If $url <> Null Then
     furl.Text = File.Dir(furl.Text) & "/" & File.BaseName(furl.Text) & ".pdf"
   Endif
+
+End
+
+Public Sub ScanGUI_Click()
+
+  Try Kill User.Home & "/" & "multipageproject.pdf"
+  Try Utils.Rmdir_rf(user.home & "/multipageproject")
+  Try Utils.Mkdir_p(user.home & "/multipageproject")
+  Shell "echo Project created@@@@@@@@@@@@@@@@ > " & user.home & "/multipageproject/xsane-multipage-list" Wait
+  Shell "echo image0001.pnm  >> " & user.home & "/multipageproject/xsane-multipage-list" Wait
+  Exec ["xsane", "-s", "-m"] Wait
+  Shell "convert -quality 80 -compress jpeg " & user.home & "/multipageproject/*.pnm " & User.Home & "/" & "multipageproject.pdf" Wait
+  ScannerFinalize()
+End
+
+Public Sub ScanBatch_Click()
+
+  Dim PB As ProgBar
+
+  Try Kill User.Home & "/" & "multipageproject.pdf"
+  Try Utils.Rmdir_rf(user.home & "/multipageproject")
+  Try Utils.Mkdir_p(user.home & "/multipageproject")
+  
+  PB = New ProgBar("Scan en mode Batch", 3, Null, False, "", True)
+  PB.Show()
+  PB.Avancement("Scan des pages depuis le chargeur", 1)
+  Shell "scanimage -d 'brother4:net1;dev0' --resolution 150 --source Flatbed --format tiff --batch=" & user.home & "/multipageproject/$(date +%Y%m%d_%H%M%S)_p%04d.tiff" Wait
+  pb.Avancement("Creation PDF", 1)
+  Shell "convert -quality 80 -compress jpeg " & user.home & "/multipageproject/*.tiff " & User.Home & "/" & "multipageproject.pdf" Wait
+  pb.Avancement("Finalisation", 1)
+  ScannerFinalize()
+  PB.Close()
 
 End
 
