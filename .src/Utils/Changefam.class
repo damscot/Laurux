@@ -164,10 +164,12 @@ End
 Public Sub AjoutArt()
 
   Dim rarts As Result
+  
+  If IsNull(Code.Text) Then Return
 
-  Try Utils.db.Exec("INSERT INTO CFamille (codeart, afam, nfam) Values (&1, &2, &3)", Code.Text, Afam.Text, NFam.Text)
+  Try Utils.db.Exec("INSERT INTO CFamille (codeart, nvcodeart, afam, nfam) Values (&1, &2, &3, &4)", Code.Text, NvCode.Text, Afam.Text, NFam.Text)
   If Error Then
-    Rarts = Utils.db.Exec("SELECT * FROM CFamille where codeart = &1", Code.Text)
+    Rarts = Utils.db.Exec("SELECT * FROM CFamille where codeart = &1 or codeart = &2 ", Code.Text, NvCode.Text)
     If Start.son Then
       Music.Play
     Endif
@@ -408,9 +410,9 @@ End
 Public Sub Change($hOrg As String)
 
   If Not verifam(Nfam) Then Return
-  verrou
+  verrou()
   Me.Mouse = Mouse.Wait
-  Modifart(code.Text, nfam.text)
+  Modifart(Code.Text, nfam.text, NvCode.Text)
   Utils.db.Exec("UNLOCK TABLES")
   Me.Mouse = Mouse.Default
   If Start.son Then
@@ -432,21 +434,18 @@ Public Sub Change2()
   Dim Tab3 As String
   Dim r2Result As Result
 
-  Tab = "Fiches_Fam"
-  Tab1 = "Fiches_Art"
-  Tab2 = "Fiches_HistoLigfac"
-  Tab3 = "Fiches_Ligbl"
 
   If Not verifam(Nfam2) Then Return
-  verrou
+  verrou()
   Me.Mouse = Mouse.Wait
   
-  Utils.db.Exec("UPdate  " & Tab1 & "  SET  art_fam = &2 where art_fam = &1", Afam2.Text, Nfam2.Text)
-  Utils.db.Exec("UPdate  " & Tab2 & "  SET  fam_ligfac = &2 where fam_ligfac = &1", Afam2.text, Nfam2.text)
-  Utils.db.Exec("UPdate  " & Tab3 & "  SET  fam_ligbl = &2 where fam_ligbl = &1", Afam2.text, Nfam2.text)
-  Utils.db.Exec("UPdate  Fiches_HistoLigfacM  SET  fam_ligfac = &2 where fam_ligfac = &1", Afam2.text, Nfam2.text)
-  Utils.db.Exec("UPdate  Fiches_LigblM  SET  fam_ligbl = &2 where fam_ligbl = &1", Afam2.text, Nfam2.text)
+  Utils.db.Exec("UPdate Fiches_Art  SET  art_fam = &2 where art_fam = &1", Afam2.Text, Nfam2.Text)
+  Utils.db.Exec("UPdate Fiches_HistoLigfac SET  fam_ligfac = &2 where fam_ligfac = &1", Afam2.text, Nfam2.text)
+  Utils.db.Exec("UPdate Fiches_Ligbl SET  fam_ligbl = &2 where fam_ligbl = &1", Afam2.text, Nfam2.text)
+  Utils.db.Exec("UPdate Fiches_LigblM  SET  fam_ligbl = &2 where fam_ligbl = &1", Afam2.text, Nfam2.text)
+  Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2 where fam_ligfac = &1", Afam2.text, Nfam2.text)
   Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2 where mat_fam = &1", Afam2.text, Nfam2.text)
+  Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2 where mat_fam = &1", Afam2.text, Nfam2.text)
   utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2 WHERE fam=&1", Afam2.text, Nfam2.text)
   utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2 WHERE fam=&1", Afam2.text, Nfam2.text)
   Me.Mouse = Mouse.Default
@@ -472,10 +471,10 @@ Public Sub Change3()
     Me.Mouse = Mouse.Wait
     rfam = Utils.db.Exec("SELECT * from  " & Tab & "")
     If rfam.Available Then
-      verrou
+      verrou()
       rfam.MoveFirst
       Repeat
-        Modifart(rfam!codeart, rfam!nfam)
+        Modifart(rfam!codeart, rfam!nfam, rfam!nvcodeart)
       Until rfam.MoveNext()
       Utils.db.Exec("UNLOCK TABLES")
       Me.Mouse = Mouse.Default
@@ -498,16 +497,50 @@ Public Sub Change3()
 
 End
 
-Public Sub Modifart(numart As String, numfam As String)
+Public Sub Modifart(oldcode As String, newfam As String, newcode As String)
 
-  Utils.db.Exec("UPdate  Fiches_Art  SET  art_fam = &2 where art_code = &1", numart, numfam)
-  Utils.db.Exec("UPdate Fiches_HistoLigfac  SET  fam_ligfac = &2 where code_ligfac = &1", numart, numfam)
-  Utils.db.Exec("UPdate Fiches_Ligbl  SET  fam_ligbl = &2 where code_ligbl = &1", numart, numfam)
-  Utils.db.Exec("UPdate  Fiches_LigblM SET  fam_ligbl = &2 where code_ligbl = &1", numart, numfam)
-  Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2 where code_ligfac = &1", numart, numfam)
-  Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2 where mat_code = &1", numart, numfam)
-  utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2 WHERE code=&1", numart, numfam)
-  utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2 WHERE code=&1", numart, numfam)
+  'Table avec Famille & Code
+  Utils.db.Exec("UPdate Fiches_Art  SET  art_fam = &2, art_code = &3 where art_code = &1", oldcode, newfam, newcode)
+  Utils.db.Exec("UPdate Fiches_HistoLigfac  SET  fam_ligfac = &2, code_ligfac = &3 where code_ligfac = &1", oldcode, newfam, newcode)
+  Utils.db.Exec("UPdate Fiches_Ligbl  SET  fam_ligbl = &2, code_ligbl = &3 where code_ligbl = &1", oldcode, newfam, newcode)
+  Utils.db.Exec("UPdate Fiches_LigblM SET  fam_ligbl = &2, code_ligbl = &3 where code_ligbl = &1", oldcode, newfam, newcode)
+  Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2, code_ligfac = &3 where code_ligfac = &1", oldcode, newfam, newcode)
+  Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
+  Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
+  utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
+  utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
+  
+  If Not IsNull(newcode) And oldcode <> newcode Then
+  'Table avec Code
+    utils.db.Exec("UPdate Docs_Ged SET code=&3 WHERE code=&1 and type = &2", oldcode, LGed.Articles, newcode)
+    utils.db.Exec("UPdate Fiches_ArtPromo SET code=&2 WHERE code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_CdBarre SET codep=&2 WHERE codep=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_CdFour SET codep=&2 WHERE codep=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Cequ SET codep=&2 WHERE codep=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Cequ SET codequ=&2 WHERE codequ=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_EtiGond SET code=&2 WHERE code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_EtiProd SET code=&2 WHERE code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_HisInvT SET inv_code=&2 WHERE inv_code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Inv SET inv_code=&2 WHERE inv_code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_InvT  SET inv_code=&2 WHERE inv_code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Ligcom SET code=&2 WHERE code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Ligrecpt SET code=&2 WHERE code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Mvtexp SET code=&2 WHERE code=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Mvtexpdc SET code=&2 WHERE code=&1", oldcode, newcode)
+    
+    utils.db.Exec("UPdate Fiches_PrdComp SET codep=&2 WHERE codep=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_PrdComp SET codec=&2 WHERE codec=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Rpl1 SET codep=&2 WHERE codep=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Rpl1 SET coderpl1=&2 WHERE coderpl1=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Rpl2 SET codep=&2 WHERE codep=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_Rpl2 SET coderpl2=&2 WHERE coderpl2=&1", oldcode, newcode)
+  
+    utils.db.Exec("UPdate Fiches_Tarcli SET cart=&2 WHERE cart=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Fiches_TarTypcli SET cart=&2 WHERE cart=&1", oldcode, newcode)
+    utils.db.Exec("UPdate Rupture SET codea=&2 WHERE codea=&1", oldcode, newcode)
+    utils.db.Exec("UPdate RuptureC SET codea=&2 WHERE codea=&1", oldcode, newcode)
+  Endif
+  
 
 End
 Public Sub Liste_Click()
@@ -525,6 +558,7 @@ Public Sub Liste_Click()
     Utils.db.Exec("DROP TABLE IF EXISTS CFamille")
     Utils.db.Exec("CREATE Temporary TABLE " & TabF &
       "(codeart Char(15) Not Null, " &
+      "nvcodeart Char(15), " &
       "afam Char(5)," &
       "nfam Char(20)," &
       "PRIMARY KEY (codeart))" & Utils.db.Engine())
@@ -605,16 +639,18 @@ Public Sub Bouton2_Click()
   Dim Lig As String
   Dim Lig2 As String[]
   Dim Rfams As Result
+  Dim Rcode As Result
 
   If Exist(filetxt) Then
     If message.question("Attention ! Vous allez changer les familles a partir du fichier : " & hText.Text & "\n Voulez-vous continuer ?", "Oui", "Non") = 1 Then
-      verrou
+      verrou()
       hFile = Open Filetxt For Read
       While Not Eof(hFile)
         Line Input #hFile, Lig
         Lig2 = Split(Lig, ";")
         Code.Text = Lig2[0]
         NFam.Text = Lig2[1]
+        NvCode.Text = Lig2[2]
         Rfams = Utils.db.Exec("SELECT * FROM Fiches_Fam WHERE code_fam = &1", NFam.Text)
         If Not Rfams.Available Then
           If Start.son Then
@@ -622,7 +658,15 @@ Public Sub Bouton2_Click()
           Endif
           Message.Warning("La famille " & NFam.Text & " n'existe pas !" & "\nLe produit " & Code.Text & " ne sera pas traité.", "OK")
         Else
-          Modifart(lig2[0], lig2[1])
+          Rfams = Utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_code = &1", NFam.Text)
+          If Not Rfams.Available Then
+            If Start.son Then
+              Music.Play
+            Endif
+            Message.Warning("Le code " & NvCode.Text & " existe déjà !" & "\nLe produit " & Code.Text & " ne sera pas traité.", "OK")
+          Else
+            Modifart(lig2[0], lig2[1], lig2[2])
+          Endif
         Endif
       Wend
       hbutton3.Text = "Quitter"
@@ -660,14 +704,22 @@ Public Function verifart() As Boolean
     code.SetFocus
     Return False
   Endif
+  
+  res = utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_code=&1", NvCode.Text)
+  If res.Available Then
+    Balloon.Delay = 4000
+    Balloon.Warning("Le Nouveau code est déjà utilisé", NvCode)
+    NvCode.SetFocus
+    Return False
+  Endif
 
   Return True
 End
 
 Public Sub verrou()
 
-  Utils.db.Exec("LOCK TABLES Fiches_Art WRITE, Fiches_HistoLigfac WRITE, Fiches_HistoLigfacM WRITE, Fiches_Ligbl WRITE, Fiches_LigblM WRITE, Fiches_Materiels WRITE, Fiches_HisLigTickets WRITE, Fiches_LigTicketz WRITE")
- 
+  Utils.db.Exec("LOCK TABLES Fiches_Art WRITE, Fiches_HistoLigfac WRITE, Fiches_HistoLigfacM WRITE, Fiches_Ligbl WRITE, Fiches_LigblM WRITE, Fiches_Materiels WRITE, Fiches_Mats WRITE, Fiches_HisLigTickets WRITE, Fiches_LigTicketz WRITE , Docs_Ged Write , Fiches_ArtPromo Write , Fiches_CdBarre Write , Fiches_CdFour Write , Fiches_Cequ Write , Fiches_EtiGond Write , Fiches_EtiProd Write , Fiches_HisInvT Write , Fiches_Inv Write , Fiches_InvT Write , Fiches_Ligcom Write , Fiches_Ligrecpt Write , Fiches_Mvtexp Write , Fiches_Mvtexpdc Write , Fiches_PrdComp Write , Fiches_Rpl1 Write , Fiches_Rpl2 Write , Fiches_Tarcli Write , Fiches_TarTypcli Write , Rupture Write , RuptureC Write")
+
 End
 
 Public Sub Bouton3_Click()

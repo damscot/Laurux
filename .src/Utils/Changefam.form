@@ -3,7 +3,7 @@
 { Form Form
   MoveScaled(8.25,12.75,88,73)
   { FamList ColumnView
-    MoveScaled(1.625,28.375,43.75,38.625)
+    MoveScaled(2,29,44,38)
     Visible = False
     Font = Font["Serif,-1"]
     ScrollBar = Scroll.Vertical
@@ -16,14 +16,14 @@
     Border = Border.Plain
   }
   { Liste CheckBox
-    MoveScaled(34.25,29,17,3)
+    MoveScaled(34,21,17,3)
     Font = Font["Serif,-1"]
     Text = ("Liste")
   }
   { Label1 Label
-    MoveScaled(1.625,2,85,26)
+    MoveScaled(1,1,85,19)
     Font = Font["Serif,-1"]
-    Text = ("Ce programme vous permet de changer le code famille pour un \narticle ou pour l'ensemble des articles d'une même famille.\nCe programme mettra également à jour les historiques avec les\nnouvelles familles\n\nVeuillez faire une sauvegarde avant de lancer ce \ntraitement SVP .\n\nAttention ! Soyez patient.\nCe traitement peut-être assez long.")
+    Text = ("Ce programme vous permet de changer le code famille pour un \narticle ou pour l'ensemble des articles d'une même famille.\nCe programme mettra également à jour les historiques avec les\nnouvelles familles. Attention, Veuillez faire une sauvegarde avant de lancer ce \ntraitement SVP, ne lancer ce programme que lorsque tous les autres postes sont fermés!!!\n\nSoyez patient, ce traitement peut-être assez long!")
     Alignment = Align.Center
     Border = Border.Plain
   }
@@ -101,46 +101,46 @@
     }
   }
   { Fichier CheckBox
-    MoveScaled(58,29,28,3)
+    MoveScaled(58,21,28,3)
     Font = Font["Serif,-1"]
     Text = ("Fichier texte")
   }
   { Frame1 Frame
-    MoveScaled(1,32,85,19)
+    MoveScaled(1,25,85,25)
     Font = Font["Serif,-1"]
     Text = ("Maj pour un article")
     { Code TextBox Cmpt
       Name = "Code"
-      MoveScaled(27,3,17,3)
+      MoveScaled(2,6,17,3)
       Font = Font["Serif,-1"]
       Tag = "1"
       MaxLength = 15
     }
     { TextLabel1 TextLabel
-      MoveScaled(2,3,25,3)
+      MoveScaled(1,3,21,3)
       Font = Font["Serif,-1"]
       Text = ("Code article à modifier")
       Alignment = Align.Left
     }
     { TextLabel2 TextLabel
-      MoveScaled(0.625,6.625,17,2.625)
+      MoveScaled(1,13,17,2.625)
       Font = Font["Serif,-1"]
       Text = ("Ancienne famille")
       Alignment = Align.Left
     }
     { TextLabel3 TextLabel
-      MoveScaled(36,6.625,17,2)
+      MoveScaled(43,12,17,2)
       Font = Font["Serif,-1"]
       Text = ("Nouvelle famille")
       Alignment = Align.Left
     }
     { Desg Label
-      MoveScaled(49,3,35,3)
+      MoveScaled(2,10,35,3)
       Font = Font["Serif,-1"]
     }
     { Button3 Button Btn
       Name = "Button3"
-      MoveScaled(34,14,14,4)
+      MoveScaled(34,20,14,4)
       Font = Font["Serif,Bold,-1"]
       Tag = "3"
       ToolTip = ("Lance les changements de codification des familles")
@@ -150,18 +150,18 @@
     }
     { Button2 Button Btn
       Name = "Button2"
-      MoveScaled(59,9,3.625,3.625)
+      MoveScaled(59,15,3.625,3.625)
       Tag = "2"
       Picture = Picture["Icones/next_frame.png"]
     }
     { Button1 Button Btn
       Name = "Button1"
-      MoveScaled(44,2.625,3.625,3.625)
+      MoveScaled(19,6,3.625,3.625)
       Tag = "1"
       Picture = Picture["Icones/next_frame.png"]
     }
     { Button9 Button
-      MoveScaled(18,14,14,4)
+      MoveScaled(18,20,14,4)
       Font = Font["Serif,Bold,-1"]
       ToolTip = ("Ajoute le produit saisi à la liste")
       Drop = True
@@ -169,21 +169,34 @@
       Picture = Picture["icon:/32/add"]
     }
     { Libelfam Label
-      MoveScaled(16,11,19,2)
+      MoveScaled(16,17,19,2)
       Font = Font["Serif,-1"]
     }
     { LibelFam2 Label
-      MoveScaled(64,10,20,3)
+      MoveScaled(64,16,20,3)
       Font = Font["Serif,-1"]
     }
     { afam textfamille
-      MoveScaled(0,9,15,4)
+      MoveScaled(0,15,15,4)
       Enabled = False
     }
     { Nfam textfamille Cmpt
       Name = "Nfam"
-      MoveScaled(43,9,15,4)
+      MoveScaled(43,15,15,4)
       Tag = "2"
+    }
+    { TextLabel6 TextLabel
+      MoveScaled(43,3,21,3)
+      Font = Font["Serif,-1"]
+      Text = ("Nouveau code article")
+      Alignment = Align.Left
+    }
+    { NvCode TextBox Cmpt
+      Name = "NvCode"
+      MoveScaled(43,6,17,3)
+      Font = Font["Serif,-1"]
+      Tag = "1"
+      MaxLength = 15
     }
   }
 }
