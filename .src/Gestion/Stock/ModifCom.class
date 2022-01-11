@@ -2413,7 +2413,7 @@ Public Sub Colrcp_Keypress()
         Tab = "Fiches_Ligrecpt"
         LigCom = Utils.db.Exec("SELECT * From " & Tab & " where four = &1 and numrecpt = &2 and nligne = &3", four.text, Ncom.text, Colrcp.current[0])
         If LigCom.Available Then
-          Maj_Quantite(LigCom!code, - Val(.cpoint(LigCom!qte)))
+          Maj_Quantite(LigCom!code, -Val(.cpoint(LigCom!qte)))
           Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and nligne = &3", Ncom.Text, four.Text, LigCom!nligne)
         Endif
         CleanChamps()
@@ -2595,7 +2595,7 @@ Public Sub Enrgcom(valid As Boolean)
         LigCom = Utils.db.Exec("SELECT * From Fiches_Ligrecpt where four = &1 and numrecpt = &2", $fourc, snum)
         LigCom.MoveFirst
         Repeat
-          Maj_Quantite(LigCom!code, - Val(.cpoint(LigCom!qte)))
+          Maj_Quantite(LigCom!code, -Val(.cpoint(LigCom!qte)))
           Utils.db.Exec("DELETE from Fiches_Ligrecpt WHERE numrecpt = &1 and four = &2 and nligne = &3 AND code=&4", snum, $fourc, LigCom!nligne, LigCom!code)
         Until LigCom.MoveNext()
         'création des lignes de commande modifiées
@@ -2847,7 +2847,7 @@ Public Sub Delcom()
       LigCom = Utils.db.Exec("SELECT * From " & Tab & " where four = &1 and numrecpt = &2 and daterecpt = &3", four.text, Ncom.text, .Cdate_Dbase(datej.Text))
       If LigCom.Available Then
         Repeat
-          Maj_Quantite(LigCom!code, - Val(.cpoint(LigCom!qte)))
+          Maj_Quantite(LigCom!code, -Val(.cpoint(LigCom!qte)))
           Utils.db.Exec("delete from " & Tab & " WHERE numrecpt = &1 and four = &2 and nligne = &3", Ncom.Text, four.Text, LigCom!nligne)
         Until LigCom.MoveNext()
       Endif

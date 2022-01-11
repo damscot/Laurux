@@ -4435,37 +4435,36 @@ Public Sub Art_Rpl()
   If stk And Val(Qte.Text) <= 0 And If Tp = "B" Or Tp = "F" Then
     Rpl = utils.db.Exec("SELECT *  From " & Cbase.Table("TabRpl1") & " Left join " & Cbase.Table("TabArt") & " on art_code = coderpl1 WHERE codep = &1 order by coderpl1", Cart.Text)
     If Rpl.count > 1 Then
-      hcol.Columns.Count = 3
+      hcol.Columns.Count = 4
       hcol.Columns[0].Width = 180
       hcol.Columns[0].Text = "Code"
       hcol.Columns[1].Width = 470
       hcol.Columns[1].Text = "Désignation"
       hcol.Columns[2].Width = 80
       hcol.Columns[2].Text = "Quantité"
+      hcol.Columns[3].Width = 80
+      hcol.Columns[3].Text = "Stocké"
       Repeat
-        If Rpl!art_qte > 0 Then
+        If ((Rpl!art_stocke = 0) Or (Rpl!art_stocke <> 0 And Rpl!art_qte > 0)) Then
           hcol.Add(Rpl!coderpl1, Rpl!coderpl1)
           hcol.item[0] = Rpl!art_code
           hcol.item[1] = Rpl!art_design
           hcol.item[2] = Rpl!art_qte
+          hcol.item[3] = Rpl!art_stocke
         Endif
       Until Rpl.MoveNext()
       If hcol.count = 1 Then
-        Try Cart.Text = hcol.current[0]
-        If start.son Then
-          Music.Play
-        Endif
-        Message.Info("Le produit " & prodru & " est en rupture de stock il est remplacé par " & Cart.Text)
-        '        ArtQte.SetFocus
-        '        ArtQte.Select
+        Cart.Text = hcol.item[0]
+        Message.Info("Le produit " & prodru & " est en rupture il est remplacé par " & Cart.Text)
         foccons
       Else
         If hcol.count > 1 Then
           Panel11.Visible = True
+          Panel11.Raise()
           If start.son Then
             Music.Play
           Endif
-          Message.Info("Le produit " & prodru & " est en rupture de stock, veuillez sélectionner un produit de remplacement SVP ! " & Cart.Text)
+          Message.Info("Le produit " & prodru & " est en rupture, veuillez sélectionner un produit de remplacement SVP !")
           hcol.SetFocus
         Endif
       Endif
@@ -4475,18 +4474,13 @@ Public Sub Art_Rpl()
         If Rpl2.Available Then
           If Val(Utils.cpoint(Rpl!art_qte)) > 0 Then
             Cart.Text = Rpl!coderpl1
-            If start.son Then
-              Music.Play
-            Endif
-            Message.Info("Le produit " & prodru & " est en rupture de stock il est remplacé par " & Cart.Text)
-            '            ArtQte.SetFocus
-            '           ArtQte.Select
+            Message.Info("Le produit " & prodru & " est en rupture il est remplacé par " & Cart.Text)
             foccons
           Else
             If start.son Then
               Music.Play
             Endif
-            If message.Question("Ce produit n'est plus en stock et il n'y a plus de produits de remplacement\nVoulez-vous continuer la saisie avec ce produit ?", "Oui", "Non") = 1 Then
+            If message.Question("Ce produit est en rupture et il n'y a plus de produits de remplacement\nVoulez-vous continuer la saisie avec ce produit ?", "Oui", "Non") = 1 Then
             Else
               Cleanart()
               Cart.SetFocus
