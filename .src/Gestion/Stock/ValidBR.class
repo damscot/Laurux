@@ -72,7 +72,6 @@ Public Exo As Boolean = True
 Private Ccli As String
 Private libel As String
 Private dateech2 As String
-Private hnew As File
 Private chkfam As Boolean = False
 Private bchktva As Boolean = False
 Private Famachat As String
@@ -465,6 +464,10 @@ End
 
 Public Sub Button1_Click()
 
+  Dim Cmpts As Result
+  Dim libel_var As LVar
+  Dim libel_def As String
+
   If chkfam = True Then
     Message.Warning("Traitement impossible ! La famille " & Famachat & " n'a pas de compte d'achat")
     Return
@@ -476,7 +479,16 @@ Public Sub Button1_Click()
     'Quittedate()
     If B <> 1 Then
       recup_bl()
-      Libell.SetFocus
+      'On selectionne un fournisseur
+      If Radiobutton1.Value = False Then
+        Cmpts = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " left join " & Cbase.Table("TabFour") & " on fo_code = &2 WHERE compte_cc like '" & CodeFour.Text & "%' and coll <> &1  order by compte_cc", 1, CodeFour.Text)
+        libel_var = New LVar(Libell, Null, "")
+        libel_var.AddDate(LDate(datej.Text))
+        libel_var.ParseResult(Cmpts)
+        libel_def = libel_var.Evaluate(Cmpts!libel_def)
+        Libell.Text = Left(libel_def, 45)
+        Libell.SetFocus
+      Endif
     Else
       b = 0
     Endif
@@ -543,7 +555,7 @@ Public Sub Togglebutton1_Click()
 
 End
 
-Public Sub Gen_ecr(View As Boolean)
+Public Sub Gen_ecr(Mode As Integer) 'Mode 0 visualisation seule, Mode 1 cloture mais sans compta, Mode 2 cloture et compta
 
   Dim Tab As String
   Dim Tab0 As String
@@ -572,6 +584,10 @@ Public Sub Gen_ecr(View As Boolean)
   Dim hFormc As GedC
   Dim numrecpts As String = ""
   Dim ccd As Calculdroit
+  Dim hForm As LGed
+  Dim cancel As Boolean
+  Dim $ttc As LPrix
+  Dim $ht As LPrix
 
   P = 31
   Pge = 1
@@ -601,20 +617,11 @@ Public Sub Gen_ecr(View As Boolean)
   Ventilation()
   Filename = User.Home & "/tmp/BonReception.pdf"
   If Not Exist(User.home & "/BR") Then Try Mkdir User.home & "/BR"
-  If Not View Then
-    Try Hnew = Open User.home & "/BR/" & "Valbr" & Datej.Text & ".txt" For Write Create
-    Print #Hnew, " "
-    Print #Hnew, "*************************************   Liste des BR validés au " & Datej.Text & " *****************************************************"
-    Print #Hnew, " "
-    Print #Hnew, " Code                    Nom               Montant HT   Montant TTC    Libellé écriture          N° ecr. provisoire  N° ecr. définitive  "
-    Print #Hnew, " "
-    Print #Hnew, " "
-  Endif
   Raz_Ventilation()
   If $soption = "B" Or $soption = "T" Then
-    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write, " & Cbase.Table("TabCPTdocs") & " write, " & Cbase.Table("TabFdocs") & " write, Fiches_ligcons WRITE, Fiches_ligregie WRITE, Fiches_regie WRITE ")
+    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write, Fiches_ligcons WRITE, Fiches_ligregie WRITE, Fiches_regie WRITE ")
   Else
-    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write, " & Cbase.Table("TabCPTdocs") & " write, " & Cbase.Table("TabFdocs") & " write ")
+    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write")
   Endif
   Parametres()
   With Utils
@@ -676,7 +683,7 @@ Public Sub Gen_ecr(View As Boolean)
             Until Ligbl.MoveNext()
           Endif
 
-          If Not View Then
+          If Mode > 0 Then
             If bchktva Then Utils.db.Exec("UPdate " & Tab0 & " set validee = &3 Where four = &1 and numrecpt = &2", Colbl.Item[0], numbl!numrecpt, 1)
           Endif
 
@@ -690,7 +697,7 @@ Public Sub Gen_ecr(View As Boolean)
         Endif
       Until Coldetail.MoveNext()
       Edbr.Ed(numrecpts, Colbl.Item[0], datej.Text, coulfond, "ValidBR")
-      If Not View Then
+      If Mode > 0 Then
         If Apdf Then
           'Keep a copy in fournisseur docs
           Copie.Dupli4(Filename, "", "BR" & Colbl.Item[0] & "_" & numerobl, datej.Text, Colbl.Item[0])
@@ -700,11 +707,12 @@ Public Sub Gen_ecr(View As Boolean)
         Utils.db.Exec("INSERT INTO " & Tab10 & "(compte, intitule, totalht, codetva) VALUES (&1, &2, &3, &4)", Colbl.Item[0], nom, Totalttc, 0)
         If bchktva Then
           Verif_solde()
-          Maj_Compta()
+          If Mode > 1 Then
+            Maj_Compta()
+          Endif
           Variables.inumr = Numr
           Majnum()
           If Len(libel) > 30 Then libel = Left(libel, 30)
-          Print #Hnew, Colbl.Item[0] & String$(10 - Len(Colbl.Item[0]), " ") & Colbl.Item[1] & String$(35 - Len(Colbl.Item[1]), " ") & Colbl.Item[2] & String$(15 - Len(Colbl.Item[2]), " ") & Colbl.Item[3] & String$(10 - Len(Colbl.Item[3]), " ") & libel & String(30 - Len(libel), " ") & "     " & Numr & String$(15 - Len(Str(Numr)), " ") & Numr2 & String$(15 - Len(Str(Numr2)), " ")
           Raz_Ventilation()
           Toteuros = 0
           'Endif
@@ -713,16 +721,33 @@ Public Sub Gen_ecr(View As Boolean)
           'Until Colbl.MoveNext()
           Me.mouse = Mouse.Wait
           Utils.db.Exec("UNLOCK TABLES")
-          Message.Info("Traitement terminé !")
-          Close #Hnew
-          Editeur.Prog_Editeur(User.home & "/BR/" & "Valbr" & Datej.Text & ".txt")
           If Start.LocalSettings["/Soc" & Start.Societe & "/Ged"] And Apdf Then
-            Select Case Message.Question("Que souhaitez vous faire ? \n1- scanner la facture fournisseur\n2- Joindre un document\n3- Ne rien faire", "1", "2", "3")
+            Select Case Message.Question("Que souhaitez vous faire ?", "GED (scan facture)", "Sortir")
               Case 1
-                scanfacture()
-              Case 2
-                hFormc = New GedC(Numr, "Fac", CodeFour.text, " ")
-                hFormc.Showmodal()
+                'En cas d'ecriture comptable on enregistre le document avec le code de l'ecriture dans les documents comptables
+                If Mode > 1 Then
+                  hForm = New LGed(Null, 0, LGed.Comptabilite, "Reception", Numr, CCli)
+                Else
+                  hForm = New LGed(Null, 0, LGed.Fournisseurs, "Reception", NumeroBl, CCli)
+                Endif
+                
+                'Add Tags from Fournisseur
+                rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & CCli)
+                If rResult.Available Then
+                  hForm.AddTags(LGed.String2Array(rResult!tag_def))
+                Endif
+                hForm.AddTag(CCli)
+                $ttc = New LPrix(0)
+                $ht = New LPrix(0)
+                $ttc.Add(LPrix(Totalttc))
+                $ht.Add(LPrix(totht))
+                hForm.TTC = $ttc
+                hForm.HT = $ht
+                hForm.DTE = LDate(Datej.Text)
+                cancel = hForm.ShowModal()
+                If cancel Then
+                  hForm.Delete()
+                Endif
             End Select
           Endif
         Endif
@@ -742,19 +767,6 @@ Public Sub Gen_ecr(View As Boolean)
   Colbl.Clear
   Coldetail.Clear
   Button1_Click()
-
-End
-
-'**********************************************************
-'*                  Gestion de la GED                     *
-'**********************************************************
-Public Sub scanfacture()
-
-  Dim hForm As Gged
-
-  NmFic &= "/" & Ccli
-  hForm = New Gged(Ccli, "Fac", Ccli, "")
-  hForm.Showmodal()
 
 End
 
@@ -1014,7 +1026,7 @@ Public Sub Maj_Compta()
             Mtd = Val(.cpoint(rResult!totalht))
             Mtc = 0
           Endif
-          Utils.db.Exec("INSERT INTO " & Tmvt & "(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef, dateech) VALUES (&1, &2, &3, &4, &5, &6, &7, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19})", Jnl, numr, coll, collectif, Intit, .Cdate_Dbase(Datej.Text), numr, Libel, Abs(Mtd), Abs(Mtc), Valid, Prov, Tresor, pointee, lettree, cloturee, relance, numr2, dateech2)
+          Utils.db.Exec("INSERT INTO " & Tmvt & "(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef, dateech) VALUES (&1, &2, &3, &4, &5, &6, &7, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19})", Jnl, numr, coll, collectif, Intit, LDate(Datej.Text).D, numr, Libel, Abs(Mtd), Abs(Mtc), Valid, Prov, Tresor, pointee, lettree, cloturee, relance, numr2, Ldate(dateech2).D)
           rrResult = Utils.db.Exec("SELECT * FROM " & Tab3 & " Where compte_cc = &1", coll)
           If rrResult!solde = "" Then
             Sld = Mtc - Mtd
@@ -1143,7 +1155,7 @@ Public Sub Bl_Sup()
 
 End
 
-Public Sub Button9_Click()
+Public Sub Btn_Click()
 
   Dim Tab As String
   Dim Params As Result
@@ -1153,32 +1165,9 @@ Public Sub Button9_Click()
   If Not IsNull(Params!jrnal5) Then
     If RadioButton2.value Then
       If Colbl.Count <> 0 Then
-        Gen_ecr(False)
+        Gen_ecr(Last.tag)
       Else
         Message.Warning("Veuillez lancer votre traitement avant de generer l'ecriture SVP ! ")
-      Endif
-    Else
-      Message.Warning("Ce traitement ne peut se faire que pour un fournisseur. ! ")
-    Endif
-  Else
-    Message.Warning("Génération impossible le journal d'achat n'est pas renseigné dans les paramètres !")
-  Endif
-
-End
-
-Public Sub Button2_Click()
-
-  Dim Tab As String
-  Dim Params As Result
-
-  Tab = "Fiches_Parametres"
-  Params = Utils.db.Exec("SELECT jrnal5 FROM " & Tab & " ")
-  If Not IsNull(Params!jrnal5) Then
-    If RadioButton2.value Then
-      If Colbl.Count <> 0 Then
-        Gen_ecr(True)
-      Else
-        Message.Warning("Veuillez lancer votre traitement avant de visualiser SVP ! ")
       Endif
     Else
       Message.Warning("Ce traitement ne peut se faire que pour un fournisseur. ! ")

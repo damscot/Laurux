@@ -405,9 +405,11 @@ Public Sub compteman()
             Endif
             If Left$(numcompte.Text, 2) = "40" Or Left$(numcompte.Text, 2) = "41" Then
               numcvtl = numcompte.text
-              libel_var = New LVar(["$annee2": LDate(datej.Text).Year2, "$annee": LDate(datej.Text).Year, "$mois": LDate(datej.Text).Month, "$jour": LDate(datej.Text).Day], Intitulcompte.Text & " ")
+              libel_var = New LVar(Libelecrit, Null, Intitulcompte.Text & " ")
+              libel_var.AddDate(LDate(datej.Text))
+              libel_var.ParseResult(Cmpts)
               libel_def = libel_var.Evaluate(Cmpts!libel_def)
-              Libelecrit.Text = Left(libel_def, 50)
+              Libelecrit.Text = Left(libel_def, 45)
             Endif
             If Cmpts!solde <> "" Then
               soldecompte.Text = Format$(Cmpts!solde, "0.00")
@@ -2693,7 +2695,7 @@ Public Sub DelMvt()
     Endif
     Utils.db.Exec("UPDATE Fiches_MvtM SET supprimee = &1, datem = &3 WHERE numero =  &2", 1, numecrit.Text, Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
     Ecrit1.Clear
-    ged = LGed.Search(numecrit.Text, LGed.Comptabilite)
+    ged = LGed.Search(LGed.Comptabilite, numecrit.Text)
     If ged <> Null Then
       ged.Supprime()
     Endif
@@ -2711,7 +2713,6 @@ End
 Public Sub DelMvt2()
 
   Dim rResult As Result
-  Dim ged As LGed
 
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1 ", numecrit.Text)
   If rResult.Available Then
@@ -3075,9 +3076,9 @@ Public Sub Button5_Click()
 
   If ecrit1.count > 0 Then
     
-    hForm = LGed.Search(Numecrit.text, LGed.Comptabilite)
+    hForm = LGed.Search(LGed.Comptabilite, Numecrit.text)
     If hForm = Null Then
-      hForm = New LGed(Null, 0, LGed.Comptabilite, "CPT", Numecrit.text)
+      hForm = New LGed(Null, 0, LGed.Comptabilite, "Compta", Numecrit.text)
     Endif
 
     ecrit1.MoveFirst()
@@ -3124,7 +3125,8 @@ Public Sub Button5_Click()
     If cancel Then
       hForm.Delete()
     Endif
-  
+  Else
+    Message.Error("Veuillez d'abord saisir les ecritures de ventilations!")
   Endif
 
 End

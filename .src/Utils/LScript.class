@@ -1,1 +1,135 @@
 ' Gambas class file
+
+Inherits Array
+Create Static
+
+Private $prog As String
+Private $arguments As String[]
+Private $runinshell As Boolean
+
+
+Public Sub _New(Optional Program As String = "", Optional Arguments As String[] = [], Optional RunInShell As Boolean = True)
+  
+   $prog = Program
+   $arguments = Arguments
+   $runinshell = RunInShell
+  
+End
+
+Public Sub _call(Optional Prog As String, Optional Argu As String[] = [], Optional RuSh As Boolean = True) As LScript
+
+  Dim $CLScript As LScript
+  
+  $CLScript = New LScript(Prog, Argu, RuSh)
+  Return $CLScript
+
+End
+
+Public Function Run() As Integer
+
+  Utils.Log(Me, "Run script " & $prog & " " & $arguments.Join(" "), Logger.Info)
+  
+  If $prog = "debug" Then
+    Show()
+    Return 0
+  Endif
+
+  If $prog = "debug2" Then
+    Show(False)
+    Return 0
+  Endif
+  
+  $arguments.Add($prog, 0)
+  
+  If $runinshell Then
+    Try Shell $arguments.Join(" ") Wait
+    If Error Then
+      Utils.Log(Me, "Fail to run script (shell): " & Error.Text, Logger.Error)
+      Return 1
+    Endif
+  Else 
+    Try Exec $arguments Wait
+    If Error Then
+      Utils.Log(Me, "Fail to run script (exec): " & Error.Text, Logger.Error)
+      Return 1
+    Endif
+  Endif
+  
+  Return 0
+
+End
+
+Public Sub RunA(Als As LScript[]) As Integer
+  
+  Dim $elem As LScript
+  
+  For Each $elem In Als
+    If $elem.Run() Then Return 1
+  Next
+  
+  Return 0
+  
+End
+
+
+Private Function Show(Optional MessageBox As Boolean = True)
+
+  Dim arglist As String
+  
+  arglist = $arguments.Join("\n")
+  If MessageBox Then
+    Message.Info("Le script sera executé avec les arguments suivant :\n" & arglist)
+  Else
+    Print "Le script sera executé avec les arguments suivant :\n" & arglist
+  Endif
+
+End
+
+'Methode Publique de test
+
+Public Sub Internal_Test(Test_List As String[]) As Boolean
+
+  Dim x As LScript[]
+  Dim r As LScript
+  Dim tx As LTaxe
+  Dim err As Integer = 0
+  
+  
+  If Test_List.Find("list") <> -1 Then
+    Print "Internal Test for Class " & Object.Class(Me).Name & ": " & Object.Class(Me).Name
+    Return True
+  Endif
+  
+  If ((Test_List.Find("all") = -1) And (Test_List.Find(Object.Class(Me).Name) = -1)) Then
+    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SKIPPED"
+    Return True
+  Endif
+  
+  x = New LScript[]
+  
+  'TODO supprimer les prints et remplacer par des tests
+  
+  LScript(Start.LocalSettings["/Soc" & Start.Societe & "/scanbatch"], ["-m", "scanbatch", "-d \"", "toto", " \"-i", user.home & "/multipageproject/", "-o", user.home & "/multipageproject.pdf"]).Run()
+  
+  Print LScript("/bin/bash", ["-c", "echo test"]).Run()
+  Print LScript("debug2", ["-c", "echo test"]).Run()
+  
+  x.Add(LScript("/bin/bash", ["-c", "\"echo test1\""]))
+  x.Add(LScript("/bin/bash", ["-c", "echo test2"], False))
+  Print LScript.RunA(x)
+  
+  Print LScript("/bin/faaalse", [], False).Run()
+  Print LScript("/bin/false", [], False).Run()
+  Print LScript("/bin/true").Run()
+  
+  If err <> 0 Then
+    Print "Internal Test for Class : " & Object.Class(Me).Name & " => FAIL with " & err & " Errors!"
+    Return False
+  Else
+    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SUCCESS"
+    Return True
+  Endif
+
+
+End
+

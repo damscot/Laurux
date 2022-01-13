@@ -644,7 +644,7 @@ Public Sub affichage()
  '         If dt.Apres(dte2) and Then
           If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
             Colcli.Add(rResult.Index, rResult.Index)
-            ged = LGed.Search(rResult!numero, LGed.Comptabilite)
+            ged = LGed.Search(LGed.Comptabilite, rResult!numero)
             If ged <> Null Then
               Colcli.Item[0] = "* " & rResult!compte
             Else
@@ -1124,7 +1124,7 @@ Public Sub Colcli_MouseUp()
   Dim ged As LGed
 
   If Mouse.Right Then
-    ged = LGed.Search(Colcli.Current[7], LGed.Comptabilite)
+    ged = LGed.Search(LGed.Comptabilite, Colcli.Current[7])
     If ged <> Null Then
       ged.Ouvrir()
     Endif

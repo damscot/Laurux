@@ -15,7 +15,12 @@ Property DT As String 'Database DateTime String Propery
 Property Read FinMois As LDate 'retourne le dernier jour du mois
 Property Read FinJour As LDate 'retourne la dernière seconde du meme jour
 Property Read Day As Integer 'retourne le jour uniquement
+Property Read WeekDay As String 'retourne le jour en lettre
+Property Read WeekDay3 As String 'retourne le jour sur 3 lettre uniquement
+Property Read Week As Integer 'retourne le numero de semaine
 Property Read Month As Integer 'retourne le mois uniquement
+Property Read MonStr As String 'retourne le mois en lettre
+Property Read MonStr3 As String 'retourne le mois comme 3 caractère uniquement
 Property Read Year As Integer 'retourne l'année uniquement
 Property Read Year2 As Integer 'retourne les deux derniers digit de l'année uniquement
 Property Read F As String 'Filename Date String Propery
@@ -433,9 +438,47 @@ Sub Day_Read() As Integer
   
 End
 
+Sub WeekDay_Read() As String
+
+  Dim DayNames As String[]
+  DayNames = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"]
+
+  Return DayNames[WeekDay(Dte)]
+
+End
+
+Sub WeekDay3_Read() As String
+
+  Dim DayNames As String[]
+  DayNames = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"]
+
+  Return DayNames[WeekDay(Dte)]
+
+End
+
+Sub Week_Read() As Integer
+  
+  Return Week(Dte)
+  
+End
+
 Sub Month_Read() As Integer
   
   Return Month(Dte)
+  
+End
+
+Sub MonStr_Read() As String
+  
+  Dim Mois As String[] = ["janvier", "fevrier", "mars", "avril", "mai", "jun", "jui", "aou", "sep", "oct", "nov", "dec"]
+  Return Mois[Month(Dte) - 1]
+  
+End
+
+Sub MonStr3_Read() As String
+  
+  Dim Mois3 As String[] = ["jan", "fev", "mar", "avr", "mai", "jun", "jui", "aou", "sep", "oct", "nov", "dec"]
+  Return Mois3[Month(Dte) - 1]
   
 End
 

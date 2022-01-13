@@ -294,11 +294,17 @@ End
 Public Sub DelMvt()
 
   Dim rResult As Result
+  Dim ged As LGed
 
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1 ", numecrit.Text)
   If rResult.Available Then
     Utils.db.Exec("DELETE FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1", numecrit.Text)
     Utils.db.Exec("UPDATE Fiches_MvtM SET supprimee = &1, datem = &3 WHERE numero =  &2", 1, numecrit.Text, Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
+  Endif
+  
+  ged = LGed.Search(LGed.Comptabilite, numecrit.Text)
+  If ged <> Null Then
+    ged.Supprime()
   Endif
 
 End
@@ -2546,9 +2552,9 @@ Public Sub Button5_Click()
   Dim rResult As Result
 
   If ecrit1.count > 0 Then
-    hForm = LGed.Search(Numecrit.text, LGed.Comptabilite)
+    hForm = LGed.Search(LGed.Comptabilite, Numecrit.text)
     If hForm = Null Then
-      hForm = New LGed(Null, 0, LGed.Comptabilite, "TRE", Numecrit.text)
+      hForm = New LGed(Null, 0, LGed.Comptabilite, "Treso", Numecrit.text)
     Endif
     
     ecrit1.MoveFirst()

@@ -2766,7 +2766,7 @@ Public Sub Button9_Click()
   Dim cancel As Boolean
 
   If Not IsNull(Cd.Text) Then
-    hForm = New LGed(Null, 0, LGed.Fournisseurs, "", Cd.Text)
+    hForm = New LGed(Null, 0, LGed.Fournisseurs, "", "", Cd.Text)
     hForm.TTC = New LPrix(0)
     hForm.HT = New LPrix(0)
     hForm.DTE = LDate()

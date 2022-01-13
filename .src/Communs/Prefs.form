@@ -5,7 +5,7 @@
   { TabStrip1 TabStrip
     MoveScaled(1,8,107,75)
     Background = Color.Background
-    Count = 10
+    Count = 11
     Index = 0
     Text = ("Environnement")
     { Frame3 Frame
@@ -1481,6 +1481,37 @@
       }
     }
     Index = 8
+    Text = ("GED")
+    { Label37 Label
+      MoveScaled(2,8,29,4)
+      Text = ("Scanner GUI script")
+    }
+    { ScanGui TextBox
+      MoveScaled(2,12,58,3)
+    }
+    { ScanBatch TextBox
+      MoveScaled(2,19,58,3)
+    }
+    { Label63 Label
+      MoveScaled(2,15,29,4)
+      Text = ("Scanner Batch script")
+    }
+    { ScanConvert TextBox
+      MoveScaled(2,26,58,3)
+    }
+    { Label64 Label
+      MoveScaled(2,22,29,4)
+      Text = ("Scanner conversion script")
+    }
+    { Label65 Label
+      MoveScaled(2,0,27,4)
+      Text = ("Scanner Device")
+    }
+    { ScanDevice TextBox
+      MoveScaled(2,4,29,3)
+      ToolTip = ("Executer scanimage -L dans un terminal pour obtenir la liste des scanner disponible, utiliser le nom du backend et device ex:\nbrother4:net1;dev0   \nsnapscan:libusb:001:002")
+    }
+    Index = 9
     Text = ("Caisse")
     { Frame14 Frame
       MoveScaled(2,2,103,32)
@@ -1535,7 +1566,7 @@
         }
       }
     }
-    Index = 9
+    Index = 10
     Text = ("Logos")
     { Frame12 Frame
       MoveScaled(9,2,42,52)

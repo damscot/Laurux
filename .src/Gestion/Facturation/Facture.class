@@ -9440,6 +9440,7 @@ Public Sub Bl_Suppr()
 
   Dim Blrslt As Result
   Dim Bannul As Boolean = True
+  Dim Lg As LGed
 
   If Not bTypeFacture Then
     Tab2 = "Fiches_Ligbl"
@@ -9474,6 +9475,10 @@ Public Sub Bl_Suppr()
           Endif
           If Message.Question("Etes-vous sur de vouloir supprimer ce bon ?", "Oui", "Non") = 1 Then
             DocActif.Free_Lock("Facturation", $numbl)
+            Lg = LGed.Search(LGed.Clients, $numbl)
+            If Not IsNull(Lg) Then
+              Lg.Supprime(False)
+            Endif
             Utils.db.Exec("DELETE FROM " & tab & " where numbl = &1", $numbl)
             Utils.db.Exec("DELETE FROM " & tab2 & " where num_ligbl = &1", $numbl)
             If Gmateriel Then

@@ -73,11 +73,11 @@ Public Sub _New(Optional Montant As Variant = 0, Optional Quantite As Variant = 
   
 End
 
-Public Sub _call(Optional Montant As Variant = 0, Optional Qte As Variant = 1, Optional Arr As Variant = LPrix.Arr_001, Optional Cpt As String = "") As LPrix
+Public Sub _call(Optional Montant As Variant = 0, Optional Quantite As Variant = 1, Optional Arr As Variant = LPrix.Arr_001, Optional Cpt As String = "") As LPrix
 
   Dim $CLPrix As LPrix
   
-  $CLPrix = New LPrix(Montant, Qte, Arr, Compte)
+  $CLPrix = New LPrix(Montant, Quantite, Arr, Cpt)
   Return $CLPrix
 
 End

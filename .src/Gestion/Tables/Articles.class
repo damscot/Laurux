@@ -92,6 +92,7 @@ Private $opt As Artopt
 
 Private trb As TriGen
 Private Col As Collection
+Private Col2 As Collection
 Private CB1Conv As Collection
 Private SmallPanel As Integer
 Private Coul As LCoul
@@ -4029,6 +4030,7 @@ Public Function art_Suppr(art_code As String, Optional Confirm As Boolean = True
   Dim rResult As Result
   Dim lcfour As String
   Dim lcequ As String
+  Dim Lg As LGed
 
   If Not IsNull(art_code) Then
     
@@ -4082,6 +4084,15 @@ Public Function art_Suppr(art_code As String, Optional Confirm As Boolean = True
     Endif
 
     If Variables.Sprix And Variables.Sexport And Variables.SMajArt Then Serveur.Pass("Art", "S", art_code, lcequ, lcfour)
+    rResult = Utils.db.Exec("SELECT lind FROM " & Cbase.Table("TabDocGed") & " where code = &1 and type = &2", art_code, LGed.Articles)
+    If rResult.Available Then
+      Repeat
+        Lg = New LGed(Null, rResult!lind)
+        Lg.Supprime(False)
+      Until rResult.MoveNext()
+      'Epuration Tags once all documents with the code is destroyed
+      LGed.Supprime(True)
+    Endif
     Utils.db.Exec("DELETE FROM " & Cbase.Table("TabArt") & " WHERE art_code = &1", art_code)
     Utils.db.Exec("DELETE IGNORE FROM " & Cbase.Table("TabMvtexp") & " WHERE  code = &1", art_code)
     rResult = Utils.db.Exec("SHOW TABLES Like &1", Cbase.Table("TabInv"))
@@ -4096,7 +4107,6 @@ Public Function art_Suppr(art_code As String, Optional Confirm As Boolean = True
     Utils.db.Exec("DELETE IGNORE FROM " & Cbase.Table("TabCdBarre") & " WHERE codep = &1", art_code)
     Utils.db.Exec("DELETE IGNORE FROM " & Cbase.Table("TabRpl1") & " WHERE codep = &1", art_code)
     Utils.db.Exec("DELETE IGNORE FROM " & Cbase.Table("TabRpl2") & " WHERE codep = &1", art_code)
-    Utils.db.Exec("DELETE IGNORE FROM " & Cbase.Table("TabPdocs") & " WHERE code = &1", art_code)
     Utils.db.Exec("DELETE IGNORE FROM " & Cbase.Table("TabCequ") & " WHERE codequ = &1 or codep = &1", art_code)
   
   Endif
@@ -4377,164 +4387,86 @@ Public Function Codart(coda As String) As String
 
 End
 
+'************************************
+'* Document lié à l'article Produit *
+'************************************
 Public Sub Maj_Dssr()
+  
+  Dim k As String
+  Dim Req As String
+  Dim Res As Result
+  Dim prop As ObjProp
+  Dim tr As TriGen
+  
+  Req = "select code, date, filename, lind from " & Cbase.Table("TabDocGed")
+  
+  Col2 = New Collection
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  
+  k = Space(3) & "-- index --" & Space(3)
+  prop = New ObjProp(Res.Fields["lind"], k)
+  Col2.Add(prop, k)
+  k = Space(4) & "---- Code ----" & Space(4)
+  prop = New ObjProp(Res.Fields["code"], k)
+  Col2.Add(prop, k)
+  k = Space(2) & "---- Date ----" & Space(2)
+  prop = New ObjProp(Res.Fields["date"], k)
+  Col2.Add(prop, k)
+  k = Space(20) & "----------- fichier -------------" & Space(20)
+  prop = New ObjProp(Res.Fields["filename"], k)
+  prop.tri = True
+  Col2.Add(prop, k)
 
-  Dim rDoc As Result
-  Dim Tag As String[]
-  Dim n As Integer = 0
-
-  Dssr.Rows.Count = 0
-  Dssr.Columns.Count = 4
-  Dssr.Columns[0].Width = 100
-  Dssr.Columns[1].Width = 0
-  Dssr.Columns[2].Width = 330
-  Dssr.Columns[3].Width = 330
-  Dssr.Columns[0].Text = "Code/Référence"
-  Dssr.Columns[2].Text = "Nom du fichier"
-  Dssr.Columns[3].Text = "Etiquettes"
-  rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabPdocs") & "  where code = &1 order by doc", Code.text)
-  If rDoc.Available Then
-    tableau = New String[rDoc.Count, 4]
-    Dssr.Rows.count = rDoc.Count
-    Repeat
-      Tableau[n, 0] = rDoc!code
-      Tableau[n, 1] = rDoc!doc
-      Tag = Split(rDoc!doc, "/")
-      Tableau[n, 2] = Tag[Tag.count - 1]
-      Tableau[n, 3] = rDoc!doc2
-      Inc n
-    Until rDoc.MoveNext()
-  Endif
-Catch
-
+  tr = New TriGen(PanelGedDoc, Col2, Res, Req, 20, Me) As "ColTriGenDoc"
+  tr.ExtraSel(utils.db.Subst("code=&1 and type = &2", Code.text, LGed.Articles), "and")
+  tr.Update()
+  tr.Show()
+  
 End
 
-Public Sub Dssr_Data(Row As Integer, Column As Integer)
+Public Sub ColTriGenDoc_MajSel(val As Variant)
 
-  Try Dssr.Data.Text = tableau[Row, Column]
-
-End
-
-Public Sub Dssr_Activate()
-
-  Dim Attente As Boolean = False
-
-  Try Desktop.Open(Dssr[Dssr.row, 1].Text, Attente)
-  If Error Then Message.Info("Ce fichier n'existe pas ! Peut-être devriez-vous le supprimer de cette liste. ")
-
-End
-
-Public Sub Dssr_MouseDown()
-
-  If Me.mouse = Mouse.Right Then
-    Tbxrem2.Clear
-    Chkfocus = False
-    If Mouse.Right Then
-      If Not Tbxrem2.Visible Then
-        Try Dssr.Current.EnsureVisible
-        If Not Error Then
-          ShowTextBox2()
-          Tbxrem2.SetFocus
-        Endif
-      Else
-        Tbxrem2.Visible = False
-      Endif
-    Else
-      If Tbxrem2.Visible Then Tbxrem2.Visible = False
-    Endif
+  Dim Lg As LGed
+  If val Then
+    lg = New LGed(Null, val)
+    lg.Ouvrir()
   Endif
 
-End
-
-' Affichage du Textbox Tbxrem
-Public Function ShowTextBox2()
-
-  With Dssr.Current
-    Tbxrem2.Text = .Text
-    Tbxrem2.Width = Dssr.Columns[3].Width
-    Tbxrem2.Move(Dssr.X + Dssr[Dssr.row, 3].x, Dssr.Y + Dssr.Rows.Height + Dssr.current.Y, Dssr.Columns[3].Width, .H)
-    Tbxrem2.Text = Dssr[Dssr.row, 3].Text
-    Tbxrem2.Visible = True
-  End With
-
-End
-
-'Masquage du Textbox Tbxrem
-Public Function HideTextBox2()
-
-  With Utils
-    Try Dssr[Dssr.row, 3].Text = Tbxrem2.Text
-    Utils.db.Exec("Update " & Cbase.Table("TabPdocs") & " set doc2 = &3 where code = &1 AND doc = &2 ", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text, Dssr[Dssr.row, 3].Text)
-    Tbxrem2.Visible = False
-
-  End With
-
-End
-
-Public Sub Tbxrem2_KeyPress()
-
-  If Key.code = Key.Enter Or Key.code = Key.Return Then
-    HideTextBox2()
-  Endif
-
-End
-
-Public Sub Tbxrem2_MouseDown()
-
-  If Tbxrem2.Visible Then Tbxrem2.Visible = False
-
-End
-
-Public Sub Dssr_KeyPress()
-
-  If Key.code = Key.del Or Key.code = Key.delete Then
-    If Message.Question("Vous allez supprimer le lien sélectionné.", "Oui", "Non") = 1 Then
-      Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabPdocs") & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-      If Error Then
-        Message.Error("Impossible de supprimer ce document ...")
-      Else
-        If Message.Question("Le lien a été supprimé !\nVoulez-vous supprimer le fichier ?", "Oui", "Non") = 1 Then Try Kill Dssr[Dssr.row, 1].Text
-        Serveur.Docs("Art", "S", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text, "")
-      Endif
-      Maj_Dssr()
-    Endif
-  Endif
-  If Key.code = Key.F2 Then
-    If Dssr.Width = TabStrip1.w - 5 Then
-      Dssr.Width = Button14.x - 7
-    Else
-      Dssr.Width = Tabstrip1.w - 5
-      Dssr.Columns[2].Width = Tabstrip1.w - (Dssr.Columns[0].Width + Dssr.Columns[3].Width)
-    Endif
-  Endif
-  If Key.code = Key.F3 Then
-    Message.Info(Dssr[Dssr.row, 1].Text)
-  Endif
-
+  Stop Event
+  
 End
 
 Public Sub Button8_Click()
 
-  Dim hForm As Gged
+  Dim hForm As LGed
+  Dim rResult As Result
+  Dim $ttc As Lprix
+  Dim $ht As Lprix
+  Dim cancel As Boolean
+  
 
   Chkfocus = False
   If Not IsNull(Code.Text) Then
-    hForm = New Gged("Article", "P", Code.Text, "")
-    hForm.Showmodal()
-    Maj_Dssr()
-  Else
-    Message.Info("Veuillez saisir un produit SVP !")
-  Endif
-
-End
-
-Public Sub Button14_Click()
-
-  Dim hFormc As GedC
-
-  If Not IsNull(Code.Text) Then
-    hFormc = New Gedc("Article", "P", Code.Text, "")
-    hFormc.Showmodal()
+    hForm = New LGed(Null, 0, LGed.Articles, "", Code.Text)
+    'Add Tags from Fournisseur
+    rResult = Utils.db.Exec("SELECT art_fam,art_four,art_pvttc,art_pvht FROM " & Cbase.Table("TabArt") & " WHERE art_code = " & Code.Text)
+    If rResult.Available Then
+      hForm.AddTag(rResult!art_fam)
+      hForm.AddTag(rResult!art_four)
+      'On utilise le prix de vente dans le GED? pourquoi pas...
+      $ttc = New LPrix(0)
+      $ttc.Add(LPrix(rResult!art_pvttc))
+      $ht = New LPrix(0)
+      $ht.Add(LPrix(rResult!art_pvht))
+      hForm.TTC = $ttc
+      hForm.HT = $ht
+    Endif
+    cancel = hForm.ShowModal()
+    If cancel Then
+      hForm.Delete()
+      Return
+    Endif
     Maj_Dssr()
   Else
     Message.Info("Veuillez saisir un produit SVP !")

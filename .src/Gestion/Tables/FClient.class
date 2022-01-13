@@ -64,6 +64,7 @@ Private hColCli As Boolean = False
 Private pdf As Cetiquettes
 Private ComboCom As Boolean = False
 Private Tableau As String[]
+Private Col As Collection
 Public Bsel As Boolean = False
 Public Bval As String
 Public Codepostal As String
@@ -655,6 +656,7 @@ Public Sub CleanChamps()
   AutoEnt.value = False
   LibelDef.Text = ""
   ListTags.List = New String[]
+  Copie.Value = False
 
 End
 
@@ -746,7 +748,8 @@ Public Sub colcli_Click()
   If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] <> 0 Then Aff_Mat()
   Aff_AdrC()
   Aff_Ct()
-  Maj_Dssr()
+  Maj_Dssr("")
+  Tous.Value = 1
   If hColcli Then
     Colcli.Height = Me.Window.Height / 3.22
     hColcli = False
@@ -1490,6 +1493,7 @@ Public Sub Button4_Click()
       Endif
     Endif
   End With
+  Colcli.UnSelectAll()
 Catch
   If son Then
     Music.Play
@@ -3023,6 +3027,72 @@ Public Sub CleanChampsCt()
 
 End
 
+'************* Document ************
+
+'************************************
+'* Document lié au client *
+'************************************
+Public Sub Maj_Dssr(Origin As String)
+  
+  Dim k As String
+  Dim Req As String
+  Dim Res As Result
+  Dim prop As ObjProp
+  Dim tr As TriGen
+  
+  If IsNull(Cd.text) Then
+    Message.Error("Veuillez sélectionner un compte client.")
+    Return
+  Endif
+  
+  Req = "select code, date, filename, origin, lind from " & Cbase.Table("TabDocGed")
+  
+  Col = New Collection
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  
+  k = "idx"
+  prop = New ObjProp(Res.Fields["lind"], k)
+  Col.Add(prop, k)
+  k = Space(2) & "-- Code --" & Space(2)
+  prop = New ObjProp(Res.Fields["code"], k)
+  Col.Add(prop, k)
+  k = Space(2) & "-- Ori --" & Space(2)
+  prop = New ObjProp(Res.Fields["origin"], k)
+  Col.Add(prop, k)
+  k = Space(3) & "--- Date ---" & Space(3)
+  prop = New ObjProp(Res.Fields["date"], k)
+  Col.Add(prop, k)
+  k = Space(10) & "------- fichier -------" & Space(10)
+  prop = New ObjProp(Res.Fields["filename"], k)
+  prop.tri = True
+  Col.Add(prop, k)
+
+  tr = New TriGen(PanelGedDoc, Col, Res, Req, 20, Me) As "ColTriGenDoc"
+  If Origin Then
+    tr.ExtraSel(utils.db.Subst("compte=&1 and type = &2 and origin = &3", Cd.text, LGed.Clients, Origin), "and")
+  Else
+    tr.ExtraSel(utils.db.Subst("compte=&1 and type = &2", Cd.text, LGed.Clients), "and")
+  Endif
+  tr.FontSize(-2)
+  tr.Update()
+  tr.Show()
+  
+End
+
+Public Sub ColTriGenDoc_MajSel(val As Variant)
+
+  Dim Lg As LGed
+  If val Then
+    lg = New LGed(Null, val)
+    lg.Ouvrir()
+  Endif
+
+  Stop Event
+  
+End
+
+
 Public Sub Dssr_Data(Row As Integer, Column As Integer)
 
   Try Dssr.Data.Text = tableau[Row, Column]
@@ -3125,7 +3195,7 @@ Public Sub Tbxrem2_MouseDown()
 
 End
 
-Public Sub Maj_Dssr()
+Public Sub Maj_Dssr2()
 
   Dim rDoc As Result
   Dim Tag As String[]
@@ -3192,6 +3262,8 @@ Catch
 
 End
 
+'************* Document ************
+
 Private Function FileFilter(Optional All As Boolean = False) As String[]
 
   Dim filter As New String[]
@@ -3231,7 +3303,7 @@ Public Sub Button9_Click()
   Dim cancel As Boolean
 
   If Not IsNull(Cd.Text) Then
-    hForm = New LGed(Null, 0, LGed.Clients, "", Cd.Text)
+    hForm = New LGed(Null, 0, LGed.Clients, "", "", Cd.Text)
     hForm.TTC = New LPrix(0)
     hForm.HT = New LPrix(0)
     hForm.DTE = LDate()
@@ -3240,7 +3312,8 @@ Public Sub Button9_Click()
       hForm.Delete()
       Return
     Endif
-    Maj_Dssr()
+    Tous.Value = 1
+    Maj_Dssr("")
   Else
     Message.Info("Veuillez saisir un client avant de scanner SVP !")
   Endif
@@ -3249,37 +3322,37 @@ End
 
 Public Sub Docs_Click()
 
-  Maj_Dssr()
+  Maj_Dssr("Docs")
 
 End
 
 Public Sub Tous_Click()
 
-  Maj_Dssr()
+  Maj_Dssr("")
 
 End
 
 Public Sub Facs_Click()
 
-  Maj_Dssr()
+  Maj_Dssr("Facture")
 
 End
 
 Public Sub Facs2_Click()
 
-  Maj_Dssr()
+  Maj_Dssr("BL")
 
 End
 
 Public Sub Facs3_Click()
 
-  Maj_Dssr()
+  Maj_Dssr("Commande")
 
 End
 
 Public Sub Facs4_Click()
 
-  Maj_Dssr()
+  Maj_Dssr("Devis")
 
 End
 

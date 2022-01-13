@@ -235,6 +235,9 @@ Public Sub Update_Req()
   k = "----  code  ----"
   prop = New ObjProp(Res.Fields["code"], k)
   Col.Add(prop, k)
+  k = "--  compte  --"
+  prop = New ObjProp(Res.Fields["compte"], k)
+  Col.Add(prop, k)
   k = "-----  Date  -----"
   prop = New ObjProp(Res.Fields["date"], k)
   Col.Add(prop, k)
@@ -256,6 +259,7 @@ Public Sub Update_Req()
   tr.GroupBy("group by doc_lind")
   Filter_Calc()
   tr.NoUp = False
+  tr.FontSize(-2)
   tr.Update() 
   TextBox1.SetFocus()
 

@@ -2,9 +2,6 @@
 
 'Supprimer Gged et Ggedc class and call
 'Supprimer tous les appels aux anciennes tables Cdocs, Docs_Clients, Docs_Clients Docs_Fournisseurs,... et Cbase.Table("TabCPTdocs")
-'Ajout des tags/libellé par défaut client et fournisseur
-'Revoir les tags d'ecriture comptable
-'Accelerer la selection du Scanner par un scanner par défault
 
 Create Static
 
@@ -14,6 +11,7 @@ Private $index As Integer
 Private $tags As Collection
 Private $type As Integer
 Private $code As String
+Private $compte As String
 Private $url As String
 Private $filename As String
 Private $mime As String
@@ -31,9 +29,10 @@ Public Bval As String = ""
 Property TTC As LPrix
 Property HT As LPrix
 Property DTE As LDate
+Property ORI As String
 
 
-Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres, Optional origin As String = "", Optional code As String = "")
+Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres, Optional origin As String = "", Optional code As String = "", Optional compte As String = "")
   
   Dim Res, Res2 As Result
   
@@ -45,6 +44,7 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
   $temp_extension = Null
   $tags = New Collection
   $code = code
+  $compte = compte
   $dte = LDate()
   $mht = LPrix(0)
   $mttc = LPrix(0)
@@ -62,6 +62,7 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
       Endif
       $type = Res!type
       $code = Res!code
+      $compte = Res!compte
       $url = Res!url
       $filename = Res!filename
       $mime = Res!mime
@@ -74,11 +75,24 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
   
 End
 
-Public Sub Search(code As String, Optional type As Integer = Autres) As LGed
+Public Sub Search(type As Integer, code As String, Optional compte As String = "", Optional orig As String = "") As LGed
   
   Dim Res As Result
   Dim Ret As LGed
-  Res = Utils.db.Exec("Select lind From Docs_Ged where code = &1 and type = &2", code, type)
+  
+  If IsNull(compte) Then
+    If IsNull(orig) Then
+      Res = Utils.db.Exec("Select lind From Docs_Ged where type = &1 and code = &2", type, code)
+    Else
+      Res = Utils.db.Exec("Select lind From Docs_Ged where type = &1 and code = &2 and orig = &3", type, code, orig)
+    Endif
+  Else
+    If IsNull(orig) Then
+      Res = Utils.db.Exec("Select lind From Docs_Ged where type = &1 and code = &2 and compte = &3", type, code, compte)
+    Else
+      Res = Utils.db.Exec("Select lind From Docs_Ged where type = &1 and code = &2 and compte = &3 and origin = &4", type, code, compte, orig)
+    Endif
+  Endif
   If Res.Available Then
     Ret = New LGed(Null, Res!lind)
     Return Ret
@@ -90,10 +104,10 @@ End
 
 Public Sub Supprime(Optional Epur As Boolean = True)
   
-  If $index = 0 Then Return
-
-  Utils.db.Exec("delete FROM Docs_Ged where lind = &1", $index)
-  Utils.db.Exec("delete FROM Docs_Tag where doc_lind = &1", $index)
+  If $index <> 0 Then
+    Utils.db.Exec("delete FROM Docs_Ged where lind = &1", $index)
+    Utils.db.Exec("delete FROM Docs_Tag where doc_lind = &1", $index)
+  Endif
   If Epur Then
     EpurationTags()
   Endif
@@ -380,7 +394,7 @@ Public Sub Commit()
   Dim tag As String
 
   If $index = 0 Then
-    Utils.db.Exec("Insert into Docs_Ged (type, code, origin, url, filename, mime, date, ttc, ht) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9)", $type, $code, $origin, $url, $filename, $mime, $dte.DT, $mttc.D, $mht.D)
+    Utils.db.Exec("Insert into Docs_Ged (type, code, compte, origin, url, filename, mime, date, ttc, ht) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10})", $type, $code, $compte, $origin, $url, $filename, $mime, $dte.DT, $mttc.D, $mht.D)
     Res = Utils.db.Exec("SELECT * FROM Docs_Ged WHERE lind = LAST_INSERT_ID()")
     $index = Res!lind
   Endif
@@ -391,7 +405,7 @@ Public Sub Commit()
     AddTag(tag)
   Next
 
-  Utils.db.Exec("update Docs_Ged set type = &1, code = &2, origin = &3, url = &4, filename = &5, mime = &6, date = &7, ttc = &8, ht = &9 where lind = &{10}", $type, $code, $origin, $url, $filename, $mime, $dte.DT, $mttc.D, $mht.D, $index)
+  Utils.db.Exec("update Docs_Ged set type = &1, code = &2, compte = &3, origin = &4, url = &5, filename = &6, mime = &7, date = &8, ttc = &9, ht = &{10} where lind = &{11}", $type, $code, $compte, $origin, $url, $filename, $mime, $dte.DT, $mttc.D, $mht.D, $index)
   
 End
 
@@ -412,6 +426,7 @@ Public Sub Default_URL(Optional FileName As String) As String
   Dim Extension As String
   Dim Base As String
   Dim tag As String
+  Dim code As String
 
   Base = ""
 
@@ -428,10 +443,11 @@ Public Sub Default_URL(Optional FileName As String) As String
       Base &= Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminA"]
   End Select
 
-  Base &= "/" & Str$($dte.Year) & "/"
+  Base &= "/" & $compte & "/" & Str$($dte.Year) & "/"
 
   If $origin = "" Then
     Base &= "/Docs/"
+    $origin = "Docs"
   Else
     Base &= "/" & $origin & "/"
   Endif
@@ -440,8 +456,12 @@ Public Sub Default_URL(Optional FileName As String) As String
   FileName = File.BaseName(FileName)
 
   If FileName = "" Then
-    DefFile = Base & $dte.FT & "_" & Str($code)
+    code = Replace(CStr($code), " ", "")
+    code = Replace(code, ".", "")
+    DefFile = Base & $dte.FT & "_" & code
     For Each tag In ListTags.List
+      Replace(tag, " ", "_")
+      Replace(tag, ".", "_")
       If (Len(Base) + Len(DefFile) + Len(Left(tag, 8)) + Len(Extension) + 2) < 255 Then
         DefFile &= "_" & Left(tag, 8)
       Endif
@@ -485,6 +505,14 @@ Sub DTE_Write(dte As LDate)
   $dte = dte
 End
 
+Sub ORI_Read() As String
+  Return $origin
+End
+
+Sub ORI_Write(orig As String)
+  $origin = orig
+End
+
 ''''''''''''''''
 'Graphic methods
 
@@ -493,6 +521,8 @@ Public Sub form_Open()
   Dim tag As Variant
 
   'on affiche les valeurs dans le formulaire
+  fcompte.Enabled = False
+  cptselect.Enabled = False
   findex.Text = $index
   ftype.Add("Clients", Clients)
   ftype.Add("Fournisseurs", Fournisseurs)
@@ -501,6 +531,9 @@ Public Sub form_Open()
   ftype.Add("Articles", Articles)
   ftype.Text = ftype[$type].Text
   fcode.Text = $code
+  fcode.reg = fcode.code
+  fcompte.Text = $compte
+  fcompte.reg = fcompte.compte
   furl.reg = ".*"
   furl.Text = $url
   forigin.Text = $origin
@@ -533,12 +566,26 @@ End
 Public Sub ftype_Change()
   
   $type = ftype.Index
+  If $type = Me.Clients Or $type = Me.Fournisseurs Or $type = Me.Comptabilite Then
+    fcompte.Enabled = True
+    cptselect.Enabled = True
+  Else
+    fcompte.Enabled = False
+    cptselect.Enabled = False
+  Endif
+  
   
 End
 
 Public Sub fcode_Change()
   
   $code = fcode.Text
+  
+End
+
+Public Sub fcompte_Change()
+  
+  $compte = fcompte.Text
   
 End
 
@@ -572,6 +619,31 @@ End
 
 Public Sub ListTags_Change()
   
+End
+
+Public Sub cptselect_Click()
+
+  Dim MyForm As Tricpt
+  Dim typecpt As Integer
+  
+  Select Case $type
+    Case Me.Comptabilite
+      typecpt = TriCpt.Tous
+    Case Me.Clients
+      typecpt = TriCpt.Client
+    Case Me.Fournisseurs
+      typecpt = TriCpt.Fournisseur
+    Default
+      typecpt = TriCpt.Tous
+  End Select
+
+  MyForm = New TriCpt(typecpt, TriCpt.Avec_Solde, Me)
+  MyForm.Showmodal()
+  If Bsel = True Then
+    fcompte.Text = Bval
+  Endif
+  fcompte.setfocus
+
 End
 
 Public Sub Existant_Click()
@@ -631,6 +703,11 @@ Public Sub Enregistrer_Click()
 
   If fcode.Text = Null Then
     Message.Error("le code ne doit pas etre vide")
+    Return
+  Endif
+  
+  If fcompte.Text = Null And ($type = Me.Clients Or $type = Me.Fournisseurs) Then
+    Message.Error("le compte ne doit pas etre vide pour ce type de document")
     Return
   Endif
 
@@ -766,30 +843,74 @@ End
 
 Public Sub ScanGUI_Click()
 
+  Dim ScanDevice As String
+  Dim Als As LScript[]
+  Dim Ls As LScript
+  ScanDevice = Start.LocalSettings["/Soc" & Start.Societe & "/scandevice"]
+  
   Try Kill User.Home & "/" & "multipageproject.pdf"
   Try Utils.Rmdir_rf(user.home & "/multipageproject")
   Try Utils.Mkdir_p(user.home & "/multipageproject")
-  Shell "echo Project created@@@@@@@@@@@@@@@@ > " & user.home & "/multipageproject/xsane-multipage-list" Wait
-  Shell "echo image0001.pnm  >> " & user.home & "/multipageproject/xsane-multipage-list" Wait
-  Exec ["xsane", "-s", "-m"] Wait
-  Shell "convert -quality 80 -compress jpeg " & user.home & "/multipageproject/*.pnm " & User.Home & "/" & "multipageproject.pdf" Wait
+  
+  If IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/scangui"]) Then
+    Als = New LScript[]
+    Ls = New LScript("echo Project created@@@@@@@@@@@@@@@@ > " & user.home & "/multipageproject/xsane-multipage-list")
+    Als.Add(Ls)
+    Ls = New LScript("echo image0001.pnm  >> " & user.home & "/multipageproject/xsane-multipage-list")
+    Als.Add(Ls)
+    Ls = New LScript("xsane -s -m")
+    Als.Add(Ls)
+    LScript.RunA(Als)
+  Else
+    Ls = New LScript(Start.LocalSettings["/Soc" & Start.Societe & "/scangui"], ["-m", "scangui", "-d", ScanDevice, "-i", user.home & "/multipageproject/", "-o", user.home & "/multipageproject.pdf"], False)
+    Ls.Run()
+  Endif
+  
+  If IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/scanconvert"]) Then
+    Ls = New LScript("convert -quality 80 -compress jpeg " & user.home & "/multipageproject/*.pnm " & User.Home & "/" & "multipageproject.pdf")
+    Ls.Run()
+  Else
+    Ls = New LScript(Start.LocalSettings["/Soc" & Start.Societe & "/scanconvert"], ["-m", "scanconvert", "-i", user.home & "/multipageproject/", "-o", user.home & "/multipageproject.pdf"], False)
+    Ls.Run()
+  Endif
   ScannerFinalize()
 End
 
 Public Sub ScanBatch_Click()
 
   Dim PB As ProgBar
-
+  Dim Ls As LScript
+  Dim ScanDevice As String
+  
   Try Kill User.Home & "/" & "multipageproject.pdf"
   Try Utils.Rmdir_rf(user.home & "/multipageproject")
   Try Utils.Mkdir_p(user.home & "/multipageproject")
-  
+  ScanDevice = Start.LocalSettings["/Soc" & Start.Societe & "/scandevice"]
+
   PB = New ProgBar("Scan en mode Batch", 3, Null, False, "", True)
   PB.Show()
   PB.Avancement("Scan des pages depuis le chargeur", 1)
-  Shell "scanimage -d 'brother4:net1;dev0' --resolution 150 --source Flatbed --format tiff --batch=" & user.home & "/multipageproject/$(date +%Y%m%d_%H%M%S)_p%04d.tiff" Wait
+  
+  If IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/scanbatch"]) Then
+    If Not IsNull(ScanDevice)
+      ScanDevice = "-d \"" & ScanDevice & "\""
+    Endif
+    Ls = New LScript("scanimage " & ScanDevice & " --resolution 150 --source Flatbed --format pnm --batch=" & user.home & "/multipageproject/$(date +%Y%m%d_%H%M%S)_p%04d.pnm")
+    Ls.Run()
+  Else
+    Ls = New LScript(Start.LocalSettings["/Soc" & Start.Societe & "/scanbatch"], ["-m", "scanbatch", "-d", ScanDevice, "-i", user.home & "/multipageproject/", "-o", user.home & "/multipageproject.pdf"], False)
+    Ls.Run()
+  Endif
+  
   pb.Avancement("Creation PDF", 1)
-  Shell "convert -quality 80 -compress jpeg " & user.home & "/multipageproject/*.tiff " & User.Home & "/" & "multipageproject.pdf" Wait
+  If IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/scanconvert"]) Then
+    Ls = New LScript("convert -quality 80 -compress jpeg " & user.home & "/multipageproject/*.pnm " & User.Home & "/" & "multipageproject.pdf")
+    Ls.Run()
+  Else
+    Ls = New LScript(Start.LocalSettings["/Soc" & Start.Societe & "/scanconvert"], ["-m", "scanconvert", "-i", user.home & "/multipageproject/", "-o", user.home & "/multipageproject.pdf"], False)
+    Ls.Run()
+  Endif
+
   pb.Avancement("Finalisation", 1)
   ScannerFinalize()
   PB.Close()
@@ -846,4 +967,24 @@ Public Sub DefUrl_Click()
 
   furl.Text = Default_URL(furl.Text)
 
+End
+
+Public Sub PDFDupli(InFile As String, Optional filename As String = "") As Integer
+  
+  Dim destdir As String
+  
+  $filename = filename
+  $url = Default_URL(filename)
+  $url = Replace($url, "file://", "")
+  destdir = File.Dir($url)
+  Utils.Mkdir_p(destdir)
+  $mime = "application/pdf"
+  Try Copy InFile To $url
+  If Error Then
+    Return 1
+  Endif
+  
+  Commit()
+  Return 0
+  
 End

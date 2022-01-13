@@ -2,11 +2,15 @@
 
 Create Static
 
+Private $parent As Control
 Private $context As Collection
 Private $defaut_output As String
+Private $original_tooltip As String
 
 
-Public Sub _New(VariableAssignement As Collection, Optional defout As String = "")
+Public Sub _New(Parent As Control, VariableAssignement As Collection, Optional defout As String = "")
+  
+  Dim Pos As Integer
   
   $defaut_output = defout
   If IsNull(VariableAssignement) Then
@@ -14,6 +18,44 @@ Public Sub _New(VariableAssignement As Collection, Optional defout As String = "
   Else
     $context = VariableAssignement
   Endif
+  
+  $parent = Parent
+  If Not IsNull(Parent)
+    Pos = InStr(Parent.Tooltip, "\n----------------------\n")
+    $original_tooltip = Left(Parent.Tooltip, Pos)
+    Update_Tooltip()
+  Endif
+  
+End
+
+Public Sub ParseResult(res As Result)
+  
+  Dim out As String
+  Dim resfield As ResultField
+  
+  If Not res.Available Then Return
+  
+  For Each resfield As ResultField In res.Fields
+    $context["$" & Replace(resfield.Name, ".", "_")] = res[resfield.Name]
+  Next
+
+  Update_Tooltip()
+  
+End
+
+Public Sub AddDate(dte As LDate, Optional Prefix As String = "")
+  
+  $context["$" & Prefix & "annee"] = CStr(dte.Year)
+  $context["$" & Prefix & "annee2"] = CStr(dte.Year2)
+  $context["$" & Prefix & "mois"] = CStr(dte.Month)
+  $context["$" & Prefix & "moistr"] = dte.MonStr
+  $context["$" & Prefix & "moistr3"] = dte.MonStr3
+  $context["$" & Prefix & "semaine"] = CStr(dte.Week)
+  $context["$" & Prefix & "jour"] = CStr(dte.Day)
+  $context["$" & Prefix & "jourstr"] = dte.WeekDay
+  $context["$" & Prefix & "jourstr3"] = dte.WeekDay3
+  
+  Update_Tooltip()
   
 End
 
@@ -25,9 +67,26 @@ Public Sub Evaluate(str As String) As String
   out = $defaut_output
   Try out = Eval(str, $context)
   If Error Then
+    If Not IsNull($parent) Then 
+      Update_Tooltip("!!! Erreur dans l'evaluation !!!\n" & str & "\nVérifier l'usage des variables.\n!!!!!!!!!!!!!!!!!!!!!!\n")
+    Endif
     Return $defaut_output
   Endif
 
   Return out
+  
+End
+
+Private Sub Update_Tooltip(Optional info As String = "")
+  
+  If IsNull($parent) Then Return
+  
+  'Restore original tooltip
+  $parent.Tooltip = $original_tooltip & "\n----------------------\n" & info & "Variables Possible:\n"
+  
+  'add each variable possible using context key in tooltip
+  For Each elem As String In $context
+    $parent.Tooltip = $parent.Tooltip & $context.Key & " "
+  Next
   
 End

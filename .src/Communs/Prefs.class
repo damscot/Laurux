@@ -115,6 +115,7 @@ End
 Public Sub Form_Open()
 
   Dim sVer As String
+  Dim stmp As String
   Dim rResult As Result
   
   If global = False
@@ -436,6 +437,15 @@ Public Sub Form_Open()
   Try ServerLogPort.Value = cursettings["/Soc" & Start.Societe & "/ServerLogPort"]
   If ServerLogPort.Value = 0 Then ServerLogPort.Value = 6556
 
+
+  Try ScanDevice.Text = cursettings["/Soc" & Start.Societe & "/scandevice"]
+  Try ScanGui.Text = cursettings["/Soc" & Start.Societe & "/scangui"]
+  ScanGui.Tooltip = "Les fichiers images de chaque page doivent etre placés dans " & User.Home & "/" & "multipageproject/\nVoir les différentes options passées automatiquement au script en utilisant le nom de script 'debug'"
+  Try ScanBatch.Text = cursettings["/Soc" & Start.Societe & "/scanbatch"]
+  ScanBatch.Tooltip = "Les fichiers images de chaque page doivent etre placés dans " & User.Home & "/" & "multipageproject/\nVoir les différentes options passées automatiquement au script en utilisant le nom de script 'debug'"
+  Try ScanConvert.Text = cursettings["/Soc" & Start.Societe & "/scanconvert"]
+  ScanConvert.Tooltip = "Les fichiers images sources de chaque page sont trouvés dans " & User.Home & "/" & "multipageproject/\nLe fichier PDF de sortie doit etre placé ici: " & User.Home & "/" & "multipageproject.pdf\nVoir les différentes options passées automatiquement au script en utilisant le nom de script 'debug'"
+
 End
 
 '*******************************************************
@@ -704,6 +714,10 @@ Public Sub form_close()
   cursettings["/Soc" & Start.Societe & "/Breplique"] = Breplique.Value
   'cursettings["/Soc" & Start.Societe & "/Hidentifiant"] = Api2.Text
   'cursettings["/Soc" & Start.Societe & "/Hmdp"] = Api3.Text
+  cursettings["/Soc" & Start.Societe & "/scandevice"] = ScanDevice.Text
+  cursettings["/Soc" & Start.Societe & "/scangui"] = ScanGui.Text
+  cursettings["/Soc" & Start.Societe & "/scanbatch"] = ScanBatch.Text
+  cursettings["/Soc" & Start.Societe & "/scanconvert"] = ScanConvert.Text
   
   If Exp.Value = True Then
     Exprt = "1"

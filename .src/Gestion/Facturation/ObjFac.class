@@ -38,6 +38,7 @@ Public Struct ltva
 End Struct
 
 Public Enum sans, bl, facture, archive, commande, proforma, devis, atelier, finmois, abonnement, magasin
+Public Origine As String[] = ["", "BL", "Facture", "Archive", "Commande", "Proforma", "Devis", "Atelier", "FinMois", "Abonnement", "Magasin"]
 
 Public resent As Result                       ''entete des bons
 Public reslig As Result                         ''lignes des bons
@@ -823,19 +824,6 @@ Public Function testchem() As Boolean
         Return True
       Endif
     Endif
-    If Not Exist(pdfchemin & "/Fac") Then
-      Try Mkdir pdfchemin & "/Fac"
-      If Error Then
-        If start.son Then Music.Play
-        Message.Error("La copie du fichier pdf ne peut pas être effectuée !\nVeuillez vérifier le chemin " & pdfchemin & "/Fac dans les préférences SVP.")
-        Return True
-      Endif
-    Endif
-    If Not Access(pdfchemin & "/Fac", gb.Write) Then
-      If start.son Then Music.Play
-      Message.Error("Impossible d'écrire sur le répertoire " & pdfchemin & "/Fac")
-      Return True
-    Endif
   Else
     If Not Exist(User.home & "/Impressions") Then
       Try Mkdir User.home & "/Impressions"
@@ -857,7 +845,14 @@ Public Sub Dupli2()
 
   Dim chemin, ty As String 
   Dim res As Result
+  Dim rResult As Result
   Dim imp As New Printer
+  Dim libel_def As String
+  Dim tags As String[]
+  Dim lg As LGed
+  Dim code As String
+  Dim orig As String
+  Dim ret As Integer
   
   imp.NumCopies = 1
   imp.OutputFile = User.Home & "/tmp/Facture.pdf"
@@ -866,18 +861,50 @@ Public Sub Dupli2()
   If resent!imp = 1 Then Return
   ty = nom()
   If sauvpdf Then
-    Chemin = pdfchemin & "/Fac/" & $numcli
-    If Not Exist(chemin) Then Try Mkdir chemin
-    Chemin &= "/" & Format(Year($dtedoc.G), "0000")
-    If Not Exist(chemin) Then Try Mkdir chemin
-    Chemin &= "/" & Format(Month($dteech.G), "00")
-    If Not Exist(chemin) Then Try Mkdir chemin
-    imp.OutputFile = chemin & "/" & ty & ".pdf"
+    'Chemin = pdfchemin & "/Fac/" & $numcli
+    'If Not Exist(chemin) Then Try Mkdir chemin
+    'Chemin &= "/" & Format(Year($dtedoc.G), "0000")
+    'If Not Exist(chemin) Then Try Mkdir chemin
+    'Chemin &= "/" & Format(Month($dteech.G), "00")
+    'If Not Exist(chemin) Then Try Mkdir chemin
+    'imp.OutputFile = chemin & "/" & ty & ".pdf"
     imp.NumCopies = 1
     edit.Print(imp)
-    res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $numcli, chemin & "/" & ty & ".pdf")
-    If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $numcli, chemin & "/" & ty & ".pdf", $numcli & "," & ty & ",", "Facs")
-    If choix = ObjFac.facture Or choix = ObjFac.finmois Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
+    If IsNull($numfac) Then
+      code = $numbl
+    Else
+      code = $numfac
+    Endif
+    orig = FactType2Orig(choix)
+    'On conserve une version de documents pour chaque origine devis, commande, BL, Facture
+    lg = LGed.Search(LGed.Clients, code, $numcli, orig)
+    If IsNull(lg)
+      lg = New LGed(Null, 0, LGed.Clients, orig, code, $numcli)
+    Endif
+    lg.DTE = $dteech
+    lg.TTC = LPrix(montttc)
+    lg.HT = LPrix(montht)
+    ret = lg.PDFDupli(User.Home & "/tmp/Facture.pdf", ty & "-" & LDate(Now).FT & ".pdf")
+    If ret = 1 Then
+      lg.Supprime(False)
+      Return
+    Else
+      'On ajoute les tags et les liens avec le document apres commit dans Doc_Ged
+      lg.DelAllTag(False)
+      If Not IsNull($numfac) Then
+        lg.AddTag("BL" & $numbl)
+      Endif
+      lg.AddTag($numcli)
+      rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabCli") & " WHERE cli_code = " & $numcli)
+      If rResult.Available Then
+        tags = LGed.String2Array(rResult!tag_def).Copy()
+        lg.AddTags(tags)
+      Endif
+    Endif
+    
+    'res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $numcli, chemin & "/" & ty & ".pdf")
+    'If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $numcli, chemin & "/" & ty & ".pdf", $numcli & "," & ty & ",", "Facs")
+    'If choix = ObjFac.facture Or choix = ObjFac.finmois Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
   Else
       chemin = User.Home & "/Impressions"
       imp.OutputFile = chemin & "/" & ty & ".pdf"
@@ -894,15 +921,15 @@ Private Function nom() As String
   
   Select Case choix
     Case ObjFac.facture, ObjFac.finmois, ObjFac.abonnement
-      ty = "F" & $numfac
+      ty = "F" & $numfac & "-" & $numbl & "_"
     Case ObjFac.bl
-      ty = "B" & $numbl
+      ty = "B" & $numbl & "_"
     Case ObjFac.commande
-      ty = "C" & $numbl
+      ty = "C" & $numbl & "_"
     Case ObjFac.proforma
-      ty = "P" & $numbl
+      ty = "P" & $numbl & "_"
     Case ObjFac.devis
-      ty = "D" & $numbl
+      ty = "D" & $numbl & "_"
   End Select
  
   reg = New RegExp
@@ -944,6 +971,32 @@ Public Function ecriturecompt() As Boolean
     MajSuivis()
   Endif
   Return False
+  
+End
+
+
+Public Sub Orig2FactType(Orig As String) As Integer
+  
+  Dim pos As Integer
+  
+  pos = Origine.Find(Orig, gb.Text)
+  If pos > 1 Then
+    Return pos
+  Else
+    Return 0
+  Endif
+  
+End
+
+Public Sub FactType2Orig(choix As Integer) As String
+  
+  Dim pos As Integer
+  
+  If choix >= Origine.Length Or choix < 0 Then
+    Return Origine[0]
+  Else
+    Return Origine[choix]
+  Endif
   
 End
 

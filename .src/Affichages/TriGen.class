@@ -652,6 +652,26 @@ Public Sub DB_Decr()
 
 End
 
+Public Sub FontSize(Increment As Float)
+  
+  Dim fts As Float
+  Dim f As ObjProp
+  
+  If Parent Then
+    fts = Parent.Font.Size
+  Else
+    fts = Me.Font.Size
+  Endif
+  
+  'Reduce or Increment font in TriGen
+  Coltri.Font.Size = Coltri.Font.Size + Increment
+  For Each f In Col_Def
+    f.filter.Font.Size = f.filter.Font.Size + Increment
+  Next
+  
+End
+
+
 Sub NoUp_Read() As Boolean
 
   Return $nup
