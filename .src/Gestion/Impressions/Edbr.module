@@ -133,6 +133,10 @@ Public Function Ed(Nbls As String, codef As String, dater As String, Coulfond As
   Dim Fichier As String
   Dim Cfac As Boolean = False
   Dim Nbl As String
+  Dim nfour As String
+  Dim lg As LGed
+  Dim ret As Integer
+  Dim tags As String[]
 
   Shell "cd " & User.Home & ""
   Filename = User.Home & "/tmp/BonReception.pdf"
@@ -157,7 +161,8 @@ Public Function Ed(Nbls As String, codef As String, dater As String, Coulfond As
         If rResult.Available Then
           fourResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE fo_code = &1 ", codef)
           If fourResult.Available Then
-            intitulef = fourResult!fo_rs_soc & " " & fourResult!fo_nom & " " & fourResult!fo_pnm
+            nfour = fourResult!fo_nom
+            intitulef = fourResult!fo_rs_soc & " " & nfour & " " & fourResult!fo_pnm
             adr1 = fourResult!fo_adr1
             adr2 = fourResult!fo_adr2
             cp = fourResult!fo_cd_ptl & " " & fourResult!fo_ville
@@ -218,10 +223,34 @@ Public Function Ed(Nbls As String, codef As String, dater As String, Coulfond As
     pdf.Baspage()
     pdf.Output(Filename, False)
     Visualiseur.Prog(Filename)
-    'Copie.Dupli("BonReception.pdf", "/Impressions", "BonReception", dater)
-    Copie.Dupli4(User.Home & "/tmp/BonReception.pdf", "", "BR" & codef & "_" & nbl, dater, codef)
-    Fichier = User.home & "/Impressions/" & "BonReception" & ".pdf"
-    'If Cfac Then Copie.Dupli4(Filename, User.home & "/Impressions", "BonReception" & Nbl, dater, Codef)
+    Copie.Dupli(Filename, "/Impressions", "BonReception" & "-" & codef, dater)
+  
+    If Cfac Then
+      'On conserve une copie du documents pour le fournisseur
+      lg = LGed.Search(LGed.Fournisseurs, nbl, codef, "BR")
+      If IsNull(lg)
+        lg = New LGed(Null, 0, LGed.Fournisseurs, "BR", nbl, codef)
+      Endif
+      lg.DTE = LDate(dater)
+      lg.TTC = LPrix()
+      lg.HT = LPrix(Totalbl)
+      'On copie sur le disque le document autand de fois qu'il est produit (grace à la date), mais on conserve le dernier pointeur dans la table GED.
+      ret = lg.PDFDupli(User.Home & "/tmp/BonReception.pdf", "BR" & nbl & "_" & LDate(dater).F & "_" & nfour & "-" & LDate(Now).FT & ".pdf")
+      If ret = 1 Then
+        lg.Supprime(False)
+        Return
+      Else
+        'On ajoute les tags et les liens avec le document apres commit dans Doc_Ged
+        lg.DelAllTag(False)
+        lg.AddTag("BR" & nbl)
+        lg.AddTag(codef)
+        rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & codef)
+        If rResult.Available Then
+          tags = LGed.String2Array(rResult!tag_def).Copy()
+          lg.AddTags(tags)
+        Endif
+      Endif
+    Endif
   End With
 
 End

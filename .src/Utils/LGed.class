@@ -521,8 +521,6 @@ Public Sub form_Open()
   Dim tag As Variant
 
   'on affiche les valeurs dans le formulaire
-  fcompte.Enabled = False
-  cptselect.Enabled = False
   findex.Text = $index
   ftype.Add("Clients", Clients)
   ftype.Add("Fournisseurs", Fournisseurs)
@@ -530,6 +528,7 @@ Public Sub form_Open()
   ftype.Add("Autres", Autres)
   ftype.Add("Articles", Articles)
   ftype.Text = ftype[$type].Text
+  ftype_Change()
   fcode.Text = $code
   fcode.reg = fcode.code
   fcompte.Text = $compte
@@ -975,10 +974,11 @@ Public Sub PDFDupli(InFile As String, Optional filename As String = "") As Integ
   
   $filename = filename
   $url = Default_URL(filename)
-  $url = Replace($url, "file://", "")
+  $url = Replace($url, "file:///", "/")
   destdir = File.Dir($url)
   Utils.Mkdir_p(destdir)
   $mime = "application/pdf"
+  $filename = File.Name($url)
   Try Copy InFile To $url
   If Error Then
     Return 1

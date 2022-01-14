@@ -619,9 +619,9 @@ Public Sub Gen_ecr(Mode As Integer) 'Mode 0 visualisation seule, Mode 1 cloture 
   If Not Exist(User.home & "/BR") Then Try Mkdir User.home & "/BR"
   Raz_Ventilation()
   If $soption = "B" Or $soption = "T" Then
-    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write, Fiches_ligcons WRITE, Fiches_ligregie WRITE, Fiches_regie WRITE ")
+    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write, Docs_Ged Write, Docs_Tag Write, Fiches_Tag Write, Fiches_ligcons WRITE, Fiches_ligregie WRITE, Fiches_regie WRITE ")
   Else
-    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write")
+    Utils.db.Exec("LOCK TABLES " & Tab & " WRITE, " & Tab0 & " WRITE, " & Tab1 & " WRITE, " & Tab2 & " WRITE, " & Tab4 & " WRITE, " & Tab5 & " WRITE, " & Tab6 & " WRITE, " & Tab7 & " WRITE, " & Tab10 & " WRITE, " & Tab11 & " WRITE," & Cbase.Table("TabTleg") & " WRITE, " & Cbase.Table("TabFam") & " WRITE, " & Cbase.Table("TabComptes") & " WRITE, " & Cbase.Table("TabMvt") & " WRITE, " & Cbase.Table("TabMvtM") & " WRITE, " & Cbase.Table("TabTvav") & " WRITE, " & Cbase.Table("TabHisFac") & " WRITE, " & "Fiches_Tvaac" & " Write, Docs_Ged Write, Docs_Tag Write, Fiches_Tag Write")
   Endif
   Parametres()
   With Utils
@@ -698,10 +698,6 @@ Public Sub Gen_ecr(Mode As Integer) 'Mode 0 visualisation seule, Mode 1 cloture 
       Until Coldetail.MoveNext()
       Edbr.Ed(numrecpts, Colbl.Item[0], datej.Text, coulfond, "ValidBR")
       If Mode > 0 Then
-        If Apdf Then
-          'Keep a copy in fournisseur docs
-          Copie.Dupli4(Filename, "", "BR" & Colbl.Item[0] & "_" & numerobl, datej.Text, Colbl.Item[0])
-        Endif
         Mttc = Colbl.Item[2]
         If exo Then Totalttc = Colbl.Item[3]
         Utils.db.Exec("INSERT INTO " & Tab10 & "(compte, intitule, totalht, codetva) VALUES (&1, &2, &3, &4)", Colbl.Item[0], nom, Totalttc, 0)
@@ -724,19 +720,21 @@ Public Sub Gen_ecr(Mode As Integer) 'Mode 0 visualisation seule, Mode 1 cloture 
           If Start.LocalSettings["/Soc" & Start.Societe & "/Ged"] And Apdf Then
             Select Case Message.Question("Que souhaitez vous faire ?", "GED (scan facture)", "Sortir")
               Case 1
-                'En cas d'ecriture comptable on enregistre le document avec le code de l'ecriture dans les documents comptables
+                'En cas d'ecriture comptable on enregistre également le document avec le code de l'ecriture dans les documents comptables
                 If Mode > 1 Then
-                  hForm = New LGed(Null, 0, LGed.Comptabilite, "Reception", Numr, CCli)
+                  hForm = New LGed(Null, 0, LGed.Comptabilite, "Facture", Numr, CCli)
                 Else
-                  hForm = New LGed(Null, 0, LGed.Fournisseurs, "Reception", NumeroBl, CCli)
+                  hForm = New LGed(Null, 0, LGed.Fournisseurs, "Facture", NumeroBl, CCli)
                 Endif
-                
                 'Add Tags from Fournisseur
                 rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & CCli)
                 If rResult.Available Then
                   hForm.AddTags(LGed.String2Array(rResult!tag_def))
                 Endif
                 hForm.AddTag(CCli)
+                If Mode > 1 Then
+                  hForm.AddTag("BR" & NumeroBl)
+                Endif
                 $ttc = New LPrix(0)
                 $ht = New LPrix(0)
                 $ttc.Add(LPrix(Totalttc))

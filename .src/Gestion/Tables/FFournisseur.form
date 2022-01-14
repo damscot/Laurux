@@ -1,11 +1,11 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(27.25,4.25,109,82)
+  MoveScaled(27.25,4.25,113,82)
   Background = Color.Background
   Text = ("Table des fournisseurs")
   { TabFour TabStrip
-    MoveScaled(3,30,103,45)
+    MoveScaled(2,30,110,45)
     Font = Font["Serif,Bold,Italic,-1"]
     Background = Color.Background
     Count = 6
@@ -739,55 +739,48 @@
     Index = 5
     Text = ("Dossiers li&és")
     { Copie CheckBox
-      MoveScaled(78,33,21,7)
+      MoveScaled(89,33,21,7)
       ToolTip = ("Si ce bouton est activé alors, à l'impression des documents fournisseurs,\nune copie pdf sera automatiquement générée sous le repertoire \ndéfini dans les préférences.")
       Text = ("Copie automatique\ndes documents.")
     }
     { Tous RadioButton
-      MoveScaled(78,3,20,3)
+      MoveScaled(89,3,20,3)
       ToolTip = ("Affiche l'ensemble des documents du client")
       Text = ("Tous documents")
       Value = True
     }
-    { Facs2 RadioButton
-      MoveScaled(78,9,20,3)
-      ToolTip = ("Affiche  les BR")
-      Text = ("Afficher BR")
+    { BonRecep RadioButton
+      MoveScaled(89,9,20,3)
+      ToolTip = ("Affiche  les Bon de Réceptions")
+      Text = ("Bon Réception")
     }
     { Docs RadioButton
-      MoveScaled(78,15,20,3)
+      MoveScaled(89,18,20,3)
       ToolTip = ("Affiche les documents scannés en direct")
       Text = ("Autres documents")
     }
-    { Dssr GridView
-      MoveScaled(0,1,77,39)
-      Mode = Select.Single
-      Header = GridView.Horizontal
-      ScrollBar = Scroll.Vertical
-    }
-    { Tbxrem2 TextBox
-      MoveScaled(97,0,2,3)
-      Visible = False
-      Font = Font["Serif,-1"]
-      Background = Color.TextBackground
-      Mouse = Mouse.Pointing
-      ToolTip = ("Code  sur deux caracteres maxi.")
-      MaxLength = 100
-    }
-    { Facs3 RadioButton
-      MoveScaled(78,12,20,3)
+    { Comman RadioButton
+      MoveScaled(89,6,20,3)
       ToolTip = ("Affiche  les commandes")
-      Text = ("Aff. commandes")
+      Text = ("Commandes")
     }
     { Facs RadioButton
-      MoveScaled(78,6,20,3)
-      ToolTip = ("Affiche  les factures")
-      Text = ("Afficher factures")
+      MoveScaled(89,12,20,3)
+      ToolTip = ("Affiche  les factures issues des bon de réception validée en gestion uniquement.")
+      Text = ("Factures Gestion")
+    }
+    { PanelGedDoc Panel
+      MoveScaled(0,0,88,43)
+    }
+    { FacCompta RadioButton
+      MoveScaled(89,15,20,3)
+      ToolTip = ("Affiche les factures saisie en compta ou généré en compta depuis\nla Validation de Bon de Réception")
+      Text = ("Factures Compta")
     }
     Index = 0
   }
   { HBox1 HBox
-    MoveScaled(-1,77,109,4)
+    MoveScaled(-1,77,113,4)
     Spacing = True
     { Button7 Button Btn
       Name = "Button7"
@@ -806,7 +799,7 @@
       Picture = Picture["Icones/mail_forward.png"]
     }
     { Button19 Button
-      MoveScaled(13,0,10,4)
+      MoveScaled(15.5,0,10,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Text = ("Sms")
@@ -814,7 +807,7 @@
     }
     { Button15 Button Btn
       Name = "Button15"
-      MoveScaled(23,0,14,4)
+      MoveScaled(26,0,14,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "7"
@@ -824,7 +817,7 @@
     }
     { Button2 Button Btn
       Name = "Button2"
-      MoveScaled(37,0,10,4)
+      MoveScaled(40.5,0,11,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "3"
@@ -834,7 +827,7 @@
     }
     { Button3 Button Btn
       Name = "Button3"
-      MoveScaled(47,0,16,4)
+      MoveScaled(51.875,0,16,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "4"
@@ -844,15 +837,15 @@
       Picture = Picture["Icones/stock_trash_24.png"]
     }
     { Button9 Button
-      MoveScaled(63,0,14,4)
+      MoveScaled(68.375,0,13.625,4)
       Font = Font["Bold,-1"]
       Background = Color.ButtonBackground
-      Text = Shortcut(("Scanner"), "n")
+      Text = Shortcut(("GED"), "G")
       Picture = Picture["Icones/27019.png"]
     }
     { Button4 Button Btn
       Name = "Button4"
-      MoveScaled(77,0,17,4)
+      MoveScaled(82.5,0,16,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "5"
@@ -863,7 +856,7 @@
     }
     { Button5 Button Btn
       Name = "Button5"
-      MoveScaled(94,0,13,4)
+      MoveScaled(99,0,13,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "6"

@@ -933,15 +933,14 @@ Public Sub Btn_Click()
 
     Case 10
       Panel7.Visible = False
-      If Not CheckBox1.value Then
-        If Org = "" Then
-          Impcom("")
-          four.SetFocus
-          four.Select
-        Else
-          Mail()
-        Endif
+      If Org = "" Then
+        Impcom("")
+        four.SetFocus
+        four.Select
       Else
+        Mail()
+      Endif
+      If CheckBox1.value Then
         GenFic()
       Endif
       Stop Event
@@ -3440,6 +3439,11 @@ Public Sub Impcom(Org As String)
   Dim Logo As Image
   Dim LstFour, codecli As String
   Dim Cfac As Boolean = False
+  Dim nfour As String
+  Dim lg As LGed
+  Dim ret As Integer
+  Dim rResult As Result
+  Dim tags As String[]
 
   PosY = 105
   dte = Format$(Now, "dd.mm.yyyy")
@@ -3481,7 +3485,8 @@ Public Sub Impcom(Org As String)
       If Rsoc!banq Then Iban = "Iban : " & Rsoc!banq & " Bic : " & Rsoc!bic
       fourResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE fo_code = &1 ", codef)
       If fourResult.Available Then
-        Rs2 = fourResult!fo_rs_soc & " " & fourResult!fo_nom & " " & fourResult!fo_pnm
+        nfour = fourResult!fo_nom 
+        Rs2 = fourResult!fo_rs_soc & " " & nfour & " " & fourResult!fo_pnm
         adr1 = fourResult!fo_adr1
         adr2 = fourResult!fo_adr2
         cp = fourResult!fo_cd_ptl & " " & fourResult!fo_ville
@@ -3553,9 +3558,35 @@ Public Sub Impcom(Org As String)
       pdf.Output(Filename, False)
       Wait 0.5
       If Org <> "M" Then Visualiseur.Prog(Filename)
-      Copie.Dupli(Filename, "/Impressions", "Commande", datej.Text)
+      Copie.Dupli(Filename, "/Impressions", "Commande" & "-" & four.text, dater)
       Piece = Filename
-      If Cfac Then Copie.Dupli5("Commande.pdf", datej.Text, Four.Text, "C" & Ncom.text & Fournom.Text, Fournom.text & "," & Ncom.Text, "Commande")
+      
+      If Cfac Then
+        'On conserve une copie du documents pour le fournisseur
+        lg = LGed.Search(LGed.Fournisseurs, nbl, four.text, "Commande")
+        If IsNull(lg)
+          lg = New LGed(Null, 0, LGed.Fournisseurs, "Commande", nbl, four.text)
+        Endif
+        lg.DTE = LDate(dater)
+        lg.TTC = LPrix()
+        lg.HT = LPrix(Totcom)
+        'On copie sur le disque le document autand de fois qu'il est produit (grace à la date), mais on conserve le dernier pointeur dans la table GED.
+        ret = lg.PDFDupli(User.Home & "/tmp/Commande.pdf", "CF" & nbl & "_" & LDate(dater).F & "_" & Fournom.Text & "-" & LDate(Now).FT & ".pdf")
+        If ret = 1 Then
+          lg.Supprime(False)
+          Return
+        Else
+          'On ajoute les tags et les liens avec le document apres commit dans Doc_Ged
+          lg.DelAllTag(False)
+          lg.AddTag("CF" & nbl)
+          lg.AddTag(four.text)
+          rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & four.text)
+          If rResult.Available Then
+            tags = LGed.String2Array(rResult!tag_def).Copy()
+            lg.AddTags(tags)
+          Endif
+        Endif
+      Endif
       Me.Mouse = Mouse.Default
     Endif
   End With
@@ -3755,7 +3786,7 @@ Public Sub GenFic()
       Endif
       Print #hFile, code & ";" & Colrcp.Item[6 + $o]
     Until Colrcp.Movenext()
-    Message.Info("Traitement terminé!\n Le fichier commande .txt a été généré sous votre repertoire.")
+    Message.Info("Traitement terminé!\n Le fichier a été généré sous " & User.home & "/commande.csv")
   Else
     Message.Info("Ce traitement doit se faire après la saisie de la commande!")
   Endif

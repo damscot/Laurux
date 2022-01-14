@@ -717,6 +717,11 @@ End
 
 Public Sub ecriture(numcpt As String, tot As Float, intitule As String)
   
+  Dim Cmpts As Result
+  Dim libel_var As LVar
+  Dim libel_def As String
+  Dim localvars As Collection
+  
   lignecom = New VarEcr
   If ecrit.Exist(numcpt) Then
     lignecom = ecrit[numcpt]
@@ -728,9 +733,21 @@ Public Sub ecriture(numcpt As String, tot As Float, intitule As String)
     Endif
     ecrit[numcpt] = lignecom
   Else
+      localvars = New Collection
+      'localvars.Add($numfac, "$numfac") 'le numero de facture est défini trop tard (ecr.ecriture) pour etre utilisé ici.
+      localvars.Add($numbl, "$numbl")
       lignecom.compte = numcpt
       lignecom.intitul = intitule
-      lignecom.libelle = "FACTURE " & resent!nmclibl
+      libel_def = "FACTURE " & resent!nmclibl
+      libel_var = New LVar(Null, localvars, libel_def)
+      libel_var.AddDate($dteech)
+      Cmpts = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " left join " & Cbase.Table("TabCli") & " on cli_code = &2 WHERE compte_cc like '" & resent!cdclibl & "%' and coll <> &1  order by compte_cc", 1, resent!cdclibl)
+      If Cmpts.Available Then
+        libel_var.ParseResult(Cmpts)
+        libel_def = Cmpts!libel_def
+      Endif
+      libel_def = libel_var.Evaluate(libel_def)
+      lignecom.libelle = Left(libel_def, 50)
       lignecom.dte = $dtedoc
       If Not IsNull($dteech) Then lignecom.dteech = $dteech
       lignecom.numdoc = $numfac
@@ -861,13 +878,6 @@ Public Sub Dupli2()
   If resent!imp = 1 Then Return
   ty = nom()
   If sauvpdf Then
-    'Chemin = pdfchemin & "/Fac/" & $numcli
-    'If Not Exist(chemin) Then Try Mkdir chemin
-    'Chemin &= "/" & Format(Year($dtedoc.G), "0000")
-    'If Not Exist(chemin) Then Try Mkdir chemin
-    'Chemin &= "/" & Format(Month($dteech.G), "00")
-    'If Not Exist(chemin) Then Try Mkdir chemin
-    'imp.OutputFile = chemin & "/" & ty & ".pdf"
     imp.NumCopies = 1
     edit.Print(imp)
     If IsNull($numfac) Then
@@ -884,6 +894,7 @@ Public Sub Dupli2()
     lg.DTE = $dteech
     lg.TTC = LPrix(montttc)
     lg.HT = LPrix(montht)
+    'On copie sur le disque le document autand de fois qu'il est produit (grace à la date), mais on conserve le dernier pointeur dans la table GED.
     ret = lg.PDFDupli(User.Home & "/tmp/Facture.pdf", ty & "-" & LDate(Now).FT & ".pdf")
     If ret = 1 Then
       lg.Supprime(False)
@@ -901,10 +912,6 @@ Public Sub Dupli2()
         lg.AddTags(tags)
       Endif
     Endif
-    
-    'res = Utils.db.Exec("SELECT * FROM Docs_Clients WHERE code=&1 AND doc=&2", $numcli, chemin & "/" & ty & ".pdf")
-    'If Not res.Available Then Utils.db.Exec("insert into " & Cbase.Table("TabCdocs") & " (code,doc, doc2, org) values ( &1,&2, &3, &4)", $numcli, chemin & "/" & ty & ".pdf", $numcli & "," & ty & ",", "Facs")
-    'If choix = ObjFac.facture Or choix = ObjFac.finmois Then copie.Dupli2CPT(numeroecr, chemin, $numcli, ty)
   Else
       chemin = User.Home & "/Impressions"
       imp.OutputFile = chemin & "/" & ty & ".pdf"

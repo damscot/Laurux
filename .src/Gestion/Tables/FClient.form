@@ -5,15 +5,6 @@
   Background = Color.Background
   Text = ("Table des clients")
   Sticky = True
-  { Colcp ColumnView
-    MoveScaled(-3,15,61,65)
-    Visible = False
-    Font = Font["Serif,-1"]
-    Background = &HE8E8B0&
-    Mouse = Mouse.Pointing
-    Sorted = True
-    ScrollBar = Scroll.Vertical
-  }
   { TabStrip1 TabStrip
     MoveScaled(2,33,111,47)
     Font = Font["Serif,Bold,Italic,-1"]
@@ -906,7 +897,7 @@
     }
     { Label58 Label
       MoveScaled(5,33,64,4)
-      Text = ("Libelle des ecritures par défault (utilisation de visual basic possible)")
+      Text = ("Libelle des ecritures par défault (utilisation du language visual basic)")
     }
     { TextLabel11 TextLabel
       MoveScaled(86,9,20,2)
@@ -1214,12 +1205,12 @@
       Text = ("Copie automatique\ndes documents.")
     }
     { Facs RadioButton
-      MoveScaled(90,6,20,3)
+      MoveScaled(90,15,20,3)
       ToolTip = ("Affiche  les factures")
-      Text = ("Afficher factures")
+      Text = ("Factures Gestion")
     }
     { Docs RadioButton
-      MoveScaled(90,18,20,3)
+      MoveScaled(90,21,20,3)
       ToolTip = ("Affiche les documents scannés en direct")
       Text = ("Autres documents")
     }
@@ -1229,40 +1220,28 @@
       Text = ("Tous documents")
       Value = True
     }
-    { Dssr GridView
-      MoveScaled(1,1,3,8)
-      Mode = Select.Single
-      Header = GridView.Horizontal
-      ScrollBar = Scroll.Vertical
-      AutoResize = False
-      Resizable = False
-    }
-    { Tbxrem2 TextBox
-      MoveScaled(5,1,2,3)
-      Visible = False
-      Font = Font["Serif,-1"]
-      Background = Color.TextBackground
-      Mouse = Mouse.Pointing
-      ToolTip = ("Code  sur deux caracteres maxi.")
-      MaxLength = 100
-    }
-    { Facs4 RadioButton
-      MoveScaled(90,15,20,3)
+    { Devis RadioButton
+      MoveScaled(90,6,20,3)
       ToolTip = ("Affiche  les devis")
-      Text = ("Afficher devis")
+      Text = ("Devis")
     }
-    { Facs2 RadioButton
-      MoveScaled(90,9,20,3)
-      ToolTip = ("Affiche  les BL")
-      Text = ("Afficher BL")
-    }
-    { Facs3 RadioButton
+    { BonLivraison RadioButton
       MoveScaled(90,12,20,3)
+      ToolTip = ("Affiche  les BL")
+      Text = ("Bon Livraison")
+    }
+    { Comman RadioButton
+      MoveScaled(90,9,20,3)
       ToolTip = ("Affiche  les commandes")
-      Text = ("Aff. commandes")
+      Text = ("Commandes")
     }
     { PanelGedDoc Panel
       MoveScaled(0,0,89,43)
+    }
+    { FacsCompta RadioButton
+      MoveScaled(90,18,20,3)
+      ToolTip = ("Affiche  les factures saisie en Compta")
+      Text = ("Factures Compta")
     }
     Index = 8
     Text = ("Abonnement")
@@ -1477,19 +1456,9 @@
       ToolTip = ("Doc HTML")
       Picture = Picture["Icones/khelp.png"]
     }
-    { Button2 Button Btn
-      Name = "Button2"
-      MoveScaled(4,0,11,4)
-      Font = Font["Serif,Bold,-1"]
-      Background = Color.ButtonBackground
-      Tag = "3"
-      Drop = True
-      Text = Shortcut(("Créer"), "C")
-      Picture = Picture["Icones/folder_new.png"]
-    }
     { Button1 Button Btn
       Name = "Button1"
-      MoveScaled(16,0,10,4)
+      MoveScaled(5.25,0,10,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "2"
@@ -1497,22 +1466,15 @@
       Picture = Picture["Icones/mail_forward.png"]
     }
     { Button19 Button
-      MoveScaled(28,0,10,4)
+      MoveScaled(15.875,0,10,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Text = ("Sms")
       Picture = Picture["icon:/22/phone"]
     }
-    { Button9 Button
-      MoveScaled(39,0,14,4)
-      Font = Font["Bold,-1"]
-      Background = Color.ButtonBackground
-      Text = Shortcut(("Scanner"), "n")
-      Picture = Picture["Icones/27019.png"]
-    }
     { Button12 Button Btn
       Name = "Button12"
-      MoveScaled(54,0,14,4)
+      MoveScaled(26.375,0,14,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "7"
@@ -1520,9 +1482,19 @@
       Text = Shortcut(("Etiquette"), "q")
       Picture = Picture["Icones/etiquette.png"]
     }
+    { Button2 Button Btn
+      Name = "Button2"
+      MoveScaled(41.25,0,11,4)
+      Font = Font["Serif,Bold,-1"]
+      Background = Color.ButtonBackground
+      Tag = "3"
+      Drop = True
+      Text = Shortcut(("Créer"), "C")
+      Picture = Picture["Icones/folder_new.png"]
+    }
     { Button3 Button Btn
       Name = "Button3"
-      MoveScaled(69,0,14,4)
+      MoveScaled(52.75,0,14,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "4"
@@ -1531,20 +1503,27 @@
       Text = Shortcut(("Supprimer"), "S")
       Picture = Picture["Icones/stock_trash_24.png"]
     }
+    { Button9 Button
+      MoveScaled(67.375,0,14,4)
+      Font = Font["Bold,-1"]
+      Background = Color.ButtonBackground
+      Text = Shortcut(("GED"), "G")
+      Picture = Picture["Icones/27019.png"]
+    }
     { Button4 Button Btn
       Name = "Button4"
-      MoveScaled(83,0,16,4)
+      MoveScaled(82,0,16,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "5"
       Drop = True
       Expand = True
-      Text = Shortcut(("Enregistrer"), "g")
+      Text = Shortcut(("Enregistrer"), "E")
       Picture = Picture["Icones/filesave.png"]
     }
     { Button5 Button Btn
       Name = "Button5"
-      MoveScaled(95,0,12,4)
+      MoveScaled(98.625,0,12,4)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "6"
@@ -1552,5 +1531,14 @@
       Text = Shortcut(("Quitter"), "Q")
       Picture = Picture["Icones/exit.png"]
     }
+  }
+  { Colcp ColumnView
+    MoveScaled(-3,15,61,65)
+    Visible = False
+    Font = Font["Serif,-1"]
+    Background = &HE8E8B0&
+    Mouse = Mouse.Pointing
+    Sorted = True
+    ScrollBar = Scroll.Vertical
   }
 }

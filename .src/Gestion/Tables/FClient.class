@@ -638,8 +638,6 @@ Public Sub CleanChamps()
   Burdist2.Clear
   Colal.Clear
   Mreg.text = ""
-  Dssr.Clear
-  Copie.value = False
   Inactif.Value = False
   Div.value = False
   'Tarif.value = False
@@ -3027,8 +3025,6 @@ Public Sub CleanChampsCt()
 
 End
 
-'************* Document ************
-
 '************************************
 '* Document lié au client *
 '************************************
@@ -3068,11 +3064,15 @@ Public Sub Maj_Dssr(Origin As String)
   prop.tri = True
   Col.Add(prop, k)
 
-  tr = New TriGen(PanelGedDoc, Col, Res, Req, 20, Me) As "ColTriGenDoc"
+  tr = New TriGen(PanelGedDoc, Col, Res, Req, 20, Me) As "PanelGedDoc"
   If Origin Then
-    tr.ExtraSel(utils.db.Subst("compte=&1 and type = &2 and origin = &3", Cd.text, LGed.Clients, Origin), "and")
+    If Origin = "Compta" Then
+      tr.ExtraSel(utils.db.Subst("compte=&1 and type = &2 and origin = &3", Cd.text, LGed.Comptabilite, "Facture"), "and")
+    Else
+      tr.ExtraSel(utils.db.Subst("compte=&1 and type = &2 and origin = &3", Cd.text, LGed.Clients, Origin), "and")
+    Endif
   Else
-    tr.ExtraSel(utils.db.Subst("compte=&1 and type = &2", Cd.text, LGed.Clients), "and")
+    tr.ExtraSel(utils.db.Subst("compte=&1 and (type = &2 or (type = &3 and origin = &4))", Cd.text, LGed.Clients, LGed.Comptabilite, "Facture"), "and")
   Endif
   tr.FontSize(-2)
   tr.Update()
@@ -3080,7 +3080,7 @@ Public Sub Maj_Dssr(Origin As String)
   
 End
 
-Public Sub ColTriGenDoc_MajSel(val As Variant)
+Public Sub PanelGedDoc_MajSel(val As Variant)
 
   Dim Lg As LGed
   If val Then
@@ -3092,177 +3092,7 @@ Public Sub ColTriGenDoc_MajSel(val As Variant)
   
 End
 
-
-Public Sub Dssr_Data(Row As Integer, Column As Integer)
-
-  Try Dssr.Data.Text = tableau[Row, Column]
-
-End
-
-Public Sub Dssr_Activate()
-
-  Dim Attente As Boolean = False
-
-  Try Desktop.Open(Dssr[Dssr.row, 1].Text, Attente)
-  If Error Then Message.Info("Ce fichier n'existe pas ! Peut-être devriez-vous le supprimer de cette liste. ")
-
-End
-
-Public Sub Dssr_KeyPress()
-
-  If Key.code = Key.del Or Key.code = Key.delete Then
-    If Message.Question("Vous allez supprimer le lien sélectionné.", "Oui", "Non") = 1 Then
-      Try Utils.db.Exec("DELETE FROM " & Cbase.Table("TabCdocs") & " WHERE code = &1 and doc = &2", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 1].Text)
-      If Error Then
-        Message.Error("Impossible de supprimer ce document ...")
-      Else
-        If Message.Question("Le lien a été supprimé !\nVoulez-vous supprimer le fichier ?", "Oui", "Non") = 1 Then Try Kill Dssr[Dssr.row, 1].Text
-      Endif
-      Maj_Dssr()
-    Endif
-  Endif
-  If Key.code = Key.F2 Then
-    If Dssr.Width = TabStrip1.w - 5 Then
-      Dssr.Width = Tous.x - 7
-    Else
-      Dssr.Width = Tabstrip1.w - 5
-      Dssr.Columns[2].Width = Tabstrip1.w - (Dssr.Columns[0].Width + Dssr.Columns[3].Width)
-    Endif
-  Endif
-  If Key.code = Key.F3 Then
-    Message.Info(Dssr[Dssr.row, 1].Text)
-  Endif
-
-End
-
-Public Sub Dssr_MouseDown()
-
-  If Me.mouse = Mouse.right Then
-    Tbxrem2.Clear
-    If Mouse.Right Then
-      If Not Tbxrem2.Visible Then
-        Try Dssr.Current.EnsureVisible
-        If Not Error Then
-          ShowTextBox()
-          Tbxrem2.SetFocus
-        Endif
-      Else
-        Tbxrem2.Visible = False
-      Endif
-    Else
-      If Tbxrem2.Visible Then Tbxrem2.Visible = False
-    Endif
-  Endif
-
-End
-
-' Affichage du Textbox Tbxrem
-Public Function ShowTextBox()
-
-  With Dssr.Current
-    Tbxrem2.Text = .Text
-    Tbxrem2.Width = Dssr.Columns.Width
-    Tbxrem2.Move(Dssr.X + Dssr[Dssr.row, 3].x, Dssr.Y + Dssr.Rows.Height + Dssr.current.Y, Dssr.Columns[3].Width, .H)
-    Tbxrem2.Text = Dssr[Dssr.row, 3].Text
-    Tbxrem2.Visible = True
-  End With
-
-End
-
-'Masquage du Textbox Tbxrem
-Public Function HideTextBox()
-
-  With Utils
-    Try Dssr[Dssr.row, 3].Text = Tbxrem2.Text
-    Utils.db.Exec("Update " & Cbase.Table("TabCdocs") & " set doc2 = &3 where code = &1 AND doc = &2 ", Dssr[Dssr.row, 0].Text, Dssr[Dssr.row, 2].Text, Dssr[Dssr.row, 3].Text)
-    Tbxrem2.Visible = False
-
-  End With
-
-End
-
-Public Sub Tbxrem2_KeyPress()
-
-  If Key.code = Key.Enter Or Key.code = Key.Return Then
-    HideTextBox()
-  Endif
-
-End
-
-Public Sub Tbxrem2_MouseDown()
-
-  If Tbxrem2.Visible Then Tbxrem2.Visible = False
-
-End
-
-Public Sub Maj_Dssr2()
-
-  Dim rDoc As Result
-  Dim Tag As String[]
-  Dim n As Integer = 0
-
-  Dssr.Rows.Count = 0
-  Dssr.Refresh()
-  Dssr.Columns.Count = 4
-  Dssr.Columns[0].Width = 100
-  Dssr.Columns[1].Width = 0
-  Dssr.Columns[2].Width = 330
-  Dssr.Columns[3].Width = 330
-  Dssr.Columns[0].Text = "Code"
-  Dssr.Columns[2].Text = "Nom du fichier"
-  Dssr.Columns[3].Text = "Etiquettes"
-  If Tous.value Then rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCdocs") & " where code = &1 order by doc", Cd.Text)
-  If Facs.value Or Facs2.value Or Facs3.value Or Facs4.value Then rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCdocs") & " where code = &1 and org = &2 order by doc", Cd.Text, "Facs")
-  If Docs.value Then rDoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCdocs") & " where code = &1 and org = &2 order by doc", Cd.Text, "Docs")
-  If rDoc.Available Then
-    n = 0
-    tableau = New String[rDoc.Count, 4]
-    Repeat
-      Dssr.Rows.count = n + 1
-      Tag = Split(rDoc!doc, "/")
-      If Tous.Value Then
-        Tableau[n, 0] = rDoc!code
-        Tableau[n, 1] = rDoc!doc
-        Tableau[n, 2] = Tag[Tag.count - 1]
-        Tableau[n, 3] = rDoc!doc2
-        Inc n
-      Endif
-      If Facs.value And Left$(Tag[Tag.count - 1]) = "F" Then
-        Tableau[n, 0] = rDoc!code
-        Tableau[n, 1] = rDoc!doc
-        Tableau[n, 2] = Tag[Tag.count - 1]
-        Tableau[n, 3] = rDoc!doc2
-        Inc n
-      Endif
-      If Facs2.Value And Left$(Tag[Tag.count - 1]) = "B" Then
-        Tableau[n, 0] = rDoc!code
-        Tableau[n, 1] = rDoc!doc
-        Tableau[n, 2] = Tag[Tag.count - 1]
-        Tableau[n, 3] = rDoc!doc2
-        Inc n
-      Endif
-      If Facs3.Value And Left$(Tag[Tag.count - 1]) = "C" Then
-        Tableau[n, 0] = rDoc!code
-        Tableau[n, 1] = rDoc!doc
-        Tableau[n, 2] = Tag[Tag.count - 1]
-        Tableau[n, 3] = rDoc!doc2
-        Inc n
-      Endif
-      If Facs4.Value And Left$(Tag[Tag.count - 1]) = "D" Then
-        Tableau[n, 0] = rDoc!code
-        Tableau[n, 1] = rDoc!doc
-        Tableau[n, 2] = Tag[Tag.count - 1]
-        Tableau[n, 3] = rDoc!doc2
-        Inc n
-      Endif
-    Until rDoc.MoveNext()
-  Endif
-Catch
-  Print Error.Text
-
-End
-
-'************* Document ************
+'************* Fin Document ************
 
 Private Function FileFilter(Optional All As Boolean = False) As String[]
 
@@ -3301,12 +3131,21 @@ Public Sub Button9_Click()
 
   Dim hForm As LGed
   Dim cancel As Boolean
+  Dim tags As String[]
+  Dim rResult As Result
 
   If Not IsNull(Cd.Text) Then
+    tags = New String[]
     hForm = New LGed(Null, 0, LGed.Clients, "", "", Cd.Text)
     hForm.TTC = New LPrix(0)
     hForm.HT = New LPrix(0)
     hForm.DTE = LDate()
+    hForm.AddTag(Cd.Text)
+    rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabCli") & " WHERE cli_code = " & Cd.Text)
+    If rResult.Available Then
+      tags = LGed.String2Array(rResult!tag_def).Copy()
+      hForm.AddTags(tags)
+    Endif
     cancel = hForm.ShowModal()
     If cancel Then
       hForm.Delete()
@@ -3338,19 +3177,25 @@ Public Sub Facs_Click()
 
 End
 
-Public Sub Facs2_Click()
+Public Sub FacsCompta_Click()
+
+  Maj_Dssr("Compta")
+
+End
+
+Public Sub BonLivraison_Click()
 
   Maj_Dssr("BL")
 
 End
 
-Public Sub Facs3_Click()
+Public Sub Comman_Click()
 
   Maj_Dssr("Commande")
 
 End
 
-Public Sub Facs4_Click()
+Public Sub Devis_Click()
 
   Maj_Dssr("Devis")
 

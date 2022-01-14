@@ -326,6 +326,7 @@ Public Sub compteman()
   Dim Cmpts As Result
   Dim libel_var As LVar
   Dim libel_def As String
+  Dim localvars As Collection
 
   B = 0
   If LF = 0 Then
@@ -405,11 +406,14 @@ Public Sub compteman()
             Endif
             If Left$(numcompte.Text, 2) = "40" Or Left$(numcompte.Text, 2) = "41" Then
               numcvtl = numcompte.text
-              libel_var = New LVar(Libelecrit, Null, Intitulcompte.Text & " ")
+              localvars = New Collection
+              'On ajoute une variable nulle ici pour la comptatibilité avec les variables possible en Facturation
+              localvars.Add("", "$numbl")
+              libel_var = New LVar(Libelecrit, localvars, Intitulcompte.Text & " ")
               libel_var.AddDate(LDate(datej.Text))
               libel_var.ParseResult(Cmpts)
               libel_def = libel_var.Evaluate(Cmpts!libel_def)
-              Libelecrit.Text = Left(libel_def, 45)
+              Libelecrit.Text = Left(libel_def, 50)
             Endif
             If Cmpts!solde <> "" Then
               soldecompte.Text = Format$(Cmpts!solde, "0.00")
