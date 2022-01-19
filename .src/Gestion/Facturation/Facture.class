@@ -5361,7 +5361,7 @@ Public Sub Art_KeyPress()
       ' artpu.SetFocus
     Endif
 
-    If Key.code = 68 Then Dupli3() 'CTRL+D
+    If Key.code = 68 Then DupliDoc() 'CTRL+D
 
     If Key.code = 80 Then 'CTRL+P
       Select Case Last.tag
@@ -8632,7 +8632,7 @@ Public Sub Coldetail_Keypress()
   Endif
   'On lance la duplication
   If key.Control Then
-    If Key.code = 68 Then Dupli3()
+    If Key.code = 68 Then DupliDoc()
   Endif
 Catch
   If start.son Then
@@ -8645,7 +8645,7 @@ End
 '**************************************************
 '*       Duplication document en cours            *
 '**************************************************
-Public Sub Dupli3()
+Public Sub DupliDoc()
 
   Dim numbon As String
   Dim $dup, $dupP As Boolean = False

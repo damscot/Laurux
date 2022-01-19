@@ -226,7 +226,8 @@ Public Sub Update_Req()
   
   Col = New Collection
   
-  Req = "select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag left join Docs_Tag as t on lind=t.tag_lind left join Docs_Ged as d on d.lind=t.doc_lind"
+  'La requete de construction est limité à 1 element.
+  Req = "select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind limit 1"
   Res = Utils.db.Exec(Req)
   If Not Res.Available Then Return
   k = "- idx -"
@@ -253,7 +254,9 @@ Public Sub Update_Req()
   k = "- Orig -"
   prop = New ObjProp(Res.Fields["origin"], k)
   Col.Add(prop, k)
-
+  
+  'La requete pour le trigen n'a pas de limite par défaut
+  Req = "select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind"
   tr = New TriGen(Panel1, Col, Res, Req, 20, Me) As "TriGen"
   tr.NoUp = True
   tr.GroupBy("group by doc_lind")
@@ -424,7 +427,7 @@ Public Sub SupprimerTags_Click()
 
   tags = New Strings[]
   For Each idx In Selected
-    Res = Utils.db.Exec("Select tag from Docs_Ged as d left join Docs_Tag on d.lind=doc_lind Left join Fiches_Tag as t on t.lind = tag_lind where d.lind = &1", idx)
+    Res = Utils.db.Exec("Select tag from Docs_Ged as d inner join Docs_Tag on d.lind=doc_lind inner join Fiches_Tag as t on t.lind = tag_lind where d.lind = &1", idx)
     If Res.Available Then
       Repeat
         If tags.Find(Res!tag) = -1 Then

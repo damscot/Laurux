@@ -1599,6 +1599,28 @@ Public Sub Bip()
 
 End
 
+Public Sub MouseProcessing()
+
+  If Not IsNull(Start.MainWindow) Then
+    Start.MainWindow.Mouse = Mouse.Wait
+    If Not IsNull(Application.ActiveWindow) Then
+      Application.ActiveWindow.Mouse = Mouse.Wait
+    Endif
+  Endif
+  
+End
+
+Public Sub MouseDefault()
+
+  If Not IsNull(Start.MainWindow) Then
+    Start.MainWindow.Mouse = Mouse.Default
+    If Not IsNull(Application.ActiveWindow) Then
+      Application.ActiveWindow.Mouse = Mouse.Default
+    Endif
+  Endif
+  
+End
+
 Public Sub Log(Obj As Variant, sMessage As String, Optional level As Integer = Logger.Info)
 
   Dim lg As LLog

@@ -560,6 +560,7 @@ Public Sub GetAllFiltered() As Result
   
   Dim sel_comb As String
   Dim have_comb As String
+  Dim rRes As Result
 
   If Extra_sel <> Null And Sel <> Null Then
     sel_comb = Extra_selcomb
@@ -567,8 +568,18 @@ Public Sub GetAllFiltered() As Result
   If Extra_have <> Null And Having <> Null Then
     have_comb = Extra_havecomb
   Endif
-  
-  Return Utils.db.Exec(Request & where & Extra_sel & " " & sel_comb & " " & Sel & " " & Group & " " & has & Extra_have & " " & have_comb & " " & Having & " order by " & Tri)
+
+  If Parent Then
+    Parent.mouse = mouse.Wait
+  Endif
+
+  rRes = Utils.db.Exec(Request & where & Extra_sel & " " & sel_comb & " " & Sel & " " & Group & " " & has & Extra_have & " " & have_comb & " " & Having & " order by " & Tri)
+
+  If Parent Then
+    Parent.mouse = mouse.Default
+  Endif
+
+  Return rRes
   
 End
 
@@ -577,7 +588,7 @@ Public Sub Update()
   Dim Rescnt As Result
   'Dim TimeExec As Date
   'Dim TimeLong As Integer
-
+  
   If NbEnreg < 0 Then NbEnreg = 0
   Count.Value = NbEnreg
   

@@ -416,7 +416,9 @@ Public Sub Exec(Request As String, ...) As Result
   
   'Une fois logger on execute la requete
   If Utils.db.Opened = True Then
+    Utils.MouseProcessing()
     rResult = Super.Exec(Request)
+    Utils.MouseDefault()
     Return rResult
   Else
     'Message.Error("La connection a la Base de donnée est inexistante, Vérifier vos paramètres d'accès.") 

@@ -636,7 +636,7 @@ Public Function editefm(Optional courriel As Boolean = False, tri As String) As 
     Me.resent.MoveFirst          'on regarde si 1 bon ne vient pas de la caisse
     Repeat
       If Not IsNull(Me.resent!numtick) Then
-        Message.Error("Document en attente de moulinage ...\n le BL est noté règlé par le ticket " & Me.resent!numtick)
+        Message.Error("Document en attente de moulinage ...\n le BL " & Me.resent!numbl & " est noté règlé par le ticket " & Me.resent!numtick)
         Return True
       Endif
     Until Me.resent.MoveNext()
@@ -669,7 +669,7 @@ Public Function editefm(Optional courriel As Boolean = False, tri As String) As 
         sText2 = Variables.sTexte
       Endif
       sText = "Facture n° : " & Me.numfac & " du " & Me.dtedoc.L
-      Me.dupli2()
+      Me.CopieGedFac()
       EnvMail.Envoi(Me.rescli!cli_email, sText, sText2, True, User.Home & "/tmp/", "application/pdf", "Facture.pdf")
     Else
       Me.imp.NumCopies = Me.nbexplemplaire
@@ -682,7 +682,7 @@ Public Function editefm(Optional courriel As Boolean = False, tri As String) As 
           If Me.condvent Then Impression.Facture(Me.condvent, 1, Me.imp.Name)
         Endif
       Endif
-      Me.Dupli2()
+      Me.CopieGedFac()
     Endif
     transblfac()
   Until res.MoveNext()
@@ -734,7 +734,7 @@ Public Function editef() As Boolean         ''Edite les factures
       If Me.condvent Then Impression.Facture(Me.condvent, 1, Me.imp.Name)
     Endif
   Endif
-  Me.dupli2()
+  Me.CopieGedFac()
   Application.Busy -= 1
   If Me.saisreg Then
     $win = New Window
@@ -772,7 +772,7 @@ Public Function editebl() As Boolean        ''Edite un bl
   Me.imp.NumCopies = Me.nbexplemplaire
   If Me.imp.NumCopies > 0 Then Me.edit.Print(Me.imp)
   
-  Me.Dupli2()
+  Me.CopieGedFac()
   Application.Busy -= 1
   
 End

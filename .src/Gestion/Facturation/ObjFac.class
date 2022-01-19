@@ -858,9 +858,9 @@ Public Function testchem() As Boolean
   Endif
 End
 'chemin de la facture
-Public Sub Dupli2()
+Public Sub CopieGedFac()
 
-  Dim chemin, ty As String 
+  Dim chemin, ty As String
   Dim res As Result
   Dim rResult As Result
   Dim imp As New Printer
@@ -955,7 +955,7 @@ Public Function ecriturecompt() As Boolean
   
   resent.MoveFirst()
   If Not IsNull(resent!numtick) Then
-    Message.Error("Document en attente de moulinage ...\n le BL est noté règlé par le ticket " & resent!numtick)
+    Message.Error("Document en attente de moulinage ...\n le BL " & $numbl & " est noté règlé par le ticket " & resent!numtick)
     Return True
   Endif
   lignecom = New VarEcr
