@@ -47,11 +47,11 @@ Public Sub AddDate(dte As LDate, Optional Prefix As String = "")
   
   $context["$" & Prefix & "annee"] = CStr(dte.Year)
   $context["$" & Prefix & "annee2"] = CStr(dte.Year2)
-  $context["$" & Prefix & "mois"] = CStr(dte.Month)
+  $context["$" & Prefix & "mois"] = Format(CStr(dte.Month), "00")
   $context["$" & Prefix & "moistr"] = dte.MonStr
   $context["$" & Prefix & "moistr3"] = dte.MonStr3
-  $context["$" & Prefix & "semaine"] = CStr(dte.Week)
-  $context["$" & Prefix & "jour"] = CStr(dte.Day)
+  $context["$" & Prefix & "semaine"] = Format(CStr(dte.Week), "00")
+  $context["$" & Prefix & "jour"] = Format(CStr(dte.Day), "00")
   $context["$" & Prefix & "jourstr"] = dte.WeekDay
   $context["$" & Prefix & "jourstr3"] = dte.WeekDay3
   

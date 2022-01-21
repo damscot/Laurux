@@ -2922,7 +2922,7 @@ Public Sub Deb3()
       If recr!typem = "1" Then
         Colabt.Item[3] = "Montant"
       Else
-        Colabt.Item[3] = "Pourcentage"
+        Colabt.Item[3] = "???????"
       Endif
     Until recr.MoveNext()
     Colabt.MoveFirst()
@@ -2945,61 +2945,10 @@ Public Sub Colabt_Click()
       Numcompte.text = recr!compte
       Numcpt = Numcompte.Text
       Intitulcompte.Text = recr!intitule
-      libelecrit.Text = Colabt.Current[1]
       Type_compte()
-      ' Repeat
-      If Val(recr!debit) <> 0 Then
-        Totabd += Val(Utils.cpoint(recr!debit))
-      Else
-        Totabc += Val(Utils.cpoint(recr!credit))
-      Endif
-      If Totabd > 0 Then
-        Montant.Text = Format$(Totabd, "0.00")
-        debit.Value = True
-      Else
-        Montant.Text = Format$(Totabc, "0.00")
-        credit.Value = True
-      Endif
-      ' Until recr.MoveNext()
       Colabt.Visible = False
       EcrA = "1"
     Endif
-    Numdoc.SetFocus
-  Endif
-
-End
-
-Public Sub Colabt2_Click()
-
-  Dim recr As Result
-
-  If Colabt.Count > 0 Then
-    If Colabt.Item[3] = "Montant" Then
-      recr = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " where numero = &1", Colabt.Current[0], "0,00")
-      If recr.Available Then
-        Numcompte.text = recr!compte
-        Intitulcompte.Text = recr!intitule
-        libelecrit.Text = Colabt.Current[1]
-        Montant.Text = recr!credit
-        libelecrit.SetFocus
-        Colabt.Visible = False
-        EcrA = "1"
-        Credit.Value = True
-      Endif
-    Else
-      recr = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " where numero = &1 ", Colabt.Current[0])
-      If recr.Available Then
-        Numcompte.text = recr!compte
-        Intitulcompte.Text = recr!intitule
-        libelecrit.Text = Colabt.Current[1]
-        Montant.Text = recr!credit
-        libelecrit.SetFocus
-        Colabt.Visible = False
-        EcrA = "1"
-        Credit.Value = True
-      Endif
-    Endif
-    Type_compte()
     Numdoc.SetFocus
   Endif
 
@@ -3018,30 +2967,88 @@ End
 Public Sub LignAbt()
 
   Dim recr As Result
+  Dim var As LVar
+  Dim libel_def As String
+  Dim mnt As String
+  Dim num_doc As String
+  Dim num_lot As String
+  Dim localvars As Collection
 
   Ecrit1.clear
   If Colabt.Item[3] = "Montant" Then
-    recr = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " where numero = &1 order by lig", Colabt.Current[0])
+    recr = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " as l inner join " & Cbase.Table("TabNumabon") & " as d on d.numero = l.numero where l.numero = &1 order by lig", Colabt.Current[0])
     If recr.Available Then
       Repeat
         Cle = Ecrit1.Count + 1
         numcpt = recr!compte
         Intitulcompte.Text = recr!intitule
-        Libelecrit.Text = recr!libelle
-        numdoc.text = recr!numDoc
-        numlot.text = recr!numLot
+        If IsNull(Numdoc.Text) Or Numdoc.Text = Numecrit.Text Then
+          If Not IsNull(recr!numDoc) Then
+            localvars = New Collection
+            var = New LVar(Numdoc, localvars, recr!numDoc) 
+            var.AddDate(LDate(datej.Text))
+            var.ParseResult(recr)
+            num_doc = var.Evaluate(recr!numDoc)
+            num_doc = Left(num_doc, 10)
+          Else
+            num_doc = Numecrit.Text
+          Endif
+        Else
+          num_doc = Numdoc.Text
+        Endif
+        If IsNull(Numlot.Text) Or Numlot.Text = Numecrit.Text Then
+          If Not IsNull(recr!numLot) Then
+            localvars = New Collection
+            var = New LVar(Numlot, localvars, recr!numLot) 
+            var.AddDate(LDate(datej.Text))
+            var.ParseResult(recr)
+            num_lot = var.Evaluate(recr!numLot)
+            num_lot = Left(num_lot, 10)
+          Else
+            num_lot = Numecrit.Text
+          Endif
+        Else
+          num_lot = Numlot.Text
+        Endif
+        If IsNull(Libelecrit.Text) Then
+          localvars = New Collection
+          var = New LVar(Libelecrit, localvars, recr!libelle) 
+          var.AddDate(LDate(datej.Text))
+          var.ParseResult(recr)
+          libel_def = var.Evaluate(recr!libelle)
+          libel_def = Left(libel_def, 50)
+        Else
+          libel_def = Libelecrit.Text
+        Endif
         Ecrit1.Add(recr!lig, recr!lig)
         Ecrit1.Item[0] = cle
         Ecrit1.Item[1] = numcpt
-        Ecrit1.Item[2] = Libelecrit.Text
-        Ecrit1.Item[3] = numdoc.text
-        Ecrit1.Item[4] = numlot.text
-        Ecrit1.Item[5] = Format$(Val(Utils.cpoint(recr!debit)), "0.00")
-        Ecrit1.Item[6] = Format$(Val(Utils.cpoint(recr!credit)), "0.00")
+        Ecrit1.Item[2] = libel_def
+        Ecrit1.Item[3] = num_doc
+        Ecrit1.Item[4] = num_lot
+        
+        localvars = New Collection
+        If Not IsNull(Montant.Text) Then
+          localvars.Add(Montant.Text, "$montant")
+        Else
+          localvars.Add("0", "$montant")
+        Endif
+        var = New LVar(Null, localvars, recr!debit)
+        'var.AddDate(LDate(datej.Text)) 'Probablement jamais nécessaire
+        'var.ParseResult(recr)
+        mnt = var.Evaluate(recr!debit)
+        Ecrit1.Item[5] = LPrix(mnt).L
+        var = New LVar(Null, localvars, recr!credit)
+        'var.AddDate(LDate(datej.Text)) 'Probablement jamais nécessaire
+        'var.ParseResult(recr)
+        mnt = var.Evaluate(recr!credit)
+        Ecrit1.Item[6] = LPrix(mnt).L
+        
         Ecrit1.Item[7] = datej.Text
         Ecrit1.Item[8] = Intitulcompte.Text
         Ecrit1.Item[9] = journal.Text
       Until recr.MoveNext()
+      Abont.Compteur_Incr(Colabt.Current[0])
     Endif
   Endif
   EcrA = "0"

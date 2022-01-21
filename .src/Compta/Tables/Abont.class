@@ -30,7 +30,6 @@ Private Type As String
 Private Type2 As String
 Private b As String
 Private dnum As Integer
-Private Modif As Integer = 0
 
 Public Bsel As Boolean
 Public Bval As String
@@ -72,8 +71,6 @@ Public Sub _New()
   Colecr.Columns[7].Text = "Num Doc"
   Colecr.Columns[8].Width = 90
   Colecr.Columns[8].Text = "Num Lot"
-  
-  Solde.text = "0,00"
   ComboBox1.text = "1- Montant"
   dbl = ""
   type = "F"
@@ -123,7 +120,7 @@ Public Sub Cmpt_Keypress()
         Stop Event
     End Select
   Else
-    If Last.tag = 4 Then ChkPrx()
+  ' If Last.tag = 4 Then ChkPrx() 'On utilise l'usage des variables ici.
   Endif
 
   If Key.code = Key.F5 Then
@@ -159,52 +156,53 @@ End
 
 'On gére la saisie des lignes d'écritures
 '***************************************************************************************************************
+Public Sub FillColecr(codeabn As String)
+  
+  Dim recrt As Result
+  
+  recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " Where numero = &1 order by lig asc", codeabn)
+  If recrt.Available Then
+    Colecr.Clear()
+    Repeat
+      Colecr.Add(recrt!lig, recrt!lig)
+      Colecr.Item[0] = recrt!compte
+      Colecr.Item[1] = recrt!intitule
+      If combobox1.text = "1- Montant" Then
+        Colecr.Item[2] = recrt!debit
+        Colecr.Item[3] = recrt!credit
+        Colecr.Item[4] = recrt!lig
+        Colecr.Item[5] = recrt!lind
+        Colecr.Item[6] = recrt!libelle
+        Colecr.Item[7] = recrt!numDoc
+        Colecr.Item[8] = recrt!numLot
+      Endif
+    Until recrt.MoveNext()
+  Endif
+  
+End
+  
 '****************************************************
 '       On rappelle une ligne
 '*****************************************************
 Public Sub Colabt_Click()
 
   Dim recrt As Result
-
-  Colecr.Clear
+  
   recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabNumabon") & " Where numero = &1", Colabt.Item[0])
-  Code.Text = recrt!numero
-  Libelle.Text = recrt!intitule
-  If recrt!type = "A" Then BA.value = True
-  If recrt!type = "T" Then BT.value = True
-  If recrt!typem = "1" Then
-    ComboBox1.text = "1- Montant"
-    Solde.Text = "0,00"
-  Else
-    If recrt!typem = "2" Then
-      ComboBox1.Text = "2- Pourcentage"
-      Solde.Text = "0"
-    Endif
-  Endif
-  recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " Where numero = &1", Code.Text)
   If recrt.Available Then
-    Repeat
-      Try Colecr.Add(recrt!lig, recrt!lig)
-      Colecr.Item[0] = recrt!compte
-      Colecr.Item[1] = recrt!intitule
-      If combobox1.text = "1- Montant" Then
-        Try Colecr.Item[2] = Format$(Val(Utils.cpoint(recrt!debit)), "0.00")
-        If Error Then Colecr.Item[2] = "0,00"
-        Try Colecr.Item[3] = Format$(Val(Utils.cpoint(recrt!credit)), "0.00")
-        If Error Then Colecr.Item[2] = "0,00"
-        Colecr.Item[4] = recrt!lig
-        Colecr.Item[5] = recrt!lind
-        Colecr.Item[6] = recrt!libelle
-        Colecr.Item[7] = recrt!numDoc
-        Colecr.Item[8] = recrt!numLot
-        'ELSE
-        'Colecr.Item[2] = Format$(Val(Utils.cpoint(recrt!debit)), "0")
-        'Colecr.Item[3] = Format$(Val(Utils.cpoint(recrt!credit)), "0")
-      Endif
-    Until recrt.MoveNext()
-    Modif = 1
+    Code.Text = recrt!numero
+    Libelle.Text = recrt!intitule
+    Compteur.Value = recrt!compteur
+    If recrt!type = "A" Then BA.value = True
+    If recrt!type = "T" Then BT.value = True
+    If recrt!typem = "1" Then
+      ComboBox1.text = "1- Montant"
+    Else
+      Message.Erreur("Format de masque de saisie " & recrt!typem & " non supporté!")
+    Endif
+    FillColecr(recrt!numero)
+    Compte.SetFocus
   Endif
-  Compte.SetFocus
 
 End
 
@@ -236,12 +234,10 @@ Public Sub Button2_Click()
     Intitule.clear
     Compte.Clear
     Montant.Clear
-    
+    Compteur.Value = 0
     NumDoc.Clear
     NumLot.Clear
     LibelleEcrit.Clear
-    
-    Solde.text = "0,00"
     Libelle.SetFocus
     Colecr.Clear
     Bfournisseur.Value = True
@@ -261,66 +257,35 @@ End
 Public Sub Button7_Click()
 
   Dim ligne As Integer = Colecr.count
+  Dim valdeb As String
+  Dim valcre As String
+  Dim recrt As Result
 
   Inc ligne
   If Not IsNull(code.text) Then
-    With Utils
-      Colecr.Add(Ligne, ligne)
-      Colecr.Item[0] = compte.text
-      Colecr.Item[1] = Intitule.text
-      Colecr.Item[4] = ligne
-      If Debit.Value = True Then
-        If ComboBox1.Text = "1- Montant" Then
-          Colecr.Item[2] = Format$(Val(.cpoint(Montant.text)), "0.00")
-          Colecr.Item[3] = "0,00"
-        Else
-          Colecr.Item[2] = Format$(Val(.cpoint(Montant.text)), "0")
-          Colecr.Item[3] = "0"
-        Endif
-      Else
-        If ComboBox1.Text = "1- Montant" Then
-          Colecr.Item[2] = "0,00"
-          Colecr.Item[3] = Format$(Val(.cpoint(Montant.text)), "0.00")
-        Else
-          Colecr.Item[2] = Format$(Val(.cpoint(Montant.text)), "0")
-          Colecr.Item[3] = "0"
-        Endif
-      Endif
-      
-      Colecr.Item[6] = LibelleEcrit.Text
-      Colecr.Item[7] = NumDoc.Text
-      Colecr.Item[8] = NumLot.Text
-      
-      'IF type2 = "VE" AND Debit.value = TRUE THEN Solde.Text = Format$(Val(.cpoint(Solde.Text)) + Val(.cpoint(Montant.Text)), "0.00")
-      'IF type2 = "VE" AND Credit.value = TRUE THEN Solde.Text = Format$(Val(.cpoint(Solde.Text)) - Val(.cpoint(Montant.Text)), "0.00")
-      If type2 = "AC" And Debit.value = True Then Solde.Text = Format$(Val(.cpoint(Solde.Text)) - Val(.cpoint(Montant.Text)), "0.00")
-      If type2 = "AC" And Credit.value = True Then Solde.Text = Format$(Val(.cpoint(Solde.Text)) + Val(.cpoint(Montant.Text)), "0.00")
-      'IF type2 = "TR1" AND Debit.value = TRUE THEN Solde.Text = Format$(Val(.cpoint(Solde.Text)) - Val(.cpoint(Montant.Text)), "0.00")
-      'IF type2 = "TR1" AND Credit.value = TRUE THEN Solde.Text = Format$(Val(.cpoint(Solde.Text)) + Val(.cpoint(Montant.Text)), "0.00")
-      If type2 = "TR2" And Debit.value = True Then Solde.Text = Format$(Val(.cpoint(Solde.Text)) + Val(.cpoint(Montant.Text)), "0.00")
-      If type2 = "TR2" And Credit.value = True Then Solde.Text = Format$(Val(.cpoint(Solde.Text)) - Val(.cpoint(Montant.Text)), "0.00")
-      If ComboBox1.Text = "1- Montant" Then
-        Solde.Text = Format$(Val(.cpoint(solde.text)), "0.00")
-      Else
-        Solde.Text = Format$(Val(.cpoint(solde.text)), "0")
-      Endif
-      Calculsolde()
-      Montant.Text = Format$(Val(Utils.cpoint(Solde.text)), "0.00")
-      
-      Compte.Clear
-      Intitule.Clear
-      LibelleEcrit.Clear
-      NumDoc.Clear
-      NumLot.Clear
-      
-      'Colecr.Clear
-      Compte.SetFocus
-    End With
+    recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " Where numero = &1 and lig = &2", Code.Text, ligne)
+    
+    If Debit.Value = True Then
+      valdeb = Montant.Text
+      valcre = LPrix(0).L
+    Else
+      valdeb = LPrix(0).L
+      valcre = Montant.Text
+    Endif
+    
+    If recrt.Available Then
+      Utils.db.Exec("UPdate " & Cbase.Table("TabLigabon") & " set numero = &2, compte = &3, intitule = &4, debit = &5 , credit =&6, lig = &7 , libelle = &8 , numDoc = &9 , numLot = &{10} where lind = &1", recrt!lind, code.text, compte.text, Intitule.text, valdeb, valcre, ligne, LibelleEcrit.Text, numDoc.Text, numLot.Text)
+    Else
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigabon") & "(numero, compte, intitule, debit, credit, lig, libelle, numDoc, numLot) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9)", code.text, compte.text, Intitule.text, valdeb, valcre, ligne, LibelleEcrit.Text, numDoc.Text, numLot.Text)
+    Endif
+    FillColecr(Code.Text)
+    Compte.Clear
+    Intitule.Clear
+    Compte.SetFocus
   Else
     Message.Error("veuillez saisir un code écriture SVP en cliquant sur le bouton 'Créer'")
     Code.setfocus
   Endif
-Catch
 
 End
 
@@ -343,11 +308,7 @@ Public Sub Colecr_Activate()
   Else
     Montant.Text = Colecr.Current[2]
   Endif
-  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " WHERE numero = &1 and compte = &2", Code.Text, Colecr.Current[0])
-  If rResult.Available Then
-    Utils.db.Exec("DELETE FROM " & Cbase.Table("TabLigabon") & " where numero = &1 and compte = &2", Code.Text, Colecr.Current[0])
-  Endif
-  Colecr.Current.Delete
+  Supprim_ligne(Code.Text, Colecr.Current[5])
   If Left$(Compte.Text) = "1" Or If Left$(Compte.Text) = "2" Or If Left$(Compte.Text) = "3" Or If Left$(Compte.Text) = "4" Or If Left$(Compte.Text) = "5" Then Bbilan.Value = True
   If Left$(Compte.Text) = "6" Or If Left$(Compte.Text) = "7" Then Bgestion.Value = True
   If Left$(Compte.Text, 3) = "411" Then Bclient.Value = True
@@ -366,49 +327,49 @@ Public Sub Button3_Click()
   Dim sKey As String
 
   If Not IsNull(code.text) And If Colecr.Count > 0 Then
-    If Val(solde.text) = 0 Or If BT.value = True Then
-      If BA.value = True Then
-        typecr = "A"
-      Else
-        typecr = "T"
-      Endif
-      typem = Left$(combobox1.Text, 1)
-      recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabNumabon") & " Where numero = &1", code.Text)
-      If recrt.Available Then
-        Utils.db.Exec("UPdate " & Cbase.Table("TabNumabon") & " set numero = &1, intitule = &2, type = &3 , typem =&4 Where numero = &1", code.text, Libelle.Text, typecr, typem)
-        sKey = Colabt.Current.Key
-      Else
-        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabNumabon") & "(numero, intitule, type, typem) VALUES (&1, &2, &3, &4)", code.text, Libelle.Text, typecr, typem)
-        sKey = Code.Text
-      Endif
-      Colecr.MoveFirst()
-      Colecr.Item.Selected = True
-      Repeat
-        recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " Where lind = &1", Colecr.Item[5])
-        If recrt.Available Then
-          Utils.db.Exec("UPdate " & Cbase.Table("TabLigabon") & " set numero = &1, compte = &2, intitule = &3, debit = &4 , credit =&5, lig = &6 , libelle = &8 , numDoc = &9 , numLot = &{10} Where lind = &7", code.text, Colecr.Item[0], Colecr.Item[1], Colecr.Item[2], Colecr.Item[3], Colecr.Item[4], Colecr.Item[5], Colecr.Item[6], Colecr.Item[7], Colecr.Item[8])
-        Else
-          Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigabon") & "(numero, compte, intitule, debit, credit, lig, libelle, numDoc, numLot) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9)", code.text, Colecr.Item[0], Colecr.Item[1], Colecr.Item[2], Colecr.Item[3], Colecr.Item[4], Colecr.Item[6], Colecr.Item[7], Colecr.Item[8])
-        Endif
-      Until Colecr.MoveNext()
-      Colabt.Clear
-      Colecr.Clear
-      dbl = ""
-      type = "A"
-      type2 = "AC"
-      Tri = "numero"
-      ComboBox1.Text = "1- Montant"
-      Solde.Clear
-      Code.Clear
-      Libelle.clear
-      Deb3()
-      Try Colabt.MoveTo(sKey)
-      Try Colabt.Item.Selected = True
-      Try Colabt.Item.EnsureVisible
-      Bfournisseur_Click()
+    If BA.value = True Then
+      typecr = "A"
     Else
-      Message.Error("Enregistrement impossible, votre écriture n'est pas soldée !")
+      typecr = "T"
     Endif
+    typem = Left$(combobox1.Text, 1)
+    recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabNumabon") & " Where numero = &1", code.Text)
+    If recrt.Available Then
+      Utils.db.Exec("UPdate " & Cbase.Table("TabNumabon") & " set numero = &1, intitule = &2, type = &3 , typem =&4, compteur =&5 Where numero = &1", code.text, Libelle.Text, typecr, typem, Compteur.Value)
+      sKey = Colabt.Current.Key
+    Else
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabNumabon") & "(numero, intitule, type, typem, compteur) VALUES (&1, &2, &3, &4, &5)", code.text, Libelle.Text, typecr, typem, Compteur.Value)
+      sKey = Code.Text
+    Endif
+    Colecr.MoveFirst()
+    Colecr.Item.Selected = True
+    Repeat
+      recrt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " Where lind = &1", Colecr.Item[5])
+      If recrt.Available Then
+        Utils.db.Exec("UPdate " & Cbase.Table("TabLigabon") & " set numero = &1, compte = &2, intitule = &3, debit = &4 , credit =&5, lig = &6 , libelle = &8 , numDoc = &9 , numLot = &{10} Where lind = &7", code.text, Colecr.Item[0], Colecr.Item[1], Colecr.Item[2], Colecr.Item[3], Colecr.Item[4], Colecr.Item[5], Colecr.Item[6], Colecr.Item[7], Colecr.Item[8])
+      Else
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigabon") & "(numero, compte, intitule, debit, credit, lig, libelle, numDoc, numLot) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9)", code.text, Colecr.Item[0], Colecr.Item[1], Colecr.Item[2], Colecr.Item[3], Colecr.Item[4], Colecr.Item[6], Colecr.Item[7], Colecr.Item[8])
+      Endif
+    Until Colecr.MoveNext()
+    Colabt.Clear
+    Colecr.Clear
+    numDoc.Clear
+    numLot.Clear
+    Montant.Clear
+    LibelleEcrit.Clear
+    Compteur.Value = 0
+    dbl = ""
+    type = "A"
+    type2 = "AC"
+    Tri = "numero"
+    ComboBox1.Text = "1- Montant"
+    Code.Clear
+    Libelle.clear
+    Deb3()
+    Try Colabt.MoveTo(sKey)
+    Try Colabt.Item.Selected = True
+    Try Colabt.Item.EnsureVisible
+    Bfournisseur_Click()
   Else
     If Colecr.count > 0 Then
       Message.Error("veuillez saisir un code écriture SVP")
@@ -421,28 +382,45 @@ Public Sub Button3_Click()
 End
 
 '***********************************************
-'      On supprime la ligne
+'      On supprime la ligne courante
 '************************************************
-Public Sub Colecr_KeyPress()
+Public Sub Supprim_ligne(codeabon As String, lind As Integer)
 
   Dim rResult As Result
+  Dim r2Result As Result
+  Dim incr As Integer
 
-  If Key.code = Key.Delete And Colecr.Count <> 0 Then
-    If Start.son Then
-      Music.Play
-    Endif
-    If Message.Question("Etes-vous sur de vouloir supprimer cette ligne ?", "Oui", "Non") = 1 Then
-      rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " WHERE numero = &1 and compte = &2", Code.Text, Colecr.Current[0])
-      If rResult.Available Then
-        Utils.db.Exec("DELETE FROM " & Cbase.Table("TabLigabon") & " where numero = &1 and compte = &2", Code.Text, Colecr.Current[0])
-      Endif
-      Colecr.Current.Delete
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " where lind = &1", lind)
+  If rResult.Available Then
+    Utils.db.Exec("DELETE FROM " & Cbase.Table("TabLigabon") & " where lind = &1", lind)
+    Colecr.Current.Delete()
+    r2Result = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " Where numero = &1 order by lig asc", codeabon)
+    If r2Result.Available Then
+      incr = 1
+      Colecr.MoveFirst
+      Colecr.Item.Selected = True
+      Repeat
+        Utils.db.Exec("UPdate " & Cbase.Table("TabLigabon") & " set lig = &2 where lind = &1", r2Result!lind, incr)
+        Inc incr
+      Until r2Result.MoveNext()
+      FillColecr(Code.Text)
     Endif
   Endif
-  If Key.code = Key.enter Or Key.code = Key.return Then
+End
+
+Public Sub Colecr_KeyPress()
+  
+  
+  If Key.code = Key.Delete And Colecr.Count <> 0 Then
+    Utils.Bip()
+    If Message.Question("Etes-vous sur de vouloir supprimer cette ligne ?", "Oui", "Non") = 1 Then
+      Colecr.Item.Selected = True
+      Supprim_ligne(Code.Text, Colecr.Current[5])
+    Endif
+  Else If Key.code = Key.enter Or Key.code = Key.return Then
     Colecr_Activate()
   Endif
-
+  
 End
 
 '*************************************************
@@ -487,7 +465,7 @@ Public Sub Deb3()
       If recr!typem = "1" Then
         Colabt.Item[3] = "Montant"
       Else
-        Colabt.Item[3] = "Pourcentage"
+        Message.Erreur("Format de masque de saisie " & recr!typem & " non supporté!")
       Endif
     Until recr.MoveNext()
   Endif
@@ -595,7 +573,7 @@ Public Sub Button6_Click()
   MyForm.Showmodal()
   If Bsel = True Then
     Compte.text = Bval
-'    Intitule.Text = Comptabilite.sdesg
+    Compteman()
     Montant.SetFocus
   Endif
 
@@ -623,48 +601,23 @@ Public Sub BT_Click()
 
 End
 
-'***************************************
-'*  On calcule le solde de l'écriture  *
-'***************************************
-Public Sub Calculsolde()
-
-  Dim Totalcd As Float = 0
-  Dim Totaldb As Float = 0
-  Dim soldec As Float = 0
-  Dim montantcd As Float = 0
-  Dim montantdb As Float = 0
-
-  Colecr.MoveFirst
-  If Colecr.Count Then
-    Repeat
-      Colecr.Item.Selected = True
-      montantdb = Val(Colecr.Item[2])
-      montantcd = Val(Colecr.Item[3])
-      Totaldb = Totaldb + montantdb
-      Totalcd = Totalcd + montantcd
-      soldec = Totalcd - Totaldb
-      If combobox1.text = "1- Montant" Then
-        solde.Text = Format$(soldec, "0.00")
-      Else
-        solde.Text = Format$(soldec, "0")
-      Endif
-    Until Colecr.MoveNext()
-  Endif
-  If Val(Utils.CPoint(solde.Text)) = 0 Then
-    If combobox1.text = "1- Montant" Then
-      solde.Text = "0,00"
-    Else
-      Solde.Text = "0"
-    Endif
-  Endif
-
-End
-
 '***************************
 '*  On affiche la doc htML *
 '***************************
 Public Sub Button1_Click()
 
   Doc.Open("Abonnements")
+
+End
+
+Public Sub Intitule_KeyPress()
+
+  
+
+End
+
+Public Sub Compteur_Incr(Numabon As String)
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabNumabon") & " set compteur = compteur + 1 where numero = &1", Numabon)
 
 End

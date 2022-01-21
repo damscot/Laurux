@@ -5218,6 +5218,14 @@ end_utf8:
   If rResult.Available Then
     Repeat
       Tab = "Fiches_EntTickets" & rResult!code
+      Try r2Result = Utils.db.Exec("SELECT * FROM " & Tab & " ")
+      If Not Error Then
+        If r2Result.Available Then
+          If Message.Error("Le TicketsZ/moulinage doit etre effectué pour la caisse " & rResult!code & " avant la MAJ, restaurez la version précédente de Laurux, restaurez la base et procédez au moulinage avant de relancer la MAJ!", "Arreter", "Continuer") = 1 Then
+            Return
+          Endif
+        Endif
+      Endif
       Try Utils.db.Exec("DROP TABLE IF exists " & Tab)
       Tab = "Fiches_Reglts" & rResult!code
       Try Utils.db.Exec("DROP TABLE IF exists " & Tab)
@@ -5226,12 +5234,28 @@ end_utf8:
       tab = "Fiches_Ticketx" & rResult!code
       Try Utils.db.Exec("DROP TABLE IF exists " & tab)
       tab = "Fiches_Ticketz" & rResult!code
+      Try r2Result = Utils.db.Exec("SELECT * FROM " & Tab & " ")
+      If Not Error Then
+        If r2Result.Available Then
+          If Message.Error("Le TicketsZ/moulinage doit etre effectué pour la caisse " & rResult!code & " avant la MAJ, restaurez la version précédente de Laurux, restaurez la base et procédez au moulinage avant de relancer la MAJ!", "Arreter", "Continuer") = 1 Then
+            Return
+          Endif
+        Endif
+      Endif
       Try Utils.db.Exec("DROP TABLE IF exists " & Tab)
     Until rResult.MoveNext()
   Endif
   
   PB.Avancement("Table TicketsZ", 1)
   Tab = "Fiches_EntTicketz"
+  Try rResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
+  If Not Error Then
+    If rResult.Available Then
+      If Message.Error("Le moulinage doit etre effectué avant la MAJ, restaurez la version précédente de Laurux, restaurez la base et procédez au moulinage avant de relancer la MAJ!", "Arreter", "Continuer") = 1 Then
+        Return
+      Endif
+    Endif
+  Endif
   Try Utils.db.Exec("ALTER TABLE " & Tab & " change date date datetime")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (sautre Char(1))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mautre Char(12))")
@@ -5624,6 +5648,19 @@ end_utf8:
     Until rResult.MoveNext()
     PB.Close()
   Endif
+  
+  'On autorise pour les masques de saisies la possibilité d'utiliser des variables
+  'pour résoudre les différents champs utile de l'ecriture.
+  Tab = "Fiches_Ligabon"
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " modify debit TINYTEXT")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " modify credit TINYTEXT")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " modify numdoc TINYTEXT")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " modify numlot TINYTEXT")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " modify libelle TINYTEXT")
+  
+  Tab = "Fiches_Numabon"
+  'On ajoute un compteur du nombre d'appel au masque de saisie pour incrémenter potentiellement les champs des ecritures.
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (compteur INT(11) DEFAULT 0)")
   
   Try Utils.db.Exec("DROP TABLE Docs_Autres")
   Try Utils.db.Exec("DROP TABLE Docs_Clients")

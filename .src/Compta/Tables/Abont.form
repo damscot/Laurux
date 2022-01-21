@@ -65,7 +65,7 @@
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "4"
-      MaxLength = 12
+      MaxLength = 255
     }
     { Panel3 Panel
       MoveScaled(26,18,32,4)
@@ -82,19 +82,6 @@
         Text = Shortcut(("Crédit"), "r")
         Value = True
       }
-    }
-    { Label6 Label
-      MoveScaled(57,18,15,3)
-      Font = Font["Serif,-1"]
-      Text = ("Solde écriture")
-      Alignment = Align.Center
-    }
-    { Solde TextBox
-      MoveScaled(71,18,13.625,3)
-      Font = Font["Serif,-1"]
-      Background = Color.TextBackground
-      ReadOnly = True
-      MaxLength = 8
     }
     { Frame2 Frame
       MoveScaled(2,3,109,14)
@@ -175,7 +162,7 @@
     }
   }
   { Frame4 Frame
-    MoveScaled(1,22,67,17)
+    MoveScaled(1,22,84,17)
     Font = Font["Serif,-1"]
     Text = ("Numéro de masque")
     { Label1 Label
@@ -209,7 +196,7 @@
       { BA RadioButton
         MoveScaled(3,2,18,3)
         ToolTip = ("Cliquez ici, si vous souhaitez saisir une écriture d'achat ou d'OD.")
-        Text = ("Achat")
+        Text = ("Achat / Vente")
         Value = True
       }
       { BT RadioButton
@@ -224,7 +211,7 @@
     }
   }
   { Colabt ColumnView
-    MoveScaled(1,2,74,20)
+    MoveScaled(1,2,84,20)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     Sorted = True
@@ -234,7 +221,7 @@
     MoveScaled(16,53,34,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
-    MaxLength = 40
+    MaxLength = 255
   }
   { Label7 Label
     MoveScaled(7,53,11,3)
@@ -246,7 +233,7 @@
     MoveScaled(59,53,15,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
-    MaxLength = 40
+    MaxLength = 255
   }
   { Label8 Label
     MoveScaled(47,53,15,3)
@@ -258,12 +245,25 @@
     MoveScaled(85,53,24,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
-    MaxLength = 40
+    MaxLength = 255
   }
   { Label9 Label
     MoveScaled(73,53,15,3)
     Font = Font["Serif,-1"]
     Text = ("Num Lot")
     Alignment = Align.Center
+  }
+  { Compteur ValueBox
+    MoveScaled(68,28,14,3)
+    Font = Font["Serif,-1"]
+    Background = Color.TextBackground
+    Tag = "2"
+    ToolTip = ("Compteur du nombre d'appel au masque de saisie")
+  }
+  { TextArea1 TextArea
+    MoveScaled(86,2,28,39)
+    Font = Font["-3"]
+    Text = ("Pour les masques de saisie,\nil est possible pour plusieurs \nchamps d'utiliser des variables \npour adapter leur contenu \ndynamiquement. exemple:\nex:\n5% du montant saisie dans l'ecriture\nMontant: ($montant * 0.05)\n\nLibellé dynamique en fonction de la date\nLibellé: \"vir.perm.livret_\"  & $moistr3 & $annee2\n\nnumdoc  ou numlot dynamique\nen fonction du compteur d'usage du\nmasque de saisie:\nNum Doc/Num Lot: \"VIRL\" & $annee4 & \"-\" & $compteur\n")
+    ReadOnly = True
   }
 }
