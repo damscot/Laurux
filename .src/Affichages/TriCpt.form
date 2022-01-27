@@ -10,31 +10,36 @@
     Arrangement = Arrange.Row
     AutoResize = True
     { clifou RadioButton
-      MoveScaled(1,0,23,2)
+      MoveScaled(0,0,23,2)
       Text = ("Clients et fournisseurs")
       Value = True
     }
     { cli RadioButton cli
       Name = "cli"
-      MoveScaled(27,0,17,2)
+      MoveScaled(21,0,17,2)
       Text = ("Clients")
     }
     { fou RadioButton
-      MoveScaled(36,0,14,2)
+      MoveScaled(31,0,14,2)
       Text = ("Fournisseurs")
     }
     { all RadioButton
-      MoveScaled(50,0,14,2)
+      MoveScaled(44.5,0,14,2)
       Visible = False
       Text = ("Tous")
     }
     { gest RadioButton
-      MoveScaled(58,0,14,2)
+      MoveScaled(52,0,14,2)
       Visible = False
       Text = ("Gestion ")
     }
     { bil RadioButton
-      MoveScaled(67,0,15,2)
+      MoveScaled(62,0,15,2)
+      Visible = False
+      Text = ("Bilan")
+    }
+    { treso RadioButton
+      MoveScaled(71,0,15,2)
       Visible = False
       Text = ("Bilan")
     }
@@ -92,14 +97,14 @@
     }
   }
   { Pselc Panel
-    MoveScaled(1,2,161,2.7)
+    MoveScaled(1,2,161,2.75)
     Visible = False
     { Label1 Label
       MoveScaled(26,0,36,2)
       Expand = True
     }
     { Cselc ComboBox
-      MoveScaled(63,0.6,31,2)
+      MoveScaled(63,0.625,31,2)
       ReadOnly = True
     }
     { Label2 Label
@@ -108,6 +113,6 @@
     }
   }
   { Panel1 Panel
-    MoveScaled(0,7,138.6,52)
+    MoveScaled(0,7,138.625,52)
   }
 }

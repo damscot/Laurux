@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Public Enum Tous, Client, Fournisseur, Client_Fournisseur, Bilan, Gestion, General        ''définition du type de compte à afficher
+Public Enum Tous, Client, Fournisseur, Client_Fournisseur, Bilan, Gestion, General, Tresorerie        ''définition du type de compte à afficher
 Public Enum Avec_Solde, Sans_Solde          ''Affichage avec ou sans le solde
 
 Public Bsel As Boolean = False
@@ -34,6 +34,8 @@ Dim f As String
         $type = TriCpt.Client
       Case "F"
         $type = TriCpt.Fournisseur
+      Case "T"
+        $type = TriCpt.Tresorerie
     End Select
   Else
     $type = type
@@ -49,7 +51,7 @@ Dim f As String
   $Col = New Collection
   
   Select Case $type
-    Case tous, Bilan, Gestion, General
+    Case tous, Bilan, Gestion, General, Tresorerie
       If $type = Tous Then 
         Pchoix.Visible = True
         all.Visible = True
@@ -386,6 +388,9 @@ Private Sub tricond()
       $tr.ExtraSel(cond & " type_cc='B' OR type_cc='G'", "AND")
     Case Client
       If cond Then $tr.ExtraSel(cond, "AND")
+    Case Tresorerie
+      If cond Then cond &= " AND"
+      $tr.ExtraSel(cond & " type_cc='B' and comptr_cc=1", "AND")
   End Select
   
   $tr.Show(True)
@@ -534,6 +539,19 @@ Public Sub all_Click()
   Tritous()
   If $solde = Avec_Solde Then slde()
   $type = Tous
+  tricond()
+
+End
+
+Public Sub treso_Click()
+
+  $col = New Collection
+  pcli.Visible = False
+  cptcli.Visible = False
+  Pselc.Visible = False
+  Tritous()
+  If $solde = Avec_Solde Then slde()
+  $type = Tresorerie
   tricond()
 
 End
