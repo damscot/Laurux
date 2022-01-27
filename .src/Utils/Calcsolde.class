@@ -24,19 +24,10 @@
 '# Recalcul des soldes à partir des écritures
 '################################################
 
-TotSldHP As Float
-TotDeb As Float
-TotCred As Float
-TotSld As Float
-debit As Float
-credit As Float
-Compt As String
-p As Integer
-
 '*************************
 '* On initialise l'écran *
 '*************************
-Public Sub _New()
+Public Sub form_Open()
 
   Music.Load(Start.Musique)
   Me.Center
@@ -68,53 +59,59 @@ Public Sub Button2_Click()
 
   Dim i As Integer
   Dim rResult As Result
-  Dim rrResult As Result
+  Dim compt As String
   Dim Tab As String
-  Dim Tab2 As String
-  Dim Intit As String
-  Dim p1 As Integer
-
-  totsldhp = 0.00
-  Tab = "Fiches_Mvt"
-  Tab2 = "Fiches_Comptes"
-  p1 = 1
-  p = 4
-  With Utils
-    rrResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " order by cast(compte_cc AS char)")
-    If rrResult.Available Then
-      Me.Mouse = Mouse.Wait
-      Repeat
-        compt = rrResult!compte_cc
-        Intit = rrResult!intitule_cc
-        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE compte = &1  and validee = &2  order by dte ", compt, 1)
-        If rResult.count <> 0 Then
-          i = 0
-          While i < rResult.count
-            debit = rResult!montantd
-            credit = rResult!montantc
-            totdeb = totdeb + debit
-            totcred = totcred + credit
-            totsld = totdeb - totcred
-            Inc i
-            rResult.MoveNext()
-          Wend
-          Utils.db.Exec("UPdate " & Tab2 & "  SET solde = &2 where compte_cc = &1", Compt, .PointBase(Totsld))
-        Else
-          totsld = 0
-          Utils.db.Exec("UPdate " & Tab2 & "  SET solde = &2 where compte_cc = &1", Compt, .PointBase(Totsld))
-        Endif
-        totdeb = 0
-        totcred = 0
-        totsld = 0
-      Until rrResult.MoveNext()
-    Else
-    Endif
-  End With
-  Me.Mouse = Mouse.Default
-  If Start.son Then
-    Music.Play
+  
+  Utils.MouseProcessing()
+  Tab = "Fiches_Comptes"
+  
+  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " order by cast(compte_cc AS char)")
+  If rResult.Available Then
+    Repeat
+      compt = rResult!compte_cc
+      If IsNull(compt) Then Continue
+      Calcul(compt, rResult!comptr_cc)
+    Until rResult.MoveNext()
   Endif
+
+  Utils.MouseDefault()
   message.Info(" Traitement terminé", "OK")
   Me.Close
 
 End
+
+
+Public Sub Calcul(compt As String, Optional Treso As Boolean = True)
+
+  Dim rResult As Result
+  Dim rrResult As Result
+  Dim Tab As String
+  Dim Tab2 As String
+
+  Tab = "Fiches_Mvt"
+  Tab2 = "Fiches_Comptes"
+  
+  If IsNull(compt) Then Return
+  
+  rResult = Utils.db.Exec("SELECT (sum(montantd)-sum(montantc)) as solde FROM " & Tab & " WHERE compte = &1  and validee = &2", compt, 1)
+  If rResult.Available Then
+    If IsNull(rResult!solde) Then
+      Utils.db.Exec("UPdate " & Tab2 & "  SET solde = &2 where compte_cc = &1", Compt, LPrix(0).D)
+    Else
+      Utils.db.Exec("UPdate " & Tab2 & "  SET solde = &2 where compte_cc = &1", Compt, LPrix(rResult!solde).D)
+      'Cas d'un compte de Trésorerie on met a jour le solde des ecritures pointée
+      If Treso Then
+        rResult = Utils.db.Exec("SELECT (sum(montantd)-sum(montantc)) as soldepointee FROM  " & Tab & " WHERE compte = &1 and ((cloturee = 1 and jour = 90 and libelle = &2) or (pointee = 1))", compt, "Report a nouveau")
+        If rResult.Available Then
+          If IsNull(rResult!soldepointee) Then
+            Utils.db.Exec("UPdate " & Tab2 & "  SET soldep = &2 where compte_cc = &1", Compt, LPrix(0).D)
+          Else
+            Utils.db.Exec("UPdate " & Tab2 & "  SET soldep = &2 where compte_cc = &1", Compt, LPrix(rResult!soldepointee).D)
+          Endif
+        Endif
+      Endif
+    Endif
+  Endif
+  
+End
+

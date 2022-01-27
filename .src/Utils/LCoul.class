@@ -13,6 +13,12 @@ Public Art_NStk As SColor 'Color for Article Non Stocké
 Public Art_Epuise As SColor 'Color for Article Epuisé
 Public Art_Suspendu As SColor 'Color for Article Suspendu
 
+Public Ecr_provisoire As SColor 'Color for Ecriture provisoire
+Public Ecr_lettree As SColor 'Color for Ecriture lettree
+Public Ecr_pointee As SColor 'Color for Ecriture pointee
+Public Ecr_cloture As SColor 'Color for Ecriture cloturee
+Public Ecr_oldex As SColor 'Color par défault for Ecriture table Mvt (-1 à -5) quelque soit leur status
+
 
 Public Sub _New(Optional Montant As Variant = 0, Optional Quantite As Variant = 1, Optional Arr As Variant = LPrix.Arr_001, Optional Cpt As String = "")
   
@@ -57,11 +63,35 @@ Public Sub _New(Optional Montant As Variant = 0, Optional Quantite As Variant = 
     Art_Suspendu.Ft = Val[1]
     Art_Suspendu.Fg = Val[2]
   Endif
-
+  
+  'Pour l'instant valeur en dur, voir si on utilise aussi les settings ici
+  Ecr_oldex = New SColor
+  Ecr_oldex.Bg = "&HC0C0C0"
+  Ecr_cloture = New SColor
+  Ecr_cloture.Bg = "&H808080"
+  Ecr_provisoire = New SColor
+  Ecr_provisoire.Bg = "&HFFFFDC"
+  Ecr_lettree = New SColor
+  Ecr_lettree.Bg = "&HDFFFBF"
+  Ecr_pointee = New SColor
+  Ecr_pointee.Bg = "&HFFDFBF"
+  
 End
 
 Public Sub Art_DB_bgcolor() As String
 
   Return "Case WHEN art_suspendu = 1 Then '" & Art_Suspendu.Bg & "' WHEN art_qte > 0 and art_stocke = 1 THEN '" & Art_Stk.Bg & "' WHEN art_qte <= 0 and art_stocke = 1 THEN '" & Art_Epuise.Bg & "' WHEN art_stocke = 0 THEN '" & Art_NStk.Bg & "' ELSE '&H00FFFF&' END as bgcolor"
+
+End
+
+Public Sub Ecr_DB_bgcolor(OldExe As Boolean) As String
+
+  Dim color_def As String = "&HFFFFFF&"
+
+  If OldExe Then
+    color_def = Ecr_oldex.Bg
+  Endif
+
+  Return "Case WHEN lettree = 1 Then '" & Ecr_lettree.Bg & "' WHEN pointee = 1 Then '" & Ecr_pointee.Bg & "' WHEN cloturee = 1 Then '" & Ecr_cloture.Bg & "' WHEN provisoire = 1 Then '" & Ecr_provisoire.Bg & "' ELSE '" & color_def & "' END as bgcolor"
 
 End

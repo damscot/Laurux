@@ -24,233 +24,186 @@
 '# Gestion du rapprochement bancaire
 '################################################
 '
+'Public List As String[]
+Public Bsel As Boolean = False
+Public Bval As Variant
 
-Private TD As Float
-Private TC As Float
-Private totd As Float
-Private Totc As Float
-Private Sld As Float
-Private B As Integer
-Private L As Integer
-Private Filename As String
-Private son As Integer = Start.Son
-Private PosY As Integer
-Private PosX As Integer
-Private Nbpage As Integer
-Private Ste As String
-Private chkfocus As Boolean = True
-Private pdf As Ccompta
+Private Col As Collection
+Private tr As TriGen
+Private Selected As String[]
+Private IsLast As Boolean
 
-'*****************************************
-'*       On initialise notre écran       *
-'*****************************************
+
 Public Sub _New()
 
-  Dim WidthCol As String
-  Dim s As String
-  Dim spl As New String[7]
-
-  Try WidthCol = Start.LocalSettings["/Soc" & Start.Societe & "/Col/LcolP"]
-  Utils.Observers(Me)
-
-  Music.Load(Start.Musique)
   Me.Center
-  colcli.Columns.count = 11
-  colcli.Columns[0].Alignment = 4
-  If Not IsNull(WidthCol) Then
-    WidthCol = Trim(WidthCol)
-    If Right(WidthCol, 1) = ";" Then WidthCol = Left(WidthCol, Len(WidthCol) - 1)
-    For Each s In Split(LCase(WidthCol), ";")
-      spl = Scan(s, "*:*")
-      Select Case Trim(spl[0])
-        Case "col0"
-          Try Colcli.Columns[0].Width = spl[1]
-        Case "col1"
-          Try Colcli.Columns[1].Width = Val(spl[1])
-        Case "col2"
-          Try Colcli.Columns[2].Width = spl[1]
-        Case "col3"
-          Try Colcli.Columns[3].Width = spl[1]
-        Case "col4"
-          Try Colcli.Columns[4].Width = spl[1]
-        Case "col5"
-          Try Colcli.Columns[5].Width = spl[1]
-        Case "col6"
-          Try Colcli.Columns[6].Width = spl[1]
-        Case "col7"
-          Try Colcli.Columns[7].Width = spl[1]
-        Case "col8"
-          Try Colcli.Columns[8].Width = spl[1]
-        Case "col9"
-          Try Colcli.Columns[9].Width = spl[1]
-      End Select
-    Next
-  Else
-    colcli.Columns[0].Width = 70
-    colcli.Columns[1].Width = 90
-    colcli.Columns[2].Width = 210
-    colcli.Columns[3].Width = 100
-    colcli.Columns[4].Width = 100
-    colcli.Columns[5].Width = 100
-    colcli.Columns[6].Width = 100
-    colcli.Columns[7].Width = 60
-    colcli.Columns[8].Width = 70
-    colcli.Columns[9].Width = 30
-  Endif
-  colcli.Columns[10].Width = 0
-  colcli.Columns[0].Text = "code"
-  colcli.Columns[1].Text = "date"
-  colcli.Columns[2].Text = "nom"
-  colcli.Columns[3].Text = "Document"
-  colcli.Columns[4].Text = "Lot"
-  colcli.Columns[5].Alignment = 2
-  colcli.Columns[5].Text = "Débit"
-  colcli.Columns[6].Alignment = 2
-  colcli.Columns[6].Text = "Crédit"
-  colcli.Columns[7].Text = "Relevé"
-  colcli.Columns[8].Text = "Ecriture"
-  colcli.Columns[9].Text = "Pnt"
-  dte.Text = Format$(Now, "dd.mm.yyyy")
-  dterappro.Text = Format$(Now, "dd.mm.yyyy")
+  dte.Type = TextReg.EstDate
+  dte.Text = LDate(Now).L
+  dterappro.Type = TextReg.EstDate
+  dterappro.Text = LDate(Now).L
   cpt.SetFocus
   cpt.Select
-  b = 0
-  L = 1
-  TD = 0
-  TC = 0
-  totd = 0
-  Totc = 0
-  Sld = 0
+  
   Totdeb.Text = "0,00"
   Totcred.Text = "0,00"
   Sldtheorique.Text = "0,00"
   Ecart.Text = "0,00"
   Sldfinal.Text = "0,00"
+  
+  Selected = New String[]
+  IsLast = False
+  Update_Req()
+  
+End
+
+Public Sub Update_Req()
+
+  Dim f As ResultField
+  Dim k As String
+  Dim Req As String
+  Dim Res As Result
+  Dim prop As ObjProp
+  
+  If IsNull(cpt.Text) Then Return
+  
+  Col = New Collection
+  
+  ' colcli.Columns[0].Text = "code"
+  ' colcli.Columns[1].Text = "date"
+  ' colcli.Columns[2].Text = "nom"
+  ' colcli.Columns[3].Text = "Document"
+  ' colcli.Columns[4].Text = "Lot"
+  ' colcli.Columns[5].Alignment = 2
+  ' colcli.Columns[5].Text = "Débit"
+  ' colcli.Columns[6].Alignment = 2
+  ' colcli.Columns[6].Text = "Crédit"
+  ' colcli.Columns[7].Text = "Relevé"
+  ' colcli.Columns[8].Text = "Ecriture"
+  ' colcli.Columns[9].Text = "Pnt"
+  
+  
+  'La requete de construction est limité à 1 element.
+  Req = "SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P FROM " & Cbase.Table("TabMvt") & " limit 1"
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  'On utilise pas les champs field.name du résultat pour le nom car l'union avec la Table N1 cree des noms incompatible dans la requete
+  k = "- idx -"
+  prop = New ObjProp("numero", k)
+  prop.tri = 1
+  Col.Add(prop, k)
+  k = "P"
+  prop = New ObjProp("parse_having_P", k)
+  Col.Add(prop, k)
+  k = "-  Date  -"
+  prop = New ObjProp("dte", k)
+  Col.Add(prop, k)
+  k = "--------  libelle  ---------"
+  prop = New ObjProp("libelle", k)
+  Col.Add(prop, k)
+  k = "- Debit -"
+  prop = New ObjProp("montantd", k)
+  Col.Add(prop, k)
+  k = "- Credit -"
+  prop = New ObjProp("montantc", k)
+  Col.Add(prop, k)
+  k = "- Rlv -"
+  prop = New ObjProp("nrlv", k)
+  Col.Add(prop, k)
+  k = "--- Doc ---"
+  prop = New ObjProp("numdoc", k)
+  Col.Add(prop, k)
+  k = "--- Lot ---"
+  prop = New ObjProp("numlot", k)
+  Col.Add(prop, k)
+  
+  If N1.Value = True Then
+    'La table Mvt est prioritaire sur la table Mvt1 pour les ecritures dupliquée, voir le group by ci-dessous.
+    Req = Utils.db.Subst("SELECT * FROM (SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt") & " union SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(True) & " FROM " & Cbase.Table("TabMvt1") & ") as Combined_Mvt")
+  Else
+    Req = Utils.db.Subst("SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt"))
+  Endif
+
+  tr = New TriGen(Panel1, Col, Res, Req, 20, Me) As "TriGen"
+  If N1.Value = True Then
+    'En affichage N-1, les ecritures peuvent etre doublé si elles sont présente dans les deux tables (cloture apres avoir saisie/pointee des ecritures apres la date de fin de l'exercice)
+    'Logiquement c'est une copie de l'ecriture, le groupement ne pose pas de pb.
+    tr.GroupBy("group by numero")
+  Endif
+  Filter_Calc()
+  tr.FontSize(-2)
+  tr.Update() 
 
 End
 
-'*****************************************
-'*     On affiche les comptes banques    *
-'*****************************************
-Public Sub ToggleButton3_Click()
+'Event Handler
+'''''''''''''''''''''''''''''''''''''''
+Public Sub TriGen_MajSel(val As Variant)
+  
+  Dim Res As Result
+  Dim i As Integer
 
-  Dim rResult As Result
-  Dim Tab As String
-
-  Tab = "Fiches_Comptes"
-  If dte.Text = "" Then
-    If son Then
-      Music.Play
-    Endif
-    message.Info("Veuillez saisir la date du relevé SVP !")
-    b = 1
-  Else
-    If Colcompt.visible Then
-      Colcompt.clear
-      Colcompt.visible = False
-    Else
-      Colcompt.visible = True
-      Colcompt.Columns.count = 5
-      Colcompt.Columns[0].Width = 90
-      Colcompt.Columns[1].Width = 210
-      Colcompt.Columns[2].Width = 100
-      Colcompt.Columns[3].Width = 100
-      Colcompt.Columns[2].Alignment = 2
-      Colcompt.Columns[3].Alignment = 2
-      Colcompt.Columns[0].Text = "code"
-      Colcompt.Columns[1].Text = "Intitulé"
-      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE comptr_cc <> &1 order by cast(compte_cc AS char) ", 0)
-      If rResult.Available Then
-        Do
-          Colcompt.Add(rResult!compte_cc, rResult!compte_cc)
-          Colcompt.Item[0] = rResult!compte_cc
-          Colcompt.Item[1] = rResult!intitule_cc
-          Colcompt.Item[2] = rResult!solde
-          Colcompt.Item[3] = rResult!soldep
-        Loop Until rResult.MoveNext()
-        Colcompt.MoveFirst
-        Colcompt.SetFocus
-        Colcompt.Item.Selected = True
+  If Bsel = True Then
+    If Val Then
+      i = Selected.Find(Val)
+      If i <> -1 Then
+        Selected.Remove(i)
+      Else
+        Selected.Add(Val)
       Endif
+      Selcnt.Value = Selected.Count
+      tr.Refresh_Data()
+      Bsel = False
+      Val = ""
+      Calc_Solde()
     Endif
   Endif
+  
+  Stop Event
 
 End
 
-'****************************************************
-'*   On récupere le compte banque avec la souris    *
-'****************************************************
-Public Sub Colcompt_Click()
-
-  cpt.Text = Colcompt.Item[0]
-  Colcompt.clear
-  Colcompt.visible = False
-  cptman()
-  affichage()
-  Nrel.SetFocus
-  Nrel.Select
-
+Public Sub TriGen_Raz()
+  
+  Selected.Clear()
+  Selcnt.Value = 0
+  
 End
-
-'***************************************************
-'*   On récupere le compte banque manuellement     *
-'***************************************************
-Public Sub Colcompt_KeyPress()
-
-  If Key.code = Key.Enter Or Key.code = Key.Return Then
-    Colcompt.MoveCurrent
-    Colcompt.Item.Selected = True
-    Colcompt_Click()
+  
+Public Sub TriGen_Data(id As String, key As String, Data As _GridView_Data)
+  
+  If Selected.Find(Val(id)) <> -1 Then
+    Data.Background = Color.SelectedBackground
     Stop Event
-  Endif
-
-  If key.code = key.F1 Then
-    Button3_Click()
-    Stop Event
-  Endif
-
-  If Key.code = Key.Escape Or Key.code = Key.F2 Then
-    Colcompt.visible = False
-    Colcompt.clear
-    cpt.Select
-    cpt.SetFocus
-    Stop Event
-  Endif
-
-End
-
-'********************************************************************
-'* On appelle le compte en le tapant (sans la souris et sans F2)    *
-'********************************************************************
-Public Sub cptman()
-
-  Dim rResult As Result
-  Dim Tab As String
-  Dim soldepointee As String
-
-  Tab = "Fiches_Comptes"
-  rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where compte_cc = &1", cpt.Text)
-  If Not rResult.Available Then
-    If son Then
-      Music.Play
-    Endif
-    Message.Error("Attention ! Ce compte n'existe pas.")
-    b = 1
   Else
-    
-    cpt.Text = rResult!compte_cc
-    soldeBnq.Text = Format$(rResult!solde, "0.00")
-    intitule.Text = rResult!intitule_cc
-    Try soldedepart.Text = Format$(rResult!soldep, "0.00")
-    Tab = "Fiches_Mvt"
-    rResult = Utils.db.Exec("SELECT (sum(montantd)-sum(montantc)) as soldepointee FROM  " & Tab & " WHERE compte = &1 and ((cloturee = 1 and jour = 90 and libelle = &2) or pointee = 1)", cpt.Text, "Report a nouveau")
-    If rResult.Available Then
-      soldeBnq.Text = soldeBnq.Text & " (pointées : " & Format$(rResult!soldepointee, "0.00") & ")"
-    Endif
-    If Error Then Soldedepart.Text = "0,00"
-    Sldtheorique.Text = soldedepart.Text
-    affichage()
+    'set default display
+    'Stop Event
   Endif
+  
+  
+End
+
+Private Sub Filter_Calc()
+  
+  Dim filter As String
+  
+  If IsNull(cpt.Text) Then Return
+  
+  If Toutes.Value Then
+    filter = Utils.db.Subst("compte = &1 and tresorerie = &2 and validee = &3", cpt.text, 1, 1)
+  Else If Ep.Value Then
+    filter = Utils.db.Subst("compte = &1 and tresorerie = &2 and validee = &3 and pointee is TRUE", cpt.text, 1, 1)
+    If Nrel.Text And RelUniq.Value = True Then
+      filter = filter & Utils.db.Subst(" and nrlv = &1", Nrel.Text)
+    Endif
+  Else If Enp.Value Then
+    filter = Utils.db.Subst("compte = &1 and tresorerie = &2 and validee = &3 and (pointee is NULL or pointee is FALSE)", cpt.text, 1, 1)
+  Endif
+  
+  If MaskRecent.Value Then
+    filter = filter & Utils.db.Subst(" and dte <= &1", LDate(dte.Text).D)
+  Endif
+
+  tr.ExtraSel(filter, "and")
 
 End
 
@@ -261,51 +214,44 @@ End
 Public Sub ToggleButton1_MouseDown()
 
   Dim rResult As Result
-  Dim Tab As String
 
-  b = 0
-  Tab = "Fiches_Rappro"
   If cpt.Text = "" Then
-    If son Then
-      Music.Play
-    Endif
+    Utils.Bip()
     Message.Warning("veuillez saisir votre compte banque SVP !")
   Else
-    If Colcompt.visible Then
-      Colcompt.clear
-      Colcompt.visible = False
+    If Colrlv.Visible Then
+      Colrlv.Clear
+      Colrlv.Visible = False
+      Colrlv.Lower()
+      nrel.setfocus
     Else
-      If Colrlv.Visible Then
-        Colrlv.Clear
-        Colrlv.Visible = False
-        nrel.setfocus
-        b = 1
+      Colrlv.visible = True
+      Colrlv.Raise()
+      Colrlv.Columns.count = 5
+      Colrlv.Columns[0].Width = 80
+      Colrlv.Columns[1].Width = 80
+      Colrlv.Columns[2].Width = 80
+      Colrlv.Columns[3].Width = 80
+      Colrlv.Columns[4].Width = 80
+      Colrlv.Columns[0].Text = " compte "
+      Colrlv.Columns[1].Text = "N° relevé"
+      Colrlv.Columns[2].Text = "date relevé"
+      Colrlv.Columns[3].Text = "date point."
+      Colrlv.Columns[4].Text = "solde fin."
+      rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 order by date_releve desc, nreleve desc", cpt.Text)
+      If rResult.Available Then
+        Do
+          Colrlv.Add(rResult!cpt & rResult!nreleve, rResult!cpt & rResult!nreleve)
+          Colrlv.Item[0] = rResult!cpt
+          Colrlv.Item[1] = rResult!nreleve
+          Colrlv.Item[2] = Utils.Cdate_Aff(rResult!date_releve)
+          Colrlv.Item[3] = Utils.Cdate_Aff(rResult!date_rappro)
+          Colrlv.Item[4] = rResult!solde
+        Loop Until rResult.MoveNext()
+        Colrlv.MoveFirst
+        Colrlv.SetFocus
+        Colrlv.Item.Selected = True
       Else
-        Colrlv.visible = True
-        Colrlv.Columns.count = 4
-        Colrlv.Columns[0].Width = 100
-        Colrlv.Columns[1].Width = 100
-        Colrlv.Columns[2].Width = 100
-        Colrlv.Columns[3].Width = 100
-        Colrlv.Columns[0].Text = "compte"
-        Colrlv.Columns[1].Text = "N° relevé"
-        Colrlv.Columns[2].Text = "date relevé"
-        Colrlv.Columns[3].Text = "date pointage"
-        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cpt = &1 order by nreleve ", cpt.Text)
-        If rResult.Available Then
-          Do
-            Colrlv.Add(rResult!cpt & rResult!nreleve, rResult!cpt & rResult!nreleve)
-            Colrlv.Item[0] = rResult!cpt
-            Colrlv.Item[1] = rResult!nreleve
-            Colrlv.Item[2] = Utils.Cdate_Aff(rResult!date_releve)
-            Colrlv.Item[3] = Utils.Cdate_Aff(rResult!date_rappro)
-            Colrlv.Item[4] = rResult!solde
-          Loop Until rResult.MoveNext()
-          Colrlv.MoveFirst
-          Colrlv.SetFocus
-          Colrlv.Item.Selected = True
-        Else
-        Endif
       Endif
     Endif
   Endif
@@ -317,26 +263,9 @@ End
 '*********************************************
 Public Sub Colrlv_Click()
 
-  Dim Tab As String
-
-  Tab = "Fiches_Mvt"
-  With Utils
-    Nrel.Text = Colrlv.Item[1]
-    dte.Text = Colrlv.Item[2]
-    dterappro.Text = Colrlv.Item[3]
-    Sld = Colrlv.Item[4]
-    b = 0
-    affichage()
-    Colrlv.Clear
-    Colrlv.Visible = False
-    Totdeb.Text = "0,00"
-    Totcred.Text = "0,00"
-    Totd = 0
-    Totc = 0
-    Sldtheorique.Text = soldedepart.Text
-    Try Ecart.Text = Format$(Val(soldedepart.Text) - Val(Sldfinal.Text), "0.00")
-    Ep.Value = True
-  End With
+  Colrlv.MoveCurrent
+  Colrlv.Item.Selected = True
+  Colrlv_Man(Colrlv.Item[1])
 
 End
 
@@ -345,24 +274,18 @@ End
 '********************************************
 Public Sub Colrlv_KeyPress()
 
+  Stop Event
   If Key.code = Key.Enter Or Key.code = Key.Return Then
     Colrlv.MoveCurrent
     Colrlv.Item.Selected = True
-    Colrlv_Click()
-    Stop Event
+    Colrlv_Man(Colrlv.Item[1])
   Endif
 
-  If key.code = key.F1 Then
-    Button3_Click()
-    Stop Event
-  Endif
-
-  If Key.code = Key.Escape Or Key.code = Key.F2 Then
+  If Key.code = Key.Escape
     Colrlv.visible = False
     Colrlv.clear
     Nrel.Select
     Nrel.SetFocus
-    Stop Event
   Endif
 
 End
@@ -370,647 +293,431 @@ End
 '********************************************************************
 '* On appelle le relevé en le tapant (sans la souris et sans F2)    *
 '********************************************************************
-Public Sub Colrlv_Man()
+Public Sub Colrlv_Man(releve As String) As Boolean
 
   Dim rResult As Result
-  Dim Tab As String
+  Dim rResult2 As Result
+  Dim rResult3 As Result
+  
+  'Empeche la recursivité d'appel lié a l'usage de la classe Message + handler event lostfocus
+  If IsNull(releve) Then
+    RelUniq.Value = False
+    dte.Text = Ldate(Now).L
+    dterappro.Text = LDate(Now).L
+    Return False
+  Endif
 
-  Tab = "Fiches_Rappro"
-  With Utils
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE nreleve = &1 ", Nrel.Text)
-    If rResult.Available Then
-      Ep.Value = True
-      dte.Text = .Cdate_Aff(rResult!date_releve)
-      dterappro.Text = .Cdate_Aff(rResult!date_rappro)
-      Sld = rResult!solde
-      Totdeb.Text = Format$(Sld, "0.00")
-      b = 0
-      Affichage()
+  If IsNull(Cpt.Text) Then
+    Nrel.Text = ""
+    dte.Text = Ldate(Now).L
+    dterappro.Text = LDate(Now).L
+    Utils.Bip()
+    Message.Warning("veuillez saisir votre compte banque SVP !")
+    Return False
+  Endif
+  
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and nreleve = &2", cpt.Text, releve)
+  If rResult.Available Then
+    ClearChampsAll()
+    'avec un relevé selectionné existant on souhaite probablement plus voir uniquement les ecritures pointee pour ce relevé
+    RelUniq.Value = True
+    Nrel.Text = rResult!nreleve
+    dte.Text = Ldate(rResult!date_releve).L
+    dterappro.Text = LDate(rResult!date_rappro).L
+    'Rappel d'un relevé existant on passe en ecriture pointee sur ce relevé par défault
+    Ep.Value = True
+    rResult2 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and date_releve < &2 order by date_releve desc limit 1", cpt.Text, LDate(dte.Text).D)
+    If rResult2.Available Then
+      Sldepart.Text = LPrix(rResult2!solde).L
+    Else
+      Sldepart.Text = LPrix(0).L
+      Message.Error("Impossible de trouver un relevé précédent le relevé " & releve & ", veuillez saisir le solde de départ manuellement.")
+    Endif
+    'Recherche d'un relevé plus récent... pour ne mettre a jour le solde du compte uniquement pour le dernier relevé du compte
+    rResult2 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and date_releve > &2 order by date_releve desc limit 1", cpt.Text, LDate(dte.Text).D)
+    If Not rResult2.Available Then
+      IsLast = True
+      rResult3 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", cpt.Text)
+      If rResult3.Available Then
+        Sldfinal.Text = LPrix(rResult3!soldep).L
+      Else
+        'ceci ne devrait pas arriver...
+        Sldfinal.Text = LPrix(0).L
+      Endif
+    Else
+      Sldfinal.Text = LPrix(rResult!solde).L
+    Endif
+    If Colrlv.Visible = True Then
       Colrlv.Clear
       Colrlv.Visible = False
-      Totdeb.Text = "0,00"
-      Totcred.Text = "0,00"
-      Totd = 0
-      Totc = 0
-      Sldtheorique.Text = soldedepart.Text
-      Try Ecart.Text = Format$(Val(soldedepart.Text) - Val(Sldfinal.Text), "0.00")
     Endif
-  End With
+    Update_Req()
+    Calc_Solde()
+    Return True
+  Else
+    Nrel.Text = ""
+    Utils.Bip()
+    If Message.Question("Le rapprochement bancaire " & releve & " n'existe pas. Voulez-vous le créer", "Oui", "Non") = 2 Then 
+      Return False
+    Else
+      ClearChampsAll()
+      Nrel.Text = releve
+      dte.Text = Ldate(Now).L
+      dterappro.Text = LDate(Now).L
+      'Creation d'un nouveau relevé on selectionne la liste des ecriture non pointee par défault
+      Enp.Value = True
+      'avec un nouveau relevé on souhaite probablement passer facilement de ecriture pointée pour ce relevé a celle non pointee
+      RelUniq.Value = True
+      'Il s'agit du dernier relevé (à priori)
+      IsLast = True
+      rResult2 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 order by date_releve desc limit 1", cpt.Text, LDate(dte.Text).D)
+      If rResult2.Available Then
+        Sldepart.Text = LPrix(rResult2!solde).L
+      Else
+        Sldepart.Text = LPrix(0)
+        Message.Error("Impossible de trouver le dernier relevé existant veuillez saisir le solde de départ manuellement.")
+      Endif
+      rResult3 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", cpt.Text)
+      If rResult3.Available Then
+        Sldfinal.Text = LPrix(rResult3!soldep).L
+      Else
+        Sldfinal.Text = LPrix(0).L
+      Endif
+      Utils.db.Exec("insert into " & Cbase.Table("TabRappro") & " (cpt, nreleve, date_releve, date_rappro, solde) values (&1,&2, &3,&4,&5)", cpt.Text, releve, LDate(dte.Text).D, LDate(dterappro.Text).D, LPrix(Sldfinal.Text).D)
+      Update_Req()
+      Calc_Solde()
+      Return True
+    Endif
+  Endif
 
 End
 
-'*****************************
-'*    Gestion des touches    *
-'*****************************
-Public Sub Rlv_KeyPress()
+Public Sub Nrel_LostFocus()
 
-  If Key.code = Key.enter Or Key.code = Key.return Or Key.code = Key.Tab Then
+  Colrlv_Man(Nrel.Text)
+  Stop Event
 
-    Select Case Last.tag
+End
 
-      Case 1
-        If cpt.Text = "" Then
-          If son Then
-            Music.Play
-          Endif
-          Message.Warning("veuillez saisir votre compte SVP !")
-          cpt.SetFocus
-          cpt.Select
-        Else
-          cptman()
-          If b = 1 Then
-            cpt.SetFocus
-            cpt.Select
-            Stop Event
-          Else
-            b = 0
-            Nrel.SetFocus
-            Nrel.Select
-          Endif
-        Endif
-        Stop Event
+Public Sub Nrel_KeyPress()
 
-      Case 2
-        Chkfocus = True
-        dte.SetFocus
-        dte.Select
-
-      Case 3
-        dte_LF()
-        If b = 1 Then
-          dte.SetFocus
-          dte.Select
-          Stop Event
-        Else
-          b = 0
-          dterappro.SetFocus
-          dterappro.Select
-          Stop Event
-        Endif
-
-      Case 4
-        dterappro_LF()
-        If b = 1 Then
-          dterappro.SetFocus
-          dterappro.Select
-          Stop Event
-        Else
-          b = 0
-          Sldfinal.SetFocus
-          Sldfinal.Select
-          Stop Event
-        Endif
-
-      Case 5
-        Sldfinal_LF()
-        If b = 1 Then
-          Sldfinal.SetFocus
-          Sldfinal.Select
-          Stop Event
-        Else
-          b = 0
-          soldedepart.SetFocus
-          soldedepart.Select
-          Stop Event
-        Endif
-
-      Case 6
-        soldedepart_LF()
-        If b = 1 Then
-          soldedepart.SetFocus
-          soldedepart.Select
-          Stop Event
-        Else
-          b = 0
-          Nrel.SetFocus
-          nrel.Select
-          Stop Event
-        Endif
-    End Select
-  Endif
-
-  If key.code = key.F1 Then
-    Button3_Click()
+  If Key.code = Key.Enter Or Key.code = Key.Return Then
+    Colrlv_Man(Nrel.Text)
     Stop Event
   Endif
 
-  If Key.code = Key.F2 Then
-    Select Case Last.tag
+End
 
-      Case 1
-        ToggleButton3_Click()
-        Stop Event
+Public Sub Dte_LostFocus()
 
-      Case 2
-        ToggleButton1_MouseDown()
-        Stop Event
-    End Select
+  Update_Req()
+  Stop Event
+
+End
+
+Public Sub Dte_KeyPress()
+
+  If Key.code = Key.Enter Or Key.code = Key.Return Then
+    Update_Req()
+    Stop Event
   Endif
 
 End
 
-'****************************************************
-'*      Gestion du focus. Routine de Charlie Reinl  *
-'****************************************************
-Public Sub Rlv_GotFocus()
-
-  With Utils
-    .SetEditColor(Me, Last)
-  End With
-
-End
-
-Public Sub Rlv_LostFocus()
-
-  Select Last.tag
-    Case 1
-      b = 1
-      Stop Event
-
-    Case 2
-      If Chkfocus = True Then
-        If Nrel.Text = "" Then
-          If b = 1 Then
-            If son Then
-              Music.Play
-            Endif
-            Try message.Info("Veuillez saisir un numéro de relevé SVP !")
-            Nrel.SetFocus
-          Endif
-        Else
-          Colrlv_Man()
-          b = 0
-        Endif
-      Endif
-      Chkfocus = True
-      Stop Event
-  End Select
-
-End
-
-Public Sub dte_LF()
-
-  Dim dte2 As String
-
-  b = 0
-  With utils
-    dte2 = Format$(Now, "yyyy")
-    If Len(dte.Text) = 5 Then dte.Text = dte.Text & "." & dte2
-    dte.text = .Cdate_calc(dte.text)
-    dte.Text = .Cdate_aff(dte.Text)
-    If dte.Text = "00.00.0:00" Then
-      dte.Text = ""
-      B = 1
-    Endif
-  End With
-Catch
-  message.Error(Error.Text & " " & Error.where)
-  B = 1
-
-End
-
-Public Sub dterappro_LF()
-
-  Dim dte2 As String
-
-  b = 0
-  With utils
-    dte2 = Format$(Now, "yyyy")
-    If Len(dte.Text) = 5 Then dterappro.Text = dterappro.Text & "." & dte2
-    dterappro.text = .Cdate_calc(dterappro.text)
-    dterappro.Text = .Cdate_aff(dterappro.Text)
-    If dterappro.Text = "00.00.0:00" Then
-      dterappro.Text = ""
-      B = 1
-    Endif
-  End With
-Catch
-  message.Error(Error.Text & " " & Error.where)
-  B = 1
-
-End
-
-Public Sub Sldfinal_LF()
-
-  With Utils
-    If Val(.cpoint(Sldfinal.Text)) = Null Then
-      If son Then
-        Music.Play
-      Endif
-      message.Warning("Veuillez verifier votre saisie SVP !")
-      b = 1
-    Else
-      Sldfinal.Text = Format$(Val(.cpoint(Sldfinal.Text)), "0.00")
-      Ecart.Text = Format$(Val(soldedepart.Text) + Val(Totdeb.Text) - Val(Totcred.Text) - Val(Sldfinal.Text), "0.00")
-      b = 0
-    Endif
-  End With
-
-End
-
-Public Sub soldedepart_LF()
-
-  With Utils
-    If Val(.cpoint(soldedepart.Text)) = Null Then
-      If son Then
-        Music.Play
-      Endif
-      message.Warning("Veuillez verifier votre saisie SVP !")
-      b = 1
-    Else
-      soldedepart.Text = Format$(Val(.cpoint(soldedepart.Text)), "0.00")
-      Sldtheorique.Text = Format$(Val(soldedepart.Text) - Abs(Val(Totdeb.Text)) + Abs(Val(Totcred.Text)), "0.00")
-      Ecart.Text = Format$(Val(soldedepart.Text) - Abs(Val(Totdeb.Text)) + Abs(Val(Totcred.Text)) - Val(Sldfinal.Text), "0.00")
-      b = 0
-    Endif
-  End With
-
-End
-'*****************************
-'* On affiche les lignes     *
-'*****************************
-
-Public Sub affichage()
+'********************************************************************
+'* On appelle le compte en le tapant (sans la souris et sans F2)    *
+'********************************************************************
+Public Sub cptman(compte As String) As Boolean
 
   Dim rResult As Result
-  Dim dteN As String
-  Dim P As String
+  Dim soldepointee As String
+  
+  'Empeche la recursivité d'appel lié a l'usage de la classe Message + handler event lostfocus
+  If IsNull(compte) Then Return False
 
-  Colcli.clear
-  With Utils
-    dteN = Right$(dte.Text, 4) & Mid$(dte.Text, 4, 2) & Left$(dte.Text, 2)
-    If IsNull(Nrel.text) Then
-      If Enp.value Then
-        P = ""
-        If Not N1.Value Then
-          rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <= &5 order by dte", cpt.text, 0, 1, 1, dteN)
-        Else
-          Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <= &5 union SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 order by dte", cpt.text, 0, 1, 1, dteN)
-          If Error Then rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <= &5 order by dte", cpt.text, 0, 1, 1, dteN)
-        Endif
-      Else
-        If Ep.value Then
-          P = "P"
-          If Not N1.Value Then
-            rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 order by dte", cpt.text, 1, 1, 1, dteN)
-          Else
-            Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 union SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 order by dte", cpt.text, 1, 1, 1, dteN)
-            If Error Then Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 order by dte", cpt.text, 1, 1, 1, dteN)
-          Endif
-        Else
-          If Toutes.value Then
-            If Not N1.Value Then
-              rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and dte <=&4 order by dte", cpt.text, 1, 1, dteN)
-            Else
-              Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and dte <=&4 union SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and dte <=&4 order by dte", cpt.text, 1, 1, dteN)
-              If Error Then rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and dte <=&4 union SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and dte <=&4 order by dte", cpt.text, 1, 1, dteN)
-            Endif
-          Endif
-        Endif
-      Endif
-    Else
-      If Enp.value Then
-        P = ""
-        If Not N1.Value Then
-          rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 order by dte", cpt.text, 0, 1, 1, dteN)
-        Else
-          Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 union SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 order by dte", cpt.text, 0, 1, 1, dteN)
-          If Error Then rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee is null and tresorerie = &3 and validee = &4 and dte <= &5 or compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and dte <=&5 order by dte", cpt.text, 0, 1, 1, dteN)
-        Endif
-      Else
-        If Ep.value Then
-          P = "P"
-          If Not N1.Value Then
-            rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and nrlv = &5 order by dte", cpt.text, 1, 1, 1, Nrel.Text)
-          Else
-            Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and nrlv = &5  union SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and nrlv = &5 order by dte", cpt.text, 1, 1, 1, Nrel.Text)
-            If Error Then rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1 and pointee = &2 and tresorerie = &3 and validee = &4 and nrlv = &5 order by dte", cpt.text, 1, 1, 1, Nrel.Text)
-          Endif
-        Else
-          If Toutes.value Then
-            If Not N1.Value Then
-              rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1  and pointee is null and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1  and pointee =&7 and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1 and pointee = &5 and tresorerie = &2 and validee = &3 and nrlv = &6 order by dte", cpt.text, 1, 1, dteN, 1, Nrel.Text, 0)
-            Else
-              Try rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1  and pointee is null and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1  and pointee =&7 and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1 and pointee = &5 and tresorerie = &2 and validee = &3 and nrlv = &6  union SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1  and pointee is null and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1  and pointee =&7 and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1 and pointee = &5 and tresorerie = &2 and validee = &3 and nrlv = &6 order by dte", cpt.text, 1, 1, dteN, 1, Nrel.Text, 0)
-              If Error Then rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt1") & " WHERE compte = &1  and pointee is null and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1  and pointee =&7 and tresorerie = &2 and validee = &3 and dte <=&4 or compte = &1 and pointee = &5 and tresorerie = &2 and validee = &3 and nrlv = &6 order by dte", cpt.text, 1, 1, dteN, 1, Nrel.Text, 0)
-            Endif
-          Endif
-        Endif
-      Endif
-    Endif
-    If rResult.Available Then
-      Do
-        'filtrage simple pour l'instant avant mise en place Trigen
-        If Not IsNull(Montant.Text) Then
-          If (InStr(Utils.cpoint(rResult!montantc), Utils.cpoint(Montant.Text)) + InStr(Utils.cpoint(rResult!montantc), Utils.cpoint(Montant.Text))) = 0 Then
-            Continue
-          Endif
-        Endif
-        Colcli.Add(rResult!numero & rResult!lind, rResult!numero)
-        Colcli.Item[0] = rResult!compte
-        Colcli.Item[1] = .Cdate_Aff(rResult!dte)
-        Colcli.Item[2] = rResult!libelle
-        Colcli.Item[3] = rResult!numdoc
-        Colcli.Item[4] = rResult!numlot
-        Colcli.Item[5] = Format$(rResult!montantd, "0.00")
-        Colcli.Item[6] = Format$(rResult!montantc, "0.00")
-        Colcli.Item[7] = rResult!nrlv
-        Colcli.Item[8] = rResult!numero
-        If rResult!pointee Then
-          Colcli.Item[9] = "P"
-        Else
-          Colcli.Item[9] = ""
-        Endif
-        Colcli.Item[10] = rResult!lind
-      Loop Until rResult.MoveNext()
-    Endif
-  End With
-
-End
-
-'*************************************************
-'*  Calcul du total des lignes selectionnées     *
-'*************************************************
-Public Sub Colcli_Click()
-
-  With utils
-    TD = Val(.cpoint(Colcli.Item[5]))
-    If TD = Null Then TD = 0
-    TC = Val(.cpoint(Colcli.Item[6]))
-    If TC = Null Then TC = 0
-    If Not Sldfinal.Text Then Sldfinal.Text = "0,00"
-    Sldfinal.Text = Format$(Val(.cpoint(Sldfinal.Text)), "0.00")
-    soldedepart.Text = Format$(Val(.cpoint(soldedepart.Text)), "0.00")
-    If Not Nrel.Text Then
-      Message.Warning("Veuillez saisir un numéro de relevé SVP !")
-      Colcli.Current.Selected = False
-      Nrel.SetFocus
-      Nrel.Select
-    Else
-      If colcli.Item.Selected And colcli.Item[9] <> "*" And Ep.value = True Then
-        Totd = Totd + Td
-        Totc = Totc + Tc
-        Totdeb.Text = Format$(Totd, "0.00")
-        Totcred.Text = Format$(Totc, "0.00")
-        Sldtheorique.Text = Format$(Val(soldedepart.Text) - Val(Totdeb.Text) + Val(Totcred.Text), "0.00")
-        Ecart.Text = Format$(Val(soldedepart.Text) - Val(Totdeb.Text) + Val(Totcred.Text) - Val(Sldfinal.Text), "0.00")
-        Colcli.Item[9] = "*"
-      Else
-        If colcli.Item.Selected And colcli.Item[9] = "" And Enp.value = True Then
-          Totd = Totd + Td
-          Totc = Totc + Tc
-          Totdeb.Text = Format$(Totd, "0.00")
-          Totcred.Text = Format$(Totc, "0.00")
-          Sldtheorique.Text = Format$(Val(soldedepart.Text) + Abs(Val(Totdeb.Text)) - Abs(Val(Totcred.Text)), "0.00")
-          Ecart.Text = Format$(Val(soldedepart.Text) + Abs(Val(Totdeb.Text)) - Abs(Val(Totcred.Text)) - Val(Sldfinal.Text), "0.00")
-          Colcli.Item[9] = "*"
-        Else
-          If colcli.Item.Selected And colcli.Item[9] = "*" Then
-            Totd = Totd - Td
-            Totc = Totc - Tc
-            Totdeb.Text = Format$(Totd, "0.00")
-            Totcred.Text = Format$(Totc, "0.00")
-            Sldtheorique.Text = Format$(Val(soldedepart.Text) - Val(Totdeb.Text) + Val(Totcred.Text), "0.00")
-            Ecart.Text = Format$(Val(soldedepart.Text) - Val(Totdeb.Text) + Val(Totcred.Text) - Val(Sldfinal.Text), "0.00")
-            Colcli.Item[9] = ""
-          Endif
-        Endif
-      Endif
-    Endif
-  End With
-
-End
-
-'**********************************************
-'*  Calcul du total des lignes non pointées   *
-'**********************************************
-Public Sub Colcli_Tot()
-
-  With utils
-    If colcli.Count Then
-      TD = Val(.cpoint(Colcli.item[5]))
-      If TD = Null Then TD = 0
-      If Error Then TD = 0
-      TC = Val(.cpoint(Colcli.Item[6]))
-      If TC = Null Then TC = 0
-    Endif
-  End With
-
-End
-
-'***********************************************
-'* Affichage du total des lignes selectionnées *
-'***********************************************
-Public Sub Colcli_Totnp()
-
-  With utils
-    If Colcli.Available Then
-      Colcli.MoveFirst
-    Endif
-  End With
-
-End
-
-'*******************
-'*    On pointe    *
-'*******************
-Public Sub Button5_Click()
-
-  Dim rResult As Result
-  Dim Tab As String
-  Dim Tab2 As String
-  Dim Tab3 As String
-  Dim Compt As String
-  Dim num As String
-
-  Tab = "Fiches_Mvt"
-  Tab2 = "Fiches_Comptes"
-  Tab3 = "Fiches_Rappro"
-  With utils
-    If b = 0 Then
-      If Nrel.Text = "" Then
-        Message.Warning("Veuillez saisir un numéro de relevé SVP")
-        Nrel.SetFocus
-      Else
-        If enp.value = True Then
-          If Colcli.Available Then
-            Colcli.MoveFirst
-            Do
-              l = 1
-              Colcli_Tot()
-              Colcli.item.Selected = True
-              If Colcli.Item[9] = "*" Then
-                Compt = Colcli.Item[0]
-                num = Colcli.Item[8]
-                Utils.db.Exec("UPdate " & Tab & " SET pointee = &1, nrlv = &2 where numero = &3", 1, Nrel.Text, num)
-              Endif
-            Loop Until Colcli.Movenext()
-            Affichage()
-            Totdeb.Text = "0,00"
-          Endif
-          rResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE compte_cc = &1", cpt.Text)
-          If rResult.Available Then
-            Utils.db.Exec("UPdate " & Tab2 & " SET soldep = &1 where compte_cc = &2", .PointBase(Sldtheorique.Text), cpt.Text)
-          Endif
-          Try Utils.db.Exec("insert into " & Tab3 & " (cpt, nreleve, date_releve, date_rappro, solde) values (&1,&2, &3,&4,&5)", cpt.Text, Nrel.Text, .Cdate_dbase(dte.Text), .Cdate_dbase(dterappro.Text), .PointBase(Sldtheorique.Text))
-          If Error Then
-            Utils.db.Exec("UPdate " & Tab3 & " SET cpt = &1, nreleve = &2, date_releve = &3, date_rappro = &4, solde = &5 where cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text, .Cdate_dbase(dte.Text), .Cdate_dbase(dterappro.Text), .PointBase(soldedepart.Text))
-          Endif
-        Else
-          Message.Warning("Vous ne pouvez pas pointer des écritures qui sont pointées !")
-          affichage()
-          Sldtheorique.Text = soldedepart.Text
-        Endif
-      Endif
-      Calc_soldes()
-    Endif
-  End With
-
-End
-
-'********************
-'*    On dépointe   *
-'********************
-Public Sub Button7_Click()
-
-  Dim rResult As Result
-  Dim Tab As String
-  Dim tab2 As String
-  Dim Compt As String
-  Dim num As String
-
-  Tab = "Fiches_Mvt"
-  Tab2 = "Fiches_Comptes"
-  If Nrel.Text = "" Then
-    Message.Warning("Veuillez saisir un numéro de relevé SVP")
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", compte)
+  If Not rResult.Available Then
+    cpt.Text = ""
+    Utils.Bip()
+    Message.Error("Attention ! Le compte " & compte & " n'existe pas.")
+    Return False
   Else
-    With Utils
-      If ep.value = True Then
-        If Colcli.Available Then
-          Colcli.MoveFirst
-          Do
-            l = 0
-            Colcli_Tot()
-            Colcli.item.Selected = True
-            If Colcli.Item.selected Then
-              If Colcli.Item[9] = "*" Then
-                Compt = Colcli.Item[0]
-                num = Colcli.Item[8]
-                Utils.db.Exec("UPdate " & Tab & " SET pointee = &1, nrlv = &2 where numero = &3", 0, 0, num)
-              Endif
-            Endif
-          Loop Until Colcli.Movenext()
-          Colcli.Clear
-          Affichage()
-          Totdeb.Text = "0,00"
-        Endif
-        rResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE compte_cc = &1", cpt.Text)
-        If rResult.Available Then
-          Utils.db.Exec("UPdate " & Tab2 & " SET soldep = &1 where compte_cc = &2", .Pointbase(Sldtheorique.Text), cpt.Text)
-        Endif
-      Else
-        Message.Warning("Vous ne pouvez pas dépointer des écritures qui ne sont pas pointées !")
-        affichage()
-        Sldtheorique.Text = soldedepart.Text
-      Endif
-    End With
-    Calc_soldes()
+    ClearChampsAll()
+    cpt.Text = rResult!compte_cc
+    soldeBnq.Text = LPrix(rResult!solde).L
+    intitule.Text = rResult!intitule_cc
+    Sldepart.Text = LPrix(rResult!soldep).L
+
+    rResult = Utils.db.Exec("SELECT (sum(montantd)-sum(montantc)) as soldepointee FROM  " & Cbase.Table("TabMvt") & " WHERE compte = &1 and ((cloturee = 1 and jour = 90 and libelle = &2) or pointee = 1)", compte, "Report a nouveau")
+    If rResult.Available Then
+      soldeBnq.Text = soldeBnq.Text & " (pointées : " & LPrix(rResult!soldepointee).L & ")"
+    Endif
+    Update_Req()
+    Calc_Solde()
+    Return True
   Endif
 
 End
 
-'**************************************
-'*  On calcule les soldes du relevé   *
-'**************************************
-Public Sub Calc_soldes()
+Public Sub ToggleButton3_Click()
 
-  Enp.Value = True
-  Totdeb.Text = "0,00"
-  Totcred.Text = "0,00"
-  Totd = 0
-  Totc = 0
-  soldedepart.Text = Sldtheorique.Text
-  Ecart.Text = soldedepart.Text
-  Sldtheorique.Text = soldedepart.Text
-  Sldfinal.Text = "0,00"
-  dte.Text = Format$(Now, "dd.mm.yyyy")
-  dterappro.Text = Format$(Now, "dd.mm.yyyy")
-  'on recharge le compte selectionné précédement
-  cptman()
+  Dim hForm As TriCpt
+  Dim rResult As Result
+  
+  hForm = New TriCpt(TriCpt.Tresorerie, TriCpt.Avec_Solde, Me)
+  hForm.Showmodal()
+  If Bsel = True Then
+    cptman(Bval)
+  Endif
 
 End
 
-'***********************************
-'*  On affiche toutes les lignes   *
-'***********************************
-Public Sub Toutes_Click()
+Public Sub Cpt_LostFocus()
 
-  Totdeb.Text = "0,00"
-  affichage()
+  cptman(cpt.Text)
+  Stop Event
 
 End
 
-'***********************************************
-'*  On n'affiche que les lignes non pointées   *
-'***********************************************
-Public Sub Enp_Click()
+Public Sub Cpt_KeyPress()
 
-  Totdeb.Text = "0,00"
-  affichage()
-  'Sldfinal.ReadOnly = FALSE
+  If Key.code = Key.Enter Or Key.code = Key.Return Then
+    cptman(cpt.Text)
+    Stop Event
+  Endif
 
 End
 
-'*******************************************
-'*  On n'affiche que les lignes pointées   *
-'*******************************************
-Public Sub Ep_Click()
+Public Sub Modesel_Click()
 
-  Totdeb.Text = "0,00"
-  affichage()
+  Filter_Calc()
 
 End
 
-'***********************************
-'*    On affiche toutes exo N-1    *
-'***********************************
 Public Sub N1_Click()
 
-  If N1.Value Then
-    Totdeb.Text = "0,00"
-    affichage()
-  Else
-    affichage()
+  Selected.Clear()
+  Update_Req()
+
+End
+
+Public Sub SelectAllFil_Click()
+
+  Dim Res As Result
+  Dim i As Integer
+  
+  Res = tr.GetAllFiltered()
+  If Res.Available
+    Repeat
+      i = Selected.Find(Res!numero)
+      If i = -1 Then
+        Selected.Add(Res!numero)
+      Endif
+    Until Res.MoveNext()
+  Endif
+  Selcnt.Value = Selected.Count
+  Calc_Solde()
+  tr.Refresh_Data()
+  
+End
+
+Public Sub DeSelectAllFil_Click()
+
+  Dim Res As Result
+  Dim i As Integer
+  
+  Res = tr.GetAllFiltered()
+  If Res.Available
+    Repeat
+      i = Selected.Find(Res!numero)
+      If i <> -1 Then
+        Selected.Remove(i)
+      Endif
+    Until Res.MoveNext()
+  Endif
+  Selcnt.Value = Selected.Count
+  Calc_Solde()
+  tr.Refresh_Data()
+  
+End
+
+Public Sub ClearChamps()
+  
+  Selected.Clear()
+  Update_Req()
+  Calc_Solde()
+  
+End
+
+Public Sub ClearChampsAll()
+  
+  Selected.Clear()
+  Selcnt.Value = Selected.Count
+  Nrel.Clear()
+  IsLast = False
+  RelUniq.Value = False
+  Dte.Clear()
+  Dterappro.Clear()
+  Sldfinal.Clear()
+  Sldepart.Clear()
+  Update_Req()
+  Calc_Solde()
+  
+End
+
+Public Sub Calc_Solde()
+  
+  Dim Tab As String
+  Dim Tab1 As String
+  Dim totd As Float = 0
+  Dim totc As Float = 0
+  Dim slddep As Float
+  Dim sldfin As Float
+  Dim sldtheo As Float
+  Dim rResult As Result
+  
+  slddep = LPrix(Sldepart.Text).G
+  sldfin = LPrix(Sldfinal.Text).G
+
+  Ecart.Text = LPrix(0).L
+  If Selected.Count > 0 Then
+    If N1.Value = True Then
+      rResult = Utils.db.Exec("Select totdeb, totcred FROM ( Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ") Union Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt1") & " where compte=&1 and numero in (" & Selected.Join(",") & ") ) as Combined_Mvt where compte=&1 and numero in (" & Selected.Join(",") & ") group by numero", Cpt.Text)
+    Else
+      rResult = Utils.db.Exec("Select sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ")", Cpt.Text)
+    Endif
+    If rResult.Available Then
+      totd = LPrix(rResult!totdeb).G
+      totc = LPrix(rResult!totcred).G
+    Endif
+  Endif
+  
+  Totdeb.Text = LPrix(totd).L
+  Totcred.Text = LPrix(totc).L
+  sldtheo = slddep + totd - totc
+  Sldtheorique.Text = LPrix(sldtheo).L
+  Ecart.Text = LPrix(sldfin - sldtheo).L
+  
+End
+
+Public Sub Sld_LostFocus()
+
+  Calc_Solde()
+  Stop Event
+
+End
+
+Public Sub Sld_KeyPress()
+
+  If Key.code = Key.Enter Or Key.code = Key.Return Then
+    Sld_LostFocus()
   Endif
 
 End
 
-'************************************
-'*  on travaille avec les clients   *
-'************************************
-Public Sub Bclient_Click()
+Public Sub Pointage_Click()
 
-  Colcli.clear
-  cpt.Text = ""
-  cpt.Setfocus
+  Dim rResult As Result
+
+  If IsNull(Cpt.Text) Then
+    Utils.Bip()
+    Message.Error("Veuillez saisir un numero de compte")
+    Return
+  Endif
+
+  If IsNull(Nrel.Text) Then
+    Utils.Bip()
+    Message.Error("Veuillez saisir un numero de relevé")
+    Return
+  Endif
+  
+  If LPrix(Sldfinal.Text).G = 0 Then
+    If Message.Warning("Le solde final du relevé est nul, êtes-vous sur d'avoir saisi le bon solde?", "Continuer", "Sortir") = 2 Then Return
+  Endif
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabRappro") & " SET cpt = &1, nreleve = &2, date_releve = &3, date_rappro = &4, solde = &5 where cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text, LDate(dte.Text).D, LDate(dterappro.Text).D, LPrix(Sldfinal.Text).D)
+
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", cpt.Text)
+  If rResult.Available And IsLast Then
+    Utils.db.Exec("UPdate " & Cbase.Table("TabComptes") & " SET soldep = &1 where compte_cc = &2", LPrix(Sldfinal.Text).D, cpt.Text)
+  Endif
+
+  If Selected.Count Then
+    Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte = &3 and numero in (" & Selected.Join(",") & ")", 1, Nrel.Text, Cpt.Text)
+  Endif
+
+  ClearChamps()
 
 End
 
-'*****************************************
-'*  on travaille avec les fournisseurs   *
-'*****************************************
-Public Sub Bfournisseur_Click()
+Public Sub Depointage_Click()
 
-  Colcli.clear
-  cpt.Text = ""
-  cpt.Setfocus
+  Dim rResult As Result
+
+  If IsNull(Cpt.Text) Then
+    Utils.Bip()
+    Message.Error("Veuillez saisir un numero de compte")
+    Return
+  Endif
+
+  If IsNull(Nrel.Text) Then
+    Utils.Bip()
+    Message.Error("Veuillez saisir un numero de relevé")
+    Return
+  Endif
+  
+  If LPrix(Sldfinal.Text).G = 0 Then
+    If Message.Warning("Le solde final du relevé est nul, êtes-vous sur d'avoir saisi le bon solde?", "Continuer", "Sortir") = 2 Then Return
+  Endif
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabRappro") & " SET cpt = &1, nreleve = &2, date_releve = &3, date_rappro = &4, solde = &5 where cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text, LDate(dte.Text).D, LDate(dterappro.Text).D, LPrix(Sldfinal.Text).D)  
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", cpt.Text)
+  If rResult.Available And IsLast Then
+    Utils.db.Exec("UPdate " & Cbase.Table("TabComptes") & " SET soldep = &1 where compte_cc = &2", LPrix(Sldfinal.Text).D, cpt.Text)
+  Endif
+
+  If Selected.Count Then
+    Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte=&3 and numero in (" & Selected.Join(",") & ")", 0, "", Cpt.Text)
+  Endif
+
+  ClearChamps()
 
 End
 
-'***********************************
-'*      on imprime le relevé       *
-'***********************************
-Public Sub Button1_Click()
+Public Sub SuppressionRlv_Click()
+
+  Dim rResult As Result
+
+  If IsNull(Cpt.Text) Then
+    Utils.Bip()
+    Message.Error("Veuillez saisir un numero de compte")
+    Return
+  Endif
+
+  If IsNull(Nrel.Text) Then
+    Utils.Bip()
+    Message.Error("Veuillez saisir un numero de relevé")
+    Return
+  Endif
+  
+  If Message.Question("Voulez vous supprimer le relevé " & Nrel.Text, "Oui", "Non") Then
+    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text)
+    If rResult.Available Then
+       Utils.db.Exec("DELETE FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text)
+       Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte=&3 and nrlv = &4", 0, "", Cpt.Text, Nrel.Text)
+       'on recalcul les soldes du compte
+       Calcsolde.Calcul(Cpt.Text, True)
+    Else
+      Message.Error("Impossible de trouver le relevé " & Nrel.Text & "!")
+    Endif
+  
+    ClearChampsAll()
+  
+  Endif
+  
+End
+
+Public Sub Imprime_Click()
 
   Dim code As String
   Dim Intitulb As String
@@ -1026,16 +733,26 @@ Public Sub Button1_Click()
   Dim Totpnp As String
   Dim dateedition As String
   Dim typeligne As String
-  Dim dteN As String
-  Dim Tab As String
   Dim rResult As Result
+  Dim rResult2 As Result
   Dim SteResult As Result
-  Dim Tab2 As String
+  Dim Ste As String
+  Dim Nbpage As Integer
+  Dim Filename As String
+  Dim pdf As Ccompta
+  Dim PosY As Integer
+  Dim PosX As Integer
+  Dim cpttreso As String
+  Dim cptintitule As String
+  Dim cptsolde As String
 
-  Chkfocus = False
-  Tab = "Fiches_Mvt"
-  Tab2 = "Fiches_Societes"
-  SteResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " Where cd_sc = &1", Start.Societe)
+  If IsNull(Cpt.Text) Then
+    Utils.Bip()
+    Message.Error("Veuillez saisir un numero de compte")
+    Return
+  Endif
+
+  SteResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSoc") & " Where cd_sc = &1", Start.Societe)
   Ste = "Societe " & " " & SteResult!int_sc
   dateedition = dte.text
   Intitulb = Intitule.text
@@ -1046,7 +763,6 @@ Public Sub Button1_Click()
   Totpnp = "0,00"
   Totnp = "0,00"
   Totp = "0,00"
-  dteN = Right$(dte.Text, 4) & Mid$(dte.Text, 4, 2) & Left$(dte.Text, 2)
   Nbpage = 1
   Shell "cd " & User.Home & ""
   Filename = User.Home & "/tmp/Pointage.pdf"
@@ -1056,11 +772,25 @@ Public Sub Button1_Click()
   If Enp.Value Then typeligne = "(Impression des lignes non pointées)"
   If Ep.Value Then typeligne = "(Impression des lignes pointées)"
   If Nrel.Text = "" Then
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and pointee = &4 order by dte", cpt.text, 1, 1, 1)
+    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and pointee = &4 order by dte", cpt.text, 1, 1, 1)
+    rResult2 = Utils.db.Exec("SELECT compte, intitule, (sum(montantd)-sum(montantc)) as soldepointee FROM  " & Cbase.Table("TabMvt") & " WHERE compte = &1 and ((cloturee = 1 and jour = 90 and libelle = &2) or (pointee = 1 and nrlv <= &3))", cpt.Text, "Report a nouveau", Nrel.Text)
+    Try cpttreso = rResult2!compte
+    Try cptintitule = rResult2!intitule & " (Pointees)"
+    Try cptsolde = LPrix(rResult2!soldepointee).L
   Else
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and nrlv = &4  order by dte", cpt.text, 1, 1, Nrel.Text)
+    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and nrlv = &4  order by dte", cpt.text, 1, 1, Nrel.Text)
+    rResult2 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1  and nreleve = &2", cpt.text, Nrel.Text)
+    Try cpttreso = rResult!compte
+    Try cptintitule = rResult!intitule & " (Relevé " & Nrel.Text & ")"
+    Try cptsolde = LPrix(rResult2!solde).L
   Endif
-  If Enp.Value Then rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and pointee is null and dte <= &5 or compte = &1  and tresorerie = &2 and validee = &3 and pointee = &4 order by dte", cpt.text, 1, 1, 0, dteN)
+  If Enp.Value Then 
+    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1  and tresorerie = &2 and validee = &3 and pointee is null and dte <= &5 or compte = &1  and tresorerie = &2 and validee = &3 and pointee = &4 order by dte", cpt.text, 1, 1, 0, LDate(dte.Text).D)
+    rResult2 = Utils.db.Exec("SELECT compte_cc, intitule_cc, solde FROM  " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", cpt.Text)
+    Try cpttreso = rResult2!compte_cc
+    Try cptintitule = rResult2!intitule_cc & " (En Cours)"
+    Try cptsolde = LPrix(rResult2!solde).L
+  Endif
   If rResult.Available Then
     pdf.Entete("Impression des rapprochements bancaires")
     posx = 2
@@ -1109,10 +839,7 @@ Public Sub Button1_Click()
     Endif
     pdf.Level3R(Totdeb2, Totcred2, Totpnp, Posy)
     Posy += 5
-    rResult = Utils.db.Exec("SELECT compte, intitule, (sum(montantd)-sum(montantc)) as soldepointee FROM  " & Tab & " WHERE compte = &1 and ((cloturee = 1 and jour = 90 and libelle = &2) or (pointee = 1 and nrlv <= &3))", cpt.Text, "Report a nouveau", Nrel.Text)
-    If rResult.Available Then
-      pdf.Level6(rResult!compte, rResult!intitule, rResult!soldepointee, Posy)
-    Endif
+    pdf.Level6(cpttreso, cptintitule, cptsolde, Posy)
     pdf.Baspage()
     pdf.Output(Filename, False)
     Visualiseur.Prog(Filename)
@@ -1123,47 +850,14 @@ End
 '************************************
 '* on affiche la documentation html *
 '************************************
-Public Sub Button3_Click()
+Public Sub Help_Click()
 
-  Doc.Open("Pointage")
-
-End
-
-'*****************************************
-'*     Le travail est fini, on sort      *
-'*****************************************
-Public Sub Button6_Click()
-
-  b = 0
-  Me.Close
+  Doc.Open("Pointage_new")
 
 End
 
-Public Sub Form_Close()
+Public Sub QuitPoint_Click()
 
-  b = 0
-  If Exist(filename) Then Try Kill filename
-  Start.LocalSettings["/Soc" & Start.Societe & "/Col/LcolP"] = "col0:" & Colcli.Columns[0].Width & ";" & "col1:" & Colcli.Columns[1].Width & ";" & "col2:" & Colcli.Columns[2].Width & ";" & "col3:" & Colcli.Columns[3].Width & ";" & "col4:" & Colcli.Columns[4].Width & ";" & "col5:" & Colcli.Columns[5].Width & ";" & "col6:" & Colcli.Columns[6].Width & ";" & "col7:" & Colcli.Columns[7].Width & ";" & "col8:" & Colcli.Columns[8].Width & ";" & "col9:" & Colcli.Columns[9].Width
-  Start.LocalSettings.Save
-
-End
-
-Public Sub Montant_Change()
-
-  affichage()
-
-End
-
-Public Sub ToogleAll_Click()
-
-  If colcli.Available Then
-    colcli.MoveFirst()
-    Do
-      Colcli.Item.Selected = True
-      Colcli_Click()
-    Loop Until Colcli.Movenext()
-    colcli.UnselectAll()
-    colcli.MoveFirst()
-  Endif
+  Me.Close()
 
 End

@@ -1,16 +1,19 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(10,9,122,68)
+  MoveScaled(1,4,116,81)
   Background = Color.Background
   Text = ("Pointage des comptes.")
-  { Colcli ColumnView
-    MoveScaled(1,17,120,36)
+  { Panel1 Panel
+    MoveScaled(10,17,114,49)
+  }
+  { Colrlv ColumnView
+    MoveScaled(47,1,57,64)
+    Visible = False
     Font = Font["Serif,-1"]
-    Background = Color.TextBackground
+    Background = &HE8E8B0&
     Mouse = Mouse.Pointing
-    Mode = Select.Multiple
-    Resizable = True
+    Sorted = True
     AutoResize = False
     ScrollBar = Scroll.Vertical
   }
@@ -19,15 +22,8 @@
     Font = Font["Serif,-1"]
     Text = ("N° de compte")
   }
-  { Cpt TextBox Rlv
-    Name = "Cpt"
-    MoveScaled(47,1,15,3)
-    Font = Font["Serif,-1"]
-    Background = Color.TextBackground
-    Tag = "1"
-  }
-  { Button6 Button
-    MoveScaled(103,63,17,4.25)
+  { QuitPoint Button
+    MoveScaled(98,76,17,4.25)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Quitter le programme de pointage.")
@@ -42,34 +38,18 @@
     Picture = Picture["Icones/next_frame.png"]
   }
   { TextLabel2 TextLabel
-    MoveScaled(16,54,15,3.625)
+    MoveScaled(16,67,15,3.625)
     Font = Font["Serif,-1"]
     Text = ("Débit")
     Alignment = Align.Center
   }
   { Totdeb Label
-    MoveScaled(16,58,15,3)
+    MoveScaled(16,71,15,3)
     Font = Font["Serif,-1"]
     Alignment = Align.Right
   }
-  { Toutes RadioButton
-    MoveScaled(3,0.25,22.375,3)
-    Font = Font["Serif,-1"]
-    Text = Shortcut(("Toutes les écritures"), "T")
-  }
-  { Enp RadioButton
-    MoveScaled(3,3.25,23,3)
-    Font = Font["Serif,-1"]
-    Text = Shortcut(("Ecritures non pointées"), "n")
-    Value = True
-  }
-  { Ep RadioButton
-    MoveScaled(3,6.5,22.375,3)
-    Font = Font["Serif,-1"]
-    Text = Shortcut(("Ecritures pointées"), "o")
-  }
-  { Button5 Button
-    MoveScaled(61,63,18,4.25)
+  { Pointage Button
+    MoveScaled(60,76,18,4.25)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Pointer votre saisie.")
@@ -77,8 +57,8 @@
     Text = Shortcut(("Pointage"), "P")
     Picture = Picture["Icones/charset.png"]
   }
-  { Button7 Button
-    MoveScaled(40,63,18,4.25)
+  { Depointage Button
+    MoveScaled(41,76,18,4.25)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Depointer votre saisie.")
@@ -92,58 +72,58 @@
     Text = ("Solde")
   }
   { SoldeBnq Label
-    MoveScaled(34,10,41,3)
+    MoveScaled(33,9,34,3)
     Font = Font["Serif,-1"]
   }
-  { Button3 Button
-    MoveScaled(1,63,4.25,4.25)
+  { Help Button
+    MoveScaled(1,76,4.25,4.25)
     Font = Font["Serif,-1"]
     ToolTip = ("Doc HTML")
     Picture = Picture["Icones/khelp.png"]
   }
-  { Dte TextBox Rlv
-    Name = "Dte"
-    MoveScaled(91,5,13,3)
-    Font = Font["Serif,-1"]
-    Background = Color.TextBackground
-    Tag = "3"
-  }
   { Label3 Label
-    MoveScaled(68,5,22,4)
+    MoveScaled(70,4.5,14,4)
     Font = Font["Serif,-1"]
+    ToolTip = ("Date du relevé tel qu'il est fourni par l'etablissement bancaire")
     Text = ("Date du relevé")
   }
   { Label4 Label
-    MoveScaled(68,1,22,3)
+    MoveScaled(68,1,14,3)
     Font = Font["Serif,-1"]
     Text = ("N° de relevé")
   }
-  { Nrel TextBox Rlv
-    Name = "Nrel"
-    MoveScaled(91,1,13,3)
+  { Nrel TextBox
+    MoveScaled(85,1,13,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     Tag = "2"
   }
+  { RelUniq CheckBox Modesel
+    Name = "RelUniq"
+    MoveScaled(5,9,23,2)
+    Font = Font["Serif,Italic,-3"]
+    ToolTip = ("Masque les ecritures apres la date du relevé si un relevé est selectionné")
+    Text = ("Releve en cours Uniq.")
+  }
   { TextLabel1 TextLabel
-    MoveScaled(48,54,15,3.625)
+    MoveScaled(48,67,15,3.625)
     Font = Font["Serif,-1"]
     Text = ("Solde ")
     Alignment = Align.Center
   }
   { Sldtheorique Label
-    MoveScaled(48,58,15,3)
+    MoveScaled(48,71,15,3)
     Font = Font["Serif,-1"]
     Alignment = Align.Right
   }
   { TextLabel3 TextLabel
-    MoveScaled(64,54,14,3.625)
+    MoveScaled(64,67,14,3.625)
     Font = Font["Serif,-1"]
     Text = ("Ecart")
     Alignment = Align.Center
   }
   { Ecart Label
-    MoveScaled(64,58,14,3)
+    MoveScaled(64,71,14,3)
     Font = Font["Serif,-1"]
     Alignment = Align.Right
   }
@@ -151,8 +131,8 @@
     MoveScaled(40,6,26,3)
     Font = Font["Serif,-1"]
   }
-  { Button1 Button
-    MoveScaled(82,63,18,4.25)
+  { Imprime Button
+    MoveScaled(79,76,18,4.25)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Imprime le relevé")
@@ -161,97 +141,129 @@
     Picture = Picture["Icones/frameprint.png"]
   }
   { ToggleButton1 ToggleButton
-    MoveScaled(104,0.75,3.375,3.375)
+    MoveScaled(98,1,3.375,3.375)
     Font = Font["Serif,-1"]
     ToolTip = ("Cliquer pour recuperer votre relevé")
     Picture = Picture["Icones/next_frame.png"]
   }
   { Label5 Label
-    MoveScaled(68,9,22,4)
+    MoveScaled(70.125,8.5,15,4)
     Font = Font["Serif,-1"]
-    Text = ("Date du rapprochement")
-  }
-  { Dterappro TextBox Rlv
-    Name = "Dterappro"
-    MoveScaled(91,9,13,3)
-    Font = Font["Serif,-1"]
-    Background = Color.TextBackground
-    Tag = "4"
-  }
-  { Colrlv ColumnView
-    MoveScaled(47,0,57,64)
-    Visible = False
-    Font = Font["Serif,-1"]
-    Background = &HE8E8B0&
-    Mouse = Mouse.Pointing
-    Sorted = True
-    AutoResize = False
-    ScrollBar = Scroll.Vertical
+    ToolTip = ("Date à laquelle le rapprochement bancaire est fait.")
+    Text = ("Date du rappro.")
   }
   { TextLabel4 TextLabel
-    MoveScaled(1,54,14,3.625)
+    MoveScaled(1,67,14,3.625)
     Font = Font["Serif,-1"]
     Text = ("Solde départ")
     Alignment = Align.Center
   }
-  { Soldedepart TextBox Rlv
-    Name = "Soldedepart"
-    MoveScaled(2,59,13,3)
+  { Sldepart TextBox Sld
+    Name = "Sldepart"
+    MoveScaled(2,72,13,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     Tag = "6"
     Alignment = Align.Right
   }
   { Totcred Label
-    MoveScaled(32,58,15,3)
+    MoveScaled(32,71,15,3)
     Font = Font["Serif,-1"]
     Alignment = Align.Right
   }
   { TextLabel5 TextLabel
-    MoveScaled(32,54,15,3.625)
+    MoveScaled(32,67,15,3.625)
     Font = Font["Serif,-1"]
     Text = ("Crédit")
     Alignment = Align.Center
   }
   { Label7 Label
-    MoveScaled(107,5,13,4)
+    MoveScaled(101,5,13,4)
     Font = Font["Serif,-1"]
     Text = ("Solde relevé")
     Alignment = Align.Center
   }
-  { Sldfinal TextBox Rlv
+  { Sldfinal TextBox Sld
     Name = "Sldfinal"
-    MoveScaled(107,9,13,3)
+    MoveScaled(101,9,13,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     Tag = "5"
   }
+  { Dte TextReg
+    MoveScaled(85,5,13,3)
+    Font = Font["Serif,-1"]
+    Background = Color.TextBackground
+    Tag = "3"
+  }
+  { Dterappro TextReg
+    MoveScaled(85,9,13,3)
+    Font = Font["Serif,-1"]
+    Background = Color.TextBackground
+    Tag = "4"
+  }
   { N1 CheckBox
-    MoveScaled(3,10.25,29,2)
+    MoveScaled(1.25,14.625,29,2)
     Font = Font["Serif,-1"]
     Text = ("Affichage N-1")
   }
-  { Montant TextBox
-    MoveScaled(16,13,12,3)
-    ToolTip = ("Saisie la valeur du montant à filtrer")
+  { MaskRecent CheckBox Modesel
+    Name = "MaskRecent"
+    MoveScaled(1.25,12,29,2)
+    Font = Font["Serif,-1"]
+    ToolTip = ("Masque les ecritures apres la date du relevé si un relevé est selectionné")
+    Text = ("Masquage Ecr. > Date relevé")
   }
-  { Label6 Label
-    MoveScaled(3,13,15,3)
-    Font = Font["-2"]
-    Text = ("Filtre Montant")
+  { Cpt TextReg Cpt
+    Name = "Cpt"
+    MoveScaled(47,1,15,3)
+    Font = Font["Serif,-1"]
+    Background = Color.TextBackground
+    Tag = "1"
   }
-  { ToogleAll Button
-    MoveScaled(111,13,10,4)
+  { Toutes RadioButton Modesel
+    Name = "Toutes"
+    MoveScaled(1.25,0.25,22.375,3)
+    Font = Font["Serif,-1"]
+    Text = Shortcut(("Toutes les écritures"), "T")
+  }
+  { Enp RadioButton Modesel
+    Name = "Enp"
+    MoveScaled(1.25,3.25,23,3)
+    Font = Font["Serif,-1"]
+    Text = Shortcut(("Ecritures non pointées"), "n")
+    Value = True
+  }
+  { Ep RadioButton Modesel
+    Name = "Ep"
+    MoveScaled(1.25,6.25,22.375,3)
+    Font = Font["Serif,-1"]
+    Text = Shortcut(("Ecritures pointées"), "o")
+  }
+  { Selcnt ValueBox
+    MoveScaled(105,66,9,3)
+    ToolTip = ("Nombres de document selectionné")
+    Text = ("sélectionnés")
+  }
+  { TextLabel6 TextLabel
+    MoveScaled(95,66,10,3)
+    Text = ("Selection")
+  }
+  { SelectAllFil Button
+    MoveScaled(87,13,13,3)
     Text = ("Sel. Tous")
   }
-  { Colcompt ColumnView
-    MoveScaled(0,0,61,64)
-    Visible = False
-    Font = Font["Serif,-1"]
-    Background = &HE8E8B0&
-    Mouse = Mouse.Pointing
-    Sorted = True
-    AutoResize = False
-    ScrollBar = Scroll.Vertical
+  { DeSelectAllFil Button
+    MoveScaled(101,13,13,3)
+    Text = ("Désel. Tous")
+  }
+  { SuppressionRlv Button
+    MoveScaled(22,76,18,4.25)
+    Font = Font["Serif,Bold,-1"]
+    Background = Color.ButtonBackground
+    ToolTip = ("Permet la suppression d'un rapprochement bancaire.\nLes ecritures rattachées à ce relevé seront dépointées.")
+    Drop = True
+    Text = Shortcut(("Suppression"), "S")
+    Picture = Picture["Icones/stock_trash_24.png"]
   }
 }
