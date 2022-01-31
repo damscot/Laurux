@@ -489,6 +489,7 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
     resent.MoveFirst
     If IsNull($numcli) Then numcli_Write(resent!cdclibl)
     Repeat
+    
       numlig = Format(Val(numlig) + 1, "0000")
       Select Case choix
         Case ObjFac.finmois, ObjFac.facture     'on renumerote les lignes si facture
@@ -716,12 +717,7 @@ Private Sub calc(numlig As String)
 End
 
 Public Sub ecriture(numcpt As String, tot As Float, intitule As String)
-  
-  Dim Cmpts As Result
-  Dim libel_var As LVar
-  Dim libel_def As String
-  Dim localvars As Collection
-  
+ 
   lignecom = New VarEcr
   If ecrit.Exist(numcpt) Then
     lignecom = ecrit[numcpt]
@@ -733,21 +729,10 @@ Public Sub ecriture(numcpt As String, tot As Float, intitule As String)
     Endif
     ecrit[numcpt] = lignecom
   Else
-      localvars = New Collection
-      'localvars.Add($numfac, "$numfac") 'le numero de facture est défini trop tard (ecr.ecriture) pour etre utilisé ici.
-      localvars.Add($numbl, "$numbl")
       lignecom.compte = numcpt
       lignecom.intitul = intitule
-      libel_def = "FACTURE " & resent!nmclibl
-      libel_var = New LVar(Null, localvars, libel_def)
-      libel_var.AddDate($dteech)
-      Cmpts = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " left join " & Cbase.Table("TabCli") & " on cli_code = &2 WHERE compte_cc like '" & resent!cdclibl & "%' and coll <> &1  order by compte_cc", 1, resent!cdclibl)
-      If Cmpts.Available Then
-        libel_var.ParseResult(Cmpts)
-        libel_def = Cmpts!libel_def
-      Endif
-      libel_def = libel_var.Evaluate(libel_def)
-      lignecom.libelle = Left(libel_def, 50)
+      lignecom.libelle = "FACTURE " & resent!nmclibl
+      lignecom.libelle = Left(lignecom.libelle, 50)
       lignecom.dte = $dtedoc
       If Not IsNull($dteech) Then lignecom.dteech = $dteech
       lignecom.numdoc = $numfac
@@ -965,6 +950,7 @@ Public Function ecriturecompt() As Boolean
   lignecom.type = VarEcr.L_ajou
   lignecom.etat = VarEcr.Vente
   lignecom.dte = $dtedoc
+  lignecom.divers = resent!cdclibl
   ecr = New EcrAuto("", lignecom)
   If ecr.ecriture() Then Return True
   $numfac = ecr.numfac

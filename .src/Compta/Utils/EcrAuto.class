@@ -21,13 +21,17 @@ Public Sub _new(njo As String, Ve As VarEcr)
     Error.Raise("Journal innexistant " & njo & "\nImpossible d'enregistrer l'écriture")
   Endif
   Vecr = ve
-    
+  
 End
 
 Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat= VarEcr.L_ajout ou L_valide => on ajoute une écriture, si = .L_modif => on modifit, si L_sup on supprime. Si type =VarEcr.vente on réserve un numéro de facture + d'écriture + d'écriture définitif sinon juste un numéro d'écriture.
 
   Dim var As VarEcr
   Dim res As Result
+  Dim Cmpts As Result
+  Dim libel_var As LVar
+  Dim libel_def As String
+  Dim localvars As Collection
   
   If Vecr.somme() <> 0 Or Vecr.nb() < 2 Then
     Message.Error("Abandon d'écriture :\n Client : " & Vecr.compte & " Document : " & Vecr.numdoc & "\n Solde de l'écriture : " & Vecr.somme() & " Nombre de ligne : " & Vecr.nb())
@@ -52,13 +56,33 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
       numfac = Format(Vecr.dte.G, "yyyy") & numfac
     Endif
   Endif
-  
+  If Vecr.etat = VarEcr.Vente Then
+    For Each var In Vecr
+      Break
+    Next
+    Cmpts = Utils.db.Exec("SELECT * FROM Fiches_Comptes left join Fiches_Cli On cli_code = &2 WHERE compte_cc Like &3 And coll <> &1 order by compte_cc", 1, Vecr.divers, Vecr.divers & "%")
+    localvars = New Collection
+    localvars.Add(numfac, "$numfac") 
+    localvars.Add(numerodef, "$numerodef")
+    localvars.Add(numecr, "$numecr")
+    localvars.Add(Vecr.dte.L, "$date")
+    libel_def = var.libelle
+    libel_var = New LVar(Null, localvars, libel_def)
+    If Not IsNull(var.dteech) Then libel_var.AddDate(var.dteech) Else libel_var.AddDate(LDate(Now))
+    If Cmpts.Available Then
+      libel_var.ParseResult(Cmpts)
+      libel_def = Cmpts!libel_def
+    Endif
+    libel_def = libel_var.Evaluate(libel_def)
+    libel_def = Left(libel_def, 50)
+  Endif
   
   For Each var In Vecr
     utils.db.Begin
     Select Case var.etat
       Case VarEcr.L_ajou, VarEcr.L_valide, VarEcr.L_caisse
         If var.type = VarEcr.Vente Then
+          var.libelle = libel_def
           var.numdoc = numfac
           var.numlot = numfac
         Else
