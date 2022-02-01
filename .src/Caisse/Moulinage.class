@@ -73,29 +73,27 @@ Public Sub Button1_Click()
   Dim rResult As Result
   Dim chemin As String = "/Sauve"
 
-  If Jnal = "" Or If Vic = "" Or If Vichq = "" Or If Vibonus = "" Or If Vibachat = "" Or If Vitresto = "" Or If Viautre = "" Or If Vicadeau = "" Then
-    If start.son Then Music.Play
-    Message.Error("Vous devez completer, dans les parametres, les données relatives au journal de caisse \net aux comptes de virements internes avant de faire le moulinage !")
-  Else
-    If start.son Then Music.Play
+  Utils.Bip()
+  If Verif_Reglement_Caisse() Then
     If Message.Question("Ce programme va effacer les bordereaux de remises de chèques et de cartes !\nEtes-vous d'accord pour lancer le moulinage ?", "Oui", "Non") = 1 Then
       rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCaisses") & " where connecte = &1", 1)
       If rResult.Available Then
-        If start.son Then Music.Play
+        Utils.Bip()
         Message.Error("La caisse numéro " & rResult!code & " est connectée ! \n Veuillez déconnecter toutes vos caisses avant de faire le moulinage SVP.")
         Return
       Else
         rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCaisses") & " where tkz = &1", 0)
         If rResult.Available Then
-          If start.son Then Music.Play
+          Utils.Bip()
           Message.Error("Le ticket Z de la caisse numéro " & rResult!code & " n'est pas tiré ! \n Veuillez imprimer vos bandes Z avant de faire le moulinage SVP.")
           Return
         Else
-          If start.son Then Music.Play
+          Utils.Bip()
           If Message.Question("Cette opération va effectuer le passage en comptabilité pour l'ensemble des tickets de caisse.\nLes bons de caisse pour les clients en compte seront archivés dans les documents.\nLes bordereaux seront effacés.\nVoulez-vous continuer ?", "Oui", "Non") = "1" Then
-            Me.mouse = mouse.Wait
+            Utils.MouseProcessing()
             If Not Exist(User.home & chemin) Then Mkdir User.home & chemin
             Shell "mysqldump -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " " & Utils.db.Name & " " & "--add-drop-table" & " " & ">" & " " & User.home & "/Sauve/" & Utils.db.Name & ".sql" & Format$(Now, "yyyymmdd") Wait
+            Utils.MouseDefault()
             Moulinage()
           Endif
         Endif
@@ -951,7 +949,7 @@ Public Sub Moulinage_Acomptes_Avoir(Type As String, jour As String, CptCli As St
 End
 
 
-Public Sub Moulinage()
+Public Sub Moulinage() As Boolean
 
   Dim rTck As Result
   Dim rlTck As Result
@@ -1010,6 +1008,9 @@ Public Sub Moulinage()
   Virements()
   Ventilation()
   Parametres()
+  
+  Utils.MouseProcessing()
+  
   numecr = "numecriture"
   numr = Ecritures(numecr)
   numr = numr + 1
@@ -1023,7 +1024,6 @@ Public Sub Moulinage()
   Datec = DateChooser1.Value
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & " ")
   With utils
-    Me.mouse = Mouse.Wait
     If rResult.Available Then numbon = rResult!dnbon
     Try rTck = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabEntTck") & " where statut = &1 order by date, numero", "V")
     If rTck.Available Then
@@ -1388,45 +1388,32 @@ next_ticket:
                 Utils.db.Exec("delete FROM " & Cbase.Table("TabLigTck") & " where numero = &1", rTck!numero)
               Until rTck.MoveNext()
             Endif
-            Me.mouse = Mouse.Default
-            If start.son Then Music.Play
+            Utils.Bip()
             Message.Info("Traitement terminé !")
           Else
             Utils.db.Exec("UNLOCK TABLES")
-            Me.mouse = Mouse.Default
-            If start.son Then Music.Play
+            Utils.Bip()
             Message.Info("Vous avez interrompu le processus de moulinage suite a un controle de ventilation!\nVous devez restaurer la sauvegarde\n " & User.home & "/Sauve/" & Utils.db.Name & ".sql" & Format$(Now, "yyyymmdd") & "\nPuis faire suivre votre sauvegarde sur le forum pour analyse par les développeurs\net ne plus pratiquer de nouveau moulinage avant correction")
           Endif
         Else
-          If start.son Then Music.Play
+          Utils.Bip()
           Message.Info("Aucune donnée n'est a traiter pour cette sélection !")
         Endif
       Endif
     Else
-      If start.son Then Music.Play
+      Utils.Bip()
       Message.Info("Aucune donnée n'est a traiter pour cette sélection !")
     Endif
   End With
-  Me.Mouse = mouse.Default
   
-'  Catch
-'    If Not PB.Closed Then PB.Delete()
-'    Utils.db.Exec("UNLOCK TABLES")
-'    If Start.son Then
-'      Music.Play
-'    Endif
-'    If Object.IsValid(rTck)
-'      If rTck.Available Then msg_err = "Ticket " & rTck!numero Else msg_err = "Ticket " & "inconnu"
-'    Else
-'      msg_err = "Ticket " & "invalid"
-'    Endif
-'    If Object.IsValid(rlTck)
-'      If rlTck.Available Then msg_err = msg_err & " Ligne " & rlTck!numlig Else msg_err = msg_err & " Ligne " & "inconnue"
-'    Else
-'      msg_err = msg_err & " Ligne " & "invalid"
-'    Endif
-'    message.Error(Error.Text & " " & Error.where & "\n\nErreur Fatal au moulinage!!\n" & msg_err & "\nVous devez restaurer la sauvegarde\n " & User.home & "/Sauve/" & Utils.db.Name & ".sql" & Format$(Now, "yyyymmdd") & "\nPuis faire suivre votre sauvegarde sur le forum pour analyse par les développeurs\net ne plus pratiquer de nouveau moulinage avant correction")
-'    Me.Mouse = Mouse.Default
+  Utils.MouseDefault()
+  Return True
+  
+Catch
+    Utils.Bip()
+    message.Error(Error.Text & " " & Error.where & "\n\nErreur Fatal lors du moulinage!!\nVous devez restaurer votre base avant moulinage et faire\nsuivre une sauvegarde sur le forum pour une analyse par les développeurs\n")
+    Utils.MouseDefault()
+    Return False
 
 End
 
@@ -1470,7 +1457,9 @@ Public Sub Controle_Moulinage() As Boolean
   'On reinitialise les tables temporaire de ventilation et de virement interne
   Virements()
   Ventilation()
-  
+
+  Utils.MouseProcessing()
+
   With utils
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabJour") & " where code_jo = &1", Jnal)
     If rResult.Available Then CptCaisse = rResult!cde_banque
@@ -1867,15 +1856,13 @@ Public Sub Controle_Moulinage() As Boolean
   End With
   
   Majnum()
+  Utils.MouseDefault()
   Return True
   
   Catch
-    If Start.son Then
-      Music.Play
-    Endif
-
+    Utils.Bip()
     message.Error(Error.Text & " " & Error.where & "\n\nErreur Fatal lors du controle du moulinage!!\nVous devez faire suivre une sauvegarde sur le forum pour une analyse par les développeurs\n")
-    Me.Mouse = Mouse.Default
+    Utils.MouseDefault()
     Return False
 
 End
@@ -2200,13 +2187,6 @@ Public Sub Parametres()
   'On recupère les données pour la trésorerie.
   If rJnl.Available Then
     Jnal = rJnl!jrnal2
-    Vic = rJnl!viremc
-    Vichq = rJnl!viremchq
-    Vibonus = rJnl!virembonus
-    Vibachat = rJnl!virembachat
-    Vitresto = rJnl!viremtresto
-    Viautre = rJnl!virema
-    Vicadeau = rJnl!viremcad
   Endif
   rcli = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCliCaisse") & "")
   If rcli.Available Then
@@ -2439,13 +2419,38 @@ Public Sub Maj_Compta() As Float
 
 End
 
+''' vérification que l'ensemble des règlements saisis en caisse possède une liaison
+''' avec la mécanique de règlement.
+Public Sub Verif_Reglement_Caisse() As Boolean
+  
+  Dim Ret As Boolean = True
+  Dim hResult As Result
+  Dim i As Integer
+  
+  For i = 1 To Mreglement.RegCais.Max
+    '
+    'on cherche au moins un ticket validé avec ce mode de règlement
+    hResult = Utils.db.Exec("SELECT L.numero as numero FROM " & Cbase.Table("TabLigTck") & " as L left join " & Cbase.Table("TabEntTck") & " as E on L.numero = E.numero where L.type = &1 and E.statut = &2 group by L.type limit 1", MReglement.RegMode2CodeCaisse(i), "V")
+    If hResult.Available Then
+      If IsNull(MReglement.Laision_Reg(i)) Then
+        Message.Error("Attention, la caisse a des règlements " & MReglement.RegCais[i] & "\nsur le ticket " & hResult!numero & ", Vous devez établir un lien en caisse\npour ce mode de règlement depuis la table de règlements")
+        ret = False
+      Endif
+    Endif
+  Next
+  
+  Return Ret
+  
+End
+
+
 Public Sub Maj_Tresorerie(Verif_Caisse As Float)
 
   Dim rResult As Result
   Dim hResult As Result
   Dim resreg As Result
   Dim SldTot As Float
-  Dim ecr1, ecr2 As Collection
+  Dim ecr1 As Collection
   Dim var, varp As VarEcr
   Dim i, ind As Integer
   Dim ecr As EcrReg
@@ -2460,47 +2465,16 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
   For i = 1 To Mreglement.RegCais.Max
     pb.Avancement("règlements " & Mreglement.RegCais[i], 1)
     'on gére les cas particuliers à chaque mode de réglement (requete et contrepartie)
-    Select Case i
-      Case Mreglement.espece
-        hResult = Utils.db.Exec("SELECT mespeces as montant,intitule_cc,date,client FROM " & Cbase.Table("TabEntTck") & ",Fiches_Comptes where compte_cc=client and sespeces = &1 and statut = &2", "N", "V")
-        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabJour") & " where code_jo = &1", jnal)
-        Cpt = rResult!cde_banque
-      Case Mreglement.cheque
-        hResult = Utils.db.Exec("SELECT mcheque as montant,intitule_cc,date,client  FROM " & Cbase.Table("TabEntTck") & ",Fiches_Comptes where compte_cc=client and  scheque = &1 and statut = &2", "V", "V")
-        cpt = Vichq
-      Case Mreglement.carte
-        hResult = Utils.db.Exec("SELECT mcarte as montant,intitule_cc,date,client  FROM " & Cbase.Table("TabEntTck") & ",Fiches_Comptes where compte_cc=client and scarte = &1 and statut = &2", "U", "V")
-        cpt = Vic
-      Case Mreglement.bonus
-        hResult = Utils.db.Exec("SELECT mbonus as montant,intitule_cc,date,client  FROM " & Cbase.Table("TabEntTck") & ",Fiches_Comptes where compte_cc=client and sbonus = &1 and statut = &2", "B", "V")
-        cpt = Vibonus
-      Case Mreglement.bon_achat
-        hResult = Utils.db.Exec("SELECT mbachat as montant,intitule_cc,date,client  FROM " & Cbase.Table("TabEntTck") & ",Fiches_Comptes where compte_cc=client and sbachat = &1 and statut = &2", "X", "V")
-        cpt = Vibachat
-      Case Mreglement.ticket_resto
-        hResult = Utils.db.Exec("SELECT mresto as montant,intitule_cc,date,client  FROM " & Cbase.Table("TabEntTck") & ",Fiches_Comptes where compte_cc=client and sresto = &1 and statut = &2", "1", "V")
-        cpt = Vitresto
-      Case Mreglement.autre
-        hResult = Utils.db.Exec("SELECT mautre as montant,intitule_cc,date,client  FROM " & Cbase.Table("TabEntTck") & ",Fiches_Comptes where compte_cc=client and sautre = &1 and statut = &2", "E", "V")
-        cpt = Viautre
-      Case Mreglement.cheque_cadeaux
-        hResult = Utils.db.Exec("SELECT montant,intitule_cc,Fiches_EntTicketz.date,client  FROM Fiches_LigTicketz, Fiches_EntTicketz, Fiches_Comptes WHERE Fiches_LigTicketz.numero = Fiches_EntTicketz.numero AND compte_cc=client AND Fiches_LigTicketz.type = &1 and Fiches_EntTicketz.statut = &2", "Y", "V")
-        cpt = Vicadeau
-      Case Else     'il n'y a pas de traitement pour les cheques entreprise
-        Continue
-    End Select
- 
+    hResult = Utils.db.Exec("SELECT Fiches_LigTicketz.montant,Fiches_EntTicketz.date,Fiches_EntTicketz.numero,Fiches_LigTicketz.numlig,client,intitule_cc FROM Fiches_LigTicketz left join Fiches_EntTicketz on Fiches_LigTicketz.numero = Fiches_EntTicketz.numero left join Fiches_Comptes on Fiches_Comptes.compte_cc=Fiches_EntTicketz.client WHERE Fiches_LigTicketz.type = &1 and Fiches_EntTicketz.statut = &2", MReglement.CodeCais[i], "V")
     If hresult.Available Then
       resreg = utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE caisse=&1", i)
       ecr1 = New Collection
-      ecr2 = New Collection
       Repeat
         If LDate(hResult!date).GnT = DateChooser1.Value Then
           var = New VarEcr
           SldTot = SldTot - Val(utils.cpoint(hResult!montant))
           If resreg.Available Then
-            'On gére l'écriture de reglement avec le fichier 
-'            var = New VarEcr
+            'On gére l'écriture de reglement avec le fichier
             If ecr1.Exist(hResult!client) Then
               If resreg!regroup Then
                 var = ecr1[hResult!client]
@@ -2514,42 +2488,6 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
               var = majecr(hResult!client, datem, hResult!intitule_cc, i, Val(utils.cpoint(hResult!montant)) * -1)
               ecr1.Add(var, hResult!client)
             Endif
-            
-          Else
-            'on gére l'écriture de reglement avec les parametres
-'            var = New VarEcr
-            If ecr2.Exist(hResult!client) Then
-              'si le client est déjà crée on rajoute le montant
-              var = ecr2[hResult!client]
-              var = majsld(var, Val(utils.cpoint(hResult!montant)))
-              ecr2[hResult!client] = var
-              'on regarde si le compte de contrepartie existe
-              var = New VarEcr
-              var = ecr2[hResult!client] 
-              ind = var.reccomp(cpt)
-              If ind > -1 Then
-                'le compte existe, on rajoute le montant
-                varp = New VarEcr
-                varp = var.trouve(ind)
-                varp = majsld(varp, Val(utils.cpoint(hResult!montant)) * -1)
-                var.modifi(ind, varp)
-                ecr2[hResult!client] = var
-              Else
-                'le compte n'existe pas, on le crée
-                var = New VarEcr
-                var = majecr(cpt, datem, hResult!intitule_cc, i, Val(utils.cpoint(hResult!montant)) * -1)
-                ecr2[hResult!client].plus(var)
-              Endif
-            Else
-              'le compte n'existe pas, on crée
-              var = New VarEcr
-              var = majecr(hResult!client, datem, hResult!intitule_cc, i, Val(utils.cpoint(hResult!montant)))
-              ecr2.Add(var, hResult!client)
-              'on crée aussi la contre partie
-              var = New VarEcr
-              var = majecr(cpt, datem, hResult!intitule_cc, i, Val(utils.cpoint(hResult!montant)) * -1)
-              ecr2[hResult!client].plus(var)
-            Endif
           Endif
         Endif
       Until hresult.MoveNext()
@@ -2558,14 +2496,6 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
         ecr = New EcrReg(resreg!journal, var, resreg!code)
         ecr.ecriture
       Next
-      'on passe les écritures des parametres
-      If Not IsNull(ecr2) Then
-        For Each var In ecr2
-          var.plus(var)
-          ecra = New EcrAuto(jnal, var)
-          ecra.ecriture
-        Next
-      Endif
     Endif
   Next
   pb.Close

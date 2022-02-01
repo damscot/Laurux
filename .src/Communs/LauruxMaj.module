@@ -5110,7 +5110,7 @@ end_utf8:
   
   'création de la table Fiches_Reglement
   If Not Utils.db.Tables.Exist("Fiches_Reglements") Then
-    pb = New ProgBar("Gestion des réglements", 9)
+    pb = New ProgBar("Gestion des réglements", 10)
     PB.Show()
     PB.Avancement("Création du fichier des réglements", 1)
     Utils.db.Exec("CREATE TABLE Fiches_Reglements" &
@@ -5195,6 +5195,14 @@ end_utf8:
       res!journal = respar!jrnal3
       res.Update
       Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='35' WHERE cli_reg='Lcr'")
+      pb.Avancement("Autre", 1)
+      res = Utils.db.Create("Fiches_Reglements")      '35 Traite
+      res!code = "40"
+      res!libel = "Autre"
+      res!journal = respar!jrnal3
+      res!cptint = respar!virema
+      res.Update
+      Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='40' WHERE cli_reg='Autre'")
     Endif
     pb.Close
     Utils.db.Commit
@@ -5503,11 +5511,11 @@ end_utf8:
   If rResult.Available Then
     Try Utils.db.Exec("UPdate Fiches_Parametres SET dnart = &1", rResult!art_code)
   Endif
-  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (virembonus Char(8))")
-  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (virembachat Char(8))")
-  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (viremtresto Char(8))")
-  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres ADD (viremcad Char(8))")
-  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres drop version_pos")
+  'Champ parametres inutile lie a l'integration caisse et nouvel gestion des règlements
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres DROP viremc")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres DROP viremchq")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres DROP virema")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Parametres DROP version_pos")
   Try utils.db.exec("ALTER TABLE Fiches_Parametres ADD ecart decimal(6,2) DEFAULT 0.00")
   'rajout du journal d'od
   Try utils.db.exec("ALTER TABLE Fiches_Parametres ADD jrnod char(2)")

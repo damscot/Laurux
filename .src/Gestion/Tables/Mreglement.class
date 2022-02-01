@@ -1,8 +1,9 @@
 ' Gambas class file
 
 Public Enum sans_lcr, lcr_nacc, lcr_acc
-Public Enum sans_caisse, espece, carte, cheque, bon_achat, cheque_cadeaux, autre, cheque_entreprise, bonus, ticket_resto
-Public RegCais As String[] = ["Sans", "Espéce", "Carte", "Chèque", "Bon d'achat", "Chèque cadeaux", "Autres", "Chèque entreprise", "Bonus", "Tickets restaurant"]
+Public Enum sans_caisse, espece, carte, cheque, bon_achat, cheque_cadeaux, autre, bonus, ticket_resto
+Public RegCais As String[] = ["Sans", "Espéce", "Rendu", "Carte", "Chèque", "Bon d'achat", "Chèque cadeaux", "Autres", "Bonus", "Tickets restaurant"]
+Public CodeCais As String[] = ["", "N", "Q", "U", "V", "X", "Y", "E", "B", "1"]
 
 Private $ressel As Result
 Private $res As Result
@@ -239,13 +240,48 @@ Public Sub cptint_LostFocus()
   
 End
 
+Public Sub CodeCaisse2RegMode(Code As String) As Integer
+  
+  Dim val As Integer
+  
+  val = CodeCais.Find(Code)
+  If val < 0 Then
+    Return 0
+  Else
+    Return val
+  Endif
+  
+End
+
+Public Sub RegMode2CodeCaisse(mode As Integer) As String
+  
+  If mode = 0 Or mode > CodeCais.Max Then
+    Return Null
+  Else
+    Return CodeCais[mode]
+  Endif
+  
+End
+
+Public Sub Laision_Reg(mode As Integer) As String
+
+  Dim res As Result
+  
+  res = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE caisse=&1", mode)
+  If res.Available Then
+    Return RegMode2CodeCaisse(mode)
+  Else
+    Return Null
+  Endif
+
+End
+
 Public Sub Combocais_Click()
 
   Dim res As Result
   
-    If Combocais.Index <> Combocais.Tag And Combocais.Index <> 0 Then
-    res = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE caisse=&1", Combocais.Index)
-    If res.Available Then
+  If Combocais.Index <> Combocais.Tag And Combocais.Index <> 0 Then
+    If Not IsNull(Laision_Reg(Combocais.Index)) Then
       Message.Warning("Liaison déjà définie")
       Combocais.Text = RegCais[sans_caisse]
     Endif
