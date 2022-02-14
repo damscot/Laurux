@@ -912,8 +912,10 @@ Private Function nom() As String
   Dim reg As RegExp
   
   Select Case choix
-    Case ObjFac.facture, ObjFac.finmois, ObjFac.abonnement
+    Case ObjFac.facture
       ty = "F" & $numfac & "-" & $numbl & "_"
+    Case ObjFac.finmois, ObjFac.abonnement
+      ty = "F" & $numfac & "_" 
     Case ObjFac.bl
       ty = "B" & $numbl & "_"
     Case ObjFac.commande
