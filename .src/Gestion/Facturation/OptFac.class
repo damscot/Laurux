@@ -116,6 +116,8 @@ End
 
 Public Sub form_Close()
 
+  Dim res As Result
+
   Start.LocalSettings["/Soc" & Start.Societe & "/Recap"] = Recap.Value
   ' Start.LocalSettings["/Soc" & Start.Societe & "/Impttc"] = Impttc.Value
   Start.LocalSettings["/Soc" & Start.Societe & "/Entete"] = Entete.Value
@@ -132,6 +134,23 @@ Public Sub form_Close()
   Start.LocalSettings["/Soc" & Start.Societe & "/Cond"] = Cond.value
   Start.LocalSettings.Save
   Start.LocalSettings.Reload
+  If $vfac.adrliv.nom And $vfac.numbl Then
+    utils.db.Begin
+    res = utils.db.Edit("Fiches_AdrlivBL", "numbl= &1", $vfac.numbl)
+    If Not res.Available Then res = utils.db.Create("Fiches_AdrlivBL")
+    res!numbl = $vfac.numbl
+    res!nom = $vfac.adrliv.nom
+    res!adr1 = $vfac.adrliv.adr1
+    res!adr2 = $vfac.adrliv.adr2
+    res!cp = $vfac.adrliv.cp
+    res!ville = $vfac.adrliv.ville
+    res.Update
+    utils.db.Commit
+  Else
+    utils.db.Begin
+    utils.db.Delete("Fiches_AdrlivBL", "numbl = &1", $vfac.numbl)
+    utils.db.Commit
+  Endif
 
 End
 'Gestion des click et lostfocus
@@ -228,6 +247,11 @@ Public Sub AffBledit2_Click()
   $vfac.badr = AffBledit2.Value
   If $vfac.badr Then
     padliv.Visible = True
+    Nombl.Text = $vfac.adrliv.nom
+    Adr1BL.Text = $vfac.adrliv.adr1
+    Adr2BL.Text = $vfac.adrliv.adr2
+    CPBL.Text = $vfac.adrliv.cp
+    VilleBL.Text = $vfac.adrliv.ville
   Else
     padliv.Visible = False
   Endif

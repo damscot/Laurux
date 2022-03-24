@@ -94,6 +94,7 @@ Public rescli As Result                       ''fiche client
 Public couleur As Integer                   ''couleur de fond à l'edition
 Public couleur2 As Integer
 Public numeroecr As Integer               ''numero ecriture
+Public numerodef As Integer               ''numero ecriture definitif
 Public cheque As Boolean                    ''bordereau de cheque
 Public intcheque As Boolean               ''cpt interne cheque
 Public cptcheque As String                  ''n° du compte interne cheque
@@ -320,6 +321,14 @@ Private Sub numcli_Write(Value As String)
     adrfac.cp = rescli!cli_cd_ptl
     adrfac.ville = rescli!cli_ville
     adrfac.pays = rescli!cli_pays
+    res = Utils.db.Exec("SELECT * FROM Fiches_AdrlivBL WHERE numbl = &1", $numbl)
+    If res.Available Then
+      adrliv.nom = res!nom
+      adrliv.adr1 = res!adr1
+      adrliv.adr2 = res!adr2
+      adrliv.cp = res!cp
+      adrliv.ville = res!ville
+    Endif
   Else
     If $numcli Then
       Error.Raise("Client " & $numcli & " innexistant")
@@ -558,7 +567,7 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
             numlig = Format(Val(numlig) - 1, "0000")
           Endif
           
-          Case "E"
+          Case "E", "D", "P"
             ligneart = New Ledit
             ligneart.Index = reslig.Index
             ligneart.libel = "Dont " & reslig!pu_ligbl & " " & reslig!libel_ligbl
@@ -956,6 +965,8 @@ Public Function ecriturecompt() As Boolean
   ecr = New EcrAuto("", lignecom)
   If ecr.ecriture() Then Return True
   $numfac = ecr.numfac
+  numeroecr = ecr.numecr
+  numerodef = ecr.numerodef
   If choix = ObjFac.facture Then
     rescomp = utils.db.Edit("Fiches_Bl", "numbl=&1", $numbl)
     rescomp!numfac = ecr.numfac

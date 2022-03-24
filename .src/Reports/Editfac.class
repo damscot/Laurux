@@ -119,12 +119,12 @@ Public Sub _new(vfac As ObjFacB)
         Me.livr.BackGround = ReportBrush.Color(Val("&HE0E0E0"))
         Me.livr.Text = "A livrer"
       Endif
-      If vfac.badr Then
-        Me.nom.Text = vfac.adrliv.nom
-        Me.adr1.Text = vfac.adrliv.adr1
-        Me.adr2.Text = vfac.adrliv.adr2
-        Me.ville1.Text = vfac.adrliv.cp & " " & vfac.adrliv.ville
-        Me.pays.Text = vfac.adrliv.pays
+      If $vfac.adrliv.nom Then
+        Me.nom.Text = $vfac.adrliv.nom
+        Me.adr1.Text = $vfac.adrliv.adr1
+        Me.adr2.Text = $vfac.adrliv.adr2
+        Me.ville1.Text = $vfac.adrliv.cp & " " & $vfac.adrliv.ville
+        Me.pays.Text = ""
       Endif
     Case ObjFac.commande
        Me.numero.Text = "Commande n° " & vfac.numbl & " du " & vfac.dtedoc.L
