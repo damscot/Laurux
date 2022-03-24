@@ -532,7 +532,7 @@ Public Sub Button2_Click()
           Endif
         Endif
 
-        intitule = Trim(.Accent(rResult!intitule))
+        intitule = Trim(.Accent(Left(rResult!intitule, 40)))
         If IsNull(intitule)
           intitule = "Err intitule compte: " & rResult!compte
           report_err = True
