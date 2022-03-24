@@ -220,7 +220,7 @@ Public Sub Button10_Click()
             rBrd = .db.Exec("select * from Fiches_Lcr where bordereau = &1", ColBrd[ColBrd.row, 0].Text)
             If rBrd.Available Then
               Repeat
-                Utils.db.Exec("UPdate  Fiches_Lcr  SET  bordereau = &1 where bordereau = &2", "", ColBrd[ColBrd.row, 0].Text)
+                Utils.db.Exec("UPdate  Fiches_Lcr  SET  bordereau = &1 where bordereau = &2", "0", ColBrd[ColBrd.row, 0].Text)
               Until rBrd.MoveNext()
             Endif
             Utils.db.Exec("DELETE FROM Fiches_Bordereaux WHERE bordereau = &1", ColBrd[ColBrd.row, 0].Text)
