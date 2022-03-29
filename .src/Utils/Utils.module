@@ -1601,7 +1601,7 @@ End
 
 Public Sub MouseProcessing()
 
-  If Not IsNull(Start.MainWindow) Then
+  If Object.IsValid(Start.MainWindow) Then
     Start.MainWindow.Mouse = Mouse.Wait
     If Not IsNull(Application.ActiveWindow) Then
       Application.ActiveWindow.Mouse = Mouse.Wait
@@ -1612,7 +1612,7 @@ End
 
 Public Sub MouseDefault()
 
-  If Not IsNull(Start.MainWindow) Then
+  If Object.IsValid(Start.MainWindow) Then
     Start.MainWindow.Mouse = Mouse.Default
     If Not IsNull(Application.ActiveWindow) Then
       Application.ActiveWindow.Mouse = Mouse.Default
