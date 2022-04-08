@@ -1501,6 +1501,17 @@ Public Sub Fill_DataBase(Tab As String, filepath As String)
   
 End
 
+Public Sub Clear_DataBase(Tab As String)
+  
+  Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " -e \"Drop database " & Tab & ";\" " Wait
+  
+End
+
+Public Sub Create_DataBase(Tab As String)
+  
+  Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " -e \"Create database " & Tab & ";\" " Wait
+  
+End
 
 Public Function FloatParse(Val As String) As Float
 

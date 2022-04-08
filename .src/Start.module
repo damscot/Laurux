@@ -445,6 +445,8 @@ Public Sub Restore_Args()
     Endif
     Print "ATTENTION CE MODULE DE RESTAURATION DOIT S'UTILISER EN MODE DEBUG UNIQUEMENT" 
     Print "Restauration de la Societe " & Societe & " avec la base de donnée " & Arg_Restore_DB & "."
+    Utils.Clear_DataBase("Laurux" & Societe)
+    Utils.Create_DataBase("Laurux" & Societe)
     Utils.Fill_DataBase("Laurux" & Societe, Arg_Restore_DB)
   Endif
 
