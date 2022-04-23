@@ -756,6 +756,8 @@ End
 
 Public Function editebl() As Boolean        ''Edite un bl
   
+  Dim ch As Integer
+  
   Application.Busy += 1
   Me.AffClient = False
   calcul()
@@ -766,6 +768,7 @@ Public Function editebl() As Boolean        ''Edite un bl
       If verifdat() Then Return True
     Endif
   Endif
+  ch = Me.choix
   If Me.resent!imp = 1 Then Me.choix = ObjFac.facture
   
   Me.edit = New EditfacB(Me, Me)
@@ -773,6 +776,7 @@ Public Function editebl() As Boolean        ''Edite un bl
   If Me.imp.NumCopies > 0 Then Me.edit.Print(Me.imp)
   
   Me.CopieGedFac()
+  Me.choix = ch
   Application.Busy -= 1
   
 End
@@ -780,6 +784,7 @@ End
 Public Sub visualisation()        ''Visualisation d'un bl ou d'une facture
 
   Dim Filename As String
+  Dim ch As Integer
   
   Filename = User.Home & "/tmp/Facture.pdf"
   
@@ -788,11 +793,14 @@ Public Sub visualisation()        ''Visualisation d'un bl ou d'une facture
   If Me.choix = ObjFac.facture And Me.resent!imp = "0" Then
     Me.choix = ObjFac.bl
   Endif
+  ch = Me.choix
+  If Me.resent!imp = 1 Then Me.choix = ObjFac.facture
   Me.edit = New EditfacB(Me, Me)
   Me.imp.OutputFile = Filename
+  Me.imp.NumCopies = 1
   Me.edit.Print(Me.imp)
   Visualiseur.Prog(Filename)
-
+  Me.choix = ch
   
 End
 
