@@ -65,23 +65,23 @@
       Picture = Picture["icon:/medium/add"]
     }
     { imprime Button
-      MoveScaled(22,13,13,4)
+      MoveScaled(21.7778,13,12,4)
       Text = Shortcut(("Imprimer"), "I")
       Picture = Picture["Icones/frameprint.png"]
     }
     { mail Button
-      MoveScaled(36,13,13,4)
+      MoveScaled(34.4444,13,10,4)
       Text = Shortcut(("Mail"), "M")
       Picture = Picture["Icones/mail_forward.png"]
     }
     { suppr Button
-      MoveScaled(51,13,13,4)
+      MoveScaled(45.4444,13,13,4)
       Text = Shortcut(("Supprimer"), "S")
       Picture = Picture["Icones/stock_trash_24.png"]
     }
     { ValideS Button
-      MoveScaled(65,13,18,4)
-      Text = Shortcut(("Valider la saisie"), "V")
+      MoveScaled(59,13,21,4)
+      Text = Shortcut(("Enregistrer la saisie"), "E")
       Picture = Picture["icon:/32/apply"]
     }
     { crecom Button
@@ -97,10 +97,9 @@
       MoveScaled(14,5,63,6)
     }
     { rececp Button
-      MoveScaled(84,13,14,4)
-      Enabled = False
-      Text = ("Reception")
-      Picture = Picture["Icones/next.png"]
+      MoveScaled(80.7778,13,22,4)
+      Text = Shortcut(("Valider les récetpions"), "r")
+      Picture = Picture["Icones/button_ok.png"]
     }
     { dte TextReg
       MoveScaled(107,9,17,3)
@@ -110,7 +109,7 @@
       Text = ("Date :")
     }
     { annul Button
-      MoveScaled(133,13,12,4)
+      MoveScaled(133.2222,13,12,4)
       Text = ("Annuler")
       Picture = Picture["Icones/cancel.png"]
     }
@@ -120,7 +119,7 @@
       Picture = Picture["Icones/exit.png"]
     }
     { Etarif Button
-      MoveScaled(99,13,27,4)
+      MoveScaled(103.2222,13,27,4)
       Text = ("Enregistrer tous les tarifs")
       Picture = Picture["Icones/filesave.png"]
     }
@@ -129,6 +128,11 @@
       Visible = False
       Text = ("Générer       ")
       Picture = Picture["icon:/32/exec"]
+    }
+    { tardt Button
+      MoveScaled(134,8,22,4)
+      Text = ("Tarif par date")
+      Picture = Picture["icon:/32/office"]
     }
   }
   { Label5 Label
@@ -189,10 +193,13 @@
       MoveScaled(51,1,28,2.2222)
     }
     { stk TextLabel
-      MoveScaled(5,5,26,2.2222)
+      MoveScaled(1,5,22,2)
     }
     { qtecom TextLabel
-      MoveScaled(37,5,36,2.2222)
+      MoveScaled(49,5,31,2)
+    }
+    { Encom TextLabel
+      MoveScaled(25,5,23,2.2222)
     }
   }
 }

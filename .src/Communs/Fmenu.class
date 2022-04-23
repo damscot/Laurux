@@ -214,6 +214,11 @@ Public Sub Form_Open()
         Message.Info("Rappel: La promotion " & Cpromo & " " & Lpromo & " se termine aujourd'hui !\nPensez aux impressions d'étiquettes de fin de promotion.")
       Endif
       promo = False
+      
+      rResult = Utils.db.Exec("SELECT * FROM Fiches_TarTemp WHERE date <= &1 AND dtmaj = &2", LDate(Now).DT, True)
+      If rResult.Available Then
+        DateTar.EnrTouTar(rResult)
+      Endif
       If Start.LocalSettings["/Soc" & Start.Societe & "/Faca"] Then Abonnement()
       If Start.son Then
         Music.Load("son/menu.ogg")
@@ -2277,7 +2282,7 @@ Public Sub Menu295_Click()
     Endif
   Endif
 
-  ValidBR.ShowModal()
+  ValidBR1.ShowModal()
 
 End
 

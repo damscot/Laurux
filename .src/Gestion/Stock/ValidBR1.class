@@ -1,0 +1,179 @@
+' Gambas class file
+
+Public Bsel As Boolean = False
+Public Bval As String = ""
+
+
+Public Sub _new()
+
+  Dim res As Result
+  
+  ' lesfour.Columns.Count = 5
+  ' lesfour.Columns[0].Text = "Sel"
+  ' lesfour.Columns[0].Width = lesfour.Width / 20
+  ' lesfour.Columns[1].Text = "Code"
+  ' lesfour.Columns[1].Width = lesfour.Width / 6
+  ' lesfour.Columns[2].Text = "Nom"
+  ' lesfour.Columns[2].Expand = True
+  ' lesfour.Columns[3].Text = "Total HT"
+  ' lesfour.Columns[3].Width = lesfour.Width / 6
+  ' lesfour.Columns[4].Text = "Total TTC"
+  ' lesfour.Columns[4].Width = lesfour.Width / 6
+  
+  lesbr.Columns.Count = 5
+  lesbr.Columns[0].Text = "Sel"
+  lesbr.Columns[0].Width = lesbr.Width / 20
+  lesbr.Columns[1].Text = "N° BR"
+  lesbr.Columns[1].Expand = True
+  lesbr.Columns[2].Text = "Date"
+  lesbr.Columns[2].Width = lesbr.Width / 6
+  lesbr.Columns[3].Text = "Montant HT"
+  lesbr.Columns[3].Width = lesbr.Width / 6
+  lesbr.Columns[4].Text = "Montant TTC"
+  lesbr.Columns[4].Width = lesbr.Width / 6
+
+End
+
+Public Sub form_Open()
+
+  Dim col As Collection
+  Dim f As ObjProp
+  Dim Req As String
+  Dim Res As Result
+  Dim k As String
+  
+  
+
+End
+
+Public Sub Ecritures(etat As Integer, dte As LDate, num As String, four As String, m As Integer)
+
+  Dim vecr As VarEcr
+  Dim compta As Boolean
+  Dim res As Result
+  Dim Ecr As EcrAuto
+  
+  Select Case m
+    Case 1
+      compta = False
+    Case 2
+      compta = True
+  End Select
+  vecr = New VarEcr
+  vecr = ValideSaisie(etat, dte, num, four, vecr, compta)
+  If m = 2 Then
+    res = Utils.db.Exec("SELECT jrnal5 FROM Fiches_Parametres")
+    If res.Available Then
+      Ecr = New EcrAuto(res!jrnal5, vecr)
+      If Ecr.ecriture() Then Return
+    Endif
+  Endif
+
+End
+
+Private Sub ValideSaisie(etat As Integer, dte As LDate, num As String, four As String, vecr As VarEcr, compta As Boolean) As VarEcr           ''Valide 1 saisie avec ou sans passage en compta
+
+  Dim resent, reslig, resfo, respar, res As Result
+  Dim vr As VarEcr
+  Dim lpx As Consigne
+  Dim ltx As LTaxe
+  Dim id As Integer
+  Dim exo As Boolean
+  Dim opt As String = Utils.Option()
+  
+  If etat <> Achat.Reception Then Return
+  res = Utils.db.Exec("SELECT fo_exo FROM Fiches_Four WHERE fo_code = &1", four)
+  If res.Available Then exo = res!fo_exo
+  resent = Utils.db.Edit("Fiches_Entrecpt", "four = &1 AND numrecpt = &2 AND ddate = &3", four, num, dte.DT)
+  If resent.Available Then
+    reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE four = &1 AND numrecpt = &2 AND daterecpt = &3", four, num, dte.DT)
+    If reslig.Available And compta Then
+      vecr.numdoc = num
+      vecr.dte = dte
+      vecr.compte = four
+      vecr.numdoc = num
+      vecr.numlot = num
+      vecr.dte = dte
+      vecr.libelle = "Réception n° " & vecr.numdoc & " du " & vecr.dte.L
+      Repeat
+        res = Utils.db.Exec("SELECT * FROM Fiches_Art LEFT JOIN Fiches_Fam ON art_fam=code_fam LEFT JOIN Fiches_Tvaac ON code_tva=cdtva_fam JOIN Fiches_Comptes ON compte_cc=compt3_fam WHERE art_code=&1", reslig!code)
+        vecr.intitul = res!intitule_cc
+        lpx = New Consigne(reslig!prvt, reslig!qte)
+        vecr = ajouligne(vecr, lpx.TotNHT.G, res!compt3_fam)
+        If Not exo Then
+          ltx = New LTaxe(res!taux_tva & "%", LTaxe.TVA, res!cc_tva)
+          lpx.add_taxe(ltx)
+          vecr = ajouligne(vecr, ltx.Montant(lpx).PuBHT.G, res!cc_tva)
+        Endif
+        If opt = "B" Or opt = "T" Then
+          respar = Utils.db.Exec("SELECT consfou FROM Fiches_Parametres")
+          If respar.Available Then
+            lpx.cdepal = res!art_consp
+            lpx.cdecol = res!art_consc
+            lpx.cdeunit = res!art_consb
+            lpx.nbpal = lpx.recuppalette(dte.L & num & four, reslig!nligne)
+            lpx.nbcol = lpx.recupcol(dte.L & num & four, reslig!nligne)
+            If lpx.consigne.TotNHT.G <> 0 Then vecr = ajouligne(vecr, lpx.consigne.TotNHT.G, respar!consfou)
+          Endif
+        Endif
+      Until reslig.MoveNext()
+    Endif
+    If compta Then
+      resent!validee = 1
+    Else 
+      resent!validee = 2
+    Endif
+    resent.Update
+  Endif
+  vecr.type = VarEcr.Autre
+  vecr.etat = VarEcr.L_ajou
+  vecr.plus(vecr)
+  Return vecr
+
+End
+
+Private Function ajouligne(vecr As VarEcr, montant As Float, cpt As String) As VarEcr   ''ajoute une ligne à l'écriture en cours
+  
+  Dim vr As VarEcr
+  Dim id As Integer
+  Dim tot As Float
+  Dim res As Result
+  
+  id = vecr.reccomp(cpt)
+  If id = -1 Then
+    res = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc = &1", cpt)
+    If res.Available Then
+      vr = New VarEcr
+      vr.type = vecr.Autre
+      vr.etat = VarEcr.L_ajou
+      vr.collectif = False
+      vr.compte = res!compte_cc
+      vr.intitul = res!intitule_cc
+      vr.numdoc = vecr.numdoc
+      vr.numlot = vecr.numlot
+      vr.dte = vecr.dte
+      vr.libelle = "Réception n° " & vecr.numdoc & " du " & vecr.dte.L
+      id = vecr.plus(vr)
+    Else
+      Error.Raise("Compte comptable inconnu : " & cpt)
+    Endif
+  Else
+    vr = vecr.trouve(id)
+  Endif
+  tot = (vr.montantd - vr.montantc) + montant
+  If tot > 0 Then
+    vr.montantd = tot
+    vr.montantc = 0
+  Else
+    vr.montantd = 0
+    vr.montantc = Abs(tot)
+  Endif
+  If montant > 0 Then
+    vecr.montantc += montant
+  Else
+    vecr.montantd += Abs(montant)
+  Endif
+  vecr.modifi(id, vr)
+  Return vecr
+  
+End

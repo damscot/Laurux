@@ -44,8 +44,9 @@
     MoveScaled(25,43,117,30)
     Arrangement = Arrange.Vertical
   }
-  { Enreg Button
+  { !Enreg Button
     MoveScaled(104,3,24,5)
+    #Public = True
     Text = ("Enregistrer les tarifs")
     Picture = Picture["icon:/32/save-as"]
   }
@@ -54,5 +55,24 @@
     Visible = False
     Text = ("Impression des étiquettes")
     Picture = Picture["icon:/32/print"]
+  }
+  { Panel1 Panel
+    MoveScaled(1,49,23,24)
+    Background = &HDFFFF7&
+    Border = Border.Plain
+    { !majtarif CheckBox
+      MoveScaled(1,1,21,3)
+      #Public = True
+      Text = ("Mise à jour des tarifs")
+      Value = CheckBox.True
+    }
+    { dtmaj CheckBox
+      MoveScaled(1,8,20,3)
+      Text = ("Date de mise à jour")
+    }
+    { dte TextReg
+      MoveScaled(2,13,19,4)
+      Enabled = False
+    }
   }
 }

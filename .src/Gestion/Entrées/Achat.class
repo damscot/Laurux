@@ -1,7 +1,5 @@
 ' Gambas class file
 
-Create Static
-
 Inherits SaiTableau
 
 Public Struct boisson
@@ -31,12 +29,14 @@ Private $dte As LDate
 Private $fournisseur As String
 Private $ndoc As String
 Private $etat As Integer            ''prend les valeurs enum de achat (EnCreation,Reception ...)
-Private $reli As Integer = 1        ''si on doit générer la commande de reliquat : 0 = reliquat 1 = pas de reliquat
+Private $reli As Integer = 2        ''si on doit générer la commande de reliquat : 1 = reliquat 2 = pas de reliquat
 Private $mail As String
+Private $ressup As Result           ''contient la commande à supprimer
+Private $sup As Boolean             ''si la commande est a supprimer
 
 Event ajou(Value As Sailig)
 
-Public Enum CreaCommande, EnCommande, Reception, Validee
+Public Enum CreaCommande, EnCommande, Reception, Validee, Sans
 Public Enum Tarif, Frais, Materiel, Consignes, FicheArt, ObjFin
 Private Enum RelQte, RelArt, RelFin          ''stock les quantités et code article des reliquats
 
@@ -163,7 +163,7 @@ Property ndoc As String
   If Not $PxRec Then obj.AddChamp("Visible", False)
   Me.$prop.Add(obj)
   
- End
+End
 '*****************Gestion des focus et calcul de chaque ligne de saisie***********************
 Public Sub ligne_LecCode(ligne As Variant)
   
@@ -496,6 +496,65 @@ Public Sub Show()
 
 End
 
+Public Sub Doublon() As Boolean         ''on regarde si il existe des doublons dans la saisie 
+
+  Dim sl, comp As Sailig
+  Dim dbl As Boolean
+  Dim lst As New Collection
+  Dim win As Window
+  Dim lab As Label
+  Dim bt As Button
+  
+  For Each sl In Me
+   For Each comp In Me
+     If sl <> comp Then
+       If sl.MonControle["Code"].Text = comp.MonControle["Code"].Text Then
+         If sl.AutresObj[Tarif].majtarif.Value And comp.AutresObj[Tarif].majtarif.Value Then
+           dbl = True
+           If Not lst.Exist(sl.MonControle["Code"].Text) Then lst.Add(sl, sl.MonControle["Code"].Text)
+         Endif
+       Endif
+     Endif
+   Next
+  Next
+
+  If dbl Then
+    Application.Busy = 0
+    win = New Window As "WinDbl"
+    Win.Height = Me.$parent.Font.Size * 70
+    win.Width = Me.$parent.Font.Size * 60
+    win.Arrangement = Arrange.Vertical
+    win.Border = False
+    lab = New Label(win)
+    lab.Text = "Liste des doublons, vous devez désactiver la maj des tarifs\nsur au moins un des deux"
+    lab.Alignment = Align.Center
+    lab.Height = Me.$parent.Font.Size * 5
+    lab.Background = Color.LightBackground
+    For Each sl In lst
+      lab = New Label(win)
+      lab.Height = Me.$parent.Font.Size * 2
+      lab.Text = sl.MonControle["Code"].Text & "  " & sl.MonControle["Désignation"].Text
+    Next
+    lab = New Label(win)
+    lab.Expand = True
+    bt = New Button(win) As "BtDbl"
+    bt.Height = Me.$parent.Font.Size * 3
+    bt.Text = "Ok"
+    bt.Tag = win
+    win.ShowModal
+    Return True
+  Endif
+  
+  Return False
+  
+End
+
+Public Sub BtDbl_Click()
+
+  Last.Tag.close
+
+End
+
 '*******************Gestion des commandes et des fournisseurs
 Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une commande déja saisie
   
@@ -503,10 +562,10 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
   Dim LecEcr As Integer
   Dim dra As Boolean
   Dim sl As Sailig
+  Dim pg As ProgBar
   
   If Me.ligne.Count > 0 Then Return
   $etat = etat
-  Application.Busy += 1
   If etat = Achat.EnCommande Or etat = Achat.CreaCommande Then
     where = Replace(where, "numrecpt", "numcom")
     res = Utils.db.Exec("SELECT * FROM Fiches_Entcom JOIN Fiches_Ligcom ON Fiches_Entcom.four=Fiches_Ligcom.four AND  Fiches_Entcom.numcom=Fiches_Ligcom.numcom WHERE " & where & " ORDER BY nligne")
@@ -520,19 +579,23 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
   If res.Available Then
     $dte = New LDate(res!ddate)
     commentaire = res!commentaire
+    pg = New ProgBar("Lecture des achats", res.Count)
+    pg.Show
     res.MoveFirst()
     Repeat
+      pg.Avancement()
       Me.ajout(LecEcr)
       Me.ligne[Me.ind].MonControle["Code"].Text = res!code
       ligne_LecCode(res!code)
       Me.ligne[Me.ind].MonControle["Qte"].Value = res!qte
       Me.ligne[Me.ind].MonControle["TX_Conv"].Value = res!txconv 
       Me.ligne[Me.ind].MonControle["Px_Brut"].Value = res!pbht
-      Me.ligne[Me.ind].MonControle["Rem"].Text = Str(res!rm / 100) & "%"
+      Me.ligne[Me.ind].MonControle["Rem"].Text = Str(res!rm) & "%"
       Me.ligne[Me.ind].MonControle["Px_Net"].Value = res!paht
       Me.ligne[Me.ind].MonControle["Frais"].Value = res!frais
       Me.ligne[Me.ind].MonControle["Px_Rev"].Value = res!prvt
       Me.ligne[Me.ind].prx.Qte = Me.ligne[Me.ind].MonControle["Qte"].Value
+      Me.ligne[Me.ind].AutresObj[Tarif].majtarif.Value = res!majtarif
       If Me.opt = "B" Or Me.opt = "T" Then
         If etat = Achat.EnCommande Or etat = Achat.CreaCommande Then
           Me.ligne[Me.ind].MonControle["Pal"].Text = res!palet
@@ -563,45 +626,58 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
       sl.chain.sup(Me.ligne[Me.ind].MonControle["TX_Conv"])
     Next
   Endif
-  Application.Busy -= 1
+  pg.Close
   
 End
 
 Public Sub generer(four As String)
 
-  Dim res As Result
+  Dim res, resc As Result
   Dim qte As Float
+  Dim pb As ProgBar
   
   $fournisseur = four
   $etat = CreaCommande
   res = Utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_qte < art_stkmin AND art_four = &1", $fournisseur)
   If res.Available Then
     $etat = Achat.CreaCommande
+    pb = New ProgBar("Génération de commande", res.Count, Null, True)
+    pb.Show
     Repeat
-      qte = (res!art_stkmax - res!art_qte)
-      If qte < Val(res!art_mincom) Then 
+      pb.Avancement(res!art_design, 10)
+      resc = Utils.db.Exec("SELECT SUM(qte) AS qte FROM Fiches_Ligcom WHERE code = &1", res!art_code)
+      If IsNull(resc!qte) Then
+        qte = (res!art_stkmax - res!art_qte)
+      Else
+        qte = (res!art_stkmax - res!art_qte - resc!qte)
+      Endif
+      If Not IsNull(res!art_mincom) And If qte < Val(res!art_mincom) Then 
         qte = Val(res!art_mincom) / res!art_txconv
       Else
         qte = qte / res!art_txconv
       Endif
-      Me.ligne[Me.ind].MonControle["Code"].text = res!art_code
-      ligne_LecCode(res!art_code)
-      Me.ligne[Me.ind].MonControle["Qte"].Value = qte
-      calcul
-      Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
-      Me.ajout()
+      If qte > 0 Then 
+        Me.ligne[Me.ind].MonControle["Code"].text = res!art_code
+        ligne_LecCode(res!art_code)
+        Me.ligne[Me.ind].MonControle["Qte"].Value = qte
+        calcul
+        Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+        Me.ajout()
+      Endif
     Until res.MoveNext()
+    pb.Close
   Endif
 
 End
 '**************************Opperation sur les fichiers********************************
-Public Sub SupAchat(etat As Integer, Cle As Collection) As Boolean         ''on supprime une commande, Cle est la collection qui contient les cles pour identifier les enregistrements => N° fournisseur + N° bl + date
+Public Sub SupAchat(etat As Integer, Cle As Collection, Optional stock As Boolean = False, supmat As Boolean = True) As Boolean         ''on supprime une commande, Cle est la collection qui contient les cles pour identifier les enregistrements => N° fournisseur + N° bl + date
 
   Dim res As Result
+  Dim matvendu As New String[]
   
   Application.Busy = 1
   Select Case etat
-    Case Achat.Validee, Achat.CreaCommande
+    Case Achat.CreaCommande, Achat.Validee
       Return
       
     Case Achat.EnCommande
@@ -609,12 +685,25 @@ Public Sub SupAchat(etat As Integer, Cle As Collection) As Boolean         ''on 
       Utils.db.Delete("Fiches_Ligcom", "four = &1 AND numcom = &2", Cle["Fiches_Entcom.four"], Cle["Fiches_Entcom.numrecpt"])
     
     Case Achat.Reception
-      res = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE numrecpt = &1 AND four = &2 AND daterecpt = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
-      If res.Available Then
-        If verifdrt(res) Then Return
-        res.MoveFirst()
+      $ressup = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE numrecpt = &1 AND four = &2 AND daterecpt = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+      If $ressup.Available Then
+        $ressup.MoveFirst()
         'on supprime la ligne matériel
-        Utils.db.Delete("Fiches_Materiels", "mat_four = &1 AND mat_rcpt = &2 AND mat_ddate = &3", Cle["Fiches_Entrecpt.four"], Cle["Fiches_Entrecpt.numrecpt"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+        If supmat Then 
+          res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_four = &1 AND mat_rcpt = &2 AND mat_ddate = &3", Cle["Fiches_Entrecpt.four"], Cle["Fiches_Entrecpt.numrecpt"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+          If res.Available Then
+            Repeat
+              If res!mat_vendu Then
+                matvendu.Add(res!mat_serie)
+              Endif
+            Until res.MoveNext()
+            If IsNull(matvendu) Then
+              Utils.db.Delete("Fiches_Materiels", "mat_four = &1 AND mat_rcpt = &2 AND mat_ddate = &3", Cle["Fiches_Entrecpt.four"], Cle["Fiches_Entrecpt.numrecpt"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+            Else
+              Error.Raise("Le(s) numéro(s) de série : " & matvendu.Join("/") & " sont attribués à un matériel vendu")
+            Endif
+          Endif
+        Endif
         'on supprime l'entrée
         Utils.db.Delete("Fiches_Entrecpt", "numrecpt = &1 AND four = &2 AND ddate = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
         Utils.db.Delete("Fiches_Ligrecpt", "numrecpt = &1 AND four = &2 AND daterecpt = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
@@ -622,27 +711,33 @@ Public Sub SupAchat(etat As Integer, Cle As Collection) As Boolean         ''on 
           'on supprime les consignes
           Utils.db.Delete("Fiches_ligcons", "bloc = &1 AND type = 'E'", LDate(Cle["Fiches_Entrecpt.ddate"]).L & Cle["Fiches_Entrecpt.numrecpt"] & Cle["Fiches_Entrecpt.four"])
         Endif
-        'on decremente le stock et le pamp
-        Repeat
-          Utils.db.Lockstock(res!code, res!qte, "-", True, res!paht)
-        Until res.MoveNext()
+        If stock Then
+          'on decremente le stock et le pamp
+          Repeat
+            Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)
+          Until $ressup.MoveNext()
+          $sup = False
+        Else
+          $sup = True
+        Endif
       Endif
   End Select
   
   Catch
-    Message.Error(Error.Text & " " & Error.Where & "\n L'entrée N° " & Cle["Fiches_Entrecpt.numrecpt"] & " ne sera pas supprimée.", "Ok")
+    Message.Error(Error.Text & " " & Error.Where & "\nLes oppérations sur l'entrée N° " & Cle["Fiches_Entrecpt.numrecpt"] & " ne seront pas prisent en compte.", "Ok")
     Utils.db.Rollback
     Application.Busy = 0
-    Utils.db.Exec("UNLOCK TABLES")
     Return True
 
 End
+
 
 Public Sub EnrAch(etat As Integer, dte As LDate, num As String, four As String, Optional vignette As String) As Boolean       ''On enregistre ou la commande en cours ou le bon de réception
 
   Dim resent, reslig As Result
   Dim sl As Sailig
   Dim modif As Boolean
+  Dim stk As Boolean = False
   
   If Me.ligne.Count < 1 Or $etat = achat.Validee Then Return
  
@@ -652,7 +747,7 @@ Public Sub EnrAch(etat As Integer, dte As LDate, num As String, four As String, 
       resent = Utils.db.Create("Fiches_Entcom")
       For Each sl In Me
         reslig = Utils.db.Create("Fiches_Ligcom")
-        reslig!datecom = dte.GnT
+        reslig!datecom = $dte.GnT
         reslig!numcom = num
         If Object.IsValid(sl.AutresObj[Consignes]) Then
           reslig!palet = sl.AutresObj[Consignes].ccd.nbpal
@@ -678,7 +773,7 @@ Public Sub EnrAch(etat As Integer, dte As LDate, num As String, four As String, 
         Else
           reslig = Utils.db.Create("Fiches_Ligrecpt")
         Endif
-        reslig!daterecpt = dte.GnT
+        reslig!daterecpt = $dte.GnT
         reslig!numrecpt = num
         EnrRec(reslig, sl, dte, num, $fournisseur, vignette, modif)
       Next
@@ -688,24 +783,37 @@ Public Sub EnrAch(etat As Integer, dte As LDate, num As String, four As String, 
       
   End Select
   resent!four = four
-  resent!ddate = dte.GnT
+  resent!ddate = $dte.GnT
   resent!montant = TotHt
   resent!anomalie = False
   resent!commentaire = commentaire
   resent.Update
+  Utils.db.Commit
   
   If etat = Achat.Reception Then
+    stk = True
+    If $sup Then
+      $ressup.MoveFirst()
+      Repeat
+        Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)  'on decremente le stock et pamp de la réception supprimée
+      Until $ressup.MoveNext()
+      $sup = False
+    Endif
     For Each sl In Me
       Utils.db.Lockstock(sl.MonControle["Code"].Text, sl.prx.Qte, "+", True, sl.MonControle["Px_Net"].Value)   'maj du stock et pamp
     Next
   Endif
   Application.Busy = 0
+  Return False
   
   Catch
-    Message.Error(Error.Text & " " & Error.Where & "\n L'entrée N° " & num & " ne sera pas enregistrée.", "Ok")
-    Utils.db.Rollback
+    If stk Then
+      Message.Error(Error.Text & " " & Error.Where & "\nErreur sur le calcul des stocks et du pamp, les entrées sont validées.", "Ok")
+    Else
+      Message.Error(Error.Text & " " & Error.Where & "\n L'entrée N° " & num & " ne sera pas enregistrée.", "Ok")
+      Utils.db.Rollback
+    Endif
     Application.Busy = 0
-    Utils.db.Exec("UNLOCK TABLES")
     Return True
 
 End
@@ -733,8 +841,11 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
   reslig!prvt = sl.MonControle["Px_Rev"].Value
   reslig!pattc = sl.prx.PuNTC.G
   reslig!nligne = Format(sl.Ind + 1, "000")
+  If Object.IsValid(sl.AutresObj[Tarif]) Then 
+    sl.AutresObj[Tarif].EnrTarTemp(reslig!pbht, reslig!txconv, rem, reslig!paht, reslig!frais, reslig!prvt)
+    reslig!majtarif = sl.AutresObj[Tarif].majtarif.Value
+  Endif
   reslig.Update
-  If Object.IsValid(sl.AutresObj[Tarif]) Then sl.AutresObj[Tarif].EnrTarTemp()
   'on enregistre les options boissons
   If Me.opt = "B" Or Me.opt = "T" Then
     sl.AutresObj[Frais].enregiste(False)
@@ -742,7 +853,7 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
       cdd = sl.AutresObj[Consignes].ccd
       If cdd.code Then      'si la ligne contient des alcools
         res = Utils.db.Create("Fiches_ligregie")
-        res!dtmouv = $dte.GnT
+        res!dtmouv = $dte.GnT 
         res!num = num
         res!numlig = Format(sl.Ind, "000")
         res!type = "E"
@@ -756,9 +867,9 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
         res!vignette = vignette
         res.Update
       Endif
-      EnrConsigne(cdd.cdepal, cdd.nbpal, Format(sl.Ind, "000"), cdd, dte, num, four)
-      EnrConsigne(cdd.cdecol, cdd.nbcol, Format(sl.Ind, "000"), cdd, dte, num, four)
-      EnrConsigne(cdd.cdeunit, sl.MonControle["Qte"].Value, Format(sl.Ind, "000"), cdd, dte, num, four)
+      EnrConsigne(cdd.cdepal, cdd.nbpal, Format(sl.Ind + 1, "000"), cdd, dte, num, four)
+      EnrConsigne(cdd.cdecol, cdd.nbcol, Format(sl.Ind + 1, "000"), cdd, dte, num, four)
+      EnrConsigne(cdd.cdeunit, sl.MonControle["Qte"].Value, Format(sl.Ind + 1, "000"), cdd, dte, num, four)
     Endif
   Endif
   
@@ -833,6 +944,7 @@ Public Function imprime(Optional ChCo As Boolean = True, chiffre As Boolean = Tr
   contv.Fixed = True
   conth = New ReportHBox(contv)
   lab = New ReportLabel(conth)
+  lab.Expand = True
   lab.font = Font["Serif,9"]
   lab.Text = "Fournisseur : " & res!fo_rs_soc & " " & $fournisseur & "  " & res!fo_nom
   lab = New ReportLabel(conth)
@@ -944,7 +1056,7 @@ Public Function imprime(Optional ChCo As Boolean = True, chiffre As Boolean = Tr
     lab.Height = "3mm"
     lab = New ReportLabel(conth)
     lab.font = Font["Serif,Blod,9"]
-    lab.Text = lg.MonControle["Désignation"].text
+    lab.Text = Left(lg.MonControle["Désignation"].text, 30)
     lab.Border = ReportBorder["Right:1pt #000000"]
     lab.Expand = True
     lab = New ReportLabel(conth)
@@ -1209,6 +1321,7 @@ Public Sub CreMat() As Boolean             ''créer le tableau de saisie des n°
   Dim i As Integer
   Dim ch As Chainage
   
+  Application.Busy = 0
   res = Utils.db.Exec("SELECT * FROM Fiches_Materiels LIMIT 1")
   win = CreFen(ByRef pan)
   win.Name = "mat"
@@ -1242,23 +1355,35 @@ Public Sub CreMat() As Boolean             ''créer le tableau de saisie des n°
   ch = New Chainage([])
   For Each lig In Me
     If lig.AutresObj[Materiel] Then
+      res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_rcpt=&1 AND mat_four=&2  AND mat_code=&3", $ndoc, $fournisseur, lig.MonControle["Code"].Text)
       For i = 0 To lig.MonControle["Qte"].Value - 1
         mat.ajout()
         mat.ligne[mat.ind].Dernier = ""
         mat.ligne[mat.ind].chain.sup(mat.ligne[mat.ind].MonControle["Code"], 2)
         mat.ligne[mat.ind].MonControle["Code"].Text = lig.MonControle["Code"].Text
         mat.ligne[mat.ind].MonControle["Désignation"].Text = lig.MonControle["Désignation"].Text
+        If res.Available Then
+          If Not res.MoveTo(i) Then mat.ligne[mat.ind].MonControle["Série"].text = res!mat_serie
+          If Not res.MoveTo(i) And If res!mat_vendu Then 
+            mat.ligne[mat.ind].MonControle["Série"].Enabled = False
+            mat.ligne[mat.ind].MonControle["Série"].tooltip = "matériel déjà vendu, modification impossible"
+          Endif
+          res.MoveFirst()
+        Endif
         ch.add([mat.ligne[mat.ind].MonControle["Série"]])
+        mat.ligne[mat.ind].Tag = mat.ligne[mat.ind].MonControle["Série"].text
       Next
     Endif
   Next
   sorti = win.Showmodal()
+  Application.Busy = 1
   If sorti = 0 Then Return False Else Return True
   
 End
 
 Public Sub abandon_click()
 
+  Application.Busy = 0
   Last.Tag.Close(0)
 
 End
@@ -1268,13 +1393,18 @@ Public Sub valider_click()
   Dim lig, ligart As Sailig
   Dim res As Result
   Dim cde As String
+  Dim ns As Boolean = True
   
   If Last.Tag.name = "mat" Then
     'Controle si on peut vaider
     For Each lig In mat
-      If Not lig.MonControle["Série"].Text Then
-        Message.Warning("Tous les n° de série doivent être remplis", "Ok")
-        Return
+      If Not lig.MonControle["Série"].Text And ns Then
+        If Message.Warning("Tous les n° de série ne sont pas renseignés\nVoulez vous continuer ?", "Oui", "Non") = 1 Then 
+          ns = False
+          Continue
+        Else
+          Return
+        Endif
       Endif
       res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_serie=&1 AND mat_code=&2 AND mat_rcpt <> &3", mat.ligne[mat.ind].MonControle["Série"].Text, mat.ligne[mat.ind].MonControle["Code"].Text, $ndoc)
       If res.Available Then
@@ -1283,9 +1413,15 @@ Public Sub valider_click()
       Endif
     Next
     'on supprime les n° de cette commande
-    Utils.db.Delete("Fiches_Materiels", "mat_rcpt=&1 AND mat_four=&2 AND mat_ddate=&3", $ndoc, $fournisseur, $dte.GnT)
+    For Each lig In mat
+      res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_serie=&1 AND mat_code=&2 AND mat_rcpt = &3", lig.Tag, lig.MonControle["Code"].Text, $ndoc)
+      If res.Available And If Not res!mat_vendu Then
+        Utils.db.Delete("Fiches_Materiels", "mat_rcpt=&1 AND mat_four=&2 AND mat_serie=&3 ", $ndoc, $fournisseur, lig.Tag)
+      Endif
+    Next
     'on créer les n° saisies
     For Each lig In mat
+      If Not lig.MonControle["Série"].Text Or lig.MonControle["Série"].Enabled = False Then Continue
       If lig.MonControle["Code"].Text <> cde Then
         cde = lig.MonControle["Code"].Text 
         For Each ligart In Me
@@ -1303,17 +1439,29 @@ Public Sub valider_click()
       res!mat_prvt = ligart.MonControle["Px_Rev"].Value
       res!mat_cdarr = ligart.AutresObj[FicheArt]["art_cdarr"]
       res!mat_nbd = ligart.AutresObj[FicheArt]["art_nbd"]
+      res!mat_dec = ligart.AutresObj[FicheArt]["art_dec"]
       res!mat_dfour = $fournisseur
+      res!mat_dpa = ligart.AutresObj[FicheArt]["art_dpa"]
       res!mat_ddate = $dte.GnT
-      res!mat_rcpt = "1"
-      res!mat_cfour = ligart.AutresObj[FicheArt]["art_cfour"]
+      res!mat_rcpt = $ndoc
+      res!mat_dfour = $fournisseur
       res!mat_cequ = ligart.AutresObj[FicheArt]["art_cequ"]
       res!mat_cbarre = ligart.AutresObj[FicheArt]["art_cbarre"]
       res!mat_dpa = ligart.AutresObj[FicheArt]["art_dpa"]
       res!mat_eco = ligart.AutresObj[FicheArt]["art_eco"]
+      res!mat_fam = ligart.AutresObj[FicheArt]["art_fam"]
       res!mat_qte = "1"
-      
-      res.Update
+      res!mat_tva = ligart.AutresObj[FicheArt]["taux_tva"]
+      res!mat_cequ = ligart.AutresObj[FicheArt]["art_cequ"]
+      res!mat_coef = ligart.AutresObj[FicheArt]["art_coef"]
+      res!mat_eco = ligart.AutresObj[FicheArt]["art_eco"]
+      res!mat_poids = ligart.AutresObj[FicheArt]["art_poids"]
+      res!mat_poids2 = ligart.AutresObj[FicheArt]["art_poids2"]
+      res!mat_photo = ligart.AutresObj[FicheArt]["art_photo"]
+      res!mat_crst = ligart.AutresObj[FicheArt]["art_crst"]
+      res!mat_vendu = False
+      res!mat_marque = ligart.AutresObj[FicheArt]["art_marque"]
+      res.Update()
     Next
   Endif
   Last.Tag.Close(1)
@@ -1370,7 +1518,7 @@ Public Sub CreRec() As Boolean          ''ouvre la fenetre des réceptions et re
   Dim ch As Chainage
   Dim obs As Observer
   
-  $reli = 1
+  $reli = 2
   win = CreFen(ByRef pan)
   win.Name = "rec"
   
@@ -1446,7 +1594,9 @@ Public Sub CreRec() As Boolean          ''ouvre la fenetre des réceptions et re
   Next
   For Each lig In rec
     If lig.MonControle["Reliquat"].Value > 0 Then
+      Application.Busy = 0
       $reli = Message.Question("Voulez vous générer une commande de reliquat ?", "Oui", "Non")
+      Application.Busy = 1
       Break
     Endif
   Next

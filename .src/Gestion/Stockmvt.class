@@ -483,7 +483,13 @@ Public Sub Buttrait_Click()
   pgb = New ProgBar("Création de la requête", 0)
   pgb.Show
   If Radiodetail.Value Or Checkdetf.Value Then
-    $res = Utils.db.Exec(reqstkd & reqstth & requbl & requblm & requfa & requfam & reqfo & reqex & reqprd & reqtck & ord)
+    If reqstkd & reqstth & requbl & requblm & requfa & requfam & reqfo & reqex & reqprd & reqtck Then
+      $res = Utils.db.Exec(reqstkd & reqstth & requbl & requblm & requfa & requfam & reqfo & reqex & reqprd & reqtck & ord)
+    Else
+      mab()
+      pgb.Close
+      Return
+    Endif
   Else
     $res = Utils.db.Exec("SELECT code, libelle, dte, SUM(qtem) as qtem, SUM(qtep) as qtep, SUM(ca) as ca, SUM(mrgart) as mrgart, SUM(mrgmo) as mrgmo FROM (" & reqstkd & reqstth & requbl & requblm & requfa & requfam & reqfo & reqex & reqprd & reqtck & ord & ") as a " & groupage & " ORDER BY dte,code ")
   Endif

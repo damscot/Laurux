@@ -236,7 +236,7 @@ Public Sub Aff_StatAC()
   Dim Nbd3 As String
   Dim Libelle As String
 
-  Dtejour = Format$(DateAdd(Now, gb.Year, - Periode), "yyyy-mm-dd")
+  Dtejour = Format$(DateAdd(Now, gb.Year, -Periode), "yyyy-mm-dd")
   Colhisto.Clear
   Qte_totale.text = "0"
   If Not Dbl Then
@@ -661,12 +661,12 @@ Public Sub DocAchat()
             Colrcp2.Item[2] = .cpoint(Ligrcpt!qte)
           Endif
           Colrcp2.Item[1] = Ligrcpt!design
-          Colrcp2.Item[3] = Format$(Val(Ligrcpt!pbht), "0.00")
+          Colrcp2.Item[3] = Format$(Ligrcpt!pbht, "0.00")
           If Len(Colrcp2.Item[3]) - InStr(Colrcp2.Item[3], ",") = 2 Then Colrcp2.Item[3] = Colrcp2.Item[3] & " "
           Colrcp2.Item[4] = Ligrcpt!rm
-          Colrcp2.Item[5] = Format$(Val(Ligrcpt!paht), "0.00")
+          Colrcp2.Item[5] = Format$(Ligrcpt!paht, "0.00")
           If Len(Colrcp2.Item[5]) - InStr(Colrcp2.Item[5], ",") = 2 Then Colrcp2.Item[5] = Colrcp2.Item[5] & " "
-          Totalbl.Text = Format$(Val(Totalbl.Text) + (Val(Ligrcpt!paht) * Val(Colrcp2.Item[2])), "0.00")
+          Totalbl.Text = Format$(Val(Totalbl.Text) + (Ligrcpt!paht * Val(Colrcp2.Item[2])), "0.00")
         Loop Until Ligrcpt.MoveNext()
         Nlgbl.Text = Colrcp2.count
       Endif

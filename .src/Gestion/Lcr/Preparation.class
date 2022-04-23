@@ -680,13 +680,13 @@ Dim Bq3 As String = "0"
 Dim x As Integer = 0
 Dim sel As Boolean = False
 If Not IsNull(Left$(BQ2.text, 1)) Then Bq3 = Left$(BQ2.text, 1)
-For x = 0 To Enrg
-ColLcr.MoveTo(x, 0)
-  If ColLcr[ColLcr.row, 9].Text = "*" Then
-Utils.db.Exec("UPdate  Fiches_Lcr   SET codeentree = &1 where lind = &2", Left$(Entree2.Text, 1), ColLcr[ColLcr.row, 8].Text)
-ColLcr[ColLcr.row, 9].Text = "False"
-sel = True
-  Endif
+  For x = 0 To Enrg
+    ColLcr.MoveTo(x, 0)
+    If ColLcr[ColLcr.row, 9].Text = "*" Then
+      Utils.db.Exec("UPdate  Fiches_Lcr   SET codeentree = &1 where lind = &2", Left$(Entree2.Text, 1), ColLcr[ColLcr.row, 8].Text)
+      ColLcr[ColLcr.row, 9].Text = "False"
+      sel = True
+    Endif
   Next
   If Not sel Then Utils.db.Exec("UPdate  Fiches_Lcr   SET code = &1, nom = &2, date = &3, datech = &4, montant = &5, ecartee = &6, banque = &7, codeentree = &8 where lind = &9", Code.Text, Nom.Text, dte.dte.G, datee.dte.G, montant.Text, Utils.convBool(cRej.Value), BQ3, Left$(Entree2.Text, 1), iLind)
   CleanChamps()

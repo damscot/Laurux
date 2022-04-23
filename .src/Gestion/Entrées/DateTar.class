@@ -1,0 +1,254 @@
+' Gambas class file
+
+Private $restar As Result
+
+Public Sub _new(Optional four As String)
+
+  date.Dat = True
+  date.dte.g = Now
+  fournisseur.Text = four
+  fournisseur_LostFocus()
+
+End
+
+Private Sub affiche()
+  
+  Dim txt As String
+  
+  Try $restar.MoveFirst()
+  If Not $restar.Available Then Return
+  ListFour.Clear
+  ListArt.Clear
+  Repeat
+    txt = $restar!art & "  " & $restar!art_design
+    If $restar!dtmaj Then txt &= " " & LDate($restar!date).L
+    ListFour.Add(txt)
+  Until $restar.MoveNext()
+  
+End
+
+Public Sub selec_Click()
+
+  Dim i As Integer
+  
+  If ListFour.Count < 1 Then Return
+  Repeat
+    If ListFour[i].Selected Then ajou(i) Else i += 1
+  Until i = ListFour.Count
+
+End
+
+Public Sub fournisseur_LostFocus()
+
+  If fournisseur.Text Then
+    $restar = Utils.db.Exec("SELECT art,dtmaj,date,art_design FROM Fiches_TarTemp JOIN Fiches_Art ON art_code=art WHERE art_four=&1 AND temp_sup = False GROUP BY art,dtmaj,date,art_design", fournisseur.text)
+  Else
+    $restar = Utils.db.Exec("SELECT art,dtmaj,date,art_design FROM Fiches_TarTemp JOIN Fiches_Art ON art_code=art WHERE temp_sup = False GROUP BY art,dtmaj,date,art_design")
+  Endif
+  affiche()
+  
+End
+
+Public Sub deselec_Click()
+
+  Dim i As Integer
+  
+  If ListArt.Count < 1 Then Return
+  Repeat
+    If ListArt[i].Selected Then supr(i) Else i += 1
+  Until i = ListArt.Count
+
+End
+
+Public Sub Sup_Click()
+
+  Dim j As Integer
+  Dim txt As String
+  
+  If ListArt.Count < 1 Then Return
+  If Message.Delete("Vous allez supprimer les tarifs sélectionnés à droite\nVoulez vous continuer ?", "Oui", "Non") = 2 Then Return
+  Utils.db.Begin
+  $restar.MoveFirst
+  If Not $restar.Available Then Return
+  For i As Integer = 0 To ListArt.Count
+    Repeat
+      txt = $restar!art & "  " & $restar!art_design
+      If $restar!dtmaj Then txt &= " " & LDate($restar!date).L
+      If txt = ListArt[i].Text Then
+        j = $restar.Index
+        Break
+      Endif
+    Until $restar.MoveNext()
+    $restar.MoveTo(j)
+    Utils.db.Delete("Fiches_TarTemp", "art = &1", $restar!art)
+  Next
+  Utils.db.Commit
+  fournisseur_LostFocus()
+  affiche()
+
+End
+
+Public Sub anul_Click()
+
+  affiche()
+  
+End
+
+Public Sub Enr_Click()
+
+  Dim j As Integer
+  Dim txt As String
+  
+  $restar.MoveFirst
+  If Not $restar.Available Then Return
+  For i As Integer = 0 To ListArt.Count
+    Repeat
+      txt = $restar!art & "  " & $restar!art_design
+      If $restar!dtmaj Then txt &= " " & LDate($restar!date).L
+      If txt = ListArt[i].Text Then
+        j = $restar.Index
+        Break
+      Endif
+    Until $restar.MoveNext()
+    $restar.MoveTo(j)
+    Utils.db.Exec("UPDATE Fiches_TarTemp SET dtmaj = &1, date = &2 WHERE art = &3 ", True, date.dte.G, $restar!art)
+  Next
+  fournisseur_LostFocus()
+  affiche()
+
+End
+
+Public Sub Quit_Click()
+
+  Me.Close
+
+End
+
+Private Sub ajou(ind As Integer)
+  
+  ListArt.Add(ListFour[ind].Text)
+  ListFour.Remove(ind)
+  
+End
+
+Public Sub ListFour_Activate()
+
+  ajou(ListFour.Index)
+
+End
+
+Public Sub ListArt_Activate()
+
+  supr(ListArt.Index)
+
+End
+
+Public Sub Rech_Click()
+
+  Dim txt As String
+  Dim i As Integer
+  
+  If ListFour.Count < 1 Then Return
+  
+  $restar.MoveFirst()
+  Repeat
+    txt = $restar!art & "  " & $restar!art_design
+    If $restar!dtmaj Then txt &= " " & LDate($restar!date).L
+    i = ListFour.Find(txt)
+    If i > -1 Then 
+      If LDate($restar!date).D = date.dte.D Then ajou(i)
+    Endif
+  Until $restar.MoveNext()
+  
+End
+
+Private Sub supr(ind As Integer)
+  
+  ListFour.Add(ListArt[ind].Text)
+  ListArt.Remove(ind)
+  
+End
+
+Public Sub EnrTouTar(rResult As Result)            ''Enregistre tous les tarifs lors de l'ouverture de Laurux
+
+  Dim pb As ProgBar
+  Dim lp As LPrix
+  Dim lt As LTaxe
+  Dim art As String
+  Dim res, restva As Result
+  
+  pb = New ProgBar("Enregistrement des tarifs", rResult.Count)
+  pb.Show
+  Utils.db.Begin
+  Repeat
+    pb.Avancement()
+    If art <> rResult!art Then
+      'on sauvegarde la fiche article 1 seule fois
+      art = rResult!art
+      res = Utils.db.Edit("Fiches_Art", "art_code = &1", rResult!art)
+      If res.Available Then
+        restva = Utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva = &1", res!art_tva)
+        lp = New LPrix(rResult!pxrev, 1, res!art_cdarr)
+        lt = New LTaxe((rResult!temp_coef - 1) * -1, LTaxe.Remise)
+        lp.add_taxe(lt)
+        lt = New LTaxe(restva!taux_tva & "%", LTaxe.TVA)
+        lp.add_taxe(lt)
+        res!art_prvt = rResult!pxrev
+        res!art_pauaht = rResult!pbht
+        res!art_pvht = lp.PuNHT.G
+        res!art_pvttc = lp.PuNTC.G
+        res!art_frais = rResult!frais
+        res!art_pbht = rResult!pbht
+        res!art_paht = rResult!paht
+        res!art_txconv = rResult!txconv
+        res!art_tr = rResult!rm
+        res.Update
+      Endif
+      Utils.db.Delete("Fiches_TarTemp", "art = &1 AND temp_type =&2", rResult!art, GesTar.TarGen)
+    Endif
+    
+    Select Case rResult!temp_type
+      Case GesTar.TarGen
+        res = Utils.db.Edit("Fiches_Art", "art_code = &1", rResult!art)
+        If res.Available Then
+          lt = New LTaxe((rResult!temp_coef - 1) * -1, LTaxe.Remise)
+          lp.add_taxe(lt)
+          res!art_pvht = lp.PuNHT.G
+          res!art_pvttc = lp.PuNTC.G
+          res!art_coef = rResult!temp_coef
+          res.Update
+        Endif
+      Case GesTar.TarCli
+        If rResult!temp_sup Then
+          Utils.db.Delete("Fiches_Tarcli", "ccli = &1 AND cart = &2", rResult!code, rResult!art)
+        Else
+          res = Utils.db.Edit("Fiches_Tarcli", "ccli = &1 AND cart = &2", rResult!code, rResult!art)
+          If Not res.Available Then res = Utils.db.Create("Fiches_Tarcli")
+          res!cart = rResult!art
+          res!coef = rResult!temp_coef
+          res!ccli = rResult!code
+          res.Update
+        Endif
+        Utils.db.Delete("Fiches_TarTemp", "art = &1 AND temp_type =&2 AND code = &3", rResult!art, GesTar.TarCli, rResult!code)
+      Case GesTar.TarTcli
+        If rResult!temp_sup Then
+          Utils.db.Delete("Fiches_TarTypcli", "type = &1 AND cart = &2", rResult!code, rResult!art)
+        Else
+          res = Utils.db.Edit("Fiches_TarTypcli", "type = &1 AND cart = &2", rResult!code, rResult!art)
+          If Not res.Available Then res = Utils.db.Create("Fiches_TarTypcli")
+          res!cart = rResult!art
+          res!coef = rResult!temp_coef
+          res!type = rResult!code
+          res.Update
+        Endif
+        Utils.db.Delete("Fiches_TarTemp", "art = &1 AND temp_type =&2 AND code = &3", rResult!art, GesTar.TarTcli, rResult!code)
+    End Select
+  Until rResult.MoveNext()
+  Utils.db.Commit
+  pb.Close()
+
+Catch
+  message.Error(Error.Text & " " & Error.Where & "\nLes tarifs ne seront pas modifiés")
+  Utils.db.Rollback
+  
+End

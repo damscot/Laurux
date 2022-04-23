@@ -1164,8 +1164,8 @@ Public Sub Coeff()
       Calc_Marge()
     Endif
   End With
-Catch
-  message.Error(Error.Text & " " & Error.where)
+'Catch
+'  message.Error(Error.Text & " " & Error.where)
 
 End
 
@@ -2379,10 +2379,10 @@ Public Sub Histo_Achat()
             Colachat.Item[1] = .Cdate_Aff(Ligrcpt!daterecpt)
             Colachat.Item[2] = Ligrcpt!four
             Colachat.Item[3] = fours!fo_nom
-            Colachat.Item[4] = Format$(Val(Ligrcpt!pbht), nbdec)
+            Colachat.Item[4] = Format$(Ligrcpt!pbht, nbdec)
             If Len(Colachat.Item[4]) - InStr(Colachat.Item[4], ",") = 2 Then Colachat.Item[4] = Colachat.Item[4] & " "
             Colachat.Item[5] = Ligrcpt!rm
-            Colachat.Item[6] = Format$(Val(Ligrcpt!paht), nbdec)
+            Colachat.Item[6] = Format$(Ligrcpt!paht, nbdec)
             If Len(Colachat.Item[6]) - InStr(Colachat.Item[6], ",") = 2 Then Colachat.Item[6] = Colachat.Item[6] & " "
             Colachat.Item[7] = Ligrcpt!qte
           Loop Until Ligrcpt.MoveNext()

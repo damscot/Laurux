@@ -5030,7 +5030,7 @@ Public Sub Maj369()
   Dim numero As String
   Dim $i As Integer = 0
   Dim val As Variant
-  
+ ' Goto end_utf81
   'Modification charset to utf8
   rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, t1.COLUMN_TYPE, t1.character_set_name from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.column_type like '%CHAR%' or t1.column_type like 'TEXT') and t1.character_set_name != 'utf8'", "Laurux" & Start.Societe)
   If rReq.Count = 0 Then
@@ -5100,11 +5100,15 @@ end_utf8:
   Start.LocalSettings.Save
   Start.LocalSettings.Reload
   
+end_utf81:
   'Modifications des achats
   Try utils.db.Exec("ALTER TABLE Fiches_Materiels ADD dt datetime")
   res = Utils.db.Exec("SELECT * FROM Fiches_Materiels")
   If res.Available Then
+    PB = New ProgBar("Conversion des dates du matériel", res.Count)
+    PB.Show()
     Repeat
+      pb.Avancement("", 10)
       Try Utils.db.Exec("UPDATE Fiches_Materiels SET dt =&1 WHERE mat_serie = &2 AND mat_code=&3", LDate(res!mat_ddate).G, res!mat_serie, res!mat_code)
     Until res.MoveNext()
   Endif
@@ -5113,10 +5117,20 @@ end_utf8:
   'création de la table des tarifs à changer
   Try Utils.db.Exec("CREATE TABLE Fiches_TarTemp" &
    " (art VarChar(15) NOT NULL," &
-   "temp_type integer DEFAULT 0," &
-   "code VarChar(10)," &
-   "temp_coef DECIMAL(7,4)," &
-    "PRIMARY KEY (art,temp_type,code)) ENGINE=InnoDB")
+   " dtmaj BOOLEAN DEFAULT FALSE," &
+   " date DATETIME,"
+   " pbht DECIMAL(12,3)," &
+   " rm DECIMAL(6,2)," &
+   " paht DECIMAL(12,3)," &
+   " frais DECIMAL (12,3)," &
+   " pxrev DECIMAL(12,3)," &
+   " txconv DECIMAL (10,4)," &
+   " temp_type integer DEFAULT 0," &
+   " code VarChar(10)," &
+   " temp_coef DECIMAL(7,4)," &
+   " temp_sup BOOLEAN DEFAULT FALSE,"
+   "PRIMARY KEY (art,temp_type,code)) ENGINE=InnoDB")
+  
   'Modification des CHAR en DECIMAL
   val = "Fiches_Ligrecpt"
   For $i = 0 To 1
@@ -5128,13 +5142,15 @@ end_utf8:
     Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY frais DECIMAL(12,3)")
     Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY prvt DECIMAL(12,3)")
     Try Utils.db.Exec("ALTER TABLE " & val & " MODIFY pattc DECIMAL(12,3)")
-    Try Utils.db.Exec("ALTER TABLE " & val & " ADD txconv DECIMAL(10,3)")
+    Try Utils.db.Exec("ALTER TABLE " & val & " ADD txconv DECIMAL(10,4) DEFAULT 1")
+    Try Utils.db.Exec("ALTER TABLE " & val & " ADD majtarif BOOLEAN DEFAULT TRUE")
     Try utils.db.Exec("UPDATE " & val & ",Fiches_Art SET txconv= art_txconv WHERE art_code = code")
     val = "Fiches_Ligcom"
   Next
+  Try Utils.db.Exec("ALTER TABLE Fiches_Entrecpt MODIFY validee TINYINT(2) DEFAULT 0")
   val = Null
   $i = 0
-  
+'  Quit
   'création de la table Fiches_Reglement
   If Not Utils.db.Tables.Exist("Fiches_Reglements") Then
     pb = New ProgBar("Gestion des réglements", 9)

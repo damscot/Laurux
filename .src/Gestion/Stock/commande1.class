@@ -2,7 +2,6 @@
 
 Create Static
 
-Private $tim As Timer
 Private $opt As String
 Private $req As String
 Private $win As Window
@@ -34,6 +33,8 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate)
     If $opt <> "N" Then TabStrip1[2].Visible = False
   Endif
   
+'  $etat = Achat.Sans
+  rececp.Tag = Achat.Sans
   dte.Dat = True
   dte.dte.G = Now
   totfrais.numerique = True
@@ -71,7 +72,6 @@ Public Sub Form_Open()
   
   Dim rd As RadioButton
   
-  
   TabStrip1.Index = 0
   $win = New Window As "Window"
   $win.Arrangement = Arrange.Vertical
@@ -82,11 +82,11 @@ Public Sub Form_Open()
   rd = New RadioButton($panel) As "commande"
   rd.Text = "Liste des commandes"
   rd.Expand = True
-  rd = New RadioButton($panel) As "valide"
-  rd.Text = "Liste des commandes validées"
-  rd.Expand = True
   rd = New RadioButton($panel) As "reception"
   rd.Text = "Liste des commandes réceptionnées"
+  rd.Expand = True
+  rd = New RadioButton($panel) As "valide"
+  rd.Text = "Liste des commandes validées"
   rd.Expand = True
   $etat = Achat.Reception
   $panel = New Panel($win)
@@ -103,10 +103,7 @@ Public Sub Form_Open()
   $win.Show
   If Bval Then ColTri_MajSel(Bval)
   rd.Value = True
-'  $tim = New Timer As "Tim"
-'  $Tim.Delay = 10000
-'  $Tim.Start
-  
+
 End
 
 Public Sub form_Close()
@@ -115,14 +112,24 @@ Public Sub form_Close()
     If Message.Question("Vous avez une saisie en cours\nVoulez vous fermer quand même ?", "Oui", "Non") = 2 Then
       Stop Event
       Return
+    Else
+      If $etat <> Achat.CreaCommande Then DocActif.free_lock("Achat", $numlock)
     Endif
   Endif
+  $validBR = True
   $win.Close
 
 End
 
 Public Sub Window_Close()
 
+  If Not IsNull(tbl) And If tbl.ligne.Count > 0 And Not $validBR Then
+    If Message.Question("Vous avez une saisie en cours\nVoulez vous fermer quand même ?", "Oui", "Non") = 2 Then
+      Stop Event
+      Return
+    Endif
+  Endif
+  $validBR = True
   Me.Close
 
 End
@@ -179,6 +186,7 @@ Public Sub Achat_Ajou(Value As Sailig)
   comin.Text = ""
   stk.Text = ""
   qtecom.Text = ""
+  Encom.Text = ""
   Value.AutresObj = New Object[Achat.ObjFin]
   Value.AutresObj[Achat.Tarif] = gt
   Value.AutresObj[Achat.Frais] = opt
@@ -212,11 +220,7 @@ Public Sub LPrix_change(lp As LPrix)
   
 End
 
-Public Sub Tim_Timer()
 
-  tr.Update
-
-End
 '***************Table de choix des commandes
 Public Sub Update_Req()
 
@@ -292,15 +296,17 @@ Public Sub ColTri_MajSel(val As Variant)
       tbl.LitCommande($cond, $etat)
       Wait 0.1
       generer.Visible = False
+      ChangVal($etat)
       $numlock = tbl.ndoc
-      If Not DocActif.get_lock("Achat", tbl.ndoc) Then Return
+      If Not DocActif.get_lock("Achat", tbl.ndoc) Then 
+        tbl.Delete()
+        Return
+      Endif
       com.Text = tbl.commentaire
       If $etat = Achat.EnCommande Then 
         ncom.Text = tbl.ndoc
-        rececp.Enabled = True
       Else 
         nbl.Text = tbl.ndoc
-        rececp.Enabled = False
       Endif
       If $etat = Achat.Reception Then
         BlqSai(False)
@@ -309,6 +315,8 @@ Public Sub ColTri_MajSel(val As Variant)
         Endif
       Endif
       $win.Enabled = False
+      tardt.Visible = False
+      Me.Raise
     Endif
   Endif
 
@@ -355,7 +363,7 @@ Public Sub Valide_click()
   $req = "SELECT four, numrecpt, ddate,montant, mttc,anomalie,commentaire,fo_nom FROM Fiches_Entrecpt JOIN Fiches_Four on four=fo_code "
   $etat = Achat.Validee
   Update_Req
-  tr.ExtraSel("validee= True ", "AND")
+  tr.ExtraSel("(validee= '1' or validee = '2') ", "AND")
 
 End
 
@@ -390,6 +398,7 @@ Public Sub creation_Click()
   Endif
   
   generer.Visible = False
+  tardt.Visible = False
   tbl.fourisseur = fcode.Text
   tbl.date = dte.dte
   tbl.ndoc = nbl.Text
@@ -397,7 +406,7 @@ Public Sub creation_Click()
   tbl.ajout
   $etat = Achat.CreaCommande
   Panel3.Raise
-  rececp.Enabled = True
+  ChangVal($etat)
 
 End
 
@@ -438,7 +447,10 @@ Public Sub suppr_Click()
   For Each lg In tbl
     lg.AutresObj[Achat.Tarif].SupTarTemp()
   Next
-  If tbl.SupAchat($etat, Bval) Then Return
+  If tbl.SupAchat($etat, Bval, True) Then 
+    Utils.db.Rollback
+    Return
+  Endif
   Utils.db.Commit
   annul_Click()
   
@@ -470,7 +482,6 @@ Public Sub annul_Click()
   ncom.Clear
   nbl.Clear
   com.Clear
-  rececp.Enabled = False
   totaht.Clear
   totht.Clear
   totttc.Clear
@@ -481,15 +492,31 @@ Public Sub annul_Click()
   comin.Text = ""
   stk.Text = ""
   qtecom.Text = ""
+  Encom.Text = ""
+  Etarif.Background = Color.ButtonBackground
+  tardt.Visible = True
   If $etat <> Achat.CreaCommande Then DocActif.free_lock("Achat", $numlock)
   $win.Enabled = True
-  If $etat = Achat.CreaCommande Then reception_click()
+  If $etat = Achat.CreaCommande Then Valide_click()
   tr.Update
+  ChangVal(Achat.Sans)
+  Wait 0.001
   Application.Busy = 0
   
 End
 
 Public Sub ValideS_Click()
+  
+  Application.Busy = 1
+  If ValCom() Then 
+    Application.Busy = 0
+    Return
+  Endif
+  annul_Click()
+  
+End
+
+Private Sub ValCom() As Boolean
   
   Dim nco As String
   Dim rep As Report
@@ -497,15 +524,15 @@ Public Sub ValideS_Click()
   Dim lg As Sailig
   Dim res As Result
   
-  If $etat = Achat.Validee Then Return
+  If $etat = Achat.Validee Then Return True
+  Application.Busy = 1
   If $etat = Achat.EnCommande Or $etat = Achat.CreaCommande Then nco = ncom.Text Else nco = nbl.Text
-  If VerSai($etat) Then Return
-  If $opt = "B" Or $opt = "T" Then
-    Utils.db.Exec("LOCK TABLES Fiches_Ligrecpt WRITE, Fiches_Entrecpt WRITE, Fiches_Materiels WRITE, Fiches_Tvaav READ, Fiches_ligcons WRITE, Fiches_ligregie WRITE, Fiches_Ligcom WRITE, Fiches_Entcom WRITE")
-  Else
-    Utils.db.Exec("LOCK TABLES Fiches_Ligrecpt WRITE, Fiches_Entrecpt WRITE, Fiches_Materiels WRITE, Fiches_Tvaav READ, Fiches_Ligcom WRITE, Fiches_Entcom WRITE")
-  Endif
+  If VerSai($etat) Then Return True
   Utils.db.Begin
+  If tbl.ContMat() And $etat = Achat.Reception Then
+    If Not tbl.CreMat() Then Return True
+  Endif
+
   If $etat = Achat.Reception Then     'si c'est la derniere entrée on maj l'article
     For Each lg In tbl
       res = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE code = &1 AND daterecpt > &2", lg.MonControle["Code"].Text, dte.dte.D)
@@ -514,21 +541,22 @@ Public Sub ValideS_Click()
       Endif
     Next
   Endif
-  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, Bval) Then Return
-  If tbl.EnrAch($etat, dte.dte, nco, fcode.Text) Then Return
+  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, Bval, False, False) Then Return True
+  If tbl.EnrAch($etat, dte.dte, nco, fcode.Text) Then Return True
   Utils.db.Commit
-  Utils.db.Exec("UNLOCK TABLES")
+  
   If $etat = Achat.Reception Then
     rep = tbl.imprime(False)
-    If IsNull(rep) Then Return
+    If IsNull(rep) Then Return False
     prt = New Printer
     prt.OutputFile = User.Home & "/tmp/BonReception.pdf"
     rep.Print(prt)
     Copie.Dupli4(User.Home & "/tmp/BonReception.pdf", "", "BR" & fcode.Text & "_" & nbl.Text, dte.dte.L, fcode.Text)
   Endif
-  annul_Click()
+  Return False
   
 End
+
 
 Public Sub rececp_Click()
 
@@ -545,112 +573,118 @@ Public Sub rececp_Click()
   Dim res As Result
   Dim rep As Report
   Dim prt As New Printer
+  Dim vecr As VarEcr
+  Dim m As Integer
   
-  If VerSai(Achat.Reception) Then Return
-  tbl.fourisseur = fcode.Text
-  tbl.ndoc = nbl.Text
-  tbl.date = dte.dte
-  tbl.commentaire = com.Text
-  
-  res = Utils.db.Exec("SELECT * FROM Fiches_Entrecpt WHERE four=&1 AND numrecpt = &2", fcode.Text, nbl.Text)
-  If res.Available Then
-    Message.Warning("Réception impossible ce numéro de BL est déjà attribué", "Ok")
-    Return
-  Endif
-  
-  dt = New VerifDate(dte.dte.G)
-  If dt.DateCom.Apres(dte.dte) Then
-    If Message.Warning("La date du mouvement est inférieur à celle de l'exercice\nContiner pourrait provoquer des erreurs de stock", "Abandon", "Continuer") = 0 Then Return
-  Endif
-  
-  If tbl.CreRec() = 0 Then Return
-  
-  If $opt = "B" Or $opt = "T" Then
-    For Each lg In tbl
-      If lg.AutresObj[Achat.FicheArt]["art_dra"] Then
-        dra = True
-        If lg.AutresObj[Achat.Consignes].ccd.suspendu Then vgn = True
-        If dt.ClotDroi(Null, lg.AutresObj[Achat.FicheArt]["art_dra"]) Then Return
-      Endif
-    Next
-    If vgn Then
-      win = New Window
-      win.Height = win.Font.Height * 6
-      win.Width = win.Font.Size * 50
-      win.Arrangement = Arrange.Vertical
-      lab = New Label(win)
-      lab.Text = "N° de vignette "
-      lab.Alignment = Align.Center
-      lab.Expand = True
-      vignette = New TextReg(win) As "Nvign"
-      vignette.Expand = True
-      vignette.numerique = True
-      vignette.nbdec = "0"
-      vignette.MaxLenght = 25
-      Utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
-      res = Utils.db.Exec("Select nvign From Fiches_Parametres")
-      vignette.Text = Format(Val(res!nvign) + 1, "0000000000000000000000000")
-      vignette.Enabled = False
-      pan = New Panel(win)
-      pan.Expand = True
-      pan.Arrangement = Arrange.Horizontal
-      but = New Button(pan) As "Babandon"
-      but.Text = "Abandon"
-      but.Picture = Picture["Icones/exit.png"]
-      but.Expand = True
-      but.Tag = win
-      but = New Button(pan) As "Bvalide"
-      but.Text = "Valider"
-      but.Picture = Picture["Icones/button_ok.png"]
-      but.Tag = win
-      but.Expand = True
-      sort = win.Showmodal()
+  Select Case Last.Tag
+    Case Achat.Sans
+      ValidBR1.Showmodal
       
-      If sort = 0 Then 
-        Utils.db.Exec("UNLOCK TABLES")
+    Case Achat.Reception
+      m = Message.Question("Comment voulez vous validater votre entrée ?", "Sans écriture comptable", "Avec écriture comptable", "Abandon")
+      If m = 3 Then Return
+      If ValCom() Then Return
+      ValidBR1.Ecritures($etat, dte.dte, nbl.Text, fcode.Text, m)
+      annul_Click()
+      
+    Case Achat.CreaCommande, Achat.EnCommande
+      If VerSai(Achat.Reception) Then Return
+      tbl.fourisseur = fcode.Text
+      tbl.ndoc = nbl.Text
+      tbl.date = dte.dte
+      tbl.commentaire = com.Text
+      
+      res = Utils.db.Exec("SELECT * FROM Fiches_Entrecpt WHERE four=&1 AND numrecpt = &2", fcode.Text, nbl.Text)
+      If res.Available Then
+        Message.Warning("Réception impossible ce numéro de BL est déjà attribué", "Ok")
         Return
       Endif
-      vgn = vignette.Text
-      Utils.db.Exec("UPDATE Fiches_Parametres SET nvign= &1", Format(vignette.Value, "0000000000000000000000000"))
-      Utils.db.Exec("UNLOCK TABLES")
-    Endif
-  Endif
-  
-  If tbl.ContMat() Then
-    If Not tbl.CreMat() Then Return
-  Endif
-  If $opt = "B" Or $opt = "T" Then
-    Utils.db.Exec("LOCK TABLES Fiches_Ligrecpt WRITE, Fiches_Entrecpt WRITE, Fiches_Materiels WRITE, Fiches_Tvaav READ, Fiches_ligcons WRITE, Fiches_ligregie WRITE, Fiches_Ligcom WRITE, Fiches_Entcom WRITE")
-  Else
-    Utils.db.Exec("LOCK TABLES Fiches_Ligrecpt WRITE, Fiches_Entrecpt WRITE, Fiches_Materiels WRITE, Fiches_Tvaav READ, Fiches_Ligcom WRITE, Fiches_Entcom WRITE")
-  Endif
-  Utils.db.Begin
-  If $etat = Achat.EnCommande Or ($etat = Achat.Reception And Not dra) Then
-    'on supprime l'ancienne commande de la BD
-    If tbl.SupAchat($etat, Bval) Then Return
-  Endif
-  'on enregistre la nouvelle
-  tbl.EnrAch(Achat.Reception, dte.dte, nbl.Text, fcode.Text, vgn)
-  For Each lg In tbl
-    lg.AutresObj[Achat.Tarif].EnrTarArt(lg)
-    lg.AutresObj[Achat.Tarif].EnrArt(fcode.Text, dte.dte)
-    lg.AutresObj[Achat.Tarif].EnrEtiqu(lg)
-  Next
-  Utils.db.Commit
-  Utils.db.Exec("UNLOCK TABLES")
-  'on enregistre le pdf de réception
-  rep = tbl.imprime(False)
-  If IsNull(rep) Then Return
-  prt.OutputFile = User.Home & "/tmp/BonReception.pdf"
-  rep.Print(prt)
-  If $etat = Achat.Reception Then Copie.Dupli4(User.Home & "/tmp/BonReception.pdf", "", "BR" & fcode.Text & "_" & nbl.Text, dte.dte.L, fcode.Text)
-  
-  Utils.db.Exec("UNLOCK TABLES")
-  annul_Click()
-  If tbl.CreReliquat() Then
-    $etat = Achat.CreaCommande
-    rececp.Enabled = True
-  Endif
+      
+      dt = New VerifDate(dte.dte.G)
+      If dt.DateCom.Apres(dte.dte) Then
+        If Message.Warning("La date du mouvement est inférieur à celle de l'exercice\nContinuer pourrait provoquer des erreurs de stock", "Abandon", "Continuer") = 1 Then Return
+      Endif
+      
+      If tbl.CreRec() = 0 Then Return
+      
+      If $opt = "B" Or $opt = "T" Then
+        For Each lg In tbl
+          If lg.AutresObj[Achat.FicheArt]["art_dra"] Then
+            dra = True
+            If lg.AutresObj[Achat.Consignes].ccd.suspendu Then vgn = True
+            If dt.ClotDroi(Null, lg.AutresObj[Achat.FicheArt]["art_dra"]) Then Return
+          Endif
+        Next
+        If vgn Then
+          win = New Window
+          win.Height = win.Font.Height * 6
+          win.Width = win.Font.Size * 50
+          win.Arrangement = Arrange.Vertical
+          lab = New Label(win)
+          lab.Text = "N° de vignette "
+          lab.Alignment = Align.Center
+          lab.Expand = True
+          vignette = New TextReg(win) As "Nvign"
+          vignette.Expand = True
+          vignette.numerique = True
+          vignette.nbdec = "0"
+          vignette.MaxLenght = 25
+          Utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
+          res = Utils.db.Exec("Select nvign From Fiches_Parametres")
+          vignette.Text = Format(Val(res!nvign) + 1, "0000000000000000000000000")
+          vignette.Enabled = False
+          pan = New Panel(win)
+          pan.Expand = True
+          pan.Arrangement = Arrange.Horizontal
+          but = New Button(pan) As "Babandon"
+          but.Text = "Abandon"
+          but.Picture = Picture["Icones/exit.png"]
+          but.Expand = True
+          but.Tag = win
+          but = New Button(pan) As "Bvalide"
+          but.Text = "Valider"
+          but.Picture = Picture["Icones/button_ok.png"]
+          but.Tag = win
+          but.Expand = True
+          sort = win.Showmodal()
+          
+          If sort = 0 Then 
+            Utils.db.Exec("UNLOCK TABLES")
+            Return
+          Endif
+          vgn = vignette.Text
+          Utils.db.Exec("UPDATE Fiches_Parametres SET nvign= &1", Format(vignette.Value, "0000000000000000000000000"))
+          Utils.db.Exec("UNLOCK TABLES")
+        Endif
+      Endif
+      
+      Utils.db.Begin
+      If tbl.ContMat() Then
+        If Not tbl.CreMat() Then Return
+      Endif
+      If $etat = Achat.EnCommande Or ($etat = Achat.Reception And Not dra) Then
+        'on supprime l'ancienne commande de la BD
+        If tbl.SupAchat($etat, Bval) Then Return
+      Endif
+      'on enregistre la nouvelle
+      For Each lg In tbl
+        lg.AutresObj[Achat.Tarif].EnrTarArt(lg)
+        lg.AutresObj[Achat.Tarif].EnrArt(fcode.Text, dte.dte)
+        lg.AutresObj[Achat.Tarif].EnrEtiqu(lg)
+      Next
+      tbl.EnrAch(Achat.Reception, dte.dte, nbl.Text, fcode.Text, vgn)
+      'on enregistre le pdf de réception
+      rep = tbl.imprime(False)
+      If IsNull(rep) Then Return
+      prt.OutputFile = User.Home & "/tmp/BonReception.pdf"
+      rep.Print(prt)
+      If $etat = Achat.Reception Then Copie.Dupli4(User.Home & "/tmp/BonReception.pdf", "", "BR" & fcode.Text & "_" & nbl.Text, dte.dte.L, fcode.Text)
+      annul_Click()
+      If tbl.CreReliquat() Then
+        $etat = Achat.CreaCommande
+        ChangVal($etat)
+      Endif
+  End Select
   
 End
 
@@ -661,11 +695,20 @@ Public Sub Etarif_Click()       ''on enregistre tous les tarifs de la commande
   If Not IsNull(tbl) And If tbl.ligne.Count > 0 Then
     Utils.db.Begin
     For Each lg In tbl
-      lg.AutresObj[Achat.Tarif].EnrTar(lg, tbl.fourisseur, tbl.date)
+      lg.AutresObj[Achat.Tarif].EnrTar(lg, tbl.fourisseur)
     Next
     Utils.db.Commit
   Endif
   
+End
+
+Public Sub tardt_Click()
+
+  Dim td As DateTar
+  
+  td = New DateTar(Null, fcode.Text)
+  td.Showmodal
+
 End
 
 Public Sub Tarif_EnrTar()
@@ -673,7 +716,15 @@ Public Sub Tarif_EnrTar()
   Dim lg As Sailig
   
   lg = tbl.ligne[tbl.ind]
-  lg.AutresObj[Achat.Tarif].EnrTar(lg, tbl.fourisseur, tbl.date)
+  Utils.db.Begin
+  lg.AutresObj[Achat.Tarif].EnrTar(lg, tbl.fourisseur)
+  Utils.db.Commit
+
+End
+
+Public Sub Tarif_CoulBout()
+
+  Etarif.Background = Color.Red
 
 End
 
@@ -687,6 +738,7 @@ Private Function VerSai(etat As Integer) As Boolean      ''on verifie la saisie 
   If Not fcode.Text Then
     Message.Warning("Vous devez renseigner le fournisseur", "Ok")
     fcode.SetFocus
+    Application.Busy = 0
     Return True
   Endif
   If Not nbl.Text And etat = Achat.Reception Then
@@ -697,11 +749,13 @@ Private Function VerSai(etat As Integer) As Boolean      ''on verifie la saisie 
   If Not ncom.text And etat <> Achat.Reception Then
     Message.Warning("Vous devez renseigner le n° de commande", "Ok")
     ncom.SetFocus
+    Application.Busy = 0
     Return True
   Endif
   If Not dte.Text Then
     Message.Warning("Vous devez renseigner la date", "Ok")
     dte.SetFocus
+    Application.Busy = 0
     Return True
   Endif
   
@@ -711,11 +765,12 @@ Private Function VerSai(etat As Integer) As Boolean      ''on verifie la saisie 
       Message.Warning("Création impossible ce numéro de commande est déjà attribué")
       ncom.SetFocus
       ncom.Text = ""
+      Application.Busy = 0
       Return True
     Endif
   Endif
   
-  Return False
+  Return tbl.Doublon()
 End
 
 Private Sub BlqSai(Value As Boolean)
@@ -726,6 +781,34 @@ Private Sub BlqSai(Value As Boolean)
   nbl.Enabled = value
   
 End
+
+Private Sub ChangVal(etat As Integer)
+  
+  Select Case etat
+    
+    Case Achat.CreaCommande, Achat.EnCommande
+      rececp.Enabled = True
+      rececp.Text = "Réception"
+      rececp.Picture = Picture["Icones/next.png"]
+      
+    Case Achat.Reception
+      rececp.Enabled = True
+      rececp.Text = "Valider la récetpion"
+      rececp.Picture = Picture["Icones/button_ok.png"]
+      
+    Case Achat.Validee
+      rececp.Enabled = False
+    
+    Case Achat.Sans
+      rececp.Enabled = True
+      rececp.Text = "Valider les récetpions"
+      rececp.Picture = Picture["Icones/button_ok.png"]
+      
+  End Select
+  rececp.Tag = etat
+  
+End
+
 
 Public Sub Babandon_click()
 
@@ -772,16 +855,7 @@ End
 
 Public Sub Achat_gotfocus(Value As Sailig)
 
-  Dim res As Result
-  
-  Try res = tbl.ligne[tbl.ind].AutresObj[Achat.FicheArt]
-  If Not IsNull(res) And If res.Available Then
-    stmini.Text = "Stock mini : " & Str(res!art_stkmin)
-    stmax.Text = "Stock maxi : " & Str(res!art_stkmax)
-    comin.Text = "Commande minimum : " & res!art_mincom
-    stk.Text = "Stock : " & Str(res!art_qte)
-    qtecom.Text = "Quantitée à commander : " & Str((res!art_stkmax - res!art_qte) / CFloat(res!art_txconv))
-  Endif
+  affstk()
   
   If Value.MonControle["Code"].hasfocus Then 
     Panel3.Y = tbl.Tableau.Y + Value.Y 
@@ -795,15 +869,27 @@ End
 
 Public Sub Achat_lostfocus(Value As Sailig)
 
-  Dim res As Result
+  affstk()
+
+End
+
+Private Sub affstk()
+  
+  Dim res, resc As Result
+  Dim enco, qteac As Float
   
   Try res = tbl.ligne[tbl.ind].AutresObj[Achat.FicheArt]
   If Not IsNull(res) And If res.Available Then
+    resc = Utils.db.Exec("SELECT SUM(qte) AS qte FROM Fiches_Ligcom WHERE code = &1", res!art_code)
+    If IsNull(resc!qte) Then enco = 0 Else enco = resc!qte
+    Encom.Text = "En commande : " & Str(Round(enco, -3))
     stmini.Text = "Stock mini : " & Str(res!art_stkmin)
     stmax.Text = "Stock maxi : " & Str(res!art_stkmax)
     comin.Text = "Commande minimum : " & res!art_mincom
     stk.Text = "Stock : " & Str(res!art_qte)
-    qtecom.Text = "Quantitée à commander : " & Str((res!art_stkmax - res!art_qte) / CFloat(res!art_txconv))
+    qteac = res!art_stkmax - res!art_qte
+    If Not IsNull(res!art_mincom) And If qteac < Val(res!art_mincom) Then qteac = Val(res!art_mincom)
+    qtecom.Text = "Quantitée à commander : " & Str(qteac / CFloat(res!art_txconv))
   Endif
-
+  
 End

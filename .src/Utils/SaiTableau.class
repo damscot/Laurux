@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Public ligne As New SaiLig[]      ''Tableau des saisies
+Public ligne As New Sailig[]      ''Tableau des saisies
 Public ind As Integer = -1          ''Index du tableau des saisie
 Public opt As String                      ''Quelle option est active 
 
@@ -24,7 +24,11 @@ Public Ptot As ScrollView
 Public $prop As New ObjProp[]
 Public $parent As Control
 
+Private $tag As Variant
+
 Const Background As Integer = &FFEFDF
+
+Property Tag As Variant
 
 Event ajou(Value As Sailig)   ''Est levé lorsque on ajoute une ligne de saisie
 Event gotfocus(Value As Sailig)
@@ -207,6 +211,7 @@ Public Sub Netoyage(nom As String)         ''on supprime les lignes vides, nom e
   
 End
 
+
 Private Sub evenement(lg As Sailig)   ''on rattache tous les évenements des controles de SaiLig ici, ils sont donc accessibles dans les classes héritées de SaiTableau
   
    Dim obj As Object
@@ -255,7 +260,7 @@ End
 
 Public Sub ligne_gotfocus(Value As SaiLig)
 
-  HideAutreO(ligne[ind])
+  If ind > -1 Then HideAutreO(ligne[ind])
   AfficheAutreO(Value)
   ind = value.Ind
   Raise gotfocus(Value)
@@ -358,5 +363,17 @@ Public Sub ligne_Bas(etat As Integer)
       Endif
     Endif
   Endif
+
+End
+
+Private Function Tag_Read() As Variant
+
+  Return $tag
+
+End
+
+Private Sub Tag_Write(Value As Variant)
+
+  $tag = value
 
 End

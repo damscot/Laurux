@@ -82,6 +82,24 @@ Public Sub _call(Optional Montant As Variant = 0, Optional Qte As Variant = 1, O
 
 End
 
+Public Sub _put(value As LPrix, i As Integer)
+
+  If Me.Count < i Then
+    Me.Resize(i)
+  Endif
+  Me[i] = value
+
+End
+
+Public Sub _get(i As Integer) As LPrix
+
+  If Me.Max > i Then
+    Return Me[i]
+  Else
+    Return Null
+  Endif
+
+End
 
 '**************
 'METHODE PRIVEE

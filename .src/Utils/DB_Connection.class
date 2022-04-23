@@ -435,12 +435,13 @@ Public Sub Lockstock(nart As String, nb As Float, Optional signe As String = "+"
   Dim DteInv As LDate
   Dim qte As Float
   
+  utils.db.Begin
+  utils.db.Exec("LOCK TABLES Fiches_Art WRITE") 
   rResult = utils.db.Edit("Fiches_Art", "art_code = &1 And art_stocke = &2", nart, True)
   If rResult.Available Then
-    
     If signe = "-" Then nb = nb * -1
     If pmp Then
-      If rResult!art_qte > 0 Then
+      If rResult!art_qte > 0 And rResult!art_qte + nb <> 0 Then
         rResult!art_pmp = ((rResult!art_pmp * rResult!art_qte) + (nb * paht)) / (rResult!art_qte + nb)
       Else
         rResult!art_pmp = paht
@@ -449,8 +450,12 @@ Public Sub Lockstock(nart As String, nb As Float, Optional signe As String = "+"
     qte = rResult!art_qte + nb
     rResult!art_qte = qte
     rResult.Update
+    utils.db.Commit
+    utils.db.Exec("UNLOCK TABLES")
     Return qte
   Endif
+  utils.db.Commit
+  utils.db.Exec("UNLOCK TABLES")
   
   Return 0
   

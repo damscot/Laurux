@@ -89,14 +89,14 @@ Public Sub Delete()
   
   chain.tableaux.Clear
   If Not IsNull(AutresObj) Then
-    For Each obj In AutresObj
-      Try obj.Delete     
-    Next
+     ' For Each obj In AutresObj
+     '   Try obj.Close    
+     ' Next
     AutresObj.Clear
   Endif
-  For Each obj In Panel1.Children
-    Try obj.Delete
-  Next
+  ' For Each obj In Panel1.Children
+  '   Try obj.Delete
+  ' Next
   MonControle.Clear
   Panel1.Delete
 
@@ -155,10 +155,16 @@ Public Sub groupe_keypress()
       Endif
       
     Case Key.Insert
-      If $etat = ecriture Then Raise InsLig($etat)
+      If $etat = ecriture Then 
+        ok = Raise InsLig($etat)
+        If ok Then Stop Event
+      Endif
       
     Case Key.Delete
-      If $etat = ecriture Then Raise SupLig($etat)
+      If $etat = ecriture Then 
+        ok = Raise SupLig($etat)
+        If ok Then Stop Event
+      Endif
       
     Case Key.Up
       If kalt Then 
