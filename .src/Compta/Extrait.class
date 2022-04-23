@@ -663,7 +663,7 @@ Public Sub affichage()
             Else
               Colcli.Item[9] = ""
             Endif
-            Colcli.Item[10] = rResult!tresorerie
+            If rResult!tresorerie Then Colcli.Item[10] = "T"
             DebP = DebP + rResult!montantd
             CredP = CredP + rResult!montantc
           Else
@@ -1211,6 +1211,7 @@ Public Sub Necrit_Click()
   Dim hForm2 As Tresor
 
   If Journaux.visible = False Then
+    tresr = CBool(Colcli.Current[10])
     If Cloturee = 0 Then
       'Verification si l'ecriture est une ecriture de tresorerie
       If Colcli.Current[10] == "0" Then
