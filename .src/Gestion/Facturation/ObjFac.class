@@ -211,12 +211,10 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
     Endif
   Endif
   pied = Start.LocalSettings["/Soc" & Start.Societe & "/Pied"]
-  If pied Then
-    res = Utils.db.Exec("SELECT * from Fiches_LibelFac")
-    If res.Available Then
-      tpied = New String[]
-      tpied = Split(res!txtfac, "\n")
-    Endif
+  res = Utils.db.Exec("SELECT * from Fiches_LibelFac")
+  If res.Available Then
+    tpied = New String[]
+    tpied = Split(res!txtfac, "\n")
   Endif
   res = Utils.db.Exec("SELECT devise FROM Fiches_Parametres")
   If res.Available Then devise = res!devise
