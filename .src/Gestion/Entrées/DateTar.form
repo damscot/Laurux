@@ -1,0 +1,64 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,114,74)
+  Text = ("Tarif par date")
+  { ListFour ListBox
+    MoveScaled(1,6,47,67)
+    Mode = Select.Multiple
+  }
+  { ListArt ListBox
+    MoveScaled(67,6,46,67)
+    Mode = Select.Multiple
+  }
+  { selec Button
+    MoveScaled(49,15,15,5)
+    Picture = Picture["icon:/32/forward"]
+  }
+  { deselec Button
+    MoveScaled(49,26,15,5)
+    Picture = Picture["icon:/32/rewind"]
+  }
+  { Label1 Label
+    MoveScaled(69,2,9,3)
+    Text = ("Date :")
+  }
+  { date TextReg
+    MoveScaled(79,2,14,3)
+  }
+  { Label2 Label
+    MoveScaled(1,2,11,3)
+    Text = ("Fournisseur :")
+  }
+  { fournisseur TextReg
+    MoveScaled(14,2,14,3)
+  }
+  { Quit Button
+    MoveScaled(49,68,17,4)
+    Text = ("Quitter")
+    Picture = Picture["Icones/exit.png"]
+  }
+  { Enr Button
+    MoveScaled(49,63,17,4)
+    Text = ("Enregistrer")
+    Picture = Picture["Icones/filesave.png"]
+  }
+  { Rech Button
+    MoveScaled(96,2,13,3)
+    Text = ("Recherche")
+    Picture = Picture["icon:/32/exec"]
+  }
+  { anul Button
+    MoveScaled(49,53,17,4)
+    Text = ("Annuler")
+    Picture = Picture["Icones/cancel.png"]
+  }
+  { Sup Button
+    MoveScaled(49,58,17,4)
+    Text = ("Suppression")
+    Picture = Picture["Icones/stock_trash_24.png"]
+  }
+  { ListView1 ListView
+    MoveScaled(95,26,1,1)
+  }
+}

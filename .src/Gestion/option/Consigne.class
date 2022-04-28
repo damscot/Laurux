@@ -1,0 +1,89 @@
+' Gambas class file
+
+Inherits Calculdroit1
+
+Public cdepal As String         ''code consigne pour les palettes
+Public nbpal As Integer         ''nombre de palette à consigner
+Public cdecol As String           ''code consigne pour les colis
+Public nbcol As Integer           ''nombre de colis à consigner
+Public cdeunit As String          ''code consigne unité, le nombre de consigne est Me.qte
+
+Property Read consigne As LPrix
+
+Public Sub _new(Optional cdepal As String, nbpal As Integer, cdecol As String, nbcol As Integer, cdeunit As String)    ''Calcul des consignes : on passe le code palette + sa quantitée, le code colie + sa quantitée, le code unité sa quantitée etant qte de LPrix
+  
+  Me.cdepal = cdepal
+  Me.cdecol = cdecol
+  Me.nbpal = nbpal
+  Me.nbcol = nbcol
+  Me.cdeunit = cdeunit
+  
+End
+
+Private Sub LecCons()
+  
+  If Me.opt Then Return
+  
+  
+End
+
+Public Function consigne_montant(code As String, qte As Integer) As LTaxe
+
+  Dim lt As LTaxe
+  Dim res As Result
+  
+  code = Utils.db.Subst("&1", code)
+  res = Utils.db.Exec("SELECT * FROM Fiches_consigne WHERE code = " & code)
+  If res.Available Then
+    lt = New LTaxe(res!prix * qte, LTaxe.Consigne)
+    Return lt
+  Else
+    lt = New LTaxe(0, LTaxe.Consigne)
+    Return lt
+  Endif
+  
+End
+
+Public Function recuppalette(block As String, nlge As Variant) As Integer               ''retourne le nb de palette dans les achats
+
+  Dim res As Result
+  Dim lig As String
+  
+  If TypeOf(nlge) = gb.Integer Then lig = Format(nlge, "000") Else lig = nlge
+  res = Utils.db.Exec("SELECT * FROM Fiches_ligcons,Fiches_consigne WHERE Fiches_consigne.code=codecons AND Fiches_consigne.type='P' AND bloc=&1 AND numlig=&2", block, lig)
+  If res.Available Then 
+    nbpal = res!nb
+    Return res!nb 
+  Else 
+    nbpal = 0
+    Return 0
+  Endif
+  
+End
+
+Public Function recupcol(block As String, nlge As Variant) As Integer         ''retourne le nb de colis dans les achats
+
+  Dim res As Result
+  Dim lig As String
+  
+  If TypeOf(nlge) = gb.Integer Then lig = Format(nlge, "000") Else lig = nlge
+   res = Utils.db.Exec("SELECT * FROM Fiches_ligcons,Fiches_consigne WHERE Fiches_consigne.code=codecons AND Fiches_consigne.type='C' AND bloc=&1 AND numlig=&2", block, lig)
+  If res.Available Then 
+    nbcol = res!nb
+    Return res!nb 
+  Else 
+    nbcol = 0
+    Return 0
+  Endif
+
+End
+
+Private Function consigne_Read() As LPrix
+
+  Dim lp As LPrix
+  
+  lp = New LPrix(consigne_montant(cdepal, nbpal).Montant(Me, True).TotNHT.G + consigne_montant(cdecol, nbcol).Montant(Me, True).TotNHT.G + consigne_montant(cdeunit, Me.Qte).Montant(Me, True).TotNHT.G)
+  Return lp
+
+End
+

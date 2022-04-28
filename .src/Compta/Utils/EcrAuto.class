@@ -1,5 +1,7 @@
 ' Gambas class file
 
+Create Static
+
 Public resjou As Result       ''Journal 
 Public Vecr As VarEcr         ''Variables passées par _new
 Public numecr As Integer      ''N° de l'écriture
@@ -8,7 +10,7 @@ Public numfac As String           ''N° de facture si vente
 
 Private $rescomp As Result
 
-Public Sub _new(njo As String, Ve As VarEcr)
+Public Sub _new(Optional njo As String, Ve As VarEcr)
 
   Dim res As Result
   
@@ -153,8 +155,15 @@ Private Sub ajout(var As VarEcr) As Boolean
     $rescomp!numlot = var.numlot
   Endif
   $rescomp!libelle = Left(var.libelle, 50)
-  $rescomp!montantd = utils.arrondi(var.montantd, 2)
-  $rescomp!montantc = utils.arrondi(var.montantc, 2)
+  tot = var.montantd - var.montantc
+  If tot > 0 Then
+    $rescomp!montantd = utils.arrondi(tot, 2)
+    $rescomp!montantc = 0
+  Else
+    tot = Abs(tot)
+    $rescomp!montantc = utils.arrondi(tot, 2)
+    $rescomp!montantd = 0
+  Endif
   $rescomp!provisoire = False
   If var.type = VarEcr.Treso Then $rescomp!tresorerie = True Else $rescomp!tresorerie = False
   $rescomp!pointee = False

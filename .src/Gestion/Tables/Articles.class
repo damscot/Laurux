@@ -178,7 +178,7 @@ Public Sub _New()
   $soption = utils.Option()
   If $soption <> "N" Then 
     TabStrip1.Count += 1
-    $opt = New Artopt(TabStrip1, $soption, Frais, PaUA, Prvt, TxTva, code, TabStrip1) As "$opt"
+    $opt = New Artopt(TabStrip1, $soption, Frais, PaHt, Prvt, TxTva, code, TabStrip1) As "$opt"
   Endif
   
   $grdv = New Gridvi(TabStrip1, "A")

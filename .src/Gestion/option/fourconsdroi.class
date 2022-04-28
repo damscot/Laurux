@@ -8,6 +8,7 @@ Private $decosn As Float
 Private $accise As Float
 Private $tva As Float
 Private $sbloc As String
+Private $bvign As Boolean = False
 
 Public Struct consigne
   code As String
@@ -21,10 +22,11 @@ Public Struct ligne
   conspal As Consigne
   conscoli As Consigne
   consbte As Consigne
-  drtacc As Float
-  tva As Float
+
+  cdt As Calculdroit
   
 End Struct
+
 Private $lg As Collection
 
 Property Read consigne As Float
@@ -32,7 +34,7 @@ Property Read deconsigne As Float
 Property Read accise As Float
 Property Read tva As Float
 Property bloc As String
-
+Property Read lig As Collection
 
 
 Public Sub _new(choix As String, Optional block As String)
@@ -103,12 +105,10 @@ Public Sub addligne(art As String, nbpal As String, nbcol As String, qte As Stri
     Endif
   Endif
 
-  cdt = New Calculdroit(resart!art_dra, resart!art_volm, resart!art_deg, Val(qte))
+  lg1.cdt = New Calculdroit(resart!art_dra, resart!art_volm, resart!art_deg, Val(qte))
   If Not cdt.suspendu And cdt.drsurfac Then
-    $accise += cdt.droit
-    $tva += cdt.tvadroit
-    lg1.drtacc = cdt.droit
-    lg1.tva = cdt.tvadroit
+    $accise += lg1.cdt.droit
+    $tva += lg1.cdt.tvadroit
   Endif
   $lg.Add(lg1, nlge)
 End
@@ -133,8 +133,8 @@ Public Sub supligne(nlge As String)
   If Not IsNull($lg[nlge].conspal) Then $cons -= $lg[nlge].conspal.montant
   If Not IsNull($lg[nlge].conscoli) Then $cons -= $lg[nlge].conscoli.montant
   If Not IsNull($lg[nlge].consbte) Then $cons -= $lg[nlge].consbte.montant
-  $accise -= $lg[nlge].drtacc
-  $tva -= $lg[nlge].tva
+  $accise -= $lg[nlge].cdt.droit
+  $tva -= $lg[nlge].cdt.tvadroit
   $lg.Remove(nlge)
 
 End
@@ -219,6 +219,29 @@ Private Sub enregistre(cons As Consigne, nbr As String, nlig As String)
   
 End
 
+Private Sub creadra(ccd As Calculdroit, nart As String, qte As String, dte As Date, nbl As String, nlig As String, degre As Float, code As String)
+  
+  Dim res As Result
+  
+  utils.db.Begin
+  res = utils.db.Create("Fiches_ligregie")
+  res!dtmouv = dte
+  res!num = nbl
+  res!numlig = nlig
+  res!type = "E"
+  res!codeart = nart
+  res!coderegie = code
+  res!qte = qte
+  res!volume = ccd.vol
+  res!degres = degre
+  res!volumeap = ccd.volap
+  res!cloture = False
+  res.Update
+  utils.db.Commit
+  If ccd.suspendu Then $bvign = True
+
+End
+
 Private Function consigne_Read() As Float
 
   Return $cons
@@ -252,5 +275,11 @@ End
 Private Function tva_Read() As Float
 
   Return $tva
+
+End
+
+Private Function lig_Read() As Collection
+
+  Return $lg
 
 End

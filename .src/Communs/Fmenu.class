@@ -215,6 +215,11 @@ Public Sub Form_Open()
         Message.Info("Rappel: La promotion " & Cpromo & " " & Lpromo & " se termine aujourd'hui !\nPensez aux impressions d'étiquettes de fin de promotion.")
       Endif
       promo = False
+      
+      rResult = Utils.db.Exec("SELECT * FROM Fiches_TarTemp WHERE date <= &1 AND dtmaj = &2", LDate(Now).DT, True)
+      If rResult.Available Then
+        DateTar.EnrTouTar(rResult)
+      Endif
       If Start.LocalSettings["/Soc" & Start.Societe & "/Faca"] Then Abonnement()
       If Start.son Then
         Music.Load("son/menu.ogg")
@@ -979,25 +984,6 @@ Public Sub ToolButton5_Click()
 
 End
 
-Public Sub Menu78_Click()
-
-  If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
-    Btunnel = Utils.ControlTunnel()
-    If Not Btunnel Then
-      Message.Error("Problème de réplication ! Saisie de document impossible.")
-      Return
-    Endif
-  Endif
-  Receipt.showModal()
-
-End
-
-Public Sub Blm_Click()
-
-  Menu78_Click()
-
-End
-
 Public Sub Menu79_Click()
 
   If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
@@ -1028,7 +1014,7 @@ Public Sub Menu88_Click()
     Endif
   Endif
 
-  Commande.showModal()
+  Commande1.show()
 
 End
 
@@ -1038,25 +1024,6 @@ Public Sub com_Click()
 
 End
 
-Public Sub Menu89_Click()
-
-  If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
-    Btunnel = Utils.ControlTunnel()
-    If Not Btunnel Then
-      Message.Error("Problème de réplication ! Saisie de document impossible.")
-      Return
-    Endif
-  Endif
-
-  Receipta.showModal()
-
-End
-
-Public Sub Bla_Click()
-
-  Menu89_Click()
-
-End
 
 Public Sub Menu90_Click()
 
@@ -1526,20 +1493,6 @@ End
 Public Sub lblCom_MouseUp()
 
   Menu88_Click()
-  Stop Event
-
-End
-
-Public Sub lblRcptM_MouseUp()
-
-  Menu78_Click()
-  Stop Event
-
-End
-
-Public Sub lblRcptA_MouseUp()
-
-  Menu89_Click()
   Stop Event
 
 End
@@ -2331,7 +2284,7 @@ Public Sub Menu295_Click()
     Endif
   Endif
 
-  ValidBR.ShowModal()
+  ValidBR1.ShowModal()
 
 End
 
@@ -2364,21 +2317,6 @@ Public Sub Menu299_Click()
   Endif
 
   FacturefmA.ShowModal()
-
-End
-
-
-Public Sub Menu301_Click()
-
-  If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
-    Btunnel = Utils.ControlTunnel()
-    If Not Btunnel Then
-      Message.Error("Problème de réplication ! Saisie de document impossible.")
-      Return
-    Endif
-  Endif
-
-  ModifBR.showModal()
 
 End
 
@@ -2623,7 +2561,7 @@ Public Sub Menu300_Click()
 
 End
 
-Public Sub ToolButton9_Click()
+Public Sub rglmt_Click()
 
   SaiReg.ShowModal
 

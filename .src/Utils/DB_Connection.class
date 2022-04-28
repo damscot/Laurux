@@ -431,7 +431,37 @@ Public Sub Exec(Request As String, ...) As Result
 
 End
 
+Public Sub Lockstock(nart As String, nb As Float, Optional signe As String = "+", pmp As Boolean = False, paht As Float) As Float            ''Calcul du stock d'un article, si pmp il est calculé
 
+  Dim rResult, res, res1 As Result
+  Dim DteInv As LDate
+  Dim qte As Float
+  
+  utils.db.Begin
+  utils.db.Exec("LOCK TABLES Fiches_Art WRITE") 
+  rResult = utils.db.Edit("Fiches_Art", "art_code = &1 And art_stocke = &2", nart, True)
+  If rResult.Available Then
+    If signe = "-" Then nb = nb * -1
+    If pmp Then
+      If rResult!art_qte > 0 And rResult!art_qte + nb <> 0 Then
+        rResult!art_pmp = ((rResult!art_pmp * rResult!art_qte) + (nb * paht)) / (rResult!art_qte + nb)
+      Else
+        rResult!art_pmp = paht
+      Endif
+    Endif
+    qte = rResult!art_qte + nb
+    rResult!art_qte = qte
+    rResult.Update
+    utils.db.Commit
+    utils.db.Exec("UNLOCK TABLES")
+    Return qte
+  Endif
+  utils.db.Commit
+  utils.db.Exec("UNLOCK TABLES")
+  
+  Return 0
+  
+End
 
 Public Sub LockIncrement(Field As String, Table As String, Optional p_form As String = "0") As Result 
   
@@ -474,6 +504,28 @@ Public Sub LockIncrement(Field As String, Table As String, Optional p_form As St
   
 End
 
+Public Function RecArt(art As String, Optional four As String = Null) As Result   ''recherche un article soit par son code, son code barre, son code fournisseur ou son code de centrale d'achat. Si four n'est pas nul la recherche se fait aussi sur le code fournisseur. La fonction retourne la fiche article, sa tva et les droits si option boissson.
+
+  Dim res As Result
+  Dim champ As String[] = ["art_code", "art_cfour", "art_refcentrale"]
+  Dim req, c1, c2 As String
+  Dim opt As Boolean = (utils.Option() = "B" Or utils.Option() = "T")
+  
+  If Left$(art) = "*" Then
+    art = Mid$(art, 2, Len(art))
+    art = Utils.Find_cbarre(art)
+  Endif
+  req = "SELECT * FROM Fiches_Art LEFT JOIN Fiches_Tvaav ON art_tva = code_tva "
+  If opt Then req &= "LEFT JOIN Fiches_regie ON art_dra = code "
+  If four Then c2 = utils.db.Subst(" AND art_four = &1", four)
+  For Each c1 In champ
+    c1 = utils.db.Subst("WHERE " & c1 & " = &1 ", art)
+    res = utils.db.Exec(req & c1 & c2)
+    If res.Available Then Break
+  Next
+  Return res
+
+End
 
 Public Sub Create(Table As String) As Result 
   

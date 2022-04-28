@@ -1,0 +1,1629 @@
+' Gambas class file
+
+Inherits SaiTableau
+
+Public Struct boisson
+  NbCol As Integer
+  NbUnit As Integer
+  ccd As Consigne
+End Struct
+
+Public commentaire As String
+'Public numero As String
+Public OptAr As Artopt
+Public mat As SaiTableau        ''tableau de saisie des matériels
+Public rec As SaiTableau        ''tableau de saise des quantités en réception
+Public TotHt As Float            ''total HT calculé par commande
+Public TotTtc As Float            '' total TTC calculé par commande
+
+Public Bsel As Boolean = False
+Public Bval As String
+
+Private $code As String
+Private $PxRec As Boolean         ''Si prix en réception 
+Private $Mat As Boolean              ''Si materiel
+Private $LtRem As New LTaxe
+Private $LtTva As New LTaxe
+Private $LtFrais As New LTaxe
+Private $dte As LDate
+Private $fournisseur As String
+Private $ndoc As String
+Private $etat As Integer            ''prend les valeurs enum de achat (EnCreation,Reception ...)
+Private $reli As Integer = 2        ''si on doit générer la commande de reliquat : 1 = reliquat 2 = pas de reliquat
+Private $mail As String
+Private $ressup As Result           ''contient la commande à supprimer
+Private $sup As Boolean             ''si la commande est a supprimer
+
+Event ajou(Value As Sailig)
+
+Public Enum CreaCommande, EnCommande, Reception, Validee, Sans
+Public Enum Tarif, Frais, Materiel, Consignes, FicheArt, ObjFin
+Private Enum RelQte, RelArt, RelFin          ''stock les quantités et code article des reliquats
+
+Property date As LDate
+Property fourisseur As String
+Property ndoc As String
+
+ 
+ Public Sub _new(Panel3 As Panel)
+ 
+  Dim res As Result
+  Dim obj As ObjProp
+  Dim w As Integer
+  Dim t1 As Integer = Me.$parent.Font.Size * 8
+  Dim t2 As Integer = Me.$parent.Font.Size * 2
+  Dim t3 As Integer = Me.$parent.Font.Size * 5
+  Dim t4 As Integer = Me.$parent.Font.Size * 12
+  
+  $etat = EnCommande
+  $PxRec = Start.LocalSettings["/Soc" & Start.Societe & "/prixRecpt"] 
+  $Mat = Start.LocalSettings["/Soc" & Start.Societe & "/ma"]
+  res = Utils.db.Exec("SELECT * FROM Fiches_Art, Fiches_Tvaav  WHERE art_tva=code_tva LIMIT 1")
+  w = Me.$parent.w - (3 * t1) - t2 - (5 * t4) 
+  If Me.opt = "B" Or Me.opt = "T" Then w -= (2 * t3)
+  If Not $PxRec Then w += (3 * T4) + (2 * t1) - 5
+  obj = New ObjProp(res.Fields["art_code"], "Code")
+  obj.AddChamp("MaxLenght", 15)
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t4
+  obj.AddChamp("recherche", True)
+  obj.AddChamp("conteneur", Panel3)
+  obj.AddChamp("champ", ["Fiches_Art", "art_code", "art_design"])
+  
+  obj.AddChamp("lke", TextReg.commence_par)
+  Me.$prop.Add(obj)
+  
+  obj = New ObjProp(Null, "Rech", ObjProp.Button)
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t2
+  obj.AddChamp("Picture", Picture["Icones/next_frame.png"])
+  Me.$prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["art_design"], "Désignation")
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = w
+  Me.$prop.Add(obj)
+  
+  If Me.opt = "B" Or Me.opt = "T" Then
+    obj = New ObjProp(res.Fields["art_nbcol"], "Pal")
+    obj.Height = Me.$parent.Font.H + 4
+    obj.Width = t3
+    obj.AddChamp("numerique", True)
+    obj.AddChamp("nbdec", "0")
+    obj.AddChamp("Alignment", Align.Center)
+    Me.$prop.Add(obj)
+    
+    obj = New ObjProp(res.Fields["art_nbbou"], "Col")
+    obj.Height = Me.$parent.Font.H + 4
+    obj.Width = t3
+    obj.AddChamp("numerique", True)
+    obj.AddChamp("nbdec", "0")
+    obj.AddChamp("Alignment", Align.Center)
+    Me.$prop.Add(obj)
+  Endif
+  
+  obj = New ObjProp(Null, "Qte")
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t4
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("Value", 1)
+  obj.AddChamp("Alignment", Align.Right)
+  Me.$prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["art_pbht"], "Px_Brut")
+  obj.Height = Me.$parent.Font.H + 4
+  If $PxRec Then obj.Width = t4 Else obj.Width = 0
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("Alignment", Align.Right)
+'  If Not $PxRec Then obj.AddChamp("Visible", False)
+  Me.$prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["art_txconv"], "TX_Conv")
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t1
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("nbdec", "4")
+  obj.AddChamp("Alignment", Align.Right)
+  Me.$prop.Add(obj)
+
+  obj = New ObjProp(res.Fields["art_tr"], "Rem")
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t1
+  obj.AddChamp("reg", "-?[0-9]*[,.]?[0-9]{0,2}[%]{0,1}")
+  obj.AddChamp("Alignment", Align.Right)
+  If Not $PxRec Then obj.AddChamp("Visible", False)
+  Me.$prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["art_paht"], "Px_Net")
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t4
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("Alignment", Align.Right)
+  obj.AddChamp("Enabled", False)
+  obj.AddChamp("nbdec", "3")
+  If Not $PxRec Then obj.AddChamp("Visible", False)
+  Me.$prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["art_frais"], "Frais")
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t1
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("nbdec", "2")
+  obj.AddChamp("Alignment", Align.Right)
+  If Not $PxRec Then obj.AddChamp("Visible", False)
+  Me.$prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["art_prvt"], "Px_Rev")
+  obj.Height = Me.$parent.Font.H + 4
+  obj.Width = t4
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("Alignment", Align.Right)
+  obj.AddChamp("Enabled", False)
+  obj.AddChamp("nbdec", "3")
+  If Not $PxRec Then obj.AddChamp("Visible", False)
+  Me.$prop.Add(obj)
+  
+End
+'*****************Gestion des focus et calcul de chaque ligne de saisie***********************
+Public Sub ligne_LecCode(ligne As Variant)
+  
+  Dim res As Result
+  Dim obj As ObjProp
+  Dim reg As Object
+  Dim code As String
+  
+  If TypeOf(code) = gb.String Then
+    code = ligne
+    ligne = Me.ligne[Me.ind]
+  Else
+    code = ligne.MonControle["Code"].text
+  Endif
+  res = Utils.db.RecArt(code)
+  If res.Available Then
+    Me.ligne[Me.ind].AutresObj[Materiel] = res!art_mat
+    Me.ligne[Me.ind].AutresObj[FicheArt] = res
+    For Each obj In Me.$prop
+      reg = Me.ligne[Me.ind].MonControle[obj.NomControl]
+      If obj.NomControl = "Qte" Then reg.nbdec = res!art_dec  
+      If Not IsNull(obj.name) Then
+        If obj.NomControl = "Rem" Then
+          reg.Text = Str(res[obj.name]) & "%"
+        Else
+          reg.Text = res[obj.name]
+        Endif
+        If obj.NomControl = "art_frais" Then reg.nbdec = "2" Else reg.nbdec = res!art_nbd
+        If obj.NomControl <> "Code" Then
+          If obj.NomControl = "Col" Or obj.NomControl = "Pal" Then 
+            reg.nbdec = "0"
+            reg.Value = 0
+            Me.ligne[Me.ind].AutresObj[Consignes] = New Boisson
+            Me.ligne[Me.ind].AutresObj[Consignes].NbCol = res!art_nbcol
+            Me.ligne[Me.ind].AutresObj[Consignes].NbUnit = res!art_nbbou
+          Endif
+        Endif
+      Endif
+    Next
+    
+    Me.ligne[Me.ind].prx.Mnt = Me.ligne[Me.ind].MonControle["Px_Brut"].Value
+    If Me.opt = "T" Or Me.opt = "B" Then
+      Me.ligne[Me.ind].AutresObj[Frais].prixachat = Me.ligne[Me.ind].MonControle["Px_Net"].Text
+      Me.ligne[Me.ind].AutresObj[Frais].prixrev = Me.ligne[Me.ind].MonControle["Px_Rev"].Text
+      Me.ligne[Me.ind].AutresObj[Frais].numart = code
+      If IsNull(Me.ligne[Me.ind].AutresObj[Consignes].ccd) Then
+        Me.ligne[Me.ind].AutresObj[Consignes].ccd = New Consigne(Me.ligne[Me.ind].MonControle["Px_Net"].Value, Me.ligne[Me.ind].MonControle["Qte"].Value, LPrix.Arr_0001, "", res!art_dra, res!art_volm, res!art_deg, "", res!art_consp, Me.ligne[Me.ind].MonControle["Pal"].Value, res!art_consc, Me.ligne[Me.ind].MonControle["Col"].Value, res!art_consb)
+      Else
+         Me.ligne[Me.ind].AutresObj[Consignes].ccd.volume = res!art_volm
+         Me.ligne[Me.ind].AutresObj[Consignes].ccd.code = res!art_dra
+         Me.ligne[Me.ind].AutresObj[Consignes].ccd.degre = res!art_deg
+         Me.ligne[Me.ind].AutresObj[Consignes].ccd.qte = Me.ligne[Me.ind].MonControle["Qte"].Value
+         Me.ligne[Me.ind].AutresObj[Consignes].ccd.cdepal = res!art_consp
+         Me.ligne[Me.ind].AutresObj[Consignes].ccd.cdecol = res!art_consc
+         Me.ligne[Me.ind].AutresObj[Consignes].ccd.cdeunit = res!art_consb
+      Endif
+    Endif
+    $LtTva = New LTaxe(res!taux_tva & "%", LTaxe.TVA)
+    Me.ligne[Me.ind].prx.add_taxe($LtTva)
+    Me.ligne[Me.ind].arrondi = res!art_cdarr
+    calcul
+  Else
+    Message.Error("Aricle innexitant")
+    ligne.MonControle["Code"].text = ""
+    ligne.MonControle["Code"].setfocus
+    Stop Event
+  Endif
+  
+End
+
+Public Sub Code_gotfocus()
+
+  $code = Me.ligne[Me.ind].MonControle["Code"].Text
+
+End
+
+Public Sub Code_lostfocus()
+
+  If Last.Text <> $code Then
+    If Last.text Then ligne_LecCode(Last.Text)
+    Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+    
+  Endif
+  Raise lostfocus(Me.ligne[Me.ind])
+  
+End
+
+Public Sub Code_KeyPress()
+
+  If Key.Code = Key.F2 Then Rech_click()
+
+End
+
+Public Sub Rech_click()
+
+   Dim MyForm As TriArticles
+   Dim option As String
+
+  If Me.ligne[Me.ind].MonControle["Code"].Enabled = False Then Return
+  If Me.mo.Value Then option = "Fournisseur"
+  If Me.artstk.Value Then option = "Centrale"
+  MyForm = New TriArticles(True, False, "art_code", $fournisseur, option, Null, False, False, Me)
+  MyForm.Showmodal()
+  If Bsel = True Then
+    Me.ligne[Me.ind].MonControle["Code"].Text = Bval
+     If Bval <> $code Then
+       If Bval Then ligne_LecCode(Bval)
+       Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+    Endif
+    ligne_LecCode(Bval)
+    Me.ligne[Me.ind].MonControle["Désignation"].setfocus
+  Endif
+
+End
+
+Public Sub qte_lostfocus()
+  
+  If Me.opt = "B" Or Me.opt = "T" Then
+    Me.ligne[Me.ind].prx.Qte = Me.ligne[Me.ind].MonControle["Pal"].Value
+    Try Me.ligne[Me.ind].AutresObj[Achat.Consignes].ccd.qte = Me.ligne[Me.ind].MonControle["Qte"].Value
+  Endif
+  calcul
+  
+End
+
+Public Sub Pal_gotfocus()
+
+  If Object.IsValid(Me.ligne[Me.ind].AutresObj[Consignes]) And If Me.ligne[Me.ind].AutresObj[Consignes].NbCol = 0 Then Me.ligne[Me.ind].MonControle["Col"].setfocus
+
+End
+
+Public Sub Pal_lostfocus()
+
+  If Object.IsValid(Me.ligne[Me.ind].AutresObj[Consignes]) Then
+    If Me.ligne[Me.ind].AutresObj[Consignes].NbCol <> 0 And Me.ligne[Me.ind].MonControle["Col"].Value = 0 Then Me.ligne[Me.ind].MonControle["Col"].Value = Me.ligne[Me.ind].AutresObj[Consignes].NbCol * Me.ligne[Me.ind].MonControle["Pal"].Value
+    Me.ligne[Me.ind].AutresObj[Consignes].ccd.nbpal = Me.ligne[Me.ind].MonControle["Pal"].Value
+    calcul
+  Endif
+
+End
+
+Public Sub Col_gotfocus()
+
+  If Object.IsValid(Me.ligne[Me.ind].AutresObj[Consignes]) And If Me.ligne[Me.ind].AutresObj[Consignes].NbUnit = 0 Then Me.ligne[Me.ind].MonControle["Qte"].setfocus
+
+End
+
+Public Sub Col_lostfocus()
+
+  If Object.IsValid(Me.ligne[Me.ind].AutresObj[Consignes]) Then
+    If Me.ligne[Me.ind].AutresObj[Consignes].NbUnit <> 0 And Me.ligne[Me.ind].MonControle["Qte"].Value = 1 Then Me.ligne[Me.ind].MonControle["Qte"].Value = Me.ligne[Me.ind].AutresObj[Consignes].NbUnit * Me.ligne[Me.ind].MonControle["Col"].Value
+    Me.ligne[Me.ind].AutresObj[Consignes].ccd.nbcol = Me.ligne[Me.ind].MonControle["Col"].Value
+    calcul
+  Endif
+
+End
+
+Public Sub rem_lostfocus()
+
+  calcul
+
+End
+
+Public Sub TX_Conv_lostfocus()
+
+  calcul
+
+End
+
+Public Sub Px_Brut_lostfocus()
+
+  calcul
+
+End
+
+Public Sub Frais_lostfocus()
+
+  calcul
+
+End
+
+Public Sub LPrix_change(Data As LPrix)
+
+
+  Me.ligne[Me.ind].MonControle["Px_Net"].Value = Data.PuBHT.Mnt + $LtRem.Montant(Data, True).G
+  Me.ligne[Me.ind].MonControle["Px_Rev"].Value = Data.PuNHT.Mnt
+  If Me.opt <> "N" Then
+    Me.ligne[Me.ind].AutresObj[Frais].prixachat = Me.ligne[Me.ind].MonControle["Px_Net"].Text
+    Me.ligne[Me.ind].AutresObj[Frais].cmpt_lostfocus()
+  Endif
+  
+End
+
+Private Sub calcul()
+  
+  Dim txt As String
+  
+  If Me.ligne[Me.ind].MonControle["TX_Conv"].Value = 0 Then Me.ligne[Me.ind].MonControle["TX_Conv"].Value = 1
+  Me.ligne[Me.ind].prx.Qte = Me.ligne[Me.ind].MonControle["Qte"].Value * Me.ligne[Me.ind].MonControle["TX_Conv"].Value
+  Me.ligne[Me.ind].prx.Mnt = Me.ligne[Me.ind].MonControle["Px_Brut"].Value / Me.ligne[Me.ind].MonControle["TX_Conv"].Value
+  Me.ligne[Me.ind].MonControle["Rem"].Text = Replace(Me.ligne[Me.ind].MonControle["Rem"].Text, ".", ",")
+  txt = Me.ligne[Me.ind].MonControle["Rem"].Text
+  If txt Then
+    If txt Match "%" Then 
+      txt = Replace(txt, "%", "")
+      If Not IsNull(txt) And If Val(txt) <> 0 Then
+        $LtRem = New LTaxe(Me.ligne[Me.ind].MonControle["Rem"].Text, LTaxe.Remise)
+      Else
+        $LtRem = New LTaxe(0, LTaxe.Remise)
+      Endif
+    Else
+      If Not IsNull(txt) And If Val(txt) <> 0 Then
+         $LtRem = New LTaxe(Val(txt), LTaxe.Remise)
+      Else
+        $LtRem = New LTaxe(0, LTaxe.Remise)
+      Endif
+    Endif
+  Else
+    $LtRem = New LTaxe(0, LTaxe.Remise)
+  Endif
+  Me.ligne[Me.ind].prx.add_taxe($LtRem)
+  If IsNull(Me.ligne[Me.ind].MonControle["Frais"].Text) Then Me.ligne[Me.ind].MonControle["Frais"].Value = 0
+  $LtFrais = New LTaxe(Me.ligne[Me.ind].MonControle["Frais"].Value, LTaxe.Frais)
+  Me.ligne[Me.ind].prx.add_taxe($LtFrais)
+
+End
+
+Public Sub ligne_RetLigne(etat As Integer)
+  
+  calcul
+  If Me.ind = Me.ligne.Max Then 
+    If etat = SaiLig.ecriture And Not (Me.ligne[Me.ind].MonControle["Code"].HasFocus) Then ajout()
+  Else
+    Me.ligne[Me.ind].AutresObj[Tarif].hide
+    Me.ligne[Me.ind + 1].MonControle[Me.$prop[0].NomControl].SetFocus
+    Me.ind += 1
+  Endif
+  Stop Event
+  
+End
+
+Public Sub ligne_InsLig(etat As Integer)
+
+  Dim cs As New Boisson
+  
+  If etat = SaiLig.ecriture And Me.ligne[Me.ind].Dernier Then
+    calcul
+    Super.ligne_InsLig(etat)
+    Raise ajou(Me.ligne[Me.ind])
+    Try Me.ligne[Me.ind].AutresObj[Consignes] = cs
+    Me.ligne[Me.ind].chain.tableaux.Extract(1)
+  Endif
+
+End
+
+Public Sub ligne_ctrl(Value As Integer)
+
+'  If Chr(Value) = "c" Or Chr(Value) = "C" Then
+    
+'  Endif
+
+End
+
+Public Sub RadioButton1_click()
+  
+  If Me.ind = -1 Then
+    Stop Event
+    Return
+  Endif
+  radioBchange(["Fiches_Art", "art_cfour", "art_design"])
+  
+End
+
+Public Sub RadioButton2_click()
+
+  If Me.ind = -1 Then
+    Stop Event
+    Return
+  Endif
+   radioBchange(["Fiches_Art", "art_code", "art_design"])
+ 
+End
+
+Public Sub RadioButton3_click()
+
+  If Me.ind = -1 Then
+    Stop Event
+    Return
+  Endif
+  radioBchange(["Fiches_Art", "art_refcentrale", "art_design"])
+
+End
+
+Private Sub radioBchange(cond As String[])
+  
+  Dim i As Integer
+  
+  For i = 0 To Me.$prop.Max
+    If Me.$prop[i].NomControl = "Code" Then
+      Me.$prop[i].ModChamp("champ", Cond)
+      Me.$prop[i].AppProp(Me.ligne[Me.ind].MonControle["Code"])
+      Break
+    Endif
+  Next
+  
+End
+
+Public Sub ajout(Optional etat As Integer = SaiLig.ecriture)
+  
+  If Me.ind > -1 Then calcul
+  Super.ajout(etat)
+  Me.ligne[Me.ind].prx.Arr = LPrix.Arr_0001
+  Me.ligne[Me.ind].chain.tableaux.Extract(1)
+  If Not $PxRec Then
+    Me.ligne[Me.ind].chain.sup(Me.ligne[Me.ind].MonControle["Px_Brut"])
+    Me.ligne[Me.ind].chain.sup(Me.ligne[Me.ind].MonControle["Px_Net"])
+    Me.ligne[Me.ind].chain.sup(Me.ligne[Me.ind].MonControle["Px_Rev"])
+    Me.ligne[Me.ind].Dernier = "TX_Conv"
+  Endif
+  
+End
+
+Public Sub Show()
+
+  Super.show()
+  Me.art.Text = "Affichage référence produit"
+  Me.art.Value = True
+  Me.mo.Text = "Affichage référence fournisseur"
+  Me.artstk.Text = "Affichage référence centrale"
+
+End
+
+Public Sub Doublon() As Boolean         ''on regarde si il existe des doublons dans la saisie 
+
+  Dim sl, comp As Sailig
+  Dim dbl As Boolean
+  Dim lst As New Collection
+  Dim win As Window
+  Dim lab As Label
+  Dim bt As Button
+  
+  For Each sl In Me
+   For Each comp In Me
+     If sl <> comp Then
+       If sl.MonControle["Code"].Text = comp.MonControle["Code"].Text Then
+         If sl.AutresObj[Tarif].majtarif.Value And comp.AutresObj[Tarif].majtarif.Value Then
+           dbl = True
+           If Not lst.Exist(sl.MonControle["Code"].Text) Then lst.Add(sl, sl.MonControle["Code"].Text)
+         Endif
+       Endif
+     Endif
+   Next
+  Next
+
+  If dbl Then
+    Application.Busy = 0
+    win = New Window As "WinDbl"
+    Win.Height = Me.$parent.Font.Size * 70
+    win.Width = Me.$parent.Font.Size * 60
+    win.Arrangement = Arrange.Vertical
+    win.Border = False
+    lab = New Label(win)
+    lab.Text = "Liste des doublons, vous devez désactiver la maj des tarifs\nsur au moins un des deux"
+    lab.Alignment = Align.Center
+    lab.Height = Me.$parent.Font.Size * 5
+    lab.Background = Color.LightBackground
+    For Each sl In lst
+      lab = New Label(win)
+      lab.Height = Me.$parent.Font.Size * 2
+      lab.Text = sl.MonControle["Code"].Text & "  " & sl.MonControle["Désignation"].Text
+    Next
+    lab = New Label(win)
+    lab.Expand = True
+    bt = New Button(win) As "BtDbl"
+    bt.Height = Me.$parent.Font.Size * 3
+    bt.Text = "Ok"
+    bt.Tag = win
+    win.ShowModal
+    Return True
+  Endif
+  
+  Return False
+  
+End
+
+Public Sub BtDbl_Click()
+
+  Last.Tag.close
+
+End
+
+'*******************Gestion des commandes et des fournisseurs
+Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une commande déja saisie
+  
+  Dim res As Result
+  Dim LecEcr As Integer
+  Dim dra As Boolean
+  Dim sl As Sailig
+  Dim pg As ProgBar
+  
+  If Me.ligne.Count > 0 Then Return
+  $etat = etat
+  If etat = Achat.EnCommande Or etat = Achat.CreaCommande Then
+    where = Replace(where, "numrecpt", "numcom")
+    res = Utils.db.Exec("SELECT * FROM Fiches_Entcom JOIN Fiches_Ligcom ON Fiches_Entcom.four=Fiches_Ligcom.four AND  Fiches_Entcom.numcom=Fiches_Ligcom.numcom WHERE " & where & " ORDER BY nligne")
+    LecEcr = SaiLig.ecriture
+    If res.Available Then $ndoc = res!numcom
+  Else
+    res = Utils.db.Exec("SELECT * FROM Fiches_Entrecpt JOIN Fiches_Ligrecpt ON Fiches_Entrecpt.four=Fiches_Ligrecpt.four AND  Fiches_Entrecpt.numrecpt=Fiches_Ligrecpt.numrecpt WHERE " & where & " ORDER BY nligne")
+    If etat = Achat.Validee Then LecEcr = SaiLig.lecture Else LecEcr = Sailig.reception
+    If res.Available Then $ndoc = res!numrecpt
+  Endif
+  If res.Available Then
+    $dte = New LDate(res!ddate)
+    commentaire = res!commentaire
+    pg = New ProgBar("Lecture des achats", res.Count)
+    pg.Show
+    res.MoveFirst()
+    Repeat
+      pg.Avancement()
+      Me.ajout(LecEcr)
+      Me.ligne[Me.ind].MonControle["Code"].Text = res!code
+      ligne_LecCode(res!code)
+      Me.ligne[Me.ind].MonControle["Qte"].Value = res!qte
+      Me.ligne[Me.ind].MonControle["TX_Conv"].Value = res!txconv 
+      Me.ligne[Me.ind].MonControle["Px_Brut"].Value = res!pbht
+      Me.ligne[Me.ind].MonControle["Rem"].Text = Str(res!rm) & "%"
+      Me.ligne[Me.ind].MonControle["Px_Net"].Value = res!paht
+      Me.ligne[Me.ind].MonControle["Frais"].Value = res!frais
+      Me.ligne[Me.ind].MonControle["Px_Rev"].Value = res!prvt
+      Me.ligne[Me.ind].prx.Qte = Me.ligne[Me.ind].MonControle["Qte"].Value
+      Me.ligne[Me.ind].AutresObj[Tarif].majtarif.Value = res!majtarif
+      If Me.opt = "B" Or Me.opt = "T" Then
+        If etat = Achat.EnCommande Or etat = Achat.CreaCommande Then
+          Me.ligne[Me.ind].MonControle["Pal"].Text = res!palet
+          Me.ligne[Me.ind].MonControle["Col"].Text = res!coli
+        Else
+          Me.ligne[Me.ind].MonControle["Pal"].Text = Me.ligne[Me.ind].AutresObj[Consignes].ccd.recuppalette(LDate(res!daterecpt).L & res!numrecpt & res!four, Format(Me.ind + 1, "000"))
+          Me.ligne[Me.ind].MonControle["Col"].Text = Me.ligne[Me.ind].AutresObj[Consignes].ccd.recupcol(LDate(res!daterecpt).L & res!numrecpt & res!four, Format(Me.ind + 1, "000"))
+        Endif
+        qte_lostfocus()
+        Pal_lostfocus()
+        Col_lostfocus()
+        If Me.ligne[Me.ind].AutresObj[Consignes].ccd.code And etat = Reception Then dra = True
+      
+      Endif
+      calcul()
+      Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+      Me.ligne[Me.ind].valide = False
+    Until res.MoveNext()
+  Endif
+  'si 1 ligne au moins contient des droits, on bloque les qtes et les articles => on ne peut changer que les px
+  If dra Then
+    For Each sl In Me
+      sl.MonControle["Code"].enabled = False
+      sl.chain.sup(Me.ligne[Me.ind].MonControle["Code"])
+      sl.MonControle["Qte"].enabled = False
+      sl.chain.sup(Me.ligne[Me.ind].MonControle["Qte"])
+      sl.MonControle["TX_Conv"].enabled = False
+      sl.chain.sup(Me.ligne[Me.ind].MonControle["TX_Conv"])
+    Next
+  Endif
+  pg.Close
+  
+End
+
+Public Sub generer(four As String)
+
+  Dim res, resc As Result
+  Dim qte As Float
+  Dim pb As ProgBar
+  
+  $fournisseur = four
+  $etat = CreaCommande
+  res = Utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_qte < art_stkmin AND art_four = &1", $fournisseur)
+  If res.Available Then
+    $etat = Achat.CreaCommande
+    pb = New ProgBar("Génération de commande", res.Count, Null, True)
+    pb.Show
+    Repeat
+      pb.Avancement(res!art_design, 10)
+      resc = Utils.db.Exec("SELECT SUM(qte) AS qte FROM Fiches_Ligcom WHERE code = &1", res!art_code)
+      If IsNull(resc!qte) Then
+        qte = (res!art_stkmax - res!art_qte)
+      Else
+        qte = (res!art_stkmax - res!art_qte - resc!qte)
+      Endif
+      If Not IsNull(res!art_mincom) And If qte < Val(res!art_mincom) Then 
+        qte = Val(res!art_mincom) / res!art_txconv
+      Else
+        qte = qte / res!art_txconv
+      Endif
+      If qte > 0 Then 
+        Me.ligne[Me.ind].MonControle["Code"].text = res!art_code
+        ligne_LecCode(res!art_code)
+        Me.ligne[Me.ind].MonControle["Qte"].Value = qte
+        calcul
+        Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+        Me.ajout()
+      Endif
+    Until res.MoveNext()
+    pb.Close
+  Endif
+
+End
+'**************************Opperation sur les fichiers********************************
+Public Sub SupAchat(etat As Integer, Cle As Collection, Optional stock As Boolean = False, supmat As Boolean = True) As Boolean         ''on supprime une commande, Cle est la collection qui contient les cles pour identifier les enregistrements => N° fournisseur + N° bl + date
+
+  Dim res As Result
+  Dim matvendu As New String[]
+  
+  Application.Busy = 1
+  Select Case etat
+    Case Achat.CreaCommande, Achat.Validee
+      Return
+      
+    Case Achat.EnCommande
+      Utils.db.Delete("Fiches_Entcom", "four = &1 AND numcom = &2", Cle["Fiches_Entcom.four"], Cle["Fiches_Entcom.numrecpt"])
+      Utils.db.Delete("Fiches_Ligcom", "four = &1 AND numcom = &2", Cle["Fiches_Entcom.four"], Cle["Fiches_Entcom.numrecpt"])
+    
+    Case Achat.Reception
+      $ressup = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE numrecpt = &1 AND four = &2 AND daterecpt = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+      If $ressup.Available Then
+        $ressup.MoveFirst()
+        'on supprime la ligne matériel
+        If supmat Then 
+          res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_four = &1 AND mat_rcpt = &2 AND mat_ddate = &3", Cle["Fiches_Entrecpt.four"], Cle["Fiches_Entrecpt.numrecpt"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+          If res.Available Then
+            Repeat
+              If res!mat_vendu Then
+                matvendu.Add(res!mat_serie)
+              Endif
+            Until res.MoveNext()
+            If IsNull(matvendu) Then
+              Utils.db.Delete("Fiches_Materiels", "mat_four = &1 AND mat_rcpt = &2 AND mat_ddate = &3", Cle["Fiches_Entrecpt.four"], Cle["Fiches_Entrecpt.numrecpt"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+            Else
+              Error.Raise("Le(s) numéro(s) de série : " & matvendu.Join("/") & " sont attribués à un matériel vendu")
+            Endif
+          Endif
+        Endif
+        'on supprime l'entrée
+        Utils.db.Delete("Fiches_Entrecpt", "numrecpt = &1 AND four = &2 AND ddate = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+        Utils.db.Delete("Fiches_Ligrecpt", "numrecpt = &1 AND four = &2 AND daterecpt = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+        If Me.opt = "B" Or Me.opt = "T" Then
+          'on supprime les consignes
+          Utils.db.Delete("Fiches_ligcons", "bloc = &1 AND type = 'E'", LDate(Cle["Fiches_Entrecpt.ddate"]).L & Cle["Fiches_Entrecpt.numrecpt"] & Cle["Fiches_Entrecpt.four"])
+        Endif
+        If stock Then
+          'on decremente le stock et le pamp
+          Repeat
+            Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)
+          Until $ressup.MoveNext()
+          $sup = False
+        Else
+          $sup = True
+        Endif
+      Endif
+  End Select
+  
+  Catch
+    Message.Error(Error.Text & " " & Error.Where & "\nLes oppérations sur l'entrée N° " & Cle["Fiches_Entrecpt.numrecpt"] & " ne seront pas prisent en compte.", "Ok")
+    Utils.db.Rollback
+    Application.Busy = 0
+    Return True
+
+End
+
+
+Public Sub EnrAch(etat As Integer, dte As LDate, num As String, four As String, Optional vignette As String) As Boolean       ''On enregistre ou la commande en cours ou le bon de réception
+
+  Dim resent, reslig As Result
+  Dim sl As Sailig
+  Dim modif As Boolean
+  Dim stk As Boolean = False
+  
+  If Me.ligne.Count < 1 Or $etat = achat.Validee Then Return
+ 
+  Application.Busy = 1
+  Select Case etat
+    Case Achat.CreaCommande, Achat.EnCommande
+      resent = Utils.db.Create("Fiches_Entcom")
+      For Each sl In Me
+        reslig = Utils.db.Create("Fiches_Ligcom")
+        reslig!datecom = $dte.GnT
+        reslig!numcom = num
+        If Object.IsValid(sl.AutresObj[Consignes]) Then
+          reslig!palet = sl.AutresObj[Consignes].ccd.nbpal
+          reslig!coli = sl.AutresObj[Consignes].ccd.nbcol
+        Endif
+        EnrRec(reslig, sl, $dte, $ndoc, $fournisseur, "", True)
+      Next
+      resent!numcom = num
+      resent!montantttc = TotTtc
+      resent!reliquat = False
+      
+    Case Achat.Reception
+      resent = Utils.db.Edit("Fiches_Entrecpt", "four = &1 AND numrecpt = &2 AND ddate = &3", four, num, dte.DT)
+      If resent.Available Then
+        modif = True
+      Else
+        resent = Utils.db.Create("Fiches_Entrecpt")
+      Endif
+      For Each sl In Me
+        If modif Then 
+          'cas de modification d'une réception avec compta matiere => on ne peut modifier que les prix
+          reslig = Utils.db.Edit("Fiches_Ligrecpt", "four = &1 AND numrecpt = &2 AND daterecpt = &3 AND nligne = &4", four, num, dte.DT, Format(sl.Ind + 1, "000"))   'Ind+1 pour garder la comptabilité avec la version précédente
+        Else
+          reslig = Utils.db.Create("Fiches_Ligrecpt")
+        Endif
+        reslig!daterecpt = $dte.GnT
+        reslig!numrecpt = num
+        EnrRec(reslig, sl, dte, num, $fournisseur, vignette, modif)
+      Next
+      resent!numrecpt = num
+      resent!validee = False
+      resent!mttc = TotTtc
+      
+  End Select
+  resent!four = four
+  resent!ddate = $dte.GnT
+  resent!montant = TotHt
+  resent!anomalie = False
+  resent!commentaire = commentaire
+  resent.Update
+  Utils.db.Commit
+  
+  If etat = Achat.Reception Then
+    stk = True
+    If $sup Then
+      $ressup.MoveFirst()
+      Repeat
+        Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)  'on decremente le stock et pamp de la réception supprimée
+      Until $ressup.MoveNext()
+      $sup = False
+    Endif
+    For Each sl In Me
+      Utils.db.Lockstock(sl.MonControle["Code"].Text, sl.prx.Qte, "+", True, sl.MonControle["Px_Net"].Value)   'maj du stock et pamp
+    Next
+  Endif
+  Application.Busy = 0
+  Return False
+  
+  Catch
+    If stk Then
+      Message.Error(Error.Text & " " & Error.Where & "\nErreur sur le calcul des stocks et du pamp, les entrées sont validées.", "Ok")
+    Else
+      Message.Error(Error.Text & " " & Error.Where & "\n L'entrée N° " & num & " ne sera pas enregistrée.", "Ok")
+      Utils.db.Rollback
+    Endif
+    Application.Busy = 0
+    Return True
+
+End
+
+Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, four As String, Optional vignette As String, modif As Boolean)
+  
+  Dim rem As Float
+  Dim res As Result
+  Dim cdd As Consigne
+  
+  reslig!code = sl.MonControle["Code"].text
+  reslig!design = sl.MonControle["Désignation"].text
+  reslig!four = four
+  reslig!qte = sl.MonControle["Qte"].Value
+  reslig!pbht = sl.MonControle["Px_Brut"].Value
+  If sl.MonControle["Rem"].text Match "%" Then
+    rem = Val(Left(sl.MonControle["Rem"].text, -1))
+  Else
+    rem = ((sl.MonControle["Px_Brut"].Value - sl.MonControle["Px_Net"].Value) / sl.MonControle["Px_Brut"].Value) * 100
+  Endif
+  reslig!rm = rem
+  reslig!txconv = sl.MonControle["TX_Conv"].Value
+  reslig!paht = sl.MonControle["Px_Net"].Value * sl.MonControle["TX_Conv"].Value
+  reslig!frais = sl.MonControle["Frais"].Value
+  reslig!prvt = sl.MonControle["Px_Rev"].Value
+  reslig!pattc = sl.prx.PuNTC.G
+  reslig!nligne = Format(sl.Ind + 1, "000")
+  If Object.IsValid(sl.AutresObj[Tarif]) Then 
+    sl.AutresObj[Tarif].EnrTarTemp(reslig!pbht, reslig!txconv, rem, reslig!paht, reslig!frais, reslig!prvt)
+    reslig!majtarif = sl.AutresObj[Tarif].majtarif.Value
+  Endif
+  reslig.Update
+  'on enregistre les options boissons
+  If Me.opt = "B" Or Me.opt = "T" Then
+    sl.AutresObj[Frais].enregiste(False)
+    If Not modif Then
+      cdd = sl.AutresObj[Consignes].ccd
+      If cdd.code Then      'si la ligne contient des alcools
+        res = Utils.db.Create("Fiches_ligregie")
+        res!dtmouv = $dte.GnT 
+        res!num = num
+        res!numlig = Format(sl.Ind, "000")
+        res!type = "E"
+        res!codeart = sl.MonControle["Code"].Text
+        res!coderegie = cdd.code
+        res!qte = sl.MonControle["Qte"].Value
+        res!volume = cdd.volume_total().TotBHT.G
+        res!degres = cdd.degre
+        res!volumeap = cdd.volume_total().TotNHT.G 
+        If cdd.secu_droit().Montant(cdd, True).Mnt <> 0 Then res!volumess = cdd.volume_total().TotNHT.G 
+        res!vignette = vignette
+        res.Update
+      Endif
+      EnrConsigne(cdd.cdepal, cdd.nbpal, Format(sl.Ind + 1, "000"), cdd, dte, num, four)
+      EnrConsigne(cdd.cdecol, cdd.nbcol, Format(sl.Ind + 1, "000"), cdd, dte, num, four)
+      EnrConsigne(cdd.cdeunit, sl.MonControle["Qte"].Value, Format(sl.Ind + 1, "000"), cdd, dte, num, four)
+    Endif
+  Endif
+  
+End
+
+Private Sub EnrConsigne(code As String, nb As Float, nlig As String, cdd As Consigne, dte As LDate, num As String, four As String)
+  
+  Dim rescons As Result
+  
+  If Not code Then Return
+  rescons = Utils.db.Create("Fiches_ligcons")
+  rescons!num = num
+  rescons!numlig = nlig
+  rescons!type = "E"        'E pour entrée
+  rescons!codecons = code
+  rescons!nb = nb
+  rescons!montant = cdd.consigne_montant(code, nb).Montant().TotNHT.G
+  rescons!envaleur = True
+  rescons!bloc = dte.L & num & four
+  rescons.Update
+  
+End
+
+Private Function verifdrt(res As Result) As Boolean
+  
+  Dim resart As Result
+  
+  If Me.opt = "N" Or Me.opt = "P" Then Return False
+  res.MoveFirst()
+  Repeat
+    resart = Utils.db.Exec("SELECT art_dra FROM Fiches_Art WHERE art_code = &1", res!code)
+    If resart!art_dra Then
+      Return True
+    Endif
+  Until res.MoveNext()
+  Return False
+  
+End
+
+Public Function imprime(Optional ChCo As Boolean = True, chiffre As Boolean = True) As Report          ''imprime le bon de réception
+
+  Dim res As Result
+  Dim rep As New Report
+  Dim conth As ReportHBox
+  Dim contv As ReportVBox
+  Dim lab As ReportLabel
+  Dim num As String
+  Dim coul As Integer = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
+  Dim lg As Sailig
+  Dim choix As Integer
+  
+  Me.Netoyage("Code")
+  If Me.ligne.Count < 1 Then Return
+  
+  res = Utils.db.Exec("SELECT * FROM Fiches_Four WHERE fo_code = &1", $fournisseur)
+  If Not res.Available Then Return Null
+  If ChCo Then choix = ChoixCode()
+  lab = New ReportLabel(rep)
+  If $etat = Achat.Reception Or $etat = Achat.Validee Then 
+    num = " BL n° " & $ndoc & " du " & $dte.L
+    lab.Text = "Impression des BL fournisseurs"
+  Else 
+    num = " Commande n° " & $ndoc & " du " & $dte.L
+    lab.Text = "Impression des commandes fournisseurs"
+  Endif
+  lab.Fixed = True
+  lab.Alignment = Align.Center
+  lab.font = Font["Serif,Blod,13"]
+  lab.BackGround = ReportBrush.Color(coul)
+  lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+  contv = New ReportVBox(rep)
+  contv.Fixed = True
+  conth = New ReportHBox(contv)
+  lab = New ReportLabel(conth)
+  lab.Expand = True
+  lab.font = Font["Serif,9"]
+  lab.Text = "Fournisseur : " & res!fo_rs_soc & " " & $fournisseur & "  " & res!fo_nom
+  lab = New ReportLabel(conth)
+  lab.font = Font["Serif,9"]
+  lab.Expand = True
+  lab.Alignment = Align.Right
+  lab.Text = num
+  lab = New ReportLabel(contv)
+  lab.font = Font["Serif,9"]
+  lab.Text = res!fo_adr1
+  lab = New ReportLabel(contv)
+  lab.font = Font["Serif,9"]
+  lab.Text = res!fo_adr2
+  lab = New ReportLabel(contv)
+  lab.font = Font["Serif,9"]
+  lab.Text = res!fo_cd_ptl & " " & res!fo_ville
+  lab = New ReportLabel(contv)
+  lab.font = Font["Serif,9"]
+  lab.Text = "Tel : " & res!fo_tel_std
+  lab = New ReportLabel(contv)
+  lab.Height = "3mm"
+  conth = New ReportHBox(contv)
+  conth.BackGround = ReportBrush.Color(coul)
+  conth.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+  lab = New ReportLabel(conth)
+  lab.font = Font["Serif,Blod,9"]
+  lab.Text = "Code"
+  lab.Alignment = Align.Center
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Width = "30mm"
+  lab.Height = "5mm"
+  lab = New ReportLabel(conth)
+  lab.font = Font["Serif,Blod,9"]
+  lab.Text = "Intitulé"
+  lab.Alignment = Align.Center
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Expand = True
+  lab = New ReportLabel(conth)
+  lab.font = Font["Serif,Blod,9"]
+  lab.Text = "Quantité"
+  lab.Alignment = Align.Center
+  lab.Width = "15mm"
+  If chiffre Then
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab = New ReportLabel(conth)
+    lab.font = Font["Serif,Blod,9"]
+    lab.Text = "PB HT"
+    lab.Alignment = Align.Center
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Width = "30mm"
+    lab = New ReportLabel(conth)
+    lab.font = Font["Serif,Blod,9"]
+    lab.Text = "Remise"
+    lab.Alignment = Align.Center
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Width = "15mm"
+    lab = New ReportLabel(conth)
+    lab.font = Font["Serif,Blod,9"]
+    lab.Text = "PA HT"
+    lab.Alignment = Align.Center
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Width = "30mm"
+    lab = New ReportLabel(conth)
+    lab.font = Font["Serif,Blod,9"]
+    lab.Text = "PA total"
+    lab.Alignment = Align.Center
+    lab.Width = "30mm"
+    If Me.opt = "B" Or Me.opt = "T" Then
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      rep.Orientation = Printer.Landscape
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = "Consigne"
+      lab.Alignment = Align.Center
+      lab.Width = "30mm"
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = "Deg"
+      lab.Alignment = Align.Center
+      lab.Width = "15mm"
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = "Volume"
+      lab.Alignment = Align.Center
+      lab.Width = "20mm"
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = "Volume AP"
+      lab.Alignment = Align.Center
+      lab.Width = "20mm"
+    Endif
+  Endif
+  For Each lg In Me
+    conth = New ReportHBox(rep)
+    lab = New ReportLabel(conth)
+    lab.font = Font["Serif,Blod,9"]
+    lab.Text = lg.MonControle["Code"].text
+    Select Case choix
+      Case 1
+        If lg.AutresObj[FicheArt]!art_cfour Then lab.Text = lg.AutresObj[FicheArt]!art_cfour
+      Case 2
+        If lg.AutresObj[FicheArt]!art_refcentrale Then lab.Text = lg.AutresObj[FicheArt]!art_refcentrale
+    End Select
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Width = "30mm"
+    lab.Height = "3mm"
+    lab = New ReportLabel(conth)
+    lab.font = Font["Serif,Blod,9"]
+    lab.Text = Left(lg.MonControle["Désignation"].text, 30)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Expand = True
+    lab = New ReportLabel(conth)
+    lab.font = Font["Serif,Blod,9"]
+    lab.Text = lg.MonControle["Qte"].text
+    lab.Alignment = Align.Right
+    lab.Width = "15mm"
+    If chiffre Then
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = lg.MonControle["Px_Brut"].text
+      lab.Alignment = Align.Right
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      lab.Width = "30mm"
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = lg.MonControle["Rem"].Text
+      lab.Alignment = Align.Right
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      lab.Width = "15mm"
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = lg.MonControle["Px_Net"].Text
+      lab.Alignment = Align.Right
+      lab.Border = ReportBorder["Right:1pt #000000"]
+      lab.Width = "30mm"
+      lab = New ReportLabel(conth)
+      lab.font = Font["Serif,Blod,9"]
+      lab.Text = lg.MonControle["Px_Rev"].text
+      lab.Alignment = Align.Right
+      lab.Width = "30mm"
+      If Me.opt = "B" Or Me.opt = "T" Then
+        lab.Border = ReportBorder["Right:1pt #000000"]
+        rep.Orientation = Printer.Landscape
+        lab = New ReportLabel(conth)
+        lab.font = Font["Serif,Blod,9"]
+        lab.Text = lg.AutresObj[Achat.Consignes].ccd.consigne.L
+        lab.Alignment = Align.Right
+        lab.Width = "30mm"
+        lab.Border = ReportBorder["Right:1pt #000000"]
+        lab = New ReportLabel(conth)
+        lab.font = Font["Serif,Blod,9"]
+        lab.Text = lg.AutresObj[Consignes].ccd.degre
+        lab.Alignment = Align.Right
+        lab.Width = "15mm"
+        lab.Border = ReportBorder["Right:1pt #000000"]
+        lab = New ReportLabel(conth)
+        lab.font = Font["Serif,Blod,9"]
+        lab.Text = lg.AutresObj[Consignes].ccd.volume_total().TotBHT.G
+        lab.Alignment = Align.Right
+        lab.Width = "20mm"
+        lab.Border = ReportBorder["Right:1pt #000000"]
+        lab = New ReportLabel(conth)
+        lab.font = Font["Serif,Blod,9"]
+        lab.Text = lg.AutresObj[Consignes].ccd.volume_total().TotNHT.G 
+        lab.Alignment = Align.Right
+        lab.Width = "20mm"
+      Endif
+    Endif
+  Next
+  
+  If chiffre Then
+    lab = New ReportLabel(rep)
+    lab.Height = "4mm"
+    lab.font = Font["Serif,Blod,10"]
+    lab.Alignment = Align.Right
+    lab.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+    lab.Text = "TOTAL HT : " & Format(TotHt, "0.00") & "   TOTAL TTC  : " & Format(TotTtc, "0.00")
+  Endif
+  contv = New ReportVBox(rep)
+  contv.Expand = True
+  conth = New ReportHBox(rep)
+  conth.Fixed = True
+  lab = New ReportLabel(conth)
+  lab.Text = Format$(Now, "dd/mm/yyyy hh.nn") & " - Impression demandée par " & User.Name
+  lab.font = Font["Serif,8"]
+  lab = New ReportLabel(conth)
+  lab.Text = ("=\"Page : \" & Page ")
+  lab.font = Font["Serif,8"]
+  lab.Expand = True
+  lab.Alignment = Align.Right
+  
+  Return rep
+
+End
+
+Private Function ChoixCode() As Integer        ''on choisi si on imprime le code article/fournisseur/central
+  
+  Dim win As Window
+  Dim pan As Panel
+  Dim rd, rd1, rd2 As RadioButton
+  Dim bt As Button
+  
+  win = New Window
+  win.Arrangement = Arrange.Vertical
+  win.Text = "Sélection du code à éditer"
+  win.Height = win.Font.Height * 5
+  win.Width = win.Font.Size * 55
+  pan = New Panel(win)
+  pan.Arrangement = Arrange.Vertical
+  pan.Expand = True
+  rd = New RadioButton(pan) 
+  rd.Text = "Code article"
+  rd.Expand = True
+  rd.Value = True
+  rd1 = New RadioButton(pan) 
+  rd1.Text = "Référence fournisseur"
+  rd1.Expand = True
+  rd2 = New RadioButton(pan) 
+  rd2.Text = "Référence centrale"
+  rd2.Expand = True
+  bt = New Button(win) As "ButT"
+  bt.Text = "Ok"
+  bt.Width = win.Font.Size * 6
+  bt.Tag = win
+  
+  win.Showmodal()
+  
+  If rd.Value Then Return 0
+  If rd1.Value Then Return 1
+  If rd2.Value Then Return 2
+  
+End
+
+Public Sub ButT_click()
+  
+  Last.Tag.Close
+
+End
+
+Public Sub mail()
+
+  Dim win As Window
+  Dim pan As Panel
+  Dim cb As ComboBox
+  Dim rd, rd1 As RadioButton
+  Dim bt As Button
+  Dim res As Result
+  Dim rep As Report
+  Dim prt As New Printer
+  Dim tMail As String[]
+  
+  win = New Window
+  win.Arrangement = Arrange.Vertical
+  win.Text = "Envoi de commande"
+  win.Height = win.Font.Height * 5
+  win.Width = win.Font.Size * 45
+  pan = New Panel(win)
+  pan.Arrangement = Arrange.Horizontal
+  pan.Expand = True
+  rd = New RadioButton(pan) 
+  rd.Text = "Chiffrée"
+  rd.Expand = True
+  rd.Value = True
+  rd1 = New RadioButton(pan) 
+  rd1.Text = "Non chiffrée"
+  rd1.Expand = True
+  cb = New ComboBox(win) As "mail"
+  cb.Expand = True
+  res = Utils.db.Exec("SELECT * FROM Mails_Four WHERE code = &1", $fournisseur)
+  If res.Available Then
+    Repeat
+      cb.Add(res!mail)
+    Until res.MoveNext()
+  Endif
+  res = Utils.db.Exec("SELECT * FROM Fiches_ContactF WHERE code = &1", $fournisseur)
+  If res.Available Then 
+    cb.add(res!nom & " " & res!pnm & " | " & res!mail)
+  Endif
+  $mail = cb.Text
+  bt = New Button(win) As "ButT"
+  bt.Text = "Ok"
+  bt.Width = win.Font.Size * 6
+  bt.Tag = win
+  
+  win.ShowModal()
+  
+  rep = imprime(True, rd.Value)
+  If IsNull(rep) Then Return
+    tMail = Split($mail, "|")
+    Try $mail = tMail[1]
+  prt.OutputFile = User.Home & "/tmp/BonCommande.pdf"
+  rep.Print(prt)
+  EnvMail.Envoi2($mail, "Notre commande du " & $dte.L, "Bonjour, \nMerci de bien vouloir prendre en compte notre commande ci_jointe \nCordialement.", prt.OutputFile)
+  
+End
+
+Public Sub mail_change()
+
+  $mail = Last.Text
+
+End
+
+Public Sub mail_click()
+
+  $mail = Last.Text
+
+End
+'**********************propriétés***************
+Private Function date_Read() As LDate
+
+  Return $dte
+
+End
+
+Private Sub date_Write(Value As LDate)
+
+  $dte = Value
+
+End
+
+Private Function fourisseur_Read() As String
+
+  Return $fournisseur
+
+End
+
+Private Sub fourisseur_Write(Value As String)
+
+  $fournisseur = Value
+
+End
+
+Private Function ndoc_Read() As String
+
+  Return $ndoc
+
+End
+
+Private Sub ndoc_Write(Value As String)
+
+  $ndoc = Value
+
+End
+
+
+'***************************************************************************************************
+'*               gestion du materiel
+'***************************************************************************************************
+
+Public Function ContMat() As Boolean            ''Si au moins une des lignes saisie concerne le materiel
+  
+  Dim lig As Sailig
+  
+  For Each lig In Me
+    If lig.AutresObj[Materiel] Then Return True
+  Next
+  Return False
+  
+End
+
+Public Sub CreMat() As Boolean             ''créer le tableau de saisie des n° de série
+  
+  Dim res As Result
+  Dim lig As Sailig
+  Dim obj As ObjProp
+  Dim prop As New ObjProp[]
+  Dim win As Window
+  Dim sorti As Integer
+  Dim pan As Panel
+  Dim i As Integer
+  Dim ch As Chainage
+  
+  Application.Busy = 0
+  res = Utils.db.Exec("SELECT * FROM Fiches_Materiels LIMIT 1")
+  win = CreFen(ByRef pan)
+  win.Name = "mat"
+  
+  obj = New ObjProp(res.Fields["mat_code"], "Code")
+  obj.AddChamp("MaxLenght", 15)
+  obj.AddChamp("ReadOnly", True)
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 12
+  prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["mat_design"], "Désignation")
+  obj.AddChamp("ReadOnly", True)
+  obj.AddChamp("MaxLenght", 50)
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 50
+  prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["mat_serie"], "Série") As "serie"
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 35
+  obj.AddChamp("MaxLenght", 30)
+  prop.Add(obj)
+  
+  mat = New SaiTableau(prop, pan)
+  mat.VisibleChoi = False
+  mat.VisibleTot = False
+  mat.VisibleTuto = False
+  pan.Show
+  mat.show
+  ch = New Chainage([])
+  For Each lig In Me
+    If lig.AutresObj[Materiel] Then
+      res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_rcpt=&1 AND mat_four=&2  AND mat_code=&3", $ndoc, $fournisseur, lig.MonControle["Code"].Text)
+      For i = 0 To lig.MonControle["Qte"].Value - 1
+        mat.ajout()
+        mat.ligne[mat.ind].Dernier = ""
+        mat.ligne[mat.ind].chain.sup(mat.ligne[mat.ind].MonControle["Code"], 2)
+        mat.ligne[mat.ind].MonControle["Code"].Text = lig.MonControle["Code"].Text
+        mat.ligne[mat.ind].MonControle["Désignation"].Text = lig.MonControle["Désignation"].Text
+        If res.Available Then
+          If Not res.MoveTo(i) Then mat.ligne[mat.ind].MonControle["Série"].text = res!mat_serie
+          If Not res.MoveTo(i) And If res!mat_vendu Then 
+            mat.ligne[mat.ind].MonControle["Série"].Enabled = False
+            mat.ligne[mat.ind].MonControle["Série"].tooltip = "matériel déjà vendu, modification impossible"
+          Endif
+          res.MoveFirst()
+        Endif
+        ch.add([mat.ligne[mat.ind].MonControle["Série"]])
+        mat.ligne[mat.ind].Tag = mat.ligne[mat.ind].MonControle["Série"].text
+      Next
+    Endif
+  Next
+  sorti = win.Showmodal()
+  Application.Busy = 1
+  If sorti = 0 Then Return False Else Return True
+  
+End
+
+Public Sub abandon_click()
+
+  Application.Busy = 0
+  Last.Tag.Close(0)
+
+End
+
+Public Sub valider_click()
+
+  Dim lig, ligart As Sailig
+  Dim res As Result
+  Dim cde As String
+  Dim ns As Boolean = True
+  
+  If Last.Tag.name = "mat" Then
+    'Controle si on peut vaider
+    For Each lig In mat
+      If Not lig.MonControle["Série"].Text And ns Then
+        If Message.Warning("Tous les n° de série ne sont pas renseignés\nVoulez vous continuer ?", "Oui", "Non") = 1 Then 
+          ns = False
+          Continue
+        Else
+          Return
+        Endif
+      Endif
+      res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_serie=&1 AND mat_code=&2 AND mat_rcpt <> &3", mat.ligne[mat.ind].MonControle["Série"].Text, mat.ligne[mat.ind].MonControle["Code"].Text, $ndoc)
+      If res.Available Then
+        Message.Warning("Validation impossible, le n° de série : " & mat.ligne[mat.ind].MonControle["Série"].Text & " existe déjà ", "Ok")
+        Return
+      Endif
+    Next
+    'on supprime les n° de cette commande
+    For Each lig In mat
+      res = Utils.db.Exec("SELECT * FROM Fiches_Materiels WHERE mat_serie=&1 AND mat_code=&2 AND mat_rcpt = &3", lig.Tag, lig.MonControle["Code"].Text, $ndoc)
+      If res.Available And If Not res!mat_vendu Then
+        Utils.db.Delete("Fiches_Materiels", "mat_rcpt=&1 AND mat_four=&2 AND mat_serie=&3 ", $ndoc, $fournisseur, lig.Tag)
+      Endif
+    Next
+    'on créer les n° saisies
+    For Each lig In mat
+      If Not lig.MonControle["Série"].Text Or lig.MonControle["Série"].Enabled = False Then Continue
+      If lig.MonControle["Code"].Text <> cde Then
+        cde = lig.MonControle["Code"].Text 
+        For Each ligart In Me
+          If ligart.MonControle["Code"].Text = cde Then Break
+        Next
+      Endif
+      res = Utils.db.Create("Fiches_Materiels")
+      res!mat_serie = lig.MonControle["Série"].Text
+      res!mat_code = lig.MonControle["Code"].Text
+      res!mat_four = $fournisseur
+      res!mat_design = ligart.MonControle["Désignation"].Text
+      res!mat_design2 = ligart.AutresObj[FicheArt]["art_design2"]
+      res!mat_paht = ligart.MonControle["Px_Net"].Value
+      res!mat_frais = ligart.MonControle["Frais"].Value
+      res!mat_prvt = ligart.MonControle["Px_Rev"].Value
+      res!mat_cdarr = ligart.AutresObj[FicheArt]["art_cdarr"]
+      res!mat_nbd = ligart.AutresObj[FicheArt]["art_nbd"]
+      res!mat_dec = ligart.AutresObj[FicheArt]["art_dec"]
+      res!mat_dfour = $fournisseur
+      res!mat_dpa = ligart.AutresObj[FicheArt]["art_dpa"]
+      res!mat_ddate = $dte.GnT
+      res!mat_rcpt = $ndoc
+      res!mat_dfour = $fournisseur
+      res!mat_cequ = ligart.AutresObj[FicheArt]["art_cequ"]
+      res!mat_cbarre = ligart.AutresObj[FicheArt]["art_cbarre"]
+      res!mat_dpa = ligart.AutresObj[FicheArt]["art_dpa"]
+      res!mat_eco = ligart.AutresObj[FicheArt]["art_eco"]
+      res!mat_fam = ligart.AutresObj[FicheArt]["art_fam"]
+      res!mat_qte = "1"
+      res!mat_tva = ligart.AutresObj[FicheArt]["taux_tva"]
+      res!mat_cequ = ligart.AutresObj[FicheArt]["art_cequ"]
+      res!mat_coef = ligart.AutresObj[FicheArt]["art_coef"]
+      res!mat_eco = ligart.AutresObj[FicheArt]["art_eco"]
+      res!mat_poids = ligart.AutresObj[FicheArt]["art_poids"]
+      res!mat_poids2 = ligart.AutresObj[FicheArt]["art_poids2"]
+      res!mat_photo = ligart.AutresObj[FicheArt]["art_photo"]
+      res!mat_crst = ligart.AutresObj[FicheArt]["art_crst"]
+      res!mat_vendu = False
+      res!mat_marque = ligart.AutresObj[FicheArt]["art_marque"]
+      res.Update()
+    Next
+  Endif
+  Last.Tag.Close(1)
+
+End
+
+Private Function CreFen(ByRef pan As Panel) As Window
+  
+  Dim pan1 As Panel
+  Dim but As Button
+  Dim win As Window
+  
+  win = New Window
+  win.Border = False
+  pan = New Panel(win)
+  pan.Arrangement = Arrange.Vertical
+  pan.Width = win.Font.Size * 97
+  pan.Height = (win.Font.H + 4) * 28
+  pan.X = 0
+  pan.Y = 0
+  win.Height = pan.Height + (win.Font.H + 4) * 2
+  win.Width = pan.Width
+  pan1 = New Panel(win)
+  pan1.Arrangement = Arrange.Horizontal
+  pan1.Width = win.Width
+  pan1.Height = (win.Font.H + 4) * 2
+  pan1.X = 0
+  pan1.Y = pan.Height
+  
+  but = New Button(pan1) As "abandon"
+  but.Expand = True
+  but.Tag = win
+  but.Text = "Abandon"
+  but.Picture = Picture["Icones/exit.png"]
+  but = New Button(pan1) As "valider"
+  but.Expand = True
+  but.Text = "Valider"
+  but.Tag = win
+  but.Picture = Picture["Icones/button_ok.png"]
+  Return win
+
+End 
+'***************************************************************************************************
+'Gestion des reliquats de commande
+'***************************************************************************************************
+Public Sub CreRec() As Boolean          ''ouvre la fenetre des réceptions et reliquats
+
+  Dim lig As Sailig
+  Dim obj As ObjProp
+  Dim prop As New ObjProp[]
+  Dim win As Window
+  Dim sorti As Integer
+  Dim pan As Panel
+  Dim ch As Chainage
+  Dim obs As Observer
+  
+  $reli = 2
+  win = CreFen(ByRef pan)
+  win.Name = "rec"
+  
+  obj = New ObjProp(Null, "Code")
+  obj.AddChamp("MaxLenght", 15)
+  obj.AddChamp("ReadOnly", True)
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 12
+  prop.Add(obj)
+  
+  obj = New ObjProp(Null, "Désignation")
+  obj.AddChamp("ReadOnly", True)
+  obj.AddChamp("MaxLenght", 50)
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 39
+  prop.Add(obj)
+  
+  obj = New ObjProp(Null, "Qte_Comm") 
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 15
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("ReadOnly", True)
+  prop.Add(obj)
+  
+  obj = New ObjProp(Null, "Qte_Reçu") 
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 15
+  obj.AddChamp("numerique", True)
+  prop.Add(obj)
+  
+  obj = New ObjProp(Null, "Reliquat") 
+  obj.Height = win.Font.H + 4
+  obj.Width = win.Font.Size * 15
+  obj.AddChamp("numerique", True)
+  obj.AddChamp("ReadOnly", True)
+  prop.Add(obj)
+  
+  rec = New SaiTableau(prop, pan)
+  rec.VisibleChoi = False
+  rec.VisibleTot = False
+  rec.VisibleTuto = False
+  pan.Show
+  rec.show
+  ch = New Chainage([])
+  Me.Netoyage("Code")
+ 
+  For Each lig In Me 
+    rec.ajout()
+    rec.ligne[rec.ind].AutresObj = New Variant[RelFin]
+    rec.ligne[rec.ind].Dernier = ""
+    rec.ligne[rec.ind].chain.sup(rec.ligne[rec.ind].MonControle["Code"], 3)
+    rec.ligne[rec.ind].MonControle["Code"].Text = lig.MonControle["Code"].Text
+    rec.ligne[rec.ind].AutresObj[RelArt] = lig.MonControle["Code"].Text
+    rec.ligne[rec.ind].MonControle["Désignation"].Text = lig.MonControle["Désignation"].Text
+    rec.ligne[rec.ind].MonControle["Qte_Comm"].Text = lig.MonControle["Qte"].Text
+    rec.ligne[rec.ind].MonControle["Qte_Comm"].nbdec = lig.AutresObj[FicheArt]!art_dec
+    obs = New Observer(rec.ligne[rec.ind].MonControle["Qte_Comm"]) As "Reliquat"
+    rec.ligne[rec.ind].MonControle["Qte_Reçu"].text = lig.MonControle["Qte"].Text
+    rec.ligne[rec.ind].MonControle["Qte_Reçu"].nbdec = lig.AutresObj[FicheArt]!art_dec
+    obs = New Observer(rec.ligne[rec.ind].MonControle["Qte_Reçu"]) As "Reliquat"
+    rec.ligne[rec.ind].MonControle["Reliquat"].Value = 0
+    rec.ligne[rec.ind].AutresObj[RelQte] = 0
+    rec.ligne[rec.ind].MonControle["Reliquat"].nbdec = lig.AutresObj[FicheArt]!art_dec
+    ch.add([rec.ligne[rec.ind].MonControle["Qte_Reçu"]])
+  Next
+  sorti = win.Showmodal()
+  If sorti = 0 Then Return False 
+  For Each lig In Me
+    lig.MonControle["Qte"].Text = rec.ligne[lig.Ind].MonControle["Qte_Reçu"].Text
+    Try lig.AutresObj[Achat.Consignes].ccd.qte = rec.ligne[lig.Ind].MonControle["Qte_Reçu"].Value
+    Me.ind = lig.Ind
+    calcul
+  Next
+  For Each lig In rec
+    If lig.MonControle["Reliquat"].Value > 0 Then
+      Application.Busy = 0
+      $reli = Message.Question("Voulez vous générer une commande de reliquat ?", "Oui", "Non")
+      Application.Busy = 1
+      Break
+    Endif
+  Next
+  Return True
+
+End
+
+Public Sub Reliquat_lostfocus()
+
+  rec.ligne[rec.ind].MonControle["Reliquat"].Value = rec.ligne[rec.ind].MonControle["Qte_Comm"].Value - rec.ligne[rec.ind].MonControle["Qte_Reçu"].Value
+  rec.ligne[rec.ind].AutresObj[RelQte] = rec.ligne[rec.ind].MonControle["Reliquat"].Value
+
+End
+
+Public Sub CreReliquat() As Boolean    ''Creer et affiche la commande de reliquat 
+  
+  Dim lig As Sailig
+  
+  If $reli = 2 Then Return False
+  For Each lig In rec
+    If lig.AutresObj[RelQte] > 0 Then
+      $etat = achat.CreaCommande
+      ajout()
+      Me.ligne[Me.ind].MonControle["Qte"].Value = lig.AutresObj[RelQte] 
+      ligne_LecCode(lig.AutresObj[RelArt])
+    Endif
+  Next
+  Return True
+  
+End

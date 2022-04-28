@@ -1,0 +1,379 @@
+' Gambas class file
+
+Public ligne As New Sailig[]      ''Tableau des saisies
+Public ind As Integer = -1          ''Index du tableau des saisie
+Public opt As String                      ''Quelle option est active 
+
+Public VisibleTuto As Boolean = True                  ''Affiche le tuto
+Public VisibleEntete As Boolean = True               ''Affiche l'entete
+Public VisibleTot As Boolean = True                     ''Affiche les totaux
+Public VisibleChoi As Boolean = True                 ''Affiche les choix articles/mo/stock
+
+Public total As SaiLig
+Public entete As SaiLig 
+
+Public pchoix As Panel
+Public mo As RadioButton
+Public art As RadioButton
+Public artstk As RadioButton
+Public tuto As Label
+Public Pentete As ScrollView
+Public Tableau As ScrollView
+Public Ptot As ScrollView
+
+Public $prop As New ObjProp[]
+Public $parent As Control
+
+Private $tag As Variant
+
+Const Background As Integer = &FFEFDF
+
+Property Tag As Variant
+
+Event ajou(Value As Sailig)   ''Est levé lorsque on ajoute une ligne de saisie
+Event gotfocus(Value As Sailig)
+Event lostfocus(Value As Sailig)
+
+
+Public Sub _new(prop As ObjProp[], parent As Control)
+
+  $prop = prop
+  opt = Utils.Option()
+  If IsNull(parent) Then
+    $parent = New Window
+    $parent.Height = 400
+    $parent.Width = 800
+    Else
+      $parent = parent
+  Endif
+
+End
+
+Public Sub _next() As SaiLig
+
+  If Enum.Index = Null Then Enum.Index = -1
+  Enum.Index += 1
+  If ligne.Count = Enum.Index Then 
+    Enum.Stop
+  Else
+    Return ligne[Enum.Index]
+  Endif
+
+End
+
+Public Sub show()
+
+  Dim prop As ObjProp[]
+  Dim obj, nouobj As ObjProp
+  
+  If VisibleChoi Then
+    pchoix = New Panel($parent)
+    pchoix.Arrangement = Arrange.Horizontal
+    pchoix.Width = $parent.W
+    pchoix.Border = Border.Plain
+    mo = New RadioButton(pchoix) As "RadioButton1"
+    mo.Expand = True
+    mo.H = 50
+    mo.Text = "MO"
+    art = New RadioButton(pchoix) As "RadioButton2"
+    art.Expand = True
+    art.Text = "Articles"
+    artstk = New RadioButton(pchoix) As "RadioButton3"
+    artstk.Expand = True
+    artstk.Text = "Articles en stock"
+    pchoix.H = $parent.Font.Height + 10
+  Endif
+  
+  If VisibleTuto Then
+    tuto = New Label($parent)
+    tuto.w = $parent.W
+    tuto.H = tuto.Font.H * 4
+    tuto.Background = &h00DFFFF7
+'    tuto.AutoResize = True
+    tuto.x = 0
+    tuto.Alignment = Align.Center
+    tuto.Font = Font["Italic,-1"]
+    tuto.Text = "Alt + Fléche Haut / Alt + Fléche Bas : Déplace la ligne   	Entrée / Tab / Fléche Haut : Zone suivante 		Shift + Tab / Fléche Bas : Zone précedante \n  Ins: Insert une ligne Del / Sup: Supprime une ligne Ctrl + Entrée : Retour à la ligne                                Esc : Rétablit la valeure précedante \n Code: F2 Recherche Rem: 10 % = Remise en % ou 10 = Remise en valeur"
+  Endif
+  
+  If VisibleEntete Then
+    Pentete = New ScrollView($parent)
+    Pentete.w = $parent.W
+    Pentete.H = $parent.Font.H + 4
+    Pentete.Arrangement = Arrange.Vertical
+    Pentete.Border = Border.Plain
+    prop = New ObjProp[]
+    For Each obj In $prop
+      nouobj = New ObjProp(Null, obj.NomControl, ObjProp.Label)
+      nouobj.AddChamp("Text", obj.NomControl)
+      nouobj.AddChamp("Alignment", Align.Center)
+      nouobj.AddChamp("Border", Border.Plain)
+      nouobj.Height = obj.Height
+      nouobj.Width = obj.Width
+      prop.Add(nouobj)
+    Next
+    entete = New Sailig(prop, Pentete, SaiLig.lecture) As "entete"
+  Endif
+  
+  tableau = New ScrollView($parent) As "tableau"
+  tableau.Expand = True
+  Tableau.Arrangement = Arrange.Vertical
+  tableau.Font = Font["Italic,-1"]
+  tableau.Background = Color.White
+  
+  If VisibleTot Then
+    Ptot = New ScrollView($parent) As "pto"
+    Ptot.w = $parent.W
+    Ptot.h = $parent.Font.h + 4
+    Ptot.Border = Border.Plain
+    Ptot.Arrangement = Arrange.Vertical
+    prop = New ObjProp[]
+    For Each obj In $prop
+      nouobj = New ObjProp(Null, obj.NomControl, ObjProp.Label)
+      nouobj.AddChamp("Alignment", Align.Right)
+      nouobj.Height = obj.Height
+      nouobj.Width = obj.Width
+      prop.Add(nouobj)
+    Next
+    total = New Sailig(prop, Ptot, SaiLig.lecture) As "total"
+  Endif
+
+End
+
+Public Sub Pentete_Scroll()
+
+  tableau.Scroll(Pentete.ScrollX, Pentete.ScrollY)
+
+End
+
+Public Sub ajout(Optional etat As Integer = SaiLig.ecriture)          ''Ajoute une ligne de saisie
+
+  Dim lg As SaiLig
+  Dim obj As Object
+  
+  lg = New SaiLig($prop, tableau, etat) As "ligne"
+  lg.Ind = ligne.Count
+  evenement(lg)
+  ligne.Add(lg)
+  If ind > -1 Then HideAutreO(ligne[ind])
+  ind = ligne.Max
+  If Not Even(ind) Then ligne[ind].Background = Background 
+  Raise ajou(ligne[ind])
+  ligne[ind].MonControle[$prop[0].NomControl].SetFocus
+  
+End
+
+Public Sub Delete()               ''supression de toutes les lignes du tableau
+
+  Dim lg As Sailig
+  
+  For Each lg In Me
+    lg.Delete
+  Next
+  ligne.Clear
+  ind = -1
+
+End
+
+Public Sub Extract(i As Integer)          ''supression de la ligne i et renumérotation des index
+
+  Dim lg As Sailig
+  Dim j As Integer
+  
+  Me.ligne[i].Delete
+  Me.ligne.Extract(i)
+  If ligne.Count > 0 Then
+    For j = 0 To ligne.Max
+      ligne[j].Ind = j
+    Next
+    If i < ligne.Count Then Ind = i Else ind = ligne.Max
+    ligne[ind].MonControle[ligne[ind].MonControle.First].SetFocus
+  Else
+    Ind = -1
+  Endif
+
+End
+
+Public Sub Netoyage(nom As String)         ''on supprime les lignes vides, nom est le nom du contrôle qui doit être vide pour être supprimé
+
+  Dim i As Integer
+  Dim lig As Sailig
+  
+  If ligne.Count < 1 Then Return
+  Repeat
+    lig = Me.ligne[i]
+    If Not lig.MonControle[nom].Text Then 
+      Extract(lig.Ind)
+    Else
+      i += 1
+    Endif
+  Until i = ligne.Count
+  
+End
+
+
+Private Sub evenement(lg As Sailig)   ''on rattache tous les évenements des controles de SaiLig ici, ils sont donc accessibles dans les classes héritées de SaiTableau
+  
+   Dim obj As Object
+  
+  For Each obj In lg.MonControle
+    Object.Attach(obj, Me, Utils.Accent(obj.name))      'on supprime les carctéres speciaux 
+  Next
+  Object.Attach(lg.prx, Me, "LPrix")
+  Object.Attach(lg.txl, Me, "Ltaxe")
+  
+End
+
+Private Sub AfficheAutreO(Value As Sailig)      ''on gére l'affichage des éventuels autres objets
+  
+  Dim obj As Variant
+  
+  If IsNull(value.AutresObj) Then Return
+  For Each obj In value.AutresObj
+    Try obj.visible = True
+  Next
+  
+End
+
+Private Sub HideAutreO(value As Sailig)
+  
+  Dim obj As Variant
+  
+  If IsNull(value.AutresObj) Then Return
+  For Each obj In value.AutresObj
+    Try obj.Hide
+  Next
+  
+End
+
+Public Sub ligne_RetLigne(etat As Integer)
+
+  If ind = ligne.Max Then 
+   If etat = SaiLig.ecriture And ligne[ind].Dernier Then ajout()        'si on n'idique pas le control qui déclanche le retour ligne, on ne créé pas de nouvelles lignes
+  Else
+    ligne[ind + 1].MonControle[$prop[0].NomControl].SetFocus
+    ind += 1
+  Endif
+  Stop Event
+
+End
+
+Public Sub ligne_gotfocus(Value As SaiLig)
+
+  If ind > -1 Then HideAutreO(ligne[ind])
+  AfficheAutreO(Value)
+  ind = value.Ind
+  Raise gotfocus(Value)
+  
+End
+
+Public Sub ligne_lostfocus(Value As Sailig)
+
+    Raise lostfocus(Value)
+    
+End
+
+Public Sub ligne_SupLig(etat As Integer)
+
+  Dim i, coul As Integer
+  
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
+    If Message.Question("Voulez vous supprimer cette ligne ?", "Oui", "Non") = 1 Then
+      If Even(ind) Then coul = ligne[ind].Background Else coul = ligne[ind - 1].Background
+      ligne[ind].Delete
+      ligne.Extract(ind)
+      tableau.Refresh
+      Wait 0.01
+      For i = ind To ligne.Max
+        If Not Even(i) Then ligne[i].Background = Background Else ligne[i].Background = coul
+        ligne[i].Ind = i
+      Next
+      If ind > ligne.Max Then ind = ligne.Max
+      If ligne.Count = 0 Then ajout
+      ligne[ind].MonControle[$prop[0].NomControl].SetFocus
+    Endif
+  Endif
+  Stop Event
+
+End
+
+Public Sub ligne_InsLig(etat As Integer) 
+
+  Dim ls As New SaiLig($prop, tableau) As "ligne"
+  Dim i, coul As Integer
+  
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
+    evenement(ls)
+    If Even(ind) Then coul = ligne[ind].Background Else coul = ligne[ind - 1].Background
+'    ind = ligne.Find(sl)
+    ligne.Insert([ls], ind)
+    If ind = 0 Then ls.Panel1.Previous = Null Else ls.Panel1.Previous = ligne[ind - 1].Panel1
+    ls.Panel1.Next = ligne[ind].Panel1
+    For i = ind To ligne.Max
+      If Not Even(i) Then ligne[i].Background = Background Else ligne[i].Background = coul
+      ligne[i].Ind = i
+    Next
+    ligne[ind].MonControle[$prop[0].NomControl].SetFocus
+  Endif
+
+End
+
+Public Sub ligne_Haut(etat As Integer) 
+
+  Dim coul As Integer
+  
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
+    If ind > 0 And ligne.Count > 1 Then
+      ligne[ind].Panel1.Next = ligne[ind - 1].Panel1
+      Swap ligne[ind], ligne[ind - 1]
+      Swap ligne[ind].Ind, ligne[ind - 1].Ind
+      ind -= 1
+      If Not Even(ind) Then 
+        coul = ligne[ind].Background
+        ligne[ind].Background = Background  
+        ligne[ind + 1].Background = coul
+      Else 
+        coul = ligne[ind + 1].Background
+        ligne[ind].Background = coul
+        ligne[ind + 1].Background = Background 
+      Endif
+    Endif
+  Endif
+
+End
+
+Public Sub ligne_Bas(etat As Integer)
+
+  Dim coul As Integer
+  
+  If etat = SaiLig.ecriture And ligne[ind].Dernier Then
+    If ind < ligne.Max And ligne.Count > 1 Then
+       ligne[ind].Panel1.Previous = ligne[ind + 1].Panel1
+      Swap ligne[ind], ligne[ind + 1]
+      Swap ligne[ind].Ind, ligne[ind + 1].Ind
+      ind += 1
+      If Not Even(ind) Then 
+        coul = ligne[ind].Background
+        ligne[ind].Background = Background  
+        ligne[ind - 1].Background = coul
+      Else 
+        coul = ligne[ind - 1].Background
+        ligne[ind].Background = coul
+        ligne[ind - 1].Background = Background 
+      Endif
+    Endif
+  Endif
+
+End
+
+Private Function Tag_Read() As Variant
+
+  Return $tag
+
+End
+
+Private Sub Tag_Write(Value As Variant)
+
+  $tag = value
+
+End

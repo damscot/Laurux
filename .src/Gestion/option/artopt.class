@@ -4,10 +4,10 @@
 
 Private $numart As String
 Private $schoix As String
-Private $Textfrais As TextBox
-Private $TextPaUA As TextBox
-Private $textPrvt As TextBox
-Private $code As TextBox
+Private $Textfrais As Object
+Private $TextPaUA As Object
+Private $textPrvt As Object
+Private $code As Object
 Private $texttxtva As TextLabel
 Private $snbdec As String
 Private $bcreer As Boolean = True
@@ -20,7 +20,7 @@ Property creer As Boolean
 
 Event recalculpx()
 
-Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As TextBox, PaUA As TextBox, Prvt As TextBox, TxTva As TextLabel, code As TextBox)
+Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As Object, PaUA As Object, Prvt As Object, TxTva As TextLabel, code As Object)
 
   Dim obs As Observer
   Dim chn As Chainage
@@ -299,7 +299,7 @@ Private Sub calculpxrev()
   pxrev = Textpa.Value + frs
   $Textfrais.Text = Format(frs, "0.00")
   Textprxr.Value = pxrev
-  $textPrvt.Text = Format(pxrev, "0.00")
+  $textPrvt.Text = Format(pxrev, "0.000")
   Textprxrpp.Value = pxrev
   
   Raise recalculpx()
@@ -338,7 +338,6 @@ Public Sub Buttontar_Click()
     win.Width = tarif.Width
     win.Text = "Tarif fioul"
     win.ShowModal
-'    afftarif
   Endif
 
 End
@@ -475,7 +474,7 @@ End
 
 Private Sub afftarif(vol As String)
   
-  Dim res As Result
+  Dim res, art As Result
   Dim i, coef As Integer
   
   Gridtarpp.Clear
@@ -488,19 +487,25 @@ Private Sub afftarif(vol As String)
     Gridtarpp[i, 0].Text = Format(res!binf * coef, "0") & "-" & Format(res!bsup * coef, "0")
     Gridtarpp[i, 1].Text = Format(res!normht, "0.00")
     Gridtarpp[i, 1].Alignment = Align.Right
-    Gridtarpp[i, 2].Text = Format(res!normht * (1 + (Val($texttxtva.Text) / 100)), "0.00")
+    If IsNull($texttxtva) Then 
+      art = Utils.db.Exec("SELECT taux_tva FROM Fiches_Art JOIN Fiches_Tvaav ON code_tva = art_tva WHERE art_code = &1", $numart)
+      Gridtarpp[i, 2].Text = Format(res!normht * (1 + (art!taux_tva / 100)), "0.00")
+      Gridtarpp[i, 4].Text = Format(res!supht * (1 + (art!taux_tva / 100)), "0.00")
+    Else
+      Gridtarpp[i, 2].Text = Format(res!normht * (1 + (Val($texttxtva.Text) / 100)), "0.00")
+      Gridtarpp[i, 4].Text = Format(res!supht * (1 + (Val($texttxtva.Text) / 100)), "0.00")
+    Endif
     Gridtarpp[i, 2].Alignment = Align.Right
     Gridtarpp[i, 3].Text = Format(res!supht, "0.00")
-    Gridtarpp[i, 4].Text = Format(res!supht * (1 + (Val($texttxtva.Text) / 100)), "0.00")
     res.MoveNext
   Next
 End
 
-Public Sub enregiste()
+Public Sub enregiste(Optional Commit As Boolean = True)
 
   Dim res As Result
   
-  Utils.db.Begin
+  If Commit Then Utils.db.Begin
   res = Utils.db.Edit("Fiches_Art", "art_code=&1", $code.Text)
   If Not res.Available Then Return
   
@@ -534,7 +539,7 @@ Public Sub enregiste()
     res!art_ecof = Textcee.value
   Endif
   res.Update
-  Utils.db.Commit
+  If commit Then Utils.db.Commit
   affmab
 End
 

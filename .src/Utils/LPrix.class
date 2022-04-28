@@ -77,11 +77,29 @@ Public Sub _call(Optional Montant As Variant = 0, Optional Quantite As Variant =
 
   Dim $CLPrix As LPrix
   
-  $CLPrix = New LPrix(Montant, Quantite, Arr, Cpt)
+  $CLPrix = New LPrix(Montant, Qte, Arr, Cpt)
   Return $CLPrix
 
 End
 
+Public Sub _put(value As LPrix, i As Integer)
+
+  If Me.Count < i Then
+    Me.Resize(i)
+  Endif
+  Me[i] = value
+
+End
+
+Public Sub _get(i As Integer) As LPrix
+
+  If Me.Max > i Then
+    Return Me[i]
+  Else
+    Return Null
+  Endif
+
+End
 
 '**************
 'METHODE PRIVEE
@@ -645,6 +663,14 @@ Public Sub Abs()
   
   Mnt = Abs(Mnt)
   
+End
+
+Public Sub Lit_Taxe(Ttx As Integer) As LTaxe
+
+  If Not Taxe Then Return Null
+  If Not Taxe[Ttx] Then Return Null
+  Return taxe[Ttx]
+
 End
 
 'Methode Publique de test

@@ -1,0 +1,78 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,162,77)
+  Expand = True
+  AutoResize = True
+  { Label1 Label
+    MoveScaled(1,0,158,3)
+    Background = &HDFFFF7&
+    Text = ("article")
+    Alignment = Align.Center
+  }
+  { Label2 Label
+    MoveScaled(1,3,37.7778,4)
+    Expand = True
+    Text = ("TARIF DE BASE")
+    Alignment = Align.Center
+    Border = Border.Plain
+  }
+  { Ptargen Panel
+    MoveScaled(41,3,61,7)
+    Arrangement = Arrange.Vertical
+    AutoResize = True
+  }
+  { Label3 Label
+    MoveScaled(0,11,22,4)
+    Expand = True
+    Text = ("TARIF PAR CLIENT")
+    Alignment = Align.Center
+    Border = Border.Plain
+  }
+  { Label4 Label
+    MoveScaled(0,43,25,4)
+    Expand = True
+    Text = ("TARIF PAR TYPE CLIENT")
+    Alignment = Align.Center
+    Border = Border.Plain
+  }
+  { cli ScrollView
+    MoveScaled(22,11,120,31)
+    Arrangement = Arrange.Vertical
+  }
+  { typec ScrollView
+    MoveScaled(25,43,117,30)
+    Arrangement = Arrange.Vertical
+  }
+  { !Enreg Button
+    MoveScaled(104,3,24,5)
+    #Public = True
+    Text = ("Enregistrer les tarifs")
+    Picture = Picture["icon:/32/save-as"]
+  }
+  { Etiqu Button
+    MoveScaled(129,3,29,5)
+    Visible = False
+    Text = ("Impression des étiquettes")
+    Picture = Picture["icon:/32/print"]
+  }
+  { Panel1 Panel
+    MoveScaled(1,49,23,24)
+    Background = &HDFFFF7&
+    Border = Border.Plain
+    { !majtarif CheckBox
+      MoveScaled(1,1,21,3)
+      #Public = True
+      Text = ("Mise à jour des tarifs")
+      Value = CheckBox.True
+    }
+    { dtmaj CheckBox
+      MoveScaled(1,8,20,3)
+      Text = ("Date de mise à jour")
+    }
+    { dte TextReg
+      MoveScaled(2,13,19,4)
+      Enabled = False
+    }
+  }
+}

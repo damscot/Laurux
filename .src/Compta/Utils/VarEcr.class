@@ -37,7 +37,7 @@ Public Tbl As New TableLettrage
 
 Private $Vecr As New VarEcr[]
 
-  Public Sub _next() As VarEcr
+Public Sub _next() As VarEcr
 
   If Enum.Index = Null Then Enum.Index = -1
   Enum.Index += 1
@@ -59,9 +59,10 @@ Public Sub newTbl()
 
 End
 
-Public Sub plus(value As VarEcr)    ''Ajout d'une écriture au tableau
+Public Sub plus(value As VarEcr) As Integer    ''Ajout d'une écriture au tableau
 
   $Vecr.Add(value)
+  Return $Vecr.Max
 
 End
 

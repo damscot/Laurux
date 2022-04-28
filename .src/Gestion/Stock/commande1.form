@@ -1,0 +1,205 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,162,101)
+  Text = ("Entée des articles")
+  { TabStrip1 TabStrip
+    MoveScaled(1,18,160,73)
+    Count = 2
+    Index = 0
+    Text = ("Saisie")
+    Picture = Picture["Icones/Achat.png"]
+    { Panel2 Panel
+      MoveScaled(0,0,160,69)
+      Arrangement = Arrange.Vertical
+      { Panel3 Panel
+        MoveScaled(20,4,41,18)
+        Visible = False
+        Ignore = True
+      }
+    }
+    Index = 1
+    Text = ("Tarifs")
+    Picture = Picture["Icones/Remises.png"]
+    { Ptarif Panel
+      MoveScaled(0,0,160,69)
+      Expand = True
+      Arrangement = Arrange.Horizontal
+    }
+    Index = 0
+  }
+  { Panel1 Panel
+    MoveScaled(2,1,158,17)
+    { fcode TextReg
+      MoveScaled(14,1,16,3)
+    }
+    { RecFo Button
+      MoveScaled(31,1,5,3)
+      Picture = Picture["Icones/next_frame.png"]
+    }
+    { Label1 Label
+      MoveScaled(0,1,13,3)
+      Text = ("Fournisseur :")
+    }
+    { fo_nom Label
+      MoveScaled(38,1,35,3)
+      Border = Border.Plain
+    }
+    { Label3 Label
+      MoveScaled(93,1,13,3)
+      Text = ("N° commande : ")
+    }
+    { ncom TextReg
+      MoveScaled(107,1,25,3)
+    }
+    { Label4 Label
+      MoveScaled(93,5,11,3)
+      Text = ("N° BL :")
+    }
+    { nbl TextReg
+      MoveScaled(107,5,25,3)
+    }
+    { creation Button
+      MoveScaled(0,13,21,4)
+      Text = Shortcut(("Création Commande"), "C")
+      Picture = Picture["icon:/medium/add"]
+    }
+    { imprime Button
+      MoveScaled(21.7778,13,12,4)
+      Text = Shortcut(("Imprimer"), "I")
+      Picture = Picture["Icones/frameprint.png"]
+    }
+    { mail Button
+      MoveScaled(34.4444,13,10,4)
+      Text = Shortcut(("Mail"), "M")
+      Picture = Picture["Icones/mail_forward.png"]
+    }
+    { suppr Button
+      MoveScaled(45.4444,13,13,4)
+      Text = Shortcut(("Supprimer"), "S")
+      Picture = Picture["Icones/stock_trash_24.png"]
+    }
+    { ValideS Button
+      MoveScaled(59,13,21,4)
+      Text = Shortcut(("Enregistrer la saisie"), "E")
+      Picture = Picture["icon:/32/apply"]
+    }
+    { crecom Button
+      MoveScaled(133,1,13,3)
+      Text = ("Créer")
+      Picture = Picture["Icones/folder_new.png"]
+    }
+    { Label6 Label
+      MoveScaled(0,6,14,3)
+      Text = ("Commentaire")
+    }
+    { com TextArea
+      MoveScaled(14,5,63,6)
+    }
+    { rececp Button
+      MoveScaled(80.7778,13,22,4)
+      Text = Shortcut(("Valider les récetpions"), "r")
+      Picture = Picture["Icones/button_ok.png"]
+    }
+    { dte TextReg
+      MoveScaled(107,9,17,3)
+    }
+    { Label2 Label
+      MoveScaled(93,9,15,3)
+      Text = ("Date :")
+    }
+    { annul Button
+      MoveScaled(133.2222,13,12,4)
+      Text = ("Annuler")
+      Picture = Picture["Icones/cancel.png"]
+    }
+    { sortie Button
+      MoveScaled(146,13,12,4)
+      Text = ("Quitter")
+      Picture = Picture["Icones/exit.png"]
+    }
+    { Etarif Button
+      MoveScaled(103.2222,13,27,4)
+      Text = ("Enregistrer tous les tarifs")
+      Picture = Picture["Icones/filesave.png"]
+    }
+    { generer Button
+      MoveScaled(74,1,14,3)
+      Visible = False
+      Text = ("Générer       ")
+      Picture = Picture["icon:/32/exec"]
+    }
+    { tardt Button
+      MoveScaled(134,8,22,4)
+      Text = ("Tarif par date")
+      Picture = Picture["icon:/32/office"]
+    }
+  }
+  { Label5 Label
+    MoveScaled(122,92,21,3)
+    Text = ("Montant artilce HT :")
+  }
+  { Label7 Label
+    MoveScaled(1,96,13,2.7778)
+    Text = ("Frais :")
+  }
+  { Label8 Label
+    MoveScaled(122,98,21,3)
+    Text = ("Montant TTC :")
+  }
+  { totaht TextReg
+    MoveScaled(145,92,16,2.7778)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { totfrais TextReg
+    MoveScaled(13,96,16,2.7778)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { totttc TextReg
+    MoveScaled(145,98,16,2.7778)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { Label9 Label
+    MoveScaled(1,92,11,3)
+    Text = ("Quantité : ")
+  }
+  { Qtes TextReg
+    MoveScaled(13,92,16,2.7778)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { Label10 Label
+    MoveScaled(122,95,21,3)
+    Text = ("Montant HT :")
+  }
+  { totht TextReg
+    MoveScaled(145,95,16,2.7778)
+    Enabled = False
+    Alignment = Align.Right
+  }
+  { Panel4 Panel
+    MoveScaled(35,92,80,8)
+    Background = Color.LightBackground
+    { stmini TextLabel
+      MoveScaled(1,1,22,2.2222)
+    }
+    { stmax TextLabel
+      MoveScaled(27,1,23,2.2222)
+    }
+    { comin TextLabel
+      MoveScaled(51,1,28,2.2222)
+    }
+    { stk TextLabel
+      MoveScaled(1,5,22,2)
+    }
+    { qtecom TextLabel
+      MoveScaled(49,5,31,2)
+    }
+    { Encom TextLabel
+      MoveScaled(25,5,23,2.2222)
+    }
+  }
+}

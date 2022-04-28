@@ -1,0 +1,254 @@
+' Gambas class file
+
+Public chain As New Chainage(Null)
+Public valide As Boolean = True              ''Prend la valeur false lorsque le contenu d'un controle change
+Public MonControle As New Collection        ''On stock les objets (TextReg,boutons, labels ...)
+Public Panel1 As Panel
+Public prx As New LPrix
+Public txl As New LTaxe
+Public arrondi As Variant
+Public Ind As Integer                        ''Indexe de la ligne
+Public AutresObj As Variant[]            ''On stock les objets associés à la ligne de saisie (Tarifs, consignes ....)
+
+Private $coul As Integer = Color.white
+Private $Height As Integer
+Private $prop As ObjProp[]
+Private $etat As Integer
+Private $dernier As String                   ''Nom du dernier control pour le retour à la ligne
+Private $tag As Variant
+
+Event RetLigne(etat As Integer)    ''retour ligne + création si besoin
+Event SupLig(etat As Integer)          ''Suprime 1 ligne
+Event InsLig(etat As Integer)            ''Insert 1 ligne
+Event Haut(etat As Integer)              ''Deplace 1 ligne vers le haut
+Event Bas(etat As Integer)                 ''Deplace 1 ligne vers le bas
+Event GotFocus(Data As Sailig)
+Event LostFocus(Data As Sailig)
+Event ctrl(Value As Integer)            ''Combinaison de touche ctrl + code ascii
+Event alt(Value As Integer)            ''combinaison de touche alt + code ascii
+
+Property Background As Integer
+Property X As Integer
+Property Y As Integer
+Property Dernier As String                ''Nom du dernier control pour le retour à la ligne
+Property Tag As Variant
+
+Public Enum lecture, ecriture, reception
+
+
+Public Sub _new(Optional prop As ObjProp[], parent As Control, etat As Integer = ecriture)
+
+  Dim obj As ObjProp
+  Dim clas As Object
+  Dim obs As Observer
+  
+  $prop = prop
+  Panel1 = New Panel(parent)
+  Panel1.Font = parent.Font
+  Panel1.W = parent.W
+  Panel1.H = parent.Font.H + 4
+  Panel1.Arrangement = Arrange.Horizontal
+  obs = New Observer(Panel1) As "groupe"
+  
+  $etat = etat
+  For Each obj In prop
+    Select Case obj.TypeClass
+
+      Case ObjProp.TextBox
+        clas = New TextBox(Panel1) 
+        obs = New Observer(clas) As "groupe"
+        chain.add(clas)
+      Case ObjProp.TextReg
+        clas = New TextReg(Panel1) 
+        obs = New Observer(clas) As "groupe"
+        chain.add([clas])
+      Case ObjProp.Label
+        clas = New Label(Panel1)
+      Case ObjProp.Button 
+        clas = New Button(Panel1) 
+        obs = New Observer(clas) As "groupe"
+      Case ObjProp.TextLabel
+        clas = New TextLabel(Panel1)
+        obs = New Observer(clas) As "groupe"
+    End Select
+    If $etat = lecture Then Try clas.enabled = False
+    clas.name = obj.NomControl
+    obj.AppProp(clas)
+    clas.show
+    If clas.H = 0 And clas.W = 0 Then clas.expand = True
+    MonControle.Add(clas, obj.NomControl)
+  Next
+  If Not $dernier Then $dernier = MonControle[MonControle.Last].name
+  MonControle[MonControle.First].setfocus
+  
+End
+
+Public Sub Delete()
+
+  Dim obj As Variant
+  
+  chain.tableaux.Clear
+  If Not IsNull(AutresObj) Then
+     ' For Each obj In AutresObj
+     '   Try obj.Close    
+     ' Next
+    AutresObj.Clear
+  Endif
+  ' For Each obj In Panel1.Children
+  '   Try obj.Delete
+  ' Next
+  MonControle.Clear
+  Panel1.Delete
+
+End
+
+Public Sub groupe_lostfocus()
+
+  Raise LostFocus(Me)
+  
+End
+
+Public Sub groupe_change()
+
+  valide = False
+
+End
+
+Public Sub groupe_gotfocus()
+
+  Raise GotFocus(Me)
+  
+End
+
+Public Sub groupe_keypress()
+
+  Dim kctrl As Boolean = Key.Control
+  Dim kalt As Boolean = Key.Alt 
+  Dim ok As Boolean
+  Dim obj As Object
+  
+  If kctrl Then
+    ok = Raise ctrl(Key.Code)
+    If ok Then Return
+  Endif
+  If kalt Then 
+    ok = Raise alt(Key.Code)
+    If ok Then Return
+  Endif
+  
+  Select Case Key.Code
+    Case Key.Enter, Key.Return
+      If kctrl Then
+        ok = Raise RetLigne($etat)
+        If ok Then Stop Event
+      Else
+        If Last.name = $dernier Then 
+          ok = Raise RetLigne($etat)
+          If ok Then Stop Event
+        Endif
+      Endif
+    
+    Case Key.Tab
+       If Last.name = $dernier Then 
+        ok = Raise RetLigne($etat)
+        If ok Then Stop Event
+      Endif
+      
+    Case Key.Insert
+      If $etat = ecriture Then 
+        ok = Raise InsLig($etat)
+        If ok Then Stop Event
+      Endif
+      
+    Case Key.Delete
+      If $etat = ecriture Then 
+        ok = Raise SupLig($etat)
+        If ok Then Stop Event
+      Endif
+      
+    Case Key.Up
+      If kalt Then 
+        If $etat = ecriture Then Raise haut($etat)
+        Stop Event
+      Endif
+      
+    Case Key.Down
+      If kalt Then 
+        If $etat = ecriture Then Raise Bas($etat)
+        Stop Event
+        Return
+      Else
+        If Last.name = $dernier Then 
+          ok = Raise RetLigne($etat)
+          If ok Then Stop Event
+        Endif
+      Endif
+  End Select
+  
+End
+
+Private Function Background_Read() As Integer
+
+  Return $coul
+
+End
+
+Private Sub Background_Write(Value As Integer)
+
+  Dim obj As Object
+  
+  $coul = value
+  For Each obj In MonControle
+    obj.Background = Value
+  Next
+  Panel1.Background = value
+
+End
+
+Private Function X_Read() As Integer
+
+  Return Panel1.X
+
+End
+
+Private Sub X_Write(Value As Integer)
+
+  Panel1.X = value
+
+End
+
+Private Function Y_Read() As Integer
+
+  Return Panel1.Y
+
+End
+
+Private Sub Y_Write(Value As Integer)
+
+  Panel1.Y = value
+
+End
+
+Private Function Dernier_Read() As String
+
+  Return $dernier
+
+End
+
+Private Sub Dernier_Write(Value As String)
+
+  $dernier = value
+
+End
+
+Private Function Tag_Read() As Variant
+
+  Return $tag
+
+End
+
+Private Sub Tag_Write(Value As Variant)
+
+  $tag = Value
+
+End
