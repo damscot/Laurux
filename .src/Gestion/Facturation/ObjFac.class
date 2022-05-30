@@ -883,7 +883,7 @@ Public Sub CopieGedFac()
     If IsNull(lg)
       lg = New LGed(Null, 0, LGed.Clients, orig, code, $numcli)
     Endif
-    lg.DTE = $dteech
+    lg.DTE = $dtedoc
     lg.TTC = LPrix(montttc)
     lg.HT = LPrix(montht)
     'On copie sur le disque le document autand de fois qu'il est produit (grace à la date), mais on conserve le dernier pointeur dans la table GED.
