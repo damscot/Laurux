@@ -178,8 +178,8 @@ Public Sub nreg_LostFocus()
       valide.Tooltip = "Validation des écritures modifiées et ajoutées"
       edite.Tooltip = "Édition des nouvelles écritures"
     Endif
-    If $typ = VarEcr.caisse Then Return
     $Lecr = New VarEcr
+    If $typ = VarEcr.caisse Then Return
     'on garni le bordereau si besoin
     If $resreg!bordereaux Then
       res = Utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE compte=&1 AND lettree<>True", $resreg!cptint)
