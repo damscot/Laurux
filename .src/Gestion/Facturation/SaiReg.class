@@ -946,6 +946,8 @@ Public Sub vldsaisie_Click()
   Dim tot As Float
   Dim choix As Integer
   Dim pb As ProgBar
+  Dim imp As Report
+  Dim prt As New Printer
   
   If borderaux.Rows.Count = 0 Then Return
   pb = New ProgBar("Validation de la saisie", $Lecr.nb())
@@ -956,7 +958,8 @@ Public Sub vldsaisie_Click()
       Case VarEcr.L_valide
         Continue
       Case Else
-        ereg = New EcrReg($resjou!code_jo, var, nreg.Text)
+        ereg = New EcrReg(nreg.Text, $resjou!code_jo, var)
+        ereg.Imp = imp
         If ereg.ecriture() Then
           Message.Error("Impossible de valider cette écriture" & var.compte & " " & var.libelle)
         Else
@@ -965,11 +968,19 @@ Public Sub vldsaisie_Click()
             Raise RegCaisse(var.montantc - var.montantd, $resreg!caisse, $ntk, var.numdoc)
             tot += var.montantc - var.montantd
           Endif
+          imp = ereg.Imp 
+          imp = ereg.Impression(imp)
         Endif
         
     End Select
   Next
   pb.Close
+  If Object.IsValid(imp) Then
+    imp = ereg.FinImp(imp)
+    prt.OutputFile = User.Home & "/tmp/EcrReg.pdf"
+    imp.Print(prt)
+    Visualiseur.Prog(prt.OutputFile)
+  Endif
   
   Raise RegCaisse(tot, Mreglement.sans_caisse, $ntk, var.numdoc)
   $modif = False
@@ -983,6 +994,8 @@ Public Sub vldbordereau_Click()
   
   Dim ereg As EcrReg
   Dim pb As ProgBar
+  Dim imp As Report
+  Dim prt As New Printer
   
   If borderaux.Rows.Count = 0 Then Return
 
@@ -990,11 +1003,20 @@ Public Sub vldbordereau_Click()
   pb.Show
   $Lecr.etat = VarEcr.L_valide
   $Lecr.type = VarEcr.Treso
+  $Lecr.dte = LDate(Now)
   
   pb.Avancement("Validation")
-  ereg = New EcrReg($resjou!code_jo, $Lecr, $resreg!code)
+  ereg = New EcrReg($resreg!code, $resjou!code_jo, $Lecr)
   If ereg.ecriture() Then
     Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
+  Endif
+  imp = ereg.Imp
+  imp = ereg.Impression(imp)
+  If Object.IsValid(imp) Then
+    imp = ereg.FinImp(imp)
+    prt.OutputFile = User.Home & "/tmp/EcrReg.pdf"
+    imp.Print(prt)
+    Visualiseur.Prog(prt.OutputFile)
   Endif
   $modif = False
   mabl
@@ -1002,6 +1024,22 @@ Public Sub vldbordereau_Click()
   pb.Close
   
 End
+
+Private Sub impecr(ereg As EcrReg)
+  
+  Dim imp As Report
+  Dim prt As New Printer
+  
+  imp = ereg.Imp
+  imp = ereg.Impression(imp)
+  If Object.IsValid(imp) Then
+    prt.OutputFile = User.Home & "/tmp/EcrReg.pdf"
+    imp.Print(prt)
+    Visualiseur.Prog(prt.OutputFile)
+  Endif
+  
+End
+
 'editions
 
 Public Sub editions_Click()
