@@ -42,6 +42,7 @@ Event ReDim(w As Integer)
 Event keyPress()
 Event Raz()
 Event Data(id As String, key As String, Data As _Gridview_Data)
+Event Activate(Bval As Variant)
 
 Property NoUp As Boolean 
 
@@ -365,6 +366,7 @@ End
 Public Sub Refresh_Data()
 
   coltri.Refresh()
+  Wait 0.001
 
 End
 
@@ -402,7 +404,6 @@ Public Sub Coltri_Click()
   Dim i As Integer
   
   If coltri.row = -1 Then Return
-  colret.Clear
   For i = 0 To Col_Order.Max
     If Col_Def[Col_Order[i]].cle Then
       colret.Add(coltri[coltri.Row, i].Text, Col_Def[Col_Order[i]].name)
@@ -483,7 +484,27 @@ Public Sub Coltri_Scroll()
   
 End
 
+Public Sub Coltri_Activate()
 
+  Dim cle As String
+  Dim colret As New Collection
+  Dim ok As Boolean
+  Dim i As Integer
+  
+  If coltri.row = -1 Then Return
+  For i = 0 To Col_Order.Max
+    If Col_Def[Col_Order[i]].cle Then
+      colret.Add(coltri[coltri.Row, i].Text, Col_Def[Col_Order[i]].name)
+      ok = True
+    Endif
+  Next
+  If ok Then
+    Raise Activate(colret)
+  Else
+    Raise Activate(coltri[coltri.row, 0].Text)
+  Endif
+  
+End
 
 Public Sub Descendre_Click()
 
@@ -637,6 +658,8 @@ Public Sub DB_Incr()
     If Res.count <> 0 Then
         Coltri.rows.Count = Res.count
     End If
+  Else
+    Coltri.rows.Count = 0
   End If
   Coltri.Refresh
 
