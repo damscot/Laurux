@@ -37,7 +37,7 @@ Public Sub _new(Optional lig As SaiLig)
   If Not $resart.Available Then Return
 
   obs = New Observer(lig.prx) As "LPrixAchat"
-  dte.Dat = True
+  dte.Type = TextReg.EstDate
   dte.dte.G = Now
   $MajTar[IgnoreTarif] = True
   $MajTar[DateTarif] = Null
@@ -132,7 +132,7 @@ Private Sub cre1(res As Result, t1 As Integer, t2 As Integer, t3 As Integer, t4 
   Dim obj As ObjProp
   
   obj = New ObjProp($resart.Fields["art_prvt"], "Px_Rev_Ar")
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Enabled", False)
   obj.AddChamp("nbdec", $resart!art_nbd)
   obj.AddChamp("Alignment", Align.Right)
@@ -149,7 +149,7 @@ Private Sub cre1(res As Result, t1 As Integer, t2 As Integer, t3 As Integer, t4 
   $prop.Add(obj)
   
   obj = New ObjProp(Null, "Px_HT_Ar")
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
    obj.AddChamp("Enabled", False)
   obj.AddChamp("Alignment", Align.Right)
   obj.AddChamp("nbdec", $resart!art_nbd)
@@ -158,7 +158,7 @@ Private Sub cre1(res As Result, t1 As Integer, t2 As Integer, t3 As Integer, t4 
   $prop.Add(obj)
   
   obj = New ObjProp(Null, "Px_TTC_Ar")
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Enabled", False)
   obj.AddChamp("nbdec", $resart!art_nbd)
   obj.AddChamp("Alignment", Align.Right)
@@ -173,7 +173,7 @@ Private Sub cre2(res As Result, t1 As Integer, t2 As Integer, t3 As Integer, t4 
   Dim obj As ObjProp
   
    obj = New ObjProp($resart.Fields["art_prvt"], "Px_Rev")
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Enabled", False)
   obj.AddChamp("nbdec", $resart!art_nbd)
   obj.AddChamp("Alignment", Align.Right)
@@ -189,7 +189,7 @@ Private Sub cre2(res As Result, t1 As Integer, t2 As Integer, t3 As Integer, t4 
   $prop.Add(obj)
   
   obj = New ObjProp(Null, "Px_HT")
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Alignment", Align.Right)
   obj.AddChamp("nbdec", $resart!art_nbd)
   obj.Height = Me.Font.H + 4
@@ -197,7 +197,7 @@ Private Sub cre2(res As Result, t1 As Integer, t2 As Integer, t3 As Integer, t4 
   $prop.Add(obj)
   
   obj = New ObjProp(Null, "Px_TTC")
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("nbdec", $resart!art_nbd)
   obj.AddChamp("Alignment", Align.Right)
   obj.Height = Me.Font.H + 4

@@ -267,7 +267,7 @@ Public Sub Button2_Click()
         pbht = LigResult!pbht
         rm = LigResult!rm
         paht = LigResult!paht
-        totht = Format$(Val(paht) * Val(qte), "0.00")
+        totht = Format$(paht * Val(qte), "0.00")
         Totcom = Format$(Val(Totcom) + Val(Totht), " 0.00")
         Inc p
         pdf.level3(code, intitule, qte, pbht, rm, paht, totht, False, "", PosY)

@@ -208,12 +208,7 @@ Public Sub butb_gotfocus()
   $text = Me.Editor.Text
   $textesc = Me.Editor.Text
   affwin()
-    If Object.IsValid($objp) Then $win = New Window($objp) As "win" Else $win = New Window(Me) As "win"
-    If $y = -1 Then $win.Y = Me.y Else $win.Y = $y
-'    $win.Background = Color.Black
-'    $win.AutoResize = True
- '   $grd.AutoResize = True
-  
+
 End
 
 Public Sub butb_lostfocus()

@@ -4,7 +4,7 @@ Private $restar As Result
 
 Public Sub _new(Optional four As String)
 
-  date.Dat = True
+  date.Type = TextReg.EstDate
   date.dte.g = Now
   fournisseur.Text = four
   fournisseur_LostFocus()
@@ -189,7 +189,7 @@ Public Sub EnrTouTar(rResult As Result)            ''Enregistre tous les tarifs 
       If res.Available Then
         restva = Utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva = &1", res!art_tva)
         lp = New LPrix(rResult!pxrev, 1, res!art_cdarr)
-        lt = New LTaxe((rResult!temp_coef - 1) * -1, LTaxe.Remise)
+        lt = New LTaxe(Str((rResult!temp_coef - 1) * -100) & "%", LTaxe.Remise)
         lp.add_taxe(lt)
         lt = New LTaxe(restva!taux_tva & "%", LTaxe.TVA)
         lp.add_taxe(lt)
@@ -211,7 +211,7 @@ Public Sub EnrTouTar(rResult As Result)            ''Enregistre tous les tarifs 
       Case GesTar.TarGen
         res = Utils.db.Edit("Fiches_Art", "art_code = &1", rResult!art)
         If res.Available Then
-          lt = New LTaxe((rResult!temp_coef - 1) * -1, LTaxe.Remise)
+          lt = New LTaxe(Str((rResult!temp_coef - 1) * -100) & "%", LTaxe.Remise)
           lp.add_taxe(lt)
           res!art_pvht = lp.PuNHT.G
           res!art_pvttc = lp.PuNTC.G

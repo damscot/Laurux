@@ -1,57 +1,247 @@
 ' Gambas class file
 
 Public Bsel As Boolean = False
-Public Bval As String = ""
+Public Bval As Variant = ""
 
+Private $four As String
+Private $trfo As TriGen
+Private $trbr As TriGen
+Private $colfour As Collection
+Private $colbr As Collection
+Private $selfo As New Variant[]
+Private $listbr As New Collection
+Private $Apdf As Boolean
+Private $ht As Float
+Private $ttc As Float
 
 Public Sub _new()
 
   Dim res As Result
-  
-  ' lesfour.Columns.Count = 5
-  ' lesfour.Columns[0].Text = "Sel"
-  ' lesfour.Columns[0].Width = lesfour.Width / 20
-  ' lesfour.Columns[1].Text = "Code"
-  ' lesfour.Columns[1].Width = lesfour.Width / 6
-  ' lesfour.Columns[2].Text = "Nom"
-  ' lesfour.Columns[2].Expand = True
-  ' lesfour.Columns[3].Text = "Total HT"
-  ' lesfour.Columns[3].Width = lesfour.Width / 6
-  ' lesfour.Columns[4].Text = "Total TTC"
-  ' lesfour.Columns[4].Width = lesfour.Width / 6
-  
-  lesbr.Columns.Count = 5
-  lesbr.Columns[0].Text = "Sel"
-  lesbr.Columns[0].Width = lesbr.Width / 20
-  lesbr.Columns[1].Text = "N° BR"
-  lesbr.Columns[1].Expand = True
-  lesbr.Columns[2].Text = "Date"
-  lesbr.Columns[2].Width = lesbr.Width / 6
-  lesbr.Columns[3].Text = "Montant HT"
-  lesbr.Columns[3].Width = lesbr.Width / 6
-  lesbr.Columns[4].Text = "Montant TTC"
-  lesbr.Columns[4].Width = lesbr.Width / 6
-
-End
-
-Public Sub form_Open()
-
-  Dim col As Collection
   Dim f As ObjProp
-  Dim Req As String
-  Dim Res As Result
+  Dim ch As Chainage
   Dim k As String
+  Dim req As String
+  Dim lg As Float
+  Dim libel_var As LVar
   
+  res = Utils.db.Exec("SELECT four,fo_nom,0 AS montantht,0 AS montantttc FROM Fiches_Entrecpt JOIN Fiches_Four ON fo_code=four WHERE validee = '0' LIMIT 1")
+  $colfour = New Collection
   
+  k = "----Code-----"
+  f = New ObjProp(res.Fields["four"], k)
+  $colfour.Add(f, k)
+  
+  k = "--------------------intitulé------------------"
+  f = New ObjProp(res.Fields["fo_nom"], k)
+  f.tri = True
+  $colfour.Add(f, k)
+  
+  k = "Montant HT"
+  f = New ObjProp(res.Fields["montantht"], k)
+  f.AddChamp("Alignment", Align.Right, "0.00")
+  $colfour.Add(f, k)
+  
+  k = "Montant TTC"
+  f = New ObjProp(res.Fields["montantttc"], k)
+  f.AddChamp("Alignment", Align.Right, "0.00")
+  $colfour.Add(f, k)
+  
+  req = "SELECT four,fo_nom,SUM(montant) AS montantht,SUM(mttc) AS montantttc FROM Fiches_Entrecpt JOIN Fiches_Four ON fo_code=four"
+  $trfo = New TriGen(lesfour, $colfour, res, req, Me.Font.Height + 2, Me) As "TriFou"
+  $trfo.ExtraSel(" validee= 0", " AND ")
+  $trfo.GroupBy("group by four,fo_nom ")
+  $trfo.Show
+  lg = (Me.w - lesfour.W) / 2
+  lesfour.X = lg
+  
+  $colbr = New Collection
+  res = Utils.db.Exec("SELECT * FROM Fiches_Entrecpt LIMIT 1")
+  k = "-N° BR-"
+  f = New ObjProp(res.Fields["numrecpt"], k)
+  f.cle = True
+  $colbr.Add(f, k)
+  
+  k = "--Date--"
+  f = New ObjProp(res.Fields["ddate"], k)
+  f.tri = True
+  f.cle = True
+  f.AddChamp("Alignment", Align.Center, "dd.mm.yyyy")
+  $colbr.Add(f, k)
+  
+  k = "Montant HT"
+  f = New ObjProp(res.Fields["montant"], k)
+  f.AddChamp("Alignment", Align.Right, "0.00")
+  $colbr.Add(f, k)
+  
+  k = "Montant TTC"
+  f = New ObjProp(res.Fields["mttc"], k)
+  f.AddChamp("Alignment", Align.Right, "0.00")
+  $colbr.Add(f, k)
+  
+  req = "SELECT * FROM Fiches_Entrecpt "
+  res = Utils.db.Exec(req & "LIMIT 1")
+  $trbr = New TriGen(lesbr, $colbr, res, req, lesbr.Font.Height + 2, Me) As "TriBr"
+  $trbr.ExtraSel("four = ''", "AND")
+  $trbr.Show
+  
+  lg = (lesfour.W - lesbr.w) / 2
+  lesbr.X = lesfour.X + lg
+  
+  datej.Type = TextReg.EstDate
+  res = Utils.db.Exec("SELECT * FROM Fiches_Comptes, Fiches_Entrecpt,Fiches_Four LIMIT 1")
+  libel_var = New LVar(libel, Null, "")
+  libel_var.AddDate(LDate(datej.Text))
+  libel_var.ParseResult(res)
+  libel_var.AddDate(datej.dte)
+  libel.reg = TextReg.all
+  
+End
+
+Public Sub TriFou_majsel(Value As Variant)
+  
+  Dim i As Integer
+
+  Panel1.Enabled = False
+  i = $selfo.Find(Value)
+  If i > -1 Then
+    $selfo.Remove(i)
+    selall(Value)
+    $four = ""
+    $trbr.ExtraSel("numrecpt='' ", "AND")
+  Else
+    $selfo.Add(Value)
+    selall(Value)
+    $four = Value
+  Endif
+  Stop Event
+  $trfo.Update
+  $trbr.Update
+  Bsel = False
+  Bval = ""
 
 End
 
-Public Sub Ecritures(etat As Integer, dte As LDate, num As String, four As String, m As Integer)
+Public Sub TriFou_data(id As String, key As String, Data As _Gridview_Data)
+  
+  Dim col As Collection
+  Dim ht, ttc As Float
+  Dim s As Float[]
+  
+  If $selfo.Exist(id) Then
+    Data.Background = Color.SelectedBackground
+    Stop Event
+  Endif
+  If $listbr.Exist(id) Then
+    col = $listbr[id]
+    For Each s In col
+      ht += s[0]
+      ttc += s[1]
+    Next
+    If key = "Montant HT" Then 
+      Data.Text = Format(ht, "0.00")
+      Data.Alignment = Align.Right
+    Endif
+    If key = "Montant TTC" Then 
+      Data.Text = Format(ttc, "0.00")
+      Data.Alignment = Align.Right
+    Endif
+  Endif
+
+End
+
+Public Sub TriBr_majsel(value As Variant)
+
+  Dim i As Float
+  Dim sel As Collection
+  Dim key As String
+
+  If Not $four Then Return
+  sel = $listbr[$four]
+  key = Value[Value.first]
+  If sel.Exist(key) Then
+    sel.Remove(key)
+  Else
+    sel.Add([0, 0, LDate(value["ddate"]).G], key)
+  Endif
+  $listbr[$four] = sel
+  Stop Event
+  $trbr.Update
+  $trfo.Update
+  Bsel = False
+  Bval = Null
+
+End
+
+Public Sub TriBr_data(id As String, key As String, Data As _Gridview_Data)
+
+  If $four And If $listbr[$four].Exist(id) Then
+    Data.Background = Color.SelectedBackground
+    If key = "Montant HT" Then 
+      $listbr[$four][id][0] = Data.Text
+      Data.Alignment = Align.Right
+    Endif
+    If key = "Montant TTC" Then 
+      $listbr[$four][id][1] = Data.Text
+      Data.Alignment = Align.Right
+    Endif
+    Stop Event
+  Endif
+
+End
+
+Public Sub TriBr_Activate(Value As Variant)
+
+  Dim ach As Commande1
+  Dim etat As Integer
+  
+  If Valid.Value Then
+    etat = Achat.Validee
+  Else
+    etat = Achat.Reception
+  Endif
+  ach = New Commande1(Null, Value["numrecpt"], $four, LDate(Value["ddate"]), etat)
+  ach.Show
+  
+End
+
+Private Sub selall(Value As Variant)
+  
+  Dim res As Result
+  Dim col As Collection
+  
+ 
+  If br.Value Then
+    $trbr.ExtraSel(Utils.db.Subst("four = &1 AND validee = &2 ", Value, 0), "AND")
+  Endif
+  If brval.Value Then
+    $trbr.ExtraSel(Utils.db.Subst("four = &1 AND (validee = &2 OR validee =&3) ", Value, 0, 2), "AND")
+  Endif
+  If Valid.Value Then
+    $trbr.ExtraSel(Utils.db.Subst("four = &1 AND validee = &2", Value, 2), "AND")
+  Endif
+  If Not $listbr.Exist(Value) Then $listbr.Add(Null, Value)
+  col = $listbr[Value]
+  If IsNull(col) Then
+    col = New Collection
+    res = $trbr.GetAllFiltered()
+    Repeat
+      col.Add([res!montant, res!mttc, res!ddate], res!numrecpt)
+    Until res.MoveNext()
+    $listbr[Value] = col
+  Endif
+  $trbr.Update()
+  
+End
+
+'Validation et génération des écritures
+Public Sub Ecritures(dteecr As LDate, dtebon As LDate, num As String, four As String, m As Integer, ht As Float, ttc As Float)    ''on valide 1 br depuis les achats
 
   Dim vecr As VarEcr
   Dim compta As Boolean
   Dim res As Result
   Dim Ecr As EcrAuto
+  Dim imp As Report
+  Dim prt As New Printer
   
   Select Case m
     Case 1
@@ -60,18 +250,120 @@ Public Sub Ecritures(etat As Integer, dte As LDate, num As String, four As Strin
       compta = True
   End Select
   vecr = New VarEcr
-  vecr = ValideSaisie(etat, dte, num, four, vecr, compta)
+  vecr = ValideSaisie(dteecr, dtebon, num, four, vecr, compta)
   If m = 2 Then
     res = Utils.db.Exec("SELECT jrnal5 FROM Fiches_Parametres")
     If res.Available Then
       Ecr = New EcrAuto(res!jrnal5, vecr)
       If Ecr.ecriture() Then Return
+      If $Apdf And Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminC"] Then
+      Endif
+      imp = Ecr.Imp
+      imp = Ecr.Impression(imp)
+      If Object.IsValid(imp) Then
+        prt.OutputFile = User.Home & "/tmp/EcrBr.pdf"
+        imp.Print(prt)
+        Visualiseur.Prog(prt.OutputFile)
+      Endif
     Endif
   Endif
+  scanged(compta, ecr, num, four, ht, ttc)
 
 End
 
-Private Sub ValideSaisie(etat As Integer, dte As LDate, num As String, four As String, vecr As VarEcr, compta As Boolean) As VarEcr           ''Valide 1 saisie avec ou sans passage en compta
+Private Sub valide(compta As Boolean)
+  
+  Dim imp As Report
+  Dim brfo As Variant[]
+  Dim fo As String
+  Dim vecr As VarEcr
+  Dim ecr As EcrAuto
+  Dim res As Result
+  Dim pg As ProgBar
+  
+  pg = New ProgBar("Validation des réceptions", $selfo.Count, Null, True)
+  pg.Show
+  For Each fo In $selfo
+    If pg.Avancement() Then
+      validefin(pg, imp, ecr)
+      Return
+    Endif
+    vecr = New VarEcr
+    $ht = 0
+    $ttc = 0
+    For Each brfo In $listbr[fo]
+      vecr = ValideSaisie(datej.dte, LDate(brfo[2]), $listbr[fo].Key, fo, vecr, compta)
+    Next
+    res = Utils.db.Exec("SELECT jrnal5 FROM Fiches_Parametres")
+    If res.Available And compta Then
+      Ecr = New EcrAuto(res!jrnal5, vecr)
+      ecr.Imp = imp
+      If Ecr.ecriture() Then 
+        validefin(pg, imp, ecr)
+        Return
+      Endif
+      imp = ecr.Imp       'on recupere l'écriture d'od
+      imp = ecr.Impression(imp)
+    Endif
+    scanged(compta, ecr, $listbr[fo].Key, fo, $ht, $ttc)
+  Next
+  validefin(pg, imp, ecr)
+  
+End
+
+Private Sub validefin(pg As ProgBar, imp As Report, ecr As EcrAuto)
+  
+  Dim prt As New Printer
+  
+  If Object.IsValid(imp) Then
+    imp = ecr.FinImp(imp)
+    prt.OutputFile = User.Home & "/tmp/EcrBr.pdf"
+    imp.Print(prt)
+    Visualiseur.Prog(prt.OutputFile)
+  Endif
+  pg.Close
+  $trfo.Update
+  $trbr.Update
+  
+End
+
+Private Sub scanged(compta As Boolean, Ecr As EcrAuto, num As String, four As String, ht As Float, ttc As Float)
+  
+  Dim cancel As Integer
+  Dim hForm As LGed
+  Dim rResult As Result
+  
+  If Start.LocalSettings["/Soc" & Start.Societe & "/Ged"] And $Apdf Then
+    Select Case Message.Question("Que souhaitez vous faire ?", "GED (scan facture)", "Sortir")
+      Case 1
+        'En cas d'ecriture comptable on enregistre également le document avec le code de l'ecriture dans les documents comptables
+        If compta Then
+          hForm = New LGed(Null, 0, LGed.Comptabilite, "Facture", Ecr.numecr, four)
+        Else
+          hForm = New LGed(Null, 0, LGed.Fournisseurs, "Facture", Num, four)
+        Endif
+        'Add Tags from Fournisseur
+        rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & four)
+        If rResult.Available Then
+          hForm.AddTags(LGed.String2Array(rResult!tag_def))
+        Endif
+        hForm.AddTag(four)
+        If compta Then
+          hForm.AddTag("BR" & Num)
+        Endif
+        hForm.TTC = LPrix(ht)
+        hForm.HT = LPrix(ttc)
+        hForm.DTE = Datej.dte
+        cancel = hForm.ShowModal()
+        If cancel Then
+          hForm.Delete()
+        Endif
+    End Select
+  Endif
+  
+End
+
+Private Sub ValideSaisie(dteecr As LDate, dtebon As LDate, num As String, four As String, vecr As VarEcr, compta As Boolean) As VarEcr           ''Valide 1 saisie avec ou sans passage en compta
 
   Dim resent, reslig, resfo, respar, res As Result
   Dim vr As VarEcr
@@ -80,24 +372,42 @@ Private Sub ValideSaisie(etat As Integer, dte As LDate, num As String, four As S
   Dim id As Integer
   Dim exo As Boolean
   Dim opt As String = Utils.Option()
+  Dim cmpt As Result
+  Dim libel_var As LVar
+  Dim libel_def As String
+  Dim localvars As Collection
   
-  If etat <> Achat.Reception Then Return
-  res = Utils.db.Exec("SELECT fo_exo FROM Fiches_Four WHERE fo_code = &1", four)
-  If res.Available Then exo = res!fo_exo
-  resent = Utils.db.Edit("Fiches_Entrecpt", "four = &1 AND numrecpt = &2 AND ddate = &3", four, num, dte.DT)
+  res = Utils.db.Exec("SELECT fo_exo,fo_copie,libel_def FROM Fiches_Four WHERE fo_code = &1", four)
+  If res.Available Then
+    exo = res!fo_exo
+    $Apdf = res!fo_copie
+  Endif
+  resent = Utils.db.Edit("Fiches_Entrecpt", "four = &1 AND numrecpt = &2 AND ddate = &3", four, num, dtebon.DT)
   If resent.Available Then
-    reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE four = &1 AND numrecpt = &2 AND daterecpt = &3", four, num, dte.DT)
+    $ht += resent!montant
+    $ttc += resent!mttc
+    
+    libel_def = "Réception n° " & num & " du " & dteecr.L
+    libel_var = New LVar(Null, Null, libel_def)
+    libel_var.AddDate(datej.dte)
+    cmpt = Utils.db.Exec("SELECT * FROM Fiches_Entrecpt LEFT JOIN Fiches_Comptes ON four = compte_cc LEFT JOIN Fiches_Four ON fo_code = four WHERE four=&1 AND numrecpt = &2 AND ddate = &3", four, num, dtebon.DT)
+    libel_var.ParseResult(cmpt)
+    If libel.Text Then libel_def = libel.Text
+    If cmpt!libel_def Then libel_def = cmpt!libel_def
+    libel_def = libel_var.Evaluate(libel_def)
+    libel_def = Left(libel_def, 50)
+    
+    reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt LEFT JOIN Fiches_Comptes ON four = compte_cc WHERE four = &1 AND numrecpt = &2 AND daterecpt = &3", four, num, dtebon.DT)
     If reslig.Available And compta Then
       vecr.numdoc = num
-      vecr.dte = dte
+      vecr.dte = dteecr
       vecr.compte = four
       vecr.numdoc = num
       vecr.numlot = num
-      vecr.dte = dte
-      vecr.libelle = "Réception n° " & vecr.numdoc & " du " & vecr.dte.L
+      vecr.libelle = libel_def
+      vecr.intitul = reslig!intitule_cc
       Repeat
-        res = Utils.db.Exec("SELECT * FROM Fiches_Art LEFT JOIN Fiches_Fam ON art_fam=code_fam LEFT JOIN Fiches_Tvaac ON code_tva=cdtva_fam JOIN Fiches_Comptes ON compte_cc=compt3_fam WHERE art_code=&1", reslig!code)
-        vecr.intitul = res!intitule_cc
+        res = Utils.db.Exec("SELECT * FROM Fiches_Art LEFT JOIN Fiches_Fam ON art_fam=code_fam LEFT JOIN Fiches_Tvaac ON code_tva=cdtva_fam  WHERE art_code=&1", reslig!code)
         lpx = New Consigne(reslig!prvt, reslig!qte)
         vecr = ajouligne(vecr, lpx.TotNHT.G, res!compt3_fam)
         If Not exo Then
@@ -111,8 +421,8 @@ Private Sub ValideSaisie(etat As Integer, dte As LDate, num As String, four As S
             lpx.cdepal = res!art_consp
             lpx.cdecol = res!art_consc
             lpx.cdeunit = res!art_consb
-            lpx.nbpal = lpx.recuppalette(dte.L & num & four, reslig!nligne)
-            lpx.nbcol = lpx.recupcol(dte.L & num & four, reslig!nligne)
+            lpx.nbpal = lpx.recuppalette(dtebon.L & num & four, reslig!nligne)
+            lpx.nbcol = lpx.recupcol(dtebon.L & num & four, reslig!nligne)
             If lpx.consigne.TotNHT.G <> 0 Then vecr = ajouligne(vecr, lpx.consigne.TotNHT.G, respar!consfou)
           Endif
         Endif
@@ -120,15 +430,15 @@ Private Sub ValideSaisie(etat As Integer, dte As LDate, num As String, four As S
     Endif
     If compta Then
       resent!validee = 1
+      vecr.type = VarEcr.Autre
+      vecr.etat = VarEcr.L_ajou
+      If vecr.reccomp(vecr.compte) = -1 Then vecr.plus(vecr)
     Else 
       resent!validee = 2
     Endif
     resent.Update
+    Return vecr
   Endif
-  vecr.type = VarEcr.Autre
-  vecr.etat = VarEcr.L_ajou
-  vecr.plus(vecr)
-  Return vecr
 
 End
 
@@ -152,7 +462,7 @@ Private Function ajouligne(vecr As VarEcr, montant As Float, cpt As String) As V
       vr.numdoc = vecr.numdoc
       vr.numlot = vecr.numlot
       vr.dte = vecr.dte
-      vr.libelle = "Réception n° " & vecr.numdoc & " du " & vecr.dte.L
+      vr.libelle = vecr.libelle
       id = vecr.plus(vr)
     Else
       Error.Raise("Compte comptable inconnu : " & cpt)
@@ -176,4 +486,61 @@ Private Function ajouligne(vecr As VarEcr, montant As Float, cpt As String) As V
   vecr.modifi(id, vr)
   Return vecr
   
+End
+
+Public Sub br_Click()
+
+  If $selfo.Count = 0 Then
+    If br.Value Then
+      $trfo.ExtraSel(" validee= '0' ", " AND ")
+      $trfo.Update
+    Endif
+  Else
+    Stop Event
+  Endif
+
+End
+
+Public Sub brval_Click()
+
+  If $selfo.Count = 0 Then
+    If brval.Value Then
+      $trfo.ExtraSel(" (validee= '0' OR validee = '2') ", " AND ")
+      $trfo.Update
+    Endif
+  Else
+    Stop Event
+  Endif
+
+End
+
+Public Sub Valid_Click()
+
+  If $selfo.Count = 0 Then
+    If Valid.Value Then
+      $trfo.ExtraSel(" validee= '2' ", " AND ")
+      $trfo.Update
+    Endif
+  Else
+    Stop Event
+  Endif
+
+End
+
+Public Sub clot_Click()
+
+  Valide(False)
+
+End
+
+Public Sub Clotc_Click()
+
+  valide(True)
+
+End
+
+Public Sub quit_Click()
+
+  Me.Close
+
 End

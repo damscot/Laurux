@@ -32,15 +32,16 @@ Property Read TypeClass As Integer
 Property Height As Integer
 Property Width As Integer
 
-Public Sub _new(FieldName As ResultField, NomColonne As String, Optional TypeClass As Integer = Me.TextReg)
 Public Sub _new(Clef As Variant, Nom As String, Optional TypeClass As Integer = Me.TextReg)
 
   If Not IsNull(Clef) Then
     If TypeOf(Clef) = gb.String Then
       $clef = Clef
+      $name = Clef
     Else If TypeOf(Clef) = gb.Object Then
       If Object.Type(Clef) = "ResultField" Then
         $clef = Clef.Name
+        $name = Clef.Name
       Else
         Message.Error("Object property non supporté")
       Endif

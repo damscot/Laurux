@@ -1,22 +1,69 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,111,74)
+  MoveScaled(0,0,92,91)
   Text = ("Validation des rèceptions")
-  { lesbr GridView
-    MoveScaled(1,37,109,31)
-    Mode = Select.Single
-    Header = GridView.Horizontal
-  }
+  AutoResize = True
   { Label1 Label
-    MoveScaled(4,69,18,3)
+    MoveScaled(4,81,18,3)
     Text = ("Libellé de l'écriture")
   }
-  { TextReg1 TextReg
-    MoveScaled(23,69,58,3)
+  { libel TextReg
+    MoveScaled(23,81,54,3)
   }
   { lesfour Panel
-    MoveScaled(1,2,109,32)
+    MoveScaled(1,10,90,36)
     Background = Color.White
+  }
+  { Panel1 Panel
+    MoveScaled(9,6,77,4)
+    Arrangement = Arrange.Horizontal
+    { br RadioButton
+      MoveScaled(1,1,29,2)
+      ToolTip = ("Que les BR")
+      Expand = True
+      Text = ("BR")
+      Value = True
+    }
+    { brval RadioButton
+      MoveScaled(30,1,20,2)
+      ToolTip = ("Les BR et les entrées validées non passées en compta")
+      Expand = True
+      Text = ("BR et Validés")
+    }
+    { Valid RadioButton
+      MoveScaled(57,1,20,2)
+      ToolTip = ("Entrées validées non passées en compta")
+      Expand = True
+      Text = ("Validés")
+    }
+  }
+  { lesbr Panel
+    MoveScaled(8,47,73,33)
+    Background = Color.White
+  }
+  { Label2 Label
+    MoveScaled(11,2,18,2)
+    Text = ("Date de l'écriture :")
+  }
+  { datej TextReg
+    MoveScaled(32,2,15,2)
+  }
+  { clot Button
+    MoveScaled(2,86,20,4)
+    ToolTip = ("validation du bon de réception\nsans génération d'écriture comptable")
+    Text = Shortcut(("Validation Seule"), "S")
+    Picture = Picture["Icones/button_ok.png"]
+  }
+  { Clotc Button
+    MoveScaled(24,86,23,4)
+    ToolTip = ("validation du bon de réception\navec génération des écriture d'achat")
+    Text = Shortcut(("Validation + Compta"), "V")
+    Picture = Picture["Icones/ecritures.png"]
+  }
+  { quit Button
+    MoveScaled(62,86,19,4)
+    Text = Shortcut(("Quitter"), "Q")
+    Picture = Picture["Icones/exit.png"]
   }
 }

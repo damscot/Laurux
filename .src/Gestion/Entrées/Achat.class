@@ -88,7 +88,7 @@ Property ndoc As String
     obj = New ObjProp(res.Fields["art_nbcol"], "Pal")
     obj.Height = Me.$parent.Font.H + 4
     obj.Width = t3
-    obj.AddChamp("numerique", True)
+    obj.AddChamp("Type", TextReg.EstNum)
     obj.AddChamp("nbdec", "0")
     obj.AddChamp("Alignment", Align.Center)
     Me.$prop.Add(obj)
@@ -96,7 +96,7 @@ Property ndoc As String
     obj = New ObjProp(res.Fields["art_nbbou"], "Col")
     obj.Height = Me.$parent.Font.H + 4
     obj.Width = t3
-    obj.AddChamp("numerique", True)
+    obj.AddChamp("Type", TextReg.EstNum)
     obj.AddChamp("nbdec", "0")
     obj.AddChamp("Alignment", Align.Center)
     Me.$prop.Add(obj)
@@ -105,7 +105,7 @@ Property ndoc As String
   obj = New ObjProp(Null, "Qte")
   obj.Height = Me.$parent.Font.H + 4
   obj.Width = t4
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Value", 1)
   obj.AddChamp("Alignment", Align.Right)
   Me.$prop.Add(obj)
@@ -113,7 +113,7 @@ Property ndoc As String
   obj = New ObjProp(res.Fields["art_pbht"], "Px_Brut")
   obj.Height = Me.$parent.Font.H + 4
   If $PxRec Then obj.Width = t4 Else obj.Width = 0
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Alignment", Align.Right)
 '  If Not $PxRec Then obj.AddChamp("Visible", False)
   Me.$prop.Add(obj)
@@ -121,7 +121,7 @@ Property ndoc As String
   obj = New ObjProp(res.Fields["art_txconv"], "TX_Conv")
   obj.Height = Me.$parent.Font.H + 4
   obj.Width = t1
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("nbdec", "4")
   obj.AddChamp("Alignment", Align.Right)
   Me.$prop.Add(obj)
@@ -137,7 +137,7 @@ Property ndoc As String
   obj = New ObjProp(res.Fields["art_paht"], "Px_Net")
   obj.Height = Me.$parent.Font.H + 4
   obj.Width = t4
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Alignment", Align.Right)
   obj.AddChamp("Enabled", False)
   obj.AddChamp("nbdec", "3")
@@ -147,7 +147,7 @@ Property ndoc As String
   obj = New ObjProp(res.Fields["art_frais"], "Frais")
   obj.Height = Me.$parent.Font.H + 4
   obj.Width = t1
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("nbdec", "2")
   obj.AddChamp("Alignment", Align.Right)
   If Not $PxRec Then obj.AddChamp("Visible", False)
@@ -156,7 +156,7 @@ Property ndoc As String
   obj = New ObjProp(res.Fields["art_prvt"], "Px_Rev")
   obj.Height = Me.$parent.Font.H + 4
   obj.Width = t4
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("Alignment", Align.Right)
   obj.AddChamp("Enabled", False)
   obj.AddChamp("nbdec", "3")
@@ -245,9 +245,9 @@ Public Sub Code_lostfocus()
   If Last.Text <> $code Then
     If Last.text Then ligne_LecCode(Last.Text)
     Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
-    
+    Me.ligne[Me.ind].MonControle["Désignation"].setfocus
   Endif
-  Raise lostfocus(Me.ligne[Me.ind])
+  If Me.ind > -1 Then Raise lostfocus(Me.ligne[Me.ind])
   
 End
 
@@ -1134,6 +1134,7 @@ Public Function imprime(Optional ChCo As Boolean = True, chiffre As Boolean = Tr
   lab = New ReportLabel(conth)
   lab.Text = Format$(Now, "dd/mm/yyyy hh.nn") & " - Impression demandée par " & User.Name
   lab.font = Font["Serif,8"]
+  lab.Expand = True
   lab = New ReportLabel(conth)
   lab.Text = ("=\"Page : \" & Page ")
   lab.font = Font["Serif,8"]
@@ -1539,20 +1540,20 @@ Public Sub CreRec() As Boolean          ''ouvre la fenetre des réceptions et re
   obj = New ObjProp(Null, "Qte_Comm") 
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 15
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("ReadOnly", True)
   prop.Add(obj)
   
   obj = New ObjProp(Null, "Qte_Reçu") 
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 15
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   prop.Add(obj)
   
   obj = New ObjProp(Null, "Reliquat") 
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 15
-  obj.AddChamp("numerique", True)
+  obj.AddChamp("Type", TextReg.EstNum)
   obj.AddChamp("ReadOnly", True)
   prop.Add(obj)
   

@@ -13,12 +13,14 @@ Private $prop As New ObjProp[]
 Private $cond As String               ''cle pour acceder a la commande, sous forme 'four='401X' and 
 Private $numlock As String
 Private $validBR As Boolean           ''a true si la modif vient de la validation des entrées
+Private $Apdf As Boolean               ''si copie ged
+Private $rd As RadioButton
 Public Bsel As Boolean = False
 Public Bval As Variant = Null
 Public tbl As Achat
 
 
-Public Sub _new(Optional num As String, nfour As String, dt As LDate)
+Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As Integer = Achat.Reception)
 
   Dim ch As Chainage
   
@@ -35,17 +37,17 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate)
   
 '  $etat = Achat.Sans
   rececp.Tag = Achat.Sans
-  dte.Dat = True
+  dte.Type = TextReg.EstDate
   dte.dte.G = Now
-  totfrais.numerique = True
+  totfrais.Type = TextReg.EstNum
   totfrais.nbdec = "2"
-  totaht.numerique = True
+  totaht.Type = TextReg.EstNum
   totaht.nbdec = "2"
-  totttc.numerique = True
+  totttc.Type = TextReg.EstNum
   totttc.nbdec = "2"
-  Qtes.numerique = True
+  Qtes.Type = TextReg.EstNum
   Qtes.nbdec = "3"
-  totht.numerique = True
+  totht.Type = TextReg.EstNum
   totht.nbdec = "2"
   
   ch = New Chainage([fcode, ncom, com])
@@ -53,10 +55,11 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate)
   tbl = New Achat($prop, Panel2, panel3) As "Achat"
   tbl.VisibleTot = False
   tbl.show
+  $etat = Achat.Reception
   
   If nfour Then
     Bval = ["Fiches_Entrecpt.four": nfour, "Fiches_Entrecpt.numrecpt": num, "Fiches_Entrecpt.ddate": dt.L]
-    $etat = Achat.Reception
+    $etat = etat
     bsel = True
     tbl.fourisseur = nfour
     tbl.ndoc = num
@@ -88,7 +91,6 @@ Public Sub Form_Open()
   rd = New RadioButton($panel) As "valide"
   rd.Text = "Liste des commandes validées"
   rd.Expand = True
-  $etat = Achat.Reception
   $panel = New Panel($win)
   $win.Text = "Sélection des entrées"
   $win.Width = Me.Width + 50
@@ -103,6 +105,8 @@ Public Sub Form_Open()
   $win.Show
   If Bval Then ColTri_MajSel(Bval)
   rd.Value = True
+  $rd = rd
+  $rd.Tag = Achat.Sans
 
 End
 
@@ -333,6 +337,8 @@ Public Sub commande_click()
   Endif
   $req = "SELECT four, numcom as numrecpt, ddate, montant, montantttc AS mttc,anomalie,commentaire,fo_nom FROM Fiches_Entcom JOIN Fiches_Four on four=fo_code"
   $etat = Achat.EnCommande
+  Last.Tag = $etat
+  $rd = Last
   Update_Req
 
 End
@@ -347,8 +353,10 @@ Public Sub reception_click()
   Endif
   $req = "SELECT  four,numrecpt, ddate, montant, mttc,anomalie,commentaire,fo_nom FROM Fiches_Entrecpt JOIN Fiches_Four on four=fo_code "
   $etat = Achat.Reception
+  Last.Tag = $etat
+  $rd = Last
   Update_Req
-  tr.ExtraSel("validee= False ", "AND")
+  tr.ExtraSel("validee= '0' ", "AND")
 
 End
 
@@ -362,6 +370,8 @@ Public Sub Valide_click()
   Endif
   $req = "SELECT four, numrecpt, ddate,montant, mttc,anomalie,commentaire,fo_nom FROM Fiches_Entrecpt JOIN Fiches_Four on four=fo_code "
   $etat = Achat.Validee
+  Last.Tag = $etat
+  $rd = Last
   Update_Req
   tr.ExtraSel("(validee= '1' or validee = '2') ", "AND")
 
@@ -375,6 +385,7 @@ Private Sub FourMan(four As String)      ''Récupere les info sur le fournisseur
   If res.Available Then
     fcode.Text = four
     fo_nom.Text = res!fo_nom
+    $Apdf = res!fo_copie
     If Not IsNull(tbl) And If tbl.ligne.Count < 1 Then generer.Visible = True
   Else
     Message.Warning("Fournisseur inconnu", "Ok")
@@ -420,7 +431,7 @@ Public Sub imprime_Click()
   prt.OutputFile = User.Home & "/tmp/BonReception.pdf"
   rep.Print(prt)
   Visualiseur.Prog(prt.OutputFile)
-  If $etat = Achat.Reception Then Copie.Dupli4(User.Home & "/tmp/BonReception.pdf", "", "BR" & fcode.Text & "_" & nbl.Text, dte.dte.L, fcode.Text)
+  If $etat = Achat.Reception And $Apdf Then ged()
 
 End
 
@@ -497,7 +508,7 @@ Public Sub annul_Click()
   tardt.Visible = True
   If $etat <> Achat.CreaCommande Then DocActif.free_lock("Achat", $numlock)
   $win.Enabled = True
-  If $etat = Achat.CreaCommande Then Valide_click()
+  If $etat = Achat.CreaCommande Then $etat = $rd.Tag
   tr.Update
   ChangVal(Achat.Sans)
   Wait 0.001
@@ -545,16 +556,57 @@ Private Sub ValCom() As Boolean
   If tbl.EnrAch($etat, dte.dte, nco, fcode.Text) Then Return True
   Utils.db.Commit
   
-  If $etat = Achat.Reception Then
-    rep = tbl.imprime(False)
-    If IsNull(rep) Then Return False
-    prt = New Printer
-    prt.OutputFile = User.Home & "/tmp/BonReception.pdf"
-    rep.Print(prt)
-    Copie.Dupli4(User.Home & "/tmp/BonReception.pdf", "", "BR" & fcode.Text & "_" & nbl.Text, dte.dte.L, fcode.Text)
-  Endif
+  rep = tbl.imprime(False)
+  If IsNull(rep) Then Return False
+  prt = New Printer
+  prt.OutputFile = User.Home & "/tmp/BonReception.pdf"
+  rep.Print(prt)
+  If $Apdf Then ged()
   Return False
   
+End
+
+Private Sub ged()
+  
+  Dim lg As LGed
+  Dim ret As Integer
+  Dim tags As String[]
+  Dim rResult As Result
+  Dim origin, br As String
+  
+  'On conserve une copie du documents pour le fournisseur
+  If $etat = Achat.CreaCommande Or $etat = Achat.EnCommande Then
+    origin = "Commande"
+    br = ncom.Text
+  Else
+    origin = "BR"
+    br = nbl.Text
+  Endif
+  
+  lg = LGed.Search(LGed.Fournisseurs, br, fcode.Text, origin)
+  If IsNull(lg)
+    lg = New LGed(Null, 0, LGed.Fournisseurs, origin, br, fcode.Text)
+  Endif
+  lg.DTE = dte.dte
+  lg.TTC = LPrix(tbl.TotTtc)
+  lg.HT = LPrix(tbl.TotHt)
+  'On copie sur le disque le document autand de fois qu'il est produit (grace à la date), mais on conserve le dernier pointeur dans la table GED.
+  ret = lg.PDFDupli(User.Home & "/tmp/BonReception.pdf", origin & br & "_" & dte.dte.F & "_" & fcode.Text & "-" & LDate(Now).FT & ".pdf")
+  If ret = 1 Then
+    lg.Supprime(False)
+    Return
+  Else
+    'On ajoute les tags et les liens avec le document apres commit dans Doc_Ged
+    lg.DelAllTag(False)
+    lg.AddTag(origin & br)
+    lg.AddTag(fcode.Text)
+    rResult = Utils.db.Exec("SELECT tag_def FROM " & Cbase.Table("TabFour") & " WHERE fo_code = " & fcode.Text)
+    If rResult.Available Then
+      tags = LGed.String2Array(rResult!tag_def).Copy()
+      lg.AddTags(tags)
+    Endif
+  Endif
+
 End
 
 
@@ -574,17 +626,53 @@ Public Sub rececp_Click()
   Dim rep As Report
   Dim prt As New Printer
   Dim vecr As VarEcr
-  Dim m As Integer
+  Dim dtv As LDate
   
   Select Case Last.Tag
     Case Achat.Sans
       ValidBR1.Showmodal
       
     Case Achat.Reception
-      m = Message.Question("Comment voulez vous validater votre entrée ?", "Sans écriture comptable", "Avec écriture comptable", "Abandon")
-      If m = 3 Then Return
+      win = New Window
+      win.Height = win.Font.Height * 4
+      win.Width = win.Font.Size * 50
+      win.Arrangement = Arrange.Vertical
+      win.Border = False
+      pan = New Panel(win)
+      pan.Arrangement = Arrange.Horizontal
+      pan.Expand = True
+      lab = New Label(pan)
+      lab.Text = "Date de l'écriture : "
+      lab.Expand = True
+      lab.Alignment = Align.Center
+      vignette = New TextReg(pan)
+      vignette.Type = TextReg.EstDate
+      vignette.Expand = True
+      pan = New Panel(win) 
+      pan.Arrangement = Arrange.Horizontal
+      pan.Expand = True
+      but = New Button(pan) As "Bavec"
+      but.Expand = True
+      but.Picture = Picture["Icones/ecritures.png"]
+      but.Tag = win
+      but.Text = "Avec écriture\ncomptable"
+      but = New Button(pan) As "Bsans"
+      but.Picture = Picture["Icones/button_ok.png"]
+      but.Expand = True
+      but.Tag = win
+      but.Text = "Sans écriture\ncomptable"
+      but = New Button(pan) As "Ecraban"
+      but.Expand = True
+      but.Tag = win
+      but.Picture = Picture["Icones/exit.png"]
+      but.Text = "Abandon"
+      vignette.SetFocus
+      sort = win.Showmodal()
+      dtv = New LDate(vignette.dte.G)
+      
+      If sort = 3 Then Return
       If ValCom() Then Return
-      ValidBR1.Ecritures($etat, dte.dte, nbl.Text, fcode.Text, m)
+      ValidBR1.Ecritures(dtv, dte.dte, nbl.Text, fcode.Text, sort, tbl.TotHt, tbl.TotTtc)
       annul_Click()
       
     Case Achat.CreaCommande, Achat.EnCommande
@@ -626,7 +714,7 @@ Public Sub rececp_Click()
           lab.Expand = True
           vignette = New TextReg(win) As "Nvign"
           vignette.Expand = True
-          vignette.numerique = True
+          vignette.Type = TextReg.EstNum
           vignette.nbdec = "0"
           vignette.MaxLenght = 25
           Utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
@@ -678,7 +766,7 @@ Public Sub rececp_Click()
       If IsNull(rep) Then Return
       prt.OutputFile = User.Home & "/tmp/BonReception.pdf"
       rep.Print(prt)
-      If $etat = Achat.Reception Then Copie.Dupli4(User.Home & "/tmp/BonReception.pdf", "", "BR" & fcode.Text & "_" & nbl.Text, dte.dte.L, fcode.Text)
+      If $Apdf Then ged()
       annul_Click()
       If tbl.CreReliquat() Then
         $etat = Achat.CreaCommande
@@ -699,6 +787,7 @@ Public Sub Etarif_Click()       ''on enregistre tous les tarifs de la commande
     Next
     Utils.db.Commit
   Endif
+  Etarif.Background = Color.ButtonBackground
   
 End
 
@@ -809,6 +898,23 @@ Private Sub ChangVal(etat As Integer)
   
 End
 
+Public Sub Bavec_click()
+
+  Last.Tag.Close(2)
+
+End
+
+Public Sub Bsans_click()
+
+  Last.Tag.Close(1)
+
+End
+
+Public Sub Ecraban_click()
+
+  Last.Tag.Close(3)
+
+End
 
 Public Sub Babandon_click()
 
