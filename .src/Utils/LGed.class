@@ -83,7 +83,7 @@ Public Sub Search(type As Integer, code As String, Optional compte As String = "
     If IsNull(orig) Then
       Res = Utils.db.Exec("Select lind From Docs_Ged where type = &1 and code = &2", type, code)
     Else
-      Res = Utils.db.Exec("Select lind From Docs_Ged where type = &1 and code = &2 and orig = &3", type, code, orig)
+      Res = Utils.db.Exec("Select lind From Docs_Ged where type = &1 and code = &2 and origin = &3", type, code, orig)
     Endif
   Else
     If IsNull(orig) Then

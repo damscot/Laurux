@@ -9,6 +9,10 @@ Public numerodef As Integer   ''N° définitif de l'écriture si vente
 Public numfac As String           ''N° de facture si vente
 
 Private $rescomp As Result
+Private $imp As Report        ''impression de l'écriture
+
+Property Imp As Report
+
 
 Public Sub _new(Optional njo As String, Ve As VarEcr)
 
@@ -24,6 +28,231 @@ Public Sub _new(Optional njo As String, Ve As VarEcr)
   Endif
   Vecr = ve
   
+End
+
+Public Function Impression(imp As Report) As Report     ''impression de l'écriture
+
+  Dim var As VarEcr
+  Dim lab As ReportLabel
+  Dim pan As ReportPanel
+  
+  If IsNull(imp) Then
+    imp = New Report
+    imp.Orientation = Printer.Landscape
+    pan = New ReportPanel(imp)
+    pan.Height = "8mm"
+    pan.Fixed = True
+    pan.Arrangement = Arrange.Horizontal
+    pan.Border = ReportBorder["Top:2pt #000000;Bottom:2pt #000000;Left:2pt #000000;Right:2pt #000000"]
+    lab = New ReportLabel(pan)
+    lab.Expand = True
+    lab.Alignment = Align.Center
+    lab.Font = Font["Serif, Blod, 12"]
+    lab.Text = "Impression des écritures du : " & Vecr.dte.L
+    pan = New ReportPanel(imp)
+    pan.Fixed = True
+    pan.Border = ReportBorder["Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+    pan.Arrangement = Arrange.Horizontal
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "8mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "Jo"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "20mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "Etat"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "20mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "Date"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "15mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "N° Écr"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "15mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "N° déf"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "18mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "N° Cpt"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Expand = True
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "Intitulé"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Expand = True
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "Libellé"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "18mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "N° Doc"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "18mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "N° Lot"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "25mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "Débit"
+    lab = New ReportLabel(pan)
+    lab.Height = "5mm"
+    lab.Width = "25mm"
+    lab.Font = Font["Serif, Blod, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = "Crédit"
+'  Else
+ '   $imp = imp
+  Endif
+  
+  For Each var In Vecr
+    If var.collectif Then Continue
+    pan = New ReportPanel(imp)
+    pan.Arrangement = Arrange.Horizontal
+    pan.Height = "5mm"
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000;Left:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "8mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Text = resjou!code_jo
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "20mm"
+    lab.Font = Font["Serif, 9"]
+    If numecr = 0 Then 
+      lab.Text = "Provisoire"
+    Else
+      Select Case var.etat
+        Case VarEcr.L_ajou, VarEcr.L_valide, VarEcr.L_caisse
+          lab.Text = "Création"
+        Case VarEcr.L_sup
+          lab.Text = "supprime"
+        Case VarEcr.L_modif
+          lab.Text = "Modifie"
+      End Select
+    Endif
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "20mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Alignment = Align.Center
+    lab.Text = var.dte.L
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "15mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Text = Str(numecr)
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "15mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Text = Str(numerodef)
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "18mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Text = var.compte
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Expand = True
+    lab.Font = Font["Serif, 9"]
+    lab.Text = Left(var.intitul, 45)
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Expand = True
+    lab.Font = Font["Serif, 9"]
+    lab.Text = Left(var.libelle, 45)
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "18mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Text = var.numdoc
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "18mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Text = var.numlot
+    lab = New ReportLabel(pan)
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Height = "5mm"
+    lab.Width = "25mm"
+    lab.Font = Font["Serif, 9"]
+    lab.Alignment = Align.Right
+    lab.Text = Format(var.montantd, "0.00")
+    lab = New ReportLabel(pan)
+    lab.Height = "5mm"
+    lab.Width = "25mm"
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Font = Font["Serif, 9"]
+    lab.Alignment = Align.Right
+    lab.Text = Format(var.montantc, "0.00")
+    
+  Next
+  
+  Return imp
+  
+End
+
+Public Sub FinImp(imp As Report) As Report        ''on imprime la dreniere ligne 
+
+  Dim lab As ReportLabel
+  Dim pan As ReportPanel
+  
+  pan = New ReportPanel(imp)
+  pan.Expand = True
+  pan.Arrangement = Arrange.Vertical
+  lab = New ReportLabel(pan)
+  lab.Expand = True
+  lab = New ReportLabel(pan)
+  lab.Height = "8mm"
+  lab.Alignment = Align.Center
+  lab.Font = Font["Serif, Blod, 12"]
+  lab.Text = "Impression demandée par : " & User.Name
+  lab.Border = ReportBorder["Top:2pt #000000;Bottom:2pt #000000;Left:2pt #000000;Right:2pt #000000"]
+  
+  Return imp
+
 End
 
 Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat= VarEcr.L_ajout ou L_valide => on ajoute une écriture, si = .L_modif => on modifit, si L_sup on supprime. Si type =VarEcr.vente on réserve un numéro de facture + d'écriture + d'écriture définitif sinon juste un numéro d'écriture.
@@ -57,8 +286,6 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
     Else
       numfac = Format(Vecr.dte.G, "yyyy") & numfac
     Endif
-  Endif
-  If Vecr.etat = VarEcr.Vente Then
     For Each var In Vecr
       Break
     Next
@@ -118,6 +345,7 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
   utils.db.Exec("UNLOCK TABLES")
   
   If DocActif.Is_lock("Reglement", numecr, False) Then DocActif.free_lock("Reglement", numecr)
+  ged()
 
 End
 
@@ -142,7 +370,6 @@ Private Sub ajout(var As VarEcr) As Boolean
   If var.type = VarEcr.Treso Then $rescomp!datee = Now
   $rescomp!jour = resjou!code_jo
   $rescomp!numero = numecr
- ' $rescomp!numerop = numecr
   $rescomp!compte = var.compte
   $rescomp!intitule = Left(var.intitul, 40)
   $rescomp!dte = var.dte.G
@@ -256,13 +483,14 @@ End
 
 Private Sub collectif(var As VarEcr, cpt As String) As Boolean
   
-  var.compte = cpt
+  Swap var.compte, cpt
   If var.etat = VarEcr.L_ajou Or var.etat = VarEcr.L_caisse Then
     $rescomp = utils.db.Create("Fiches_Mvt")
   Else
     $rescomp = utils.db.Edit("Fiches_Mvt", "lind=&1", var.lind)
   Endif
   If ajout(var) Then Return True
+  Swap var.compte, cpt
   Return False
   
 End
@@ -288,6 +516,40 @@ Private Sub traite(var As VarEcr)
   Endif
 
 End
+
+'gestion de la ged
+Private Sub ged()
+  
+  Dim impr As Report
+  Dim prt As New Printer
+  Dim var As VarEcr
+  Dim lg As LGed
+  Dim tags As New String[]
+  Dim ret As Integer
+  
+  If Not Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminC"] Then Return
+  impr = impression(impr)
+  impr = FinImp(impr)
+  impr.Count = 1
+  prt.OutputFile = User.Home & "/tmp/Ecriture.pdf"
+  impr.Print(prt)
+  lg = LGed.Search(LGed.Comptabilite, numecr, "", "Compta")
+  If IsNull(lg)
+    lg = New LGed(Null, 0, LGed.Comptabilite, "Compta", numecr, "")
+  Endif
+  ret = lg.PDFDupli(User.Home & "/tmp/Ecriture.pdf", numecr & "-" & LDate(Now).FT & ".pdf")
+  If ret = 1 Then
+    lg.Supprime(False)
+    Return
+  Else
+    For Each var In Vecr
+      tags.Add(var.compte)
+    Next
+    lg.AddTags(tags)
+  Endif
+  
+End
+
 'gestion du lettrage
 Private Sub Lettrage(var As VarEcr)
   
@@ -312,6 +574,7 @@ Private Sub Lettrage(var As VarEcr)
       ecrdif = New VarEcr
       ecrdif.etat = VarEcr.L_ajou
       ecrdif.type = VarEcr.Autre
+      ecrdif.dte = LDate(Now)
       ecrdif.plus(diff(var.compte, var, lisext.ecart * -1, respart!jrnod))
       If lisext.ecart < 0 Then
         var.compte = respart!cptrsplus
@@ -321,6 +584,7 @@ Private Sub Lettrage(var As VarEcr)
       ecrdif.plus(diff(var.compte, var, lisext.Ecart, respart!jrnod))
       nouecr = New EcrAuto(respart!jrnod, ecrdif)
       nouecr.ecriture()
+      $imp = nouecr.Impression($imp)
     Endif
   Else
     lisext.letgroupe(var.numlot, var.numlot, True, var.compte)
@@ -378,4 +642,16 @@ Private Function diff(cpt As String, var As VarEcr, ecart As Float, jour As Stri
   
   Return ecrdif
   
+End
+
+Private Function Imp_Read() As Report
+
+  Return $imp
+
+End
+
+Private Sub Imp_Write(Value As Report)
+
+  $imp = value
+
 End
