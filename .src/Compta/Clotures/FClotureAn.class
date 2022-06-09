@@ -171,6 +171,7 @@ Public Sub Button1_Click()
   Dim Cbfournisseur As String
   Dim Sbfournisseur As String
   Dim Col As String
+  Dim dt As LDate 
 
   Tab0 = "Fiches_Parametres"
   'On récupère les numéros d'écritures
@@ -668,13 +669,10 @@ Public Sub Button1_Click()
 
             ' On change les dates et on déplace les numéros d'écritures dans la table des parametres
             rResult = Utils.db.Exec("SELECT * FROM " & Tab0 & "")
-            datec2 = rResult!dteclec
-            datec2 = Left$(datec2, 10)
-            Dtpc = Val(Right$(datec2, 4)) + 1
-            datec2 = Mid$(datec2, 4, 2) & "." & Left$(datec2, 2) & "." & Dtpc
+            dt = New LDate(DateAdd(rResult!dteclec, gb.Year, 1))
             Inc Numecr1
             Inc Numecr3
-            Utils.db.Exec("UPdate  " & Tab0 & "  SET  dteclec = &1, dteclec1 = &2, dteclec2 = &3, dteclec3= &4, dteclec4 = &5, dteclec5 = &6, dtetdec= &7, dtefedec = &8, numecriture = &9, numecriture1 = &{10}, numecriture2 = &{11} ", .Cdate_Dbase(datec2), rResult!dteclec, rResult!dteclec1, rResult!dteclec2, rResult!dteclec3, rResult!dteclec4, .Cdate_Dbase(jour), rResult!dteclec, numecr1, 0, numecr3)
+            Utils.db.Exec("UPdate  " & Tab0 & "  SET  dteclec = &1, dteclec1 = &2, dteclec2 = &3, dteclec3= &4, dteclec4 = &5, dteclec5 = &6, dtetdec= &7, dtefedec = &8, numecriture = &9, numecriture1 = &{10}, numecriture2 = &{11} ", dt.G, rResult!dteclec, rResult!dteclec1, rResult!dteclec2, rResult!dteclec3, rResult!dteclec4, .Cdate_Dbase(jour), rResult!dteclec, numecr1, 0, numecr3)
 
             'On mouvemente les écritures
             Tab = "Fiches_Mvt"
