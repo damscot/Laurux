@@ -37,6 +37,8 @@ Public Tbl As New TableLettrage
 
 Private $Vecr As New VarEcr[]
 
+Property Read Max As Integer
+
 Public Sub _next() As VarEcr
 
   If Enum.Index = Null Then Enum.Index = -1
@@ -46,6 +48,20 @@ Public Sub _next() As VarEcr
   Else
     Return $Vecr[Enum.Index]
   Endif
+
+End
+
+Public Sub _get(i As Integer) As VarEcr
+
+  If i > $Vecr.Max Then Return Null
+  Return $Vecr[i]
+
+End
+
+Public Sub _put(value As VarEcr, i As Integer)
+
+  If i > $Vecr.Max Then $Vecr.Resize(i)
+  $Vecr[i] = value
 
 End
 
@@ -135,4 +151,10 @@ Public Function nb() As Integer   ''Retourne le nombre féléments du tableau
   
   Return $Vecr.Count
   
+End
+
+Private Function Max_Read() As Integer
+
+  Return $Vecr.Max
+
 End

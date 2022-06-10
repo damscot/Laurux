@@ -101,9 +101,9 @@ Private Sub reglement()
       Endif
       var.numdoc = ""
       var.numlot = ""
-      var.dte = LDate(Now)
+      var.dte = Me.Vecr.dte
       var.type = VarEcr.Treso
-      var.intitul = $resreg!libel & " du " & LDate(Now).L
+      var.intitul = $resreg!libel & " du " & var.dte.L
       res = Utils.db.Exec("SELECT * FROM Fiches_Comptes WHERE compte_cc=&1", Me.resjou!cde_banque)
       var.libelle = res!intitule_cc
       var.etat = VarEcr.L_valide

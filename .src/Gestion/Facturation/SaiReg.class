@@ -993,23 +993,65 @@ End
 Public Sub vldbordereau_Click()
   
   Dim ereg As EcrReg
+  Dim var As VarEcr
   Dim pb As ProgBar
   Dim imp As Report
   Dim prt As New Printer
+  Dim pan As Panel
+  Dim dtecr As TextReg
+  Dim lab As Label
+  Dim bt As Button
+  Dim ret As Integer
   
   If borderaux.Rows.Count = 0 Then Return
-
-  pb = New ProgBar("Validation du bordereau", 1)
-  pb.Show
-  $Lecr.etat = VarEcr.L_valide
-  $Lecr.type = VarEcr.Treso
-  $Lecr.dte = LDate(Now)
   
-  pb.Avancement("Validation")
-  ereg = New EcrReg($resreg!code, $resjou!code_jo, $Lecr)
-  If ereg.ecriture() Then
-    Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
-  Endif
+  win = New Window
+  win.Height = Me.Height / 9
+  win.Width = Me.Width / 5
+  win.Arrangement = Arrange.Vertical
+  win.Border = False
+  pan = New Panel(win)
+  pan.Arrangement = Arrange.Horizontal
+  pan.Expand = True
+  lab = New Label(pan)
+  lab.Text = "Date du règlement"
+  lab.Expand = True
+  dtecr = New TextReg(pan)
+  dtecr.Type = TextReg.EstDate
+  dtecr.dte = New LDate(Now)
+  dtecr.Expand = True
+  ch = New Chainage([dtecr])
+  pan = New Panel(win)
+  pan.Arrangement = Arrange.Horizontal
+  pan.Expand = True
+  bt = New Button(pan) As "btval"
+  bt.Text = "OK"
+  bt.Picture = Picture["icon:/22/apply"]
+  bt.Tag = win
+  bt.Expand = True
+  ch.add([bt])
+  bt = New Button(pan) As "btaba"
+  bt.Text = "Abandon"
+  bt.Expand = True
+  bt.Picture = Picture["icon:/22/cancel"]
+  bt.Tag = win
+  ch.add([bt])
+  ret = win.ShowModal()
+  
+  If ret = 0 Then
+    $Lecr.etat = VarEcr.L_valide
+    $Lecr.type = VarEcr.Treso
+  $Lecr.dte = LDate(Now)
+    pb = New ProgBar("Validation du bordereau", 1)
+    pb.Show
+    pb.Avancement("Validation")
+    For ret = 0 To $Lecr.Max
+      $Lecr[ret].dte = $Lecr.dte
+    Next
+    ereg = New EcrReg($resjou!code_jo, $Lecr, $resreg!code)
+    If ereg.ecriture() Then
+      Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
+    Endif
   imp = ereg.Imp
   imp = ereg.Impression(imp)
   If Object.IsValid(imp) Then
@@ -1018,11 +1060,24 @@ Public Sub vldbordereau_Click()
     imp.Print(prt)
     Visualiseur.Prog(prt.OutputFile)
   Endif
-  $modif = False
-  mabl
-  mabreg()
-  pb.Close
+    $modif = False
+    mabl
+    mabreg()
+    pb.Close
+  Endif
   
+End
+
+Public Sub btval_click()
+
+  Last.Tag.Close(0)
+
+End
+
+Public Sub btaba_click()
+
+  Last.Tag.Close(1)
+
 End
 
 Private Sub impecr(ereg As EcrReg)
@@ -1040,8 +1095,8 @@ Private Sub impecr(ereg As EcrReg)
   
 End
 
-'editions
 
+'editions
 Public Sub editions_Click()
 
   Dim ed As EdReg
