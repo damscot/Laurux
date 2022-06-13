@@ -664,6 +664,7 @@ End
 Public Sub GridView1_Activate()
 
   Dim obj As ObjFacB
+  Dim com As Commande1
   Dim res As Result
   
   If Not Radiodetail.Value Then Return
@@ -675,7 +676,9 @@ Public Sub GridView1_Activate()
       obj = New ObjFacB(GridView1[GridView1.Row, 4].Text, ObjFac.archive, LDate(GridView1[GridView1.Row, 0].Text))
       obj.visualisation
     Endif
-    
+  Else If GridView1[GridView1.Row, 2].Text Match "fournisseurs" Then
+    com = New Commande1(Null, GridView1[GridView1.Row, 4].Text, GridView1[GridView1.Row, 3].Text, LDate(GridView1[GridView1.Row, 0].Text), Achat.Validee)
+    com.Show
   Endif
 
 End
