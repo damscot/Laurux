@@ -337,6 +337,7 @@ Private Sub numcli_Write(Value As String)
     Endif
   Endif
   'gestion des règlements
+  If Not IsNull(tsaisreg) Then Return
   If breg Then
     tsaisreg = treg
   Else
