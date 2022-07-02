@@ -1002,6 +1002,7 @@ Public Sub Moulinage() As Boolean
   Dim lasttk As String
   Dim inda As Integer
   Dim PB As ProgBar
+  Dim fac As ObjFacB
   
   RegroupBL = New Facturergbl
   'On reinitialise les tables temporaire de ventilation et de virement interne
@@ -1303,38 +1304,15 @@ Public Sub Moulinage() As Boolean
                     RegroupBL.Ent_Bl(Bl!cdclibl, numbon, False, rtck!numero, Date_Bl)
                     Blg = Utils.db.Exec(" select * from " & Cbase.Table("TabBl") & " where type = \"B\" and numbl = &1", numbon)
                     If Blg.Available
-                      'recuperation et maj du n° facture
-                      respar = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
-                      If (respar!nfac <> 0)
-                        snfac = Str(Format$(Now, "yymm")) & Format(Val(respar!dnfac) + 1, "000000")
-                      Else
-                        snfac = Str(Format$(Now, "yyyy")) & Format(Val(respar!dnfac) + 1, "000000")
+                      fac = New ObjFacB(numbon, ObjFac.facture, LDate(Date_Bl))
+                      fac.nbexplemplaire = 0
+                      fac.saisreg = False
+                      fac.tsaisreg = "Facture acquitté en caisse le " & LDate(Date_Bl).L
+                      If fac.editef() Then
+                       Message.Error("Une erreur c'est produite sur le bon  " & numbon & " du client " & Blg!cdclibl)
                       Endif
-                      dnfac = Format(Val(respar!dnfac) + 1, "000000")
-                      utils.db.Exec("UPDATE Fiches_Parametres set dnfac = &1", dnfac)
-                      Utils.db.Exec("UPDATE " & Cbase.Table("TabBl") & " set type = \"F\", numtick = NULL, imp = 1, acquitte = 1, reg = \"Caisse\", mtreg = &2, numfac = &3, dtefac = &4, ech = &4 where numbl = &1", numbon, Blg!totalttc, snfac, LDate(Date_Bl).DT)
-                      'ICI on devrait faire une copie GED (si le client a l'option copie) de la facture produite (Regroupement de BL reglé en caisse)... a voir avec Patrick comment utiliser ObjFac en mode non interactif
-                      'On genere les Mvt pour le clients
-                      If Blg!totalttc < 0 Then
-                        bl_cli_credit = Abs(Blg!totalttc)
-                        bl_cli_debit = 0
-                      Else
-                        bl_cli_credit = 0
-                        bl_cli_debit = Blg!totalttc
-                      Endif
-                      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnl, numr, Blg!cdclibl, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), snfac, snfac, Left$("Facture " & Blg!nmclibl, 30), bl_cli_debit, bl_cli_credit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-                      Sha1Calc.CalcSha1("Fiches_Mvt", numr)
-                      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnl, numr, Client, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), snfac, snfac, Left$("Facture " & Blg!nmclibl, 30), bl_cli_credit, bl_cli_debit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-                      Sha1Calc.CalcSha1("Fiches_Mvt", numr)
-                      numr = numr + 1
-                      numr2 = numr2 + 1
-                      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Blg!cdclibl, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), snfac, snfac, Left$("Rglt Caisse Facture " & Blg!nmclibl, 30), bl_cli_credit, bl_cli_debit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-                      Sha1Calc.CalcSha1("Fiches_Mvt", numr)
-                      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), snfac, snfac, Left$("Rglt Caisse Facture " & Blg!nmclibl, 30), bl_cli_debit, bl_cli_credit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
-                      Sha1Calc.CalcSha1("Fiches_Mvt", numr)
-                      'on incremente le numero d'ecriture pour la suite des Mvt
-                      numr = numr + 1
-                      numr2 = numr2 + 1
+                      numr = fac.numeroecr + 1
+                      numr2 = fac.numerodef + 1
                     Else
                       res = utils.db.Exec("SELECT cli_nom FROM Fiches_Cli WHERE cli_code=&1", Bl!cdclibl)
                       Message.Warning("Le BL " & numbon & " du client " & res!cli_nom & " est inexistant le regroupement de BL n'a pas fonctionné")
