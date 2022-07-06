@@ -8,6 +8,7 @@ Private $targen As SaiTableau     ''Tableau tarif général
 Private $tarpcli As SaiTableau    ''Tableau tarif par client
 Private $tartypcli As SaiTableau    ''Tableau tarif par type de client
 Private $ligart As SaiLig           ''Ligne de saisie ayant le focus
+Private $ligach As Sailig            ''Ligne de saisie venant des achats
 Private $prop As New ObjProp[]
 Private $lv As ListView
 
@@ -335,7 +336,7 @@ End
 '************propriétés
 Private Function LecArt_Read() As Sailig
 
-  Try Return $resart!art_code
+  Return $ligach
 
 End
 
@@ -346,6 +347,7 @@ Private Sub LecArt_Write(Value As Sailig)
   Dim i As Integer
   
   If Not value.MonControle["Code"].Text Then Return
+  $ligach = value
   $resart = Utils.db.Exec("SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva LEFT JOIN Fiches_TarTemp ON art_code=art AND temp_type=&2 WHERE art_code=&1 ", value.MonControle["Code"].Text, TarGen)
   If $resart.Available Then
     Label1.Text = $resart!art_code & " " & $resart!art_design
@@ -648,6 +650,18 @@ End
 Public Sub Etiqu_Click()
 
   EtiqRecpt.Show
+
+End
+
+Public Sub ButArt_Click()
+
+  Dim hform As Form
+  
+  If Object.IsValid(Me.LecArt) Then
+    hform = New Articles(Null, $resart!art_code)
+    hform.ShowModal
+    Me.LecArt = $ligach
+  Endif
 
 End
 

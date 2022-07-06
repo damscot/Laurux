@@ -98,7 +98,7 @@ Private SmallPanel As Integer
 Private Coul As LCoul
 
 
-Public Sub _New()
+Public Sub _New(Optional prod As String)
 
   Dim rResult As Result
   Dim n As Integer
@@ -214,6 +214,7 @@ Public Sub _New()
   
   Coul = New LCoul
   Update_Req()
+  If prod Then code.Text = prod
 
 End
 
@@ -231,9 +232,13 @@ Public Sub Form_Open()
   Tri = "art_code"
   'Tris()
   'Deb2()
-  CleanChamps()
+  If code.Text Then 
+    AfficheArt(code.Text)
+    Maj_ColType()
+  Else
+    CleanChamps()
+  Endif
   Desg.SetFocus
-  code.Text = ""
   Balloon.delay = 2000
   Label7.Text = "Remises par type client"
   code.SetFocus

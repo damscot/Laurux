@@ -69,6 +69,7 @@ Property ndoc As String
   obj.AddChamp("recherche", True)
   obj.AddChamp("conteneur", Panel3)
   obj.AddChamp("champ", ["Fiches_Art", "art_code", "art_design"])
+  obj.AddChamp("AddTooltip", "\nF3 Table articles")
   
   obj.AddChamp("lke", TextReg.commence_par)
   Me.$prop.Add(obj)
@@ -172,7 +173,7 @@ Public Sub ligne_LecCode(ligne As Variant)
   Dim reg As Object
   Dim code As String
   
-  If TypeOf(code) = gb.String Then
+  If TypeOf(ligne) = gb.String Then
     code = ligne
     ligne = Me.ligne[Me.ind]
   Else
@@ -254,6 +255,7 @@ End
 Public Sub Code_KeyPress()
 
   If Key.Code = Key.F2 Then Rech_click()
+  If Key.Code = Key.F3 Then articles.ShowModal()
 
 End
 
