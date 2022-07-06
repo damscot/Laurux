@@ -62,6 +62,7 @@ Property RechY As Float             ''Y de la fenetre de recherche
 Property Champ As String[]          ''les champs à afficher dans la fenetre de recherche
 Property Choirech As Integer        ''les choix sur ce qu'on affiche dans la fenetre de rechereche (historique ou recherche)
 Property Name As String
+Property AddTooltip As String       ''On ajoute un tooltip a l'existant
 
 Public Sub _new()
 
@@ -651,5 +652,17 @@ Private Sub Type_Write(Value As Integer)
     $typedonne = value
     Me.Editor.Text = $text
   Endif
+
+End
+
+Private Function AddTooltip_Read() As String
+
+  Return Me.Tooltip
+
+End
+
+Private Sub AddTooltip_Write(Value As String)
+
+  Me.Tooltip &= value
 
 End

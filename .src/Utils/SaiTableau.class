@@ -105,6 +105,7 @@ Public Sub show()
     prop = New ObjProp[]
     For Each obj In $prop
       nouobj = New ObjProp(Null, obj.NomControl, ObjProp.Label)
+      nouobj.AddChamp("reg", TextReg.all)
       nouobj.AddChamp("Text", obj.NomControl)
       nouobj.AddChamp("Alignment", Align.Center)
       nouobj.AddChamp("Border", Border.Plain)
