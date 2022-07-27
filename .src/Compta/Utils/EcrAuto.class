@@ -410,7 +410,14 @@ Private Sub ajout(var As VarEcr) As Boolean
   Endif
   If var.type = VarEcr.vente And rescpt!type_cc = "C" Then traite(var)
   If rescpt!coll_cc And (var.etat = VarEcr.L_ajou Or var.etat = VarEcr.L_caisse) Then
-    If collectif(var, rescpt!coll_cc) Then Return True
+    If collectif(var, rescpt!coll_cc) Then 
+      Message.Error("Erreur sur génération du collectif : " & rescpt!coll_cc & " écriture n° : " & numecr)
+      If var.type = VarEcr.Vente Then
+        Message.Info("La facture sera quand même créée, veuillez vérifier l'écriture", "Ok")
+      Else
+        Return True
+      Endif
+    Endif
   Endif
   
   Return False
