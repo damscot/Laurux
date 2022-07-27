@@ -70,7 +70,7 @@ Public Sub calcul(Optional nom As String)     ''On calcul la facture et on fait 
   
   Super.calcul(nom)
   $borientation = borientation()
-  If Not $borientation Or Not Me.blchif Then Return
+  If Not $borientation Then Return
   
   $cimp = New Collection
   $vdecons = New Variant[]
