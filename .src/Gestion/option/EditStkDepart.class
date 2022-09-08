@@ -31,9 +31,9 @@ Public Sub _new(ind As Integer)
     Case EditStkDepart.tournant
       $resalc = Utils.db.Exec("SELECT art_code,art_design,inv_qtecomptee AS qte,art_dra,art_deg,art_volm FROM Fiches_InvT,Fiches_Art WHERE inv_code=art_code AND art_dra IS NOT NULL ORDER BY art_dra,art_deg")
     Case EditStkDepart.depart
-      $resalc = Utils.db.Exec("SELECT art_code,art_design,art_qte AS qte,art_dra,art_deg,art_volm FROM Fiches_Art WHERE art_dra IS NOT NULL ORDER BY art_dra,art_deg")
-    Case EditStkDepart.fin
       $resalc = Utils.db.Exec("SELECT art_code,art_design,art_stkdep AS qte,art_dra,art_deg,art_volm FROM Fiches_Art WHERE art_dra IS NOT NULL ORDER BY art_dra,art_deg")
+    Case EditStkDepart.fin
+      $resalc = Utils.db.Exec("SELECT art_code,art_design,art_qte AS qte,art_dra,art_deg,art_volm FROM Fiches_Art WHERE art_dra IS NOT NULL ORDER BY art_dra,art_deg")
   End Select
   
   If $resalc.Available Then
@@ -110,6 +110,7 @@ End
 Private Sub totdra()
 
   Dim lab As ReportLabel
+  Dim brk As ReportPageBreak
   
   ligne = New ReportHBox(Me)
   lab = dimention(ligne, "6mm", "100mm", "Serif,10")
@@ -124,6 +125,7 @@ Private Sub totdra()
   lab.Text = Format($totgen.totap, "0.00")
   lab = dimention(ligne, "5mm", "25mm", "Serif,9", Align.Right)
   lab.Text = Format($totgen.totss, "0.00")
+  brk = New ReportPageBreak(Me)
   
   $totgen = New Totalc
 
@@ -136,26 +138,26 @@ Private Sub edligne()
   
   cdd = New Calculdroit($resalc!art_dra, $resalc!art_volm, $resalc!art_deg, $resalc!qte)
   ligne = New ReportHBox(Me)
-  lab = dimention(ligne, "3mm", "25mm", "Serif,6")
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", 0, "Left:1pt #000000;Right:1pt #000000")
   lab.Text = $resalc!art_code
   
-  lab = dimention(ligne, "3mm", "25mm", "Serif,6")
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", 0, "Right:1pt #000000")
   lab.Expand = True
   lab.Text = $resalc!art_design
   
-  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Center)
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right, "Right:1pt #000000")
   lab.Text = $resalc!art_deg
   
-  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right, "Right:1pt #000000")
   lab.Text = $resalc!qte
   
-  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right, "Right:1pt #000000")
   lab.Text = Format(cdd.vol, "0.00")
   
-  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right, "Right:1pt #000000")
   lab.Text = Format(cdd.volap, "0.00")
   
-  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right)
+  lab = dimention(ligne, "3mm", "25mm", "Serif,6", Align.Right, "Right:1pt #000000")
   lab.Text = Format(cdd.volumess, "0.00")
   
   $soustot.stk += $resalc!qte
@@ -165,7 +167,7 @@ Private Sub edligne()
   
 End
 
-Private Function dimention(obj As Object, h As String, w As String, f As String, Optional a As Integer) As ReportLabel
+Private Function dimention(obj As Object, h As String, w As String, f As String, Optional a As Integer, b As String) As ReportLabel
   
   Dim lab As ReportLabel
   
@@ -174,6 +176,8 @@ Private Function dimention(obj As Object, h As String, w As String, f As String,
   lab.Width = w
   lab.Font = Font[f]
   If a Then lab.Alignment = a
+  If b Then lab.Border = ReportBorder[b]
+  
   Return lab
   
 End
