@@ -36,6 +36,8 @@ Public Sub _New()
   If $soption = "B" Or $soption = "T" Then
     Button4.Visible = True
   Endif
+  dtinv.Type = TextReg.EstDate
+  dtinv.Dte = LDate(Now)
 
 End
 
@@ -183,7 +185,7 @@ Public Sub Button2_click()
           Endif
         End With
         'Utils.db.Exec("drop Table IF exists " & Cbase.Table("TabInv") & "")
-        Utils.db.Exec("Update " & Cbase.Table("TabParam") & " set dteinv = &1", Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
+        Utils.db.Exec("Update " & Cbase.Table("TabParam") & " set dteinv = &1", dtinv.dte.G)
         'On calcul le stock réel
         Cstock.Calc_stock("", "")
         'On vide la table des historiques des inventaires tournants

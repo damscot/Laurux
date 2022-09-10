@@ -1,18 +1,18 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(26.625,11,68,45)
+  MoveScaled(26.6667,11,68,47)
   Background = Color.Background
   Text = ("Validation de l'inventaire.")
   { Button1 Button
-    MoveScaled(2,35,4,4.375)
+    MoveScaled(2,37,4,4.3333)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Doc HTML")
     Picture = Picture["Icones/khelp.png"]
   }
   { Button3 Button
-    MoveScaled(45,35,21,4.375)
+    MoveScaled(45,37,21,4.3333)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Cliquer ici pour quitter le programme de validation de l'inventaire.")
@@ -20,13 +20,13 @@
     Picture = Picture["Icones/exit.png"]
   }
   { TextLabel1 TextLabel
-    MoveScaled(1,1,66,22)
+    MoveScaled(1,1,66,19)
     Font = Font["Serif,-1"]
     Text = ("Ce programme va valider l'inventaire. C'est à dire qu'il va recalculer le stock pour l'ensemble des articles saisis lors de l'inventaire et, selon votre choix, soit remettre le stock à zéro pour les non saisis soit les laisser à leur valeur d'origine.<br>\nL'inventaire sera supprimé après le traitement, en conséquence assurez-vous que vous l'avez bien imprimé.<br>\nFaites bien une sauvegarde avant de lancer ce traitement.<br>\n<h4>Attention ! Ce traitement peut être long.</h4>\n")
     Alignment = Align.Center
   }
   { Panel1 Panel
-    MoveScaled(5,24,57,10)
+    MoveScaled(6,20,57,10)
     Border = Border.Plain
     { RadioButton1 RadioButton
       MoveScaled(1,6,25,3)
@@ -47,7 +47,7 @@
     }
   }
   { Button2 Button
-    MoveScaled(14,35,26,4.375)
+    MoveScaled(14,37,26,4.3333)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Cliquer ici pour valider l'inventaire.")
@@ -56,11 +56,19 @@
     Picture = Picture["Icones/filesave.png"]
   }
   { Button4 Button
-    MoveScaled(14,40,26,4.375)
+    MoveScaled(27,42,26,4.3333)
     Visible = False
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     Text = ("Compta matiére ")
     Picture = Picture["Icones/filesave.png"]
+  }
+  { Label1 Label
+    MoveScaled(15,32,19,3)
+    Text = ("Date de l'inventaire :")
+  }
+  { dtinv TextReg
+    MoveScaled(36,32,15,3)
+    ToolTip = ("Il est conseiller de mettre la date de début du nouvel exercice")
   }
 }
