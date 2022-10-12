@@ -1,0 +1,305 @@
+' Gambas class file
+
+Public Enum Tous, Proforma, Devis, Commande, Bon, FacTous, FacPaye, FacNonPaye, BonFacNonPaye ''définition du type de document à afficher
+
+Private tr As TriGen
+Private Client As String
+Private NumTick As String
+Private Col As Collection
+Private CB1Conv As Collection
+Private Obj As Object
+Public Bsel As Boolean = False
+Public Bval As String = ""
+Private Coul As LCoul
+Private Selected As String[]
+
+'************************************** Gestion des documents *****************************************************
+Public Sub _new(Optional Option As Integer = TriFacture.Tous, Optional Cl As String = Null, Optional Nt As String = Null, Optional ob As Object = Null)
+
+  Dim Res As Result
+
+  Utils.Observers(Me)
+  Me.Center
+  Obj = ob
+  
+  CB1Conv = New Collection
+  CB1.Add("------  Tous ------")
+  CB1Conv.Add("(\"P\",\"D\",\"C\",\"B\",\"F\")", CB1.List[0])
+  CB1.Add("----  Proforma  ---")
+  CB1Conv.Add("(\"P\")", CB1.List[1])
+  CB1.Add("-----  Devis  -----")
+  CB1Conv.Add("(\"D\")", CB1.List[2])
+  CB1.Add("---- Commande  ----")
+  CB1Conv.Add("(\"C\")", CB1.List[3])
+  CB1.Add("------- Bon -------")
+  CB1Conv.Add("(\"B\")", CB1.List[4])
+  CB1.Add("- Toutes Facture. -")
+  CB1Conv.Add("(\"F\")", CB1.List[5])
+  CB1.Add("---  Fac. Payé  ---")
+  CB1Conv.Add("(\"F\")", CB1.List[6])
+  CB1.Add("-- Fac. Non Payé --")
+  CB1Conv.Add("(\"F\")", CB1.List[7])
+  CB1.Add("-Bon&Fac. Non Payé-")
+  CB1Conv.Add("(\"B\",\"F\")", CB1.List[8])
+  
+  Select Case Option
+    Case TriFacture.Tous
+      CB1.Text = CB1.List[0]
+    Case TriFacture.Proforma
+      CB1.Text = CB1.List[1]
+    Case TriFacture.Devis
+      CB1.Text = CB1.List[2]
+    Case TriFacture.Commande
+      CB1.Text = CB1.List[3]
+    Case TriFacture.Bon
+      CB1.Text = CB1.List[4]
+    Case TriFacture.FacTous
+      CB1.Text = CB1.List[5]
+    Case TriFacture.FacPaye
+      CB1.Text = CB1.List[6]
+    Case TriFacture.FacNonPaye
+      CB1.Text = CB1.List[7]
+    Case TriFacture.BonFacNonPaye
+      CB1.Text = CB1.List[8]
+    Default
+      CB1.Text = CB1.List[0]
+  End Select
+  
+  Selected = New String[]
+  Coul = New LCoul
+  Client = Cl
+  NumTick = Nt
+  
+  ' Initialise la selection depuis le numero de ticket fournit
+  Res = Utils.db.Exec("select numbl from " & Cbase.Table("TabBl") & " where numtick = &1", NumTick)
+  If Res.Available Then
+    Selected = Res.All("numbl")
+    Selcnt.Value = Selected.Count
+  Endif
+  
+  If Object.IsValid(Obj) Then
+    If Object.Class(Obj).Name = "LTrans" Then
+      LTrans.List = Selected.Copy()
+    Else
+      Object.SetProperty(Obj, "Bsel", False)
+      Object.SetProperty(Obj, "Bval", Null)
+    Endif
+  Endif
+
+  Update_Req()
+
+End
+
+Public Sub Update_Req()
+
+  Dim k As String
+  Dim Req As String
+  Dim Res As Result
+  Dim prop As ObjProp
+  
+  Col = New Collection
+  
+  Req = "select *, " & Coul.Fac_DB_bgcolor() & " from " & Cbase.Table("TabBl")
+  Res = Utils.db.Exec(Req)
+  If Not Res.Available Then Return
+  k = "N°Doc"
+  prop = New ObjProp(Res.Fields["numbl"], k)
+  Col.Add(prop, k)
+  k = "T"
+  prop = New ObjProp(Res.Fields["type"], k)
+  Col.Add(prop, k)
+  k = "-Client-"
+  prop = New ObjProp(Res.Fields["cdclibl"], k)
+  Col.Add(prop, k)
+  k = Space(5) & "---- Date ----" & Space(5)
+  prop = New ObjProp(Res.Fields["datebl"], k)
+  Col.Add(prop, k)
+  k = Space(5) & "--- Nom ---" & Space(5)
+  prop = New ObjProp(Res.Fields["nmclibl"], k)
+  Col.Add(prop, k)
+  prop.tri = True
+  k = Space(2) & "--- Prénom ---" & Space(2)
+  prop = New ObjProp(Res.Fields["pnmclibl"], k)
+  Col.Add(prop, k)
+  k = "- PvHT -"
+  prop = New ObjProp(Res.Fields["totalht"], k)
+  Col.Add(prop, k)
+  k = "- PvTTC -"
+  prop = New ObjProp(Res.Fields["totalttc"], K)
+  Col.Add(prop, k)
+  k = "- NumTicket -"
+  prop = New ObjProp(Res.Fields["numtick"], K)
+  Col.Add(prop, k)
+
+  tr = New TriGen(Panel2, Col, Res, Req, 20, Me) As "TriGen"
+  Filter_Calc()
+  Total_Calc()
+
+End
+
+Public Sub Filter_Calc()
+
+  Dim filter As String
+
+
+  filter = "type in " & CB1Conv[CB1.Text] & " "
+
+  If CB1.Index = TriFacture.BonFacNonPaye Then
+    filter &= " and (acquitte = 0 or acquitte is null) "
+  Else If CB1.Index = TriFacture.FacNonPaye Then
+    filter &= " and acquitte = 0 "
+  Else If CB1.Index = TriFacture.FacPaye Then
+    filter &= " and acquitte = 1 "
+  Endif
+
+  If Client Then
+    filter &= Utils.db.Subst(" and cdclibl = &1 ", Client)
+  Endif
+
+  If NumTick Then
+    filter &= Utils.db.Subst(" and (numtick = &1 or numtick is Null) ", NumTick)
+  Endif
+
+  If filter <> "" Then
+    tr.ExtraSel(filter, "and")
+  Else
+    tr.ExtraSel(filter, "")
+  Endif
+
+End
+
+Public Sub Total_Calc()
+  
+  Dim Res As Result
+  
+  TotHT.Text = Format(0, "0.00")
+  TotTTC.Text = Format(0, "0.00")
+
+  If Selected.Length Then
+    Res = Utils.db.Exec("select sum(totalht) as toht, sum(totalttc) as tottc from " & Cbase.Table("TabBl") & " where numbl in (" & Selected.Join(",") & ")")
+    If Res.Available Then
+      TotHT.Text = Format(Res!toht, "0.00")
+      TotTTC.Text = Format(Res!tottc, "0.00")
+    Endif
+  Endif
+
+End
+
+Public Sub SelectAllFil_Click()
+
+  Dim Res As Result
+  Dim i As Integer
+  
+  Res = tr.GetAllFiltered()
+  If Res.Available
+    Repeat
+      i = Selected.Find(Res!numbl)
+      If i = -1 Then
+        Selected.Add(Res!numbl)
+      Endif
+    Until Res.MoveNext()
+  Endif
+  Selcnt.Value = Selected.Count
+  Total_Calc()
+  tr.Refresh_Data()
+  
+End
+
+Public Sub DeSelectAllFil_Click()
+
+  Dim Res As Result
+  Dim i As Integer
+  
+  Res = tr.GetAllFiltered()
+  If Res.Available
+    Repeat
+      i = Selected.Find(Res!numbl)
+      If i <> -1 Then
+        Selected.Remove(i)
+      Endif
+    Until Res.MoveNext()
+  Endif
+  Selcnt.Value = Selected.Count
+  Total_Calc()
+  tr.Refresh_Data()
+  
+End
+
+Public Sub CB1_Click()
+
+  Filter_Calc()
+
+End
+
+'Event Handler
+'''''''''''''''''''''''''''''''''''''''
+Public Sub TriGen_MajSel(val As Variant)
+  
+  Dim Res As Result
+  Dim i As Integer
+
+  If Bsel = True Then
+    If Val Then
+      i = Selected.Find(Val)
+      If i <> -1 Then
+        Selected.Remove(i)
+      Else
+        Selected.Add(Val)
+      Endif
+      Selcnt.Value = Selected.Count
+      Total_Calc()
+      tr.Refresh_Data()
+      Bsel = False
+      Val = ""
+    Endif
+  Endif
+  
+  Stop Event
+
+End
+
+Public Sub TriGen_Raz()
+  
+  Selected.Clear()
+  Selcnt.Value = 0
+  Total_Calc()
+  
+End
+  
+Public Sub TriGen_Data(id As String, key As String, Data As _GridView_Data)
+  
+  If Selected.Find(id) <> -1 Then
+    Data.Background = Color.SelectedBackground
+    Stop Event
+  Else
+    'set default display
+    'Stop Event
+  Endif
+  
+  
+End
+
+Public Sub Form_Close()
+  
+  If Selected.Count Then
+    If Object.IsValid(Obj) Then
+      If Object.Class(Obj).Name = "LTrans" Then
+        LTrans.List = Selected.Copy()
+      Else
+        Object.SetProperty(Obj, "Bsel", True)
+        Object.SetProperty(Obj, "Bval", Selected[0])
+      Endif
+    Endif
+  Else
+    If Object.IsValid(Obj) Then
+      If Object.Class(Obj).Name = "LTrans" Then
+        LTrans.List.Clear()
+      Else
+        Object.SetProperty(Obj, "Bsel", False)
+        Object.SetProperty(Obj, "Bval", Null)
+      Endif
+    Endif
+  Endif
+  
+End
+

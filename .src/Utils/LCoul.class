@@ -19,6 +19,12 @@ Public Ecr_pointee As SColor 'Color for Ecriture pointee
 Public Ecr_cloture As SColor 'Color for Ecriture cloturee
 Public Ecr_oldex As SColor 'Color par défault for Ecriture table Mvt (-1 à -5) quelque soit leur status
 
+Public Fac_Proforma As SColor
+Public Fac_Devis As SColor
+Public Fac_Commande As SColor
+Public Fac_Bon As SColor
+Public Fac_Acquite As SColor
+
 
 Public Sub _New(Optional Montant As Variant = 0, Optional Quantite As Variant = 1, Optional Arr As Variant = LPrix.Arr_001, Optional Cpt As String = "")
   
@@ -76,11 +82,28 @@ Public Sub _New(Optional Montant As Variant = 0, Optional Quantite As Variant = 
   Ecr_pointee = New SColor
   Ecr_pointee.Bg = "&HFFDFBF"
   
+  Fac_Proforma = New SColor
+  Fac_Proforma.Bg = "&HDFFFBF"
+  Fac_Devis = New SColor
+  Fac_Devis.Bg = "&HFFFFDC"
+  Fac_Commande = New SColor
+  Fac_Commande.Bg = "&HDFFFBF"
+  Fac_Bon = New SColor
+  Fac_Bon.Bg = "&HFFDFBF"
+  Fac_Acquite = New SColor
+  Fac_Acquite.Bg = "&HC0C0C0"
+  
 End
 
 Public Sub Art_DB_bgcolor() As String
 
   Return "Case WHEN art_suspendu = 1 Then '" & Art_Suspendu.Bg & "' WHEN art_qte > 0 and art_stocke = 1 THEN '" & Art_Stk.Bg & "' WHEN art_qte <= 0 and art_stocke = 1 THEN '" & Art_Epuise.Bg & "' WHEN art_stocke = 0 THEN '" & Art_NStk.Bg & "' ELSE '&H00FFFF&' END as bgcolor"
+
+End
+
+Public Sub Fac_DB_bgcolor() As String
+
+  Return "Case WHEN acquitte = 1 Then '" & Fac_Acquite.Bg & "' WHEN type = \"D\" then '" & Fac_Devis.Bg & "' WHEN type = \"C\" then '" & Fac_Commande.Bg & "' WHEN type = \"B\" then '" & Fac_Bon.Bg & "' ELSE '&HFFFFFF&' END as bgcolor"
 
 End
 

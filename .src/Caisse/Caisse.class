@@ -6974,7 +6974,9 @@ End
 Public Sub Button30_click()
 
   Dim MyForm As TriCpt
-  Dim MyForm2 As Tribl
+  Dim MyForm2 As TriFacture
+  Dim Selection As LTrans
+  Dim Sel As String[]
   Dim numero_tk As String
 
   If iRattente = 0 Then
@@ -7006,13 +7008,17 @@ Public Sub Button30_click()
           Endif
         Endif
       Case 2
-        MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
-        MyForm.Showmodal()
-        If Bsel = True Then
-          MyForm2 = New Tribl(Bval, numero_tk)
-          MyForm2.Showmodal()
-          Blexists = Ajout_Reg_Bl(numero_tk)
+        Selection = New LTrans
+        MyForm2 = New TriFacture(Null, TriFacture.BonFacNonPaye, Null, numero_tk, Selection)
+        MyForm2.Showmodal()
+        Sel = LTrans.List.Copy()
+        Utils.db.Exec("LOCK TABLES " & Cbase.Table("TabBl") & " WRITE ")
+        Utils.db.Exec("Update " & Cbase.Table("TabBl") & " set numtick = NULL where numtick = &1", numero_tk)
+        If Sel.Count Then
+          Utils.db.Exec("Update " & Cbase.Table("TabBl") & " set numtick = &1 where numbl in (" & Sel.Join(",") & ")", numero_tk)
         Endif
+        Utils.db.Exec("UNLOCK TABLES")
+        Blexists = Ajout_Reg_Bl(numero_tk)
       Case 3
         'do nothing
     End Select
