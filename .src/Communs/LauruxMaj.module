@@ -5291,14 +5291,6 @@ end_utf8:
       tab = "Fiches_Ticketx" & rResult!code
       Try Utils.db.Exec("DROP TABLE IF exists " & tab)
       tab = "Fiches_Ticketz" & rResult!code
-      Try r2Result = Utils.db.Exec("SELECT * FROM " & Tab & " ")
-      If Not Error Then
-        If r2Result.Available Then
-          If Message.Error("Le TicketsZ/moulinage doit etre effectué pour la caisse " & rResult!code & " avant la MAJ, restaurez la version précédente de Laurux, restaurez la base et procédez au moulinage avant de relancer la MAJ!", "Arreter", "Continuer") = 1 Then
-            Return
-          Endif
-        Endif
-      Endif
       Try Utils.db.Exec("DROP TABLE IF exists " & Tab)
     Until rResult.MoveNext()
   Endif
