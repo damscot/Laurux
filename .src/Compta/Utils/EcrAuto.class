@@ -278,14 +278,8 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
   If Vecr.type = VarEcr.vente Then
     res = utils.db.LockIncrement("numecriture2", "Fiches_Parametres")
     numerodef = res!numecriture2
-    res = utils.db.LockIncrement("dnfac", "Fiches_Parametres")
-    numfac = Format(res!dnfac, "000000")
-    res = utils.db.Exec("SELECT nfac FROM Fiches_Parametres")
-    If res!nfac Then
-      numfac = Format(Vecr.dte.G, "yymm") & numfac
-    Else
-      numfac = Format(Vecr.dte.G, "yyyy") & numfac
-    Endif
+    numfac = facnum()
+    If Not numfac Then Return True
     For Each var In Vecr
       Break
     Next
@@ -305,7 +299,6 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
     libel_def = libel_var.Evaluate(libel_def)
     libel_def = Left(libel_def, 50)
   Endif
-  
   For Each var In Vecr
     utils.db.Begin
     Select Case var.etat
@@ -347,6 +340,50 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
   If DocActif.Is_lock("Reglement", numecr, False) Then DocActif.free_lock("Reglement", numecr)
   ged()
 
+End
+
+Private Function facnum() As String
+
+  Dim res As Result
+  Dim num As String
+  Dim err As Boolean = False
+
+  res = utils.db.LockIncrement("dnfac", "Fiches_Parametres")
+  num = Format(res!dnfac, "000000")
+  res = utils.db.Exec("SELECT nfac FROM Fiches_Parametres")
+  If res!nfac Then
+    num = Format(Vecr.dte.G, "yymm") & num
+  Else
+    num = Format(Vecr.dte.G, "yyyy") & num
+  Endif
+  'on regarde si le n° de facture existe si oui on refait, ça ne devrait pas arriver
+  res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numfac = &1", num)
+  If Not res.Available Then
+    res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numfac = &1", num)
+    If Not res.Available Then
+      res = utils.db.Exec("SELECT * FROM Fiches_HistoFac WHERE numfac = &1", num)
+      If Not res.Available Then
+        res = utils.db.Exec("SELECT * FROM Fiches_HistoFacM WHERE numfac = &1", num)
+        If res.Available Then err = True
+      Else
+        err = True
+      Endif
+    Else
+      err = True
+    Endif
+  Else
+    err = True
+  Endif
+  If err Then
+    If Message.Error("Le n° de facture " & num & " est déjà utilisé", "Annuler", "N° suivant") = 1 Then
+      Return ""
+    Else
+      num = facnum()
+    Endif
+  Endif
+  
+  Return num
+  
 End
 
 Private Sub ajout(var As VarEcr) As Boolean
