@@ -1,2 +1,126 @@
 ' Gambas class file
 
+Public Bsel As Boolean = False
+Public Bval As String = ""
+
+Private $tr As TriGen
+Private $col As New Collection
+Private $prop As ObjProp
+Private $res As Result
+
+Public Sub _new()
+
+  Dim k As String
+  Dim res As Result
+  Dim ch As Chainage
+  
+  ch = New Chainage([dtdeb, dtfin, Button1])
+  res = Utils.db.Exec("SELECT arrete FROM Fiches_Parametres")
+  dtdeb.Type = TextReg.EstDate
+  dtdeb.Text = "01." & res!arrete
+  dtfin.Type = TextReg.EstDate
+  
+  $res = Utils.db.Exec("SELECT * FROM Fiches_ligregie LIMIT 1")
+  If Not $res.Available Then Return
+  
+  k = "---Date---"
+  $prop = New ObjProp($Res.Fields["dtmouv"], k)
+  $prop.AddChamp("Alignment", Align.Left, "dd.mm.yyyy")
+  $Col.Add($prop, k)
+  
+  k = "----Document----"
+  $prop = New ObjProp($Res.Fields["num"], k)
+  $Col.Add($prop, k)
+  
+  k = "--------------Vignette---------------"
+  $prop = New ObjProp($Res.Fields["vignette"], k)
+  $Col.Add($prop, k)
+  
+  k = "-E/S-"
+  $prop = New ObjProp($Res.Fields["type"], k)
+  $Col.Add($prop, k)
+  
+  k = "--Article--"
+  $prop = New ObjProp($Res.Fields["codeart"], k)
+  $Col.Add($prop, k)
+  
+  k = "-Regie-"
+  $prop = New ObjProp($Res.Fields["coderegie"], k)
+  $Col.Add($prop, k)
+  
+  k = "-Qte-"
+  $prop = New ObjProp($Res.Fields["qte"], k)
+  $Col.Add($prop, k)
+  
+  k = "---Volume---"
+  $prop = New ObjProp($Res.Fields["volume"], k)
+  $prop.AddChamp("Alignment", Align.Right)
+  $Col.Add($prop, k)
+  
+  k = "--%--"
+  $prop = New ObjProp($Res.Fields["degres"], k)
+  $prop.AddChamp("Alignment", Align.Center)
+  $Col.Add($prop, k)
+  
+  k = "--AP--"
+  $prop = New ObjProp($Res.Fields["volumeap"], k)
+  $prop.AddChamp("Alignment", Align.Right)
+  $Col.Add($prop, k)
+  
+  k = "-Droits-"
+  $prop = New ObjProp($Res.Fields["montdr"], k)
+  $prop.AddChamp("Alignment", Align.Right)
+  $Col.Add($prop, k)
+  
+  k = "--SS--"
+  $prop = New ObjProp($Res.Fields["montss"], k)
+  $prop.AddChamp("Alignment", Align.Right)
+  $Col.Add($prop, k)
+
+End
+
+Public Sub Form_Open()
+
+  Dim req As String
+  
+  req = "SELECT * FROM Fiches_ligregie" 
+  $tr = New TriGen(Panel1, $col, $res, req, 20, Me) As "coltri"
+  $tr.ExtraSel("(type='S' or type='E') AND " & dte(), "AND")
+  $tr.Show(True)
+  
+End
+
+Private Function dte() As String
+  
+  Dim dt As String
+  
+  dt = Utils.db.Subst(" dtmouv BETWEEN &1 AND &2", dtdeb.dte.D, dtfin.dte.D)
+  Return dt
+  
+End
+
+Public Sub coltri_MajSel(Bval As Variant)
+
+  Stop Event
+
+End
+
+Public Sub Button1_Click()
+
+  Me.Close
+
+End
+
+Public Sub dtdeb_LostFocus()
+
+  $tr.ExtraSel("(type='S' or type='E') AND " & dte(), "AND")
+  $tr.Update
+
+End
+
+Public Sub dtfin_LostFocus()
+
+  $tr.ExtraSel("(type='S' or type='E') AND " & dte(), "AND")
+  $tr.Update
+
+End

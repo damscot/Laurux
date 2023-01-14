@@ -723,7 +723,7 @@ Public Sub imprime()        ''imprime la sélection
     lab.Width = w.Last
   Next
   
-  rs2.MoveFirst()
+  Res.MoveFirst()
   Repeat
     pan = New ReportPanel(rep)
     pan.Height = "3mm"
@@ -735,12 +735,12 @@ Public Sub imprime()        ''imprime la sélection
       lab.Width = w[i]
       lab.Height = "3mm"
       If obj.name Then
-        lab.Alignment = Coltri[rs2.Index, i].Alignment
-        lab.Text = Coltri[rs2.Index, i].Text
+        lab.Alignment = Coltri[Res.Index, i].Alignment
+        lab.Text = Coltri[Res.Index, i].Text
         i += 1
       Endif
     Next
-  Until rs2.MoveNext()
+  Until Res.MoveNext()
   rep.Preview()
 End
 
