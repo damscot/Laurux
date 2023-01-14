@@ -350,6 +350,12 @@ End
 
 Public Sub Filter_KeyPress()
 
+  Dim ctrl As Boolean = Key.Control
+
+  If ctrl Then
+    If Key.Code = Key["p"] Or Key.Code = Key["P"] Then imprime()
+  Endif
+  
   If Key.Code = Key.Esc Then Close(Null) 
   If Key.Code = Key.Down Then 
     Stop Event
@@ -422,9 +428,13 @@ End
 Public Sub Coltri_KeyPress()
 
   Dim cancel As Boolean = False
+  Dim ctrl As Boolean = Key.Control
 
   cancel = Raise keyPress()
   If cancel Then Return
+  If ctrl Then
+    If Key.Code = Key["p"] Or Key.Code = Key["P"] Then imprime()
+  Endif
   If Key.code = Key.Enter Or Key.code = Key.Return Then
     Coltri_Click()
   Endif
@@ -685,6 +695,53 @@ Public Sub DB_Decr()
   End If
   Coltri.Refresh
 
+End
+
+Public Sub imprime()        ''imprime la sélection
+  
+  Dim rep As New Report
+  Dim pan As ReportPanel
+  Dim lab As ReportLabel
+  Dim filter As TextReg
+  Dim obj As ObjProp
+  Dim w As New String[]
+  Dim i As Integer
+  Dim t As String
+  
+  pan = New ReportPanel(rep)
+  pan.Fixed = True
+  pan.Height = "5mm"
+  pan.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+  pan.Arrangement = Arrange.Horizontal
+  For Each filter In Colfil
+    lab = New ReportLabel(pan)
+    lab.Text = filter.Text
+    lab.Font = Font["Serif, 8"]
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    t = Str(Round(220 * (filter.w / coltri.W), 0)) & "mm"
+    w.Add(t)
+    lab.Width = w.Last
+  Next
+  
+  rs2.MoveFirst()
+  Repeat
+    pan = New ReportPanel(rep)
+    pan.Height = "3mm"
+    pan.Arrangement = Arrange.Horizontal
+    i = 0
+    For Each obj In Col_Def
+      lab = New ReportLabel(pan)
+      lab.Font = Font["Serif, 5"]
+      lab.Width = w[i]
+      lab.Height = "3mm"
+      If obj.name Then
+        lab.Alignment = Coltri[rs2.Index, i].Alignment
+        lab.Text = Coltri[rs2.Index, i].Text
+        i += 1
+      Endif
+    Next
+  Until rs2.MoveNext()
+  rep.Preview()
 End
 
 Public Sub FontSize(Increment As Float)
