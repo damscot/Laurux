@@ -111,7 +111,7 @@ Public Function ClotSuspendu(Optional nart As String, Optional droi As String) A
       Return False
     Endif
   Endif
-  If Me.Avant(DateSus, True) Then 
+  If droi And Me.Avant(DateSus, True) Then 
     Message.Warning("La CM en droit suspendu est clôturée pour cette période : " & Me.L)
     Return True
   Endif
@@ -136,7 +136,7 @@ Public Function ClotAcquite(Optional nart As String, Optional droi As String) As
       Return False
     Endif
   Endif
-  If Me.Avant(DateAcq, True) Then 
+  If droi And Me.Avant(DateAcq, True) Then 
     Message.Warning("La CM en droit acquité est clôturée pour cette période : " & Me.L)
     Return True
   Endif
