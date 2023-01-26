@@ -71,11 +71,13 @@ Public Sub _new()
   k = "Montant HT"
   f = New ObjProp(res.Fields["montant"], k)
   f.AddChamp("Alignment", Align.Right, "0.00")
+  f.cle = True
   $colbr.Add(f, k)
   
   k = "Montant TTC"
   f = New ObjProp(res.Fields["mttc"], k)
   f.AddChamp("Alignment", Align.Right, "0.00")
+  f.cle = True
   $colbr.Add(f, k)
   
   req = "SELECT * FROM Fiches_Entrecpt "
@@ -161,7 +163,7 @@ Public Sub TriBr_majsel(value As Variant)
   If sel.Exist(key) Then
     sel.Remove(key)
   Else
-    sel.Add([0, 0, LDate(value["ddate"]).G], key)
+    sel.Add([Val(value["montant"]), Val(value["mttc"]), LDate(value["ddate"]).G], key)
   Endif
   $listbr[$four] = sel
   Stop Event
@@ -250,7 +252,7 @@ Public Sub Ecritures(dteecr As LDate, dtebon As LDate, num As String, four As St
       compta = True
   End Select
   vecr = New VarEcr
-  vecr = ValideSaisie(dteecr, dtebon, num, four, vecr, compta)
+  vecr = ValideSaisie(dteecr, dtebon, num, four, vecr, compta, num)
   If m = 2 Then
     res = Utils.db.Exec("SELECT jrnal5 FROM Fiches_Parametres")
     If res.Available Then
@@ -280,6 +282,7 @@ Private Sub valide(compta As Boolean)
   Dim ecr As EcrAuto
   Dim res As Result
   Dim pg As ProgBar
+  Dim num As String
   
   pg = New ProgBar("Validation des réceptions", $selfo.Count, Null, True)
   pg.Show
@@ -291,8 +294,9 @@ Private Sub valide(compta As Boolean)
     vecr = New VarEcr
     $ht = 0
     $ttc = 0
+    num = $listbr[fo].first
     For Each brfo In $listbr[fo]
-      vecr = ValideSaisie(datej.dte, LDate(brfo[2]), $listbr[fo].Key, fo, vecr, compta)
+      vecr = ValideSaisie(datej.dte, LDate(brfo[2]), $listbr[fo].Key, fo, vecr, compta, num)
     Next
     res = Utils.db.Exec("SELECT jrnal5 FROM Fiches_Parametres")
     If res.Available And compta Then
@@ -363,7 +367,7 @@ Private Sub scanged(compta As Boolean, Ecr As EcrAuto, num As String, four As St
   
 End
 
-Private Sub ValideSaisie(dteecr As LDate, dtebon As LDate, num As String, four As String, vecr As VarEcr, compta As Boolean) As VarEcr           ''Valide 1 saisie avec ou sans passage en compta
+Private Sub ValideSaisie(dteecr As LDate, dtebon As LDate, num As String, four As String, vecr As VarEcr, compta As Boolean, Optional nump As String) As VarEcr           ''Valide 1 saisie avec ou sans passage en compta
 
   Dim resent, reslig, resfo, respar, res As Result
   Dim vr As VarEcr
@@ -399,11 +403,10 @@ Private Sub ValideSaisie(dteecr As LDate, dtebon As LDate, num As String, four A
     
     reslig = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt LEFT JOIN Fiches_Comptes ON four = compte_cc WHERE four = &1 AND numrecpt = &2 AND daterecpt = &3", four, num, dtebon.DT)
     If reslig.Available And compta Then
-      vecr.numdoc = num
       vecr.dte = dteecr
       vecr.compte = four
-      vecr.numdoc = num
-      vecr.numlot = num
+      vecr.numdoc = nump
+      vecr.numlot = nump
       vecr.libelle = libel_def
       vecr.intitul = reslig!intitule_cc
       Repeat
