@@ -34,7 +34,6 @@ Event ajou(Value As Sailig)   ''Est levé lorsque on ajoute une ligne de saisie
 Event gotfocus(Value As Sailig)
 Event lostfocus(Value As Sailig)
 
-
 Public Sub _new(prop As ObjProp[], parent As Control)
 
   $prop = prop
@@ -89,7 +88,6 @@ Public Sub show()
     tuto.w = $parent.W
     tuto.H = tuto.Font.H * 4
     tuto.Background = &h00DFFFF7
-'    tuto.AutoResize = True
     tuto.x = 0
     tuto.Alignment = Align.Center
     tuto.Font = Font["Italic,-1"]

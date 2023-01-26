@@ -125,7 +125,7 @@ Public Sub _new(Optional lig As SaiLig)
   $tartypcli.VisibleTot = False
   $tartypcli.VisibleTuto = False
   $tartypcli.show
-
+  
 End
 
 Private Sub cre1(res As Result, t1 As Integer, t2 As Integer, t3 As Integer, t4 As Integer)
@@ -342,14 +342,17 @@ End
 
 Private Sub LecArt_Write(Value As Sailig)
 
-  Dim res As Result
+  Dim res, res1 As Result
   Dim obj As ObjProp
   Dim i As Integer
-  
+  Dim req As String
+  Dim obs As Observer
+
   If Not value.MonControle["Code"].Text Then Return
   $ligach = value
   $resart = Utils.db.Exec("SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva LEFT JOIN Fiches_TarTemp ON art_code=art AND temp_type=&2 WHERE art_code=&1 ", value.MonControle["Code"].Text, TarGen)
   If $resart.Available Then
+    'Utils.db.Exec("SET @TarCli = '" & TarCli & "', @TarTcli = '" & TarTcli & "', @code = ' '")
     Label1.Text = $resart!art_code & " " & $resart!art_design
     If $resart!art Then 
       Enreg.Background = Color.Red
@@ -377,29 +380,31 @@ Private Sub LecArt_Write(Value As Sailig)
       Endif
     Next
     $ligart = $targen.ligne[1]
-'    If $resart!majtarif Then majtarif.Value = $resart!majtarif
+    'If $resart!majtarif Then majtarif.Value = $resart!majtarif
     If $resart!dtmaj Then dtmaj.Value = $resart!dtmaj
     If $resart!date Then dte.dte.G = $resart!date
-    $targen.ligne[1].prx = New LPrix(value.MonControle["Px_Rev"].Value, 1, $resart!art_cdarr) As "LpxTar"
+    obs = New Observer($targen.ligne[1].prx) As "LpxTar"
+    $targen.ligne[1].prx.Mnt = value.MonControle["Px_Rev"].Value
+    $targen.ligne[1].prx.Qte = 1
+    $targen.ligne[1].prx.Arr = $resart!art_cdarr
     If Not IsNull($targen.ligne[1].MonControle["Coef"].Text) Then
       $targen.ligne[1].txl = New LTaxe(calcoef($targen.ligne[1].MonControle["Coef"].Text), LTaxe.Remise)
       $targen.ligne[1].prx.add_taxe($targen.ligne[1].txl)
     Endif
     $targen.ligne[1].txl = New LTaxe($resart!taux_tva & "%", LTaxe.TVA)
     $targen.ligne[1].prx.add_taxe($targen.ligne[1].txl)
-'    $targen.ligne[0].valide = True
     If $resart!art Then $targen.ligne[1].valide = False
-  
-    res = Utils.db.Exec("SELECT * FROM (SELECT DISTINCT cart,ccli FROM Fiches_Tarcli WHERE cart = &2 UNION SELECT DISTINCT art AS cart,code AS ccli FROM Fiches_TarTemp WHERE art = &2 AND temp_type = &1) AS a LEFT JOIN Fiches_TarTemp ON art=a.cart AND temp_type=&1 AND code = a.ccli LEFT JOIN  Fiches_Tarcli ON Fiches_Tarcli.cart = a.cart AND a.ccli = Fiches_Tarcli.ccli LEFT JOIN Fiches_Cli ON cli_code=a.ccli LEFT JOIN Fiches_Art ON art_code=a.cart WHERE a.cart=&2", TarCli, $resart!art_code) 
-    $tarpcli.Delete
-    If res.Available Then affdonnes($tarpcli, res, value.MonControle["Px_Rev"].Value)
+    Utils.db.Set("@code", $resart!art_code)
 
-    res = Utils.db.Exec("SELECT * FROM (SELECT DISTINCT cart,type FROM Fiches_TarTypcli WHERE cart = &2 UNION SELECT DISTINCT art AS cart,code AS type FROM Fiches_TarTemp WHERE art = &2 AND temp_type = &1) AS a left JOIN Fiches_TarTemp ON art=a.cart AND temp_type=&1 AND Fiches_TarTemp.code = a.type  LEFT JOIN Fiches_TarTypcli ON a.cart=Fiches_TarTypcli.cart AND a.type=Fiches_TarTypcli.type LEFT JOIN Fiches_Typec ON Fiches_Typec.code=a.type JOIN Fiches_Art ON  art_code=a.cart WHERE a.cart=&2", TarTcli, $resart!art_code)
-    $tartypcli.Delete
+    res = Utils.db.execute("requ_cli")
+    If $tarpcli.ligne.Count > 0 Then $tarpcli.Delete
+    If res.Available Then affdonnes($tarpcli, res, value.MonControle["Px_Rev"].Value)
+    
+    res = Utils.db.Execute("requ_typ")
+    If $tartypcli.ligne.Count > 0 Then $tartypcli.Delete
     If res.Available Then affdonnes($tartypcli, res, value.MonControle["Px_Rev"].Value)
      
   Endif
-  
   $tarpcli.ajout
   $tartypcli.ajout
 
@@ -408,6 +413,7 @@ End
 Private Sub affdonnes(tar As SaiTableau, res As Result, Px_Rev As Float)
   
   Dim obj As ObjProp
+  Dim obs As Observer
   
   res.MoveFirst()
   If Not IsNull(res!dtmaj) Then dtmaj.Value = res!dtmaj
@@ -436,7 +442,10 @@ Private Sub affdonnes(tar As SaiTableau, res As Result, Px_Rev As Float)
         Endif
       Endif
     Next
-    $ligart.prx = New LPrix(Px_Rev, 1, res!art_cdarr) As "LpxTar"
+    obs = New Observer($ligart.prx) As "LpxTar"
+    $ligart.prx.Mnt = Px_Rev
+    $ligart.prx.Qte = 1
+    $ligart.prx.Arr = res!art_cdarr
     calprvart($ligart, $ligart.MonControle["Coef"].Text)
     $ligart.AutresObj[SupLigne] = res!temp_sup
     If res!temp_sup Then SupLig()
@@ -462,6 +471,7 @@ Public Sub Tarif_ajou(sl As Sailig)     ''s'execute à l'ajout d'une ligne de sa
     sl.chain.sup(sl.MonControle["Libellé"], 6)
   Endif
   sl.MonControle["Coef"].setfocus
+  'obs = New Observer($ligart.prx) As "LpxTar"
   sl.prx = New LPrix(sl.MonControle["Px_Rev"].Value, 1, $resart!art_cdarr) As "LpxTar"
   sl.AutresObj = New Variant[SupFin]
   sl.AutresObj[SupLigne] = False          'Si on supprime la ligne
@@ -471,8 +481,6 @@ End
 
 Public Sub ligne_SupLig(etat As Integer)
 
-  
-  
   If Not $ligart.MonControle[$ligart.MonControle.First].Text Then 
     Stop Event
     Return
@@ -488,8 +496,8 @@ Private Sub SupLig()
   Dim Obj As Object
   
   For Each obj In $ligart.MonControle
-    obj.Font = Font["Strikeout"]
-    obj.Enabled = False
+    Try obj.Font = Font["Strikeout"]
+    Try obj.Enabled = False
   Next
   $ligart.AutresObj[SupLigne] = True
   $ligart.valide = False
@@ -501,20 +509,22 @@ Public Sub LPrixAchat_change(Value As LPrix)           ''on change le prix de re
 
   Dim lg As Sailig
   Dim ligne As Sailig = $ligart
+  Dim PuNHT As Float
   
   lg = $targen.ligne[1]
+  PuNHT = value.PuNHT.Mnt
   If IsNull(lg.prx) Then Return
   $ligart = lg
-  calprv(lg, value.PuNHT.Mnt)
+  calprv(lg, PuNHT)
 
   For Each lg In $tarpcli
     $ligart = lg
-    calprv(lg, Value.PuNHT.Mnt)
+    calprv(lg, PuNHT)
   Next
   
   For Each lg In $tartypcli
     $ligart = lg
-    calprv(lg, Value.PuNHT.Mnt)
+    calprv(lg, PuNHT)
   Next
   $ligart = ligne
   
@@ -553,18 +563,10 @@ End
 
 Private Sub calprvart(lg As Sailig, coef As Variant)            ''calcul le tarif sur la base fiche article et avec le coef indiqué de Px_HT_Ar et Px_TTC_Ar
 
-  Dim lpx As LPrix
-  Dim lta As LTaxe
-  
   calprv(lg, lg.MonControle["Px_Rev"].Value)
-  lpx = New LPrix(lg.MonControle["Px_Rev"].Value, 1, $resart!art_cdarr)
-  lta = New LTaxe(coef, LTaxe.Remise)
-  lpx.add_taxe(lta)
-  lta = New LTaxe($resart!taux_tva & "%", LTaxe.TVA)
-  lpx.add_taxe(lta)
-  $ligart.MonControle["Px_HT_Ar"].value = lpx.PuNHT.G
-  $ligart.MonControle["Px_TTC_Ar"].value = lpx.PuNTC.G
-
+  $ligart.MonControle["Px_HT_Ar"].value = lg.MonControle["Px_Rev"].Value * (1 + (Val(Left(coef, -1)) / 100))
+  $ligart.MonControle["Px_TTC_Ar"].value = $ligart.MonControle["Px_HT_Ar"].value * (1 + ($resart!taux_tva / 100))
+  
 End
 '*************************control  vailidté client ou type client*****************************************
 Private Function climan() As Boolean
@@ -783,7 +785,6 @@ Public Sub EnrTarTemp(pbht As Float, txconv As Float, rm As Float, paht As Float
       dettartemp(pbht, txconv, rm, paht, frais, pxrev, res, sl)
     Endif
   Next
-  'tarif par type client
   $tartypcli.Netoyage("Type")
   For Each sl In $tartypcli
     If Not sl.valide Then
@@ -806,7 +807,6 @@ Private Sub dettartemp(pbht As Float, txconv As Float, rm As Float, paht As Floa
   
   tx = 1 + (Val(Left(sl.MonControle["Coef"].Text, -1)) / 100)
   res!temp_coef = tx
-'  res!tarif = CBool($MajTar[IgnoreTarif])
   res!dtmaj = CBool($MajTar[MajTar])
   If $MajTar[MajTar] Then res!date = $MajTar[DateTarif].Gnt
   res!pbht = pbht

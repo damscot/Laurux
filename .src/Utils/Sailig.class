@@ -74,12 +74,11 @@ Public Sub _new(Optional prop As ObjProp[], parent As Control, etat As Integer =
     If $etat = lecture Then Try clas.enabled = False
     clas.name = obj.NomControl
     obj.AppProp(clas)
-    clas.show
     If clas.H = 0 And clas.W = 0 Then clas.expand = True
     MonControle.Add(clas, obj.NomControl)
   Next
   If Not $dernier Then $dernier = MonControle[MonControle.Last].name
-  MonControle[MonControle.First].setfocus
+  If $etat <> lecture Then MonControle[MonControle.First].setfocus
   
 End
 

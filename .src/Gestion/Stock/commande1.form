@@ -46,18 +46,18 @@
       Border = Border.Plain
     }
     { Label3 Label
-      MoveScaled(93,1,13,3)
-      Text = ("N° commande : ")
+      MoveScaled(86,1,23,3)
+      Text = ("N° commande fournisseur: ")
     }
     { ncom TextReg
-      MoveScaled(107,1,25,3)
+      MoveScaled(109,1,25,3)
     }
     { Label4 Label
-      MoveScaled(93,5,11,3)
-      Text = ("N° BL :")
+      MoveScaled(86,5,20,3)
+      Text = ("N° BR fournisseur :")
     }
     { nbl TextReg
-      MoveScaled(107,5,25,3)
+      MoveScaled(109,5,25,3)
     }
     { creation Button
       MoveScaled(0,13,21,4)
@@ -84,11 +84,6 @@
       Text = Shortcut(("Enregistrer la saisie"), "E")
       Picture = Picture["icon:/32/apply"]
     }
-    { crecom Button
-      MoveScaled(133,1,13,3)
-      Text = ("Créer")
-      Picture = Picture["Icones/folder_new.png"]
-    }
     { Label6 Label
       MoveScaled(0,6,14,3)
       Text = ("Commentaire")
@@ -102,10 +97,10 @@
       Picture = Picture["Icones/button_ok.png"]
     }
     { dte TextReg
-      MoveScaled(107,9,17,3)
+      MoveScaled(109,9,17,3)
     }
     { Label2 Label
-      MoveScaled(93,9,15,3)
+      MoveScaled(86,9,24,3)
       Text = ("Date :")
     }
     { annul Button
@@ -124,15 +119,21 @@
       Picture = Picture["Icones/filesave.png"]
     }
     { generer Button
-      MoveScaled(74,1,14,3)
+      MoveScaled(74,1,12,3)
       Visible = False
       Text = ("Générer       ")
       Picture = Picture["icon:/32/exec"]
     }
     { tardt Button
-      MoveScaled(134,8,22,4)
+      MoveScaled(140,1,18,4)
       Text = ("Tarif par date")
-      Picture = Picture["icon:/32/office"]
+      Picture = Picture["icon:/22/office"]
+    }
+    { Import Button
+      MoveScaled(140,7,18,4)
+      ToolTip = ("Récupération des données du portable inventaire")
+      Text = Shortcut(("Importer"), "I")
+      Picture = Picture["Icones/charset.png"]
     }
   }
   { Label5 Label

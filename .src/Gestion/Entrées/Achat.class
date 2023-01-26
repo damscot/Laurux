@@ -421,11 +421,10 @@ Public Sub ligne_InsLig(etat As Integer)
 
 End
 
-Public Sub ligne_ctrl(Value As Integer)
+Public Sub ligne_Suplig(etat As Integer)
 
-'  If Chr(Value) = "c" Or Chr(Value) = "C" Then
-    
-'  Endif
+  Super.ligne_Suplig(etat)
+  calcul
 
 End
 
@@ -561,7 +560,7 @@ End
 Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une commande déja saisie
   
   Dim res As Result
-  Dim LecEcr As Integer
+  Dim LecEcr, av As Integer
   Dim dra As Boolean
   Dim sl As Sailig
   Dim pg As ProgBar
@@ -583,9 +582,11 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
     commentaire = res!commentaire
     pg = New ProgBar("Lecture des achats", res.Count)
     pg.Show
+    av = res.Count / 3
+    If av = 0 Then av = 1
     res.MoveFirst()
     Repeat
-      pg.Avancement()
+      pg.Avancement("", av)
       Me.ajout(LecEcr)
       Me.ligne[Me.ind].MonControle["Code"].Text = res!code
       ligne_LecCode(res!code)
@@ -612,7 +613,6 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
         If Me.ligne[Me.ind].AutresObj[Consignes].ccd.code And etat = Reception Then dra = True
       
       Endif
-      calcul()
       Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
       Me.ligne[Me.ind].valide = False
     Until res.MoveNext()
@@ -646,7 +646,7 @@ Public Sub generer(four As String)
     pb = New ProgBar("Génération de commande", res.Count, Null, True)
     pb.Show
     Repeat
-      pb.Avancement(res!art_design, 10)
+      pb.Avancement(res!art_design, 5)
       resc = Utils.db.Exec("SELECT SUM(qte) AS qte FROM Fiches_Ligcom WHERE code = &1", res!art_code)
       If IsNull(resc!qte) Then
         qte = (res!art_stkmax - res!art_qte)
@@ -659,16 +659,107 @@ Public Sub generer(four As String)
         qte = qte / res!art_txconv
       Endif
       If qte > 0 Then 
-        Me.ligne[Me.ind].MonControle["Code"].text = res!art_code
-        ligne_LecCode(res!art_code)
-        Me.ligne[Me.ind].MonControle["Qte"].Value = qte
-        calcul
-        Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
-        Me.ajout()
+        If Rech(res!art_code) Then 
+          Me.ligne[Me.ind].MonControle["Code"].text = res!art_code
+          ligne_LecCode(res!art_code)
+          Me.ligne[Me.ind].MonControle["Qte"].Value = qte
+          calcul
+          Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+          Me.ajout()
+        Endif
       Endif
     Until res.MoveNext()
     pb.Close
   Endif
+
+End
+
+Private Function Rech(code As String) As Boolean
+  
+  Dim lig As Sailig
+    
+  For Each lig In Me
+    If code = lig.MonControle["Code"].Text Then Return False
+  Next
+  Return True
+  
+End
+
+
+Public Sub Import()
+
+  Dim x As Integer
+  Dim Code As String
+  Dim Codeb As String
+  Dim cle As String
+  Dim hfil As File
+  Dim cpt2, cpt, iPos As Integer = 0
+  Dim Hnew As File
+  Dim filename As String
+  Dim lig, Nombre As String
+
+  Shell "cd " & User.Home & ""
+  filename = User.Home & "/tmp/ImpT.txt"
+  If Exist(filename) Then Try Kill filename
+  Hnew = Open filename For Write Create
+  Try HFil = Open User.Home & "/Portable/inventaire.txt" For Read Write
+  If Not Error Then
+    Print #Hnew, "Les références suivantes n'ont pas pu être importées car elles n'existent pas dans la table des produits."
+
+    '****************************************On travaille avec le portable inventaire***************************************
+    Me.Mouse = Mouse.Wait
+    With utils
+      While Not Eof(hFil)
+        Line Input #hFil, Lig
+        If Not IsNull(Lig) Then
+          For x = 1 To 2
+            iPos = InStr(Lig, ";")
+            If iPos = 0 Then
+              cle = Lig
+            Else
+              cle = Left$(Lig, iPos - 1)
+              Lig = Mid$(Lig, iPos + 1)
+            Endif
+            Select Case x
+              Case 1
+                If Not IsNull(cle) Then
+                  Codeb = Trim(cle)
+                  Code = Utils.Find_cbarre(Codeb)
+                Else
+                  Print #Hnew, "Une saisie a été rejetée car elle ne possède pas de code barre."
+                  Inc cpt2
+                Endif
+                If IsNull(Code) Then
+                  Print #Hnew, "Une saisie a été rejetée car le code barre " & Codeb & " n'existe pas."
+                  Inc cpt2
+                Endif
+              Case 2
+                Nombre = Format$(Val(Utils.cpoint(cle)), "#.###")
+            End Select
+          Next
+          Inc cpt
+          Me.ajout()
+          Me.ligne[Me.ind].MonControle["Code"].Text = code
+          ligne_LecCode(code)
+          Me.ligne[Me.ind].MonControle["Qte"].text = Nombre
+          calcul()
+        Endif
+      Wend
+    End With
+    Me.Mouse = Mouse.Default
+
+    Try Close #Hnew
+    Try Close #HFil
+    Music.Play
+    Message.Info("Importation terminée. " & Cpt & " réfèrences  ont été importées. ", "Ok")
+    If cpt2 <> 0 Then Editeur.Prog_Editeur(Filename)
+  Else
+    Message.Info("Problème d'import ! Vérifiez la présence du fichier inventaire.txt sous le repertoire " & "~/Portable !")
+  Endif
+Catch
+  Me.Mouse = Mouse.Default
+  Music.Play
+  message.Error(Error.Text & " " & Error.where)
 
 End
 '**************************Opperation sur les fichiers********************************

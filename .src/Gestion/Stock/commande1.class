@@ -69,6 +69,8 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As In
     tbl.ind = -1
     $validBR = True
   Endif
+  
+  
 End
 
 Public Sub Form_Open()
@@ -111,7 +113,7 @@ Public Sub Form_Open()
 End
 
 Public Sub form_Close()
-
+Dim res As Result
   If Not IsNull(tbl) And If tbl.ligne.Count > 0 And Not $validBR Then
     If Message.Question("Vous avez une saisie en cours\nVoulez vous fermer quand même ?", "Oui", "Non") = 2 Then
       Stop Event
@@ -210,16 +212,18 @@ Public Sub LPrix_change(lp As LPrix)
   totttc.Value = 0
   Qtes.Value = 0
   For Each sl In tbl
-    If ($opt = "B" Or $opt = "T") And If Not IsNull(sl.AutresObj[Achat.Consignes]) Then
-      If Not IsNull(sl.AutresObj[Achat.Consignes].ccd) Then totttc.Value += sl.AutresObj[Achat.Consignes].ccd.consigne.G
+    If sl Then
+      If ($opt = "B" Or $opt = "T") And If Not IsNull(sl.AutresObj[Achat.Consignes]) Then
+        If Not IsNull(sl.AutresObj[Achat.Consignes].ccd) Then totttc.Value += sl.AutresObj[Achat.Consignes].ccd.consigne.G
+      Endif
+      totfrais.Value += sl.MonControle["Frais"].Value * sl.prx.Qte
+      totaht.Value += (sl.MonControle["Px_Net"].Value * sl.prx.Qte) 
+      totht.Value += (sl.MonControle["Px_Net"].Value * sl.prx.Qte) + (sl.MonControle["Frais"].Value * sl.prx.Qte)
+      totttc.Value += sl.prx.TotNTC.G
+      Qtes.Value += sl.prx.Qte
+      tbl.TotHt = totht.Value
+      tbl.TotTtc = totttc.Value
     Endif
-    totfrais.Value += sl.MonControle["Frais"].Value * sl.prx.Qte
-    totaht.Value += sl.prx.TotNHT.G - (sl.MonControle["Frais"].Value * sl.prx.Qte)
-    totht.Value += sl.prx.TotNHT.G
-    totttc.Value += sl.prx.TotNTC.G
-    Qtes.Value += sl.prx.Qte
-    tbl.TotHt = totht.Value
-    tbl.TotTtc = totttc.Value
   Next
   
 End
@@ -299,7 +303,6 @@ Public Sub ColTri_MajSel(val As Variant)
       $cond = Left($cond, -4)
       tbl.LitCommande($cond, $etat)
       Wait 0.1
-      generer.Visible = False
       ChangVal($etat)
       $numlock = tbl.ndoc
       If Not DocActif.get_lock("Achat", tbl.ndoc) Then 
@@ -386,7 +389,7 @@ Private Sub FourMan(four As String)      ''Récupere les info sur le fournisseur
     fcode.Text = four
     fo_nom.Text = res!fo_nom
     $Apdf = res!fo_copie
-    If Not IsNull(tbl) And If tbl.ligne.Count < 1 Then generer.Visible = True
+    generer.Visible = True
   Else
     Message.Warning("Fournisseur inconnu", "Ok")
     fo_nom.Text = ""
@@ -408,7 +411,6 @@ Public Sub creation_Click()
     Endif
   Endif
   
-  generer.Visible = False
   tardt.Visible = False
   tbl.fourisseur = fcode.Text
   tbl.date = dte.dte
@@ -444,8 +446,12 @@ End
 
 Public Sub generer_Click()
   
-  creation_Click()
-  tbl.generer(fcode.Text)
+  If tbl.ligne.Count < 1 Then 
+    creation_Click() 
+  Else If $etat = Achat.EnCommande Or $etat = Achat.CreaCommande Then
+    If tbl.ligne[tbl.ligne.Max].MonControle["Code"].text Then tbl.ajout()
+    tbl.generer(fcode.Text)
+  Endif
 
 End
 
@@ -537,8 +543,8 @@ Private Sub ValCom() As Boolean
   
   If $etat = Achat.Validee Then Return True
   Application.Busy = 1
-  If $etat = Achat.EnCommande Or $etat = Achat.CreaCommande Then nco = ncom.Text Else nco = nbl.Text
   If VerSai($etat) Then Return True
+  If $etat = Achat.EnCommande Or $etat = Achat.CreaCommande Then nco = ncom.Text Else nco = nbl.Text
   Utils.db.Begin
   If tbl.ContMat() And $etat = Achat.Reception Then
     If Not tbl.CreMat() Then Return True
@@ -800,6 +806,12 @@ Public Sub tardt_Click()
 
 End
 
+Public Sub Import_Click()
+
+  If $etat = Achat.CreaCommande Or $etat = Achat.EnCommande Or $etat = Achat.Sans Or tbl.ligne.Count < 1 Then tbl.Import()
+  
+End
+
 Public Sub Tarif_EnrTar()
 
   Dim lg As Sailig
@@ -835,12 +847,6 @@ Private Function VerSai(etat As Integer) As Boolean      ''on verifie la saisie 
     nbl.Text = res!dnbr
     tbl.ndoc = res!dnbr
   Endif
-  If Not ncom.text And etat <> Achat.Reception Then
-    Message.Warning("Vous devez renseigner le n° de commande", "Ok")
-    ncom.SetFocus
-    Application.Busy = 0
-    Return True
-  Endif
   If Not dte.Text Then
     Message.Warning("Vous devez renseigner la date", "Ok")
     dte.SetFocus
@@ -849,14 +855,24 @@ Private Function VerSai(etat As Integer) As Boolean      ''on verifie la saisie 
   Endif
   
   If $etat = Achat.CreaCommande Then
+    If Not ncom.Text Then
+      res = Utils.db.LockIncrement("dncom", "Fiches_Parametres")
+      ncom.Text = res!dncom
+    Endif
     res = Utils.db.Exec("SELECT * FROM Fiches_Entcom WHERE numcom = &1", ncom.Text)
     If res.Available Then
-      Message.Warning("Création impossible ce numéro de commande est déjà attribué")
+      Message.Warning("Création impossible ce numéro de commande est déjà attribué", "Ok")
       ncom.SetFocus
       ncom.Text = ""
       Application.Busy = 0
       Return True
     Endif
+  Endif
+  If $etat = Achat.EnCommande And Not ncom.Text Then
+    Message.Warning("Vous devez renseigner le numéro de commande ", "Ok")
+    ncom.SetFocus
+    Application.Busy = 0
+    Return True
   Endif
   
   Return tbl.Doublon()
@@ -865,6 +881,7 @@ End
 Private Sub BlqSai(Value As Boolean)
   
   fcode.Enabled = value
+  RecFo.Enabled = value
   dte.Enabled = value
   ncom.Enabled = value
   nbl.Enabled = value
@@ -935,20 +952,12 @@ Public Sub sortie_Click()
 
 End
 
-Public Sub crecom_Click()
-
-  Dim res As Result
-  
-  res = Utils.db.LockIncrement("dncom", "Fiches_Parametres")
-  ncom.Text = res!dncom
-  ncom.SetFocus
-
-End
 
 Public Sub RecFo_Click()
 
   Dim MyForm As TriCpt
 
+  Bsel = False
   MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then

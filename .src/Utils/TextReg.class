@@ -75,8 +75,6 @@ Public Sub _new()
   $reg = chaine
   $regex.Compile($reg)
   $textesc = Me.Editor.Text
-  $prop = New ObjProp(Null, Me.Window.Name & "/" & Me.Name, ObjProp.Param)
-  $prop.AppProp(Me)
 
 End
 
@@ -203,6 +201,8 @@ Public Sub butb_gotfocus()
 
   Dim i As Integer
   
+  $prop = New ObjProp(Null, Me.Window.Name & "/" & Me.Name, ObjProp.Param)
+  $prop.AppProp(Me)
   If $typedonne = EstNum And $value <> 0 Then
     Me.Editor.Text = Str($value)
   Endif
