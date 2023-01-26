@@ -18,7 +18,9 @@ Private Filter_Error As String
 
 Private Filters As Collection
 Private Show_Backtrace As Boolean
-
+'
+Private $req As New Collection
+Private $context As New Collection
 
 
 Public Sub _new()
@@ -427,7 +429,76 @@ Public Sub Exec(Request As String, ...) As Result
 
   Catch
     If Show_Backtrace Then Message.Error("Erreur de Requete SQL!\nReq: " & Request & "\n" & Error.Text & "\n ---- Backtrace ---- \n" & Error.Backtrace.Join("\n"))
-    Error.Propagate()
+    Error.Propagate() 
+
+End
+
+Public Sub Prepare(Nom As String, Request As String, ...)     ''Prepare une requete, Nom est le nom de la requete, request la requete puis les arguments éventuels. Les variables mysql sont à déclarer avec Set.
+
+  Dim aArg As New Variant[]
+  Dim oneArg As Variant 
+  Dim iInd As Integer
+  
+  If Param.Count Then
+    aArg = New Variant[Param.Count + 1]
+    aArg[0] = Request
+    iInd = 1
+    For Each oneArg In Param
+      aArg[iInd] = oneArg
+      iInd += 1
+    Next
+    'Seul moyen trouvé pour executer une fonction a arg variable depuis une fonction a arg variable
+    Request = Object.Call(Me, "Subst", aArg)
+  Endif
+  
+  If Super.type = "sqlite3" Then
+    If Not $req.Exist(nom) Then
+      $req.Add(Request, Nom)
+    Else
+      $req[Nom] = Request
+    Endif
+  Else
+    Request = "PREPARE " & nom & " FROM '" & Request & "'"
+    Me.Exec(request)
+  Endif
+
+End
+
+Public Sub Set(Var As String, value As Variant)        ''on cré la variable mysql, on ne peut en créé qu'une à la fois
+
+  Dim Request As String
+  
+  If Super.type = "sqlite3" Then
+    If Not $context.Exist(var) Then
+      $context.Add(value, Var)
+    Else
+      $context[Var] = value
+    Endif
+  Else
+    Select Case TypeOf(value)
+      Case gb.String, gb.Date
+        Request = Me.Subst("SET " & Var & " = &1", value)
+      Case gb.Float, gb.Integer
+        Request = "SET " & Var & " = " & Str(value)
+      Case gb.Null
+         Request = "SET " & Var
+    End Select
+    Me.Exec(Request)
+    
+  Endif
+
+End
+
+Public Sub Execute(Nom As String) As Result
+
+  Dim res As Result
+  
+  If Super.type = "sqlite3" Then
+    res = Eval("Me.Exec(" & $req[Nom] & ")", $context)
+  Else
+    res = Me.Exec("EXECUTE " & Nom)
+  Endif
+  Return res
 
 End
 
