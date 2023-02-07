@@ -25,7 +25,7 @@ Public Sub _new()
     Message.Error("Veuillez vérifier le paramétrage des familles dans les préférences", "OK")
     Quit
   Endif
-  $texfam = New $texfam[$ipr.Count]
+  $texfam = New TextBox[$ipr.Count]
   For i = 0 To $ipr.Max
     $texfam[i] = New TextBox(Me) As "codefam"
     $texfam[i].Height = Me.Height

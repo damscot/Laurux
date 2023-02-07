@@ -551,7 +551,7 @@ Public Sub Button5_Click()
 
   Dim MyForm As TriCpt
 
-  MyForm = New TriCcpt(Type, TriCpt.Sans_Solde, Me)
+  MyForm = New TriCpt(Type, TriCpt.Sans_Solde, Me)
   MyForm.Showmodal()
   If Bsel = True Then
     Cpt2.text = Bval
@@ -782,7 +782,7 @@ Public Sub Centralisation()
 
   Tab1 = "Ctrlnc"
   Libel = "Centralisation"
-  jrs = Date(Right$(Datj, 4), Format$(Val(Mid$(Datj, 4, 2)), "00"), 01)
+  jrs = Date(Right$(Datj, 4), Format$(Val(Mid$(Datj, 4, 2)), "00"), 1)
   Mois = Right$(Datj, 4) & Mid$(Datj, 4, 2)
   Jrs1 = finmois(jrs)
   Jrs1 = Right$(Datj, 4) & Format$(Val(Mid$(Datj, 4, 2)), "00") & Jrs1

@@ -260,7 +260,7 @@ Public Sub _new(vfac As ObjFacB)
   Endif
 
   'Gestion des 5 taux de tva
-  ctva = New Ltva
+  ctva = New LTaxe
   i = 0
   For Each ctva In $vfac.tva
     edtva(ctva, $vfac.tva.Count, i)

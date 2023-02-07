@@ -425,7 +425,7 @@ Public Sub SupprimerTags_Click()
     If Message.Warning("Cet outil permet pour la liste des documents selectionnés\nde supprimer un certain nombre de tags.\nAttention cette opération est définitive.", "Annuler", "Continuer") = 1 Then Return
   Endif
 
-  tags = New Strings[]
+  tags = New String[]
   For Each idx In Selected
     Res = Utils.db.Exec("Select tag from Docs_Ged as d inner join Docs_Tag on d.lind=doc_lind inner join Fiches_Tag as t on t.lind = tag_lind where d.lind = &1", idx)
     If Res.Available Then
