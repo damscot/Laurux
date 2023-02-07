@@ -30,6 +30,9 @@ Private $x As Float
 Private $objp As Object
 Private $cond As String
 Private $prop As ObjProp            ''propietes de me pour le fichier setting
+Private $sca As Boolean              ''scanner peut être activé
+Private $actsca As Boolean = False
+Private $F11 As Boolean              ''scanner activé/désactivé
 'constantes prédéfinies
 Public Const all As String = ".*"       'tout est autorisé
 Public Const path As String = "[a-zA-Z0-9_.+-@:&/]*" 'saisie d'un chemin avec protocol d'acces et credential
@@ -63,6 +66,7 @@ Property Champ As String[]          ''les champs à afficher dans la fenetre de 
 Property Choirech As Integer        ''les choix sur ce qu'on affiche dans la fenetre de rechereche (historique ou recherche)
 Property Name As String
 Property AddTooltip As String       ''On ajoute un tooltip a l'existant
+Property scanner As Boolean          ''On active/désactive la fonction scan par F11=> un retour chariot est inséré à la fin de la lecture du code barre
 
 Public Sub _new()
 
@@ -74,6 +78,11 @@ Public Sub _new()
   Me.Tooltip &= "CTRL + Down Fenetre historique"
   $reg = chaine
   $regex.Compile($reg)
+
+End
+
+Public Sub _ready()
+
   $textesc = Me.Editor.Text
 
 End
@@ -157,8 +166,25 @@ Public Sub butb_keypress()
         Stop Event
         If $grd.Row < $grd.Rows.Max Then $grd.Select($grd.row + 1)
       Endif
-      
+
   End Select
+
+End
+
+Public Sub butb_KeyRelease()
+
+  Dim shi As Boolean = Key.Normal
+  
+  If Key.Code = Key.ShiftKey Then $actsca = True
+  If shi And $F11 And $actsca Then
+    $actsca = False
+    Desktop.SendKeys(("[Return]"))
+    Return
+  Endif
+  
+  If Key.Code = Key.F11 And $sca Then
+    $F11 = Not $F11
+  Endif
 
 End
 
@@ -664,5 +690,20 @@ End
 Private Sub AddTooltip_Write(Value As String)
 
   Me.Tooltip &= value
+
+End
+
+Private Function scanner_Read() As Boolean
+
+  Return $sca
+
+End
+
+Private Sub scanner_Write(Value As Boolean)
+
+  $sca = value
+  If value Then
+    If Me.Tooltip Not Match "F11 Activation du scanner" Then Me.AddTooltip = "\nF11 Activation du scanner"
+  Endif
 
 End
