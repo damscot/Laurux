@@ -154,7 +154,7 @@ Public Sub _new(vfac As ObjFacB)
       Me.signature.Image = Image.Load("Icones/signature.jpg")
     Case ObjFac.archive
       Me.numero.Text = "Duplicata facture n° " & vfac.numfac & " du " & vfac.dtedoc.L
-    Case "T"
+    Case ObjFac.atelier
       Me.numero.Text = "Fiche atelier N° " & vfac.numbl & " du " & vfac.dtedoc.L
       Me.gest.Text = "Matériel récéptionné le " & vfac.dtedoc.L
       Me.enttva.Children.Clear
@@ -164,7 +164,7 @@ Public Sub _new(vfac As ObjFacB)
       Me.lgtva.Height = "0mm"
       Me.rtotttc.Children.Clear
       Me.rtotttc.Height = "10mm"
-      Me.rtotttc.BackGround = ReportBrush.Color(&H8BB5E0)
+      Me.rtotttc.BackGround = ReportBrush.Color($vfac.couleur)
       lab = New ReportLabel(rtotttc)
       lab.Height = "10mm"
       lab.Width = "30mm"
