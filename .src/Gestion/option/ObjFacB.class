@@ -790,10 +790,10 @@ Public Sub visualisation()        ''Visualisation d'un bl ou d'une facture
   
   calcul()
   Me.resent.MoveFirst
+  ch = Me.choix
   If Me.choix = ObjFac.facture And Me.resent!imp = "0" Then
     Me.choix = ObjFac.bl
   Endif
-  ch = Me.choix
   If Me.resent!imp = 1 Then Me.choix = ObjFac.facture
   Me.edit = New EditfacB(Me, Me)
   Me.imp.OutputFile = Filename
