@@ -8,12 +8,12 @@
     Font = Font["Serif,-1"]
     Spacing = True
     { Button1 Button
-      MoveScaled(7,0,4.1429,4.1429)
+      MoveScaled(7,0,4.1111,4.1111)
       ToolTip = ("Doc HTML")
       Picture = Picture["Icones/khelp.png"]
     }
     { Button2 Button
-      MoveScaled(17,0,18,4.1429)
+      MoveScaled(17,0,18,4.1111)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       ToolTip = ("Imprime le résultat sur l'imprimante")
@@ -23,7 +23,7 @@
       Picture = Picture["Icones/frameprint.png"]
     }
     { Button3 Button
-      MoveScaled(36,0,14,4.1429)
+      MoveScaled(36,0,14,4.1111)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       ToolTip = ("Quitter le programme .")
@@ -34,7 +34,7 @@
     }
   }
   { Frame1 Frame
-    MoveScaled(1,4,60,7)
+    MoveScaled(1,3,60,7)
     Text = ("Type comptes")
     { Rfour RadioButton
       MoveScaled(2,3,26,3)
@@ -49,7 +49,7 @@
     }
   }
   { Frame2 Frame
-    MoveScaled(1,13,59,7)
+    MoveScaled(1,11,59,7)
     Text = ("Tri par")
     { Dtech RadioButton
       MoveScaled(2,3,22,3)
@@ -64,23 +64,23 @@
     }
   }
   { Label2 Label
-    MoveScaled(37,23,10,3)
+    MoveScaled(37,19,10,3)
     Font = Font["Serif,-1"]
     Text = ("Jusqu'au :")
   }
   { Dten0 TextBox
-    MoveScaled(47,23,13,3)
+    MoveScaled(47,19,13,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     ToolTip = ("Double clic pour avoir le calendrier")
   }
   { Label1 Label
-    MoveScaled(1,23,10,3)
+    MoveScaled(1,19,10,3)
     Font = Font["Serif,-1"]
     Text = ("Du")
   }
   { Dten1 TextBox
-    MoveScaled(11,23,13,3)
+    MoveScaled(11,19,13,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     ToolTip = ("Double clic pour avoir le calendrier")
@@ -90,5 +90,13 @@
     Visible = False
     Font = Font["Serif,-1"]
     Background = Color.Background
+  }
+  { Label3 Label
+    MoveScaled(6,24,19,3)
+    Text = ("Mode de règlement :")
+  }
+  { Eche ComboBox
+    MoveScaled(28,24,26,3)
+    Text = ("Tous")
   }
 }

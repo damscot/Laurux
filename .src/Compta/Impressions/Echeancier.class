@@ -48,6 +48,8 @@ Private Org As String
 '*************************
 Public Sub _New()
 
+  Dim res As Result
+  
   Utils.Observers(Me)
   Music.Load(Start.Musique)
   Me.Center
@@ -58,6 +60,13 @@ Public Sub _New()
   DteN1.Text = Utils.Cdate_Aff(rResult!dteclec1)
   DteN1.SetFocus
   DteN1.Select
+  Eche.Add("Tous")
+  res = utils.db.Exec("SELECT * FROM Fiches_Reglements")
+  If res.Available Then
+    Repeat
+      Eche.Add(res!code & " | " & res!libel)
+    Until res.MoveNext()
+  Endif
 
 End
 
@@ -138,7 +147,11 @@ Public Sub Button2_Click()
       typec = "401"
     Endif
     If Dtech.value Then
-      rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " left join  " & Cbase.Table("TabComptes") & " on compte_cc = compte WHERE dateech >= &5 and dateech <= &1 and validee = &2  and lettree = &3 and left(compte,3) = &4 and tresorerie <> &6 and collectif is null order by dateech, compte, jour desc, numlot ", Utils.Cdate_Dbase(DteN0.Text), 1, 0, Typec, Utils.Cdate_Dbase(DteN1.Text), 1)
+      If Eche.Index = 0 Or Typec = "401" Then
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " left join  " & Cbase.Table("TabComptes") & " on compte_cc = compte WHERE dateech >= &5 and dateech <= &1 and validee = &2  and lettree = &3 and left(compte,3) = &4 and tresorerie <> &6 and collectif is null order by dateech, compte, jour desc, numlot ", Utils.Cdate_Dbase(DteN0.Text), 1, 0, Typec, Utils.Cdate_Dbase(DteN1.Text), 1)
+      Else
+        rResult = Utils.db.Exec("SELECT * FROM Fiches_Mvt left join  Fiches_Comptes on compte_cc = compte LEFT JOIN Fiches_Cli on compte = cli_code WHERE dateech >= &5 and dateech <= &1 and validee = &2  and lettree = &3 and left(compte,3) = &4 and tresorerie <> &6 and collectif is null AND cli_reg LIKE &7 order by dateech, compte, jour desc, numlot ", Utils.Cdate_Dbase(DteN0.Text), 1, 0, Typec, Utils.Cdate_Dbase(DteN1.Text), 1, Left(Eche.Text, 2) & "%")
+      Endif
     Else
       rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " left join  " & Cbase.Table("TabComptes") & " on compte_cc = compte WHERE dateech >= &5 and dateech <= &1 and validee = &2  and lettree = &3 and left(compte,3) = &4 and tresorerie <> &6 and collectif is null order by compte, jour desc, dateech, numlot", Utils.Cdate_Dbase(DteN0.Text), 1, 0, Typec, Utils.Cdate_Dbase(DteN1.Text), 1)
     Endif
