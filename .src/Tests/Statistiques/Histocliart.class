@@ -1,0 +1,1025 @@
+' Gambas class file
+
+'----------------------------------------------------------------------------
+'
+
+'
+'Ce programme est un logiciel libre; Vous pouvez le redistribuer et/ou
+'le modifier selon les termes de la GNU General PUBLIC License publiés par
+'la Free Software Foundation.
+
+'Ce programme est distribué sans garantie. Voyez la GNU General PUBLIC
+'License pour plus de details.
+
+'Vous devez lire la GNU General PUBLIC Licence.
+'Si vous ne disposez pas d'un exemplaire, veuillez écrire
+'à " The Free Software Foundation
+'INC, 59 Temple place - Suite 33, Boston
+'MA 02111-1307 USA
+'----------------------------------------------------------------------------
+'################################################
+'# nom du fichier           : Histocliart.class
+'# Auteur                   : Maguer Patrick
+'# date de création         : 01/01/2019
+'# Impression de statistique détaillée
+'################################################
+'
+
+Filename As String
+hfile As File
+son As Integer = Start.Son
+Coulfond As New String[]
+PosY As Integer
+PosX As Integer
+Public Cclient As String
+Public Bsel As Boolean = False
+Public Bval As String
+Private $familles As Trifam
+Private $rpt As Report
+Private $res As Result
+Private $ca As Float
+Private $marge As Float
+Private $srequete As String
+
+Public Sub _New()
+
+  Dim rResult As Result
+  Dim Tab As String
+  Dim Frmt As New String[]
+  Dim chn As Chainage
+
+  Coulfond = Utils.Coulfd()
+  Frmt = Utils.FColr(Start.LocalSettings["/Coul/Fnets"])
+  Utils.Observers(Me)
+  Music.Load(Start.Musique)
+  
+  chn = New Chainage([dten0, dten1, cli, cli2, Texttype, Textart, Textart1, Textfour, Textfour1, Textmarq, Textcentr])
+  dten0.Type = TextReg.EstDate
+  dten1.Type = TextReg.EstDate
+  Textfour1.reg = "4{1}0*1*[0-9]{0,5}"
+  Textfour.reg = "4{1}0*1*[0-9]{0,5}"
+  cli.reg = "4{1}1*1*[0-9]{0,5}"
+  cli2.reg = "4{1}1*1*[0-9]{0,5}"
+  
+'  Tab = "Fiches_Parametres"
+  Me.Center
+ ' rResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
+  dteN0.Text = LDate(Now).EDeb.L 'rResult!dteclec1
+ ' dteN0.Text = Utils.Calc_mois(dteN0.Text)
+  dteN1.Text = LDate(Now).FinMois.L
+  dten0.SetFocus
+  dten0.Select
+  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCommerciaux") & " order by code")
+  If rResult.Available Then
+    Do
+      Try Combcomm.Add(rResult!code & " - " & rResult!nom)
+    Loop Until rResult.MoveNext()
+  Endif
+  Combcomm.Add(" ", "00")
+  $familles = New Trifam("1")
+  TriArticles($familles.enfant)
+
+End
+
+Private Sub TriArticles(fam As Trifam)
+  
+  Dim fm As Trifam
+  Dim cle As String
+  
+  For Each fm In fam
+    If Not IsNull(fm.precedant) Then TriArticles(fm.precedant)
+    If fm.parent = $familles Then
+      TreeView1.Add(fm.cle, fm.Text)
+    Else
+      TreeView1.Add(fm.cle, fm.Text,, fm.parent.cle)
+    Endif
+    TreeView1[fm.cle].EnsureVisible
+  Next
+  TreeView1.MoveFirst
+  TreeView1[TreeView1.Item.Key].Selected = True
+End
+
+
+'****************************************************
+'*           Gestion de la seconde date             *
+'****************************************************
+Public Sub dteN1_LostFocus()
+'Date non inclusive
+  If dten0.dte.Apres(dten1.dte, True) Then
+'  If Val(Right$(dteN1.text, 4) & Mid$(dteN1.text, 4, 2) & Left$(dteN1.text, 2)) < Val(Right$(dteN0.text, 4) & Mid$(dteN0.text, 4, 2) & Left$(dteN0.text, 2)) Then
+    If son Then
+      Music.Play
+    Endif
+    If Message.Warning("Attention ! Votre selection n'est pas possible.", "Ok") = 1 Then
+'      dteN1.setfocus
+'      dteN1.Select
+    Endif
+  Endif
+
+End
+
+'********************************************
+'* Saisie d'un client manuellement     *
+'********************************************
+Public Sub Cli_man(Org As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Cli where cli_code = &1", Cli.Text)
+  With Utils
+    If rResult.available Then
+      If Org = "Cli" Then
+        Cli2.SetFocus
+      Else
+        Cli.SetFocus
+      Endif
+    Else
+      If Son Then
+        Music.Play
+      Endif
+      Message.Warning("Attention ! Veuillez saisir un compte existant SVP.", "Ok")
+      If Org = "Cli" Then
+        Cli.Clear
+        Cli.SetFocus
+      Else
+        Cli2.Clear
+        Cli2.SetFocus
+      Endif
+    Endif
+  End With
+
+End
+
+
+Public Sub Butcli_Click()
+
+  Dim MyForm As TriCpt
+
+  bsel = False
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
+  MyForm.Showmodal()
+  If Bsel = True Then
+    Cli.text = Bval
+    Cli_Man("Cli")
+  Else
+    Cli.SetFocus
+  Endif
+
+End
+
+Public Sub Butcli2_Click()
+
+  Dim MyForm As TriCpt
+
+  MyForm = New TriCpt(TriCpt.Client, TriCpt.Sans_Solde, Me)
+  MyForm.Showmodal()
+  If Bsel = True Then
+    Cli2.text = Bval
+    Cli_Man("Cli2")
+  Else
+    Cli2.SetFocus
+  Endif
+
+End
+
+Public Sub Butart_Click()
+
+  Dim MyForm As TriArticles
+  Dim lst As String
+
+  lst = Last.tag
+  Bsel = False
+  MyForm = New TriArticles(True, False, "art_code", "", "", Null, False, False, Me)
+  MyForm.Showmodal()
+  If Bsel = True Then
+    Select Case lst
+      Case "1"
+        Textart.Text = Bval
+        Textart1.SetFocus
+        Textart1.Select
+      Case "2"
+        Textart1.Text = Bval
+        Textfour.SetFocus
+        Textfour.Select
+    End Select
+  Endif
+
+End
+
+Public Sub butfour_click()
+
+  Dim MyForm As TriCpt
+  Dim lst As String
+
+  lst = Last.Tag
+  MyForm = New TriCpt(TriCpt.Fournisseur, TriCpt.Sans_Solde, Me) 
+  MyForm.Showmodal()
+  If Bsel = True Then
+    Select Case lst
+      Case "1"
+        Textfour.Text = Bval
+        Textfour1.setfocus
+        Textfour1.Select
+      Case "2"
+        Textfour1.Text = Bval
+        Textmarq.SetFocus
+        Textmarq.Select
+    End Select
+  Endif
+  
+End
+
+Public Sub Buttype_Click()
+
+  Dim res As Result
+  
+  If ColumnView2.Visible Then 
+    ColumnView2.Visible = False
+    ColumnView2.Clear
+    Return
+  Endif
+  ColumnView2.Raise
+  ColumnView2.Visible = True
+  res = utils.db.Exec("SELECT * FROM Fiches_Typec")
+  If res.Available Then
+    res.MoveFirst
+    Repeat
+      ColumnView2.Add(res!code, res!libelle)
+    Until res.MoveNext()
+  Endif
+
+End
+
+Public Sub ColumnView2_Activate()
+
+  Texttype.Text = ColumnView2.Current.Key
+  ColumnView2.Visible = False
+  ColumnView2.Clear
+
+End
+
+Public Sub btn_Click()
+
+  Dim res As Result
+  
+  If ColumnView1.Visible Then 
+    ColumnView1.Visible = False
+    ColumnView1.Clear
+    Return
+  Endif
+  ColumnView1.Raise
+  ColumnView1.Visible = True
+  If Last = Butmarque Then
+    ColumnView1.Tag = "marque"
+    res = Utils.db.Exec("SELECT * FROM Fiches_Marques")
+  Endif 
+  If Last = Butcenta Then
+    ColumnView1.Tag = "central"
+    res = Utils.db.Exec("SELECT code,libelle as intitule FROM Fiches_Centrales")
+  Endif
+  If res.Available Then
+    res.MoveFirst
+    Repeat
+      ColumnView1.Add(res!code, res!intitule)
+    Until res.MoveNext()
+  Endif
+  
+End
+
+Public Sub ColumnView1_Activate()
+
+  If ColumnView1.Tag = "marque" Then
+    Textmarq.Text = ColumnView1.Current.Text
+  Endif
+  If ColumnView1.Tag = "central" Then
+    Textcentr.Text = ColumnView1.Current.Key
+  Endif
+  ColumnView1.Visible = False
+  ColumnView1.Clear
+
+End
+
+
+Public Sub Butedit_Click()
+
+  If nbfic() = 0 Then
+    Message.Warning("Veuillez sélectionner au moins un fichier")
+    Return
+  Endif
+  If crearequ() = False Then
+    Return
+  Endif
+  If $res.Available Then edition
+  
+End
+
+Private Sub crearequ() As Boolean
+  
+  'construction de la requete
+  Dim dtinf, dtsup As String
+  Dim requbl, champbl, fichierbl, condbl As String
+  Dim requblm, champblm, fichierblm, condblm As String
+  Dim requfa, champfa, fichierfa, condfa As String
+  Dim requfam, champfam, fichierfam, condfam As String
+  Dim requtk, champtk, fichiertk, condtk As String
+  Dim ord, group As String 
+  Dim un As Boolean
+  Dim typedoc As String[]
+  
+  typedoc = New String[]
+  If CheckPro.Value Then typedoc.Add("'P'")
+  If CheckDev.Value Then typedoc.Add("'D'")
+  If CheckCom.Value Then typedoc.Add("'C'")
+  If CheckBl.Value Then typedoc.Add("'B'")
+  If CheckFac.Value Then typedoc.Add("'A','F'")
+  If typedoc.Length = 0 And (CheckDoc.Value = True Or CheckDocE.Value = True) Then
+    Message.Error("Vous devez sélectionner au moins un type de document")
+    Return False
+  Endif
+  
+  Me.Mouse = Mouse.Wait
+  dtinf = dteN0.dte.DT
+  dtsup = dteN1.dte.Fin_Jour().DT
+  TextArea1.Clear
+  
+'Select fam, sum(Replace(montant, ',', '.') * replace(qte, ',', '.')) as tot_ttc, sum(replace(mht, ',', '.')) as tot_ht
+'  From (
+'        Select numero, block, Max(type) As Max_type
+'          From Laurux01.Fiches_HisLigTickets where numero = "3011975" And (type = "A" Or type = "S") 
+'         group by block
+'      )t1 JOIN Laurux01.Fiches_HisLigTickets t2 On t1.block = t2.block
+'   And t1.max_type = t2.type And t1.numero = t2.numero group by fam
+  
+  
+  'tri par client
+  If Radiocli.Value Then
+    group = "client"
+    'bon de livraison
+    If CheckDoc.Value Then
+      champbl = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo, CASE WHEN Fiches_Bl.type IN('A','F') THEN dtefac ELSE datebl END AS dte,cdclibl as client "
+      fichierbl = "Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art"
+      condbl = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (cdclibl>=&1 AND cdclibl<=&2) AND (code_ligbl>=&3 AND code_ligbl<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champbl &= ",code_ligbl as article"
+      Endif
+      If Texttype.Text Then condbl &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condbl &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condbl &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condbl &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condbl &= utils.fam("fam_ligbl", TreeView1)
+      requbl = champbl & " FROM " & fichierbl & " WHERE " & condbl
+      un = True
+      TextArea1.Text &= requbl & "\n"
+    Endif
+    'bon de livraison M
+    If CheckDocE.Value Then
+      champblm = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END mrgmo, CASE WHEN Fiches_BlM.type IN('A','F') THEN dtefac ELSE datebl END AS dte,cdclibl as client "
+      fichierblm = "Fiches_BlM,Fiches_LigblM,Fiches_Cli,Fiches_Art"
+      condblm = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_BlM.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (cdclibl>=&1 AND cdclibl<=&2) AND (code_ligbl>=&3 AND code_ligbl<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champblm &= ",code_ligbl as article"
+      Endif
+      If Texttype.Text Then condblm &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condblm &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condblm &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condblm &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condblm &= utils.fam("fam_ligbl", TreeView1)
+      If un Then requblm = " UNION ALL "
+      requblm &= champblm & " FROM " & fichierblm & " WHERE " & condblm
+      TextArea1.Text &= requblm & "\n"
+      un = True
+    Endif
+    'factures
+    If CheckFacA.Value Then
+      champfa = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo, datefac AS dte,cdclifac as client "
+      fichierfa = "Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art"
+      condfa = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (cdclifac>=&1 AND cdclifac<=&2) AND (code_ligfac>=&3 AND code_ligfac<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champfa &= ",code_ligfac as article"
+      Endif
+      If Texttype.Text Then condfa &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condfa &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condfa &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condfa &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condfa &= utils.fam("fam_ligfac", TreeView1)
+      If un Then requfa = " UNION ALL "
+      requfa &= champfa & " FROM " & fichierfa & " WHERE " & condfa
+      TextArea1.Text &= requfa & "\n"
+    Endif
+    'factures M
+    If CheckFacEA.Value Then
+      champfam = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo,datefac AS dte,cdclifac as client "
+      fichierfam = "Fiches_HistoFacM,Fiches_HistoLigfacM,Fiches_Cli,Fiches_Art"
+      condfam = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (cdclifac>=&1 AND cdclifac<=&2) AND (code_ligfac>=&3 AND code_ligfac<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champfam &= ",code_ligfac as article"
+      Endif
+      If Texttype.Text Then condfam &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condfam &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condfam &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condfam &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condfam &= utils.fam("fam_ligfac", TreeView1)
+      If un Then requfam = " UNION ALL "
+      requfam &= champfam & " FROM " & fichierfam & " WHERE " & condfam
+      TextArea1.Text &= requfam & "\n"
+    Endif
+    'ticket
+    If CheckTk.Value Then
+      champtk = "SELECT CASE WHEN Fiches_HisLigTickets.qte IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.qte,',','.') END as qte, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, Fiches_HisLigTickets.date AS dte, client"
+      fichiertk = "(select numero, block, max(type) as max_type from Fiches_HisLigTickets where type IN('A','S') group by numero, block) T1, Fiches_HisEntTickets, Fiches_HisLigTickets, Fiches_Cli, Fiches_Art"
+      condtk = utils.db.Subst("Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND art_code=code AND cli_code=client AND T1.numero = Fiches_HisLigTickets.numero and T1.block = Fiches_HisLigTickets.block AND T1.max_type = Fiches_HisLigTickets.type AND suppr != 1 AND (client>=&1 AND client<=&2) AND (Fiches_HisLigTickets.code>=&3 AND Fiches_HisLigTickets.code<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champtk &= ",Fiches_HisLigTickets.code as article"
+      Endif
+      If Texttype.Text Then condtk &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condtk &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condtk &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condtk &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condtk &= utils.fam("fam", TreeView1)
+      requtk = champtk & " FROM " & fichiertk & " WHERE " & condtk
+      TextArea1.Text = requtk & "\n"
+    Endif
+    'construction de la requete 
+    $srequete = "SELECT SUM(qte) AS qte,SUM(ca) AS ca,SUM(mrgart)+SUM(mrgmo) as marge,client"
+    If Checkdetart.Value Then 
+      $srequete &= ",article"
+      group &= ",article"
+    Else
+      If Not Checkca.Value And Not Checkmarg.Value Then ord = " ORDER BY qte DESC"
+      If Checkmarg.Value Then ord = " ORDER BY marge DESC"
+      If Checkca.Value Then ord = " ORDER BY ca DESC"
+    Endif 
+    $srequete &= " FROM (" & requbl & requblm & requfa & requfam & requtk & ") AS a WHERE (dte BETWEEN &1 And &2) GROUP BY " & group & ord
+    TextArea1.Text &= $srequete & "\n"
+  Endif
+  
+  'TRI PAR ARTICLE
+   If Radioart.Value Then
+    group = "article"
+    'bon de livraison
+    If CheckDoc.Value Then
+      champbl = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo, CASE WHEN Fiches_Bl.type IN('A','F') THEN dtefac ELSE datebl END AS dte, code_ligbl as article"
+      fichierbl = "Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art"
+      condbl = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (cdclibl>=&1 AND cdclibl<=&2) AND (code_ligbl>=&3 AND code_ligbl<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetcli.Value Then
+        champbl &= ",cdclibl as client"
+      Endif
+      If Texttype.Text Then condbl &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condbl &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condbl &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condbl &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condbl &= utils.fam("fam_ligbl", TreeView1)
+      requbl = champbl & " FROM " & fichierbl & " WHERE " & condbl
+      un = True
+      TextArea1.Text &= requbl & "\n"
+    Endif
+    'bon de livraison M
+    If CheckDocE.Value Then
+      champblm = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo, CASE WHEN Fiches_BlM.type IN('A','F') THEN dtefac ELSE datebl END AS dte, code_ligbl as article"
+      fichierblm = "Fiches_BlM,Fiches_LigblM,Fiches_Cli,Fiches_Art"
+      condblm = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_BlM.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (cdclibl>=&1 AND cdclibl<=&2) AND (code_ligbl>=&3 AND code_ligbl<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetcli.Value Then
+        champblm &= ",cdclibl as client"
+      Endif
+      If Texttype.Text Then condblm &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condblm &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condblm &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condblm &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condblm &= utils.fam("fam_ligbl", TreeView1)
+      If un Then requblm = " UNION ALL "
+      requblm &= champblm & " FROM " & fichierblm & " WHERE " & condblm
+      TextArea1.Text &= requblm & "\n"
+      un = True
+    Endif
+    'factures
+    If CheckFacA.Value Then
+      champfa = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo, datefac AS dte,code_ligfac as article "
+      fichierfa = "Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art"
+      condfa = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A'  AND (cdclifac>=&1 AND cdclifac<=&2) AND (code_ligfac>=&3 AND code_ligfac<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetcli.Value Then
+        champfa &= ",cdclifac as client"
+      Endif
+      If Texttype.Text Then condfa &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condfa &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condfa &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condfa &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condfa &= utils.fam("fam_ligfac", TreeView1)
+      If un Then requfa = " UNION ALL "
+      requfa &= champfa & " FROM " & fichierfa & " WHERE " & condfa
+      TextArea1.Text &= requfa & "\n"
+    Endif
+    'factures M
+    If CheckFacEA.Value Then
+      champfam = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo, datefac AS dte,code_ligfac as article "
+      fichierfam = "Fiches_HistoFacM,Fiches_HistoLigfacM,Fiches_Cli,Fiches_Art"
+      condfam = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A'  AND (cdclifac>=&1 AND cdclifac<=&2) AND (code_ligfac>=&3 AND code_ligfac<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetcli.Value Then
+        champfam &= ",cdclifac as client"
+      Endif
+      If Texttype.Text Then condfam &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condfam &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condfam &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condfam &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condfam &= utils.fam("fam_ligfac", TreeView1)
+      If un Then requfam = " UNION ALL "
+      requfam &= champfam & " FROM " & fichierfam & " WHERE " & condfam
+      TextArea1.Text &= requfam & "\n"
+    Endif
+    'ticket
+    If CheckTk.Value Then
+      champtk = "SELECT CASE WHEN Fiches_HisLigTickets.qte IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.qte,',','.') END as qte, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, Fiches_HisLigTickets.date as dte, Fiches_HisLigTickets.code as article "
+      fichiertk = "(select numero, block, max(type) as max_type from Fiches_HisLigTickets where type IN('A','S') group by numero, block) T1, Fiches_HisEntTickets, Fiches_HisLigTickets, Fiches_Cli, Fiches_Art"
+      condtk = utils.db.Subst("Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND art_code=code AND cli_code=client AND T1.numero = Fiches_HisLigTickets.numero and T1.block = Fiches_HisLigTickets.block AND T1.max_type = Fiches_HisLigTickets.type AND suppr != 1 AND (client>=&1 AND client<=&2) AND (Fiches_HisLigTickets.code>=&3 AND Fiches_HisLigTickets.code<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetcli.Value Then
+        champtk &= ",client"
+      Endif
+      If Texttype.Text Then condtk &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condtk &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condtk &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condtk &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condtk &= utils.fam("fam", TreeView1)
+      requtk = champtk & " FROM " & fichiertk & " WHERE " & condtk
+      TextArea1.Text = requtk & "\n"
+    Endif
+    'construction de la requete 
+    $srequete = "SELECT SUM(qte) AS qte,SUM(ca) AS ca,SUM(mrgart)+SUM(mrgmo) as marge,article"
+    If Checkdetcli.Value Then 
+      $srequete &= ",client"
+      group &= ",client"
+    Else
+      If Not Checkca.Value And Not Checkmarg.Value Then ord = " ORDER BY qte DESC"
+      If Checkmarg.Value Then ord = " ORDER BY marge DESC"
+      If Checkca.Value Then ord = " ORDER BY ca DESC"
+    Endif 
+    $srequete &= " FROM (" & requbl & requblm & requfa & requfam & requtk & ") AS a WHERE (dte BETWEEN &1 And &2) GROUP BY " & group & ord
+    TextArea1.Text &= $srequete & "\n"
+  Endif
+  
+    'tri par famille
+  If Radiofam.Value Then
+    group = "famille"
+    'bon de livraison
+    If CheckDoc.Value Then
+      champbl = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo, CASE WHEN Fiches_Bl.type IN('A','F') THEN dtefac ELSE datebl END AS dte,fam_ligbl as famille "
+      fichierbl = "Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art"
+      condbl = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (cdclibl>=&1 AND cdclibl<=&2) AND (code_ligbl>=&3 AND code_ligbl<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champbl &= ",code_ligbl as article"
+      Endif
+      If Texttype.Text Then condbl &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condbl &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condbl &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condbl &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condbl &= utils.fam("fam_ligbl", TreeView1)
+      requbl = champbl & " FROM " & fichierbl & " WHERE " & condbl
+      un = True
+      TextArea1.Text &= requbl & "\n"
+    Endif
+    'bon de livraison M
+    If CheckDocE.Value Then
+      champblm = "SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo,  CASE WHEN Fiches_BlM.type IN('A','F') THEN dtefac ELSE datebl END AS dte,fam_ligbl as famille "
+      fichierblm = "Fiches_BlM,Fiches_LigblM,Fiches_Cli,Fiches_Art"
+      condblm = utils.db.Subst("cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_BlM.type IN(" & typedoc.Join(",") & ")) AND typel_ligbl = 'A' AND (cdclibl>=&1 AND cdclibl<=&2) AND (code_ligbl>=&3 AND code_ligbl<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champblm &= ",code_ligbl as article"
+      Endif
+      If Texttype.Text Then condblm &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condblm &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condblm &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condblm &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condblm &= utils.fam("fam_ligbl", TreeView1)
+      If un Then requblm = " UNION ALL "
+      requblm &= champblm & " FROM " & fichierblm & " WHERE " & condblm
+      TextArea1.Text &= requblm & "\n"
+      un = True
+    Endif
+    'factures
+    If CheckFacA.Value Then
+      champfa = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo, datefac as dte,fam_ligfac as famille "
+      fichierfa = "Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art"
+      condfa = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (cdclifac>=&1 AND cdclifac<=&2) AND (code_ligfac>=&3 AND code_ligfac<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champfa &= ",code_ligfac as article"
+       Endif
+      If Texttype.Text Then condfa &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condfa &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condfa &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condfa &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condfa &= utils.fam("fam_ligfac", TreeView1)
+      If un Then requfa = " UNION ALL "
+      requfa &= champfa & " FROM " & fichierfa & " WHERE " & condfa
+      TextArea1.Text &= requfa & "\n"
+    Endif
+    'factures M
+    If CheckFacEA.Value Then
+      champfam = "SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo, datefac AS dte,fam_ligfac as famille "
+      fichierfam = "Fiches_HistoFacM,Fiches_HistoLigfacM,Fiches_Cli,Fiches_Art"
+      condfam = utils.db.Subst("cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (cdclifac>=&1 AND cdclifac<=&2) AND (code_ligfac>=&3 AND code_ligfac<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champfam &= ",code_ligfac as article"
+      Endif
+      If Texttype.Text Then condfam &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condfam &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condfam &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condfam &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condfam &= utils.fam("fam_ligfac", TreeView1)
+      If un Then requfam = " UNION ALL "
+      requfam &= champfam & " FROM " & fichierfam & " WHERE " & condfam
+      TextArea1.Text &= requfam & "\n"
+    Endif
+    'ticket
+    If CheckTk.Value Then
+      champtk = "SELECT CASE WHEN Fiches_HisLigTickets.qte IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.qte,',','.') END as qte, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, Fiches_HisLigTickets.date AS dte, fam as famille"
+      fichiertk = "(select numero, block, max(type) as max_type from Fiches_HisLigTickets where type IN('A','S') group by numero, block) T1, Fiches_HisEntTickets, Fiches_HisLigTickets, Fiches_Cli, Fiches_Art"
+      condtk = utils.db.Subst("Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND art_code=code AND cli_code=client AND T1.numero = Fiches_HisLigTickets.numero and T1.block = Fiches_HisLigTickets.block AND T1.max_type = Fiches_HisLigTickets.type AND suppr != 1 AND (client>=&1 AND client<=&2) AND (Fiches_HisLigTickets.code>=&3 AND Fiches_HisLigTickets.code<=&4) AND (art_four>=&5 AND art_four<=&6)", Cli.Text, Cli2.Text, Textart.Text, Textart1.Text, Textfour.Text, Textfour1.Text)
+      If Checkdetart.Value Then
+        champtk &= ",Fiches_HisLigTickets.code as article"
+      Endif
+      If Texttype.Text Then condtk &= utils.db.Subst(" AND cli_typec=&1", Left(Texttype.Text, 2))
+      If Combcomm.Current.Text <> " " Then condtk &= utils.db.Subst(" AND cli_comm=&1", Left(Combcomm.Current.Text, 2))
+      If Textmarq.Text Then condtk &= utils.db.Subst(" AND art_marque=&1", Textmarq.Text)
+      If Textcentr.Text Then condtk &= utils.db.Subst(" AND art_centrale=&1", Textcentr.Text)
+      If Not Checktfam.Value Then condtk &= utils.fam("fam", TreeView1)
+      requtk = champtk & " FROM " & fichiertk & " WHERE " & condtk
+      TextArea1.Text = requtk & "\n"
+    Endif
+    'construction de la requete 
+    $srequete = "SELECT SUM(qte) AS qte,SUM(ca) AS ca,SUM(mrgart)+SUM(mrgmo) as marge,famille"
+    If Checkdetart.Value Then 
+      $srequete &= ",article"
+      group &= ",article"
+    Else
+      If Not Checkca.Value And Not Checkmarg.Value Then ord = " ORDER BY qte DESC"
+      If Checkmarg.Value Then ord = " ORDER BY marge DESC"
+      If Checkca.Value Then ord = " ORDER BY ca DESC"
+    Endif 
+    $srequete &= " FROM (" & requbl & requblm & requfa & requfam & requtk & " ) AS a WHERE (dte BETWEEN &1 And &2) GROUP BY " & group & ord
+    TextArea1.Text &= $srequete & "\n"
+  Endif
+  
+  'Et on lance la requete
+  $res = utils.db.Exec($srequete, dtinf, dtsup)
+  Me.Mouse = Mouse.Normal
+  
+  Return True
+  
+End
+
+Private Function nbfic() As Integer
+  
+  Dim i As Integer
+  
+  If CheckDoc.Value Then Inc i
+  If CheckDocE.Value Then Inc i
+  If CheckFacA.Value Then Inc i
+  If CheckFacEA.Value Then Inc i
+  If CheckTk.Value Then Inc i
+  Return i
+  
+End
+'edition
+Private Sub edition()
+  
+  Dim hb As ReportHBox
+  Dim hv As ReportHBox
+  Dim lab As ReportLabel
+  Dim coul As Integer
+  Dim i, j As Integer
+  Dim qte, ca, mrg As Float
+  Dim tqte, tca, tmrg As Float
+  Dim res, res1 As Result
+  Dim cond1, cond2 As String
+  Dim Filename As String
+  Dim prt As New Printer
+  
+  Filename = User.Home & "/tmp/Histo.pdf"
+  prt.OutputFile = Filename
+  
+  coul = Val("&H" & Hex(Start.R) & Hex(Start.G) & Hex(Start.B))
+  $rpt = New Report
+  
+  lab = New ReportLabel($rpt)
+  
+  lab.Height = "5mm"
+  lab.Text = "Edition "
+  If Radiocli.Value Then lab.Text &= "des articles par client " 
+  If Radioart.Value Then lab.Text &= "des clients par article "
+  If Radiofam.Value Then lab.Text &= "des famille par article "
+  lab.Text &= "de la date : " & dteN0.Text & " a la date : " & dten1.Text
+  lab.BackGround = ReportBrush.Color(coul)
+  lab.Alignment = Align.Center
+  lab.Fixed = True
+  lab.Font = font["Serif,13"]
+  'edition de l'entete
+  hb = New ReportHBox($rpt)
+  hb.Height = "4mm"
+  hb.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000"]
+  hb.Fixed = True
+  lab = New ReportLabel(hb)
+  lab.Height = "4mm"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,10"]
+  lab.Width = "25mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  If Radiocli.Value Or Radiofam.Value Then lab.Text = "N° Article"
+  If Radioart.Value Then lab.Text = "N° Client"
+  lab = New ReportLabel(hb)
+  lab.Height = "4mm"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,10"]
+  lab.Expand = True
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Text = "Libelle"
+  lab = New ReportLabel(hb)
+  lab.Height = "4mm"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,10"]
+  lab.Width = "20mm"
+  lab.Border = ReportBorder["Right:1pt #000000"]
+  lab.Text = "Qte"
+  If Checkca.Value Then
+    lab = New ReportLabel(hb)
+    lab.Height = "4mm"
+    lab.Alignment = Align.Center
+    lab.Font = font["Serif,10"]
+    lab.Width = "20mm"
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Text = "CA"
+  Endif
+  If Checkmarg.Value Then
+    lab = New ReportLabel(hb)
+    lab.Height = "4mm"
+    lab.Alignment = Align.Center
+    lab.Font = font["Serif,10"]
+    lab.Width = "20mm"
+    lab.Border = ReportBorder["Right:1pt #000000"]
+    lab.Text = "Marge"
+  Endif
+  
+  $res.MoveFirst
+  
+  Repeat
+    res = attribres()
+    If Not res.Available Then Continue
+    If cond1 <> res!code Then
+      If cond1 And (Checkdetart.Value Or Checkdetcli.Value) Then afftot(qte, ca, mrg)
+      tqte += qte
+      tca += ca
+      tmrg += mrg
+      qte = 0
+      ca = 0
+      mrg = 0
+      cond1 = res!code
+      If Checkdetart.Value Or Checkdetcli.Value Then
+        lab = New ReportLabel($rpt)
+        lab.Height = "3mm"
+        lab.Alignment = Align.Center
+        lab.Font = font["Serif,9"]
+        lab.Text = res!code & "  " & res!lib
+      Else
+        afflig(res!code, res!lib)
+        tqte += $res!qte
+        tca += $res!ca
+        tmrg += $res!marge
+        Continue
+      Endif
+    Endif
+    res1 = attrires1()
+    afflig(res1!code, res1!lib)
+    qte += $res!qte
+    ca += $res!ca
+    mrg += $res!marge
+    
+  Until $res.MoveNext()
+  
+  If Checkdetart.Value Or Checkdetcli.Value Then
+    afftot(qte, ca, mrg)
+    tqte += qte
+    tca += ca
+    tmrg += mrg
+  Endif
+  afftot(tqte, tca, tmrg)
+  
+  $rpt.Print(prt)
+  Visualiseur.Prog(Filename)
+  
+End
+
+Private Sub afflig(code As String, lib As String)
+  
+  Dim hb As ReportHBox
+  Dim hv As ReportHBox
+  Dim lab As ReportLabel
+  
+  hb = New ReportHBox($rpt)
+  lab = New ReportLabel(hb)
+  lab.Height = "3mm"
+  lab.Alignment = Align.Left
+  lab.Font = font["Serif,7"]
+  lab.Width = "25mm"
+  lab.Text = code
+  lab = New ReportLabel(hb)
+  lab.Height = "3mm"
+  lab.Alignment = Align.Left
+  lab.Font = font["Serif,7"]
+  lab.Expand = True
+  lab.Text = lib
+  lab = New ReportLabel(hb)
+  lab.Height = "3mm"
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,7"]
+  lab.Width = "20mm"
+  lab.Text = Format($res!qte, "0.000")
+  If Checkca.Value Then
+    lab = New ReportLabel(hb)
+    lab.Height = "3mm"
+    lab.Alignment = Align.Right
+    lab.Font = font["Serif,7"]
+    lab.Width = "20mm"
+    lab.Text = Format($res!ca, "0.00")
+  Endif
+  If Checkmarg.Value Then
+    lab = New ReportLabel(hb)
+    lab.Height = "3mm"
+    lab.Alignment = Align.Right
+    lab.Font = font["Serif,7"]
+    lab.Width = "20mm"
+    lab.Text = Format($res!marge, "0.00")
+  Endif
+  
+End
+
+Private Sub afftot(qte As Float, ca As Float, mrg As Float)
+  
+  Dim hb As ReportHBox
+  Dim hv As ReportHBox
+  Dim lab As ReportLabel
+  
+  hb = New ReportHBox($rpt)
+  hb.Height = "4mm"
+  hb.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000"]
+  lab = New ReportLabel(hb)
+  lab.Height = "4mm"
+  lab.Alignment = Align.Center
+  lab.Font = font["Serif,9"]
+  lab.Expand = True
+  lab.text = "TOTAL"
+  lab = New ReportLabel(hb)
+  lab.Height = "4mm"
+  lab.Alignment = Align.Right
+  lab.Font = font["Serif,Bold,7"]
+  lab.Width = "20mm"
+  lab.Text = Format(qte, "0.000")
+  If Checkca.Value Then
+    lab = New ReportLabel(hb)
+    lab.Height = "4mm"
+    lab.Alignment = Align.Right
+    lab.Font = font["Serif,Bold,7"]
+    lab.Width = "20mm"
+    lab.Text = Format(ca, "0.00")
+  Endif
+  If Checkmarg.Value Then
+    lab = New ReportLabel(hb)
+    lab.Height = "4mm"
+    lab.Alignment = Align.Right
+    lab.Font = font["Serif,Bold,7"]
+    lab.Width = "20mm"
+    lab.Text = Format(mrg, "0.00")
+  Endif
+  
+End
+
+Private Function attribres() As Result
+  
+  Dim res As Result
+  
+  If Radiocli.Value Then
+    res = utils.db.Exec("SELECT cli_nom as lib,cli_code as code FROM Fiches_Cli WHERE cli_code=&1", $res!client) 
+  Endif
+  If Radioart.Value Then
+    res = utils.db.Exec("SELECT art_design as lib,art_code as code FROM Fiches_Art WHERE art_code=&1", $res!article) 
+  Endif
+  If Radiofam.Value Then
+    res = utils.db.Exec("SELECT libell_fam as lib,code_fam as code FROM Fiches_Fam WHERE code_fam=&1", $res!famille) 
+  Endif
+  Return res
+  
+End
+
+Private Function attrires1() As Result
+  
+  Dim res As Result
+  
+  If Checkdetart.Value Then
+    res = utils.db.Exec("SELECT art_design as lib,art_code as code FROM Fiches_Art WHERE art_code=&1", $res!article) 
+  Else
+    res = utils.db.Exec("SELECT cli_nom as lib,cli_code as code FROM Fiches_Cli WHERE cli_code=&1", $res!client) 
+  Endif
+  Return res
+  
+End
+
+Public Sub Radiocli_Click()
+
+  If Radiocli.Value Then
+    Checkdetart.Enabled = True
+    Checkdetcli.Enabled = False
+    Checkdetcli.Value = False
+  Endif
+
+End
+
+Public Sub Radioart_Click()
+
+  If Radioart.Value Then
+    Checkdetcli.Enabled = True
+    Checkdetart.Enabled = False
+    Checkdetart.Value = False
+  Endif
+  
+End
+
+Public Sub Radiofam_Click()
+
+  If Radiofam.Value Then
+    Checkdetcli.Enabled = False
+    Checkdetart.Enabled = True
+    Checkdetart.Value = False
+  Endif
+
+End
+
+Public Sub Butquit_Click()
+
+  Me.Close
+
+End
+
+Public Sub Butexp_Click()
+
+  Dim lge As String
+  
+  If crearequ() = False Then
+    Return
+  Endif
+  Filename = User.Home & "/tmp/HistoVente.csv"
+  If Exist(Filename) Then Kill Filename
+  hFile = Open Filename For Write Create
+  $res.MoveFirst
+  
+  Repeat
+    If Radiocli.Value Then lge = $res!client
+    If Radioart.Value Then lge = $res!article
+    If Radiofam.Value Then lge = $res!famille
+    lge &= ";"
+    If Checkdetart.Value Then lge &= $res!article & ";"
+    If Checkdetcli.Value Then lge &= $res!client & ";"
+    lge &= Str($res!qte) & ";"
+    lge &= Str($res!marge) & ";"
+    lge &= Str($res!ca) 
+    Print #hFile, lge
+  Until $res.MoveNext()
+  Close #hFile
+  If Message.Question("Le fichier csv a été généré. Voulez-vous l'ouvrir ?", "Oui", "Non") = 1 Then
+    Editeur.Prog_Editeur(Filename)
+  Endif
+  
+End
+
+Public Sub CheckTk_Click()
+
+  If CheckTk.Value Then
+    CheckDoc.Value = False
+    CheckDocE.Value = False
+    CheckFacA.Value = False
+    CheckFacEA.Value = False
+    CheckPro.Value = False
+    CheckDev.Value = False
+    CheckCom.Value = False
+    CheckBl.Value = False
+    CheckFac.Value = False
+    
+    CheckDoc.Enabled = False
+    CheckDocE.Enabled = False
+    CheckFacA.Enabled = False
+    CheckFacEA.Enabled = False
+    CheckPro.Enabled = False
+    CheckDev.Enabled = False
+    CheckCom.Enabled = False
+    CheckBl.Enabled = False
+    CheckFac.Enabled = False
+    
+  Else
+    CheckDoc.Enabled = True
+    CheckDocE.Enabled = True
+    CheckFacA.Enabled = True
+    CheckFacEA.Enabled = True
+    CheckPro.Enabled = True
+    CheckDev.Enabled = True
+    CheckCom.Enabled = True
+    CheckBl.Enabled = True
+    CheckFac.Enabled = True
+  Endif
+  
+
+End

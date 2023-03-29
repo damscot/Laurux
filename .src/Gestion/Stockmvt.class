@@ -753,7 +753,7 @@ Public Sub Butedit_Click()
     If Even(i) Then hb.BackGround = ReportBrush.Color(Color.White) Else hb.BackGround = ReportBrush.Color(Color.Lighter(Color.Gray))
     j = 0
     lab = nlab(hb)
-    lab.Font = font["Serif,5"]
+    lab.Font = font["Serif,7"]
     If Radiojour.Value Or Radiodetail.Value Then lab.Text = Format($res!dte, "dd.mm.yyyy")
     If Radiomens.Value Then lab.Text = Format($res!dte, "mm.yyyy")
     If Radioanuel.Value Then lab.Text = Format($res!dte, "yyyy")
@@ -761,24 +761,24 @@ Public Sub Butedit_Click()
     lab = nlab(hb)
     lab.Text = $res!code
     lab.Alignment = Align.Center
-    lab.Font = font["Serif,5"]
+    lab.Font = font["Serif,7"]
     lab = nlab(hb)
     lab.Text = $res!libelle
     lab.Alignment = Align.Left
     lab.Expand = True
-    lab.Font = font["Serif,5"]
+    lab.Font = font["Serif,7"]
     If Radiodetail.Value Then
       lab = nlab(hb)
       lab.Text = $res!nom
-      lab.Font = font["Serif,5"]
+      lab.Font = font["Serif,7"]
       lab = nlab(hb)
       lab.Text = $res!document
-      lab.Font = font["Serif,5"]
+      lab.Font = font["Serif,7"]
     Endif
     If Radiosortie.Value Or Radiotouta.Value Then
       lab = nlab(hb)
       lab.Alignment = Align.Right
-      lab.Font = font["Serif,5"]
+      lab.Font = font["Serif,7"]
       lab.Text = Format(Utils.totobs([$res!qtem]), "0.000")
       tot[j] += (Utils.totobs([$res!qtem]))
       Inc j
@@ -786,7 +786,7 @@ Public Sub Butedit_Click()
     If Radioentre.Value Or Radiotouta.Value Then
       lab = nlab(hb)
       lab.Alignment = Align.Right
-      lab.Font = font["Serif,5"]
+      lab.Font = font["Serif,7"]
         lab.Text = Format(Utils.totobs([$res!qtep]), "0.000")
         tot[j] += Utils.totobs([$res!qtep])
       Inc j
@@ -794,7 +794,7 @@ Public Sub Butedit_Click()
     If Checkca.Value Then
       lab = nlab(hb)
       lab.Alignment = Align.Right
-      lab.Font = font["Serif,5"]
+      lab.Font = font["Serif,7"]
       lab.Text = Format(Utils.totobs([$res!ca]), "0.00")
       tot[j] += Utils.totobs([$res!ca])
       Inc j
@@ -802,7 +802,7 @@ Public Sub Butedit_Click()
     If Checkmarge.Value Then
       lab = nlab(hb)
       lab.Alignment = Align.Right
-      lab.Font = font["Serif,5"]
+      lab.Font = font["Serif,7"]
       lab.Text = Format(Utils.totobs([$res!mrgart, $res!mrgmo]), "0.00")
       tot[j] += Utils.totobs([$res!mrgart, $res!mrgmo])
     Endif
