@@ -5036,6 +5036,13 @@ Public Sub Maj369()
   Dim basename As String
   Dim compte As String
   Dim code As String
+  
+  PB = New ProgBar("Sauvegarde de la base dans SauveV368", 1)
+  PB.Show()
+  pb.Avancement(" ", 1)
+  If Not Exist(User.home & "/SauveV368") Then Mkdir User.home & "/SauveV368"
+  Shell "mysqldump -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " " & Utils.db.Name & " " & "--add-drop-table" & " " & ">" & " " & User.home & "/SauveV368/" & Utils.db.Name & ".sql" & Format$(Now, "yyyymmdd") Wait
+  pb.Close()
   'Modification charset to utf8
   rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, UPPER(t1.COLUMN_TYPE), UPPER(t1.character_set_name) from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (UPPER(t1.column_type) like '%CHAR%' or UPPER(t1.column_type) like 'TEXT') and UPPER(t1.character_set_name) != 'UTF8'", "Laurux" & Start.Societe)
   If rReq.Count = 0 Then
@@ -5178,7 +5185,7 @@ end_utf8:
     pb.Avancement("Espèces", 1)
     respar = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
     Utils.db.Begin
-    If respar.Available Then
+    If respar.Available And If respar.Fields.Exist("virema") Then     'si executé 2 fois des champs n'existent plus
       res = Utils.db.Create("Fiches_Reglements")      '01 especes
       res!code = "01"
       res!libel = "Espèces"
