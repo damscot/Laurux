@@ -1534,7 +1534,7 @@ Public Function FloatParse(Val As String) As Float
     Else If $reg.Count = 1 Then
       Return CFloat($reg[1].Text)
     Else
-      Message.Error("Erreur, impossible d'interpréter la valeur " & val & "!\nLa valeur suivante sera utilisé : " & 0)
+      Try Message.Error("Erreur, impossible d'interpréter la valeur " & val & "!\nLa valeur suivante sera utilisé : " & 0)
       Return 0
     Endif
   Endif

@@ -41,6 +41,10 @@ Public Sub _New()
   dte.Text = LDate(Now).L
   dterappro.Type = TextReg.EstDate
   dterappro.Text = LDate(Now).L
+  Sldepart.Type = TextReg.EstNum
+  Sldepart.nbdec = "2"
+  Sldfinal.Type = TextReg.EstNum
+  Sldfinal.nbdec = "2"
   cpt.SetFocus
   cpt.Select
   
@@ -374,7 +378,7 @@ Public Sub Colrlv_Man(releve As String) As Boolean
       If rResult2.Available Then
         Sldepart.Text = LPrix(rResult2!solde).L
       Else
-        Sldepart.Text = LPrix(0)
+        Sldepart.Value = 0 
         Message.Error("Impossible de trouver le dernier relevé existant veuillez saisir le solde de départ manuellement.")
       Endif
       rResult3 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", cpt.Text)
