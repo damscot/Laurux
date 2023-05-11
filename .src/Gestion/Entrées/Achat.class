@@ -618,6 +618,7 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
       Me.ligne[Me.ind].valide = False
     Until res.MoveNext()
   Endif
+  calcul
   'si 1 ligne au moins contient des droits, on bloque les qtes et les articles => on ne peut changer que les px
   If dra Then
     For Each sl In Me
