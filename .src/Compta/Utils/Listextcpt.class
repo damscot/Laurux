@@ -96,33 +96,34 @@ Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(
           ok = False
           'calcul du report a nouveau si nécessaire
           dte = New LDate(DateAdd($dtei.G, gb.Day, -1))
+          dte = dte.FinJour
           If i = der Then
-             res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte <= &1 AND compte=&2 AND provisoire=False LIMIT 1", dte.D, cpt) 
+             res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte <= &1 AND compte=&2 AND provisoire=False LIMIT 1", dte.DT, cpt) 
           Else
-            res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND compte=&3 AND provisoire=False  LIMIT 1", $brn[i].dteinf.D, dte.D, cpt)
+            res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND compte=&3 AND provisoire=False  LIMIT 1", $brn[i].dteinf.D, dte.DT, cpt)
           Endif 
           If res1.Available Then
-            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", DateAdd($dtei.G, gb.Day, -1), $brn[i].dteinf.D, dte.D, cpt)
+            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", DateAdd($dtei.G, gb.Day, -1), $brn[i].dteinf.D, dte.DT, cpt)
             dte = dtsup(i)
-            req = Utils.db.Subst("SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.D, cpt) & req
+            req = Utils.db.Subst("SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.DT, cpt) & req
           Else
             'sans calcul du report a nouveau
              ok = False
             dte = dtsup(i)
-            req &= Utils.db.Subst("SELECT" & champ & "FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.D, cpt)
+            req &= Utils.db.Subst("SELECT" & champ & "FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.DT, cpt)
           Endif
         Else
           'requete sur année complete
           If $dtei = $brn[i].dteinf Or ltr <> "t" Then
            ok = False
           dte = dtsup(i)
-          req = Utils.db.Subst("SELECT " & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND" & cli & lett, $dtei.D, dte.D, cpt)
+          req = Utils.db.Subst("SELECT " & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND" & cli & lett, $dtei.D, dte.DT, cpt)
           Endif
         Endif
       Else
         'requete sur année suivante
         dte = dtsup(i)
-        req &= Utils.db.Subst(" UNION (SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett & "  AND jour<>&4)", $dtei.D, dte.D, cpt, $jouran)
+        req &= Utils.db.Subst(" UNION (SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett & "  AND jour<>&4)", $dtei.D, dte.DT, cpt, $jouran)
       Endif
     Next
     req &= " ORDER BY " & stri
@@ -135,11 +136,11 @@ Private Function dtsup(ind As Integer) As LDate
   
   If $dtes.Apres($brn[ind].dtesup) Then
     If ind = $brn.Max Then
-      Return $dtes
+      Return $dtes.FinJour
     Endif
-    Return $brn[ind].dtesup
+    Return $brn[ind].dtesup.FinJour
   Else
-    Return $dtes
+    Return $dtes.FinJour
   Endif
   
 End

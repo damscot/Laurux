@@ -1157,8 +1157,8 @@ Public Sub Colcli_Activate()
         Else
           Return
         Endif
- '       Mvt = Utils.db.Exec("SELECT * FROM " & tabM & " where numero = &1 ", Num)
-        If Mvt!cloturee = True Then
+        Mvt = Utils.db.Exec("SELECT * FROM " & tabM & " where numero = &1 ", Num)
+        If Mvt.Available And If Mvt!cloturee = True Then
           cloturee = 1
           Necrit.Visible = False
           If son Then
