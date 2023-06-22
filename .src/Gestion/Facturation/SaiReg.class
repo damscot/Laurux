@@ -241,6 +241,13 @@ End
 
 Public Sub dtereg_LostFocus()
 
+  Dim vd As VerifDate
+  
+  vd = New VerifDate(dtereg.Text)
+  If vd.ClotComptable() Then 
+    dtereg.SetFocus
+    Return
+  Endif
   libsaisi.Text = libreg.Text & " du " & dtereg.Text
 
 End
