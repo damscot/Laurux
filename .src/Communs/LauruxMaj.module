@@ -5725,7 +5725,8 @@ end_utf8:
   Try Utils.db.Exec("DROP TABLE Docs_Produits")
   'Unused table
   Try Utils.db.Exec("DROP TABLE Fiches_TarFour")
-  
+  'Les comptes lettrables ne sont pas toujours bien enregistrés
+  Try utils.db.Exec("UPDATE Fiches_Comptes SET lettrable = True WHERE lettrable <> False")
   'il semblerait que ces colonnes manquent dans certaines bases
   Tab = "Fiches_HistoFacM"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtreg VarChar(12))")
