@@ -69,7 +69,10 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As In
     tbl.ind = -1
     $validBR = True
   Endif
-  
+  'requetes préparées
+  'Achats
+  Utils.db.Prepare("requ_cli", "SELECT a.*,Fiches_TarTemp.*,Fiches_Tarcli.*,art_code,art_paht,art_pbht,art_txconv,art_tr,art_prvt,art_cdarr,art_coef,cli_code,cli_nom FROM (SELECT DISTINCT cart,ccli FROM Fiches_Tarcli WHERE cart = @code UNION SELECT DISTINCT art AS cart,code AS ccli FROM Fiches_TarTemp WHERE art = code AND temp_type = &1) AS a LEFT JOIN Fiches_TarTemp ON art=a.cart AND temp_type=&1 AND code = a.ccli LEFT JOIN  Fiches_Tarcli ON Fiches_Tarcli.cart = a.cart AND a.ccli = Fiches_Tarcli.ccli LEFT JOIN Fiches_Cli ON cli_code=a.ccli LEFT JOIN Fiches_Art ON art_code=a.cart WHERE a.cart=@code ", GesTar.TarCli)
+  Utils.db.Prepare("requ_typ", "SELECT a.*,Fiches_TarTemp.*,Fiches_TarTypcli.*,art_code,art_paht,art_pbht,art_txconv,art_tr,art_prvt,art_cdarr,art_coef,Fiches_Typec.code,Fiches_Typec.* FROM (SELECT DISTINCT cart,type FROM Fiches_TarTypcli WHERE cart = @code UNION SELECT DISTINCT art AS cart,code AS type FROM Fiches_TarTemp WHERE art = @code AND temp_type = &1) AS a left JOIN Fiches_TarTemp ON art=a.cart AND temp_type= &1 AND Fiches_TarTemp.code = a.type  LEFT JOIN Fiches_TarTypcli ON a.cart=Fiches_TarTypcli.cart AND a.type=Fiches_TarTypcli.type LEFT JOIN Fiches_Typec ON Fiches_Typec.code=a.type JOIN Fiches_Art ON  art_code=a.cart WHERE a.cart=@code ", GesTar.TarTcli)
   
 End
 

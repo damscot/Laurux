@@ -165,12 +165,11 @@ Public Sub Form_Open()
   If $con_ok Then
     Try Utils.db.Open
     Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8_unicode_ci")
+    Utils.db.Exec("SET NAMES utf8mb3 COLLATE utf8mb3_unicode_ci")
     'function de restauration a partir de la ligne de commande
     'a n'utiliser que pour des tests
     Start.Restore_Args()
     
-    Try Utils.db.exec("SET NAMES 'utf8'")
-    'Try Utils.db.exec("SET NAMES 'latin1'")
     If Not IsNull(Utils.db.Login) Then Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode=NO_ENGINE_SUBSTITUTION " & "; \"" Wait
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSoc") & " where cd_sc = &1", Soc)
     If rResult.Available Then Soc = Soc & " " & rResult!type_sc & " - " & rResult!int_sc
@@ -244,10 +243,6 @@ Public Sub Form_Open()
     ColTaches.Columns[4].Text = "Libellé de la tâche"
     RecupTaches()
   Endif
-  'requetes préparées
-  'Achats
-  Utils.db.Prepare("requ_cli", "SELECT a.*,Fiches_TarTemp.*,Fiches_Tarcli.*,art_code,art_paht,art_pbht,art_txconv,art_tr,art_prvt,art_cdarr,art_coef,cli_code,cli_nom FROM (SELECT DISTINCT cart,ccli FROM Fiches_Tarcli WHERE cart = @code UNION SELECT DISTINCT art AS cart,code AS ccli FROM Fiches_TarTemp WHERE art = code AND temp_type = &1) AS a LEFT JOIN Fiches_TarTemp ON art=a.cart AND temp_type=&1 AND code = a.ccli LEFT JOIN  Fiches_Tarcli ON Fiches_Tarcli.cart = a.cart AND a.ccli = Fiches_Tarcli.ccli LEFT JOIN Fiches_Cli ON cli_code=a.ccli LEFT JOIN Fiches_Art ON art_code=a.cart WHERE a.cart=@code ", GesTar.TarCli)
-  Utils.db.Prepare("requ_typ", "SELECT a.*,Fiches_TarTemp.*,Fiches_TarTypcli.*,art_code,art_paht,art_pbht,art_txconv,art_tr,art_prvt,art_cdarr,art_coef,Fiches_Typec.code,Fiches_Typec.* FROM (SELECT DISTINCT cart,type FROM Fiches_TarTypcli WHERE cart = @code UNION SELECT DISTINCT art AS cart,code AS type FROM Fiches_TarTemp WHERE art = @code AND temp_type = &1) AS a left JOIN Fiches_TarTemp ON art=a.cart AND temp_type= &1 AND Fiches_TarTemp.code = a.type  LEFT JOIN Fiches_TarTypcli ON a.cart=Fiches_TarTypcli.cart AND a.type=Fiches_TarTypcli.type LEFT JOIN Fiches_Typec ON Fiches_Typec.code=a.type JOIN Fiches_Art ON  art_code=a.cart WHERE a.cart=@code ", GesTar.TarTcli)
   
 Catch
   If Error.text = "Connection is not opened" Then
