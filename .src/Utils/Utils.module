@@ -1386,6 +1386,7 @@ Public Function arrondi(montant As Variant, ndec As Integer) As Float
   Dim tab As String[]
   Dim neg As Boolean
   
+  If IsNull(montant) Then montant = 0
   If TypeOf(montant) = gb.String Then
     montant = Replace(montant, ".", ",")
     retour = Val(montant)

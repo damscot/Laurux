@@ -1423,11 +1423,11 @@ next_ticket:
   Utils.MouseDefault()
   Return True
   
-Catch
-    Utils.Bip()
-    message.Error(Error.Text & " " & Error.where & "\n\nErreur Fatal lors du moulinage!!\nVous devez restaurer votre base avant moulinage et faire\nsuivre une sauvegarde sur le forum pour une analyse par les développeurs\n")
-    Utils.MouseDefault()
-    Return False
+' Catch
+'     Utils.Bip()
+'     message.Error(Error.Text & " " & Error.where & "\n\nErreur Fatal lors du moulinage!!\nVous devez restaurer votre base avant moulinage et faire\nsuivre une sauvegarde sur le forum pour une analyse par les développeurs\n")
+'     Utils.MouseDefault()
+'     Return False
 
 End
 
@@ -2227,7 +2227,7 @@ Public Sub Maj_Totalisation(cpt As String, intit As String, montant As String)
 
   Dim hResult As Result
   Dim Mtnt As String
-
+  
   With utils
     hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("Totalisation") & " Where compte = &1", Cpt)
     'Si le compte existe dans la table temporaire
@@ -2269,27 +2269,28 @@ Public Sub Verif() As Boolean
     If hResult.Available Then
       Repeat
         If Left$(hResult!compte, 3) = "411" Then
-          sTotalD = Val(.cpoint(sTotalD)) + Val(.cpoint(hResult!totalttc))
+          sTotalD = .arrondi(sTotalD, 2) + .arrondi(hResult!totalttc, 2)
         Else
-          sTotalC = Val(.cpoint(sTotalC)) + Val(.cpoint(hResult!totalht))
+          sTotalC = .arrondi(sTotalC, 2) + .arrondi(hResult!totalht, 2)
           sCompte = hResult!compte
         Endif
       Until hResult.MoveNext()
       hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("Totalisation") & " Where compte = &1", sCompte)
       If hresult.Available Then
-        If Val(.cpoint(sTotalD)) < Val(.cpoint(sTotalC)) Then
-          sDif = Val(.cpoint(sTotalC)) - Val(.cpoint(sTotalD))
-          If (sDif > 0.05) Then
+        sDif = .arrondi(sTotalC, 2) - .arrondi(sTotalD, 2)
+        If sdif > 0 Then
+          If sDif > 0.05 Then
             If Message.Error("Une erreur de ventilation génère une perte de " & sDif & "!\nVoulez vous continuer et enregistrer une ecriture de charge exceptionelle?", "OK", "Annuler") = 2 Then
               Return False
             Endif
           Endif
           Maj_Totalisation($resdif!cptrmoins, "Erreur moulinage caisse", -sDif)
         Else
-          If Val(.cpoint(sTotalD)) > Val(.cpoint(sTotalC)) Then
-            sDif = Val(.cpoint(sTotalD)) - Val(.cpoint(sTotalC))
+          If sDif < 0 Then
+            sdif = Abs(sDif)
+            'sDif = .arrondi(sTotalD, 2) - .arrondi(sTotalD, 2)
             'sDif = Val(.cpoint(hResult!totalht)) + sDif
-            If (sDif > 0.05) Then
+            If sDif > 0.05 Then
               If Message.Error("Une erreur de ventilation génère un bénéfice de " & sDif & "!\nVoulez vous continuer et enregistrer une ecriture de produit exceptionnel?", "OK", "Annuler") = 2 Then
                 Return False
               Endif
@@ -2353,12 +2354,14 @@ Public Sub Maj_Compta() As Float
           hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", Cpt)
           coll = hResult!coll_cc
           collectif = "1"
-          Mtd = Val(.cpoint(rResult!totalttc))
+          Mtd = .arrondi(rResult!totalttc, 2)
           Verif_Caisse += Mtd
           If Mtd < 0 Then
             Mtc = Abs(Mtd)
             Mtd = 0
           Endif
+          'Mtd = .arrondi(Abs(Mtd), 2)
+          'Mtc = .arrondi(Abs(Mtc), 2)
           Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, collectif, intitule, dte, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef, numdoc, numlot) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19})", Jnl, numr, coll, collectif, Intit, .Cdate_Dbase(Datem), Libel, Mtd, Mtc, Valid, Prov, Tresor, Pointee, lettree, Cloturee, Relance, numr2, Numlt, numlt)
           Sha1Calc.CalcSha1("Fiches_Mvt", numr)
           hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", coll)
@@ -2377,19 +2380,19 @@ Public Sub Maj_Compta() As Float
           'Compte de vente ou d'erreur de caisse
           If Left$(rResult!compte, 3) <> "709" Then
             If rResult!totalht And Val(.cpoint(rResult!totalht)) > 0 Then
-              Mtc = Val(.cpoint(rResult!totalht))
+              Mtc = .arrondi(rResult!totalht, 2)
               Mtd = 0
             Else
-              Mtd = Val(.cpoint(rResult!totalht))
+              Mtd = .arrondi(rResult!totalht, 2)
               Mtc = 0
             Endif
           Else
           'Compte de remise RRR
             If rResult!totalht And Val(.cpoint(rResult!totalht)) > 0 Then
-              Mtd = Val(.cpoint(rResult!totalht))
+              Mtd = .arrondi(rResult!totalht, 2)
               Mtc = 0
             Else
-              Mtc = Val(.cpoint(rResult!totalht))
+              Mtc = .arrondi(rResult!totalht, 2)
               Mtd = 0
             Endif
           Endif
@@ -2398,16 +2401,16 @@ Public Sub Maj_Compta() As Float
         If Left$(Cpt, 3) = "445" Then
           If Not IsNull(rResult!totalht) Then
             If Val(.cpoint(rResult!totalht)) > 0 Then
-              Mtc = Val(.cpoint(rResult!totalht))
+              Mtc = .arrondi(rResult!totalht, 2)
               Mtd = 0
             Else
-              Mtd = Abs(Val(.cpoint(rResult!totalht)))
+              Mtd = Abs(.arrondi(rResult!totalht, 2))
               Mtc = 0
             Endif
           Endif
         Endif
-        Mtd = Abs(Mtd)
-        Mtc = Abs(Mtc)
+        Mtd = .arrondi(Abs(Mtd), 2)
+        Mtc = .arrondi(Abs(Mtc), 2)
         Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef, numdoc, numlot) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18})", Jnl, numr, Cpt, Left$(Intit, 40), .Cdate_Dbase(Datem), Left$(Libel, 30), Mtd, Mtc, Valid, Prov, Tresor, Pointee, lettree, Cloturee, Relance, numr2, Numlt, numlt)
         Sha1Calc.CalcSha1("Fiches_Mvt", numr)
         hResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " Where compte_cc = &1", Cpt)
@@ -2444,7 +2447,7 @@ Public Sub Verif_Reglement_Caisse() As Boolean
   For i = 1 To Mreglement.RegCais.Max
     '
     'on cherche au moins un ticket validé avec ce mode de règlement
-    hResult = Utils.db.Exec("SELECT L.numero as numero FROM " & Cbase.Table("TabLigTck") & " as L left join " & Cbase.Table("TabEntTck") & " as E on L.numero = E.numero where L.type = &1 and E.statut = &2 group by L.type limit 1", MReglement.RegMode2CodeCaisse(i), "V")
+    hResult = Utils.db.Exec("SELECT L.numero as numero FROM " & Cbase.Table("TabLigTck") & " as L left join " & Cbase.Table("TabEntTck") & " as E on L.numero = E.numero where L.type = &1 and E.statut = &2 group by L.type,numero limit 1", MReglement.RegMode2CodeCaisse(i), "V")
     If hResult.Available Then
       If IsNull(MReglement.Laision_Reg(i)) Then
         Message.Error("Attention, la caisse a des règlements " & MReglement.RegCais[i] & "\nsur le ticket " & hResult!numero & ", Vous devez établir un lien en caisse\npour ce mode de règlement depuis la table de règlements")
@@ -2507,10 +2510,10 @@ Public Sub Maj_Tresorerie(Verif_Caisse As Float)
       Until hresult.MoveNext()
       'on passe l'écriture tel que définie dans Mreglement
       For Each var In ecr1
-        ecr = New EcrReg(resreg!journal, var, resreg!code)
+        ecr = New EcrReg(resreg!code, resreg!journal, var)
         ecr.ecriture
       Next
-    Endif
+    Endif 
   Next
   pb.Close
  
