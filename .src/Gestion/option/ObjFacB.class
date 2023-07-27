@@ -845,43 +845,43 @@ Public Sub mail(courriel As String)       ''Envois de facture par mail
       Endif
 
     Case Else
-   If Not courriel Then
-     Message.Error("Le mail n'est pas renseigné")
-   Endif
-  Tmail = Split(courriel, "|")
-  Try sCourriel = Replace$(Tmail[1], " ", "")
-  If Error Then sCourriel = courriel
-  hForm = New Commail("F")
-  If Message.Question("Voulez-vous sélectionner un texte prédéfini ?", "Oui", "Non") = 1 Then
-    hForm.Showmodal()
-  Endif
-  calcul
-'  visufac()
-  Me.edit = New EditfacB(Me, Me)
-  Me.imp.OutputFile = User.Home & "/tmp/Facture.pdf"
-  Me.edit.Print(Me.imp)
-  Me.resent.MoveFirst
-  If Me.choix = ObjFac.facture And Me.resent!imp = 1 Then sText = "Facture " Else sText = "Bon "
-  If Me.choix = ObjFac.commande Then sText = "Commande "
-  If Me.choix = ObjFac.bl Then sText = "Bon "
-  If Me.choix = ObjFac.devis Then sText = "Devis "
-  If Me.choix = ObjFac.proforma Then sText = "Proforma "
-  If Me.numfac Then num = Me.numfac Else num = Me.numbl
-  If IsNull(Variables.sTexte) Then
-    rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabTmail") & "")
-    If rResult.Available Then
-      sText2 = Replace$(rResult!intitule, "**", " client ")
-    Else
-       Stext2 = "Bonjour,\n\nVeuillez trouver ci-joint votre document No " & num & " du " & Me.dtedoc.L & ".\n\nCordialement." & "\n\n"
-    Endif
-  Else
-    sText2 = Variables.sTexte
-  Endif
-  sText = sText & " n° : " & num & " du " & Me.dtedoc.L
-  EnvMail.Envoi2(sCourriel, sText, sText2, Me.imp.OutputFile, Me.condvent)
-  
+      If Not courriel Then
+        Message.Error("Le mail n'est pas renseigné")
+      Endif
+      Tmail = Split(courriel, "|")
+      Try sCourriel = Replace$(Tmail[1], " ", "")
+      If Error Then sCourriel = courriel
+      hForm = New Commail("F")
+      If Message.Question("Voulez-vous sélectionner un texte prédéfini ?", "Oui", "Non") = 1 Then
+        hForm.Showmodal()
+      Endif
+      calcul
+      Me.edit = New EditfacB(Me, Me)
+      Me.imp.OutputFile = User.Home & "/tmp/Facture.pdf"
+      Me.edit.Print(Me.imp)
+      Me.resent.MoveFirst
+      If Me.choix = (ObjFac.facture And Me.resent!imp = 1) Or ObjFac.archive Then sText = "Facture " Else sText = "Bon "
+      If Me.choix = ObjFac.commande Then sText = "Commande "
+      If Me.choix = ObjFac.bl Then sText = "Bon "
+      If Me.choix = ObjFac.devis Then sText = "Devis "
+      If Me.choix = ObjFac.proforma Then sText = "Proforma "
+      If Me.numfac Then num = Me.numfac Else num = Me.numbl
+      If IsNull(Variables.sTexte) Then
+        rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabTmail") & "")
+        If rResult.Available Then
+          sText2 = Replace$(rResult!intitule, "**", " client ")
+        Else
+           Stext2 = "Bonjour,\n\nVeuillez trouver ci-joint votre document No " & num & " du " & Me.dtedoc.L & ".\n\nCordialement." & "\n\n"
+        Endif
+      Else
+        sText2 = Variables.sTexte
+      Endif
+      sText = sText & " n° : " & num & " du " & Me.dtedoc.L
+      EnvMail.Envoi2(sCourriel, sText, sText2, Me.imp.OutputFile, Me.condvent)
+    
   End Select
-
+  Me.imp.NumCopies = Me.nbexplemplaire
+  
 End
 
 'fonction sur les dates 
