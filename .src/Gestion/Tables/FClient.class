@@ -1561,6 +1561,7 @@ Private Sub majchamp(res As Result)
   res!cli_autoent = AutoEnt.Value
   res!cli_regr = Left(Combreg.Text, 1)
   res!cli_tour = Textto1.Text
+  If IsNull(Textfrais.Text) Then Textfrais.Text = "0"
   res!cli_gestion = Val(Textfrais.Text)
   resreg = utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", Left(Mreg.Text, 2))
   If Mid(Mreg.Text, 4, 1) = "-" And If resreg.Available Then
