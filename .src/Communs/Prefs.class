@@ -300,6 +300,7 @@ Public Sub Form_Open()
   Try Smtp.Text = cursettings["/Smtp"]
   Try Adrmail.Text = cursettings["/Adrmail"]
   Try Port.Text = cursettings["/Port"]
+  Try secumail.Text = cursettings["/Secumail"]
   Try Utilisateur.Text = cursettings["/Utilisateur"]
   Try MdpStmp.Text = hexdblKey.crypt("de", cursettings["/MdpStmp"], "Laurux")
   If IsNull(Port.Text) Then Port.text = "25"
@@ -628,6 +629,7 @@ Public Sub form_close()
   cursettings["/Smtp"] = Smtp.Text
   cursettings["/Port"] = Port.Text
   cursettings["/Adrmail"] = Adrmail.Text
+  cursettings["/Secumail"] = secumail.Text
   cursettings["/Utilisateur"] = Utilisateur.Text
   cursettings["/MdpStmp"] = hexdblKey.crypt("en", MdpStmp.Text, "Laurux")
   cursettings["/Soc" & Start.Societe & "/Fecran"] = Ecran.Text
@@ -1447,5 +1449,13 @@ Public Sub Supprime_Click()
   Endif
   
   Me.Close
+
+End
+
+Public Sub MdpStmp_KeyPress()
+
+  If Key.Code = Key.F2 Then
+    MdpStmp.Password = Not MdpStmp.Password
+  Endif
 
 End

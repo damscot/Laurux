@@ -1,11 +1,13 @@
 ' Gambas module file
 
-Public Sub Envoi(Email As String, sujet As String, Txt As String, piece As Boolean, chemin As String, TypeM As String, FileN As String)
+Public Sub Envoi(Email As String, sujet As String, Txt As String, piece As Boolean, chemin As String, TypeM As String, FileN As String) As Boolean
 
   Dim Hmail As New SmtpClient
   Dim spiece As String[]
   Dim spiece2 As String
   Dim piece2 As String = Start.LocalSettings["/Soc" & Start.Societe & "/Pdfchemin"]
+  Dim cry As Collection = ["Sans": Net.None, "SSL": Net.SSL, "TLS": Net.TLS]
+  
   spiece = Split(piece2, "/")
  Try spiece2 = spiece[spiece.count - 1]
   With Hmail
@@ -16,12 +18,14 @@ Public Sub Envoi(Email As String, sujet As String, Txt As String, piece As Boole
       .From = Start.LocalSettings["/Adrmail"]
       .User = Start.LocalSettings["/Utilisateur"]
       .Password = hexdblKey.crypt("de", Start.LocalSettings["/MdpStmp"], "Laurux")
-      .Encrypt = Net.None
+      .Encrypt = cry[Start.LocalSettings["/Secumail"]]
+      .Authentication = SmtpClient.Automatic
       .Subject = sujet
       .Alternative = False
       .To.Add(Email)
       .Bcc.Add(Settings["/Adrmail"])
       .Add(Txt, "text/plain")
+      
       If piece = True And IsNull(piece2) Then
         .Add(File.Load(chemin & FileN), Typem, FileN)
       Else
@@ -30,10 +34,14 @@ Public Sub Envoi(Email As String, sujet As String, Txt As String, piece As Boole
           .Add(File.Load(piece2), TypeM, spiece2)
         Endif
       Endif
-       Try .Send()
-      If Error Then Message.Error("Veuillez vérifier le courriel du client " & Email & " SVP car l'envoi n'a pas pu se faire !")
+      Try .Send()
+      If Error Then 
+        Message.Error(Error.Text & "  " & Error.Where & "\nL'envoi n'a pas pu se faire !")
+       Return True
+      Endif
     Endif
   End With
+  Return False
 
 End
 
