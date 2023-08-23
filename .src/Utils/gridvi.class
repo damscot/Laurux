@@ -104,6 +104,7 @@ Public Sub bouton_Click()         'lit et affiche les stat
   Dim dateinf, datesup As String
   Dim tab, tab1, req, cond As String
   Dim dte1 As Date
+  Dim dt As LDate
   
   'On ne lance le calcul de stat uniquement si la "Tab" Statistique est active.
   If $tab.Current.Text <> "Statistiques" Then
@@ -121,8 +122,11 @@ Public Sub bouton_Click()         'lit et affiche les stat
 
   smoiscour = Left(respar!dtepec, 2) & Right(respar!dtepec, 4)
   smoisprec = Left(respar!dtepp, 2) & Right(respar!dtepp, 4)
-  dte = Split(respar!dteclec, "/")
-  dte[2] = Left$(dte[2], 4)
+  dt = New LDate(respar!dteclec)
+  dte = New String[3]  'Split(respar!dteclec, "/")
+  dte[0] = Format(dt.Month, "00")
+  dte[1] = Format(dt.Day, "00")
+  dte[2] = Format(dt.Year, "0000")
   dte[2] = calcanne(dte, respar!dtepec)
   '                                                             lit le fichier facture mois par mois
   smois = dte[0]
@@ -140,31 +144,31 @@ Public Sub bouton_Click()         'lit et affiche les stat
     Repeat
 
       scle = smois & sanne
-      dateinf = sanne & smois & "01"
       dte1 = Date(sanne, Val(smois), 1)
+      dateinf = LDate(dte1).DT
       datesup = sanne & smois & Format(utils.lastday(dte1), "00")
-      '      datesup = sanne & "-" & smois & "-" & Str(utils.lastday(CDate(01 & "/" & smois & "/" & sanne)))
+      datesup = LDate(dte1).FinMois.FinJour.DT
       tab = "Fiches_HistoLigfac"
       tab1 = "Fiches_HistoFac"
       For k = 0 To 1
         Select $stype
           Case "F"
-            req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            req = "SUM(CASE WHEN mrgart_ligfac IS NULL THEN 0 ELSE REPLACE(mrgart_ligfac,',','.') END + CASE WHEN mrgmo_ligfac IS NULL THEN 0 ELSE REPLACE(mrgmo_ligfac,',','.') END) AS marge,SUM(CASE WHEN netht_ligfac IS NULL THEN 0 ELSE REPLACE(netht_ligfac,',','.') END) AS ht,SUM(CASE WHEN qte_ligfac IS NULL THEN 0 ELSE REPLACE(qte_ligfac,',','.') END) AS qte"
             cond = "fam_ligfac=&1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
           Case "S"
-            req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            req = "SUM(Case WHEN mrgart_ligfac Is NULL Then 0 Else Replace(mrgart_ligfac, ',','.') END + CASE WHEN mrgmo_ligfac IS NULL THEN 0 ELSE REPLACE(mrgmo_ligfac,',','.') END) AS marge,SUM(CASE WHEN netht_ligfac IS NULL THEN 0 ELSE REPLACE(netht_ligfac,',','.') END) AS ht,SUM(CASE WHEN qte_ligfac IS NULL THEN 0 ELSE REPLACE(qte_ligfac,',','.') END) AS qte"
             cond = "LOCATE(&1,fam_ligfac)= 1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
           Case "A"
-            req = "mrgart_ligfac AS marge,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            req = "SUM(CASE WHEN mrgart_ligfac IS NULL THEN 0 ELSE REPLACE(mrgart_ligfac,',','.') END) AS marge,SUM(CASE WHEN netht_ligfac IS NULL THEN 0 ELSE REPLACE(netht_ligfac,',','.') END) AS ht,SUM(CASE WHEN qte_ligfac IS NULL THEN 0 ELSE REPLACE(qte_ligfac,',','.') END) AS qte"
             cond = "code_ligfac=&1 AND numfac=num_ligfac AND typel_ligfac='A' AND datefac BETWEEN &2 AND &3"
           Case "M"
-            req = "mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            req = "SUM(CASE WHEN mrgmo_ligfac IS NULL THEN 0 ELSE REPLACE(mrgmo_ligfac,',','.') END) AS marge,SUM(CASE WHEN netht_ligfac IS NULL THEN 0 ELSE REPLACE(netht_ligfac,',','.') END) AS ht,SUM(CASE WHEN qte_ligfac IS NULL THEN 0 ELSE REPLACE(qte_ligfac,',','.') END) AS qte"
             cond = "code_ligfac=&1 and numfac=num_ligfac AND typel_ligfac='M' AND datefac BETWEEN &2 AND &3"
           Case "C"
-            req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            req = "SUM(Case WHEN mrgart_ligfac Is NULL Then 0 Else Replace(mrgart_ligfac, ',','.') END + CASE WHEN mrgmo_ligfac IS NULL THEN 0 ELSE REPLACE(mrgmo_ligfac,',','.') END) AS marge,SUM(CASE WHEN netht_ligfac IS NULL THEN 0 ELSE REPLACE(netht_ligfac,',','.') END) AS ht,SUM(CASE WHEN qte_ligfac IS NULL THEN 0 ELSE REPLACE(qte_ligfac,',','.') END) AS qte"
             cond = "cdclifac=&1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
           Case "T"
-            req = "mrgart_ligfac AS marge,mrgmo_ligfac AS margem,netht_ligfac AS ht,qte_ligfac AS qte,typel_ligfac AS type"
+            req = "SUM(Case WHEN mrgart_ligfac Is NULL Then 0 Else Replace(mrgart_ligfac, ',','.') END + CASE WHEN mrgmo_ligfac IS NULL THEN 0 ELSE REPLACE(mrgmo_ligfac,',','.') END) AS marge,SUM(CASE WHEN netht_ligfac IS NULL THEN 0 ELSE REPLACE(netht_ligfac,',','.') END) AS ht,SUM(CASE WHEN qte_ligfac IS NULL THEN 0 ELSE REPLACE(qte_ligfac,',','.') END) AS qte"
             cond = "tour_ligfac=&1 AND numfac=num_ligfac AND typel_ligfac IN('A','M') AND datefac BETWEEN &2 AND &3"
 
         End Select
@@ -183,22 +187,22 @@ Public Sub bouton_Click()         'lit et affiche les stat
       For k = 0 To 1
         Select $stype
           Case "F"
-            req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
+            req = "SUM(CASE WHEN mrgart_ligbl IS NULL THEN 0 ELSE REPLACE(mrgart_ligbl,',','.') END + CASE WHEN mrgmo_ligbl IS NULL THEN 0 ELSE REPLACE(mrgmo_ligbl,',','.') END) AS marge,SUM(CASE WHEN netht_ligbl IS NULL THEN 0 ELSE REPLACE(netht_ligbl,',','.') END) AS ht,SUM(CASE WHEN qte_ligbl IS NULL THEN 0 ELSE REPLACE(qte_ligbl,',','.') END) AS qte"
             cond = "fam_ligbl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &2 AND &3"
           Case "S"
-            req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
+            req = "SUM(CASE WHEN mrgart_ligbl IS NULL THEN 0 ELSE REPLACE(mrgart_ligbl,',','.') END + CASE WHEN mrgmo_ligbl IS NULL THEN 0 ELSE REPLACE(mrgmo_ligbl,',','.') END) AS marge,SUM(CASE WHEN netht_ligbl IS NULL THEN 0 ELSE REPLACE(netht_ligbl,',','.') END) AS ht,SUM(CASE WHEN qte_ligbl IS NULL THEN 0 ELSE REPLACE(qte_ligbl,',','.') END) AS qte"
             cond = "LOCATE(&1,fam_ligbl) = 1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &2 AND &3"
           Case "A"
-            req = "mrgart_ligbl AS marge,netht_ligbl AS ht,qte_ligbl AS qte"
+            req = "SUM(CASE WHEN mrgart_ligbl IS NULL THEN 0 ELSE REPLACE(mrgart_ligbl,',','.') END) AS marge,SUM(CASE WHEN netht_ligbl IS NULL THEN 0 ELSE REPLACE(netht_ligbl,',','.') END) AS ht,SUM(CASE WHEN qte_ligbl IS NULL THEN 0 ELSE REPLACE(qte_ligbl,',','.') END) AS qte"
             cond = "code_ligbl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &2 AND &3"
           Case "M"
-            req = "mrgmo_ligbl AS marge,netht_ligbl AS ht,qte_ligbl AS qte"
+            req = "SUM(CASE WHEN mrgmo_ligbl IS NULL THEN 0 ELSE REPLACE(mrgmo_ligbl,',','.') END) AS marge,SUM(CASE WHEN netht_ligbl IS NULL THEN 0 ELSE REPLACE(netht_ligbl,',','.') END) AS ht,SUM(CASE WHEN qte_ligbl IS NULL THEN 0 ELSE REPLACE(qte_ligbl,',','.') END) AS qte"
             cond = "code_ligbl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &2 AND &3"
           Case "C"
-            req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
+            req = "SUM(CASE WHEN mrgart_ligbl IS NULL THEN 0 ELSE REPLACE(mrgart_ligbl,',','.') END + CASE WHEN mrgmo_ligbl IS NULL THEN 0 ELSE REPLACE(mrgmo_ligbl,',','.') END) AS marge,SUM(CASE WHEN netht_ligbl IS NULL THEN 0 ELSE REPLACE(netht_ligbl,',','.') END) AS ht,SUM(CASE WHEN qte_ligbl IS NULL THEN 0 ELSE REPLACE(qte_ligbl,',','.') END) AS qte"
             cond = "cdclibl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND  datebl BETWEEN &2 AND &3"
           Case "T"
-            req = "mrgart_ligbl AS marge,mrgmo_ligbl AS margem,netht_ligbl AS ht,qte_ligbl AS qte,typel_ligbl AS type"
+            req = "SUM(CASE WHEN mrgart_ligbl IS NULL THEN 0 ELSE REPLACE(mrgart_ligbl,',','.') END + CASE WHEN mrgmo_ligbl IS NULL THEN 0 ELSE REPLACE(mrgmo_ligbl,',','.') END) AS marge,SUM(CASE WHEN netht_ligbl IS NULL THEN 0 ELSE REPLACE(netht_ligbl,',','.') END) AS ht,SUM(CASE WHEN qte_ligbl IS NULL THEN 0 ELSE REPLACE(qte_ligbl,',','.') END) AS qte"
             cond = "tour_ligbl=&1 and numbl=num_ligbl AND typel_ligbl IN('A','M') AND (type='A' OR type='B' Or type='F') AND  datebl BETWEEN &2 AND &3"
             
         End Select
@@ -223,7 +227,7 @@ Public Sub bouton_Click()         'lit et affiche les stat
   For i = 0 To 11
     fsomme = 0
     For j = 0 To 11
-      Try fsomme += CFloat(Replace($grdv[j, i].Text, ",", "."))
+       fsomme = utils.totobs([Str(fsomme), $grdv[j, i].Text])
     Next
 
     Select i
@@ -265,29 +269,13 @@ Private Sub requete(tab As String, tab1 As String, req As String, cond As String
 
   resbl = utils.db.Exec("SELECT " & req & " FROM " & tab & "," & tab1 & " WHERE " & cond, $scode, dateinf, datesup)
   If Not resbl.Available Then Return
-  resbl.MoveFirst
-  For k = 0 To resbl.Max
-    fsomme = 0
-    Try fsomme = CFloat(Replace($grdv[j, i].Text, ",", ".")) + CFloat(Trim(Replace(resbl!ht, ",", ".")))
-    $grdv[j, i].Text = Format(fsomme, "#######0.00")
-    fsomme = 0
-    Try fsomme = CFloat(Replace($grdv[j, i + 1].Text, ",", ".")) + CFloat(Trim(Replace(resbl!qte, ",", ".")))
-    $grdv[j, i + 1].Text = Format(fsomme, "######" & $sdec)
-    fsomme = 0
-    If $stype = "F" Or $stype = "S" Or $stype = "C" Then
-      If resbl!type = "A" Then
-        Try fsomme = CFloat(Replace($grdv[j, i + 2].Text, ",", ".")) + CFloat(resbl!marge)
-      Else
-        Try fsomme = CFloat(Replace($grdv[j, i + 2].Text, ",", ".")) + CFloat(resbl!margem)
-      Endif
-    Else
-      Try fsomme = CFloat(Replace($grdv[j, i + 2].Text, ",", ".")) + CFloat(resbl!marge)
-    Endif
-    $grdv[j, i + 2].Text = Format(fsomme, "#####0.00")
-
-    resbl.MoveNext
-  Next
-
+  fsomme = utils.totobs([$grdv[j, i].Text, resbl!ht])
+  $grdv[j, i].Text = Format(fsomme, "-#######0.00")
+  fsomme = utils.totobs([$grdv[j, i + 1].Text, resbl!qte])
+  $grdv[j, i + 1].Text = Format(fsomme, "-######" & $sdec)
+  fsomme = utils.totobs([$grdv[j, i + 2].Text, resbl!marge])
+  $grdv[j, i + 2].Text = Format(fsomme, "-#####0.00")
+  
 End
 
 Private Sub affent($grdv As GridView, sdte As String[])
@@ -436,7 +424,7 @@ Public Sub grdv_MouseUp()
           "FROM Fiches_Bl JOIN Fiches_Ligbl On numbl = num_ligbl " &
           "WHERE cdclibl = &1 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND (datebl BETWEEN &2 AND &3 OR datebl BETWEEN &4 AND &5 OR datebl BETWEEN &6 AND &7 OR datebl BETWEEN &8 AND &9) " &
           "GROUP BY art_code) AS a " &
-      "GROUP BY art_code", $scode, Format(dateinf, "yyyymmdd"), Format(d1, "yyyymmdd"), Format(d2, "yyyymmdd"), Format(d3, "yyyymmdd"), Format(d4, "yyyymmdd"), Format(d5, "yyyymmdd"), Format(d6, "yyyymmdd"), Format(datesup, "yyyymmdd"))
+      "GROUP BY art_code", $scode, LDate(dateinf).dt, LDate(d1).FinJour.DT, LDate(d2).DT, LDate(d3).FinJour.DT, LDate(d4).DT, LDate(d5).FinJour.DT, LDate(d6).DT, LDate(datesup).FinJour.DT)
 
   End Select
   'affiche les entetes du gridview
@@ -472,7 +460,7 @@ Public Sub grdv_MouseUp()
         "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4"
       "UNION ALL SELECT  mrgart_ligbl As Marge, mrgmo_ligbl As Margem, netht_ligbl As Ht, qte_ligbl As Qte, typel_ligbl As Type " &
         "FROM Fiches_LigblM JOIN Fiches_BlM ON numbl=num_ligbl " & 
-        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, Format(d6, "yyyymmdd"), Format(datesup, "yyyymmdd"))
+        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, LDate(d6).DT, LDate(datesup).FinJour.DT)
       affdon(grdv1, restot, i, 0)
 
       restot = Utils.db.Exec(
@@ -487,7 +475,7 @@ Public Sub grdv_MouseUp()
         "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4"
       "UNION ALL SELECT  mrgart_ligbl As Marge, mrgmo_ligbl As Margem, netht_ligbl As Ht, qte_ligbl As Qte, typel_ligbl As Type " &
         "FROM Fiches_LigblM JOIN Fiches_BlM ON numbl=num_ligbl " & 
-        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, Format(d4, "yyyymmdd"), Format(d5, "yyyymmdd"))
+        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, LDate(d4).DT, LDate(d5).FinJour.DT)
       affdon(grdv1, restot, i, 3)
 
       restot = Utils.db.Exec(
@@ -502,7 +490,7 @@ Public Sub grdv_MouseUp()
         "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4"
       "UNION ALL SELECT  mrgart_ligbl As Marge, mrgmo_ligbl As Margem, netht_ligbl As Ht, qte_ligbl As Qte, typel_ligbl As Type " &
         "FROM Fiches_LigblM JOIN Fiches_BlM ON numbl=num_ligbl " & 
-        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, Format(d2, "yyyymmdd"), Format(d3, "yyyymmdd"))
+        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, LDate(d2).DT, LDate(d3).FinJour.DT)
       affdon(grdv1, restot, i, 6)
 
       restot = Utils.db.Exec(
@@ -517,7 +505,7 @@ Public Sub grdv_MouseUp()
         "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4"
       "UNION ALL SELECT  mrgart_ligbl As Marge, mrgmo_ligbl As Margem, netht_ligbl As Ht, qte_ligbl As Qte, typel_ligbl As Type " &
         "FROM Fiches_LigblM JOIN Fiches_BlM ON numbl=num_ligbl " & 
-        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, Format(dateinf, "yyyymmdd"), Format(d1, "yyyymmdd"))
+        "WHERE cdclibl = &1 And code_ligbl = &2 And typel_ligbl IN( 'A','M') AND (type='A' OR type='B' Or type='F') AND datebl BETWEEN &3 AND &4", $scode, res!art_code, LDate(dateinf).DT, LDate(d1).FinJour.DT)
       affdon(grdv1, restot, i, 9)
 
       res.MoveNext
@@ -548,20 +536,20 @@ Private Sub affdon(grdv1 As GridView, resbl As Result, i As Integer, j As Intege
   resbl.MoveFirst
   For k = 0 To resbl.Max
     fsomme = 0
-    Try fsomme = CFloat(Replace(grdv1[i, j].Text, ",", ".")) + CFloat(Trim(Replace(resbl!ht, ",", ".")))
+    fsomme = utils.totobs([grdv1[i, j].Text, resbl!ht])
     grdv1[i, j].Text = Format(fsomme, "#######0.00")
     fsomme = 0
-    Try fsomme = CFloat(Replace(grdv1[i, j + 1].Text, ",", ".")) + CFloat(Trim(Replace(resbl!qte, ",", ".")))
+    fsomme = utils.totobs([grdv1[i, j + 1].Text, resbl!qte])
     grdv1[i, j + 1].Text = Format(fsomme, "######0.000")
     fsomme = 0
     If $stype = "F" Or $stype = "C" Then
       If resbl!type = "A" Or resbl!type = "M" Then
-        Try fsomme = CFloat(Replace(grdv1[i, j + 2].Text, ",", ".")) + CFloat(resbl!marge)
+        fsomme = utils.totobs([grdv1[i, j + 2].Text, resbl!marge])
       Else
-        Try fsomme = CFloat(Replace(grdv1[i, j + 2].Text, ",", ".")) + CFloat(resbl!margem)
+        fsomme = utils.totobs([grdv1[i, j + 2].Text, resbl!margem])
       Endif
     Else
-      Try fsomme = CFloat(Replace(grdv1[i, j + 2].Text, ",", ".")) + CFloat(resbl!marge)
+      fsomme = utils.totobs([grdv1[i, j + 2].Text, resbl!marge])
     Endif
     grdv1[i, j + 2].Text = Format(fsomme, "#####0.00")
 
