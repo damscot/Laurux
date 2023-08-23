@@ -54,12 +54,16 @@ Private Sub LecDra(dra As String)
     Error.Raise("Probleme sur n° régie " & dra, "OK")
   Endif
   Me.Cpt = $resdr!cdcompt
-  lt = New LTaxe(Me.taxe_droit().Montant(Me).Mnt, LTaxe.Regie)
-  Me.Add_Taxe(lt) 
-  lt = New LTaxe(Me.secu_droit().Montant(Me).Mnt, LTaxe.SS)
-  Me.Add_Taxe(lt)
-  lt = New LTaxe(Me.accise_droit().Montant(Me).Mnt, LTaxe.DA)
-  Me.Add_Taxe(lt)
+  If Me.suspendu Then
+    lt = New LTaxe(Me.taxe_droit().Montant(Me, True).Mnt, LTaxe.Regie)
+    Me.Add_Taxe(lt) 
+    lt = New LTaxe(Me.secu_droit().Montant(Me, True).Mnt, LTaxe.SS)
+    Me.Add_Taxe(lt)
+  Endif
+  If Me.accise Then
+    lt = New LTaxe(Me.accise_droit().Montant(Me, True).Mnt, LTaxe.DA)
+    Me.Add_Taxe(lt)
+  Endif
   lt = New LTaxe($restva!taux_tva & "%", LTaxe.TVA)
   Me.Add_Taxe(lt)
  
@@ -115,7 +119,7 @@ Public Function accise_droit() As LTaxe             ''Calcul des droits d'accise
   
   lt = New LTaxe(0, LTaxe.DA)
   If opt Then Return lt
-  If $resdr!drfac Then lt = New LTaxe(taxe_droit().Montant(Me).Mnt, LTaxe.DA)
+  If $resdr!drfac Then lt = New LTaxe(taxe_droit().Montant(Me, True).Mnt, LTaxe.DA)
   Return lt
  
 End
@@ -168,13 +172,21 @@ End
 
 Private Function suspendu_Read() As Boolean
 
-  Return $resdr!suspendu
+  If Not IsNull($resdr) And If $resdr.Available Then
+    Return $resdr!suspendu
+  Else
+    Return False
+  Endif
 
 End
 
 Private Function drsurfac_Read() As Boolean
 
-  Return $resdr!drfac
+  If Not IsNull($resdr) And If $resdr.Available Then
+    Return $resdr!drfac
+  Else
+    Return False
+  Endif
 
 End
 

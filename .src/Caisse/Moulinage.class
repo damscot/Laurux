@@ -2615,7 +2615,7 @@ End
 '*****************************************
 Private Sub genfac()
 
-  Dim res, respu, resentz, resligz, resentfac, resligfac, respar, reslig As Result
+  Dim res, respu, resentz, resligz, resentfac, resligfac, respar, reslig, restx As Result
   Dim i, j, inda As Integer
   Dim rem As Float
   Dim pu, pxttc, mttc, mht, mtva, mremise As Float
@@ -2624,6 +2624,8 @@ Private Sub genfac()
   Dim nbvente As Integer = 0
   Dim $soption As String
   Dim lasttk As String
+  Dim drt As Calculdroit1
+  Dim lt As LTaxe
   
   $soption = utils.Option()
 
@@ -2748,16 +2750,32 @@ Private Sub genfac()
           resligfac!code_ligfac = reslig!code
           resligfac!typel_ligfac = reslig!type
           resligfac!dtligbl_ligfac = DateChooser1.Value
-          resligfac!netht_ligfac = Format(reslig!montant, "0.00")
-          resligfac!nettc_ligfac = Format(reslig!montant + reslig!mtva, "0.00")
+          If $soption = "T" Or $soption = "B" Then
+            drt = New Calculdroit1(reslig!montant / reslig!quantite, reslig!quantite, res!art_cdarr, "", res!art_dra, res!art_volm, res!art_deg, res!art_fam)
+            If drt.drsurfac Then drt = New Calculdroit1(drt.mnt - drt.accise_droit().Montant(drt, True).Mnt, reslig!quantite, res!art_cdarr, "", res!art_dra, res!art_volm, res!art_deg, res!art_fam)
+          Else
+            drt = New Calculdroit1(reslig!montant / reslig!quantite, reslig!quantite)
+          Endif
           'lecture des données sur fiche article
           If res.Available Then
+            restx = utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva=&1", res!art_tva)
+            resligfac!mtx_ligfac = restx!taux_tva
+            If Not drt.opt And If drt.drsurfac Then
+              resligfac!netht_ligfac = Format(drt.G, "0.00")
+              resligfac!nettc_ligfac = Format(drt.TotBTC.G, "0.00")
+            Else
+              resligfac!netht_ligfac = Format(reslig!montant, "0.00")
+              resligfac!nettc_ligfac = Format(reslig!montant + reslig!mtva, "0.00")
+            Endif
             resligfac!libel_ligfac = res!art_design
             resligfac!fam_ligfac = res!art_fam
             resligfac!tx_ligfac = res!art_tva
             resligfac!qte_ligfac = Format(reslig!quantite, utils.Find_nbdec(res!art_dec))
             If Val(Utils.cpoint(reslig!quantite)) <> 0 Then
               resligfac!pu_ligfac = Format(reslig!montant / reslig!quantite, utils.Find_nbdec(res!art_nbd))
+              If Not drt.opt And If drt.drsurfac Then
+                resligfac!pu_ligfac = Format(drt.Mnt, utils.Find_nbdec(res!art_nbd))
+              Endif
             Else
               resligfac!pu_ligfac = Format(0, utils.Find_nbdec(res!art_nbd))
             Endif
@@ -2768,11 +2786,12 @@ Private Sub genfac()
             Endif
             If res!art_pvht <> 0 Then
               resligfac!brut_ligfac = Format(reslig!quantite * res!art_pvht, "0.00")
+              If Not drt.opt And If drt.drsurfac Then
+                resligfac!brut_ligfac = drt.G
+              Endif
             Else
               resligfac!brut_ligfac = Format(reslig!montant, "0.00")
             Endif
-            res = utils.db.Exec("SELECT * FROM Fiches_Tvaav WHERE code_tva=&1", resligfac!tx_ligfac)
-            resligfac!mtx_ligfac = res!taux_tva
           Else
             If reslig!intitule Then
               resligfac!libel_ligfac = reslig!intitule
@@ -2789,7 +2808,9 @@ Private Sub genfac()
             resligfac!mrgart_ligfac = 0
             resligfac!brut_ligfac = Format(reslig!montant, "0.00")
           Endif
-          resligfac!rem_ligfac = Format((Val(Utils.cpoint(resligfac!brut_ligfac)) - reslig!montant), "0.00")
+          If drt.opt Then
+            resligfac!rem_ligfac = Format((Val(Utils.cpoint(resligfac!brut_ligfac)) - reslig!montant), "0.00")
+          Endif
           resligfac.Update
           reslig.MoveNext
         Next
