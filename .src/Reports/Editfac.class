@@ -79,6 +79,8 @@ Public Sub _new(vfac As ObjFacB)
   Me.adr2.Text = vfac.adrfac.adr2
   Me.ville1.Text = vfac.adrfac.cp & " " & vfac.adrfac.ville
   Me.pays.Text = vfac.adrfac.pays
+  If vfac.rescli!cli_siret Then Me.siretva.Text = "SIRET : " & vfac.rescli!cli_siret & "   "
+  If vfac.rescli!cli_id_tva Then Me.siretva.Text &= "TVA : " & vfac.rescli!cli_id_tva
   If $vfac.AffClient And ($vfac.choix = ObjFac.commande Or $vfac.choix = ObjFac.devis Or $vfac.choix = ObjFac.proforma) Then
     If Message.Question("Voulez-vous masquer les coordonées du client ?", "Oui", "Non") = 1 Then Me.rclient.Children.Clear
   Endif
