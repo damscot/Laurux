@@ -1423,11 +1423,11 @@ next_ticket:
   Utils.MouseDefault()
   Return True
   
-' Catch
-'     Utils.Bip()
-'     message.Error(Error.Text & " " & Error.where & "\n\nErreur Fatal lors du moulinage!!\nVous devez restaurer votre base avant moulinage et faire\nsuivre une sauvegarde sur le forum pour une analyse par les développeurs\n")
-'     Utils.MouseDefault()
-'     Return False
+Catch
+    Utils.Bip()
+    message.Error(Error.Text & " " & Error.where & "\n\nErreur Fatal lors du moulinage!!\nVous devez restaurer votre base avant moulinage et faire\nsuivre une sauvegarde sur le forum pour une analyse par les développeurs\n")
+    Utils.MouseDefault()
+    Return False
 
 End
 
