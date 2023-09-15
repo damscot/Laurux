@@ -67,6 +67,7 @@ Property Choirech As Integer        ''les choix sur ce qu'on affiche dans la fen
 Property Name As String
 Property AddTooltip As String       ''On ajoute un tooltip a l'existant
 Property scanner As Boolean          ''On active/désactive la fonction scan par F11=> un retour chariot est inséré à la fin de la lecture du code barre
+Property activescan As Boolean       ''On active par défault le mode scan 
 
 Public Sub _new()
 
@@ -705,5 +706,18 @@ Private Sub scanner_Write(Value As Boolean)
   If value Then
     If Me.Tooltip Not Match "F11 Activation du scanner" Then Me.AddTooltip = "\nF11 Activation du scanner"
   Endif
+
+End
+
+Private Function activescan_Read() As Boolean
+
+  Return $F11
+
+End
+
+Private Sub activescan_Write(Value As Boolean)
+
+  Me.scanner = value
+  $F11 = value
 
 End
