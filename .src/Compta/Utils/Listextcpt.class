@@ -54,7 +54,7 @@ Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(
        Case "o"
           lett = Utils.db.Subst(" AND lettree=&1", True)
         Case "n"
-          lett = Utils.db.Subst(" AND lettree=&1 ", False, $jouran)
+          lett = Utils.db.Subst(" AND lettree=&1 AND jour<>&2", False, $jouran)
         Case "t"
           lett = ""
       End Select
