@@ -33,15 +33,14 @@ tri As String
 
 Public Sub _New()
 
-  Dim jour As String
 
   Coulfond = Utils.Coulfd()
   Utils.Observers(Me)
   Music.Load(Start.Musique)
   filename = User.Home & "/tmp/Edinv.ps"
   Me.Center
-  jour = Format$(Now, "dd.mm.yyyy")
-  dte.Text = jour
+  dte.Type = TextReg.EstDate
+  dte.dte = LDate(Now)
 
 End
 

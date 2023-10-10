@@ -74,8 +74,8 @@ Public Sub Button2_click()
         With Utils
           Me.Mouse = Mouse.Wait
           ' On récupère la date de fin d'exercice
-          Rdate = Utils.db.Exec("SELECT dteclec FROM " & Cbase.Table("TabParam") & "")
-          finexo = Rdate!dteclec
+          Rdate = Utils.db.Exec("SELECT dteinv FROM " & Cbase.Table("TabParam") & "")
+          finexo = Rdate!dteinv
           finexo = DateAdd(finexo, gb.Year, 1)
           ' On récupère les articles de l'inventaire
           rartinv = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabInv") & "")
@@ -189,15 +189,8 @@ Public Sub Button2_click()
         'On calcul le stock réel
         Cstock.Calc_stock("", "")
         'On vide la table des historiques des inventaires tournants
-        res = Utils.db.Exec("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Fiches_HisInvT'")
-        If res.Available Then
-          res.MoveFirst
-          Repeat
-            If Start.LocalSettings["/dbase/Prefixe"] & Start.LocalSettings["/dbase/Name"] = res!TABLE_SCHEMA Then
-              Utils.db.Exec("Truncate table " & "Fiches_HisInvT" & "")
-              Break
-            Endif
-          Until res.MoveNext()
+        If utils.db.Tables.Exist("Fiches_HisInvT") Then
+          Utils.db.Exec("Truncate table " & "Fiches_HisInvT")
         Endif
         'Ouf ! C'est fini
         If son Then
@@ -229,23 +222,23 @@ Public Sub button4_Click()
 
   Dim res, respar, resinv, resregie As Result
   Dim i As Integer
-  Dim dte As Date
+  Dim dte As LDate
   Dim ccd As Calculdroit
   Dim vol, volap As Float
 
   respar = Utils.db.Exec("SELECT arrete FROM Fiches_Parametres")
-  dte = Date(Right(respar!arrete, 4), Val(Left(respar!arrete, 2)), 1)
-  dte = DateAdd(dte, gb.Month, 13)
-  res = Utils.db.Exec("SELECT CAST(dtmouv as date) as dtmouv FROM Fiches_ligregie WHERE dtmouv=&1 AND type='I'", dte)
+  dte = New LDate("01." & respar!arrete)
+  dte = LDate(DateAdd(dte.G, gb.Month, 13))
+  res = Utils.db.Exec("SELECT CAST(dtmouv as date) as dtmouv FROM Fiches_ligregie WHERE dtmouv=&1 AND type='I'", dte.G)
   If res.Available Then
-    Message.Warning("Il y a déjà une cloture à la date du " & Format(dte, "dd.mm.yyyy"))
+    Message.Warning("Il y a déjà une cloture à la date du " & dte.L)
     Return
   Else
     respar = Utils.db.Exec("SELECT dtepec FROM Fiches_Parametres")
-    dte = Date(Right(respar!dtepec, 4), Val(Left(respar!dtepec, 2)), 1)
-    dte = DateAdd(dte, gb.Month, 1)  
+    dte = New LDate("01." & respar!dtepec)
+    dte = New LDate(DateAdd(dte.G, gb.Month, 1))
   Endif
-  If Message.Question("La nouvelle date de début sera : " & Format(dte, "dd.mm.yyyy") & " êtes vous d'accord ?", "Oui", "Non") = 2 Then Return
+  If Message.Question("La nouvelle date de début sera : " & dte.L & " êtes vous d'accord ?", "Oui", "Non") = 2 Then Return
   Utils.db.Begin
   resregie = Utils.db.Exec("SELECT * FROM Fiches_regie")
   If resregie.Available Then
@@ -260,7 +253,7 @@ Public Sub button4_Click()
           volap += ccd.volap
         Until resinv.MoveNext()
         res = Utils.db.Create("Fiches_ligregie")
-        res!dtmouv = dte
+        res!dtmouv = dte.G
         res!type = "I"
         res!coderegie = resregie!code
         res!volume = vol
