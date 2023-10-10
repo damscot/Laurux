@@ -591,6 +591,7 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
       Me.ajout(LecEcr)
       Me.ligne[Me.ind].MonControle["Code"].Text = res!code
       ligne_LecCode(res!code)
+      Me.ligne[Me.ind].MonControle["Désignation"].text = res!design
       Me.ligne[Me.ind].MonControle["Qte"].Value = res!qte
       Me.ligne[Me.ind].MonControle["TX_Conv"].Value = res!txconv 
       Me.ligne[Me.ind].MonControle["Px_Brut"].Value = res!pbht
