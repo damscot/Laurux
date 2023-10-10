@@ -5063,11 +5063,11 @@ Public Sub Maj369()
   Endif
   PB.Close()
   
-  rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8 COLLATE utf8mb3_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Schema", 1)
     PB.Show()
-    Utils.db.Exec("ALTER DATABASE Laurux" & Start.Societe & " DEFAULT COLLATE utf8_unicode_ci")
+    Utils.db.Exec("ALTER DATABASE Laurux" & Start.Societe & " DEFAULT COLLATE utf8mb3_unicode_ci")
     Repeat
       PB.Avancement(rReq!req, 1)
       Try Utils.db.Exec(rReq!req)
@@ -5075,7 +5075,7 @@ Public Sub Maj369()
     PB.Close()
   Endif
   
-  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` CHARACTER SET utf8 COLLATE utf8mb3_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Tables", rReq.Count)
     PB.Show()
@@ -5097,16 +5097,19 @@ Public Sub Maj369()
     PB.Close()
   Endif
 
-  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` MODIFY `', t1.column_name, '` ', t1.data_type , '(' , t1.CHARACTER_MAXIMUM_LENGTH , ')' , ' CHARACTER SET utf8 COLLATE utf8_unicode_ci;') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.data_type like '%CHAR%' or t1.data_type = 'TEXT')", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` MODIFY `', t1.column_name, '` ', t1.data_type , '(' , t1.CHARACTER_MAXIMUM_LENGTH , ')' , ' CHARACTER SET utf8 COLLATE utf8mb3_unicode_ci;') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Field Type", rReq.Count)
     PB.Show()
     Repeat
       PB.Avancement(rReq!req, 1)
-      Try Utils.db.Exec(rReq!req)
+      If rReq!req Then
+        Try Utils.db.Exec(rReq!req)
+      Endif
     Until rReq.MoveNext()
     PB.Close()
   Endif
+  Utils.db.Exec("SET NAMES utf8mb3 COLLATE utf8mb3_unicode_ci")
   
 end_utf8:
   
@@ -5658,7 +5661,7 @@ end_utf8:
   
   ld = New LDate
   Try rResult = Utils.db.Exec("SELECT *, '" & LGed.Autres & "' as type FROM Docs_Autres as a UNION SELECT *, '" & LGed.Clients & "' as type FROM Docs_Clients as c UNION SELECT *, '" & LGed.Comptabilite & "' as type FROM Docs_Compta as t UNION SELECT *, '" & LGed.Fournisseurs & "' as type FROM Docs_Fournisseurs as f UNION SELECT *, '" & LGed.Articles & "' as type FROM Docs_Produits as p")
-  If rResult.Available Then
+  If rResult.Available And rResult.Max > 0 Then
     PB = New ProgBar("Fusion GED", rResult.Count)
     PB.Show()
     Repeat
