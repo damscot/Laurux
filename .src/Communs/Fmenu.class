@@ -2550,6 +2550,14 @@ Public Sub Menu142_Click()
 
   Dim dbsan As DB_Sanity
 
+  If Start.LocalSettings["/Soc" & Start.Societe & "/Admin"] Then
+    MDP.showmodal()
+    If Start.Motdepasse = "OK" Then
+      Start.Motdepasse = ""
+    Else
+      Return
+    Endif
+  Endif
   dbsan = New DB_Sanity(Utils.db)
   dbsan.showModal()
 
