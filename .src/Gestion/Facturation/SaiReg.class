@@ -182,7 +182,7 @@ Public Sub nreg_LostFocus()
     If $typ = VarEcr.caisse Then Return
     'on garni le bordereau si besoin
     If $resreg!bordereaux Then
-      res = Utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE compte=&1 AND lettree<>True", $resreg!cptint)
+      res = Utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE compte=&1 AND lettree<>True AND cloturee=False", $resreg!cptint)
       If res.Available Then
         pb = New ProgBar("Lecture des règlements", res.Count)
         pb.Show
@@ -1057,7 +1057,7 @@ Public Sub vldbordereau_Click()
     For ret = 0 To $Lecr.Max
       $Lecr[ret].dte = $Lecr.dte
     Next
-    ereg = New EcrReg($resjou!code_jo, $Lecr, $resreg!code)
+    ereg = New EcrReg($resreg!code, $resjou!code_jo, $Lecr)
     If ereg.ecriture() Then
       Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
     Endif

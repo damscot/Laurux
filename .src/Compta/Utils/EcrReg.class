@@ -15,11 +15,11 @@ Public Sub _new(nreg As String)
 
 End
 
-Public Sub _call(njo As String, var As VarEcr, nreg As String) As EcrReg
+Public Sub _call(nreg As String, njo As String, var As VarEcr) As EcrReg
 
   Dim ecr As EcrReg
   
-  ecr = New EcrReg(njo, var, nreg)
+  ecr = New EcrReg(nreg, njo, var)
   Return ecr
 
 End
