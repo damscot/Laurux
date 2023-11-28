@@ -28,10 +28,10 @@ Public Sub _new(Optional lig As SaiLig)
   Dim res As Result
   Dim obs As Observer
   
-  Dim t1 As Integer = Me.Font.Size * 10
-  Dim t2 As Integer = Me.Font.Size * 2
-  Dim t3 As Integer = Me.Font.Size * 5
-  Dim t4 As Integer = Me.Font.Size * 12
+  Dim t1 As Integer = Font["Italic,-1"].Size * 10
+  Dim t2 As Integer = Font["Italic,-1"].Size * 2
+  Dim t3 As Integer = Font["Italic,-1"].Size * 5
+  Dim t4 As Integer = Font["Italic,-1"].Size * 12
   
   $ligart = lig
   $resart = Utils.db.Exec("SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva LEFT JOIN Fiches_TarTemp ON art_code=art  LIMIT 1")

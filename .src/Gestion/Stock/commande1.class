@@ -35,7 +35,6 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As In
     If $opt <> "N" Then TabStrip1[2].Visible = False
   Endif
   
-'  $etat = Achat.Sans
   rececp.Tag = Achat.Sans
   dte.Type = TextReg.EstDate
   dte.dte.G = Now
@@ -112,21 +111,25 @@ Public Sub Form_Open()
   rd.Value = True
   $rd = rd
   $rd.Tag = Achat.Sans
-
+  Me.Font = Font["Serif,-2"]
+  
 End
 
 Public Sub form_Close()
-Dim res As Result
+  
+  If $validBR Then DocActif.free_lock("Achat", $numlock)
   If Not IsNull(tbl) And If tbl.ligne.Count > 0 And Not $validBR Then
     If Message.Question("Vous avez une saisie en cours\nVoulez vous fermer quand même ?", "Oui", "Non") = 2 Then
       Stop Event
-      Return
+      Return 
     Else
       If $etat <> Achat.CreaCommande Then DocActif.free_lock("Achat", $numlock)
+      $validBR = True
+      $win.Close()
     Endif
+  Else
+    $win.Close()
   Endif
-  $validBR = True
-  $win.Close
 
 End
 
@@ -135,11 +138,15 @@ Public Sub Window_Close()
   If Not IsNull(tbl) And If tbl.ligne.Count > 0 And Not $validBR Then
     If Message.Question("Vous avez une saisie en cours\nVoulez vous fermer quand même ?", "Oui", "Non") = 2 Then
       Stop Event
-      Return
+      Return 
+    Else
+      If $etat <> Achat.CreaCommande Then DocActif.free_lock("Achat", $numlock)
+      $validBR = True
+      Me.Close
     Endif
+  Else
+    Me.Close
   Endif
-  $validBR = True
-  Me.Close
 
 End
 
@@ -259,6 +266,7 @@ Public Sub Update_Req()
   prop = New ObjProp(Res.Fields["ddate"], k)
   prop.AddChamp("Alignment", Align.Center, "dd.mm.yyyy")
   prop.cle = True
+  prop.tri = True
   Col.Add(prop, k)
   k = "------ H.T ----------"
   prop = New ObjProp(Res.Fields["montant"], k)
@@ -357,7 +365,7 @@ Public Sub reception_click()
       Return
     Endif
   Endif
-  $req = "SELECT  four,numrecpt, ddate, montant, mttc,anomalie,commentaire,fo_nom FROM Fiches_Entrecpt JOIN Fiches_Four on four=fo_code "
+  $req = "SELECT  four,numrecpt, ddate, montant, mttc,anomalie,commentaire,fo_nom FROM Fiches_Entrecpt JOIN Fiches_Four on four=fo_code"
   $etat = Achat.Reception
   Last.Tag = $etat
   $rd = Last
@@ -481,7 +489,6 @@ Public Sub annul_Click()
   Dim lg As Sailig
   
   If $validBR Then 
-    DocActif.free_lock("Achat", $numlock)
     Me.Close
     Return
   Endif
@@ -902,7 +909,7 @@ Private Sub ChangVal(etat As Integer)
       
     Case Achat.Reception
       rececp.Enabled = True
-      rececp.Text = "Valider la récetpion"
+      rececp.Text = "Valider les factures"
       rececp.Picture = Picture["Icones/button_ok.png"]
       
     Case Achat.Validee
