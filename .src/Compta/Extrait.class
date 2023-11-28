@@ -350,6 +350,7 @@ Public Sub cpt_LostFocus()
     cpt.SetFocus
     cpt.Select
     b = 0
+    Button4_Click()
    Endif
    Stop Event
         
@@ -1121,9 +1122,18 @@ End
 Public Sub Colcli_MouseUp()
 
   Dim ged As LGed
-
+  Dim type As Integer
+  Dim i As Integer
+  
   If Mouse.Right Then
-    ged = LGed.Search(LGed.Comptabilite, Colcli.Current[7])
+    i = 3
+    If Bclient.Value Then type = LGed.Clients
+    If Bfournisseur.Value Then type = LGed.Fournisseurs
+    If Bgestion.Value Or Bbilan.Value Then 
+      type = LGed.Comptabilite
+      i = 7
+    Endif
+    ged = LGed.Search(type, Colcli.Current[i])
     If ged <> Null Then
       ged.Ouvrir()
     Endif
