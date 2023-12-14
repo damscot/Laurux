@@ -24,6 +24,16 @@
 '# Recalcul des soldes à partir des écritures
 '################################################
 
+Private $depart As Boolean
+
+Public Sub _new(Optional depart As Boolean = False)
+
+  $depart = depart
+  If depart Then
+    Button2_Click()
+  Endif
+
+End
 '*************************
 '* On initialise l'écran *
 '*************************
@@ -59,29 +69,32 @@ Public Sub Button2_Click()
 
   Dim i As Integer
   Dim rResult As Result
+  Dim rrResult As Result
   Dim compt As String
   Dim Tab As String
+  Dim jan As String
   
   Utils.MouseProcessing()
   Tab = "Fiches_Comptes"
-  
+  rrResult = Utils.db.Exec("SELECT jdr FROM Fiches_Parametres")
+  If rrResult.Available Then jan = rrResult!jdr   'on recupere le journal de a nouveau
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & " order by cast(compte_cc AS char)")
   If rResult.Available Then
     Repeat
       compt = rResult!compte_cc
       If IsNull(compt) Then Continue
-      Calcul(compt, rResult!comptr_cc)
+      Calcul(compt, rResult!comptr_cc, jan)
     Until rResult.MoveNext()
   Endif
 
   Utils.MouseDefault()
-  message.Info(" Traitement terminé", "OK")
+  If Not $depart Then message.Info(" Traitement terminé", "OK")
   Me.Close
 
 End
 
 
-Public Sub Calcul(compt As String, Optional Treso As Boolean = True)
+Public Sub Calcul(compt As String, Optional Treso As Boolean = True, jan As String)
 
   Dim rResult As Result
   Dim rrResult As Result
@@ -100,8 +113,8 @@ Public Sub Calcul(compt As String, Optional Treso As Boolean = True)
     Else
       Utils.db.Exec("UPdate " & Tab2 & "  SET solde = &2 where compte_cc = &1", Compt, LPrix(rResult!solde).D)
       'Cas d'un compte de Trésorerie on met a jour le solde des ecritures pointée
-      If Treso Then
-        rResult = Utils.db.Exec("SELECT (sum(montantd)-sum(montantc)) as soldepointee FROM  " & Tab & " WHERE compte = &1 and ((cloturee = 1 and jour = 90 and libelle = &2) or (pointee = 1))", compt, "Report a nouveau")
+      If Treso And jan Then
+        rResult = Utils.db.Exec("SELECT (sum(montantd)-sum(montantc)) as soldepointee FROM  " & Tab & " WHERE compte = &1 and ((cloturee = 1 and jour = &3 and libelle = &2) or (pointee = 1))", compt, "Report a nouveau", jan)
         If rResult.Available Then
           If IsNull(rResult!soldepointee) Then
             Utils.db.Exec("UPdate " & Tab2 & "  SET soldep = &2 where compte_cc = &1", Compt, LPrix(0).D)
