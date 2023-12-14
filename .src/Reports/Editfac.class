@@ -227,7 +227,7 @@ Public Sub _new(vfac As ObjFacB)
   Me.tht.Text = Format($vfac.montht, $frm)
   Me.ttva.Text = Format($vfac.monttva, $frm)
   Me.tttc.Text = Format($vfac.montttc, $frm) & " " & vfac.devise
-  If vfac.franctva Or vfac.autoent Then
+  If vfac.franctva Or vfac.autoent Or vfac.resent!exobl Then
     Me.pstot.Children.Clear
     Me.pstot.Width = "0mm"
     Me.enttva.Children.Clear

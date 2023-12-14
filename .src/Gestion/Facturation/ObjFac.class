@@ -45,7 +45,7 @@ Public reslig As Result                         ''lignes des bons
 Public livraison As Boolean                 ''si client à livrer
 Public devise As String                       ''devise
 Public gmateriel As Boolean               ''Si option matériel est coché
-Public dtmouv As Boolean                ''Si date de sortie=date de facture
+Public dtmouv As Boolean = True                ''Si date de sortie=date de facture
 Public sms As Boolean                       ''si sms
 Public breg As Boolean                      ''A cocher si vous souhaitez que le texte de réglement en bas de facture soit celui qui est défini dans les préférences*
 Public treg As String                           '' texte si breg=true*
@@ -591,7 +591,7 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
         If respar.Available Then
           If ttc Then gestion = resent!gestbl + utils.arrondi(resent!gestbl * (respar!taux_tva / 100), 2) Else gestion = resent!gestbl
           devise = respar!devise
-          If Not resent!exobl Or autoent Then            'calcul de tva si pas exonéré
+          If Not resent!exobl Or Not autoent Then            'calcul de tva si pas exonéré
             If tva.Exist(respar!tvafrais) Then
               lignetva = tva[respar!tvafrais]
               lignetva.totht += resent!gestbl
