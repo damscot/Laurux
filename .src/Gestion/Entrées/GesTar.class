@@ -211,7 +211,7 @@ End
 Public Sub LpxTar_change(value As LPrix)
 
   $ligart.MonControle["Px_Rev"].value = Value.PuBHT.Mnt
-  $ligart.MonControle["Px_HT"].Value = value.PuNHT.Mnt
+  $ligart.MonControle["Px_HT"].Value = value.PuNHT.G
   $ligart.MonControle["Px_TTC"].value = value.PuNTC.G
 
 End
@@ -271,7 +271,7 @@ Public Sub Coef_lostfocus()
     tx = tx - 1
     $ligart.MonControle["Coef"].Text = Format(tx, "0.00%")
   Endif
-  ltx = New LTaxe(calcoef($ligart.MonControle["Coef"].Text), LTaxe.Remise)
+  ltx = New LTaxe($ligart.MonControle["Coef"].Text, LTaxe.Marge)
   $ligart.prx.add_taxe(ltx)
   ltx = New LTaxe($resart!taux_tva & "%", LTaxe.TVA)  
   $ligart.prx.add_taxe(ltx)
@@ -388,7 +388,7 @@ Private Sub LecArt_Write(Value As Sailig)
     $targen.ligne[1].prx.Qte = 1
     $targen.ligne[1].prx.Arr = $resart!art_cdarr
     If Not IsNull($targen.ligne[1].MonControle["Coef"].Text) Then
-      $targen.ligne[1].txl = New LTaxe(calcoef($targen.ligne[1].MonControle["Coef"].Text), LTaxe.Remise)
+      $targen.ligne[1].txl = New LTaxe($targen.ligne[1].MonControle["Coef"].Text, LTaxe.Marge)
       $targen.ligne[1].prx.add_taxe($targen.ligne[1].txl)
     Endif
     $targen.ligne[1].txl = New LTaxe($resart!taux_tva & "%", LTaxe.TVA)
@@ -535,29 +535,10 @@ Private Sub calprv(lg As Sailig, value As Float)      ''Calcul du tarif par rapp
   If IsNull(lg.prx) Then Return
   lg.MonControle["Px_Rev"].Value = value
   lg.prx.Mnt = value
-  lg.txl = New LTaxe(calcoef(lg.MonControle["Coef"].Text), LTaxe.Remise)
+  lg.txl = New LTaxe(lg.MonControle["Coef"].Text, LTaxe.Marge)
   lg.prx.add_taxe(lg.txl)
   lg.txl = New LTaxe($resart!taux_tva & "%", LTaxe.TVA)
   lg.prx.add_taxe(lg.txl)
-  
-End
-
-Private Function calcoef(taux As Variant) As String     ''On passe un coef et retourne un % avec changement de signe 
-  
-  Dim tx As String
-  
-  If IsNull(taux) Then Return "0"
-  If TypeOf(taux) = gb.String Then
-    If Left(taux) = "-" Then
-        tx = Right(taux, -1) 
-    Else
-        tx = "-" & taux 
-    Endif
-  Else
-    taux = (taux - 1) * -100
-    tx = Str(taux) & "%"
-  Endif
-  Return tx
   
 End
 

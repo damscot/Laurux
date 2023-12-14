@@ -801,20 +801,22 @@ Public Sub SupAchat(etat As Integer, Cle As Collection, Optional stock As Boolea
           Endif
         Endif
         'on supprime l'entrée
-        Utils.db.Delete("Fiches_Entrecpt", "numrecpt = &1 AND four = &2 AND ddate = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
-        Utils.db.Delete("Fiches_Ligrecpt", "numrecpt = &1 AND four = &2 AND daterecpt = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
-        If Me.opt = "B" Or Me.opt = "T" Then
-          'on supprime les consignes
-          Utils.db.Delete("Fiches_ligcons", "bloc = &1 AND type = 'E'", LDate(Cle["Fiches_Entrecpt.ddate"]).L & Cle["Fiches_Entrecpt.numrecpt"] & Cle["Fiches_Entrecpt.four"])
-        Endif
-        If stock Then
-          'on decremente le stock et le pamp
-          Repeat
-            Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)
-          Until $ressup.MoveNext()
-          $sup = False
-        Else
-          $sup = True
+        If Not verifdrt($ressup) Then
+          Utils.db.Delete("Fiches_Entrecpt", "numrecpt = &1 AND four = &2 AND ddate = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+          Utils.db.Delete("Fiches_Ligrecpt", "numrecpt = &1 AND four = &2 AND daterecpt = &3", Cle["Fiches_Entrecpt.numrecpt"], Cle["Fiches_Entrecpt.four"], LDate(Cle["Fiches_Entrecpt.ddate"]).DT)
+          If Me.opt = "B" Or Me.opt = "T" Then
+            'on supprime les consignes
+            Utils.db.Delete("Fiches_ligcons", "bloc = &1 AND type = 'E'", LDate(Cle["Fiches_Entrecpt.ddate"]).L & Cle["Fiches_Entrecpt.numrecpt"] & Cle["Fiches_Entrecpt.four"])
+          Endif
+          If stock Then
+            'on decremente le stock et le pamp
+            Repeat
+              Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)
+            Until $ressup.MoveNext()
+            $sup = False
+          Else
+            $sup = True
+          Endif
         Endif
       Endif
   End Select
@@ -956,7 +958,7 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
         res!codeart = sl.MonControle["Code"].Text
         res!coderegie = cdd.code
         res!qte = sl.MonControle["Qte"].Value
-        res!volume = cdd.volume_total().TotBHT.G
+        res!volume = cdd.volume_total().TotBHT.G * res!qte
         res!degres = cdd.degre
         res!volumeap = cdd.volume_total().TotNHT.G 
         If cdd.secu_droit().Montant(cdd, True).Mnt <> 0 Then res!volumess = cdd.volume_total().TotNHT.G 
