@@ -3045,7 +3045,7 @@ Public Sub Maj_Dssr(Origin As String)
   Req = "select code, date, filename, origin, lind from " & Cbase.Table("TabDocGed")
   
   Col = New Collection
-  Res = Utils.db.Exec(Req)
+  Res = Utils.db.Exec(Req & " Limit 1")
   If Not Res.Available Then Return
   
   k = "idx"
@@ -3057,10 +3057,10 @@ Public Sub Maj_Dssr(Origin As String)
   k = Space(2) & "-- Ori --" & Space(2)
   prop = New ObjProp(Res.Fields["origin"], k)
   Col.Add(prop, k)
-  k = Space(3) & "--- Date ---" & Space(3)
+  k = Space(2) & "--- Date ---" & Space(2)
   prop = New ObjProp(Res.Fields["date"], k)
   Col.Add(prop, k)
-  k = Space(10) & "------- fichier -------" & Space(10)
+  k = Space(8) & "------- fichier -------" & Space(8)
   prop = New ObjProp(Res.Fields["filename"], k)
   prop.tri = True
   Col.Add(prop, k)
