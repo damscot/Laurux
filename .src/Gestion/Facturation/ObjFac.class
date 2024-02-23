@@ -335,7 +335,7 @@ Private Sub numcli_Write(Value As String)
     Endif
   Endif
   'gestion des règlements
-  If Not IsNull(tsaisreg) Then Return
+  If Not IsNull(tsaisreg) And (choix <> ObjFac.finmois And choix <> ObjFac.abonnement) Then Return
   If breg Then
     tsaisreg = treg
   Else
