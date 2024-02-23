@@ -46,12 +46,12 @@
   { ctrlr CheckBox
     MoveScaled(2,46,16,3)
     Font = Font["Serif,-1"]
-    Text = ("&Centralisé")
+    Text = Shortcut(("Centralisé"), "C")
   }
   { Comptr CheckBox
     MoveScaled(17,46,24,3)
     Font = Font["Serif,-1"]
-    Text = ("Compte de &trésorerie")
+    Text = Shortcut(("Compte de trésorerie"), "t")
   }
   { Col CheckBox
     MoveScaled(41,46,13,3)
@@ -77,40 +77,40 @@
     Spacing = True
     { Button4 Button Btn
       Name = "Button4"
-      MoveScaled(0,0,4.2857,4.2857)
+      MoveScaled(0,0,4.3333,4.3333)
       Tag = "1"
       ToolTip = ("Doc HTML")
       Picture = Picture["Icones/khelp.png"]
     }
     { Button1 Button Btn
       Name = "Button1"
-      MoveScaled(8,0,20,4.2857)
+      MoveScaled(8,0,20,4.3333)
       Font = Font["Serif,Bold,-1"]
       Background = &H939393&
       Tag = "2"
       Expand = True
-      Text = ("&Supprimer")
+      Text = Shortcut(("Supprimer"), "S")
       Picture = Picture["Icones/stock_trash_24.png"]
     }
     { Button2 Button Btn
       Name = "Button2"
-      MoveScaled(31,0,18,4.2857)
+      MoveScaled(31,0,18,4.3333)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "3"
       ToolTip = ("Enregistre votre travail dans la base.")
       Expand = True
-      Text = ("&Enregistrer")
+      Text = Shortcut(("Enregistrer"), "E")
       Picture = Picture["Icones/filesave.png"]
     }
     { Button3 Button Btn
       Name = "Button3"
-      MoveScaled(54,0,17,4.2857)
+      MoveScaled(54,0,17,4.3333)
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "4"
       Expand = True
-      Text = ("&Quitter")
+      Text = Shortcut(("Quitter"), "Q")
       Picture = Picture["Icones/exit.png"]
     }
   }
@@ -206,7 +206,7 @@
         Text = ("Génération automatique")
       }
       { ToggleButton2 ToggleButton
-        MoveScaled(12,2.4286,4,4)
+        MoveScaled(12,2.4444,4,4)
         ToolTip = ("Cliquer pour recuperer le code TVA sur vente")
         Picture = Picture["Icones/next_frame.png"]
       }
@@ -244,10 +244,10 @@
       { Gentvaac CheckBox
         MoveScaled(37,3,28,3)
         Font = Font["Serif,-1"]
-        Text = ("&Génération automatique")
+        Text = Shortcut(("Génération automatique"), "G")
       }
       { ToggleButton3 ToggleButton
-        MoveScaled(12,2.4286,4,4)
+        MoveScaled(12,2.4444,4,4)
         ToolTip = ("Cliquer pour recuperer le code TVA sur achat")
         Picture = Picture["Icones/next_frame.png"]
       }
@@ -285,7 +285,7 @@
       MaxLength = 8
     }
     { ToggleButton1 ToggleButton
-      MoveScaled(27,1.7143,3.5714,3.5714)
+      MoveScaled(27,1.6667,3.5556,3.5556)
       Picture = Picture["Icones/next_frame.png"]
     }
     { Button6 Button
@@ -309,19 +309,19 @@
     Index = 2
     Text = ("Analytique")
     { Label16 Label
-      MoveScaled(8.7143,1.7143,8,3)
+      MoveScaled(8.6667,1.6667,8,3)
       Font = Font["Serif,-1"]
       Text = ("Poste")
     }
     { Poste TextBox Cmpt3
       Name = "Poste"
-      MoveScaled(17,1.7143,11,3)
+      MoveScaled(17,1.6667,11,3)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "2"
     }
     { ToggleButton4 ToggleButton
-      MoveScaled(28,1.4286,3.5714,3.5714)
+      MoveScaled(28,1.4444,3.5556,3.5556)
       Picture = Picture["Icones/next_frame.png"]
     }
     { Button5 Button Vnt
@@ -330,7 +330,7 @@
       Font = Font["Serif,Bold,-1"]
       Background = Color.ButtonBackground
       Tag = "1"
-      Text = ("Enre&gistrer")
+      Text = Shortcut(("Enregistrer"), "g")
     }
     { Postes ColumnView
       MoveScaled(10,9,56,18)
@@ -340,14 +340,14 @@
     }
     { Pourcent TextBox Cmpt3
       Name = "Pourcent"
-      MoveScaled(42,1.7143,7,3)
+      MoveScaled(42,1.6667,7,3)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       Tag = "3"
       Text = ("0")
     }
     { Label9 Label
-      MoveScaled(33,1.7143,8,3)
+      MoveScaled(33,1.6667,8,3)
       Font = Font["Serif,-1"]
       Text = ("%")
       Alignment = Align.Center
@@ -377,7 +377,7 @@
   { Lettrable CheckBox
     MoveScaled(2,42,16,3)
     Font = Font["Serif,-1"]
-    Text = ("&Lettrable")
+    Text = Shortcut(("Lettrable"), "L")
   }
   { Colposte ColumnView
     MoveScaled(13,26,34,29)
