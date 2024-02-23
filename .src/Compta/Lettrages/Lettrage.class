@@ -319,6 +319,7 @@ Public Sub affichage()
     Endif
     dtei = New LDate(DateAdd(Now, gb.Year, -8))
     dtes = New LDate(DateAdd(Now, gb.Year, 8))
+    If Not cpt.Text Then Return
     If ConvBool(Enl.value) = 1 Then
     '  If Tdate.value = False Then
         $lstex = New Listextcpt(cpt.Text, dtei.L, dtes.L, "n", odr)
