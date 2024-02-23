@@ -2054,7 +2054,9 @@ Public Sub PaUAGF()
 End
 
 Public Sub PaUALF()
-
+  
+  Dim r As Integer
+  
   With Utils
     PaUA.Text = .cpoint(PaUA.Text)
     If Val(PaUA.Text) = Null Then
@@ -2078,13 +2080,16 @@ Public Sub PaUALF()
           If start.son Then
             Music.Play
           Endif
-          If message.Question(" Vous venez de modifier le prix net ht. Voulez-vous \n 1- Modifier la remise \n 2- Modifier le prix de base ", " 1 ", " 2 ") = "1" Then
-            Tr.Text = Format(Val(pbht.Text) - Val(PaUA.Text), nbdec)
-            Tr.Text = Format$((Val(Tr.Text) * 100) / Val(pbht.Text), nbdec)
-            PaUAGF()
-          Else
-            pbht.Text = Format$(Val(PaUA.Text) / (1 - (Val(Tr.Text) / 100)), nbdec)
-            PaUAGF()
+          Try r = message.Question(" Vous venez de modifier le prix net ht. Voulez-vous ?", "1- Modifier la remise  ", "2- Modifier le prix de base")
+          If Not Error Then
+            If r = 1 Then
+              Tr.Text = Format(Val(pbht.Text) - Val(PaUA.Text), nbdec)
+              Tr.Text = Format$((Val(Tr.Text) * 100) / Val(pbht.Text), nbdec)
+              PaUAGF()
+            Else
+              pbht.Text = Format$(Val(PaUA.Text) / (1 - (Val(Tr.Text) / 100)), nbdec)
+              PaUAGF()
+            Endif
           Endif
         Endif
       Else
