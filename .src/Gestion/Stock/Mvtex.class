@@ -459,7 +459,7 @@ Public Sub Enrgbl()
       Repeat
         Colrcp.Item.Selected = True
         Utils.db.Exec("INSERT INTO " & Tab & "(code,daterecpt,qtep,qtem,Com) VALUES (&1, &2, &3, &4, &5)", Colrcp.Item[0], datej.dte.G, Colrcp.Item[2], Colrcp.Item[3], Colrcp.Item[4])
-        If sortie.Value Then          'maj des stocks
+        If Colrcp.Item[3] Then          'maj des stocks
           qte = utils.totobs([Colrcp.Item[3]]) * -1
         Else
           qte = utils.totobs([Colrcp.Item[2]])
@@ -627,8 +627,7 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
   lab.Height = "3mm"
   lab = New ReportLabel(hrep)
   lab.Text = "Sorties"
-  lab.Font = font["Serif,-3"]
-  
+  lab.Font = font["Serif,-3"] 
   lab.Alignment = Align.Center
   lab.Width = "20mm"
   lab.Height = "3mm"
@@ -651,14 +650,22 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
     lab = New ReportLabel(hrep)
     lab.Text = "Alcool Pur"
     lab.Font = font["Serif,-3"]
-    lab.Border = ReportBorder["Right:1pt #000000"]
+    'lab.Border = ReportBorder["Right:1pt #000000"]
     lab.Alignment = Align.Center
     lab.Width = "20mm"
     lab.Height = "3mm"
   Endif
+  lab = New ReportLabel(hrep)
+  lab.Text = "Commentaire"
+  lab.Font = font["Serif,-3"]
+  lab.Border = ReportBorder["Left:1pt #000000"]
+  lab.Alignment = Align.Center
+  lab.Expand = True
+  lab.Height = "3mm"
   
   Colrcp.MoveFirst
   Repeat
+    Colrcp.Item.Selected = True
     hrep = New ReportHBox(rep)
     hrep.Height = "3mm"
     lab = New ReportLabel(hrep)
@@ -675,12 +682,12 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
     lab = New ReportLabel(hrep)
     lab.Text = Colrcp.Item[1]
     lab.Font = font["Serif,-5"]
-    lab.Width = "20mm"
+    lab.Expand = True
     lab.Height = "2mm"
     lab = New ReportLabel(hrep)
     lab.Text = Colrcp.Item[2]
     lab.Font = font["Serif,-5"]
-    lab.Expand = True
+    lab.Width = "20mm"
     lab.Height = "2mm"
     lab = New ReportLabel(hrep)
     lab.Text = Colrcp.Item[3]
@@ -688,12 +695,6 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
     lab.Alignment = Align.Right
     lab.Width = "20mm"
     lab.Height = "2mm"
-'    lab = New ReportLabel(hrep)
-'    lab.Text = Colrcp.Item[4]
-'    lab.Font = font["Serif,-5"]
-'    lab.Alignment = Align.Right
-'    lab.Width = "20mm"
-'    lab.Height = "2mm"
     
     If bdr Then
       res = utils.db.Exec("SELECT art_dra,art_volm,art_deg FROM Fiches_Art WHERE art_code=&1 AND art_dra IS NOT NULL", Colrcp.Item[0])
@@ -724,6 +725,12 @@ Private Sub imprim(bvign As Boolean, bdroit As Boolean, nvign As String)
         lab.Height = "2mm"
       Endif
     Endif
+    lab = New ReportLabel(hrep)
+    lab.Text = Colrcp.Item[4]
+    lab.Font = font["Serif,-5"]
+    lab.Alignment = Align.Left
+    lab.Expand = True
+    lab.Height = "2mm"
   Until Colrcp.MoveNext()
   
    rep.Print(prt)
