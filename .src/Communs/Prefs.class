@@ -227,7 +227,7 @@ Public Sub Form_Open()
     Mdp2G.Visible = False
   Endif
   
-  Try Admin.value = cursettings["/Soc" & Start.Societe & "/Admin"]
+  Try Admin.Value = cursettings["/Soc" & Start.Societe & "/Admin"]
     If admin.value Then
     Mdp2.Text = hexdblKey.crypt("de", cursettings["/Soc" & Start.Societe & "/MdpPrefs"], "Laurux")
     Mdp2.Visible = True
