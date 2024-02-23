@@ -127,7 +127,7 @@ Public Sub Update_Req()
     Req = Utils.db.Subst("SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt"))
   Endif
 
-  tr = New TriGen(Panel1, Col, Res, Req, 20, Me) As "TriGen"
+  tr = New TriGen(Panel1, Col, Res, Req, 20, Me, "numero") As "TriGen"
   If N1.Value = True Then
     'En affichage N-1, les ecritures peuvent etre doublé si elles sont présente dans les deux tables (cloture apres avoir saisie/pointee des ecritures apres la date de fin de l'exercice)
     'Logiquement c'est une copie de l'ecriture, le groupement ne pose pas de pb.

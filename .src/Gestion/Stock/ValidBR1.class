@@ -47,7 +47,7 @@ Public Sub _new()
   $colfour.Add(f, k)
   
   req = "SELECT four,fo_nom,SUM(montant) AS montantht,SUM(mttc) AS montantttc FROM Fiches_Entrecpt JOIN Fiches_Four ON fo_code=four"
-  $trfo = New TriGen(lesfour, $colfour, res, req, Me.Font.Height + 2, Me) As "TriFou"
+  $trfo = New TriGen(lesfour, $colfour, res, req, Me.Font.Height + 2, Me, "four,fo_nom ") As "TriFou"
   $trfo.ExtraSel(" validee= 0", " AND ")
   $trfo.GroupBy("group by four,fo_nom ")
   $trfo.Show

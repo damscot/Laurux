@@ -47,7 +47,7 @@ Event Activate(Bval As Variant)
 Property NoUp As Boolean 
 
 '************************************** Gestion des Tris générique *****************************************************
-Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null)
+Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String, Height As Integer, Optional ob As Object = Null, GroupB As String)
 
   Dim i As Integer = 0
   Dim offset As Integer = 0
@@ -60,6 +60,7 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Parent = Par
   Res = Resu
   Request = Req
+  If GroupB Then Group = "GROUP BY " & GroupB Else Group = ""
   If IsNull(Parent) Then
     Win = New Window
     Win.W = 800
@@ -91,7 +92,6 @@ Public Sub _new(Par As Object, Col As Collection, Resu As Result, Req As String,
   Extra_selcomb = ""
   where = ""
   has = ""
-  Group = ""
   
   For Each f In Col_Def
     filter = New TextReg(Parent) As "Filter"
