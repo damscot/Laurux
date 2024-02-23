@@ -15,6 +15,8 @@ Private $numlock As String
 Private $validBR As Boolean           ''a true si la modif vient de la validation des entrées
 Private $Apdf As Boolean               ''si copie ged
 Private $rd As RadioButton
+Private $Bval As Variant = Null
+
 Public Bsel As Boolean = False
 Public Bval As Variant = Null
 Public tbl As Achat
@@ -57,7 +59,7 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As In
   $etat = Achat.Reception
   
   If nfour Then
-    Bval = ["Fiches_Entrecpt.four": nfour, "Fiches_Entrecpt.numrecpt": num, "Fiches_Entrecpt.ddate": dt.L]
+    $Bval = ["Fiches_Entrecpt.four": nfour, "Fiches_Entrecpt.numrecpt": num, "Fiches_Entrecpt.ddate": dt.L]
     $etat = etat
     bsel = True
     tbl.fourisseur = nfour
@@ -107,7 +109,7 @@ Public Sub Form_Open()
   $win.X = 0
   $win.Y = 0
   $win.Show
-  If Bval Then ColTri_MajSel(Bval)
+  If $Bval Then ColTri_MajSel($Bval)
   rd.Value = True
   $rd = rd
   $rd.Tag = Achat.Sans
@@ -300,6 +302,7 @@ Public Sub ColTri_MajSel(val As Variant)
     If tbl.ligne.Count > 0 Then Return
   Endif
   If Bsel = True Then
+    $Bval = Bval
     If Val Then
       $cond = ""
       For Each col In val
@@ -475,7 +478,7 @@ Public Sub suppr_Click()
   For Each lg In tbl
     lg.AutresObj[Achat.Tarif].SupTarTemp()
   Next
-  If tbl.SupAchat($etat, Bval, True) Then 
+  If tbl.SupAchat($etat, $Bval, True) Then 
     Utils.db.Rollback
     Return
   Endif
@@ -568,7 +571,7 @@ Private Sub ValCom() As Boolean
       Endif
     Next
   Endif
-  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, Bval, False, False) Then Return True
+  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, $Bval, False, False) Then Return True
   If tbl.EnrAch($etat, dte.dte, nco, fcode.Text) Then Return True
   Utils.db.Commit
   
@@ -768,7 +771,7 @@ Public Sub rececp_Click()
       Endif
       If $etat = Achat.EnCommande Or ($etat = Achat.Reception And Not dra) Then
         'on supprime l'ancienne commande de la BD
-        If tbl.SupAchat($etat, Bval) Then Return
+        If tbl.SupAchat($etat, $Bval) Then Return
       Endif
       'on enregistre la nouvelle
       For Each lg In tbl
@@ -917,7 +920,7 @@ Private Sub ChangVal(etat As Integer)
     
     Case Achat.Sans
       rececp.Enabled = True
-      rececp.Text = "Valider les récetpions"
+      rececp.Text = "Valider les réceptions"
       rececp.Picture = Picture["Icones/button_ok.png"]
       
   End Select

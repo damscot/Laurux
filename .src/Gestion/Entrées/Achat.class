@@ -814,9 +814,9 @@ Public Sub SupAchat(etat As Integer, Cle As Collection, Optional stock As Boolea
               Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)
             Until $ressup.MoveNext()
             $sup = False
-          Else
-            $sup = True
           Endif
+        Else
+          $sup = True
         Endif
       Endif
   End Select
