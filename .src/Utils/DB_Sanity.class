@@ -15,6 +15,7 @@ Private EntMysql As String[] = ["Table", "Format", "Champ", "Type", "Long.", "De
 Public Sub _new(dbconnection As DB_Connection)
   Dim i As Integer
   
+  
   DB_Con = dbconnection
 
   GridView1.Header = GridView.Both
@@ -389,10 +390,10 @@ Public Sub Corriger_Click()
               'on teste collation par default sur la table 
               res = Utils.db.Exec("SELECT TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2", "Laurux" & Start.Societe, Data_Expected[i][tabl])
               If res!TABLE_COLLATION <> Data_Expected[i][collation] Then
-                Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " CHARACTER SET utf8 COLLATE " & Data_Expected[i][collation])
+                Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " CHARACTER SET utf8mb4 COLLATE " & Data_Expected[i][collation])
               Endif
               'on modifie collation sur le champ
-              Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " CHARACTER SET utf8 COLLATE " & Data_Expected[i][collation])
+              Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " CHARACTER SET utf8mb4 COLLATE " & Data_Expected[i][collation])
             
             Case PrimK      'on gére les clées
               'on rajoute la clée

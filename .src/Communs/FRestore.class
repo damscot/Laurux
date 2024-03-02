@@ -140,8 +140,8 @@ Public Sub Button2_Click()
             Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " " & Utils.db.Name & " < " & SauveB.Text & "/" & Utils.db.Name & ".sql >  " & User.home & "/tmp/resultat 2>&1" Wait
           Endif
           Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode= NO_ENGINE_SUBSTITUTION " & "; \"" Wait
-          Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8_unicode_ci")
-          Utils.db.Exec("SET NAMES utf8mb3 COLLATE utf8mb3_unicode_ci")
+          Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8mb4_unicode_ci")
+          Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
           If Exist(User.Home & "/tmp/resultat") Then txterror = File.Load(User.Home & "/tmp/resultat")
           If InStr(txterror, "Using a password") <> 18 And Not bmariadb Or If Not IsNull(txterror) And bmariadb Then
             If son Then

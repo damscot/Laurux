@@ -5036,6 +5036,7 @@ Public Sub Maj369()
   Dim basename As String
   Dim compte As String
   Dim code As String
+  Dim reg As New RegExp
   
   PB = New ProgBar("Sauvegarde de la base dans SauveV368", 1)
   PB.Show()
@@ -5063,11 +5064,11 @@ Public Sub Maj369()
   Endif
   PB.Close()
   
-  rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8 COLLATE utf8mb3_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Schema", 1)
     PB.Show()
-    Utils.db.Exec("ALTER DATABASE Laurux" & Start.Societe & " DEFAULT COLLATE utf8mb3_unicode_ci")
+    Utils.db.Exec("ALTER DATABASE Laurux" & Start.Societe & " DEFAULT COLLATE utf8mb4_unicode_ci")
     Repeat
       PB.Avancement(rReq!req, 1)
       Try Utils.db.Exec(rReq!req)
@@ -5075,7 +5076,7 @@ Public Sub Maj369()
     PB.Close()
   Endif
   
-  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` CHARACTER SET utf8 COLLATE utf8mb3_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', TABLE_SCHEMA, '`.`', table_name, '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Tables", rReq.Count)
     PB.Show()
@@ -5085,8 +5086,8 @@ Public Sub Maj369()
     Until rReq.MoveNext()
     PB.Close()
   Endif
-
-  rReq = Utils.db.Exec("SELECT concat('UPDATE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` SET `', t1.column_name, '` = CONVERT(CAST(CONVERT(`',t1.column_name,'` USING LATIN1) AS BINARY) USING UTF8)') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.data_type like '%CHAR%' or t1.data_type = 'TEXT')", "Laurux" & Start.Societe)
+  
+  rReq = Utils.db.Exec("SELECT concat('UPDATE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` SET `', t1.column_name, '` = CONVERT(CAST(CONVERT(`',t1.column_name,'` USING utf8mb4) AS BINARY) USING UTF8MB4)') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.data_type like '%CHAR%' or t1.data_type = 'TEXT')", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Field Content", rReq.Count)
     PB.Show()
@@ -5096,8 +5097,7 @@ Public Sub Maj369()
     Until rReq.MoveNext()
     PB.Close()
   Endif
-
-  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` MODIFY `', t1.column_name, '` ', t1.data_type , '(' , t1.CHARACTER_MAXIMUM_LENGTH , ')' , ' CHARACTER SET utf8 COLLATE utf8mb3_unicode_ci;') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` MODIFY `', t1.column_name, '` ', t1.data_type , '(' , t1.CHARACTER_MAXIMUM_LENGTH , ')' , ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Field Type", rReq.Count)
     PB.Show()
@@ -5105,12 +5105,16 @@ Public Sub Maj369()
       PB.Avancement(rReq!req, 1)
       If rReq!req Then
         Try Utils.db.Exec(rReq!req)
+        If Error Then     'si erreur c'est que la chaine est illimité => on supprime (xx)
+          txt = reg.Replace(rReq!req, "[()]{1}[0-9]*[)]{1}", "")
+          Try Utils.db.Exec(txt)
+        Endif
       Endif
     Until rReq.MoveNext()
     PB.Close()
   Endif
-  Utils.db.Exec("SET NAMES utf8mb3 COLLATE utf8mb3_unicode_ci")
-  
+  Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
+
 end_utf8:
   
   Start.LocalSettings["/Soc" & Start.Societe & "/Decais"] = True
@@ -5166,7 +5170,7 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE Fiches_Entrecpt MODIFY validee TINYINT(2) DEFAULT 0")
   val = Null
   $i = 0
-'  Quit
+  
   'création de la table Fiches_Reglement
   If Not Utils.db.Tables.Exist("Fiches_Reglements") Then
     pb = New ProgBar("Gestion des réglements", 10)
@@ -5658,10 +5662,9 @@ end_utf8:
   Tab = "Fiches_Four"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (libel_def TINYTEXT)")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (tag_def TINYTEXT)")
-  
   ld = New LDate
   Try rResult = Utils.db.Exec("SELECT *, '" & LGed.Autres & "' as type FROM Docs_Autres as a UNION SELECT *, '" & LGed.Clients & "' as type FROM Docs_Clients as c UNION SELECT *, '" & LGed.Comptabilite & "' as type FROM Docs_Compta as t UNION SELECT *, '" & LGed.Fournisseurs & "' as type FROM Docs_Fournisseurs as f UNION SELECT *, '" & LGed.Articles & "' as type FROM Docs_Produits as p")
-  If rResult.Available And rResult.Max > 0 Then
+  If Not Error And If (rResult.Available And rResult.Max) > 0 Then
     PB = New ProgBar("Fusion GED", rResult.Count)
     PB.Show()
     Repeat
@@ -5676,6 +5679,8 @@ end_utf8:
         Case LGed.Clients
           compte = rResult!code
           code = Null
+          reg = New RegExp(rResult!doc, "/F([0-9]*)[\\w]*.pdf")
+          Try code = reg[1].Text
         Case LGed.Fournisseurs
           compte = rResult!code
           code = Null
@@ -5707,7 +5712,6 @@ end_utf8:
     Until rResult.MoveNext()
     PB.Close()
   Endif
-  
   'On autorise pour les masques de saisies la possibilité d'utiliser des variables
   'pour résoudre les différents champs utile de l'ecriture.
   Tab = "Fiches_Ligabon"
@@ -5742,6 +5746,17 @@ end_utf8:
   
   Tab = "Fiches_Bl"
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtreg VarChar(12))")
+  
+  Try Utils.db.Exec("ALTER TABLE Fiches_Entcom ADD (commentaire TEXT)")
+  'Et absence de clé primaire
+  Try utils.db.Exec("alter table Fiches_Art add primary key (art_code)")
+  Try utils.db.Exec("alter table Fiches_Cli add primary key (cli_code)")
+  Try utils.db.Exec("alter table Fiches_Comptes add primary key (compte_cc)")
+  Try utils.db.Exec("alter table Fiches_Four add primary key (fo_code)")
+  Try utils.db.Exec("alter table Fiches_Mo add primary key (mo_code)")
+  Try utils.db.Exec("alter table Fiches_Fam add primary key (code_fam)")
+  
+  Try Utils.db.Exec("ALTER TABLE Fiches_Docactif MODIFY doc_num CHAR(25)")
   
   Sha1Calc.CalcSha1_all("Fiches_Mvt")
   'Sha1Calc.CalcSha1_all("Fiches_Mvt1") 'A REMETTRE AVANT COMMIT : DO NOT PUSH
