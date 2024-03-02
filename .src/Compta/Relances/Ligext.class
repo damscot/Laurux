@@ -42,7 +42,7 @@ Public Sub CheckBox1_Click()
   Utils.db.Begin
   $resext.MoveTo($ind)
   If CheckBox1.Value Then
-    res = Utils.db.Create("Fiches_relances")
+    res = Utils.db.Create9("Fiches_relances")
     res!compte = $resext!compte
     res!rs = $rescli!cli_rs_soc
     res!intitule = $rescli!cli_nom

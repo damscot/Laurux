@@ -223,7 +223,7 @@ Public Sub EnrTouTar(rResult As Result)            ''Enregistre tous les tarifs 
           Utils.db.Delete("Fiches_Tarcli", "ccli = &1 AND cart = &2", rResult!code, rResult!art)
         Else
           res = Utils.db.Edit("Fiches_Tarcli", "ccli = &1 AND cart = &2", rResult!code, rResult!art)
-          If Not res.Available Then res = Utils.db.Create("Fiches_Tarcli")
+          If Not res.Available Then res = Utils.db.Create9("Fiches_Tarcli")
           res!cart = rResult!art
           res!coef = rResult!temp_coef
           res!ccli = rResult!code
@@ -235,7 +235,7 @@ Public Sub EnrTouTar(rResult As Result)            ''Enregistre tous les tarifs 
           Utils.db.Delete("Fiches_TarTypcli", "type = &1 AND cart = &2", rResult!code, rResult!art)
         Else
           res = Utils.db.Edit("Fiches_TarTypcli", "type = &1 AND cart = &2", rResult!code, rResult!art)
-          If Not res.Available Then res = Utils.db.Create("Fiches_TarTypcli")
+          If Not res.Available Then res = Utils.db.Create9("Fiches_TarTypcli")
           res!cart = rResult!art
           res!coef = rResult!temp_coef
           res!type = rResult!code

@@ -231,7 +231,7 @@ Private Sub trat()
     Endif
     $pgb.Avancement(, 50)
     strs = Split(ligne, sperar)
-    res = Utils.db.Create("Fiches_Mvt")
+    res = Utils.db.Create9("Fiches_Mvt")
     strs[2] = Trim(strs[2])
 
     If Not Checkrnum.Value Then     'on reprend les n° d'ecriture
@@ -309,7 +309,7 @@ Private Sub trat()
     resrec = Utils.db.Exec("SELECT coll_cc FROM Fiches_Comptes WHERE compte_cc=&1", res!compte)
     If resrec.Available Then
       If resrec!coll_cc Then
-        rescol = Utils.db.Create("Fiches_Mvt")
+        rescol = Utils.db.Create9("Fiches_Mvt")
         rescol!compte = resrec!coll_cc
         rescol!jour = res!jour 
         rescol!numero = res!numero

@@ -1275,7 +1275,7 @@ Private Sub totalconsigne(dte As Date, numbl As String, numfr As String)
     utils.db.Begin
     res = utils.db.Edit("Totalisation", "compte=&1", respar!consfou)
     If Not res.Available Then
-      res = utils.db.Create("Totalisation")
+      res = utils.db.Create9("Totalisation")
       res!compte = respar!consfou
       res!intitule = rescons!intitule_cc
       res!totalht = "0"

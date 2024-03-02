@@ -557,7 +557,7 @@ Private Sub majcons(code As String, nb As String)
   Dim res, resc As Result
   
   If $bcrea Then
-    res = utils.db.Create("Fiches_ligcons")
+    res = utils.db.Create9("Fiches_ligcons")
   Else
     $rescons.MoveTo($irow)
     res = utils.db.Edit("Fiches_ligcons", "code=&1", $rescons!code)

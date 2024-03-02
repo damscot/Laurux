@@ -499,7 +499,7 @@ Public Sub Enrgbl()
          Repeat
            res = utils.db.Exec("SELECT art_dra,art_volm,art_deg FROM Fiches_Art WHERE art_code=&1 and art_dra IS NOT NULL", Colrcp.Item[0])
            If res.Available Then
-             resdr = utils.db.Create("Fiches_ligregie")
+             resdr = utils.db.Create9("Fiches_ligregie")
              resdr!numlig = numlig
              numlig = Format(Val(numlig) + 1, "000")
              resdr!num = num

@@ -138,7 +138,7 @@ Public Sub form_Close()
   If $vfac.adrliv.nom And $vfac.numbl Then
     utils.db.Begin
     res = utils.db.Edit("Fiches_AdrlivBL", "numbl= &1", $vfac.numbl)
-    If Not res.Available Then res = utils.db.Create("Fiches_AdrlivBL")
+    If Not res.Available Then res = utils.db.Create9("Fiches_AdrlivBL")
     res!numbl = $vfac.numbl
     res!nom = $vfac.adrliv.nom
     res!adr1 = $vfac.adrliv.adr1

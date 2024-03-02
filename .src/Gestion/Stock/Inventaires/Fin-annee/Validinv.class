@@ -252,7 +252,7 @@ Public Sub button4_Click()
           vol += ccd.vol
           volap += ccd.volap
         Until resinv.MoveNext()
-        res = Utils.db.Create("Fiches_ligregie")
+        res = Utils.db.Create9("Fiches_ligregie")
         res!dtmouv = dte.G
         res!type = "I"
         res!coderegie = resregie!code

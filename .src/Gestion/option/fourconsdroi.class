@@ -206,7 +206,7 @@ Private Sub enregistre(cons As Consigne, nbr As String, nlig As String)
   
   If Not cons.code Then Return
   rescons = Utils.db.Edit("Fiches_ligcons", "bloc=&1 AND numlig=&2 AND codecons=&3", $sbloc, nlig, cons.code)
-  If Not rescons.Available Then rescons = Utils.db.Create("Fiches_ligcons")
+  If Not rescons.Available Then rescons = Utils.db.Create9("Fiches_ligcons")
   rescons!num = nbr
   rescons!numlig = nlig
   rescons!type = "E"        'E pour entrée
@@ -224,7 +224,7 @@ Private Sub creadra(ccd As Calculdroit, nart As String, qte As String, dte As Da
   Dim res As Result
   
   utils.db.Begin
-  res = utils.db.Create("Fiches_ligregie")
+  res = utils.db.Create9("Fiches_ligregie")
   res!dtmouv = dte
   res!num = nbl
   res!numlig = nlig

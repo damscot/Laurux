@@ -313,7 +313,7 @@ Public Sub ecriture() As Boolean    ''Gestion de l'écriture comptable. Si etat=
             If Not var.numlot Then var.numlot = numecr
           Endif
         Endif
-        $rescomp = utils.db.Create("Fiches_Mvt")
+        $rescomp = utils.db.Create9("Fiches_Mvt")
         If ajout(var) Then Return True
         
       Case VarEcr.L_modif
@@ -467,7 +467,7 @@ Private Sub modif(ind As Integer, Optional sup As Boolean)
   
   utils.db.Exec("LOCK TABLES Fiches_Mvt WRITE,Fiches_MvtM WRITE")
   res = utils.db.Exec("SELECT * FROM Fiches_Mvt WHERE lind=&1", ind)
-  rescomp = utils.db.Create("Fiches_MvtM")
+  rescomp = utils.db.Create9("Fiches_MvtM")
   rescomp!jour = res!jour
   rescomp!numero = res!numero
   rescomp!compte = res!compte
@@ -529,7 +529,7 @@ Private Sub collectif(var As VarEcr, cpt As String) As Boolean
   
   Swap var.compte, cpt
   If var.etat = VarEcr.L_ajou Or var.etat = VarEcr.L_caisse Then
-    $rescomp = utils.db.Create("Fiches_Mvt")
+    $rescomp = utils.db.Create9("Fiches_Mvt")
   Else
     $rescomp = utils.db.Edit("Fiches_Mvt", "lind=&1", var.lind)
   Endif

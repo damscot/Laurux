@@ -842,9 +842,9 @@ Public Sub EnrAch(etat As Integer, dte As LDate, num As String, four As String, 
   Application.Busy = 1
   Select Case etat
     Case Achat.CreaCommande, Achat.EnCommande
-      resent = Utils.db.Create("Fiches_Entcom")
+      resent = Utils.db.Create9("Fiches_Entcom")
       For Each sl In Me
-        reslig = Utils.db.Create("Fiches_Ligcom")
+        reslig = Utils.db.Create9("Fiches_Ligcom")
         reslig!datecom = $dte.GnT
         reslig!numcom = num
         If Object.IsValid(sl.AutresObj[Consignes]) Then
@@ -862,14 +862,14 @@ Public Sub EnrAch(etat As Integer, dte As LDate, num As String, four As String, 
       If resent.Available Then
         modif = True
       Else
-        resent = Utils.db.Create("Fiches_Entrecpt")
+        resent = Utils.db.Create9("Fiches_Entrecpt")
       Endif
       For Each sl In Me
         If modif Then 
           'cas de modification d'une réception avec compta matiere => on ne peut modifier que les prix
           reslig = Utils.db.Edit("Fiches_Ligrecpt", "four = &1 AND numrecpt = &2 AND daterecpt = &3 AND nligne = &4", four, num, dte.DT, Format(sl.Ind + 1, "000"))   'Ind+1 pour garder la comptabilité avec la version précédente
         Else
-          reslig = Utils.db.Create("Fiches_Ligrecpt")
+          reslig = Utils.db.Create9("Fiches_Ligrecpt")
         Endif
         reslig!daterecpt = $dte.GnT
         reslig!numrecpt = num
@@ -950,7 +950,7 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
     If Not modif Then
       cdd = sl.AutresObj[Consignes].ccd
       If cdd.code Then      'si la ligne contient des alcools
-        res = Utils.db.Create("Fiches_ligregie")
+        res = Utils.db.Create9("Fiches_ligregie")
         res!dtmouv = $dte.GnT 
         res!num = num
         res!numlig = Format(sl.Ind, "000")
@@ -978,7 +978,7 @@ Private Sub EnrConsigne(code As String, nb As Float, nlig As String, cdd As Cons
   Dim rescons As Result
   
   If Not code Then Return
-  rescons = Utils.db.Create("Fiches_ligcons")
+  rescons = Utils.db.Create9("Fiches_ligcons")
   rescons!num = num
   rescons!numlig = nlig
   rescons!type = "E"        'E pour entrée
@@ -1532,7 +1532,7 @@ Public Sub valider_click()
           If ligart.MonControle["Code"].Text = cde Then Break
         Next
       Endif
-      res = Utils.db.Create("Fiches_Materiels")
+      res = Utils.db.Create9("Fiches_Materiels")
       res!mat_serie = lig.MonControle["Série"].Text
       res!mat_code = lig.MonControle["Code"].Text
       res!mat_four = $fournisseur

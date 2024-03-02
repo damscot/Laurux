@@ -297,7 +297,7 @@ Public Sub Button3_Click()    'enregistrer
   Utils.db.Exec("DELETE FROM Fiches_tarpp WHERE code=&1", Textcode.Text)
   Utils.db.Exec("DELETE FROM Fiches_ligtarpp WHERE code = &1", Textcode.Text)
   
-  res = Utils.db.Create("Fiches_tarpp")
+  res = Utils.db.Create9("Fiches_tarpp")
   res!code = Textcode.Text
   If Not Textmz.Text Then Textmz.Text = "0,00"
   res!margez = Val(Textmz.Text)
@@ -307,7 +307,7 @@ Public Sub Button3_Click()    'enregistrer
   
   i = 0
   While i < tableview2.Rows.Max
-    res = Utils.db.Create("Fiches_ligtarpp")
+    res = Utils.db.Create9("Fiches_ligtarpp")
     brn = Split(tableview2[i, 0].Text, "-")
     res!code = Textcode.Text
     res!ligne = i

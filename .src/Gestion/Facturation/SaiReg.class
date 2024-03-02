@@ -926,12 +926,12 @@ Private Sub Facture()
   resc = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", client.Text)
   If Not resc.Available Then Return
   Utils.db.Begin
-  res = Utils.db.Create("Facturefm")
+  res = Utils.db.Create9("Facturefm")
   res!code = client.Text
   res!nom = resc!cli_nom
   res.Update
   For i = 0 To $Vecr.Tlettrage.Max
-    res = Utils.db.Create("Bl")
+    res = Utils.db.Create9("Bl")
     res!num = $Vecr.Tlettrage[i].numdoc
     res!code = client.Text
     res!nom = resc!cli_nom

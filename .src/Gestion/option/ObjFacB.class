@@ -434,7 +434,7 @@ Public Sub comptmat(Optional numfac As String, magasin As Boolean)    ''enregist
       reslig1.MoveFirst
       For i = 0 To reslig1.Max
         drt = New Calculdroit(reslig1!art_dra, reslig1!art_volm, reslig1!art_deg, reslig1!qte_ligfac)
-        res = Utils.db.Create("Fiches_ligregie")
+        res = Utils.db.Create9("Fiches_ligregie")
         res!dtmouv = reslig1!dtligbl_ligfac
         res!num = numfac
         res!numlig = Space(6) & reslig1!numlig_ligfac
@@ -482,7 +482,7 @@ Public Sub comptmat(Optional numfac As String, magasin As Boolean)    ''enregist
     If reslig1.Available Then
       If Not IsNull(reslig1!art_dra) Then
           drt = New Calculdroit(reslig1!art_dra, reslig1!art_volm, reslig1!art_deg, lg.qte)
-          res = Utils.db.Create("Fiches_ligregie")
+          res = Utils.db.Create9("Fiches_ligregie")
           res!dtmouv = Me.reslig!dte_ligbl
           res!num = Me.numfac
           res!numlig = Me.reslig!num_ligbl & Me.ligne.Key
@@ -956,7 +956,7 @@ Public Sub transblfac()       ''Transfert d'une facture en archive
   'ligne de facure 
   utils.db.Begin
   For Each lg In Me.ligne 
-    ligfac = utils.db.Create("Fiches_HistoLigfac" & Me.tab)
+    ligfac = utils.db.Create9("Fiches_HistoLigfac" & Me.tab)
     If lg.Index > -1 Then
       Me.reslig.MoveTo(lg.Index)
       ligfac!num_ligfac = Me.numfac
@@ -1011,7 +1011,7 @@ Public Sub transblfac()       ''Transfert d'une facture en archive
   Endif
   'entete de facture
   Me.resent.MoveFirst
-  entfac = utils.db.Create("Fiches_HistoFac" & Me.tab)
+  entfac = utils.db.Create9("Fiches_HistoFac" & Me.tab)
   entfac!numfac = Me.numfac
   entfac!datefac = Me.dtedoc.G
   entfac!cdclifac = Me.resent!cdclibl
@@ -1045,7 +1045,7 @@ Public Sub transblfac()       ''Transfert d'une facture en archive
   If Me.tab = "M" Then
     Repeat
       If Me.resent!codep Then
-        hmat = utils.db.Create("Fiches_HisentMat")
+        hmat = utils.db.Create9("Fiches_HisentMat")
         hmat!numserie = Me.resent!numserie
         hmat!codep = Me.resent!codep
         hmat!numfac = Me.resent!numbl
@@ -1064,7 +1064,7 @@ Public Sub transblfac()       ''Transfert d'une facture en archive
        Me.reslig.MoveFirst
         Repeat
           If Me.reslig!typel = "A" And Me.resent!numbl = Me.reslig!num_ligbl Then
-            sdep = Utils.db.Create("Fiches_Sdepots")
+            sdep = Utils.db.Create9("Fiches_Sdepots")
             sdep!code = Left$(Me.resent!cdep, 2)
             sdep!cart = Me.reslig!code_ligbl
             sdep!date = Me.reslig!dtefac

@@ -408,7 +408,7 @@ Public Sub Button6_Click()
   utils.db.Begin
   Taresult = utils.db.Edit(tab, code & " = &1 AND cart=&2", TypeC.Text, Tart.Text)
   If Not Taresult.Available Then
-    Taresult = utils.db.Create(tab)
+    Taresult = utils.db.Create9(tab)
   Endif
   Taresult[code] = TypeC.Text
   Taresult!cart = Tart.Text

@@ -1448,7 +1448,7 @@ Public Sub Button4_Click()
       If enr = "1" Then
         utils.db.Begin
         If button4.text = "Va&lider" Then
-          rResult = utils.db.Create("Fiches_Cli")
+          rResult = utils.db.Create9("Fiches_Cli")
           majchamp(rResult)
           If Variables.Sprix And Variables.Sexport And Variables.SMajCli Then Serveur.Pass("Cli", "C", Cd.Text, "")
           Enrgcp.Ecp(Cp.Text, Burdist.Text)
@@ -1582,7 +1582,7 @@ Private Sub majchamp(res As Result)
   If rescc.Available Then
     rescc = utils.db.Edit("Fiches_Comptes", "compte_cc=&1", cd.Text)
   Else
-    rescc = utils.db.Create("Fiches_Comptes")
+    rescc = utils.db.Create9("Fiches_Comptes")
     rescc!compte_cc = cd.Text
     rescc!solde = 0
     rescc!soldep = 0

@@ -567,7 +567,7 @@ Public Sub majdroit(num As String, numlig As String) 'sert a rien
 
       Utils.db.Begin
       If Not $bimp Then
-        res = Utils.db.Create("Fiches_ligregie")
+        res = Utils.db.Create9("Fiches_ligregie")
         res!num = num
         res!numlig = reslig!numlig_ligbl
         res!codeart = reslig!code_ligbl
@@ -652,7 +652,7 @@ Public Function majlig(num As String, numlig As String, textpal As String, textc
     If Not IsNull(resart!art_consp) And textpal <> "0" Then           'creation 1 ligne consigne pour 1 palettes
       rescons = Utils.db.Exec("SELECT * FROM Fiches_consigne WHERE code=&1", resart!art_consp)
       If rescons.Available Then
-        reslig = Utils.db.Create("Fiches_ligcons")
+        reslig = Utils.db.Create9("Fiches_ligcons")
         reslig!num = num
         reslig!numlig = num & numlig
         reslig!codecons = resart!art_consp
@@ -667,7 +667,7 @@ Public Function majlig(num As String, numlig As String, textpal As String, textc
     If Not IsNull(resart!art_consc) And textcol <> "0" Then           'creation 1 ligne consigne pour 1 caisses
       rescons = Utils.db.Exec("SELECT * FROM Fiches_consigne WHERE code=&1", resart!art_consc)
       If rescons.Available Then
-        reslig = Utils.db.Create("Fiches_ligcons")
+        reslig = Utils.db.Create9("Fiches_ligcons")
         reslig!num = num
         reslig!numlig = num & numlig
         reslig!codecons = resart!art_consc
@@ -682,7 +682,7 @@ Public Function majlig(num As String, numlig As String, textpal As String, textc
     If Not IsNull(resart!art_consb) And artqte <> "0" Then           'creation 1 ligne consigne pour 1 boutelles
       rescons = Utils.db.Exec("SELECT * FROM Fiches_consigne WHERE code=&1", resart!art_consb)
       If rescons.Available Then
-        reslig = Utils.db.Create("Fiches_ligcons")
+        reslig = Utils.db.Create9("Fiches_ligcons")
         reslig!num = num
         reslig!numlig = num & numlig
         reslig!codecons = resart!art_consb
@@ -708,7 +708,7 @@ Public Sub copdecons(numfac As String, numbl As String)
     resfac.MoveFirst
     Utils.db.Begin
     Repeat
-      resbl = Utils.db.Create("Fiches_ligcons")
+      resbl = Utils.db.Create9("Fiches_ligcons")
       resbl!type = "B"
       resbl!codecons = resfac!codecons
       resbl!nb = resfac!nb * -1
@@ -775,7 +775,7 @@ Public Sub gridcons_MouseUp()
     $gridcons.UnSelectAll
     Utils.db.Begin
     For i = $ideb To $ifin
-      reslig = Utils.db.Create("Fiches_ligcons")
+      reslig = Utils.db.Create9("Fiches_ligcons")
       reslig!num = $snumbl
       reslig!type = "B"
       reslig!numlig = "D"
@@ -817,7 +817,7 @@ Private Sub valide()
   
   Utils.db.Begin
   If $textconsp.Text And verifnb($textnbp.Text) Then
-    reslig = Utils.db.Create("Fiches_ligcons")
+    reslig = Utils.db.Create9("Fiches_ligcons")
     rescons = Utils.db.Exec("SELECT * FROM Fiches_consigne WHERE code=&1", $textconsp.Text)
     If rescons.Available Then
       reslig!num = $snumbl
@@ -833,7 +833,7 @@ Private Sub valide()
     Endif
   Endif
   If $textconsc.Text And verifnb($textnbc.Text) Then
-    reslig = Utils.db.Create("Fiches_ligcons")
+    reslig = Utils.db.Create9("Fiches_ligcons")
     rescons = Utils.db.Exec("SELECT * FROM Fiches_consigne WHERE code=&1", $textconsc.Text)
     If rescons.Available Then
       reslig!num = $snumbl
@@ -849,7 +849,7 @@ Private Sub valide()
     Endif
   Endif
   If $textnbb.Text And verifnb($textnbb.Text) Then
-    reslig = Utils.db.Create("Fiches_ligcons")
+    reslig = Utils.db.Create9("Fiches_ligcons")
     rescons = Utils.db.Exec("SELECT * FROM Fiches_consigne WHERE code=&1", $textconsb.Text)
     If rescons.Available Then
       reslig!num = $snumbl

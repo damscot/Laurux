@@ -705,7 +705,7 @@ Public Sub EnrTar(ach As Sailig, fournisseur As String)           ''enregistreme
     $tarpcli.Netoyage("Numéro")
     For Each sl In $tarpcli
       If Not sl.AutresObj[SupLigne] Then
-        res = Utils.db.Create("Fiches_Tarcli")
+        res = Utils.db.Create9("Fiches_Tarcli")
         res!cart = $resart!art_code
         res!ccli = sl.MonControle["Numéro"].Text
         tx = 1 + (Val(Left(sl.MonControle["Coef"].Text, -1)) / 100)
@@ -719,7 +719,7 @@ Public Sub EnrTar(ach As Sailig, fournisseur As String)           ''enregistreme
     $tartypcli.Netoyage("Type")
     For Each sl In $tartypcli
       If Not sl.AutresObj[SupLigne] Then
-        res = Utils.db.Create("Fiches_TarTypcli")
+        res = Utils.db.Create9("Fiches_TarTypcli")
         res!cart = $resart!art_code
         res!type = sl.MonControle["Type"].Text
         tx = 1 + (Val(Left(sl.MonControle["Coef"].Text, -1)) / 100)
@@ -745,7 +745,7 @@ Public Sub EnrTarTemp(pbht As Float, txconv As Float, rm As Float, paht As Float
   If Not sl.valide Then
     res = Utils.db.Edit("Fiches_TarTemp", "art = &1 AND temp_type = &2", $resart!art_code, TarGen)
     If Not res.Available Then
-      res = Utils.db.Create("Fiches_TarTemp")
+      res = Utils.db.Create9("Fiches_TarTemp")
       res!art = $resart!art_code
       res!temp_type = TarGen
       res!code = " "
@@ -758,7 +758,7 @@ Public Sub EnrTarTemp(pbht As Float, txconv As Float, rm As Float, paht As Float
     If Not sl.valide Then
       res = Utils.db.Edit("Fiches_TarTemp", "art = &1 AND temp_type = &2 AND code = &3", $resart!art_code, TarCli, sl.MonControle["Numéro"].Text)
       If Not res.Available Then
-        res = Utils.db.Create("Fiches_TarTemp")
+        res = Utils.db.Create9("Fiches_TarTemp")
         res!art = $resart!art_code
         res!temp_type = TarCli
         res!code = sl.MonControle["Numéro"].Text
@@ -771,7 +771,7 @@ Public Sub EnrTarTemp(pbht As Float, txconv As Float, rm As Float, paht As Float
     If Not sl.valide Then
       res = Utils.db.Edit("Fiches_TarTemp", "art = &1 AND temp_type = &2 AND code = &3", $resart!art_code, TarTcli, sl.MonControle["Type"].Text)
       If Not res.Available Then
-        res = Utils.db.Create("Fiches_TarTemp")
+        res = Utils.db.Create9("Fiches_TarTemp")
         res!art = $resart!art_code
         res!temp_type = TarTcli
         res!code = sl.MonControle["Type"].Text
@@ -818,7 +818,7 @@ Public Sub EnrEtiqu(sl As Sailig)     ''on met a jour les étiquettes
   If res.Available Then
     res!nombre += sl.MonControle["Qte"].Value
   Else
-    res = Utils.db.Create("Fiches_EtiProd")
+    res = Utils.db.Create9("Fiches_EtiProd")
     res!code = $resart!art_code
     res!nombre = sl.MonControle["Qte"].Value
   Endif
@@ -826,7 +826,7 @@ Public Sub EnrEtiqu(sl As Sailig)     ''on met a jour les étiquettes
   
   res = Utils.db.Edit("Fiches_EtiGond", "code = &1", $resart!art_code)
   If Not res.Available Then
-    res = Utils.db.Create("Fiches_EtiGond")
+    res = Utils.db.Create9("Fiches_EtiGond")
     res!code = $resart!art_code
     res!nombre = 1
   Endif

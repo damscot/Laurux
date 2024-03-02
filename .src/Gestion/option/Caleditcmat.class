@@ -241,7 +241,7 @@ Public Sub Edition_Click()
     'ecriture du stock début de période prochaine
     Utils.db.Begin
     For Each dcl In tabl
-      res = Utils.db.Create("Fiches_ligregie")
+      res = Utils.db.Create9("Fiches_ligregie")
       res!dtmouv = DateAdd($dteinf.G, gb.Month, 1)
       res!type = "M"
       res!coderegie = tabl.Key

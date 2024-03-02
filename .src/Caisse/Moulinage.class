@@ -2640,7 +2640,7 @@ Private Sub genfac()
   If resentz.Available Then
 
     utils.db.Begin
-    resligfac = utils.db.Create("Tmp_Caisse")
+    resligfac = utils.db.Create9("Tmp_Caisse")
     
     Repeat
       'selection des lignes z
@@ -2701,7 +2701,7 @@ Private Sub genfac()
       utils.db.Begin
       res = Utils.db.Exec("SELECT SUM(montant) AS montht, SUM(tva) AS tottva, SUM(marge) AS totmarge,SUM(remise) as remise FROM Tmp_Caisse")
       If res.Available Then
-        resentfac = utils.db.Create("Fiches_HistoFac")
+        resentfac = utils.db.Create9("Fiches_HistoFac")
         resentfac!marge_art = res!totmarge
         'resentfac!totfac = res!montht - res!remise
         resentfac!totfac = res!montht
@@ -2732,7 +2732,7 @@ Private Sub genfac()
         'mise a jour des lignes de facture
         reslig = utils.db.Exec("SELECT SUM(pu) as pu, SUM(montant) as montant, SUM(remise) as remise, SUM(quantite) as quantite, SUM(tva) as mtva, SUM(marge) as marge, fam, code, type, intitule FROM Tmp_Caisse GROUP BY code,fam,type,intitule")
         snumlig = "0001"
-        resligfac = Utils.db.Create("Fiches_HistoLigfac")
+        resligfac = Utils.db.Create9("Fiches_HistoLigfac")
         resligfac!num_ligfac = snfac
         snumlig = snumlig
         resligfac!numlig_ligfac = Format(snumlig, "0000")
@@ -2742,7 +2742,7 @@ Private Sub genfac()
 
         reslig.MoveFirst
         For j = 0 To reslig.Max
-          resligfac = Utils.db.Create("Fiches_HistoLigfac")
+          resligfac = Utils.db.Create9("Fiches_HistoLigfac")
           res = utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_code=&1", reslig!code)
           resligfac!num_ligfac = snfac
           snumlig = Str(Val(snumlig) + 1)
