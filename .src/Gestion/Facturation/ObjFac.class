@@ -37,6 +37,11 @@ Public Struct ltva
   taux As String
 End Struct
 
+Public Struct ecotaxe
+  tee As Float
+  tea As Float
+End Struct
+
 Public Enum sans, bl, facture, archive, commande, proforma, devis, atelier, finmois, abonnement, magasin
 Public Origine As String[] = ["", "BL", "Facture", "Archive", "Commande", "Proforma", "Devis", "Atelier", "FinMois", "Abonnement", "Magasin"]
 
@@ -125,6 +130,7 @@ Public monttva As Float
 Public montttc As Float
 Public nomfm As String
 Public edit As Report
+Public eco As Ecotaxe          ''somme des écotaxes
 
 Private $dtedoc As LDate
 Private $dteech As LDate
@@ -447,6 +453,7 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
   montmo = 0
   montttc = 0
   monttva = 0
+  eco = New Ecotaxe
   
 '  If choix = ObjFac.magasin Then Return      'facture magasin
   Select Case choix
@@ -522,13 +529,13 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
           If res.Available Then
             artcomp = res!art_prdcomp And res!art_impdetail
           Endif
-          montart += Val(ligneart.neht)
+          If ttc Then montart += Val(ligneart.nettc) Else montart += Val(ligneart.neht)
           montht += Val(ligneart.neht)
           remart = remart + (Val(ligneart.brht) - Val(ligneart.neht))
           
         Case "M"
           calc(numlig)
-          montmo += Val(ligneart.neht)
+          If ttc Then montmo += Val(ligneart.nettc) Else montmo += Val(ligneart.neht)
           montht += Val(ligneart.neht)
           remmo = remmo + (Val(ligneart.brht) - Val(ligneart.neht))
           
@@ -652,13 +659,20 @@ Private Sub calc(numlig As String)
   Dim ind As Integer
   
   'on crée la ligne à editer
+  txtva = (reslig!mtx_ligfac / 100) + 1
   If reslig!typel_ligbl = "A" Then
     resart = Utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_code=&1", reslig!code_ligbl)
+    'somme des éco taxes
+    If resart!art_ect Then 
+      If ttc Then eco.tee += ((eco.tee * txtva) * utils.arrondi(reslig!qte_ligbl, 3)) Else eco.tee += (resart!art_eco * utils.arrondi(reslig!qte_ligbl, 3))
+    Endif
+    If resart!art_ect2 Then 
+      If ttc Then eco.tea += ((eco.tea * txtva) * utils.arrondi(reslig!qte_ligbl, 3)) Else eco.tea += (resart!art_eco2 * utils.arrondi(reslig!qte_ligbl, 3))
+    Endif
   Else
     resart = Utils.db.Exec("SELECT mo_code AS art_code, 0 AS art_qte, '0' AS art_dec, '2' AS art_nbd,mo_txht AS art_pvht FROM Fiches_Mo WHERE mo_code=&1", reslig!code_ligbl)
   Endif
   ligneart = New Ledit
-  txtva = (reslig!mtx_ligfac / 100) + 1
   ligneart.Index = reslig.Index                   'renseignements communs
   ligneart.code = reslig!code_ligbl
 '  If casier Then

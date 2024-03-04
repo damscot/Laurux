@@ -17,6 +17,7 @@ Public Sub _new(vfac As ObjFacB)
   Dim tot As Float
   Dim lab As ReportLabel
   Dim img As ReportImage
+  Dim txt As String
   
   $vfac = vfac
   If $vfac.pxsdec Then $frm = ",0" Else $frm = ",0.00"
@@ -250,9 +251,25 @@ Public Sub _new(vfac As ObjFacB)
   If Utils.totobs([vfac.resent!gestbl]) <> 0 Then
     Me.gest.Text = "Gestion : " & Format(Utils.totobs([vfac.gestion]), "0.00")
   Endif
-  If vfac.recap And vfac.tab <> "M" Then
-    If $vfac.montart <> 0 Then Me.tart.Text = "Total article : " & Format($vfac.montart, $frm)
-    If $vfac.montmo <> 0 Then Me.tmo.Text = "Total MO : " & Format($vfac.montmo, $frm)
+  If Not vfac.autoent And Not vfac.franctva Then
+    If vfac.ttc Then txt = " TTC" Else txt = " HT"
+  Endif
+  If vfac.recap Then
+    If $vfac.montart <> 0 Then Me.tart.Text = "Total article : " & Format($vfac.montart, $frm) & txt
+    If $vfac.montmo <> 0 Then Me.tmo.Text = "Total MO : " & Format($vfac.montmo, $frm) & txt
+  Endif
+  'eco taxes recap en bas de facture
+  If vfac.eco.tea <> 0 Or vfac.eco.tee <> 0 Then
+    eco.Height = "3.5mm"
+    eco.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
+    If vfac.eco.tee <> 0 Then
+      dee.Expand = True
+      dee.Text = "Total Eco-participation DEE : " & Format(vfac.eco.tee, "0.00") & " " & vfac.devise & txt
+    Endif
+    If vfac.eco.tea <> 0 Then
+      dea.Expand = True
+      dea.Text = "Total Eco-participation DEA : " & Format(vfac.eco.tea, "0.00") & " " & vfac.devise & txt
+    Endif
   Endif
    'edition en ttc
   If vfac.ttc Then
