@@ -75,8 +75,9 @@ Public Sub Recup_Dtes()
       dtes2 = .Cdate_aff(dtes2)
       dtes1 = Left$(dtes1, 6) & Right$(dtes2, 4)
     Endif
+    If dtes2 Then dtes2 = LDate(DateAdd(LDate(dtes2).G, gb.Day, 1)).L
     If N5.value Then
-      dtes1 = ""
+      dtes1 = LDate(rResult!dteclec5).L
       dtes2 = ""
     Endif
   End With
