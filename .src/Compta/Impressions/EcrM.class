@@ -94,118 +94,71 @@ End
 
 Public Sub Exo()
 
-  Dim rResult As Result
-
-  Tab = "Fiches_Parametres"
-  Raz()
-  With Utils
-    dteN0.Text = ""
-    dteN1.Text = ""
-    dte1 = ""
-    dte2 = ""
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec1
-    dteN0.Text = .Calc_mois(dte)
-    dte = rResult!dteclec
-    dteN1.Text = .Cdate_aff(dte)
-    dte1 = dteN0.Text
-    dte2 = dteN1.Text
-  End With
+  exercice(0)
 
 End
 
 Public Sub Exo1()
 
-  Dim rResult As Result
-
-  Tab = "Fiches_Parametres"
-  Raz()
-  With utils
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec2
-    dteN0.Text = .Calc_mois(dte)
-    dte = rResult!dteclec1
-    dteN1.Text = .Cdate_aff(dte)
-    dte1 = dteN0.Text
-    dte2 = dteN1.Text
-  End With
+  exercice(1)
 
 End
 
 Public Sub Exo2()
 
-  Dim rResult As Result
-
-  Tab = "Fiches_Parametres"
-  Raz()
-  With Utils
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec3
-    dteN0.Text = .Calc_mois(dte)
-    dte = rResult!dteclec2
-    dteN1.Text = .Cdate_aff(dte)
-    dte1 = dteN0.Text
-    dte2 = dteN1.Text
-  End With
+  exercice(2)
 
 End
 
 Public Sub Exo3()
 
-  Dim rResult As Result
-
-  Tab = "Fiches_Parametres"
-  Raz()
-  With utils
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec4
-    dteN0.Text = .Calc_mois(dte)
-    dte = rResult!dteclec3
-    dteN1.Text = .Cdate_aff(dte)
-    dte1 = dteN0.Text
-    dte2 = dteN1.Text
-  End With
+  exercice(3)
 
 End
 
 Public Sub Exo4()
 
-  Dim rResult As Result
-
-  Tab = "Fiches_Parametres"
-  Raz()
-  With utils
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec5
-    dteN0.Text = .Calc_mois(dte)
-    dte = rResult!dteclec4
-    dteN1.Text = .Cdate_aff(dte)
-    dte1 = dteN0.Text
-    dte2 = dteN1.Text
-  End With
+  exercice(4)
 
 End
 
 Public Sub Exo5()
 
+  exercice(5)
+
+End
+
+Private Sub exercice(ind As Integer) 
+  
   Dim rResult As Result
-  Dim Mois As Integer
-
-  Tab = "Fiches_Parametres"
-  Raz()
-  With utils
-    rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
-    dte = rResult!dteclec5
-    dte = Left$(dte, 10)
-    Mois = Val(Right$(dte, 4))
-    dte = Left$(dte, 6) & (Mois - 1)
-    dteN0.Text = .Calc_mois(dte)
-    dte = rResult!dteclec5
-    dteN1.Text = .Cdate_aff(dte)
-    dte1 = dteN0.Text
-    dte2 = dteN1.Text
-  End With
-
+ 
+  Raz() 
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
+  Select Case ind
+    Case 0
+      dteN0.Text = LDate(DateAdd(rResult!dteclec1, gb.Day, 1)).L
+      dteN1.Text = LDate(rResult!dteclec).L
+    Case 1
+      dteN0.Text = LDate(DateAdd(rResult!dteclec2, gb.Day, 1)).L
+      dteN1.Text = LDate(rResult!dteclec1).L
+    Case 2
+      dteN0.Text = LDate(DateAdd(rResult!dteclec3, gb.Day, 1)).L
+      dteN1.Text = LDate(rResult!dteclec2).L
+    Case 3
+      dteN0.Text = LDate(DateAdd(rResult!dteclec4, gb.Day, 1)).L
+      dteN1.Text = LDate(rResult!dteclec3).L
+    Case 4
+      dteN0.Text = LDate(DateAdd(rResult!dteclec5, gb.Day, 1)).L
+      dteN1.Text = LDate(rResult!dteclec4).L
+    Case 5
+      dteN0.Text = LDate(DateAdd(rResult!dteclec5, gb.Year, -1)).L
+      dteN0.Text = LDate(DateAdd(LDate(dteN0.Text).G, gb.Day, 1)).L
+      dteN1.Text = LDate(rResult!dteclec5).L
+  
+  End Select
+  dte1 = dteN0.Text
+  dte2 = dteN1.Text
+  
 End
 
 Public Sub Cmpt_KeyPress()
@@ -490,7 +443,9 @@ Public Sub Button1_Click()
     Endif
     If rResult.count <> 0 Then
       i = 0
-      pdf.Entete("Impression des écritures modifiées du " & DteN0.Text & " au " & Dten1.text)
+      If Modifiee.Value Then pdf.Entete("Impression des écritures modifiées du " & DteN0.Text & " au " & Dten1.text)
+      If supprimee.Value Then pdf.Entete("Impression des écritures supprimées du " & DteN0.Text & " au " & Dten1.text)
+      If Toutes.Value Then pdf.Entete("Impression de toutes les écritures du " & DteN0.Text & " au " & Dten1.text)
       pdf.Level1M()
       posy = 32
       If IsNull(Qual) Then
