@@ -107,6 +107,12 @@ Public Sub _New(Optional prod As String)
 
   Me.Center
   Music.Load(Start.Musique)
+  marque.recherche = True
+  marque.champs("Fiches_Marques", "intitule")
+  marque.MaxLenght = 20
+  marque.conteneur = Panel5
+  marque.RechX = marque.x 
+  marque.RechY = marque.Y + Marque.H
   'Phot_art = Start.LocalSettings["/Soc" & Start.Societe & "/Photart"]
   Try Gmateriel = Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"]
   If Error Then Gmateriel = False
@@ -270,9 +276,12 @@ Public Sub Maj_Zones(Prod As String, Reaf As Integer)
         Desg2.Text = Rart!art_design2
         four.Text = Rart!art_four
         If Not IsNull(Trim(Fam.text)) And Fam.text <> Rart!art_fam Then
-          Message.Warning("Attention la famille de l'article a été modifié, les parametres de la famille sont appliqués!\nVerifiez les données avant de sauvegarder.")
-          Fam.Text = Rart!art_fam
-          FamMan(True)
+          If Message.Warning("Attention la famille de l'article a été modifié, les parametres de la famille sont appliqués!\nVerifiez les données avant de sauvegarder.", "Oui", "Non") = 1 Then
+            Fam.Text = Rart!art_fam
+            FamMan(True)
+          Else
+            fam.text = Rart!art_fam
+          Endif
         Else
           Fam.Text = Rart!art_fam
           FamMan(False)
@@ -1880,24 +1889,28 @@ End
 
 Public Sub FamLF()
 
+  Dim r As Integer
+  
   If Fam.text <> Fml Then
-    Try Message.Warning("Attention la famille de l'article a été modifié, les parametres de la famille sont appliqués!\nVerifiez les données avant de sauvegarder.")
-    FamMan(True)
-    If b = 1 Then
-      Fam.SetFocus
-      Fam.select
-      'b = 0
-      Chkfocus = True
+    Try r = Message.Warning("Attention la famille de l'article a été modifié, les parametres de la famille sont appliqués!\nVerifiez les données avant de sauvegarder." "Oui", "Non")
+    If r = 1 Then
+      FamMan(True)
+      If b = 1 Then
+        Fam.SetFocus
+        Fam.select
+        'b = 0
+        Chkfocus = True
+      Else
+        fam.text = Fml
+        Four.SetFocus
+        Four.Select
+        Chkfocus = False
+      Endif
     Else
       Four.SetFocus
       Four.Select
-      Chkfocus = False
     Endif
-  Else
-    Four.SetFocus
-    Four.Select
   Endif
-
 End
 
 Public Sub fourLF()
@@ -3122,13 +3135,18 @@ End
 '************************************
 Public Sub FamList_Click()
 
+  Dim r As Integer
+  
   Fam.text = FamList.Item[0]
   FamList.clear
   FamList.visible = False
   four.SetFocus
   If Fam.text <> Fml Then
-    Message.Warning("Attention la famille de l'article a été modifié, les parametres de la famille sont appliqués!\nVerifiez les données avant de sauvegarder.")
-    FamMan(True)
+    If Message.Warning("Attention la famille de l'article a été modifié, les parametres de la famille sont appliqués!\nVerifiez les données avant de sauvegarder.", "Oui", "Non") = 1 Then
+      FamMan(True)
+    Else
+      fam.text = Fml
+    Endif
   Endif
 
 End
