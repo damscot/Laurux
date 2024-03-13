@@ -1,0 +1,47 @@
+' Gambas class file
+
+Inherits Desktop
+
+Public wayland As Boolean
+
+Public correspondance As Collection = ["[ Return ]": "Enter", "[Tab]": "Tab", "[BackSpace]": "Backspace", "[Delete]": "Delete"]
+
+Public Sub _new()
+
+  Dim txt As String
+  
+  Shell "echo $XDG_SESSION_TYPE" To txt 
+  If txt Match "wayland" Then 
+    wayland = True
+    ydotool()
+  Else
+    wayland = False
+  Endif
+  
+End
+
+Public Sub SendKey(value As String)
+
+  If wayland Then
+    If correspondance.Exist(value) Then
+      Shell "ydotool key " & correspondance[value]
+    Else
+      Shell "ydotool type " & value
+    Endif
+  Else
+    Super.SendKeys(value)
+  Endif
+  
+End
+
+Private Sub ydotool()
+  
+  Dim txt As String
+  
+  Shell "apt list --installed | grep ydotool" To txt
+  If txt Not Match "install" Then
+    Message.Info("Vous étes passé sous Wayland et pour fonctionner normalement vous avez besoin d'installer d'autres composants\nDans un terminal et dans le repertoire Laurux vous devez lancer \nsh wayland.sh\nSi votre systéme ne fonctionne pas avec sudo et apt il vous faudra reprende ce fichier pour mettre les bonnes instructions")
+  Endif
+  
+End
+

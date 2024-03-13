@@ -170,8 +170,13 @@ Static Public Sub Replay_Click(ctx As Variant, eve As String, val As String)
       Mouse.Move(ctx.ScreenX, ctx.ScreenY)
       If Mouse.Inside(ctx) And ctx.HasFocus Then
         'Shell "xdotool click 1" Wait
-        Shell "xdotool mousedown 1" Wait
-        Shell "xdotool mouseup 1" Wait
+        If Utils.de.wayland Then
+          Shell "ydotool click left--down"
+          Shell "ydotool click left--up"
+        Else
+          Shell "xdotool mousedown 1" Wait
+          Shell "xdotool mouseup 1" Wait
+        Endif
       Else
         Print "Failed to simulate click event on Label " & ctx.Name
       Endif
@@ -202,7 +207,7 @@ Static Public Sub Replay_Keypress(ctx As Variant, eve As String, val As String)
   Else
     Print "Replay Key unsupported: " & val
   Endif
-  Desktop.SendKeys(s)
+  Utils.De.SendKeys(s)
 
 End
 
