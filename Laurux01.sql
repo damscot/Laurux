@@ -1,13 +1,13 @@
--- MariaDB dump 10.19  Distrib 10.5.19-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
 -- Host: localhost    Database: Laurux01
 -- ------------------------------------------------------
--- Server version	10.5.19-MariaDB-0+deb11u2
+-- Server version	8.0.36-0ubuntu0.20.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,11 +21,11 @@
 
 DROP TABLE IF EXISTS `Art_Saisis`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Art_Saisis` (
-  `code` char(15) NOT NULL,
+  `code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,11 +43,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Artsup`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Artsup` (
-  `art_code` char(15) NOT NULL,
+  `art_code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`art_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,14 +65,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Bl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Bl` (
-  `num` varchar(12) NOT NULL,
-  `code` varchar(10) DEFAULT NULL,
+  `num` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` datetime DEFAULT NULL,
-  `ht` varchar(12) DEFAULT NULL,
+  `ht` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,11 +90,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Cli_Mailing`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Cli_Mailing` (
-  `code` char(15) NOT NULL,
+  `code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -112,12 +112,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Corsage`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Corsage` (
-  `acode` char(8) NOT NULL,
-  `ncode` char(8) DEFAULT NULL,
+  `acode` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ncode` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`acode`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -135,18 +135,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Ctrln`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Ctrln` (
-  `compte` varchar(8) NOT NULL,
-  `intitule` varchar(30) DEFAULT NULL,
-  `jour` varchar(2) DEFAULT NULL,
-  `mois` varchar(6) NOT NULL,
-  `libelle` varchar(30) DEFAULT NULL,
-  `dte` int(11) DEFAULT NULL,
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mois` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dte` int DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   PRIMARY KEY (`compte`,`mois`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,17 +164,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Detail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Detail` (
-  `num` char(12) NOT NULL,
-  `code` char(10) DEFAULT NULL,
+  `num` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `mtd` char(12) DEFAULT NULL,
-  `mtc` char(12) DEFAULT NULL,
-  `numfac` char(12) NOT NULL,
-  `intitule` char(30) DEFAULT NULL,
+  `mtd` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtc` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`,`numfac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,21 +192,21 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Docs_Ged`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Docs_Ged` (
-  `type` tinyint(4) DEFAULT NULL,
-  `code` varchar(15) DEFAULT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `origin` varchar(15) DEFAULT NULL,
-  `url` tinytext NOT NULL,
-  `filename` tinytext DEFAULT NULL,
-  `mime` tinytext NOT NULL,
+  `type` tinyint DEFAULT NULL,
+  `code` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compte` char(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `origin` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` tinytext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `filename` tinytext COLLATE utf8mb4_unicode_ci,
+  `mime` tinytext COLLATE utf8mb4_unicode_ci NOT NULL,
   `date` datetime NOT NULL,
   `ttc` decimal(12,2) DEFAULT NULL,
   `ht` decimal(12,2) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,12 +224,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Docs_Tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Docs_Tag` (
-  `doc_lind` int(11) NOT NULL,
-  `tag_lind` int(11) NOT NULL,
+  `doc_lind` int NOT NULL,
+  `tag_lind` int NOT NULL,
   PRIMARY KEY (`doc_lind`,`tag_lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -247,18 +247,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Ecrs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Ecrs` (
-  `jour` char(2) DEFAULT NULL,
-  `intitule` char(30) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
-  `numero` int(6) NOT NULL DEFAULT 0,
-  `numdoc` char(10) DEFAULT NULL,
-  `compte` char(8) DEFAULT NULL,
+  `numero` int NOT NULL DEFAULT '0',
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`numero`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,16 +276,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Facturefm`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Facturefm` (
-  `code` char(8) NOT NULL,
-  `nom` char(35) DEFAULT NULL,
-  `cp` char(5) DEFAULT NULL,
-  `ville` char(35) DEFAULT NULL,
-  `totald` char(12) DEFAULT NULL,
-  `totalc` char(12) DEFAULT NULL,
+  `code` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nom` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cp` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `totald` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `totalc` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -303,17 +303,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Acomptes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Acomptes` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `intitule` varchar(35) DEFAULT NULL,
-  `type` varchar(15) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `intitule` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime DEFAULT NULL,
-  `cli_code` char(8) DEFAULT NULL,
-  `ntk` char(7) DEFAULT NULL,
+  `cli_code` char(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ntk` char(7) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montant` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -331,16 +331,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_AdrlivBL`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_AdrlivBL` (
-  `numbl` char(6) NOT NULL,
-  `nom` varchar(90) DEFAULT NULL,
-  `adr1` varchar(35) DEFAULT NULL,
-  `adr2` varchar(35) DEFAULT NULL,
-  `cp` char(5) DEFAULT NULL,
-  `ville` varchar(35) DEFAULT NULL,
+  `numbl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nom` varchar(90) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cp` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numbl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -358,20 +358,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_AdrlivC`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_AdrlivC` (
-  `num` int(11) NOT NULL AUTO_INCREMENT,
-  `code` int(11) NOT NULL,
-  `rs_soc` char(9) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `pnm` varchar(35) DEFAULT NULL,
-  `adr1` varchar(35) DEFAULT NULL,
-  `adr2` varchar(35) DEFAULT NULL,
-  `cd_ptl` char(5) DEFAULT NULL,
-  `ville` varchar(35) DEFAULT NULL,
-  `tourne` char(15) DEFAULT NULL,
+  `num` int NOT NULL AUTO_INCREMENT,
+  `code` int NOT NULL,
+  `rs_soc` char(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnm` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cd_ptl` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tourne` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -389,15 +389,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Agenda`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Agenda` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `daction` varchar(20) DEFAULT NULL,
-  `haction` varchar(20) DEFAULT NULL,
-  `iaction` mediumtext DEFAULT NULL,
-  `nuser` varchar(35) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `daction` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `haction` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `iaction` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `nuser` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -415,15 +415,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Analytiques`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Analytiques` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(3) DEFAULT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `pourcent` int(11) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pourcent` int DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `code` (`code`,`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -441,35 +441,35 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Art`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Art` (
-  `art_code` varchar(15) NOT NULL,
-  `art_design` varchar(50) DEFAULT NULL,
-  `art_fam` char(20) DEFAULT NULL,
-  `art_four` varchar(8) DEFAULT NULL,
-  `art_cequ` varchar(15) DEFAULT NULL,
-  `art_cbarre` varchar(15) DEFAULT NULL,
-  `art_cfour` varchar(25) DEFAULT NULL,
+  `art_code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `art_design` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_fam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_four` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_cequ` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_cbarre` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_cfour` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_pbht` double DEFAULT NULL,
   `art_tr` double DEFAULT NULL,
   `art_paht` double DEFAULT NULL,
   `art_coef` decimal(7,4) DEFAULT NULL,
   `art_pvht` double DEFAULT NULL,
-  `art_tva` char(2) DEFAULT NULL,
+  `art_tva` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_pvttc` double DEFAULT NULL,
-  `art_cdarr` varchar(4) DEFAULT NULL,
+  `art_cdarr` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_pvar` double DEFAULT NULL,
-  `art_dec` varchar(1) DEFAULT NULL,
+  `art_dec` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_stocke` tinyint(1) DEFAULT NULL,
   `art_qte` double DEFAULT NULL,
   `art_dpa` double DEFAULT NULL,
-  `art_dfour` varchar(8) DEFAULT NULL,
+  `art_dfour` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_pmp` double DEFAULT NULL,
   `art_com` double DEFAULT NULL,
   `art_stkdep` double DEFAULT NULL,
-  `art_nbd` varchar(1) DEFAULT NULL,
-  `art_design2` varchar(50) DEFAULT NULL,
-  `art_ect` int(11) DEFAULT NULL,
+  `art_nbd` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_design2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_ect` int DEFAULT NULL,
   `art_eco` double DEFAULT NULL,
   `art_pauaht` double DEFAULT NULL,
   `art_txconv` decimal(7,4) DEFAULT NULL,
@@ -500,15 +500,15 @@ CREATE TABLE `Fiches_Art` (
   `art_prvt` decimal(12,3) DEFAULT NULL,
   `art_etiq` tinyint(1) DEFAULT NULL,
   `art_poids` decimal(11,3) DEFAULT NULL,
-  `art_mincom` varchar(12) DEFAULT NULL,
-  `art_vol` char(5) DEFAULT NULL,
+  `art_mincom` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_vol` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_poids2` decimal(11,3) DEFAULT NULL,
-  `art_photo` text DEFAULT NULL,
-  `art_crst` mediumtext DEFAULT NULL,
+  `art_photo` text COLLATE utf8mb4_unicode_ci,
+  `art_crst` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `art_mat` tinyint(1) DEFAULT NULL,
-  `art_marque` varchar(20) DEFAULT NULL,
+  `art_marque` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_impcar` tinyint(1) DEFAULT NULL,
-  `art_casier` char(5) DEFAULT NULL,
+  `art_casier` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_pvcons` decimal(12,3) DEFAULT NULL,
   `art_prdcomp` tinyint(1) DEFAULT NULL,
   `art_impdetail` tinyint(1) DEFAULT NULL,
@@ -518,28 +518,28 @@ CREATE TABLE `Fiches_Art` (
   `art_datefbt` date DEFAULT NULL,
   `art_pbfbt` decimal(12,3) DEFAULT NULL,
   `art_ddatefbt` date DEFAULT NULL,
-  `art_centrale` char(2) DEFAULT NULL,
-  `art_refcentrale` char(13) DEFAULT NULL,
+  `art_centrale` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_refcentrale` char(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_bonus` decimal(5,2) DEFAULT NULL,
   `art_colvte` decimal(12,3) DEFAULT NULL,
   `art_pvht2` decimal(12,3) DEFAULT NULL,
-  `art_cn8` char(12) DEFAULT NULL,
-  `art_crpl1` char(15) DEFAULT NULL,
-  `art_crpl2` char(15) DEFAULT NULL,
+  `art_cn8` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_crpl1` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_crpl2` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_ect2` tinyint(1) DEFAULT NULL,
   `art_eco2` decimal(6,3) DEFAULT NULL,
-  `art_depg` tinyint(4) DEFAULT NULL,
-  `art_cnsg` tinyint(4) DEFAULT NULL,
-  `art_ua` char(5) DEFAULT NULL,
-  `art_uv` char(5) DEFAULT NULL,
-  `art_refliee` char(15) DEFAULT NULL,
+  `art_depg` tinyint DEFAULT NULL,
+  `art_cnsg` tinyint DEFAULT NULL,
+  `art_ua` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_uv` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `art_refliee` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `art_ddate` datetime DEFAULT NULL,
   `art_cdate` datetime DEFAULT NULL,
-  `export` tinyint(4) DEFAULT 0,
-  `art_bredu` tinyint(4) DEFAULT 0,
+  `export` tinyint DEFAULT '0',
+  `art_bredu` tinyint DEFAULT '0',
   `art_bredudate` date DEFAULT NULL,
-  `art_breducond` text DEFAULT NULL,
-  `art_bredumnt` decimal(15,2) DEFAULT 0.00,
+  `art_breducond` text COLLATE utf8mb4_unicode_ci,
+  `art_bredumnt` decimal(15,2) DEFAULT '0.00',
   PRIMARY KEY (`art_code`),
   KEY `art_code` (`art_code`),
   KEY `art_design` (`art_design`),
@@ -565,7 +565,7 @@ CREATE TABLE `Fiches_Art` (
   KEY `id_casier_fam` (`art_casier`,`art_fam`),
   KEY `art_cn8` (`art_cn8`),
   KEY `art_cn8_2` (`art_cn8`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -584,17 +584,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_ArtPromo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_ArtPromo` (
-  `code_promo` char(6) NOT NULL,
-  `code` varchar(15) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `code_promo` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pmp` decimal(12,3) DEFAULT NULL,
   `pht` decimal(12,3) DEFAULT NULL,
   `pttc` decimal(12,3) DEFAULT NULL,
   `qte` decimal(12,3) DEFAULT NULL,
   PRIMARY KEY (`code_promo`,`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -612,17 +612,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Avoirs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Avoirs` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `intitule` varchar(35) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `intitule` varchar(35) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montant` decimal(12,2) DEFAULT NULL,
-  `ntk` char(7) DEFAULT NULL,
+  `ntk` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime DEFAULT NULL,
-  `type` varchar(15) DEFAULT NULL,
-  `cli_code` char(8) DEFAULT NULL,
+  `type` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_code` char(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -640,26 +640,26 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Banques`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Banques` (
-  `banques_code` int(2) NOT NULL,
-  `banques_nom` varchar(35) DEFAULT NULL,
-  `banques_dmln` varchar(35) DEFAULT NULL,
-  `banques_nume` char(6) DEFAULT NULL,
-  `banques_codeb` varchar(5) DEFAULT NULL,
-  `banques_codeg` varchar(5) DEFAULT NULL,
-  `banques_numcpt` varchar(11) DEFAULT NULL,
-  `banques_numsiren` varchar(15) DEFAULT NULL,
-  `banques_adr` char(1) DEFAULT NULL,
-  `banques_txt` mediumtext DEFAULT NULL,
-  `banques_fenrg` char(6) DEFAULT NULL,
-  `banques_mail` varchar(35) DEFAULT NULL,
-  `banques_ref` varchar(11) DEFAULT NULL,
-  `banques_entete` varchar(150) DEFAULT NULL,
-  `banques_corps` mediumtext DEFAULT NULL,
-  `banques_reftireur` varchar(10) DEFAULT NULL,
+  `banques_code` int NOT NULL,
+  `banques_nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_dmln` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_nume` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_codeb` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_codeg` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_numcpt` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_numsiren` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_adr` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_txt` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `banques_fenrg` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_mail` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_ref` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_entete` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banques_corps` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `banques_reftireur` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`banques_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -677,56 +677,56 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Bl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Bl` (
-  `numbl` varchar(6) NOT NULL,
-  `type` varchar(1) DEFAULT NULL,
-  `cdclibl` varchar(8) DEFAULT NULL,
-  `cvclibl` varchar(9) DEFAULT NULL,
-  `nmclibl` varchar(35) DEFAULT NULL,
-  `pnmclibl` varchar(35) DEFAULT NULL,
-  `adr1bl` varchar(35) DEFAULT NULL,
-  `adr2bl` varchar(35) DEFAULT NULL,
-  `cpbl` varchar(5) DEFAULT NULL,
-  `villebl` varchar(35) DEFAULT NULL,
-  `tvar` int(11) DEFAULT NULL,
+  `numbl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cdclibl` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cvclibl` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmclibl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnmclibl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1bl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2bl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cpbl` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `villebl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tvar` int DEFAULT NULL,
   `datebl` datetime DEFAULT NULL,
-  `rmobl` varchar(6) DEFAULT NULL,
-  `rartbl` varchar(6) DEFAULT NULL,
-  `exobl` int(11) DEFAULT NULL,
+  `rmobl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rartbl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `exobl` int DEFAULT NULL,
   `remmobl` double DEFAULT NULL,
   `remartbl` double DEFAULT NULL,
   `marge_art` double DEFAULT NULL,
   `marge_mo` double DEFAULT NULL,
   `totalht` double DEFAULT NULL,
-  `imp` int(11) DEFAULT NULL,
-  `acpt` varchar(12) DEFAULT NULL,
-  `mreg` varchar(10) DEFAULT NULL,
-  `reg` varchar(15) DEFAULT NULL,
+  `imp` int DEFAULT NULL,
+  `acpt` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mreg` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reg` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ech` datetime DEFAULT NULL,
-  `numfac` varchar(10) DEFAULT NULL,
+  `numfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dtefac` datetime DEFAULT NULL,
   `retro` tinyint(1) DEFAULT NULL,
-  `numserie` varchar(15) DEFAULT NULL,
-  `codep` varchar(15) DEFAULT NULL,
-  `mtreg` varchar(12) DEFAULT NULL,
+  `numserie` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtreg` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `totalttc` double DEFAULT NULL,
-  `desg1` varchar(50) DEFAULT NULL,
-  `desg2` varchar(50) DEFAULT NULL,
-  `marque` varchar(15) DEFAULT NULL,
-  `typemat` varchar(15) DEFAULT NULL,
-  `htbl` tinyint(4) DEFAULT NULL,
-  `cdep` varchar(37) DEFAULT NULL,
+  `desg1` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `desg2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `marque` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typemat` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `htbl` tinyint DEFAULT NULL,
+  `cdep` varchar(37) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `livraison` tinyint(1) DEFAULT NULL,
-  `tel` varchar(16) DEFAULT NULL,
-  `reg2` varchar(15) DEFAULT NULL,
-  `mtreg2` varchar(12) DEFAULT NULL,
+  `tel` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reg2` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtreg2` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `acquitte` tinyint(1) DEFAULT NULL,
-  `numtick` char(7) DEFAULT NULL,
-  `email` varchar(150) DEFAULT NULL,
-  `gestbl` decimal(5,2) DEFAULT 0.00,
+  `numtick` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gestbl` decimal(5,2) DEFAULT '0.00',
   PRIMARY KEY (`numbl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -744,56 +744,56 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_BlM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_BlM` (
-  `numbl` char(6) NOT NULL,
-  `type` char(1) DEFAULT NULL,
-  `cdclibl` char(8) DEFAULT NULL,
-  `cvclibl` varchar(9) DEFAULT NULL,
-  `nmclibl` varchar(35) DEFAULT NULL,
-  `pnmclibl` varchar(35) DEFAULT NULL,
-  `adr1bl` varchar(35) DEFAULT NULL,
-  `adr2bl` varchar(35) DEFAULT NULL,
-  `cpbl` char(5) DEFAULT NULL,
-  `villebl` varchar(35) DEFAULT NULL,
-  `tvar` tinyint(4) DEFAULT NULL,
+  `numbl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cdclibl` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cvclibl` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmclibl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnmclibl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1bl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2bl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cpbl` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `villebl` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tvar` tinyint DEFAULT NULL,
   `datebl` datetime DEFAULT NULL,
-  `rmobl` char(6) DEFAULT NULL,
-  `rartbl` char(5) DEFAULT NULL,
-  `exobl` tinyint(4) DEFAULT NULL,
+  `rmobl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rartbl` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `exobl` tinyint DEFAULT NULL,
   `remmobl` decimal(12,2) DEFAULT NULL,
   `remartbl` decimal(12,2) DEFAULT NULL,
   `marge_art` decimal(12,2) DEFAULT NULL,
   `marge_mo` decimal(12,2) DEFAULT NULL,
   `totalht` decimal(12,2) DEFAULT NULL,
-  `imp` int(1) DEFAULT NULL,
-  `acpt` varchar(12) DEFAULT NULL,
-  `mreg` varchar(10) DEFAULT NULL,
-  `reg` varchar(15) DEFAULT NULL,
+  `imp` int DEFAULT NULL,
+  `acpt` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mreg` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reg` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ech` date DEFAULT NULL,
-  `numfac` char(10) DEFAULT NULL,
+  `numfac` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dtefac` date DEFAULT NULL,
-  `retro` tinyint(4) DEFAULT NULL,
-  `numserie` varchar(15) DEFAULT NULL,
-  `codep` varchar(15) DEFAULT NULL,
-  `mtreg` varchar(12) DEFAULT NULL,
+  `retro` tinyint DEFAULT NULL,
+  `numserie` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtreg` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `totalttc` decimal(12,2) DEFAULT NULL,
-  `desg1` varchar(50) DEFAULT NULL,
-  `desg2` varchar(50) DEFAULT NULL,
-  `marque` varchar(15) DEFAULT NULL,
-  `typemat` varchar(15) DEFAULT NULL,
-  `htbl` tinyint(4) DEFAULT NULL,
-  `cdep` varchar(37) DEFAULT NULL,
+  `desg1` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `desg2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `marque` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typemat` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `htbl` tinyint DEFAULT NULL,
+  `cdep` varchar(37) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `livraison` tinyint(1) DEFAULT NULL,
-  `tel` varchar(16) DEFAULT NULL,
-  `reg2` varchar(15) DEFAULT NULL,
-  `mtreg2` varchar(12) DEFAULT NULL,
+  `tel` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reg2` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtreg2` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `acquitte` tinyint(1) DEFAULT NULL,
-  `numtick` char(7) DEFAULT NULL,
-  `email` varchar(150) DEFAULT NULL,
-  `gestbl` decimal(5,2) DEFAULT 0.00,
+  `numtick` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gestbl` decimal(5,2) DEFAULT '0.00',
   PRIMARY KEY (`numbl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -811,21 +811,21 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Bordereaux`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Bordereaux` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `banque` int(1) DEFAULT NULL,
-  `codeentree` int(1) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `banque` int DEFAULT NULL,
+  `codeentree` int DEFAULT NULL,
   `dateremise` date DEFAULT NULL,
-  `refremise` char(11) DEFAULT NULL,
+  `refremise` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datevaleur` date DEFAULT NULL,
   `ech1` date DEFAULT NULL,
   `ech2` date DEFAULT NULL,
-  `bordereau` int(11) DEFAULT NULL,
+  `bordereau` int DEFAULT NULL,
   `tot` decimal(12,2) DEFAULT NULL,
   `etat` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -843,19 +843,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_BordereauxC`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_BordereauxC` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `banque` int(1) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `banque` int DEFAULT NULL,
   `dateremise` date DEFAULT NULL,
-  `bordereau` int(11) DEFAULT NULL,
+  `bordereau` int DEFAULT NULL,
   `montant` decimal(12,2) DEFAULT NULL,
   `etat` tinyint(1) DEFAULT NULL,
-  `code` char(8) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `nfacture` char(10) DEFAULT NULL,
+  `code` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nfacture` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -873,28 +873,28 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Caisses`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Caisses` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(2) DEFAULT NULL,
-  `intitule` varchar(30) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dteov` datetime DEFAULT NULL,
   `dtefm` datetime DEFAULT NULL,
   `fndc` decimal(12,2) DEFAULT NULL,
-  `tkz` int(1) DEFAULT NULL,
-  `connecte` int(1) DEFAULT NULL,
-  `imp` char(15) DEFAULT NULL,
-  `typeimp` char(10) DEFAULT NULL,
-  `type` char(20) DEFAULT NULL,
-  `ecole` tinyint(4) DEFAULT NULL,
-  `poste` varchar(30) DEFAULT NULL,
-  `depot` char(8) DEFAULT NULL,
+  `tkz` int DEFAULT NULL,
+  `connecte` int DEFAULT NULL,
+  `imp` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typeimp` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ecole` tinyint DEFAULT NULL,
+  `poste` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `depot` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fndtotp` decimal(15,2) DEFAULT NULL,
   `fndtotg` decimal(15,2) DEFAULT NULL,
-  `cutk` char(7) DEFAULT NULL,
-  `vdr_code` char(2) DEFAULT NULL,
+  `cutk` char(7) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vdr_code` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -912,36 +912,36 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Carte`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Carte` (
-  `code` char(13) NOT NULL,
-  `rs_soc` char(9) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `pnm` varchar(35) DEFAULT NULL,
-  `adr1` varchar(35) DEFAULT NULL,
-  `adr2` varchar(35) DEFAULT NULL,
-  `cd_ptl` char(5) DEFAULT NULL,
-  `ville` varchar(35) DEFAULT NULL,
-  `email` varchar(40) DEFAULT NULL,
-  `tel_bur` varchar(16) DEFAULT NULL,
-  `tel_dom` varchar(16) DEFAULT NULL,
-  `tel_poste` varchar(16) DEFAULT NULL,
-  `pble` varchar(16) DEFAULT NULL,
-  `fx1` varchar(16) DEFAULT NULL,
-  `fx2` varchar(16) DEFAULT NULL,
+  `code` char(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rs_soc` char(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnm` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cd_ptl` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tel_bur` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tel_dom` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tel_poste` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pble` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fx1` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fx2` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datec` date DEFAULT NULL,
   `datef` date DEFAULT NULL,
-  `rem` tinyint(4) DEFAULT NULL,
-  `promo` tinyint(4) DEFAULT NULL,
+  `rem` tinyint DEFAULT NULL,
+  `promo` tinyint DEFAULT NULL,
   `tp1` decimal(12,3) DEFAULT NULL,
   `tp2` decimal(12,3) DEFAULT NULL,
   `tg1` decimal(12,3) DEFAULT NULL,
   `tg2` decimal(12,3) DEFAULT NULL,
-  `obs` mediumtext DEFAULT NULL,
-  `cb` char(13) DEFAULT NULL,
-  `divers` tinyint(4) DEFAULT NULL,
+  `obs` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cb` char(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `divers` tinyint DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -959,12 +959,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_CdBarre`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_CdBarre` (
-  `codep` varchar(15) NOT NULL,
-  `codeb` char(13) NOT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codeb` char(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codep`,`codeb`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -983,12 +983,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_CdFour`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_CdFour` (
-  `codep` char(15) NOT NULL,
-  `codef` char(13) NOT NULL,
+  `codep` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codef` char(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codep`,`codef`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1006,12 +1006,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Centrales`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Centrales` (
-  `code` char(2) NOT NULL,
-  `libelle` varchar(25) DEFAULT NULL,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1029,12 +1029,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Cequ`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Cequ` (
-  `codep` char(15) NOT NULL,
-  `codequ` char(15) NOT NULL,
+  `codep` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codequ` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codep`,`codequ`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1052,94 +1052,94 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Cli`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Cli` (
-  `cli_code` int(11) NOT NULL DEFAULT 0,
-  `cli_col` varchar(1) DEFAULT NULL,
-  `cli_rs_soc` varchar(12) DEFAULT NULL,
-  `cli_nom` varchar(35) DEFAULT NULL,
-  `cli_pnm` varchar(35) DEFAULT NULL,
-  `cli_adr1` varchar(35) DEFAULT NULL,
-  `cli_adr2` varchar(35) DEFAULT NULL,
-  `cli_cd_ptl` varchar(5) DEFAULT NULL,
-  `cli_ville` varchar(35) DEFAULT NULL,
-  `cli_email` varchar(150) DEFAULT NULL,
-  `cli_tel_bur` varchar(16) DEFAULT NULL,
-  `cli_tel_dom` varchar(16) DEFAULT NULL,
-  `cli_tel_poste` varchar(16) DEFAULT NULL,
-  `cli_pble` varchar(16) DEFAULT NULL,
-  `cli_fx1` varchar(16) DEFAULT NULL,
-  `cli_fx2` varchar(16) DEFAULT NULL,
-  `cli_plaf_ecrs` varchar(10) DEFAULT NULL,
-  `cli_cd_bq` varchar(5) DEFAULT NULL,
-  `cli_cd_gch` varchar(5) DEFAULT NULL,
-  `cli_dmln` varchar(30) DEFAULT NULL,
-  `cli_cle_rib` varchar(2) DEFAULT NULL,
-  `cli_num_cpt` char(11) DEFAULT NULL,
-  `cli_dom` varchar(25) DEFAULT NULL,
-  `cli_cd_ent` varchar(1) DEFAULT NULL,
-  `cli_cd_acc` varchar(1) DEFAULT NULL,
-  `cli_ref_tir` varchar(10) DEFAULT NULL,
-  `cli_id_tva` varchar(15) DEFAULT NULL,
-  `cli_cd_soc` varchar(2) DEFAULT NULL,
-  `cli_cd_cli` varchar(16) DEFAULT NULL,
-  `cli_co_vtl` varchar(255) DEFAULT NULL,
-  `cli_rlvc` int(11) DEFAULT NULL,
-  `cli_rlvf` int(11) DEFAULT NULL,
+  `cli_code` int NOT NULL DEFAULT '0',
+  `cli_col` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_rs_soc` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_pnm` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_adr1` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_adr2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_ptl` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_ville` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_tel_bur` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_tel_dom` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_tel_poste` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_pble` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_fx1` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_fx2` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_plaf_ecrs` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_bq` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_gch` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_dmln` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cle_rib` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_num_cpt` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_dom` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_ent` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_acc` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_ref_tir` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_id_tva` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_soc` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_cli` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_co_vtl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_rlvc` int DEFAULT NULL,
+  `cli_rlvf` int DEFAULT NULL,
   `cli_dt_rlc` datetime DEFAULT NULL,
-  `cli_nm_int` varchar(25) DEFAULT NULL,
-  `cli_obs` mediumtext DEFAULT NULL,
-  `cli_collectif` varchar(8) DEFAULT NULL,
-  `cli_rmo` varchar(6) DEFAULT NULL,
-  `cli_rart` varchar(6) DEFAULT NULL,
-  `cli_exo` int(11) DEFAULT NULL,
-  `cli_cdech` varchar(2) DEFAULT NULL,
-  `cli_typec` char(2) DEFAULT NULL,
-  `cli_expl` char(1) DEFAULT NULL,
-  `cli_pays` char(40) DEFAULT NULL,
-  `cli_statut` char(2) DEFAULT NULL,
-  `cli_rs_soc2` char(9) DEFAULT NULL,
-  `cli_nom2` varchar(35) DEFAULT NULL,
-  `cli_pnm2` varchar(35) DEFAULT NULL,
-  `cli_adr12` varchar(35) DEFAULT NULL,
-  `cli_adr22` varchar(35) DEFAULT NULL,
-  `cli_cd_ptl2` char(5) DEFAULT NULL,
-  `cli_ville2` varchar(35) DEFAULT NULL,
-  `cli_cnt1` char(17) DEFAULT NULL,
-  `cli_cnt2` char(40) DEFAULT NULL,
-  `cli_cnt3` char(25) DEFAULT NULL,
-  `cli_cnt4` char(17) DEFAULT NULL,
-  `cli_cnt5` char(40) DEFAULT NULL,
-  `cli_cnt6` char(25) DEFAULT NULL,
-  `cli_cnt7` char(17) DEFAULT NULL,
-  `cli_cnt8` char(40) DEFAULT NULL,
-  `cli_cnt9` char(25) DEFAULT NULL,
-  `cli_cnt10` char(17) DEFAULT NULL,
-  `cli_cnt11` char(40) DEFAULT NULL,
-  `cli_cnt12` char(25) DEFAULT NULL,
-  `cli_cnt13` char(17) DEFAULT NULL,
-  `cli_cnt14` char(40) DEFAULT NULL,
-  `cli_cnt15` char(25) DEFAULT NULL,
-  `cli_reg` char(15) DEFAULT NULL,
+  `cli_nm_int` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_obs` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cli_collectif` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_rmo` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_rart` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_exo` int DEFAULT NULL,
+  `cli_cdech` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_typec` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_expl` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_pays` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_statut` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_rs_soc2` char(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_nom2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_pnm2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_adr12` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_adr22` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cd_ptl2` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_ville2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt1` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt2` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt3` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt4` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt5` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt6` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt7` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt8` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt9` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt10` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt11` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt12` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt13` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt14` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_cnt15` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_reg` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cli_copie` tinyint(1) DEFAULT NULL,
   `cli_actif` tinyint(1) DEFAULT NULL,
   `cli_div` tinyint(1) DEFAULT NULL,
-  `cli_iban` char(30) DEFAULT NULL,
-  `cli_bic` char(11) DEFAULT NULL,
+  `cli_iban` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_bic` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cli_coop` tinyint(1) DEFAULT NULL,
-  `cli_rum` char(30) DEFAULT NULL,
-  `cli_datab` char(2) DEFAULT NULL,
-  `cli_aban` varchar(15) DEFAULT NULL,
-  `cli_sage` char(10) DEFAULT NULL,
+  `cli_rum` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_datab` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_aban` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_sage` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cli_livraison` tinyint(1) DEFAULT NULL,
-  `cli_comm` char(2) DEFAULT NULL,
+  `cli_comm` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cli_autoent` tinyint(1) DEFAULT NULL,
-  `cli_tour` char(15) DEFAULT NULL,
-  `cli_gestion` decimal(5,2) DEFAULT 0.00,
-  `cli_regr` char(1) DEFAULT NULL,
-  `cli_siret` char(14) DEFAULT NULL,
-  `libel_def` tinytext DEFAULT NULL,
-  `tag_def` tinytext DEFAULT NULL,
+  `cli_tour` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_gestion` decimal(5,2) DEFAULT '0.00',
+  `cli_regr` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cli_siret` char(14) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libel_def` tinytext COLLATE utf8mb4_unicode_ci,
+  `tag_def` tinytext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`cli_code`),
   KEY `cli_code` (`cli_code`),
   KEY `cli_nom` (`cli_nom`),
@@ -1159,7 +1159,7 @@ CREATE TABLE `Fiches_Cli` (
   KEY `cli_actif_2` (`cli_actif`),
   KEY `cli_statut_3` (`cli_statut`),
   KEY `cli_actif_3` (`cli_actif`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1178,13 +1178,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Cli_Vtl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Cli_Vtl` (
-  `code` varchar(8) NOT NULL,
-  `code_vtl` varchar(8) NOT NULL,
-  `intitule_vtl` varchar(40) DEFAULT NULL,
+  `code` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_vtl` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule_vtl` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`,`code_vtl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1203,13 +1203,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Clid`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Clid` (
-  `adr` varchar(200) DEFAULT NULL,
+  `adr` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ddate` date DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1227,13 +1227,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_ClientCaisse`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_ClientCaisse` (
-  `lInd` tinyint(4) NOT NULL AUTO_INCREMENT,
-  `code` varchar(8) DEFAULT NULL,
-  `nom` varchar(30) DEFAULT NULL,
+  `lInd` tinyint NOT NULL AUTO_INCREMENT,
+  `code` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lInd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1251,14 +1251,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_CoeffTypec`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_CoeffTypec` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `coder` char(2) DEFAULT NULL,
-  `codef` char(20) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `coder` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codef` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `coeff` decimal(6,3) DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1276,12 +1276,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_ComMail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_ComMail` (
-  `numcom` char(2) NOT NULL,
-  `intitule` mediumtext DEFAULT NULL,
+  `numcom` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`numcom`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1299,12 +1299,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Commentaires`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Commentaires` (
-  `numcom` varchar(2) NOT NULL,
-  `intitule` mediumtext DEFAULT NULL,
+  `numcom` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`numcom`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1323,15 +1323,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Commerciaux`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Commerciaux` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(2) DEFAULT NULL,
-  `nom` char(35) DEFAULT NULL,
-  `prenom` char(35) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prenom` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `comm` decimal(5,2) DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1349,27 +1349,27 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Comptes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Comptes` (
-  `compte_cc` int(11) NOT NULL DEFAULT 0,
-  `intitule_cc` varchar(40) DEFAULT NULL,
-  `type_cc` varchar(1) DEFAULT NULL,
-  `coll` int(11) DEFAULT NULL,
-  `coll_cc` varchar(8) DEFAULT NULL,
-  `cent_cc` int(11) DEFAULT NULL,
-  `comptr_cc` int(11) DEFAULT NULL,
-  `code_tvente` char(2) DEFAULT NULL,
-  `taux_tvente` varchar(5) DEFAULT NULL,
-  `gen_tv` int(11) DEFAULT NULL,
-  `code_tachat` char(2) DEFAULT NULL,
-  `taux_tachat` varchar(5) DEFAULT NULL,
-  `gen_ta` int(11) DEFAULT NULL,
+  `compte_cc` int NOT NULL DEFAULT '0',
+  `intitule_cc` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type_cc` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `coll` int DEFAULT NULL,
+  `coll_cc` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cent_cc` int DEFAULT NULL,
+  `comptr_cc` int DEFAULT NULL,
+  `code_tvente` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `taux_tvente` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gen_tv` int DEFAULT NULL,
+  `code_tachat` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `taux_tachat` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gen_ta` int DEFAULT NULL,
   `solde` double DEFAULT NULL,
   `soldep` double DEFAULT NULL,
   `cprincipal` tinyint(1) DEFAULT NULL,
   `lettrable` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`compte_cc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1378,7 +1378,7 @@ CREATE TABLE `Fiches_Comptes` (
 
 LOCK TABLES `Fiches_Comptes` WRITE;
 /*!40000 ALTER TABLE `Fiches_Comptes` DISABLE KEYS */;
-INSERT INTO `Fiches_Comptes` VALUES (101000,'Capital','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(106800,'Autres reserves','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(108000,'Exploitant','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(110000,'Report a nouveau credit','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(119000,'Report a nouveau debit','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(120000,'Resultat. Benefices','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,NULL),(129000,'Resultat. Perte','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(168800,'Interets courus','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(211000,'Terrain','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(213000,'Construction','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(213500,'Inst. Gen. Agen. Ame.','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218200,'Materiel de transport','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218300,'Materiel bureau informatique','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218400,'Mobilier','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218820,'Amortissement materiels de transport','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(231000,'Immobilisation en cours','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(231500,'Amenagement en cours','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(261000,'Titres de participation','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(266000,'Autres formes de participation','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(275000,'Depots et cautionnements','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281300,'Amortissement construction','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281400,'Amortissement mobilier','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281500,'Amortissement materiel de bureau','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281600,'Amortissement materiel de transport','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281700,'Amortissement materiel informatique','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(335000,'Travaux en cours','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(370000,'Stock marchandises','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(397000,'Provision depreciation stock','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(401000,'Collectif fournisseur','B',1,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,NULL),(401001,'A Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401002,'B Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401003,'C Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401004,'D Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401005,'E Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401006,'F Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401007,'G Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401008,'H Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401009,'I Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401010,'J Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401011,'K Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401012,'L Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401013,'M Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401014,'N Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401015,'O Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401016,'P Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401017,'Q Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401018,'R Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401019,'S Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401020,'T Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401021,'U Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401022,'V Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401023,'W Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401024,'X Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401025,'Y Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401026,'Z Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(408000,'Factures non parvenues','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(408100,'Fournisseurs factures non parvenues','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(409600,'Fourniseurs emballages a rendre','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(409700,'Avoirs non parvenus','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(411000,'Collectif client','B',1,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,NULL),(411001,'A Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411002,'B Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411003,'C Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411004,'D Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411005,'E Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411006,'F Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411007,'G Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411008,'H Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411009,'I Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411010,'J Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411011,'K Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411012,'L Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411013,'M Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411014,'N Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411015,'O Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411016,'P Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411017,'Q Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411018,'R Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411019,'S Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411020,'T Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411021,'U Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411022,'V Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411023,'W Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411024,'X Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411025,'Y Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411026,'Z Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411027,'********** Test **************','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(416000,'Clients douteux','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(419100,'Clients avances et acomptes reçus','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(419700,'Clients autres avoirs','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(421000,'Remuneration employes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(428200,'Provisions conges payes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(437100,'Organismes sociaux','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(437200,'Retraite employes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(444000,'Impots societes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(445510,'Tva a decaisser','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(445620,'Tva deductible sur immobilisation','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(445660,'Tva sur achat 2.10','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445670,'Tva sur achat 5.50','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445680,'Tva sur achat 19.60','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445710,'Tva sur ventes 2.10','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445720,'Tva sur ventes 5.50','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445730,'Tva sur ventes 19.60','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(468700,'Débiteurs divers produits à recevoir','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(471000,'Compte d\'attente','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(491000,'Provisions pour creances','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(512000,'Banque','B',0,NULL,0,1,'','',0,'','',0,0,0,0,NULL),(512001,'Banque 2','B',0,NULL,0,1,'','',0,'','',0,0,0,0,NULL),(518600,'Interets courus','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(530000,'Caisse','B',0,NULL,0,-1,'','',0,'','',0,0,0,0,NULL),(580000,'Virements internes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(580001,'Virements internes cartes','B',0,NULL,0,0,'','',0,'','',0,0,NULL,0,NULL),(580002,'Virements internes chèques','B',0,NULL,0,0,'','',0,'','',0,0,NULL,0,NULL),(580003,'Virements internes autres','B',0,NULL,0,0,'','',0,'','',0,0,NULL,0,NULL),(602100,'Matieres consommables','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(603700,'Variations de stock','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(604000,'Achats de sous-traitance','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(605000,'Sous traitance','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606100,'Fournitures non stockables','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(606110,'Electricite','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606120,'Gaz','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(606130,'Eau, assainissement','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606150,'Carburant','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(606170,'Gas-oil','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606300,'Fournitures entretien','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606306,'Petit outillage','G',0,NULL,0,0,NULL,NULL,0,'3','19.60',1,0,NULL,0,NULL),(606400,'Fournitures administratives','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606410,'Fournitures informatiques','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606800,'Matieres consommables','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606810,'Produits entretien','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(607000,'Achat de marchandises 2.10','G',0,NULL,0,0,'','',0,'1','2.10',1,0,0,0,NULL),(607010,'Achat de marchandises 7.00','G',0,NULL,0,0,NULL,NULL,0,'2','5.50',1,0,0,0,NULL),(607020,'Achat de marchandises 20.00','G',0,NULL,0,0,NULL,NULL,0,'3','19.60',1,0,0,0,NULL),(609700,'RRR obtenus','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(612200,'Credit bail mobilier','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(613200,'Locations immobiliers','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(622603,'Centre agree de gestion','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(622604,'Honoraires divers','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(622605,'Comptable','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(622700,'Frais actes et contentieux','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(623100,'Annonces','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(623400,'Cadeaux clientele','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(623700,'Publicite','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(623705,'Publicite exo','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(623800,'Dons','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(625100,'Voyages et deplacements','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(625500,'Frais internet','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(625600,'Missions','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(626100,'Frais postaux','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(627000,'Frais bancaires','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(627200,'Frais/emis emprunt','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(627800,'Frais factures','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(631200,'Taxe apprentissage','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(633300,'Participation employeur formation prof.','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(635110,'Taxe professionnelle','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(635120,'Taxe fonciere','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(635150,'Taxes diveres','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(637100,'Contibution sociale solidarite','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(637810,'Csg deductible','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(637820,'Csg non deductible','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641100,'Salaires bruts','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641110,'Salaires productifs','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641200,'Charges personnels conges payes','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641400,'Remboursement maladie','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(644000,'Remuneration exploitant','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645000,'Charges SS et prevoyance','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645320,'Retraite employes','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645500,'Provisions charges conges','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645800,'Charges sociales','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(646200,'Cotisations maladies','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(646210,'Maladie complementaire','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(646300,'Cotisations retraite','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(647500,'Medecine du travail','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(654100,'Pertes/créances irr. e.','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(658000,'Charges diverses gestion','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(661100,'Interets sur emprunts','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(671000,'Charges exceptionnelles/Opération gesti','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(671800,'Pertes stock','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(678000,'Charges exceptionnelles','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(681120,'Dotations amortissements','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(681730,'Depreciation stock','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(695100,'Impots sur les benefices','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(705000,'Sous-traitance','G',0,NULL,0,0,'3','20.00',1,'','',0,0,0,0,NULL),(706100,'Ventes MO','G',0,NULL,0,0,'3','20.00',1,'','',0,0,0,0,NULL),(706105,'Prestations services 7.00','G',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,NULL,0,NULL),(706110,'Prestations services 20.00','G',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,NULL),(707000,'Ventes marchandises 2.10','G',0,NULL,0,0,'1','2.10',1,'','',0,0,0,0,NULL),(707010,'Ventes marchandises 7.00','G',0,NULL,0,0,'2','7.00',1,NULL,NULL,0,0,0,0,NULL),(707020,'Ventes marchandises 20.00','G',0,NULL,0,0,'3','20.00',1,NULL,NULL,0,0,0,0,NULL),(709000,'RRR accordes','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(709700,'RRR accordés','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(722000,'Production immobilisée','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(758000,'Produits sur gestion courante','G',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(791000,'Transferts charges','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL);
+INSERT INTO `Fiches_Comptes` VALUES (101000,'Capital','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(106800,'Autres reserves','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(108000,'Exploitant','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(110000,'Report a nouveau credit','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(119000,'Report a nouveau debit','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(120000,'Resultat. Benefices','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,NULL),(129000,'Resultat. Perte','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(168800,'Interets courus','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(211000,'Terrain','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(213000,'Construction','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(213500,'Inst. Gen. Agen. Ame.','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218200,'Materiel de transport','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218300,'Materiel bureau informatique','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218400,'Mobilier','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(218820,'Amortissement materiels de transport','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(231000,'Immobilisation en cours','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(231500,'Amenagement en cours','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(261000,'Titres de participation','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(266000,'Autres formes de participation','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(275000,'Depots et cautionnements','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281300,'Amortissement construction','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281400,'Amortissement mobilier','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281500,'Amortissement materiel de bureau','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281600,'Amortissement materiel de transport','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(281700,'Amortissement materiel informatique','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(335000,'Travaux en cours','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(370000,'Stock marchandises','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(397000,'Provision depreciation stock','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(401000,'Collectif fournisseur','B',1,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,NULL),(401001,'A Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401002,'B Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401003,'C Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401004,'D Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401005,'E Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401006,'F Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401007,'G Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401008,'H Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401009,'I Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401010,'J Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401011,'K Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401012,'L Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401013,'M Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401014,'N Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401015,'O Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401016,'P Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401017,'Q Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401018,'R Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401019,'S Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401020,'T Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401021,'U Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401022,'V Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401023,'W Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401024,'X Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401025,'Y Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(401026,'Z Divers ','F',0,'401000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(408000,'Factures non parvenues','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(408100,'Fournisseurs factures non parvenues','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(409600,'Fourniseurs emballages a rendre','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(409700,'Avoirs non parvenus','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(411000,'Collectif client','B',1,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,NULL),(411001,'A Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411002,'B Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411003,'C Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411004,'D Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411005,'E Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411006,'F Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411007,'G Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411008,'H Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411009,'I Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411010,'J Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411011,'K Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411012,'L Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411013,'M Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411014,'N Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411015,'O Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411016,'P Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411017,'Q Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411018,'R Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411019,'S Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411020,'T Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411021,'U Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411022,'V Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411023,'W Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411024,'X Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411025,'Y Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411026,'Z Divers ','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,1),(411027,'********** Test **************','C',0,'411000',0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(416000,'Clients douteux','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(419100,'Clients avances et acomptes reçus','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(419700,'Clients autres avoirs','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(421000,'Remuneration employes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(428200,'Provisions conges payes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(437100,'Organismes sociaux','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(437200,'Retraite employes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(444000,'Impots societes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(445510,'Tva a decaisser','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(445620,'Tva deductible sur immobilisation','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(445660,'Tva sur achat 2.10','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445670,'Tva sur achat 5.50','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445680,'Tva sur achat 20','B',0,NULL,-1,0,NULL,NULL,0,NULL,NULL,0,0,0,0,0),(445710,'Tva sur ventes 2.10','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445720,'Tva sur ventes 5.50','B',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(445730,'Tva sur ventes 20','B',0,NULL,-1,0,NULL,NULL,0,NULL,NULL,0,0,0,0,0),(468700,'Débiteurs divers produits à recevoir','B',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,NULL,1),(471000,'Compte d\'attente','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(491000,'Provisions pour creances','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(512000,'Banque','B',0,NULL,0,1,'','',0,'','',0,0,0,0,NULL),(512001,'Banque 2','B',0,NULL,0,1,'','',0,'','',0,0,0,0,NULL),(518600,'Interets courus','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(530000,'Caisse','B',0,NULL,0,-1,'','',0,'','',0,0,0,0,NULL),(580000,'Virements internes','B',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(580001,'Virements internes cartes','B',0,NULL,0,0,'','',0,'','',0,0,NULL,0,NULL),(580002,'Virements internes chÃ¨ques','B',0,NULL,0,0,'','',0,'','',0,0,NULL,0,NULL),(580003,'Virements internes autres','B',0,NULL,0,0,'','',0,'','',0,0,NULL,0,NULL),(602100,'Matieres consommables','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(603700,'Variations de stock','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(604000,'Achats de sous-traitance','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(605000,'Sous traitance','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606100,'Fournitures non stockables','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(606110,'Electricite','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606120,'Gaz','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(606130,'Eau, assainissement','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606150,'Carburant','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(606170,'Gas-oil','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606300,'Fournitures entretien','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606306,'Petit outillage','G',0,NULL,0,0,NULL,NULL,0,'3','19.60',1,0,NULL,0,NULL),(606400,'Fournitures administratives','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606410,'Fournitures informatiques','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606800,'Matieres consommables','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(606810,'Produits entretien','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(607000,'Achat de marchandises 2.10','G',0,NULL,0,0,'','',0,'1','2.10',1,0,0,0,NULL),(607010,'Achat de marchandises 7.00','G',0,NULL,0,0,NULL,NULL,0,'2','5.50',1,0,0,0,NULL),(607020,'Achat de marchandises 20.00','G',0,NULL,0,0,NULL,NULL,0,'3','19.60',1,0,0,0,NULL),(609700,'RRR obtenus','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(612200,'Credit bail mobilier','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(613200,'Locations immobiliers','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(622603,'Centre agree de gestion','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(622604,'Honoraires divers','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(622605,'Comptable','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(622700,'Frais actes et contentieux','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(623100,'Annonces','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(623400,'Cadeaux clientele','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(623700,'Publicite','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(623705,'Publicite exo','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(623800,'Dons','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(625100,'Voyages et deplacements','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(625500,'Frais internet','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(625600,'Missions','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(626100,'Frais postaux','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(627000,'Frais bancaires','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(627200,'Frais/emis emprunt','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(627800,'Frais factures','G',0,NULL,0,0,'','',0,'3','19.60',1,0,0,0,NULL),(631200,'Taxe apprentissage','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(633300,'Participation employeur formation prof.','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(635110,'Taxe professionnelle','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(635120,'Taxe fonciere','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(635150,'Taxes diveres','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(637100,'Contibution sociale solidarite','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(637810,'Csg deductible','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(637820,'Csg non deductible','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641100,'Salaires bruts','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641110,'Salaires productifs','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641200,'Charges personnels conges payes','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(641400,'Remboursement maladie','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(644000,'Remuneration exploitant','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645000,'Charges SS et prevoyance','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645320,'Retraite employes','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645500,'Provisions charges conges','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(645800,'Charges sociales','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(646200,'Cotisations maladies','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(646210,'Maladie complementaire','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(646300,'Cotisations retraite','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(647500,'Medecine du travail','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(654100,'Pertes/crÃ©ances irr. e.','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(658000,'Charges diverses gestion','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(661100,'Interets sur emprunts','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(671000,'Charges exceptionnelles/OpÃ©ration gesti','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(671800,'Pertes stock','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(678000,'Charges exceptionnelles','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(681120,'Dotations amortissements','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(681730,'Depreciation stock','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(695100,'Impots sur les benefices','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(705000,'Sous-traitance','G',0,NULL,0,0,'3','20.00',1,'','',0,0,0,0,NULL),(706100,'Ventes MO','G',0,NULL,0,0,'3','20.00',1,'','',0,0,0,0,NULL),(706105,'Prestations services 7.00','G',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,NULL,0,NULL),(706110,'Prestations services 20.00','G',0,NULL,0,0,NULL,NULL,0,NULL,NULL,0,0,0,0,NULL),(707000,'Ventes marchandises 2.10','G',0,NULL,0,0,'1','2.10',1,'','',0,0,0,0,NULL),(707010,'Ventes marchandises 7.00','G',0,NULL,0,0,'2','7.00',1,NULL,NULL,0,0,0,0,NULL),(707020,'Ventes marchandises 20.00','G',0,NULL,0,0,'3','20.00',1,NULL,NULL,0,0,0,0,NULL),(709000,'RRR accordes','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(709700,'RRR accordÃ©s','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(722000,'Production immobilisÃ©e','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL),(758000,'Produits sur gestion courante','G',0,NULL,1,0,'','',0,'','',0,0,0,0,NULL),(791000,'Transferts charges','G',0,NULL,0,0,'','',0,'','',0,0,0,0,NULL);
 /*!40000 ALTER TABLE `Fiches_Comptes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1388,18 +1388,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_ContactC`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_ContactC` (
-  `num` int(11) NOT NULL AUTO_INCREMENT,
-  `code` int(11) NOT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `pnm` varchar(35) DEFAULT NULL,
-  `fonction` varchar(35) DEFAULT NULL,
-  `tel` varchar(16) DEFAULT NULL,
-  `mail` varchar(150) DEFAULT NULL,
-  `portable` char(16) DEFAULT NULL,
+  `num` int NOT NULL AUTO_INCREMENT,
+  `code` int NOT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnm` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fonction` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tel` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mail` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `portable` char(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1417,18 +1417,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_ContactF`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_ContactF` (
-  `num` int(11) NOT NULL AUTO_INCREMENT,
-  `code` int(11) NOT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `pnm` varchar(35) DEFAULT NULL,
-  `fonction` varchar(35) DEFAULT NULL,
-  `tel` varchar(16) DEFAULT NULL,
-  `mail` varchar(150) DEFAULT NULL,
-  `portable` char(16) DEFAULT NULL,
+  `num` int NOT NULL AUTO_INCREMENT,
+  `code` int NOT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnm` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fonction` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tel` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mail` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `portable` char(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1446,13 +1446,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Cpostaux`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Cpostaux` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `cp` char(5) DEFAULT NULL,
-  `burdist` char(35) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `cp` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `burdist` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1470,13 +1470,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Cpostaux01`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Cpostaux01` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `cp` char(5) DEFAULT NULL,
-  `burdist` char(35) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `cp` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `burdist` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1494,16 +1494,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Depots`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Depots` (
-  `code` char(8) NOT NULL,
-  `libelle` varchar(35) DEFAULT NULL,
-  `adr1` varchar(35) DEFAULT NULL,
-  `adr2` varchar(35) DEFAULT NULL,
-  `cp` char(5) DEFAULT NULL,
-  `ville` varchar(35) DEFAULT NULL,
+  `code` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cp` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1512,7 +1512,7 @@ CREATE TABLE `Fiches_Depots` (
 
 LOCK TABLES `Fiches_Depots` WRITE;
 /*!40000 ALTER TABLE `Fiches_Depots` DISABLE KEYS */;
-INSERT INTO `Fiches_Depots` VALUES ('01','Magasin','','','',''),('02','Dépot 1','','','','');
+INSERT INTO `Fiches_Depots` VALUES ('01','Magasin','','','',''),('02','DÃ©pot 1','','','','');
 /*!40000 ALTER TABLE `Fiches_Depots` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1522,17 +1522,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Docactif`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Docactif` (
-  `doc_type` char(12) NOT NULL,
-  `doc_num` char(8) NOT NULL,
-  `user_name` varchar(50) DEFAULT NULL,
-  `process_id` int(11) DEFAULT NULL,
-  `machine_id` varchar(50) DEFAULT NULL,
-  `host_id` varchar(50) DEFAULT NULL,
-  `userdb_name` varchar(50) DEFAULT NULL,
+  `doc_type` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `doc_num` char(25) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `process_id` int DEFAULT NULL,
+  `machine_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `host_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `userdb_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`doc_type`,`doc_num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1550,15 +1550,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Echeances`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Echeances` (
-  `num` varchar(2) NOT NULL,
-  `libell` varchar(20) DEFAULT NULL,
-  `duree` varchar(2) DEFAULT NULL,
+  `num` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libell` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `duree` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `finmois` tinyint(1) DEFAULT NULL,
-  `jours` varchar(2) DEFAULT NULL,
+  `jours` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1577,19 +1577,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_EntMat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_EntMat` (
-  `numserie` varchar(15) NOT NULL,
-  `codep` varchar(15) NOT NULL,
-  `libelle` mediumtext DEFAULT NULL,
-  `bloc` char(6) DEFAULT NULL,
-  `numbl` char(6) NOT NULL,
-  `marque` varchar(20) DEFAULT NULL,
-  `type` varchar(20) DEFAULT NULL,
-  `design` varchar(50) DEFAULT NULL,
-  `design2` varchar(50) DEFAULT NULL,
+  `numserie` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `bloc` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numbl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `marque` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `design` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `design2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numserie`,`codep`,`numbl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1607,52 +1607,52 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_EntTicketz`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_EntTicketz` (
-  `lInd` int(11) NOT NULL AUTO_INCREMENT,
-  `caisse` char(2) DEFAULT NULL,
-  `numero` char(7) DEFAULT NULL,
+  `lInd` int NOT NULL AUTO_INCREMENT,
+  `caisse` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` datetime DEFAULT NULL,
-  `client` varchar(30) DEFAULT NULL,
-  `scheque` char(1) DEFAULT NULL,
-  `mcheque` char(12) DEFAULT NULL,
-  `nmcheque` varchar(30) DEFAULT NULL,
-  `scarte` char(1) DEFAULT NULL,
-  `nmcarte` varchar(30) DEFAULT NULL,
-  `mcarte` char(12) DEFAULT NULL,
-  `sespeces` char(1) DEFAULT NULL,
-  `mespeces` char(12) DEFAULT NULL,
-  `scredit` char(1) DEFAULT NULL,
-  `mcredit` char(12) DEFAULT NULL,
-  `nmcredit` varchar(30) DEFAULT NULL,
-  `sbachat` char(1) DEFAULT NULL,
-  `mbachat` char(12) DEFAULT NULL,
-  `scavoir` char(1) DEFAULT NULL,
-  `mavoir` char(12) DEFAULT NULL,
-  `nmavoir` varchar(30) DEFAULT NULL,
-  `mht` char(12) DEFAULT NULL,
-  `mtva` char(12) DEFAULT NULL,
-  `mttc` char(12) DEFAULT NULL,
-  `statut` char(1) DEFAULT NULL,
-  `savoir` char(1) DEFAULT NULL,
-  `type` char(1) DEFAULT NULL,
-  `mrem` char(12) DEFAULT NULL,
-  `vendeur` varchar(35) DEFAULT NULL,
-  `carte` char(13) DEFAULT NULL,
+  `client` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scheque` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mcheque` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmcheque` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scarte` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmcarte` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mcarte` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sespeces` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mespeces` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scredit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mcredit` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmcredit` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sbachat` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mbachat` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scavoir` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mavoir` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmavoir` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mht` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtva` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mttc` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `statut` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `savoir` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mrem` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vendeur` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `carte` char(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `points` decimal(12,3) DEFAULT NULL,
-  `sbonus` char(1) DEFAULT NULL,
-  `mbonus` char(12) DEFAULT NULL,
-  `sresto` char(1) DEFAULT NULL,
-  `mresto` char(12) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
+  `sbonus` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mbonus` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sresto` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mresto` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `retro` tinyint(1) DEFAULT NULL,
   `suppr` tinyint(1) DEFAULT NULL,
-  `control` varchar(40) DEFAULT NULL,
-  `prev_numero` char(7) DEFAULT NULL,
-  `sautre` char(1) DEFAULT NULL,
-  `mautre` char(12) DEFAULT NULL,
+  `control` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prev_numero` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sautre` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mautre` char(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lInd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1670,18 +1670,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Entcom`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Entcom` (
-  `four` varchar(8) NOT NULL,
-  `numcom` varchar(15) NOT NULL,
+  `four` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numcom` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ddate` datetime DEFAULT NULL,
   `montant` double DEFAULT NULL,
   `reliquat` tinyint(1) DEFAULT NULL,
-  `montantttc` varchar(12) DEFAULT NULL,
+  `montantttc` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `anomalie` tinyint(1) DEFAULT NULL,
-  `commentaire` mediumtext DEFAULT NULL,
+  `commentaire` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`four`,`numcom`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1699,18 +1699,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Entrecpt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Entrecpt` (
-  `four` varchar(8) NOT NULL,
-  `numrecpt` varchar(15) NOT NULL,
+  `four` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numrecpt` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ddate` datetime DEFAULT NULL,
   `montant` decimal(12,3) DEFAULT NULL,
-  `validee` tinyint(2) DEFAULT 0,
+  `validee` tinyint DEFAULT '0',
   `mttc` decimal(12,3) DEFAULT NULL,
   `anomalie` tinyint(1) DEFAULT NULL,
-  `commentaire` mediumtext DEFAULT NULL,
+  `commentaire` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`four`,`numrecpt`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1728,12 +1728,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_EtiGond`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_EtiGond` (
-  `code` varchar(25) NOT NULL,
+  `code` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `nombre` decimal(12,0) DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1751,12 +1751,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_EtiProd`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_EtiProd` (
-  `code` varchar(25) NOT NULL,
+  `code` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `nombre` decimal(12,0) DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1774,9 +1774,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Etiquettes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Etiquettes` (
-  `code` char(1) NOT NULL,
+  `code` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `nblargeur` decimal(2,0) DEFAULT NULL,
   `nbhauteur` decimal(2,0) DEFAULT NULL,
   `largeur` decimal(5,0) DEFAULT NULL,
@@ -1785,10 +1785,10 @@ CREATE TABLE `Fiches_Etiquettes` (
   `mrgauche` decimal(5,0) DEFAULT NULL,
   `esplargeur` decimal(5,0) DEFAULT NULL,
   `esphauteur` decimal(5,0) DEFAULT NULL,
-  `libelle` char(25) DEFAULT NULL,
-  `page` varchar(20) NOT NULL,
+  `libelle` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `page` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`,`page`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1807,15 +1807,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Fam`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Fam` (
-  `code_fam` char(20) NOT NULL,
-  `libell_fam` varchar(30) DEFAULT NULL,
-  `compt_fam` varchar(8) DEFAULT NULL,
+  `code_fam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libell_fam` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compt_fam` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `coef_fam` decimal(6,3) DEFAULT NULL,
-  `cdtva_fam` char(2) DEFAULT NULL,
+  `cdtva_fam` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `txtva_fam` double DEFAULT NULL,
-  `cptrem_fam` varchar(10) DEFAULT NULL,
+  `cptrem_fam` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ect_fam` double DEFAULT NULL,
   `rem_fam` double DEFAULT NULL,
   `qte1` double DEFAULT NULL,
@@ -1836,13 +1836,13 @@ CREATE TABLE `Fiches_Fam` (
   `qte11` double DEFAULT NULL,
   `qte12` double DEFAULT NULL,
   `rem6` double DEFAULT NULL,
-  `compt2_fam` char(8) DEFAULT NULL,
-  `compt3_fam` char(8) DEFAULT NULL,
-  `compt4_fam` char(8) DEFAULT NULL,
-  `compt5_fam` char(8) DEFAULT NULL,
-  `export` tinyint(4) DEFAULT 0,
+  `compt2_fam` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compt3_fam` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compt4_fam` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compt5_fam` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `export` tinyint DEFAULT '0',
   PRIMARY KEY (`code_fam`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1861,14 +1861,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_FamDep`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_FamDep` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `fam` char(20) DEFAULT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `depot` char(8) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `fam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `depot` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1887,66 +1887,66 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Four`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Four` (
-  `fo_code` int(11) NOT NULL DEFAULT 0,
-  `fo_col` varchar(1) DEFAULT NULL,
-  `fo_rs_soc` varchar(12) DEFAULT NULL,
-  `fo_nom` varchar(35) DEFAULT NULL,
-  `fo_pnm` varchar(35) DEFAULT NULL,
-  `fo_adr1` varchar(35) DEFAULT NULL,
-  `fo_adr2` varchar(35) DEFAULT NULL,
-  `fo_cd_ptl` varchar(5) DEFAULT NULL,
-  `fo_ville` varchar(35) DEFAULT NULL,
-  `fo_email` varchar(150) DEFAULT NULL,
-  `fo_tel_std` varchar(16) DEFAULT NULL,
-  `fo_tel_bur` varchar(16) DEFAULT NULL,
-  `fo_tel_post` varchar(16) DEFAULT NULL,
-  `fo_pble` varchar(16) DEFAULT NULL,
-  `fo_fx1` varchar(16) DEFAULT NULL,
-  `fo_fx2` varchar(16) DEFAULT NULL,
-  `fo_plaf_ecrs` varchar(10) DEFAULT NULL,
-  `fo_obs` mediumtext DEFAULT NULL,
-  `fo_cd_bq` varchar(5) DEFAULT NULL,
-  `fo_cd_gch` varchar(5) DEFAULT NULL,
-  `fo_cle_rib` varchar(2) DEFAULT NULL,
-  `fo_num_cpt` char(11) DEFAULT NULL,
-  `fo_dom` varchar(25) DEFAULT NULL,
-  `fo_id_tva` varchar(15) DEFAULT NULL,
-  `fo_cd_soc` varchar(2) DEFAULT NULL,
-  `fo_site` varchar(40) DEFAULT NULL,
-  `fo_cd_cli` varchar(16) DEFAULT NULL,
-  `fo_co_vtl` varchar(255) DEFAULT NULL,
-  `fo_collectif` varchar(8) DEFAULT NULL,
-  `fo_cdech` varchar(2) DEFAULT NULL,
-  `fo_pays` char(40) DEFAULT NULL,
+  `fo_code` int NOT NULL DEFAULT '0',
+  `fo_col` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_rs_soc` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_pnm` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_adr1` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_adr2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cd_ptl` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_ville` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_tel_std` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_tel_bur` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_tel_post` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_pble` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_fx1` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_fx2` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_plaf_ecrs` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_obs` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `fo_cd_bq` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cd_gch` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cle_rib` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_num_cpt` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_dom` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_id_tva` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cd_soc` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_site` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cd_cli` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_co_vtl` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_collectif` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cdech` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_pays` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fo_franco` decimal(12,2) DEFAULT NULL,
   `fo_centrale` tinyint(1) DEFAULT NULL,
-  `fo_cnt1` char(17) DEFAULT NULL,
-  `fo_cnt2` char(40) DEFAULT NULL,
-  `fo_cnt3` char(25) DEFAULT NULL,
-  `fo_cnt4` char(17) DEFAULT NULL,
-  `fo_cnt5` char(40) DEFAULT NULL,
-  `fo_cnt6` char(25) DEFAULT NULL,
-  `fo_cnt7` char(17) DEFAULT NULL,
-  `fo_cnt8` char(40) DEFAULT NULL,
-  `fo_cnt9` char(25) DEFAULT NULL,
-  `fo_cnt10` char(17) DEFAULT NULL,
-  `fo_cnt11` char(40) DEFAULT NULL,
-  `fo_cnt12` char(25) DEFAULT NULL,
-  `fo_cnt13` char(17) DEFAULT NULL,
-  `fo_cnt14` char(40) DEFAULT NULL,
-  `fo_cnt15` char(25) DEFAULT NULL,
-  `fo_ccentrale` char(2) DEFAULT NULL,
+  `fo_cnt1` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt2` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt3` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt4` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt5` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt6` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt7` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt8` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt9` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt10` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt11` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt12` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt13` char(17) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt14` char(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_cnt15` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_ccentrale` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fo_copie` tinyint(1) DEFAULT NULL,
   `fo_mincom` decimal(12,2) DEFAULT NULL,
-  `fo_iban` char(30) DEFAULT NULL,
-  `fo_bic` char(11) DEFAULT NULL,
+  `fo_iban` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fo_bic` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fo_exo` tinyint(1) DEFAULT NULL,
   `fo_fport` decimal(12,2) DEFAULT NULL,
-  `fo_cb` varchar(13) DEFAULT NULL,
-  `libel_def` tinytext DEFAULT NULL,
-  `tag_def` tinytext DEFAULT NULL,
+  `fo_cb` varchar(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libel_def` tinytext COLLATE utf8mb4_unicode_ci,
+  `tag_def` tinytext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`fo_code`),
   KEY `fo_code` (`fo_code`),
   KEY `fo_nom` (`fo_nom`),
@@ -1960,7 +1960,7 @@ CREATE TABLE `Fiches_Four` (
   KEY `id_adr2` (`fo_adr2`),
   KEY `id_cdptl` (`fo_cd_ptl`),
   KEY `id_ville` (`fo_ville`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1979,13 +1979,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Four_Vtl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Four_Vtl` (
-  `code` varchar(8) NOT NULL,
-  `code_vtl` varchar(8) NOT NULL,
-  `intitule_vtl` varchar(40) DEFAULT NULL,
+  `code` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_vtl` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule_vtl` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`,`code_vtl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2004,47 +2004,47 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HisEntTickets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HisEntTickets` (
-  `lInd` int(11) NOT NULL AUTO_INCREMENT,
-  `caisse` char(2) DEFAULT NULL,
-  `numero` char(7) DEFAULT NULL,
-  `client` varchar(30) DEFAULT NULL,
-  `scheque` char(1) DEFAULT NULL,
-  `mcheque` char(12) DEFAULT NULL,
-  `nmcheque` varchar(30) DEFAULT NULL,
-  `scarte` char(1) DEFAULT NULL,
-  `nmcarte` varchar(30) DEFAULT NULL,
-  `mcarte` char(12) DEFAULT NULL,
-  `sespeces` char(1) DEFAULT NULL,
-  `mespeces` char(12) DEFAULT NULL,
-  `scredit` char(1) DEFAULT NULL,
-  `mcredit` char(12) DEFAULT NULL,
-  `nmcredit` varchar(30) DEFAULT NULL,
-  `sbachat` char(1) DEFAULT NULL,
-  `mbachat` char(12) DEFAULT NULL,
-  `scavoir` char(1) DEFAULT NULL,
-  `mavoir` char(12) DEFAULT NULL,
-  `nmavoir` varchar(30) DEFAULT NULL,
-  `mht` char(12) DEFAULT NULL,
-  `mtva` char(12) DEFAULT NULL,
-  `mttc` char(12) DEFAULT NULL,
-  `savoir` char(1) DEFAULT NULL,
-  `vendeur` varchar(35) DEFAULT NULL,
-  `carte` char(13) DEFAULT NULL,
+  `lInd` int NOT NULL AUTO_INCREMENT,
+  `caisse` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `client` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scheque` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mcheque` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmcheque` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scarte` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmcarte` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mcarte` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sespeces` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mespeces` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scredit` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mcredit` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmcredit` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sbachat` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mbachat` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scavoir` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mavoir` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmavoir` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mht` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtva` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mttc` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `savoir` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vendeur` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `carte` char(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `points` decimal(12,3) DEFAULT NULL,
-  `sbonus` char(1) DEFAULT NULL,
-  `mbonus` char(12) DEFAULT NULL,
-  `sresto` char(1) DEFAULT NULL,
-  `mresto` char(12) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
+  `sbonus` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mbonus` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sresto` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mresto` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `suppr` tinyint(1) DEFAULT NULL,
-  `control` varchar(40) DEFAULT NULL,
-  `type` char(1) DEFAULT NULL,
+  `control` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `retro` tinyint(1) DEFAULT NULL,
-  `prev_numero` char(7) DEFAULT NULL,
-  `sautre` char(1) DEFAULT NULL,
-  `mautre` char(12) DEFAULT NULL,
+  `prev_numero` char(7) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sautre` char(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mautre` char(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`lInd`),
   KEY `numero` (`numero`),
@@ -2055,7 +2055,7 @@ CREATE TABLE `Fiches_HisEntTickets` (
   KEY `id_caisse` (`caisse`),
   KEY `id_numero` (`numero`),
   KEY `id_vendeur` (`vendeur`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2073,15 +2073,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HisInvT`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HisInvT` (
-  `inv_num` int(11) NOT NULL,
-  `inv_code` char(15) NOT NULL,
+  `inv_num` int NOT NULL,
+  `inv_code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `inv_qtestock` decimal(12,2) DEFAULT NULL,
   `inv_qtecomptee` decimal(12,2) DEFAULT NULL,
   `inv_date` date DEFAULT NULL,
   PRIMARY KEY (`inv_num`,`inv_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2099,22 +2099,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HisLigTickets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HisLigTickets` (
-  `lInd` int(11) NOT NULL AUTO_INCREMENT,
-  `numero` char(7) DEFAULT NULL,
-  `numlig` char(6) DEFAULT NULL,
-  `code` varchar(15) DEFAULT NULL,
-  `intitule` varchar(50) DEFAULT NULL,
-  `montant` char(12) DEFAULT NULL,
-  `qte` char(12) DEFAULT NULL,
-  `type` char(2) DEFAULT NULL,
-  `fam` char(20) DEFAULT NULL,
-  `mht` char(12) DEFAULT NULL,
-  `mrem` char(12) DEFAULT NULL,
-  `tva` varchar(12) DEFAULT NULL,
-  `mtva` char(12) DEFAULT NULL,
-  `block` char(6) DEFAULT NULL,
+  `lInd` int NOT NULL AUTO_INCREMENT,
+  `numero` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlig` char(6) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `montant` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mht` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mrem` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tva` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtva` char(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `block` char(6) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`lInd`),
   KEY `numero` (`numero`),
@@ -2126,7 +2126,7 @@ CREATE TABLE `Fiches_HisLigTickets` (
   KEY `id_numlig` (`numlig`),
   KEY `id_code` (`code`),
   KEY `id_type` (`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2144,17 +2144,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HisentMat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HisentMat` (
-  `numserie` char(15) NOT NULL,
-  `codep` varchar(15) NOT NULL,
-  `marque` varchar(20) DEFAULT NULL,
-  `type` varchar(20) DEFAULT NULL,
-  `design` varchar(50) DEFAULT NULL,
-  `design2` varchar(50) DEFAULT NULL,
-  `libelle` mediumtext DEFAULT NULL,
-  `bloc` char(6) DEFAULT NULL,
-  `numfac` char(10) NOT NULL,
+  `numserie` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `marque` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `design` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `design2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `bloc` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numfac` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`numserie`,`codep`,`numfac`),
   KEY `numserie` (`numserie`),
   KEY `codep` (`codep`),
@@ -2164,7 +2164,7 @@ CREATE TABLE `Fiches_HisentMat` (
   KEY `id_codep` (`codep`),
   KEY `id_marque` (`marque`),
   KEY `id_numfac` (`numfac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2182,45 +2182,45 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HistoFac`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HistoFac` (
-  `numfac` varchar(10) DEFAULT NULL,
-  `cdclifac` varchar(8) DEFAULT NULL,
-  `cvclifac` varchar(12) DEFAULT NULL,
-  `nmclifac` varchar(35) DEFAULT NULL,
-  `pnmclifac` varchar(35) DEFAULT NULL,
-  `adr1fac` varchar(35) DEFAULT NULL,
-  `adr2fac` varchar(35) DEFAULT NULL,
-  `cpfac` varchar(5) DEFAULT NULL,
-  `villefac` varchar(35) DEFAULT NULL,
+  `numfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cdclifac` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cvclifac` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmclifac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnmclifac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1fac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2fac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cpfac` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `villefac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datefac` datetime DEFAULT NULL,
-  `rmofac` varchar(6) DEFAULT NULL,
-  `rartfac` varchar(5) DEFAULT NULL,
-  `exofac` int(11) DEFAULT NULL,
-  `remmofac` varchar(10) DEFAULT NULL,
-  `remartfac` varchar(10) DEFAULT NULL,
+  `rmofac` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rartfac` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `exofac` int DEFAULT NULL,
+  `remmofac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remartfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `totfac` decimal(12,2) DEFAULT NULL,
-  `reg` varchar(15) DEFAULT NULL,
+  `reg` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ech` datetime DEFAULT NULL,
-  `numerobl` varchar(6) DEFAULT NULL,
-  `acpt` varchar(12) DEFAULT NULL,
-  `mreg` varchar(10) DEFAULT NULL,
+  `numerobl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `acpt` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mreg` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `marge_mo` decimal(12,2) DEFAULT NULL,
   `marge_art` decimal(12,2) DEFAULT NULL,
-  `numserie` varchar(15) DEFAULT NULL,
-  `codep` varchar(15) DEFAULT NULL,
-  `mtreg` char(12) DEFAULT NULL,
+  `numserie` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtreg` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `totfacttc` decimal(12,2) DEFAULT NULL,
-  `cdep` varchar(37) DEFAULT NULL,
+  `cdep` varchar(37) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `acquitte` tinyint(1) DEFAULT NULL,
-  `gestfac` decimal(5,2) DEFAULT 0.00,
+  `gestfac` decimal(5,2) DEFAULT '0.00',
   KEY `cdclifac` (`cdclifac`),
   KEY `nmclifac` (`nmclifac`),
   KEY `numfac` (`numfac`),
   KEY `totfac` (`totfac`),
   KEY `datefac` (`datefac`),
   KEY `numserie` (`numserie`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2238,45 +2238,45 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HistoFacM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HistoFacM` (
-  `numfac` varchar(10) DEFAULT NULL,
-  `cdclifac` varchar(8) DEFAULT NULL,
-  `cvclifac` varchar(9) DEFAULT NULL,
-  `nmclifac` varchar(35) DEFAULT NULL,
-  `pnmclifac` varchar(35) DEFAULT NULL,
-  `adr1fac` varchar(35) DEFAULT NULL,
-  `adr2fac` varchar(35) DEFAULT NULL,
-  `cpfac` varchar(5) DEFAULT NULL,
-  `villefac` varchar(35) DEFAULT NULL,
+  `numfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cdclifac` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cvclifac` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nmclifac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnmclifac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1fac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2fac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cpfac` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `villefac` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datefac` datetime DEFAULT NULL,
-  `rmofac` varchar(6) DEFAULT NULL,
-  `rartfac` varchar(5) DEFAULT NULL,
-  `exofac` int(11) DEFAULT NULL,
-  `remmofac` varchar(10) DEFAULT NULL,
-  `remartfac` varchar(10) DEFAULT NULL,
+  `rmofac` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rartfac` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `exofac` int DEFAULT NULL,
+  `remmofac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `remartfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `totfac` double DEFAULT NULL,
-  `reg` varchar(15) DEFAULT NULL,
+  `reg` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ech` datetime DEFAULT NULL,
-  `numerobl` varchar(6) DEFAULT NULL,
-  `acpt` varchar(12) DEFAULT NULL,
-  `mreg` varchar(10) DEFAULT NULL,
+  `numerobl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `acpt` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mreg` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `marge_mo` decimal(12,2) DEFAULT NULL,
   `marge_art` decimal(12,2) DEFAULT NULL,
-  `numserie` varchar(15) DEFAULT NULL,
-  `codep` varchar(15) DEFAULT NULL,
-  `mtreg` varchar(12) DEFAULT NULL,
+  `numserie` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtreg` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `totfacttc` decimal(12,2) DEFAULT NULL,
-  `cdep` varchar(37) DEFAULT NULL,
+  `cdep` varchar(37) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `acquitte` tinyint(1) DEFAULT NULL,
-  `gestfac` decimal(5,2) DEFAULT 0.00,
+  `gestfac` decimal(5,2) DEFAULT '0.00',
   KEY `cdclifac` (`cdclifac`),
   KEY `nmclifac` (`nmclifac`),
   KEY `numfac` (`numfac`),
   KEY `totfac` (`totfac`),
   KEY `datefac` (`datefac`),
   KEY `numserie` (`numserie`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2294,30 +2294,30 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HistoLigfac`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HistoLigfac` (
-  `num_ligfac` varchar(10) NOT NULL,
-  `numlig_ligfac` varchar(6) NOT NULL,
-  `code_ligfac` varchar(15) DEFAULT NULL,
-  `libel_ligfac` varchar(50) DEFAULT NULL,
-  `fam_ligfac` char(20) DEFAULT NULL,
-  `pu_ligfac` varchar(10) DEFAULT NULL,
-  `qte_ligfac` varchar(6) DEFAULT NULL,
-  `brut_ligfac` varchar(10) DEFAULT NULL,
-  `rem_ligfac` varchar(6) DEFAULT NULL,
-  `netht_ligfac` varchar(10) DEFAULT NULL,
-  `tx_ligfac` varchar(1) DEFAULT NULL,
-  `nettc_ligfac` varchar(10) DEFAULT NULL,
-  `typel_ligfac` char(2) DEFAULT NULL,
-  `tm_ligfac` varchar(1) DEFAULT NULL,
-  `com_ligfac` mediumtext DEFAULT NULL,
-  `bloc` varchar(30) DEFAULT NULL,
-  `mtx_ligfac` char(5) DEFAULT NULL,
+  `num_ligfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlig_ligfac` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_ligfac` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libel_ligfac` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fam_ligfac` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pu_ligfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte_ligfac` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `brut_ligfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rem_ligfac` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `netht_ligfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tx_ligfac` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nettc_ligfac` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typel_ligfac` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tm_ligfac` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `com_ligfac` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `bloc` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtx_ligfac` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mrgart_ligfac` decimal(12,3) DEFAULT NULL,
   `mrgmo_ligfac` decimal(12,3) DEFAULT NULL,
-  `tour_ligfac` char(15) DEFAULT NULL,
+  `tour_ligfac` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dtligbl_ligfac` datetime DEFAULT NULL,
-  `numbl_ligfac` char(6) DEFAULT NULL,
+  `numbl_ligfac` char(6) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num_ligfac`,`numlig_ligfac`),
   KEY `num_ligfac` (`num_ligfac`),
   KEY `numlig_ligfac` (`numlig_ligfac`),
@@ -2329,7 +2329,7 @@ CREATE TABLE `Fiches_HistoLigfac` (
   KEY `id_code` (`code_ligfac`),
   KEY `id_fam` (`fam_ligfac`),
   KEY `id_typel` (`typel_ligfac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2347,30 +2347,30 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_HistoLigfacM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_HistoLigfacM` (
-  `num_ligfac` char(10) NOT NULL,
-  `numlig_ligfac` char(6) NOT NULL,
-  `code_ligfac` varchar(15) DEFAULT NULL,
-  `libel_ligfac` varchar(50) DEFAULT NULL,
-  `fam_ligfac` char(20) DEFAULT NULL,
-  `pu_ligfac` char(12) DEFAULT NULL,
-  `qte_ligfac` char(6) DEFAULT NULL,
-  `brut_ligfac` char(12) DEFAULT NULL,
-  `rem_ligfac` char(6) DEFAULT NULL,
-  `netht_ligfac` char(12) DEFAULT NULL,
-  `tx_ligfac` char(1) DEFAULT NULL,
-  `nettc_ligfac` char(12) DEFAULT NULL,
-  `typel_ligfac` char(2) DEFAULT NULL,
-  `tm_ligfac` char(1) DEFAULT NULL,
-  `com_ligfac` mediumtext DEFAULT NULL,
-  `bloc` varchar(30) DEFAULT NULL,
-  `mtx_ligfac` char(5) DEFAULT NULL,
+  `num_ligfac` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlig_ligfac` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_ligfac` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libel_ligfac` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fam_ligfac` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pu_ligfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte_ligfac` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `brut_ligfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rem_ligfac` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `netht_ligfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tx_ligfac` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nettc_ligfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typel_ligfac` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tm_ligfac` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `com_ligfac` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `bloc` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtx_ligfac` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mrgart_ligfac` decimal(12,3) DEFAULT NULL,
   `mrgmo_ligfac` decimal(12,3) DEFAULT NULL,
-  `tour_ligfac` char(15) DEFAULT NULL,
+  `tour_ligfac` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dtligbl_ligfac` datetime DEFAULT NULL,
-  `numbl_ligfac` char(6) DEFAULT NULL,
+  `numbl_ligfac` char(6) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num_ligfac`,`numlig_ligfac`),
   KEY `num_ligfac` (`num_ligfac`),
   KEY `numlig_ligfac` (`numlig_ligfac`),
@@ -2382,7 +2382,7 @@ CREATE TABLE `Fiches_HistoLigfacM` (
   KEY `id_code` (`code_ligfac`),
   KEY `id_fam` (`fam_ligfac`),
   KEY `id_typel` (`typel_ligfac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2400,12 +2400,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Identite`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Identite` (
-  `code` char(2) NOT NULL,
-  `libelle` char(9) DEFAULT NULL,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` char(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2424,19 +2424,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_ImpArtDef`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_ImpArtDef` (
-  `num` int(11) NOT NULL,
-  `nom` varchar(50) DEFAULT NULL,
-  `cfour` char(8) DEFAULT NULL,
-  `nfour` varchar(50) DEFAULT NULL,
-  `cfam` char(20) DEFAULT NULL,
-  `nfam` varchar(50) DEFAULT NULL,
-  `adrfic` varchar(100) DEFAULT NULL,
-  `typesep` char(1) DEFAULT NULL,
-  `sep` char(1) DEFAULT NULL,
+  `num` int NOT NULL,
+  `nom` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cfour` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nfour` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cfam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nfam` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adrfic` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typesep` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sep` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2454,171 +2454,171 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_ImpArtDef2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_ImpArtDef2` (
-  `num` int(11) NOT NULL,
-  `posorg_1` char(4) DEFAULT NULL,
-  `col_1` varchar(50) DEFAULT NULL,
-  `db_1` int(11) DEFAULT NULL,
-  `lg_1` int(11) DEFAULT NULL,
-  `pos_1` int(11) DEFAULT NULL,
-  `posorg_2` char(4) DEFAULT NULL,
-  `col_2` varchar(50) DEFAULT NULL,
-  `db_2` int(11) DEFAULT NULL,
-  `lg_2` int(11) DEFAULT NULL,
-  `pos_2` int(11) DEFAULT NULL,
-  `posorg_3` char(4) DEFAULT NULL,
-  `col_3` varchar(50) DEFAULT NULL,
-  `db_3` int(11) DEFAULT NULL,
-  `lg_3` int(11) DEFAULT NULL,
-  `pos_3` int(11) DEFAULT NULL,
-  `posorg_4` char(4) DEFAULT NULL,
-  `col_4` varchar(50) DEFAULT NULL,
-  `db_4` int(11) DEFAULT NULL,
-  `lg_4` int(11) DEFAULT NULL,
-  `pos_4` int(11) DEFAULT NULL,
-  `posorg_5` char(4) DEFAULT NULL,
-  `col_5` varchar(50) DEFAULT NULL,
-  `db_5` int(11) DEFAULT NULL,
-  `lg_5` int(11) DEFAULT NULL,
-  `pos_5` int(11) DEFAULT NULL,
-  `posorg_6` char(4) DEFAULT NULL,
-  `col_6` varchar(50) DEFAULT NULL,
-  `db_6` int(11) DEFAULT NULL,
-  `lg_6` int(11) DEFAULT NULL,
-  `pos_6` int(11) DEFAULT NULL,
-  `posorg_7` char(4) DEFAULT NULL,
-  `col_7` varchar(50) DEFAULT NULL,
-  `db_7` int(11) DEFAULT NULL,
-  `lg_7` int(11) DEFAULT NULL,
-  `pos_7` int(11) DEFAULT NULL,
-  `posorg_8` char(4) DEFAULT NULL,
-  `col_8` varchar(50) DEFAULT NULL,
-  `db_8` int(11) DEFAULT NULL,
-  `lg_8` int(11) DEFAULT NULL,
-  `pos_8` int(11) DEFAULT NULL,
-  `posorg_9` char(4) DEFAULT NULL,
-  `col_9` varchar(50) DEFAULT NULL,
-  `db_9` int(11) DEFAULT NULL,
-  `lg_9` int(11) DEFAULT NULL,
-  `pos_9` int(11) DEFAULT NULL,
-  `posorg_10` char(4) DEFAULT NULL,
-  `col_10` varchar(50) DEFAULT NULL,
-  `db_10` int(11) DEFAULT NULL,
-  `lg_10` int(11) DEFAULT NULL,
-  `pos_10` int(11) DEFAULT NULL,
-  `posorg_11` char(4) DEFAULT NULL,
-  `col_11` varchar(50) DEFAULT NULL,
-  `db_11` int(11) DEFAULT NULL,
-  `lg_11` int(11) DEFAULT NULL,
-  `pos_11` int(11) DEFAULT NULL,
-  `posorg_12` char(4) DEFAULT NULL,
-  `col_12` varchar(50) DEFAULT NULL,
-  `db_12` int(11) DEFAULT NULL,
-  `lg_12` int(11) DEFAULT NULL,
-  `pos_12` int(11) DEFAULT NULL,
-  `posorg_13` char(4) DEFAULT NULL,
-  `col_13` varchar(50) DEFAULT NULL,
-  `db_13` int(11) DEFAULT NULL,
-  `lg_13` int(11) DEFAULT NULL,
-  `pos_13` int(11) DEFAULT NULL,
-  `posorg_14` char(4) DEFAULT NULL,
-  `col_14` varchar(50) DEFAULT NULL,
-  `db_14` int(11) DEFAULT NULL,
-  `lg_14` int(11) DEFAULT NULL,
-  `pos_14` int(11) DEFAULT NULL,
-  `posorg_15` char(4) DEFAULT NULL,
-  `col_15` varchar(50) DEFAULT NULL,
-  `db_15` int(11) DEFAULT NULL,
-  `lg_15` int(11) DEFAULT NULL,
-  `pos_15` int(11) DEFAULT NULL,
-  `posorg_16` char(4) DEFAULT NULL,
-  `col_16` varchar(50) DEFAULT NULL,
-  `db_16` int(11) DEFAULT NULL,
-  `lg_16` int(11) DEFAULT NULL,
-  `pos_16` int(11) DEFAULT NULL,
-  `posorg_17` char(4) DEFAULT NULL,
-  `col_17` varchar(50) DEFAULT NULL,
-  `db_17` int(11) DEFAULT NULL,
-  `lg_17` int(11) DEFAULT NULL,
-  `pos_17` int(11) DEFAULT NULL,
-  `posorg_18` char(4) DEFAULT NULL,
-  `col_18` varchar(50) DEFAULT NULL,
-  `db_18` int(11) DEFAULT NULL,
-  `lg_18` int(11) DEFAULT NULL,
-  `pos_18` int(11) DEFAULT NULL,
-  `posorg_19` char(4) DEFAULT NULL,
-  `col_19` varchar(50) DEFAULT NULL,
-  `db_19` int(11) DEFAULT NULL,
-  `lg_19` int(11) DEFAULT NULL,
-  `pos_19` int(11) DEFAULT NULL,
-  `posorg_20` char(4) DEFAULT NULL,
-  `col_20` varchar(50) DEFAULT NULL,
-  `db_20` int(11) DEFAULT NULL,
-  `lg_20` int(11) DEFAULT NULL,
-  `pos_20` int(11) DEFAULT NULL,
-  `posorg_21` char(4) DEFAULT NULL,
-  `col_21` varchar(50) DEFAULT NULL,
-  `db_21` int(11) DEFAULT NULL,
-  `lg_21` int(11) DEFAULT NULL,
-  `pos_21` int(11) DEFAULT NULL,
-  `posorg_22` char(4) DEFAULT NULL,
-  `col_22` varchar(50) DEFAULT NULL,
-  `db_22` int(11) DEFAULT NULL,
-  `lg_22` int(11) DEFAULT NULL,
-  `pos_22` int(11) DEFAULT NULL,
-  `posorg_23` char(4) DEFAULT NULL,
-  `col_23` varchar(50) DEFAULT NULL,
-  `db_23` int(11) DEFAULT NULL,
-  `lg_23` int(11) DEFAULT NULL,
-  `pos_23` int(11) DEFAULT NULL,
-  `posorg_24` char(4) DEFAULT NULL,
-  `col_24` varchar(50) DEFAULT NULL,
-  `db_24` int(11) DEFAULT NULL,
-  `lg_24` int(11) DEFAULT NULL,
-  `pos_24` int(11) DEFAULT NULL,
-  `posorg_25` char(4) DEFAULT NULL,
-  `col_25` varchar(50) DEFAULT NULL,
-  `db_25` int(11) DEFAULT NULL,
-  `lg_25` int(11) DEFAULT NULL,
-  `pos_25` int(11) DEFAULT NULL,
-  `posorg_26` char(4) DEFAULT NULL,
-  `col_26` varchar(50) DEFAULT NULL,
-  `db_26` int(11) DEFAULT NULL,
-  `lg_26` int(11) DEFAULT NULL,
-  `pos_26` int(11) DEFAULT NULL,
-  `posorg_27` char(4) DEFAULT NULL,
-  `col_27` varchar(50) DEFAULT NULL,
-  `db_27` int(11) DEFAULT NULL,
-  `lg_27` int(11) DEFAULT NULL,
-  `pos_27` int(11) DEFAULT NULL,
-  `posorg_28` char(4) DEFAULT NULL,
-  `col_28` varchar(50) DEFAULT NULL,
-  `db_28` int(11) DEFAULT NULL,
-  `lg_28` int(11) DEFAULT NULL,
-  `pos_28` int(11) DEFAULT NULL,
-  `posorg_29` char(4) DEFAULT NULL,
-  `col_29` varchar(50) DEFAULT NULL,
-  `db_29` int(11) DEFAULT NULL,
-  `lg_29` int(11) DEFAULT NULL,
-  `pos_29` int(11) DEFAULT NULL,
-  `posorg_30` char(4) DEFAULT NULL,
-  `col_30` varchar(50) DEFAULT NULL,
-  `db_30` int(11) DEFAULT NULL,
-  `lg_30` int(11) DEFAULT NULL,
-  `pos_30` int(11) DEFAULT NULL,
-  `posorg_31` char(4) DEFAULT NULL,
-  `col_31` varchar(50) DEFAULT NULL,
-  `db_31` int(11) DEFAULT NULL,
-  `lg_31` int(11) DEFAULT NULL,
-  `pos_31` int(11) DEFAULT NULL,
-  `posorg_32` char(4) DEFAULT NULL,
-  `col_32` varchar(50) DEFAULT NULL,
-  `db_32` int(11) DEFAULT NULL,
-  `lg_32` int(11) DEFAULT NULL,
-  `pos_32` int(11) DEFAULT NULL,
+  `num` int NOT NULL,
+  `posorg_1` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_1` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_1` int DEFAULT NULL,
+  `lg_1` int DEFAULT NULL,
+  `pos_1` int DEFAULT NULL,
+  `posorg_2` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_2` int DEFAULT NULL,
+  `lg_2` int DEFAULT NULL,
+  `pos_2` int DEFAULT NULL,
+  `posorg_3` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_3` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_3` int DEFAULT NULL,
+  `lg_3` int DEFAULT NULL,
+  `pos_3` int DEFAULT NULL,
+  `posorg_4` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_4` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_4` int DEFAULT NULL,
+  `lg_4` int DEFAULT NULL,
+  `pos_4` int DEFAULT NULL,
+  `posorg_5` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_5` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_5` int DEFAULT NULL,
+  `lg_5` int DEFAULT NULL,
+  `pos_5` int DEFAULT NULL,
+  `posorg_6` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_6` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_6` int DEFAULT NULL,
+  `lg_6` int DEFAULT NULL,
+  `pos_6` int DEFAULT NULL,
+  `posorg_7` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_7` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_7` int DEFAULT NULL,
+  `lg_7` int DEFAULT NULL,
+  `pos_7` int DEFAULT NULL,
+  `posorg_8` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_8` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_8` int DEFAULT NULL,
+  `lg_8` int DEFAULT NULL,
+  `pos_8` int DEFAULT NULL,
+  `posorg_9` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_9` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_9` int DEFAULT NULL,
+  `lg_9` int DEFAULT NULL,
+  `pos_9` int DEFAULT NULL,
+  `posorg_10` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_10` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_10` int DEFAULT NULL,
+  `lg_10` int DEFAULT NULL,
+  `pos_10` int DEFAULT NULL,
+  `posorg_11` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_11` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_11` int DEFAULT NULL,
+  `lg_11` int DEFAULT NULL,
+  `pos_11` int DEFAULT NULL,
+  `posorg_12` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_12` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_12` int DEFAULT NULL,
+  `lg_12` int DEFAULT NULL,
+  `pos_12` int DEFAULT NULL,
+  `posorg_13` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_13` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_13` int DEFAULT NULL,
+  `lg_13` int DEFAULT NULL,
+  `pos_13` int DEFAULT NULL,
+  `posorg_14` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_14` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_14` int DEFAULT NULL,
+  `lg_14` int DEFAULT NULL,
+  `pos_14` int DEFAULT NULL,
+  `posorg_15` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_15` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_15` int DEFAULT NULL,
+  `lg_15` int DEFAULT NULL,
+  `pos_15` int DEFAULT NULL,
+  `posorg_16` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_16` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_16` int DEFAULT NULL,
+  `lg_16` int DEFAULT NULL,
+  `pos_16` int DEFAULT NULL,
+  `posorg_17` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_17` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_17` int DEFAULT NULL,
+  `lg_17` int DEFAULT NULL,
+  `pos_17` int DEFAULT NULL,
+  `posorg_18` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_18` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_18` int DEFAULT NULL,
+  `lg_18` int DEFAULT NULL,
+  `pos_18` int DEFAULT NULL,
+  `posorg_19` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_19` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_19` int DEFAULT NULL,
+  `lg_19` int DEFAULT NULL,
+  `pos_19` int DEFAULT NULL,
+  `posorg_20` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_20` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_20` int DEFAULT NULL,
+  `lg_20` int DEFAULT NULL,
+  `pos_20` int DEFAULT NULL,
+  `posorg_21` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_21` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_21` int DEFAULT NULL,
+  `lg_21` int DEFAULT NULL,
+  `pos_21` int DEFAULT NULL,
+  `posorg_22` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_22` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_22` int DEFAULT NULL,
+  `lg_22` int DEFAULT NULL,
+  `pos_22` int DEFAULT NULL,
+  `posorg_23` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_23` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_23` int DEFAULT NULL,
+  `lg_23` int DEFAULT NULL,
+  `pos_23` int DEFAULT NULL,
+  `posorg_24` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_24` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_24` int DEFAULT NULL,
+  `lg_24` int DEFAULT NULL,
+  `pos_24` int DEFAULT NULL,
+  `posorg_25` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_25` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_25` int DEFAULT NULL,
+  `lg_25` int DEFAULT NULL,
+  `pos_25` int DEFAULT NULL,
+  `posorg_26` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_26` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_26` int DEFAULT NULL,
+  `lg_26` int DEFAULT NULL,
+  `pos_26` int DEFAULT NULL,
+  `posorg_27` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_27` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_27` int DEFAULT NULL,
+  `lg_27` int DEFAULT NULL,
+  `pos_27` int DEFAULT NULL,
+  `posorg_28` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_28` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_28` int DEFAULT NULL,
+  `lg_28` int DEFAULT NULL,
+  `pos_28` int DEFAULT NULL,
+  `posorg_29` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_29` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_29` int DEFAULT NULL,
+  `lg_29` int DEFAULT NULL,
+  `pos_29` int DEFAULT NULL,
+  `posorg_30` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_30` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_30` int DEFAULT NULL,
+  `lg_30` int DEFAULT NULL,
+  `pos_30` int DEFAULT NULL,
+  `posorg_31` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_31` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_31` int DEFAULT NULL,
+  `lg_31` int DEFAULT NULL,
+  `pos_31` int DEFAULT NULL,
+  `posorg_32` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_32` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `db_32` int DEFAULT NULL,
+  `lg_32` int DEFAULT NULL,
+  `pos_32` int DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2636,17 +2636,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Inv`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Inv` (
-  `inv_nlig` char(9) NOT NULL,
-  `inv_code` varchar(15) DEFAULT NULL,
+  `inv_nlig` char(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `inv_code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `inv_qtestock` double DEFAULT NULL,
   `inv_qtecomptee` double DEFAULT NULL,
   `inv_date` datetime DEFAULT NULL,
-  `inv_comptee` int(11) DEFAULT NULL,
-  `inv_valid` int(11) DEFAULT NULL,
+  `inv_comptee` int DEFAULT NULL,
+  `inv_valid` int DEFAULT NULL,
   PRIMARY KEY (`inv_nlig`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2664,17 +2664,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_InvT`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_InvT` (
-  `inv_nlig` char(9) NOT NULL,
-  `inv_code` varchar(15) DEFAULT NULL,
+  `inv_nlig` char(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `inv_code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `inv_qtestock` double DEFAULT NULL,
   `inv_qtecomptee` double DEFAULT NULL,
   `inv_date` datetime DEFAULT NULL,
-  `inv_comptee` int(11) DEFAULT NULL,
-  `inv_valid` int(11) DEFAULT NULL,
+  `inv_comptee` int DEFAULT NULL,
+  `inv_valid` int DEFAULT NULL,
   PRIMARY KEY (`inv_nlig`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2692,14 +2692,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Journaux`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Journaux` (
-  `code_jo` varchar(2) NOT NULL,
-  `libelle_jo` varchar(30) DEFAULT NULL,
-  `type_jo` varchar(2) DEFAULT NULL,
-  `cde_banque` varchar(8) DEFAULT NULL,
+  `code_jo` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle_jo` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type_jo` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cde_banque` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code_jo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2718,22 +2718,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Lcr`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Lcr` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(8) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `montant` char(12) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `montant` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date DEFAULT NULL,
   `datech` date DEFAULT NULL,
-  `numfac` char(12) DEFAULT NULL,
-  `acceptee` int(11) DEFAULT NULL,
-  `ecartee` int(11) DEFAULT NULL,
-  `banque` varchar(35) DEFAULT NULL,
-  `codeentree` int(1) DEFAULT NULL,
-  `bordereau` varchar(35) DEFAULT NULL,
+  `numfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `acceptee` int DEFAULT NULL,
+  `ecartee` int DEFAULT NULL,
+  `banque` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codeentree` int DEFAULT NULL,
+  `bordereau` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2751,12 +2751,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_LibelAvoirs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_LibelAvoirs` (
-  `lInd` tinyint(4) NOT NULL AUTO_INCREMENT,
-  `libelav` char(250) DEFAULT NULL,
+  `lInd` tinyint NOT NULL AUTO_INCREMENT,
+  `libelav` char(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lInd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2774,12 +2774,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_LibelFac`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_LibelFac` (
-  `mind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `txtfac` varchar(250) DEFAULT NULL,
+  `mind` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `txtfac` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`mind`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2798,12 +2798,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_LibelTicket`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_LibelTicket` (
-  `lInd` tinyint(4) NOT NULL AUTO_INCREMENT,
-  `libeltk` varchar(250) DEFAULT NULL,
+  `lInd` tinyint NOT NULL AUTO_INCREMENT,
+  `libeltk` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lInd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2821,12 +2821,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Libelles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Libelles` (
-  `num` varchar(2) NOT NULL,
-  `intitule` varchar(30) DEFAULT NULL,
+  `num` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`num`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2845,25 +2845,25 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_LigTicketz`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_LigTicketz` (
-  `lInd` int(11) NOT NULL AUTO_INCREMENT,
-  `numero` char(7) DEFAULT NULL,
-  `numlig` char(6) DEFAULT NULL,
-  `code` varchar(15) DEFAULT NULL,
-  `intitule` varchar(50) DEFAULT NULL,
-  `montant` char(12) DEFAULT NULL,
-  `qte` char(12) DEFAULT NULL,
-  `type` char(2) DEFAULT NULL,
-  `fam` char(20) DEFAULT NULL,
-  `mht` char(12) DEFAULT NULL,
-  `mrem` char(12) DEFAULT NULL,
-  `mtva` char(12) DEFAULT NULL,
-  `block` char(6) DEFAULT NULL,
-  `tva` varchar(12) DEFAULT NULL,
+  `lInd` int NOT NULL AUTO_INCREMENT,
+  `numero` char(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlig` char(6) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `montant` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mht` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mrem` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mtva` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `block` char(6) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tva` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`lInd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2881,20 +2881,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Ligabon`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Ligabon` (
-  `numero` varchar(15) DEFAULT NULL,
-  `compte` varchar(10) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
-  `debit` tinytext DEFAULT NULL,
-  `credit` tinytext DEFAULT NULL,
-  `lig` int(2) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `libelle` tinytext DEFAULT NULL,
-  `numdoc` tinytext DEFAULT NULL,
-  `numlot` tinytext DEFAULT NULL,
+  `numero` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compte` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `debit` tinytext COLLATE utf8mb4_unicode_ci,
+  `credit` tinytext COLLATE utf8mb4_unicode_ci,
+  `lig` int DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `libelle` tinytext COLLATE utf8mb4_unicode_ci,
+  `numdoc` tinytext COLLATE utf8mb4_unicode_ci,
+  `numlot` tinytext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2912,35 +2912,35 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Ligbl`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Ligbl` (
-  `num_ligbl` varchar(6) NOT NULL,
-  `numlig_ligbl` varchar(6) NOT NULL,
-  `code_ligbl` varchar(15) DEFAULT NULL,
-  `libel_ligbl` varchar(50) DEFAULT NULL,
-  `fam_ligbl` char(20) DEFAULT NULL,
-  `pu_ligbl` varchar(10) DEFAULT NULL,
-  `dec_ligbl` varchar(1) DEFAULT NULL,
-  `qte_ligbl` varchar(6) DEFAULT NULL,
-  `brut_ligbl` varchar(10) DEFAULT NULL,
-  `rem_ligbl` varchar(6) DEFAULT NULL,
-  `netht_ligbl` varchar(10) DEFAULT NULL,
-  `tx_ligbl` char(2) DEFAULT NULL,
-  `nettc_ligbl` varchar(10) DEFAULT NULL,
-  `typel_ligbl` char(2) DEFAULT NULL,
-  `tm_ligbl` varchar(1) DEFAULT NULL,
-  `com_ligbl` mediumtext DEFAULT NULL,
-  `block_ligbl` varchar(30) DEFAULT NULL,
+  `num_ligbl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlig_ligbl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_ligbl` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libel_ligbl` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fam_ligbl` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pu_ligbl` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dec_ligbl` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte_ligbl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `brut_ligbl` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rem_ligbl` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `netht_ligbl` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tx_ligbl` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nettc_ligbl` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typel_ligbl` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tm_ligbl` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `com_ligbl` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `block_ligbl` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pdstotal_ligbl` decimal(12,3) DEFAULT NULL,
   `mrgart_ligbl` decimal(12,3) DEFAULT NULL,
   `mrgmo_ligbl` decimal(12,3) DEFAULT NULL,
-  `mtx_ligfac` char(5) DEFAULT NULL,
-  `four_ligbl` varchar(8) DEFAULT NULL,
-  `refl_ligbl` varchar(40) DEFAULT NULL,
-  `tour_ligbl` char(15) DEFAULT NULL,
+  `mtx_ligfac` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `four_ligbl` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `refl_ligbl` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tour_ligbl` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte_ligbl` datetime DEFAULT NULL,
   PRIMARY KEY (`num_ligbl`,`numlig_ligbl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2958,35 +2958,35 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_LigblM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_LigblM` (
-  `num_ligbl` char(6) NOT NULL,
-  `numlig_ligbl` char(6) NOT NULL,
-  `code_ligbl` varchar(15) DEFAULT NULL,
-  `libel_ligbl` varchar(50) DEFAULT NULL,
-  `fam_ligbl` char(20) DEFAULT NULL,
-  `pu_ligbl` char(12) DEFAULT NULL,
-  `dec_ligbl` char(1) DEFAULT NULL,
-  `qte_ligbl` char(6) DEFAULT NULL,
-  `brut_ligbl` char(12) DEFAULT NULL,
-  `rem_ligbl` char(6) DEFAULT NULL,
-  `netht_ligbl` char(12) DEFAULT NULL,
-  `tx_ligbl` char(2) DEFAULT NULL,
-  `nettc_ligbl` char(12) DEFAULT NULL,
-  `typel_ligbl` char(2) DEFAULT NULL,
-  `tm_ligbl` char(1) DEFAULT NULL,
-  `com_ligbl` mediumtext DEFAULT NULL,
-  `block_ligbl` varchar(30) DEFAULT NULL,
+  `num_ligbl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlig_ligbl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_ligbl` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libel_ligbl` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fam_ligbl` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pu_ligbl` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dec_ligbl` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte_ligbl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `brut_ligbl` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rem_ligbl` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `netht_ligbl` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tx_ligbl` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nettc_ligbl` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typel_ligbl` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tm_ligbl` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `com_ligbl` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `block_ligbl` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pdstotal_ligbl` decimal(12,3) DEFAULT NULL,
   `mrgart_ligbl` decimal(12,3) DEFAULT NULL,
   `mrgmo_ligbl` decimal(12,3) DEFAULT NULL,
-  `mtx_ligfac` char(5) DEFAULT NULL,
-  `four_ligbl` varchar(8) DEFAULT NULL,
-  `refl_ligbl` varchar(40) DEFAULT NULL,
-  `tour_ligbl` char(15) DEFAULT NULL,
+  `mtx_ligfac` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `four_ligbl` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `refl_ligbl` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tour_ligbl` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte_ligbl` datetime DEFAULT NULL,
   PRIMARY KEY (`num_ligbl`,`numlig_ligbl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3004,27 +3004,27 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Ligcom`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Ligcom` (
-  `code` varchar(25) DEFAULT NULL,
-  `design` varchar(50) DEFAULT NULL,
-  `numcom` varchar(15) DEFAULT NULL,
-  `four` varchar(8) DEFAULT NULL,
+  `code` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `design` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numcom` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `four` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `qte` decimal(9,3) DEFAULT NULL,
   `pbht` decimal(12,3) DEFAULT NULL,
   `rm` decimal(6,2) DEFAULT NULL,
   `paht` decimal(12,3) DEFAULT NULL,
   `datecom` datetime DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   `frais` decimal(12,3) DEFAULT NULL,
   `prvt` decimal(12,3) DEFAULT NULL,
-  `nligne` char(4) DEFAULT NULL,
-  `coda` char(15) DEFAULT NULL,
+  `nligne` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `coda` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pattc` decimal(12,3) DEFAULT NULL,
-  `txconv` decimal(10,4) DEFAULT 1.0000,
-  `majtarif` tinyint(1) DEFAULT 1,
+  `txconv` decimal(10,4) DEFAULT '1.0000',
+  `majtarif` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3042,12 +3042,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Ligrecpt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Ligrecpt` (
-  `code` varchar(25) NOT NULL,
-  `design` varchar(50) DEFAULT NULL,
-  `numrecpt` varchar(15) NOT NULL,
-  `four` varchar(8) NOT NULL,
+  `code` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `design` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numrecpt` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `four` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `daterecpt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `qte` decimal(9,3) DEFAULT NULL,
   `pbht` decimal(12,3) DEFAULT NULL,
@@ -3055,12 +3055,12 @@ CREATE TABLE `Fiches_Ligrecpt` (
   `paht` decimal(12,3) DEFAULT NULL,
   `frais` decimal(12,3) DEFAULT NULL,
   `prvt` decimal(12,3) DEFAULT NULL,
-  `nligne` varchar(4) NOT NULL,
+  `nligne` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `pattc` decimal(12,3) DEFAULT NULL,
-  `txconv` decimal(10,4) DEFAULT 1.0000,
-  `majtarif` tinyint(1) DEFAULT 1,
+  `txconv` decimal(10,4) DEFAULT '1.0000',
+  `majtarif` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`code`,`numrecpt`,`four`,`daterecpt`,`nligne`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3078,13 +3078,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Marques`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Marques` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(5) DEFAULT NULL,
-  `intitule` varchar(20) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3102,17 +3102,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Materiels`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Materiels` (
-  `mat_serie` char(30) NOT NULL,
-  `mat_code` char(15) NOT NULL,
-  `mat_design` char(50) DEFAULT NULL,
-  `mat_design2` char(50) DEFAULT NULL,
-  `mat_fam` char(20) DEFAULT NULL,
-  `mat_four` char(8) DEFAULT NULL,
-  `mat_cequ` char(15) DEFAULT NULL,
-  `mat_cbarre` char(15) DEFAULT NULL,
-  `mat_cfour` char(25) DEFAULT NULL,
+  `mat_serie` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mat_code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mat_design` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_design2` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_fam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_four` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_cequ` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_cbarre` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_cfour` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_paht` decimal(12,3) DEFAULT NULL,
   `mat_frais` decimal(7,3) DEFAULT NULL,
   `mat_prvt` decimal(7,3) DEFAULT NULL,
@@ -3120,28 +3120,28 @@ CREATE TABLE `Fiches_Materiels` (
   `mat_pvht` decimal(12,3) DEFAULT NULL,
   `mat_tva` decimal(10,3) DEFAULT NULL,
   `mat_pvttc` decimal(12,3) DEFAULT NULL,
-  `mat_cdarr` char(4) DEFAULT NULL,
+  `mat_cdarr` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_pvar` decimal(12,3) DEFAULT NULL,
-  `mat_dec` char(1) DEFAULT NULL,
-  `mat_nbd` char(1) DEFAULT NULL,
-  `mat_qte` char(1) DEFAULT NULL,
+  `mat_dec` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_nbd` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_qte` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_dpa` decimal(10,2) DEFAULT NULL,
-  `mat_dfour` char(8) DEFAULT NULL,
+  `mat_dfour` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_pmp` decimal(10,2) DEFAULT NULL,
   `mat_com` decimal(12,3) DEFAULT NULL,
-  `mat_ect` int(1) DEFAULT NULL,
+  `mat_ect` int DEFAULT NULL,
   `mat_eco` decimal(5,2) DEFAULT NULL,
   `mat_poids` decimal(11,3) DEFAULT NULL,
   `mat_poids2` decimal(11,3) DEFAULT NULL,
-  `mat_photo` char(20) DEFAULT NULL,
-  `mat_crst` mediumtext DEFAULT NULL,
-  `mat_vendu` int(1) DEFAULT NULL,
-  `mat_rcpt` char(15) DEFAULT NULL,
-  `mat_bl` char(15) DEFAULT NULL,
-  `mat_marque` char(20) DEFAULT NULL,
-  `mat_type` char(20) DEFAULT NULL,
-  `mat_cli` char(8) DEFAULT NULL,
-  `mat_matdiv` int(1) DEFAULT NULL,
+  `mat_photo` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_crst` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `mat_vendu` int DEFAULT NULL,
+  `mat_rcpt` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_bl` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_marque` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_type` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_cli` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_matdiv` int DEFAULT NULL,
   `mat_dtevte` date DEFAULT NULL,
   `mat_dateg1` date DEFAULT NULL,
   `mat_dateg2` date DEFAULT NULL,
@@ -3166,7 +3166,7 @@ CREATE TABLE `Fiches_Materiels` (
   KEY `id_cbarre` (`mat_cbarre`),
   KEY `id_cfour` (`mat_cfour`),
   KEY `id_marque` (`mat_marque`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3184,17 +3184,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mats` (
-  `mat_serie` char(30) NOT NULL,
-  `mat_code` char(15) NOT NULL,
-  `mat_design` char(50) DEFAULT NULL,
-  `mat_design2` char(50) DEFAULT NULL,
-  `mat_fam` char(5) DEFAULT NULL,
-  `mat_four` char(8) DEFAULT NULL,
-  `mat_cequ` char(15) DEFAULT NULL,
-  `mat_cbarre` char(15) DEFAULT NULL,
-  `mat_cfour` char(25) DEFAULT NULL,
+  `mat_serie` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mat_code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mat_design` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_design2` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_fam` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_four` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_cequ` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_cbarre` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_cfour` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_paht` decimal(12,3) DEFAULT NULL,
   `mat_frais` decimal(7,3) DEFAULT NULL,
   `mat_prvt` decimal(7,3) DEFAULT NULL,
@@ -3202,25 +3202,25 @@ CREATE TABLE `Fiches_Mats` (
   `mat_pvht` decimal(12,3) DEFAULT NULL,
   `mat_tva` decimal(10,3) DEFAULT NULL,
   `mat_pvttc` decimal(12,3) DEFAULT NULL,
-  `mat_cdarr` char(4) DEFAULT NULL,
+  `mat_cdarr` char(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_pvar` decimal(12,3) DEFAULT NULL,
-  `mat_dec` char(1) DEFAULT NULL,
-  `mat_nbd` char(1) DEFAULT NULL,
-  `mat_qte` char(1) DEFAULT NULL,
+  `mat_dec` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_nbd` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_qte` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_dpa` decimal(10,2) DEFAULT NULL,
-  `mat_dfour` char(8) DEFAULT NULL,
+  `mat_dfour` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_pmp` decimal(10,2) DEFAULT NULL,
-  `mat_ddate` char(10) DEFAULT NULL,
+  `mat_ddate` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mat_com` decimal(12,3) DEFAULT NULL,
-  `mat_ect` int(1) DEFAULT NULL,
+  `mat_ect` int DEFAULT NULL,
   `mat_eco` decimal(5,2) DEFAULT NULL,
   `mat_poids` decimal(11,3) DEFAULT NULL,
   `mat_poids2` decimal(11,3) DEFAULT NULL,
-  `mat_photo` char(20) DEFAULT NULL,
-  `mat_crst` mediumtext DEFAULT NULL,
-  `mat_rcpt` char(15) DEFAULT NULL,
+  `mat_photo` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mat_crst` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `mat_rcpt` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`mat_serie`,`mat_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3238,26 +3238,26 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mo` (
-  `mo_code` varchar(15) NOT NULL,
-  `mo_design` varchar(50) DEFAULT NULL,
-  `mo_fam` char(20) DEFAULT NULL,
-  `mo_four` int(11) DEFAULT NULL,
-  `mo_txcd` varchar(2) DEFAULT NULL,
+  `mo_code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mo_design` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mo_fam` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mo_four` int DEFAULT NULL,
+  `mo_txcd` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mo_txht` double DEFAULT NULL,
-  `mo_tva` char(2) DEFAULT NULL,
-  `mo_tempmont` varchar(1) DEFAULT NULL,
+  `mo_tva` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mo_tempmont` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mo_montant` double DEFAULT NULL,
   `mo_valeurht` double DEFAULT NULL,
-  `mo_cdarr` varchar(4) DEFAULT NULL,
+  `mo_cdarr` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mo_valeurttc` double DEFAULT NULL,
   `mo_prvt` decimal(12,3) DEFAULT NULL,
   `mo_marge` decimal(12,3) DEFAULT NULL,
   `mo_impcar` tinyint(1) DEFAULT NULL,
-  `mo_crst` mediumtext DEFAULT NULL,
+  `mo_crst` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`mo_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3276,35 +3276,35 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvt` (
-  `jour` varchar(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL,
-  `numerodef` int(11) DEFAULT NULL,
-  `compte` varchar(8) DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `numerodef` int DEFAULT NULL,
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `collectif` tinyint(1) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `datee` datetime DEFAULT NULL,
   `dateech` datetime DEFAULT NULL,
-  `numcol` varchar(3) DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numcol` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
-  `lind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `relance` int DEFAULT NULL,
+  `lind` bigint unsigned NOT NULL AUTO_INCREMENT,
   `dteval` date DEFAULT NULL,
-  `export` char(1) DEFAULT NULL,
-  `control` varchar(40) DEFAULT NULL,
+  `export` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `control` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `supprimee` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   UNIQUE KEY `lind` (`lind`),
@@ -3313,7 +3313,7 @@ CREATE TABLE `Fiches_Mvt` (
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
   KEY `compte2` (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3331,31 +3331,31 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvt1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvt1` (
-  `jour` varchar(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT 0,
-  `compte` varchar(8) NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL DEFAULT '0',
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `collectif` int DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime DEFAULT NULL,
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) NOT NULL,
-  `numlot` varchar(10) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
+  `relance` int DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3373,31 +3373,31 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvt2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvt2` (
-  `jour` varchar(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT 0,
-  `compte` varchar(8) NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL DEFAULT '0',
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `collectif` int DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime DEFAULT NULL,
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) NOT NULL,
-  `numlot` varchar(10) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
-  `control` varchar(40) DEFAULT NULL,
+  `relance` int DEFAULT NULL,
+  `control` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3415,31 +3415,31 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvt3`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvt3` (
-  `jour` varchar(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT 0,
-  `compte` varchar(8) NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL DEFAULT '0',
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `collectif` int DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime DEFAULT NULL,
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) NOT NULL,
-  `numlot` varchar(10) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
+  `relance` int DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3457,31 +3457,31 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvt4`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvt4` (
-  `jour` varchar(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT 0,
-  `compte` varchar(8) NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL DEFAULT '0',
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `collectif` int DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime DEFAULT NULL,
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) NOT NULL,
-  `numlot` varchar(10) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
+  `relance` int DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3499,31 +3499,31 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvt5`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvt5` (
-  `jour` varchar(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL DEFAULT 0,
-  `compte` varchar(8) NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL DEFAULT '0',
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `collectif` int DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime DEFAULT NULL,
   `datee` datetime DEFAULT NULL,
-  `numdoc` varchar(10) NOT NULL,
-  `numlot` varchar(10) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
+  `relance` int DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numero`,`compte`,`numdoc`,`numlot`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3541,23 +3541,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtA`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtA` (
-  `numero` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `numero` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
-  `pourcent` char(5) DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pourcent` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `jour` char(2) DEFAULT NULL,
-  `poste` char(3) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3575,23 +3575,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtA1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtA1` (
-  `numero` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `numero` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
-  `pourcent` char(5) DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pourcent` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `jour` char(2) DEFAULT NULL,
-  `poste` char(3) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3609,23 +3609,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtA2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtA2` (
-  `numero` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `numero` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
-  `pourcent` char(5) DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pourcent` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `jour` char(2) DEFAULT NULL,
-  `poste` char(3) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3643,23 +3643,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtA3`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtA3` (
-  `numero` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `numero` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
-  `pourcent` char(5) DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pourcent` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `jour` char(2) DEFAULT NULL,
-  `poste` char(3) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3677,23 +3677,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtA4`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtA4` (
-  `numero` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `numero` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
-  `pourcent` char(5) DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pourcent` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `jour` char(2) DEFAULT NULL,
-  `poste` char(3) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3711,23 +3711,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtA5`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtA5` (
-  `numero` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `numero` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
-  `pourcent` char(5) DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pourcent` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `jour` char(2) DEFAULT NULL,
-  `poste` char(3) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3745,45 +3745,45 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtM`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtM` (
-  `jour` char(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL,
-  `numerodef` int(11) DEFAULT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `numerodef` int DEFAULT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `collectif` tinyint DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
-  `numcol` char(3) DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numcol` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(8) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
-  `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
-  `export` char(1) DEFAULT NULL,
-  `control` varchar(40) DEFAULT NULL,
-  `lind2` int(11) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `relance` int DEFAULT NULL,
+  `numerop` int DEFAULT NULL,
+  `numeropdef` int DEFAULT NULL,
+  `export` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `control` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lind2` int DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
   `datem` date DEFAULT NULL,
   `supprimee` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
   KEY `compte2` (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3801,43 +3801,43 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtM1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtM1` (
-  `jour` char(2) DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `numerodef` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `collectif` tinyint DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
-  `numcol` char(3) DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numcol` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(8) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
-  `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
-  `export` char(1) DEFAULT NULL,
-  `control` varchar(40) DEFAULT NULL,
-  `lind2` int(11) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `relance` int DEFAULT NULL,
+  `numerop` int DEFAULT NULL,
+  `numeropdef` int DEFAULT NULL,
+  `export` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `control` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lind2` int DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
   KEY `compte2` (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3855,43 +3855,43 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtM2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtM2` (
-  `jour` char(2) DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `numerodef` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `collectif` tinyint DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
-  `numcol` char(3) DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numcol` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(8) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
-  `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
-  `export` char(1) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
-  `lind2` int(11) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `relance` int DEFAULT NULL,
+  `numerop` int DEFAULT NULL,
+  `numeropdef` int DEFAULT NULL,
+  `export` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lind2` int DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
   KEY `compte2` (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3909,43 +3909,43 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtM3`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtM3` (
-  `jour` char(2) DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `numerodef` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `collectif` tinyint DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
-  `numcol` char(3) DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numcol` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(8) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
-  `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
-  `export` char(1) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
-  `lind2` int(11) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `relance` int DEFAULT NULL,
+  `numerop` int DEFAULT NULL,
+  `numeropdef` int DEFAULT NULL,
+  `export` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lind2` int DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
   KEY `compte2` (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3963,43 +3963,43 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtM4`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtM4` (
-  `jour` char(2) DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `numerodef` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `collectif` tinyint DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
-  `numcol` char(3) DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numcol` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(8) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
-  `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
-  `export` char(1) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
-  `lind2` int(11) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `relance` int DEFAULT NULL,
+  `numerop` int DEFAULT NULL,
+  `numeropdef` int DEFAULT NULL,
+  `export` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lind2` int DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
   KEY `compte2` (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4017,43 +4017,43 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_MvtM5`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_MvtM5` (
-  `jour` char(2) DEFAULT NULL,
-  `numero` int(6) NOT NULL,
-  `numerodef` int(6) NOT NULL,
-  `compte` char(8) DEFAULT NULL,
-  `collectif` tinyint(4) DEFAULT NULL,
-  `intitule` varchar(40) DEFAULT NULL,
+  `jour` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `numerodef` int NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `collectif` tinyint DEFAULT NULL,
+  `intitule` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` date DEFAULT NULL,
   `datee` date DEFAULT NULL,
   `dateech` date DEFAULT NULL,
-  `numcol` char(3) DEFAULT NULL,
-  `numdoc` char(10) DEFAULT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `numcol` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(8) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
   `dteval` date DEFAULT NULL,
-  `relance` int(1) DEFAULT NULL,
-  `numerop` int(11) DEFAULT NULL,
-  `numeropdef` int(11) DEFAULT NULL,
-  `export` char(1) DEFAULT NULL,
-  `control` varchar(30) DEFAULT NULL,
-  `lind2` int(11) DEFAULT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `relance` int DEFAULT NULL,
+  `numerop` int DEFAULT NULL,
+  `numeropdef` int DEFAULT NULL,
+  `export` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `control` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lind2` int DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`),
   KEY `date` (`dte`),
   KEY `numero2` (`numero`),
   KEY `compte2` (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4071,16 +4071,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvtexp`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvtexp` (
-  `mind` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(15) DEFAULT NULL,
+  `mind` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `daterecpt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `qtep` varchar(10) DEFAULT NULL,
-  `qtem` varchar(10) DEFAULT NULL,
-  `com` varchar(35) DEFAULT NULL,
+  `qtep` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qtem` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `com` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`mind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4098,19 +4098,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Mvtexpdc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Mvtexpdc` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `mind` int(11) NOT NULL,
-  `code` char(15) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `mind` int NOT NULL,
+  `code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `daterecpt` date NOT NULL,
-  `qtep` char(10) DEFAULT NULL,
-  `qtem` char(10) DEFAULT NULL,
-  `com` varchar(35) DEFAULT NULL,
-  `type` char(1) DEFAULT NULL,
+  `qtep` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qtem` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `com` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `mind` (`mind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4128,15 +4128,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Numabon`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Numabon` (
-  `numero` int(11) NOT NULL DEFAULT 0,
-  `intitule` varchar(30) DEFAULT NULL,
-  `type` char(1) DEFAULT NULL,
-  `typem` char(1) DEFAULT NULL,
-  `compteur` int(11) DEFAULT 0,
+  `numero` int NOT NULL DEFAULT '0',
+  `intitule` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `typem` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compteur` int DEFAULT '0',
   PRIMARY KEY (`numero`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4154,58 +4154,58 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Parametres`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Parametres` (
-  `ind` int(11) NOT NULL DEFAULT 0,
+  `ind` int NOT NULL DEFAULT '0',
   `dteclec` date DEFAULT NULL,
   `dteclec1` date DEFAULT NULL,
   `dteclec2` date DEFAULT NULL,
   `dteclec3` date DEFAULT NULL,
   `dteclec4` date DEFAULT NULL,
   `dteclec5` date DEFAULT NULL,
-  `dtepp` varchar(7) DEFAULT NULL,
-  `dtepec` varchar(7) DEFAULT NULL,
+  `dtepp` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dtepec` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dtepc` date DEFAULT NULL,
   `dtetdec` date DEFAULT NULL,
   `dtefedec` date DEFAULT NULL,
-  `cptrplus` varchar(8) DEFAULT NULL,
-  `cptrmoins` varchar(8) DEFAULT NULL,
-  `jdr` varchar(2) DEFAULT NULL,
-  `cptrsplus` varchar(8) DEFAULT NULL,
-  `cptrsmoins` varchar(8) DEFAULT NULL,
-  `numecriture` int(11) DEFAULT NULL,
-  `dnc` int(11) DEFAULT NULL,
-  `dnbon` varchar(8) DEFAULT NULL,
-  `dnfac` varchar(6) DEFAULT NULL,
-  `dndevis` varchar(8) DEFAULT NULL,
-  `jrnal` varchar(2) DEFAULT NULL,
-  `son` int(11) NOT NULL DEFAULT 0,
-  `dnf` int(11) DEFAULT NULL,
-  `numecriture1` int(11) DEFAULT NULL,
-  `numecriture2` int(11) DEFAULT NULL,
-  `numecriture3` int(11) DEFAULT NULL,
-  `coretro` varchar(5) DEFAULT NULL,
-  `dncom` varchar(5) DEFAULT NULL,
-  `devise` varchar(8) DEFAULT NULL,
-  `jrnal2` varchar(2) DEFAULT NULL,
-  `jrnal3` varchar(2) DEFAULT NULL,
-  `jrnal4` char(2) DEFAULT NULL,
+  `cptrplus` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cptrmoins` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jdr` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cptrsplus` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cptrsmoins` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numecriture` int DEFAULT NULL,
+  `dnc` int DEFAULT NULL,
+  `dnbon` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dnfac` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dndevis` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jrnal` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `son` int NOT NULL DEFAULT '0',
+  `dnf` int DEFAULT NULL,
+  `numecriture1` int DEFAULT NULL,
+  `numecriture2` int DEFAULT NULL,
+  `numecriture3` int DEFAULT NULL,
+  `coretro` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dncom` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `devise` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jrnal2` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jrnal3` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `jrnal4` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dteinv` date DEFAULT NULL,
-  `jrnal5` char(2) DEFAULT NULL,
-  `dnbr` char(8) DEFAULT NULL,
+  `jrnal5` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dnbr` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nfac` tinyint(1) DEFAULT NULL,
-  `version` char(5) DEFAULT NULL,
-  `conf` blob DEFAULT NULL,
+  `version` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `conf` blob,
   `frais` decimal(6,2) DEFAULT NULL,
-  `cptfrais` char(8) DEFAULT NULL,
-  `tvafrais` char(2) DEFAULT NULL,
-  `dntk` char(7) DEFAULT NULL,
-  `cutk` char(7) DEFAULT NULL,
-  `dnart` varchar(15) DEFAULT NULL,
-  `ecart` decimal(6,2) DEFAULT 0.00,
-  `jrnod` char(2) DEFAULT NULL,
+  `cptfrais` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tvafrais` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dntk` char(7) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cutk` char(7) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dnart` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ecart` decimal(6,2) DEFAULT '0.00',
+  `jrnod` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4214,7 +4214,7 @@ CREATE TABLE `Fiches_Parametres` (
 
 LOCK TABLES `Fiches_Parametres` WRITE;
 /*!40000 ALTER TABLE `Fiches_Parametres` DISABLE KEYS */;
-INSERT INTO `Fiches_Parametres` VALUES (0,'2018-12-31','2017-12-31','2016-12-31','2015-12-31','2014-12-31','2013-12-31','12.2017','01.2018','2017-12-31','2017-12-31','2017-12-31','758000','658000','90','120000','129000',0,411027,'000000','000000','000000','70',0,401026,0,0,0,'1,00',NULL,'Euros','53','50','70',NULL,'60',NULL,0,'3.69',NULL,0.00,NULL,NULL,'0000001','0000001','003',0.00,'10');
+INSERT INTO `Fiches_Parametres` VALUES (0,'2018-12-31','2017-12-31','2016-12-31','2015-12-31','2014-12-31','2013-12-31','12.2017','01.2018','2017-12-31','2017-12-31','2017-12-31','758000','658000','90','120000','129000',0,411027,'000000','000000','000000','70',0,401026,0,0,0,'1,00',NULL,'Euros','53','50','70',NULL,'60',NULL,0,'3.69',NULL,0.00,'627800','3','0000001','0000001','001',0.00,'10');
 /*!40000 ALTER TABLE `Fiches_Parametres` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4224,14 +4224,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Postes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Postes` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(3) DEFAULT NULL,
-  `intitulep` char(35) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitulep` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`),
   KEY `code` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4249,15 +4249,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_PrdComp`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_PrdComp` (
-  `codep` varchar(15) NOT NULL,
-  `codec` varchar(50) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
-  `qte` varchar(50) DEFAULT NULL,
+  `codep` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codec` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mo` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`codep`,`codec`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4275,14 +4275,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Promo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Promo` (
-  `code` varchar(15) NOT NULL,
-  `libelle` varchar(50) DEFAULT NULL,
+  `code` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datedeb` date DEFAULT NULL,
   `datefin` date DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4300,15 +4300,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Rappro`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Rappro` (
-  `cpt` varchar(8) NOT NULL,
-  `nreleve` int(11) NOT NULL DEFAULT 0,
+  `cpt` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nreleve` int NOT NULL DEFAULT '0',
   `date_releve` datetime DEFAULT NULL,
   `date_rappro` datetime DEFAULT NULL,
   `solde` double DEFAULT NULL,
   PRIMARY KEY (`cpt`,`nreleve`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4326,19 +4326,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Reglements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Reglements` (
-  `code` char(2) NOT NULL,
-  `libel` varchar(20) DEFAULT NULL,
-  `journal` char(2) DEFAULT NULL,
-  `cptint` char(8) DEFAULT NULL,
-  `bordereaux` tinyint(1) DEFAULT 0,
-  `lcr` int(11) DEFAULT 0,
-  `caisse` int(11) DEFAULT 0,
-  `decaissement` tinyint(1) DEFAULT 0,
-  `regroup` tinyint(1) DEFAULT 1,
+  `code` char(2) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libel` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `journal` char(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cptint` char(8) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bordereaux` tinyint(1) DEFAULT '0',
+  `lcr` int DEFAULT '0',
+  `caisse` int DEFAULT '0',
+  `decaissement` tinyint(1) DEFAULT '0',
+  `regroup` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4357,25 +4357,25 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_RelFacture`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_RelFacture` (
-  `compte` char(8) NOT NULL,
-  `rs` char(10) DEFAULT NULL,
-  `intitule` char(30) DEFAULT NULL,
-  `adr1` char(30) DEFAULT NULL,
-  `adr2` char(30) DEFAULT NULL,
-  `cp` char(10) DEFAULT NULL,
-  `ville` char(25) DEFAULT NULL,
-  `dte` char(10) DEFAULT NULL,
-  `numdoc` char(10) NOT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` char(30) DEFAULT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rs` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cp` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dte` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `numero` char(8) DEFAULT NULL,
-  `journal` char(2) DEFAULT NULL,
+  `numero` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `journal` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`compte`,`numdoc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4393,25 +4393,25 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Relcomptes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Relcomptes` (
-  `compte` char(8) NOT NULL,
-  `Rs` char(10) DEFAULT NULL,
-  `intitule` char(30) DEFAULT NULL,
-  `adr1` char(30) DEFAULT NULL,
-  `adr2` char(30) DEFAULT NULL,
-  `cp` char(10) DEFAULT NULL,
-  `ville` char(25) DEFAULT NULL,
-  `dte` char(10) DEFAULT NULL,
-  `numdoc` char(10) NOT NULL,
-  `numlot` char(10) DEFAULT NULL,
-  `libelle` char(30) DEFAULT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Rs` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cp` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dte` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` decimal(12,2) DEFAULT NULL,
   `montantc` decimal(12,2) DEFAULT NULL,
-  `numero` char(8) NOT NULL,
-  `journal` char(2) DEFAULT NULL,
+  `numero` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `journal` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`compte`,`numdoc`,`numero`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4429,13 +4429,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_RemCliFam`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_RemCliFam` (
-  `codec` char(8) NOT NULL,
-  `codef` char(20) NOT NULL,
+  `codec` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codef` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `remise` decimal(6,3) DEFAULT NULL,
   PRIMARY KEY (`codec`,`codef`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4453,14 +4453,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_RemTypec`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_RemTypec` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `coder` char(2) DEFAULT NULL,
-  `codef` char(20) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `coder` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codef` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `remise` decimal(6,3) DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4478,12 +4478,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Rpl1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Rpl1` (
-  `codep` char(15) NOT NULL,
-  `coderpl1` char(15) NOT NULL,
+  `codep` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `coderpl1` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codep`,`coderpl1`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4501,12 +4501,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Rpl2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Rpl2` (
-  `codep` char(15) NOT NULL,
-  `coderpl2` char(15) NOT NULL,
+  `codep` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `coderpl2` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`codep`,`coderpl2`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4524,14 +4524,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_RubCompt`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_RubCompt` (
-  `numrub` char(8) NOT NULL,
-  `compte1` char(8) NOT NULL,
-  `compte2` char(8) DEFAULT NULL,
+  `numrub` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `compte1` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `compte2` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amortissement` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`numrub`,`compte1`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4550,15 +4550,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Rubriques`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Rubriques` (
-  `numrub` char(8) NOT NULL,
-  `intitule` varchar(70) DEFAULT NULL,
-  `type` char(2) DEFAULT NULL,
-  `detail` char(2) DEFAULT NULL,
-  `num` char(2) DEFAULT NULL,
+  `numrub` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `detail` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `num` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numrub`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4567,7 +4567,7 @@ CREATE TABLE `Fiches_Rubriques` (
 
 LOCK TABLES `Fiches_Rubriques` WRITE;
 /*!40000 ALTER TABLE `Fiches_Rubriques` DISABLE KEYS */;
-INSERT INTO `Fiches_Rubriques` VALUES ('B0010','BILAN - ACTIF','T',NULL,NULL),('B0020','ACTIF IMMOBILISE','E','N',NULL),('B0025','Capital souscrit non-appele','E','N',NULL),('B0030',NULL,'L',NULL,NULL),('B0050','Frais d\' etablissement','L',NULL,NULL),('B0060','Frais de recherche et de developpement','L',NULL,NULL),('B0070','Concessions, brevets, licences, marques, procedes, logiciels, etc...','L',NULL,NULL),('B0080','Fonds commerciaux','L',NULL,NULL),('B0090','Autres','L',NULL,NULL),('B0095','Immobilisations incorporelles','E',NULL,NULL),('B0110','Avances et acomptes','L',NULL,NULL),('B0115','Immobilisations incorporelles en cours','E',NULL,NULL),('B0130','Terrains','L',NULL,NULL),('B0140','Constructions','L',NULL,NULL),('B0150','Installations techniques, materiels et outillages industriels','L',NULL,NULL),('B0160','Autres','L',NULL,NULL),('B0165','Immobilisations corporelles','E',NULL,NULL),('B0180','Avances et acomptes','L',NULL,NULL),('B0190','Immobilisations financieres','L',NULL,NULL),('B0200','Participations','L',NULL,NULL),('B0210','Creances rattachees a des participations','L',NULL,NULL),('B0220','Autres titres immobilises','L',NULL,NULL),('B0230','Prets','L',NULL,NULL),('B0240','Autres','L',NULL,NULL),('B0245','Immobilisations corporelles en cours','E',NULL,NULL),('B0250','TOTAL I','S',NULL,NULL),('B0260','ACTIF CIRCULANT','E',NULL,NULL),('B0280','Matieres premieres et autres approvisionnements','L',NULL,NULL),('B0290','En-cours de production de biens','L',NULL,NULL),('B0300','En-cours de production de services','L',NULL,NULL),('B0310','Produits intermediaires et finis','L',NULL,NULL),('B0320','Marchandises','L',NULL,NULL),('B0330','Avances et acomptes verses sur commande','L',NULL,NULL),('B0340','Avances et acomptes versés','L',NULL,NULL),('B0345','Stocks et en-cours','E',NULL,NULL),('B0360','Creances clients et comptes rattaches','L',NULL,NULL),('B0370','Créances associés et comptes rattachés','L',NULL,NULL),('B0375','Créances sociales','L',NULL,NULL),('B0380','Capital souscrit - appele non verse','L',NULL,NULL),('B0390','Valeurs mobilieres de placement :','E',NULL,NULL),('B0400','Actions propres','L',NULL,NULL),('B0410','Autres titres','L',NULL,NULL),('B0415','Creances','E',NULL,NULL),('B0430','Disponibilités','L','',''),('B0435','Disponibilités','E','',''),('B0450','Charges constatées d\' avance','L',NULL,NULL),('B0455','Charges constatées d\' avance','E',NULL,NULL),('B0460','TOTAL II','S',NULL,NULL),('B0475','Charges a repartir sur plusieurs exercices (III)','E',NULL,NULL),('B0480',NULL,'L',NULL,NULL),('B0500',NULL,'L',NULL,NULL),('B0505','Primes de remboursement des emprunts (IV)','E',NULL,NULL),('B0520',NULL,'L',NULL,NULL),('B0525','Ecarts de conversion Actif (V)','E',NULL,NULL),('B0530','TOTAL GENERAL (I+II+III+IV+V)','O',NULL,NULL),('B1010','BILAN - PASSIF','T',NULL,NULL),('B1020','CAPITAUX PROPRES','E',NULL,NULL),('B1040','Capital social','L',NULL,NULL),('B1050','dont verse :','L','N',NULL),('B1055','Capital','E',NULL,NULL),('B1070',NULL,'L',NULL,NULL),('B1075','Primes d\' emission, de fusion, d\' apport','E',NULL,NULL),('B1090',NULL,'L',NULL,NULL),('B1095','Ecarts de reevaluation','E',NULL,NULL),('B1110',NULL,'L',NULL,NULL),('B1115','Ecarts d\' equivalence','E',NULL,NULL),('B1130','Reserve legale','L',NULL,NULL),('B1140','Reserves statutaires ou contractuelles','L',NULL,NULL),('B1150','Reserves reglementees','L',NULL,NULL),('B1160','Autres','L',NULL,NULL),('B1165','Reserves :','E',NULL,NULL),('B1180',NULL,'L',NULL,NULL),('B1185','Report a nouveau','E',NULL,NULL),('B1200',NULL,'L',NULL,NULL),('B1205','Resultat de l\' exercice (benefice ou perte )','E',NULL,NULL),('B1220',NULL,'L',NULL,NULL),('B1225','Subventions d\' investissements','E',NULL,NULL),('B1240',NULL,'L',NULL,NULL),('B1245','Provisions reglementees','E',NULL,NULL),('B1250','TOTAL I','S',NULL,NULL),('B1260','PROVISIONS POUR RISQUES ET CHARGES','E',NULL,NULL),('B1280',NULL,'L',NULL,NULL),('B1285','Provisions pour risques','E',NULL,NULL),('B1300',NULL,'L',NULL,NULL),('B1305','Provisions pour charges','E',NULL,NULL),('B1310','TOTAL II','S',NULL,NULL),('B1320','DETTES','E',NULL,NULL),('B1340',NULL,'L',NULL,NULL),('B1345','Emprunts obligatoires converties','E',NULL,NULL),('B1360',NULL,'L',NULL,NULL),('B1365','Autres emprunts obligataires','E',NULL,NULL),('B1380',NULL,'L',NULL,NULL),('B1385','Emprunts et dettes aupres des etablissements de credit','E',NULL,NULL),('B1400',NULL,'L',NULL,NULL),('B1405','Emprunts et dettes financieres divers','E',NULL,NULL),('B1420',NULL,'L',NULL,NULL),('B1425','Avances et acomptes reçus sur commandes en cours','E',NULL,NULL),('B1440',NULL,'L',NULL,NULL),('B1445','Dettes fournisseurs et comptes rattaches','E',NULL,NULL),('B1460',NULL,'L',NULL,NULL),('B1465','Dettes fiscales et sociales','E',NULL,NULL),('B1480',NULL,'L',NULL,NULL),('B1485','Dettes sur immobilisations et comptes rattaches','E',NULL,NULL),('B1500',NULL,'L',NULL,NULL),('B1505','Autres dettes','E',NULL,NULL),('B1520',NULL,'L',NULL,NULL),('B1525','Produits constates d\' avance','E',NULL,NULL),('B1530','TOTAL III','S','N',NULL),('B1550',NULL,'L',NULL,NULL),('B1555','Ecarts de conversion Passif (IV)','E','N',NULL),('B1560','TOTAL GENERAL (I+II+III+IV)','O','N',NULL),('R0010','COMPTE DE RESULTAT - CHARGES','T',NULL,NULL),('R0020','CHARGES D\'EXPLOITATION','E',NULL,NULL),('R0030','Cout d\'achat des marchandises vendues dans l\'exercice','E','N',NULL),('R0040','Achats de marchandises','L',NULL,NULL),('R0050','Variations des stocks de marchandises','L',NULL,NULL),('R0060','Consommations de l\'exercice en provenance des tiers','E','N',NULL),('R0070','Achats stockes d\'approvisionnements :','L',NULL,NULL),('R0080','Matieres premières','L',NULL,NULL),('R0090','Autres approvisionnements','L',NULL,NULL),('R0100','Variations des stocks d\'approvisionnements','L',NULL,NULL),('R0110','Achats de sous-traitances','L',NULL,NULL),('R0120','Achats non stockes de matieres et fournitures','L',NULL,NULL),('R0130','Services exterieurs :','L',NULL,NULL),('R0140','Personnel exterieur','L',NULL,NULL),('R0150','Loyers en credit-bail','L',NULL,NULL),('R0160','Autres','L',NULL,NULL),('R0170','Impots, taxes, et versements assimiles','E','N',NULL),('R0180','Sur remunerations','L',NULL,NULL),('R0190','Autres','L',NULL,NULL),('R0200','Charges de personnel','E','N',NULL),('R0210','Salaires et traitements','L',NULL,NULL),('R0220','Charges sociales','L',NULL,NULL),('R0230','Dotations aux amortissements et aux provisions','E','N',NULL),('R0240','Sur immobilisations : Dotations aux amortissements','L',NULL,NULL),('R0250','Sur immobilisations : Dotations aux provisions','L',NULL,NULL),('R0260','Sur actif circulant : Dotations aux provisions','L',NULL,NULL),('R0270','Pour risques et charges : Dotations aux provisions','L',NULL,NULL),('R0280','Autres charges','E','N',NULL),('R0290',NULL,'L',NULL,NULL),('R0300','TOTAL I','S',NULL,NULL),('R0310','QUOTES-PARTS DE RESULTAT SUR OP FAITES EN COMMUN (II)','E',NULL,NULL),('R0320',NULL,'I',NULL,NULL),('R0330','CHARGES FINANCIERES (III)','E','N',NULL),('R0340','Dotations aux amortissemnts et aux provisions','L',NULL,NULL),('R0350','Interets et charges assimilees','L',NULL,NULL),('R0360','Differences negatives de change','L',NULL,NULL),('R0370','Charges nettes/cessions de valeurs mobilieres de placement','L',NULL,NULL),('R0380','CHARGES EXCEPTIONNELLES (IV)','E','N',NULL),('R0390','Sur operations de gestion','L',NULL,NULL),('R0400','Sur operations en capital :','L',NULL,NULL),('R0410','Valeurs comptables des elements immob et financiers cede','L',NULL,NULL),('R0420','Autres','L',NULL,NULL),('R0430','Dotations aux amortissements et aux provisions :','L',NULL,NULL),('R0440','Dotations aux provisions reglementees','L',NULL,NULL),('R0450','Dotations aux amortissements et autres provisions','L',NULL,NULL),('R0460','PARTICIPATION DES SALARIES AUX FRUITS DE L\'EXPANSION (V)','E',NULL,NULL),('R0470',NULL,'L',NULL,NULL),('R0480','IMPOTS SUR LES BENEFICES (VI)','E','N',NULL),('R0490',NULL,'L',NULL,NULL),('R0700','TOTAL DES CHARGES (I+II+II+IV+V+VI)','O',NULL,NULL),('R0800','SOLDE CREDITEUR = Bénefice (VII)','C',NULL,NULL),('R0900','TOTAL GENERAL (I+II+III+IV+V+VI+VII)','R',NULL,NULL),('R1010','COMPTE DE RESULTAT - PRODUITS','T',NULL,NULL),('R1020','PRODUITS D\'EXPLOITATION :','E',NULL,NULL),('R1030','Ventes de marchandises','E','N',NULL),('R1040',NULL,'L',NULL,NULL),('R1050','Production vendue','E','N',NULL),('R1060','Ventes','L',NULL,NULL),('R1070','Travaux','L',NULL,NULL),('R1080','Prestations de services','L',NULL,NULL),('R1090','MONTANT NET DU CHIFFRE D\'AFFAIRES :','S',NULL,NULL),('R1100','Dont a l\'exportation :','E','N',NULL),('R1105',NULL,'L',NULL,NULL),('R1110','Production stockee','E','N',NULL),('R1120','En cours de production de biens','L',NULL,NULL),('R1130','En cours de production de services','L',NULL,NULL),('R1140','produits','L',NULL,NULL),('R1150','Production immobilisee','E','N',NULL),('R1160',NULL,'L',NULL,NULL),('R1170','Subvention d\'exploitation','E','N',NULL),('R1180',NULL,'L',NULL,NULL),('R1190','Reprises sur provisions (et amortissements)','E','N',NULL),('R1200',NULL,'L',NULL,NULL),('R1210','Transferts de charges','E','N',NULL),('R1220',NULL,'L',NULL,NULL),('R1230','Autres produits','E','N',NULL),('R1240',NULL,'L',NULL,NULL),('R1250','TOTAL I','S',NULL,NULL),('R1300','QUOTES-PARTS DE RESULTAT SUR OP. FAITES EN COMMUN (II)','E',NULL,NULL),('R1310',NULL,'L',NULL,NULL),('R1350','PRODUITS FINANCIERS (III)','E','N',NULL),('R1360','Departicipations','L',NULL,NULL),('R1370','D\'autres valeurs mobilieres et creances de l\'actif immobilier','L',NULL,NULL),('R1380','Autres interets et produits assimiles','L',NULL,NULL),('R1390','Reprises sur provisions et transferts de charges financiere','L',NULL,NULL),('R1400','Differences positives de change','L',NULL,NULL),('R1410','Produits nets sur cessions de valeurs mobilieres de placement','L',NULL,NULL),('R1450','PRODUITS EXCEPTIONNELS (IV)','E','N',NULL),('R1460','Sur operations de gestion','L',NULL,NULL),('R1470','Sur operations en capital :','L',NULL,NULL),('R1480','produits des cessions d\'elements d\'actif','L',NULL,NULL),('R1490','Subventions d\'investissement virees aux resultats de l\'exercice','L',NULL,NULL),('R1500','Autres','L',NULL,NULL),('R1510','Reprises sur provisions et transferts de charges exceptionnelles','L',NULL,NULL),('R1700','TOTAL DES PRODUITS (I+II+III+IV)','O',NULL,NULL),('R1800','SOLDE DEBITEUR = PERTE (V)','D',NULL,NULL),('R1810','TOTAL GENERAL(I+II+III+IV+V)','G',NULL,NULL),('S0010','SOLDES INTERMEDIAIRES DE GESTION','T',NULL,NULL),('S0020','Marge commerciale','E','N',NULL),('S0030','Ventes de marchandises','L','O','P'),('S0040','RRR sur ventes','L','O','P'),('S0050','Cout direct d\'achat','L','O','A'),('S0060','Marge commerciale','E','N',NULL),('S0070','Production vendue','L','O','P'),('S0080','Production stockee','L','O','P'),('S0090','Production immobilisee','L','N','P'),('S0100','Produits nets partiels sur operations a long terme','L',NULL,NULL),('S0105','Production de l\'exercice','E','N','P'),('S0110','Production de l\'exercice','L','N','R'),('S0115','Marge commerciale','L','N','A'),('S0120','Consommations en provenance de tiers','L','O','A'),('S0130','Valeur ajoutée','E','N',NULL),('S0135','Valeur ajoutée','L','N','R'),('S0140',NULL,NULL,NULL,NULL),('S0150','Subventions d\'exploitation','L','O','P'),('S0160','Impots, taxes, et versements assimiles','L','O','A'),('S0170','Charges de personnel','L','O','A'),('S0180','Excédent brut d\'exploitation','E','N',NULL),('S0190','Excédent brut d\'exploitation','L','N','R'),('S0195','Insuffisance brute d\'exploitation',NULL,NULL,NULL),('S0200','Reprises sur ammortissements et provisions d\'exploitation','L','O','P'),('S0205','Transferts de charges d\'exploitation','L','O','P'),('S0210','Dotations aux amortissements et provisions d\'exploitation','L','O','A'),('S0220','Autres produits de gestion courante','L','O','P'),('S0230','Autres charges de gestion courante','L','O','A'),('S0240','Transferts de charges d\'exploitation',NULL,NULL,NULL),('S0250','Résultat d\'exploitation','E','N',NULL),('S0260','Résultat d\'exploitation','L','N','R'),('S0270','Quotes-parts de resultat sur operations faites en commun','L','O','P'),('S0280','Quotes-parts de resultat sur operations faites en commun','L','O','A'),('S0290','Produits financiers','L','O','P'),('S0300','Charges financieres','L','O','A'),('S0310','Résultat courant avant impots','E','N',NULL),('S0315','Résultat courant avant impots','L','N','P'),('S0320','Résultat courant avant impots','L','N','A'),('S0330','Produits exceptionnels','L','O','P'),('S0340','Charges exceptionnelles','L','O','A'),('S0350','Résultat exceptionnel','E','N',NULL),('S0354','Résultat courant avant impots','L','N','R'),('S0358','Résultat exceptionnel','L','N','R'),('S0360','Participations des salaries aux resultats de l\'exercice','L','O','A'),('S0370','Impots sur les benefices','L','O','A'),('S0380','Résultat de l\'exercice','E','N',NULL),('S0390','Produits cessions d\'éléments d\'actif','L','O','P'),('S0400','Valeur comptable éléments cédés','L','O','A'),('S0410','Plus et moins-values sur cessions d\'éléments d\'actif','E','N',NULL);
+INSERT INTO `Fiches_Rubriques` VALUES ('B0010','BILAN - ACTIF','T',NULL,NULL),('B0020','ACTIF IMMOBILISE','E','N',NULL),('B0025','Capital souscrit non-appele','E','N',NULL),('B0030',NULL,'L',NULL,NULL),('B0050','Frais d\' etablissement','L',NULL,NULL),('B0060','Frais de recherche et de developpement','L',NULL,NULL),('B0070','Concessions, brevets, licences, marques, procedes, logiciels, etc...','L',NULL,NULL),('B0080','Fonds commerciaux','L',NULL,NULL),('B0090','Autres','L',NULL,NULL),('B0095','Immobilisations incorporelles','E',NULL,NULL),('B0110','Avances et acomptes','L',NULL,NULL),('B0115','Immobilisations incorporelles en cours','E',NULL,NULL),('B0130','Terrains','L',NULL,NULL),('B0140','Constructions','L',NULL,NULL),('B0150','Installations techniques, materiels et outillages industriels','L',NULL,NULL),('B0160','Autres','L',NULL,NULL),('B0165','Immobilisations corporelles','E',NULL,NULL),('B0180','Avances et acomptes','L',NULL,NULL),('B0190','Immobilisations financieres','L',NULL,NULL),('B0200','Participations','L',NULL,NULL),('B0210','Creances rattachees a des participations','L',NULL,NULL),('B0220','Autres titres immobilises','L',NULL,NULL),('B0230','Prets','L',NULL,NULL),('B0240','Autres','L',NULL,NULL),('B0245','Immobilisations corporelles en cours','E',NULL,NULL),('B0250','TOTAL I','S',NULL,NULL),('B0260','ACTIF CIRCULANT','E',NULL,NULL),('B0280','Matieres premieres et autres approvisionnements','L',NULL,NULL),('B0290','En-cours de production de biens','L',NULL,NULL),('B0300','En-cours de production de services','L',NULL,NULL),('B0310','Produits intermediaires et finis','L',NULL,NULL),('B0320','Marchandises','L',NULL,NULL),('B0330','Avances et acomptes verses sur commande','L',NULL,NULL),('B0340','Avances et acomptes versÃ©s','L',NULL,NULL),('B0345','Stocks et en-cours','E',NULL,NULL),('B0360','Creances clients et comptes rattaches','L',NULL,NULL),('B0370','CrÃ©ances associÃ©s et comptes rattachÃ©s','L',NULL,NULL),('B0375','CrÃ©ances sociales','L',NULL,NULL),('B0380','Capital souscrit - appele non verse','L',NULL,NULL),('B0390','Valeurs mobilieres de placement :','E',NULL,NULL),('B0400','Actions propres','L',NULL,NULL),('B0410','Autres titres','L',NULL,NULL),('B0415','Creances','E',NULL,NULL),('B0430','DisponibilitÃ©s','L','',''),('B0435','DisponibilitÃ©s','E','',''),('B0450','Charges constatÃ©es d\' avance','L',NULL,NULL),('B0455','Charges constatÃ©es d\' avance','E',NULL,NULL),('B0460','TOTAL II','S',NULL,NULL),('B0475','Charges a repartir sur plusieurs exercices (III)','E',NULL,NULL),('B0480',NULL,'L',NULL,NULL),('B0500',NULL,'L',NULL,NULL),('B0505','Primes de remboursement des emprunts (IV)','E',NULL,NULL),('B0520',NULL,'L',NULL,NULL),('B0525','Ecarts de conversion Actif (V)','E',NULL,NULL),('B0530','TOTAL GENERAL (I+II+III+IV+V)','O',NULL,NULL),('B1010','BILAN - PASSIF','T',NULL,NULL),('B1020','CAPITAUX PROPRES','E',NULL,NULL),('B1040','Capital social','L',NULL,NULL),('B1050','dont verse :','L','N',NULL),('B1055','Capital','E',NULL,NULL),('B1070',NULL,'L',NULL,NULL),('B1075','Primes d\' emission, de fusion, d\' apport','E',NULL,NULL),('B1090',NULL,'L',NULL,NULL),('B1095','Ecarts de reevaluation','E',NULL,NULL),('B1110',NULL,'L',NULL,NULL),('B1115','Ecarts d\' equivalence','E',NULL,NULL),('B1130','Reserve legale','L',NULL,NULL),('B1140','Reserves statutaires ou contractuelles','L',NULL,NULL),('B1150','Reserves reglementees','L',NULL,NULL),('B1160','Autres','L',NULL,NULL),('B1165','Reserves :','E',NULL,NULL),('B1180',NULL,'L',NULL,NULL),('B1185','Report a nouveau','E',NULL,NULL),('B1200',NULL,'L',NULL,NULL),('B1205','Resultat de l\' exercice (benefice ou perte )','E',NULL,NULL),('B1220',NULL,'L',NULL,NULL),('B1225','Subventions d\' investissements','E',NULL,NULL),('B1240',NULL,'L',NULL,NULL),('B1245','Provisions reglementees','E',NULL,NULL),('B1250','TOTAL I','S',NULL,NULL),('B1260','PROVISIONS POUR RISQUES ET CHARGES','E',NULL,NULL),('B1280',NULL,'L',NULL,NULL),('B1285','Provisions pour risques','E',NULL,NULL),('B1300',NULL,'L',NULL,NULL),('B1305','Provisions pour charges','E',NULL,NULL),('B1310','TOTAL II','S',NULL,NULL),('B1320','DETTES','E',NULL,NULL),('B1340',NULL,'L',NULL,NULL),('B1345','Emprunts obligatoires converties','E',NULL,NULL),('B1360',NULL,'L',NULL,NULL),('B1365','Autres emprunts obligataires','E',NULL,NULL),('B1380',NULL,'L',NULL,NULL),('B1385','Emprunts et dettes aupres des etablissements de credit','E',NULL,NULL),('B1400',NULL,'L',NULL,NULL),('B1405','Emprunts et dettes financieres divers','E',NULL,NULL),('B1420',NULL,'L',NULL,NULL),('B1425','Avances et acomptes reÃ§us sur commandes en cours','E',NULL,NULL),('B1440',NULL,'L',NULL,NULL),('B1445','Dettes fournisseurs et comptes rattaches','E',NULL,NULL),('B1460',NULL,'L',NULL,NULL),('B1465','Dettes fiscales et sociales','E',NULL,NULL),('B1480',NULL,'L',NULL,NULL),('B1485','Dettes sur immobilisations et comptes rattaches','E',NULL,NULL),('B1500',NULL,'L',NULL,NULL),('B1505','Autres dettes','E',NULL,NULL),('B1520',NULL,'L',NULL,NULL),('B1525','Produits constates d\' avance','E',NULL,NULL),('B1530','TOTAL III','S','N',NULL),('B1550',NULL,'L',NULL,NULL),('B1555','Ecarts de conversion Passif (IV)','E','N',NULL),('B1560','TOTAL GENERAL (I+II+III+IV)','O','N',NULL),('R0010','COMPTE DE RESULTAT - CHARGES','T',NULL,NULL),('R0020','CHARGES D\'EXPLOITATION','E',NULL,NULL),('R0030','Cout d\'achat des marchandises vendues dans l\'exercice','E','N',NULL),('R0040','Achats de marchandises','L',NULL,NULL),('R0050','Variations des stocks de marchandises','L',NULL,NULL),('R0060','Consommations de l\'exercice en provenance des tiers','E','N',NULL),('R0070','Achats stockes d\'approvisionnements :','L',NULL,NULL),('R0080','Matieres premiÃ¨res','L',NULL,NULL),('R0090','Autres approvisionnements','L',NULL,NULL),('R0100','Variations des stocks d\'approvisionnements','L',NULL,NULL),('R0110','Achats de sous-traitances','L',NULL,NULL),('R0120','Achats non stockes de matieres et fournitures','L',NULL,NULL),('R0130','Services exterieurs :','L',NULL,NULL),('R0140','Personnel exterieur','L',NULL,NULL),('R0150','Loyers en credit-bail','L',NULL,NULL),('R0160','Autres','L',NULL,NULL),('R0170','Impots, taxes, et versements assimiles','E','N',NULL),('R0180','Sur remunerations','L',NULL,NULL),('R0190','Autres','L',NULL,NULL),('R0200','Charges de personnel','E','N',NULL),('R0210','Salaires et traitements','L',NULL,NULL),('R0220','Charges sociales','L',NULL,NULL),('R0230','Dotations aux amortissements et aux provisions','E','N',NULL),('R0240','Sur immobilisations : Dotations aux amortissements','L',NULL,NULL),('R0250','Sur immobilisations : Dotations aux provisions','L',NULL,NULL),('R0260','Sur actif circulant : Dotations aux provisions','L',NULL,NULL),('R0270','Pour risques et charges : Dotations aux provisions','L',NULL,NULL),('R0280','Autres charges','E','N',NULL),('R0290',NULL,'L',NULL,NULL),('R0300','TOTAL I','S',NULL,NULL),('R0310','QUOTES-PARTS DE RESULTAT SUR OP FAITES EN COMMUN (II)','E',NULL,NULL),('R0320',NULL,'I',NULL,NULL),('R0330','CHARGES FINANCIERES (III)','E','N',NULL),('R0340','Dotations aux amortissemnts et aux provisions','L',NULL,NULL),('R0350','Interets et charges assimilees','L',NULL,NULL),('R0360','Differences negatives de change','L',NULL,NULL),('R0370','Charges nettes/cessions de valeurs mobilieres de placement','L',NULL,NULL),('R0380','CHARGES EXCEPTIONNELLES (IV)','E','N',NULL),('R0390','Sur operations de gestion','L',NULL,NULL),('R0400','Sur operations en capital :','L',NULL,NULL),('R0410','Valeurs comptables des elements immob et financiers cede','L',NULL,NULL),('R0420','Autres','L',NULL,NULL),('R0430','Dotations aux amortissements et aux provisions :','L',NULL,NULL),('R0440','Dotations aux provisions reglementees','L',NULL,NULL),('R0450','Dotations aux amortissements et autres provisions','L',NULL,NULL),('R0460','PARTICIPATION DES SALARIES AUX FRUITS DE L\'EXPANSION (V)','E',NULL,NULL),('R0470',NULL,'L',NULL,NULL),('R0480','IMPOTS SUR LES BENEFICES (VI)','E','N',NULL),('R0490',NULL,'L',NULL,NULL),('R0700','TOTAL DES CHARGES (I+II+II+IV+V+VI)','O',NULL,NULL),('R0800','SOLDE CREDITEUR = BÃ©nefice (VII)','C',NULL,NULL),('R0900','TOTAL GENERAL (I+II+III+IV+V+VI+VII)','R',NULL,NULL),('R1010','COMPTE DE RESULTAT - PRODUITS','T',NULL,NULL),('R1020','PRODUITS D\'EXPLOITATION :','E',NULL,NULL),('R1030','Ventes de marchandises','E','N',NULL),('R1040',NULL,'L',NULL,NULL),('R1050','Production vendue','E','N',NULL),('R1060','Ventes','L',NULL,NULL),('R1070','Travaux','L',NULL,NULL),('R1080','Prestations de services','L',NULL,NULL),('R1090','MONTANT NET DU CHIFFRE D\'AFFAIRES :','S',NULL,NULL),('R1100','Dont a l\'exportation :','E','N',NULL),('R1105',NULL,'L',NULL,NULL),('R1110','Production stockee','E','N',NULL),('R1120','En cours de production de biens','L',NULL,NULL),('R1130','En cours de production de services','L',NULL,NULL),('R1140','produits','L',NULL,NULL),('R1150','Production immobilisee','E','N',NULL),('R1160',NULL,'L',NULL,NULL),('R1170','Subvention d\'exploitation','E','N',NULL),('R1180',NULL,'L',NULL,NULL),('R1190','Reprises sur provisions (et amortissements)','E','N',NULL),('R1200',NULL,'L',NULL,NULL),('R1210','Transferts de charges','E','N',NULL),('R1220',NULL,'L',NULL,NULL),('R1230','Autres produits','E','N',NULL),('R1240',NULL,'L',NULL,NULL),('R1250','TOTAL I','S',NULL,NULL),('R1300','QUOTES-PARTS DE RESULTAT SUR OP. FAITES EN COMMUN (II)','E',NULL,NULL),('R1310',NULL,'L',NULL,NULL),('R1350','PRODUITS FINANCIERS (III)','E','N',NULL),('R1360','Departicipations','L',NULL,NULL),('R1370','D\'autres valeurs mobilieres et creances de l\'actif immobilier','L',NULL,NULL),('R1380','Autres interets et produits assimiles','L',NULL,NULL),('R1390','Reprises sur provisions et transferts de charges financiere','L',NULL,NULL),('R1400','Differences positives de change','L',NULL,NULL),('R1410','Produits nets sur cessions de valeurs mobilieres de placement','L',NULL,NULL),('R1450','PRODUITS EXCEPTIONNELS (IV)','E','N',NULL),('R1460','Sur operations de gestion','L',NULL,NULL),('R1470','Sur operations en capital :','L',NULL,NULL),('R1480','produits des cessions d\'elements d\'actif','L',NULL,NULL),('R1490','Subventions d\'investissement virees aux resultats de l\'exercice','L',NULL,NULL),('R1500','Autres','L',NULL,NULL),('R1510','Reprises sur provisions et transferts de charges exceptionnelles','L',NULL,NULL),('R1700','TOTAL DES PRODUITS (I+II+III+IV)','O',NULL,NULL),('R1800','SOLDE DEBITEUR = PERTE (V)','D',NULL,NULL),('R1810','TOTAL GENERAL(I+II+III+IV+V)','G',NULL,NULL),('S0010','SOLDES INTERMEDIAIRES DE GESTION','T',NULL,NULL),('S0020','Marge commerciale','E','N',NULL),('S0030','Ventes de marchandises','L','O','P'),('S0040','RRR sur ventes','L','O','P'),('S0050','Cout direct d\'achat','L','O','A'),('S0060','Marge commerciale','E','N',NULL),('S0070','Production vendue','L','O','P'),('S0080','Production stockee','L','O','P'),('S0090','Production immobilisee','L','N','P'),('S0100','Produits nets partiels sur operations a long terme','L',NULL,NULL),('S0105','Production de l\'exercice','E','N','P'),('S0110','Production de l\'exercice','L','N','R'),('S0115','Marge commerciale','L','N','A'),('S0120','Consommations en provenance de tiers','L','O','A'),('S0130','Valeur ajoutÃ©e','E','N',NULL),('S0135','Valeur ajoutÃ©e','L','N','R'),('S0140',NULL,NULL,NULL,NULL),('S0150','Subventions d\'exploitation','L','O','P'),('S0160','Impots, taxes, et versements assimiles','L','O','A'),('S0170','Charges de personnel','L','O','A'),('S0180','ExcÃ©dent brut d\'exploitation','E','N',NULL),('S0190','ExcÃ©dent brut d\'exploitation','L','N','R'),('S0195','Insuffisance brute d\'exploitation',NULL,NULL,NULL),('S0200','Reprises sur ammortissements et provisions d\'exploitation','L','O','P'),('S0205','Transferts de charges d\'exploitation','L','O','P'),('S0210','Dotations aux amortissements et provisions d\'exploitation','L','O','A'),('S0220','Autres produits de gestion courante','L','O','P'),('S0230','Autres charges de gestion courante','L','O','A'),('S0240','Transferts de charges d\'exploitation',NULL,NULL,NULL),('S0250','RÃ©sultat d\'exploitation','E','N',NULL),('S0260','RÃ©sultat d\'exploitation','L','N','R'),('S0270','Quotes-parts de resultat sur operations faites en commun','L','O','P'),('S0280','Quotes-parts de resultat sur operations faites en commun','L','O','A'),('S0290','Produits financiers','L','O','P'),('S0300','Charges financieres','L','O','A'),('S0310','RÃ©sultat courant avant impots','E','N',NULL),('S0315','RÃ©sultat courant avant impots','L','N','P'),('S0320','RÃ©sultat courant avant impots','L','N','A'),('S0330','Produits exceptionnels','L','O','P'),('S0340','Charges exceptionnelles','L','O','A'),('S0350','RÃ©sultat exceptionnel','E','N',NULL),('S0354','RÃ©sultat courant avant impots','L','N','R'),('S0358','RÃ©sultat exceptionnel','L','N','R'),('S0360','Participations des salaries aux resultats de l\'exercice','L','O','A'),('S0370','Impots sur les benefices','L','O','A'),('S0380','RÃ©sultat de l\'exercice','E','N',NULL),('S0390','Produits cessions d\'Ã©lÃ©ments d\'actif','L','O','P'),('S0400','Valeur comptable Ã©lÃ©ments cÃ©dÃ©s','L','O','A'),('S0410','Plus et moins-values sur cessions d\'Ã©lÃ©ments d\'actif','E','N',NULL);
 /*!40000 ALTER TABLE `Fiches_Rubriques` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4577,19 +4577,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Sdepots`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Sdepots` (
-  `Mind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(2) DEFAULT NULL,
-  `cart` char(15) DEFAULT NULL,
+  `Mind` int NOT NULL AUTO_INCREMENT,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cart` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date NOT NULL,
-  `type` char(1) DEFAULT NULL,
-  `qte` char(10) DEFAULT NULL,
-  `com` varchar(50) DEFAULT NULL,
+  `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `qte` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `com` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`Mind`),
   KEY `code` (`code`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4607,12 +4607,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Sms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Sms` (
-  `numcom` char(2) NOT NULL,
-  `intitule` mediumtext DEFAULT NULL,
+  `numcom` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`numcom`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4630,31 +4630,31 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Societes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Societes` (
-  `cd_sc` varchar(2) NOT NULL,
-  `type_sc` char(9) DEFAULT NULL,
-  `int_sc` varchar(35) DEFAULT NULL,
-  `adr1_sc` varchar(35) DEFAULT NULL,
-  `adr2_sc` varchar(35) DEFAULT NULL,
-  `cp_sc` varchar(5) DEFAULT NULL,
-  `burdis_sc` varchar(35) DEFAULT NULL,
-  `email_sc` char(50) DEFAULT NULL,
-  `rcs_sc` varchar(12) DEFAULT NULL,
-  `villerc_sc` varchar(15) DEFAULT NULL,
-  `siret_sc` varchar(15) DEFAULT NULL,
-  `tvaintra_sc` varchar(15) DEFAULT NULL,
-  `cap_sc` varchar(15) DEFAULT NULL,
-  `ape_sc` varchar(5) DEFAULT NULL,
-  `tel_sc` varchar(16) DEFAULT NULL,
-  `fax_sc` varchar(16) DEFAULT NULL,
-  `site` varchar(40) DEFAULT NULL,
-  `port_sc` char(16) DEFAULT NULL,
-  `banq` char(30) DEFAULT NULL,
-  `bic` char(11) DEFAULT NULL,
-  `libre` char(35) DEFAULT NULL,
+  `cd_sc` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type_sc` char(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `int_sc` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1_sc` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2_sc` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cp_sc` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `burdis_sc` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email_sc` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rcs_sc` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `villerc_sc` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `siret_sc` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tvaintra_sc` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cap_sc` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ape_sc` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tel_sc` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fax_sc` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `site` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `port_sc` char(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banq` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bic` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libre` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`cd_sc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4663,7 +4663,7 @@ CREATE TABLE `Fiches_Societes` (
 
 LOCK TABLES `Fiches_Societes` WRITE;
 /*!40000 ALTER TABLE `Fiches_Societes` DISABLE KEYS */;
-INSERT INTO `Fiches_Societes` VALUES ('01',NULL,'Laurux',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'06',NULL,NULL,NULL);
+INSERT INTO `Fiches_Societes` VALUES ('01',NULL,'Laurux',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `Fiches_Societes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4673,13 +4673,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_SousComptes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_SousComptes` (
-  `code` char(8) DEFAULT NULL,
-  `code_vtl` char(8) NOT NULL,
-  `intitule_vtl` varchar(40) DEFAULT NULL,
+  `code` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `code_vtl` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule_vtl` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code_vtl`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4697,19 +4697,19 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Stat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Stat` (
-  `code` char(15) DEFAULT NULL,
+  `code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date DEFAULT NULL,
-  `nom` char(50) DEFAULT NULL,
+  `nom` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pvb` decimal(12,2) DEFAULT NULL,
-  `rem` char(6) DEFAULT NULL,
+  `rem` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pvn` decimal(12,2) DEFAULT NULL,
   `qte` decimal(12,3) DEFAULT NULL,
-  `nfac` char(10) NOT NULL,
-  `nlig` char(10) NOT NULL,
+  `nfac` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nlig` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`nfac`,`nlig`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4727,12 +4727,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Statut`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Statut` (
-  `code` char(2) NOT NULL,
-  `libelle` varchar(25) DEFAULT NULL,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4750,15 +4750,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_StkDepots`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_StkDepots` (
-  `coded` char(8) NOT NULL,
-  `codea` varchar(15) NOT NULL,
+  `coded` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `codea` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `qte` decimal(12,3) DEFAULT NULL,
   PRIMARY KEY (`coded`,`codea`),
   KEY `coded` (`coded`),
   KEY `codea` (`codea`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4776,14 +4776,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Suivis`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Suivis` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(8) DEFAULT NULL,
-  `nom` varchar(70) DEFAULT NULL,
-  `numdev` char(12) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdev` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datedev` date DEFAULT NULL,
-  `numfac` char(12) DEFAULT NULL,
+  `numfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `datefac` date DEFAULT NULL,
   `qte` decimal(12,2) DEFAULT NULL,
   `pu` decimal(12,2) DEFAULT NULL,
@@ -4801,7 +4801,7 @@ CREATE TABLE `Fiches_Suivis` (
   KEY `code` (`code`),
   KEY `numdev` (`numdev`),
   KEY `numfac` (`numfac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4819,17 +4819,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Taches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Taches` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `numdoc` varchar(10) DEFAULT NULL,
-  `nom` char(8) DEFAULT NULL,
-  `poste` varchar(40) DEFAULT NULL,
-  `numcli` char(8) DEFAULT NULL,
-  `nomcli` varchar(40) DEFAULT NULL,
-  `texte` varchar(100) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numcli` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nomcli` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `texte` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4847,12 +4847,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Tag`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Tag` (
-  `tag` tinytext NOT NULL,
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
+  `tag` tinytext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4870,10 +4870,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_TarTemp`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_TarTemp` (
-  `art` varchar(15) NOT NULL,
-  `dtmaj` tinyint(1) DEFAULT 0,
+  `art` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dtmaj` tinyint(1) DEFAULT '0',
   `date` datetime DEFAULT NULL,
   `pbht` decimal(12,3) DEFAULT NULL,
   `rm` decimal(6,2) DEFAULT NULL,
@@ -4881,12 +4881,12 @@ CREATE TABLE `Fiches_TarTemp` (
   `frais` decimal(12,3) DEFAULT NULL,
   `pxrev` decimal(12,3) DEFAULT NULL,
   `txconv` decimal(10,4) DEFAULT NULL,
-  `temp_type` int(11) NOT NULL DEFAULT 0,
-  `code` varchar(10) NOT NULL,
+  `temp_type` int NOT NULL DEFAULT '0',
+  `code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `temp_coef` decimal(7,4) DEFAULT NULL,
-  `temp_sup` tinyint(1) DEFAULT 0,
+  `temp_sup` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`art`,`temp_type`,`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4904,14 +4904,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_TarTypcli`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_TarTypcli` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(10) DEFAULT NULL,
-  `cart` varchar(15) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cart` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `coef` decimal(7,4) DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4929,14 +4929,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Tarcli`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Tarcli` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `ccli` varchar(10) DEFAULT NULL,
-  `cart` varchar(15) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `ccli` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cart` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `coef` decimal(7,4) DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4954,12 +4954,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Tleg`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Tleg` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `intitule` mediumtext DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `intitule` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -4968,7 +4968,7 @@ CREATE TABLE `Fiches_Tleg` (
 
 LOCK TABLES `Fiches_Tleg` WRITE;
 /*!40000 ALTER TABLE `Fiches_Tleg` DISABLE KEYS */;
-INSERT INTO `Fiches_Tleg` VALUES (1,'RESERVE DE PROPRIETE: Le vendeur se réserve la proprieté des marchandises jusqu\'au paiement intégral de leur prix en principal et intérêts, par l\'acheteur.\nLa responsabilité des marchandises est transferée dès leur délivrance. Nos marchandises voyagent aux risques et périls des destinataires.\nAucune piece n\'est reprise apres 8 jours de livraison, les pieces commandées spécialement ne sont jamais reprises. Sauf application des règles obligatoires de compétence a l\'égard des non\ncommercants, toutes contestations seront transmises aux juridictions du siege de notre entreprise.');
+INSERT INTO `Fiches_Tleg` VALUES (1,'RESERVE DE PROPRIETE: Le vendeur se rÃ©serve la proprietÃ© des marchandises jusqu\'au paiement intÃ©gral de leur prix en principal et intÃ©rÃªts, par l\'acheteur.\nLa responsabilitÃ© des marchandises est transferÃ©e dÃ¨s leur dÃ©livrance. Nos marchandises voyagent aux risques et pÃ©rils des destinataires.\nAucune piece n\'est reprise apres 8 jours de livraison, les pieces commandÃ©es spÃ©cialement ne sont jamais reprises. Sauf application des rÃ¨gles obligatoires de compÃ©tence a l\'Ã©gard des non\ncommercants, toutes contestations seront transmises aux juridictions du siege de notre entreprise.');
 /*!40000 ALTER TABLE `Fiches_Tleg` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -4978,18 +4978,18 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Touches`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Touches` (
-  `touche` char(6) NOT NULL,
-  `libelle` char(30) DEFAULT NULL,
-  `code` char(15) DEFAULT NULL,
+  `touche` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `tva` decimal(5,2) DEFAULT NULL,
-  `coul` int(11) DEFAULT NULL,
-  `fond` varchar(100) DEFAULT NULL,
+  `coul` int DEFAULT NULL,
+  `fond` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `touche_s` tinyint(1) DEFAULT NULL,
-  `cai` char(2) NOT NULL,
+  `cai` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`touche`,`cai`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5007,20 +5007,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Traites`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Traites` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(8) DEFAULT NULL,
-  `montant` char(12) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `montant` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` date DEFAULT NULL,
   `datech` date DEFAULT NULL,
-  `numfac` char(12) DEFAULT NULL,
-  `imp` tinyint(4) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `acceptee` int(1) DEFAULT NULL,
-  `ecartee` int(1) DEFAULT NULL,
+  `numfac` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `imp` tinyint DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `acceptee` int DEFAULT NULL,
+  `ecartee` int DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5038,13 +5038,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Tvaac`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Tvaac` (
-  `code_tva` char(2) NOT NULL,
-  `taux_tva` varchar(5) DEFAULT NULL,
-  `cc_tva` varchar(8) DEFAULT NULL,
+  `code_tva` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `taux_tva` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cc_tva` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code_tva`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5063,13 +5063,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Tvaav`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Tvaav` (
-  `code_tva` char(2) NOT NULL,
-  `taux_tva` varchar(5) DEFAULT NULL,
-  `cc_tva` varchar(8) DEFAULT NULL,
+  `code_tva` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `taux_tva` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cc_tva` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code_tva`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5088,12 +5088,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_TxtMail`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_TxtMail` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `intitule` mediumtext DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `intitule` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5111,12 +5111,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_TxtMailC`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_TxtMailC` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `intitule` mediumtext DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `intitule` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5134,13 +5134,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Txt_Relances`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Txt_Relances` (
-  `niveau` int(11) NOT NULL DEFAULT 0,
-  `libell1` mediumtext DEFAULT NULL,
-  `libell2` mediumtext DEFAULT NULL,
+  `niveau` int NOT NULL DEFAULT '0',
+  `libell1` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `libell2` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`niveau`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5149,7 +5149,7 @@ CREATE TABLE `Fiches_Txt_Relances` (
 
 LOCK TABLES `Fiches_Txt_Relances` WRITE;
 /*!40000 ALTER TABLE `Fiches_Txt_Relances` DISABLE KEYS */;
-INSERT INTO `Fiches_Txt_Relances` VALUES (1,'Messieurs,\n\nL\'examen de votre compte nous a permis de constater que les factures ci-dessous ne nous ont pas été\nréglées à ce jour :\n\n','\nNous vous remercions de faire le nécessaire et d\'agréer, Messieurs, nos sincères salutations.\n\nLa comptabilité'),(2,'Messieurs,\n\nNous avons eu l\'honneur dernièrement de vous demander le réglement des factures ci-dessous et nous \nsommes surpris de ne pas avoir reçu de réponse.\n','\nNous vous remercions, afin de nous éviter des frais supplémentaires et de ne pas compliquer notre \ncomptabilité, de nous envoyer, par retour de courrier, le montant de ces factures.\n\nRecevez, Messieurs, nos sincères salutations.\n\nLa comptabilité'),(3,'Messieurs,\n\nNous sommes très surpris que vous ayez laissé sans réponse nos précédentes lettres .\n\n','\nA notre grand regret, étant donné nos bonnes relations pécédentes, il nous faut vous informer que si\nnous ne recevons pas le montant du solde de votre compte, dans la huitaine, nous serons obligés de\nprétendre au recouvrement de notre créance par les voies de droit.\n\nEsperant que vous ne nous laisserez pas recourir à ces moyens extrêmes, recevez, Messieurs, nos \nsincères salutations.\n\nLa comptabilité');
+INSERT INTO `Fiches_Txt_Relances` VALUES (1,'Messieurs,\n\nL\'examen de votre compte nous a permis de constater que les factures ci-dessous ne nous ont pas Ã©tÃ©\nrÃ©glÃ©es Ã  ce jour :\n\n','\nNous vous remercions de faire le nÃ©cessaire et d\'agrÃ©er, Messieurs, nos sincÃ¨res salutations.\n\nLa comptabilitÃ©'),(2,'Messieurs,\n\nNous avons eu l\'honneur derniÃ¨rement de vous demander le rÃ©glement des factures ci-dessous et nous \nsommes surpris de ne pas avoir reÃ§u de rÃ©ponse.\n','\nNous vous remercions, afin de nous Ã©viter des frais supplÃ©mentaires et de ne pas compliquer notre \ncomptabilitÃ©, de nous envoyer, par retour de courrier, le montant de ces factures.\n\nRecevez, Messieurs, nos sincÃ¨res salutations.\n\nLa comptabilitÃ©'),(3,'Messieurs,\n\nNous sommes trÃ¨s surpris que vous ayez laissÃ© sans rÃ©ponse nos prÃ©cÃ©dentes lettres .\n\n','\nA notre grand regret, Ã©tant donnÃ© nos bonnes relations pÃ©cÃ©dentes, il nous faut vous informer que si\nnous ne recevons pas le montant du solde de votre compte, dans la huitaine, nous serons obligÃ©s de\nprÃ©tendre au recouvrement de notre crÃ©ance par les voies de droit.\n\nEsperant que vous ne nous laisserez pas recourir Ã  ces moyens extrÃªmes, recevez, Messieurs, nos \nsincÃ¨res salutations.\n\nLa comptabilitÃ©');
 /*!40000 ALTER TABLE `Fiches_Txt_Relances` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -5159,15 +5159,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Txtmo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Txtmo` (
-  `code_txtmo` char(5) NOT NULL,
-  `tx_txtmo` char(10) DEFAULT NULL,
-  `libell_txtmo` varchar(25) DEFAULT NULL,
-  `compt_txtmo` varchar(8) DEFAULT NULL,
+  `code_txtmo` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tx_txtmo` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libell_txtmo` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compt_txtmo` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `prvt_txtmo` decimal(12,3) DEFAULT NULL,
   PRIMARY KEY (`code_txtmo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5186,12 +5186,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Typec`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Typec` (
-  `code` varchar(2) NOT NULL,
-  `libelle` varchar(25) DEFAULT NULL,
+  `code` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `libelle` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5210,13 +5210,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Users` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `nom` varchar(20) DEFAULT NULL,
-  `poste` varchar(35) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `nom` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `poste` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5234,15 +5234,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_Vendeurs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_Vendeurs` (
-  `lind` int(11) NOT NULL AUTO_INCREMENT,
-  `code` char(2) DEFAULT NULL,
-  `nom` varchar(35) DEFAULT NULL,
-  `mdp` varchar(15) DEFAULT NULL,
-  `admin` tinyint(4) DEFAULT NULL,
+  `lind` int NOT NULL AUTO_INCREMENT,
+  `code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nom` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mdp` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `admin` tinyint DEFAULT NULL,
   PRIMARY KEY (`lind`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5260,26 +5260,26 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_relances`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_relances` (
-  `compte` varchar(8) NOT NULL,
-  `rs` varchar(10) DEFAULT NULL,
-  `intitule` varchar(35) DEFAULT NULL,
-  `adr1` varchar(35) DEFAULT NULL,
-  `adr2` varchar(35) DEFAULT NULL,
-  `cp` varchar(10) DEFAULT NULL,
-  `ville` varchar(35) DEFAULT NULL,
-  `dte` varchar(10) DEFAULT NULL,
-  `numdoc` varchar(10) NOT NULL,
-  `numlot` varchar(10) DEFAULT NULL,
-  `libelle` varchar(35) DEFAULT NULL,
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rs` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `intitule` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr1` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `adr2` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cp` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ville` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dte` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numlot` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
-  `numero` varchar(8) DEFAULT NULL,
-  `journal` varchar(2) DEFAULT NULL,
-  `niveau` int(11) DEFAULT NULL,
+  `numero` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `journal` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `niveau` int DEFAULT NULL,
   PRIMARY KEY (`compte`,`numdoc`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5297,12 +5297,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Fiches_tourne`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Fiches_tourne` (
-  `code` char(15) NOT NULL,
-  `tourne` char(50) DEFAULT NULL,
+  `code` char(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tourne` char(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5320,12 +5320,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Mails_Cli`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Mails_Cli` (
-  `code` varchar(8) NOT NULL,
-  `mail` varchar(150) NOT NULL,
+  `code` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mail` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`,`mail`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5343,12 +5343,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Mails_Four`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Mails_Four` (
-  `code` varchar(8) NOT NULL,
-  `mail` varchar(150) NOT NULL,
+  `code` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mail` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`code`,`mail`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5366,12 +5366,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Nvcompte`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Nvcompte` (
-  `cd` varchar(8) NOT NULL,
-  `intitule` varchar(25) DEFAULT NULL,
+  `cd` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`cd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5389,32 +5389,32 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Report`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Report` (
-  `jour` varchar(2) DEFAULT NULL,
-  `numero` int(11) NOT NULL,
-  `compte` varchar(8) NOT NULL,
-  `collectif` int(11) DEFAULT NULL,
-  `intitule` varchar(30) DEFAULT NULL,
+  `jour` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numero` int NOT NULL,
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `collectif` int DEFAULT NULL,
+  `intitule` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dte` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `datee` datetime DEFAULT NULL,
   `dateech` datetime DEFAULT NULL,
-  `numcol` varchar(3) NOT NULL,
-  `numdoc` varchar(10) DEFAULT NULL,
-  `numlot` varchar(10) DEFAULT NULL,
-  `libelle` varchar(30) DEFAULT NULL,
+  `numcol` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `numdoc` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numlot` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `libelle` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `montantd` double DEFAULT NULL,
   `montantc` double DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `provisoire` tinyint(1) DEFAULT NULL,
   `tresorerie` tinyint(1) DEFAULT NULL,
   `pointee` tinyint(1) DEFAULT NULL,
-  `nrlv` int(11) DEFAULT NULL,
+  `nrlv` int DEFAULT NULL,
   `lettree` tinyint(1) DEFAULT NULL,
   `cloturee` tinyint(1) DEFAULT NULL,
-  `relance` int(11) DEFAULT NULL,
+  `relance` int DEFAULT NULL,
   PRIMARY KEY (`numero`,`compte`,`dte`,`numcol`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5432,17 +5432,17 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Total`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Total` (
-  `cdclifac` char(8) NOT NULL,
-  `nmclifac` char(25) DEFAULT NULL,
-  `pnmclifac` char(25) DEFAULT NULL,
+  `cdclifac` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nmclifac` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pnmclifac` char(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `brutfac` decimal(12,2) DEFAULT NULL,
   `rmfac` decimal(12,2) DEFAULT NULL,
   `totfac` decimal(12,2) DEFAULT NULL,
   `totfacn1` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`cdclifac`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5460,15 +5460,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Totalisation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Totalisation` (
-  `compte` varchar(8) NOT NULL,
-  `intitule` varchar(25) DEFAULT NULL,
-  `totalht` varchar(25) DEFAULT NULL,
-  `totaltva` varchar(25) DEFAULT NULL,
-  `codetva` char(2) DEFAULT NULL,
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `totalht` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `totaltva` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codetva` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5486,15 +5486,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Totalisation01`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Totalisation01` (
-  `compte` varchar(8) NOT NULL,
-  `intitule` varchar(25) DEFAULT NULL,
-  `totalht` varchar(25) DEFAULT NULL,
-  `totaltva` varchar(25) DEFAULT NULL,
-  `codetva` varchar(1) DEFAULT NULL,
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `totalht` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `totaltva` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `codetva` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5512,14 +5512,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Virements`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Virements` (
-  `compte` char(8) NOT NULL,
-  `intitule` char(35) DEFAULT NULL,
-  `type` char(1) NOT NULL,
+  `compte` char(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` char(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `montant` decimal(12,2) DEFAULT NULL,
   PRIMARY KEY (`compte`,`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5537,20 +5537,20 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `centralisation`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `centralisation` (
-  `numrub` varchar(5) NOT NULL,
-  `intitrub` varchar(70) DEFAULT NULL,
-  `type` varchar(1) DEFAULT NULL,
-  `detail` varchar(1) DEFAULT NULL,
-  `compte` varchar(8) NOT NULL,
-  `intitcpt` varchar(50) DEFAULT NULL,
-  `col1` varchar(12) DEFAULT NULL,
-  `col2` varchar(12) DEFAULT NULL,
-  `col3` varchar(12) DEFAULT NULL,
-  `col4` varchar(12) DEFAULT NULL,
+  `numrub` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitrub` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `detail` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compte` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitcpt` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col1` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col2` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col3` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col4` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`numrub`,`compte`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5568,15 +5568,15 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `centralisations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `centralisations` (
-  `cd_cent` varchar(8) NOT NULL,
-  `intitule` varchar(25) DEFAULT NULL,
+  `cd_cent` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `intitule` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `db_cent` double DEFAULT NULL,
   `crd_cent` double DEFAULT NULL,
-  `njournal` varchar(2) DEFAULT NULL,
+  `njournal` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`cd_cent`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5594,24 +5594,24 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `label_def`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `label_def` (
-  `label_no` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `manufacture` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `paper` varchar(1) DEFAULT NULL,
+  `label_no` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `manufacture` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `paper` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `gap_top` double DEFAULT NULL,
   `gap_left` double DEFAULT NULL,
   `height` double DEFAULT NULL,
   `width` double DEFAULT NULL,
   `gap_v` double DEFAULT NULL,
   `gap_h` double DEFAULT NULL,
-  `number_h` int(11) DEFAULT NULL,
-  `number_v` int(11) DEFAULT NULL,
-  `paper_type` varchar(30) DEFAULT NULL,
-  `compatibility` varchar(10) DEFAULT NULL,
+  `number_h` int DEFAULT NULL,
+  `number_v` int DEFAULT NULL,
+  `paper_type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compatibility` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`label_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -5632,4 +5632,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-10 15:41:25
+-- Dump completed on 2024-03-05 18:33:43
