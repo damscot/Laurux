@@ -735,7 +735,7 @@ Public Sub rececp_Click()
           vignette.Expand = True
           vignette.Type = TextReg.EstNum
           vignette.nbdec = "0"
-          vignette.MaxLenght = 25
+          vignette.MaxLength = 25
           Utils.db.Exec("LOCK TABLES Fiches_Parametres WRITE")
           res = Utils.db.Exec("Select nvign From Fiches_Parametres")
           vignette.Text = Format(Val(res!nvign) + 1, "0000000000000000000000000")

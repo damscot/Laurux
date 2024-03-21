@@ -19,8 +19,8 @@ Public Sub _new(choix As Integer, Optional cat As String, article As String)
   
   Me.center
   ch = New Chainage([Tart, Tcoeff, Tpvht, Tpvttc, remise, Button6])
-  TypeC.MaxLenght = 2
-  Tart.MaxLenght = 15
+  TypeC.MaxLength = 2
+  Tart.MaxLength = 15
   Tart.recherche = True
   Tart.champs("Fiches_Art", "art_code", "art_design")
   Tart.lke = TextReg.commence_par
@@ -41,7 +41,7 @@ Public Sub _new(choix As Integer, Optional cat As String, article As String)
   If $choix = client Then
     Me.Text = "Tarif par client"
     TextLabel29.Text = "Client"
-    TypeC.MaxLenght = 15
+    TypeC.MaxLength = 15
   Endif
   Typec.SetFocus
   If cat Then

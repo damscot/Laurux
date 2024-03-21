@@ -31,9 +31,9 @@ Public Sub _new()
   GridView1.Columns[2].Alignment = Align.Center
   GridView1.Columns[2].Width = 70
   
-  code.MaxLenght = 2
-  libel.MaxLenght = 20
-  jour.MaxLenght = 2
+  code.MaxLength = 2
+  libel.MaxLength = 20
+  jour.MaxLength = 2
   cptint.reg = "[0-9]{0,9}"
   $ressel = Utils.db.Exec("SELECT * FROM Fiches_Reglements")
   If $ressel.Available Then

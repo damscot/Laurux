@@ -99,7 +99,7 @@ Public Sub _new(Optional lig As SaiLig)
   res = Utils.db.Exec("SELECT * FROM Fiches_TarTemp,Fiches_TarTypcli,Fiches_Typec LIMIT 1")
   $prop = New ObjProp[]
   obj = New ObjProp(res.Fields["Fiches_Typec.code"], "Type")
-  obj.AddChamp("MaxLenght", 2)
+  obj.AddChamp("MaxLength", 2)
   obj.Height = Me.Font.H + 4
   obj.Width = t3
   $prop.Add(obj)

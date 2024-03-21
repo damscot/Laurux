@@ -55,7 +55,7 @@ Property Value As Float       ''gére la valeur numérique de l'objet
 Property Type As Integer             ''Définit le type de données à gérer, par défault EstText
 Property nbdec As String            ''le nombre de décimal que contient cette objet
 Property reg As String              ''le regex de cette objet. Il remplace la constante définie ci-dessus
-Property MaxLenght As Integer     '' longueur maximum de l'objet
+Property MaxLength As Integer     '' longueur maximum de l'objet
 Property Text As String     ''gére la valeur alfa de l'objet
 Property recherche As Boolean   ''si on ouvre une fenetre de recherche
 Property conteneur As Object    ''on passe le conteneur dans lequel on veut mettre la fenêtre
@@ -377,13 +377,13 @@ Private Sub reg_Write(Value As String)
 
 End
 
-Private Function MaxLenght_Read() As Integer
+Private Function MaxLength_Read() As Integer
 
   Return Me.Editor.Value
 
 End
 
-Private Sub MaxLenght_Write(Value As Integer)
+Private Sub MaxLength_Write(Value As Integer)
 
   Me.Editor.MaxLength = value
 

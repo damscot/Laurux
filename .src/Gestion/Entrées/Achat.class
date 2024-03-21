@@ -63,7 +63,7 @@ Property ndoc As String
   If Me.opt = "B" Or Me.opt = "T" Then w -= (2 * t3)
   If Not $PxRec Then w += (3 * T4) + (2 * t1) - 5
   obj = New ObjProp(res.Fields["art_code"], "Code")
-  obj.AddChamp("MaxLenght", 15)
+  obj.AddChamp("MaxLength", 15)
   obj.Height = Me.$parent.Font.H + 4
   obj.Width = t4
   obj.AddChamp("scanner", True)
@@ -1426,7 +1426,7 @@ Public Sub CreMat() As Boolean             ''créer le tableau de saisie des n°
   win.Name = "mat"
   
   obj = New ObjProp(res.Fields["mat_code"], "Code")
-  obj.AddChamp("MaxLenght", 15)
+  obj.AddChamp("MaxLength", 15)
   obj.AddChamp("ReadOnly", True)
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 12
@@ -1434,7 +1434,7 @@ Public Sub CreMat() As Boolean             ''créer le tableau de saisie des n°
   
   obj = New ObjProp(res.Fields["mat_design"], "Désignation")
   obj.AddChamp("ReadOnly", True)
-  obj.AddChamp("MaxLenght", 50)
+  obj.AddChamp("MaxLength", 50)
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 50
   prop.Add(obj)
@@ -1443,7 +1443,7 @@ Public Sub CreMat() As Boolean             ''créer le tableau de saisie des n°
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 35
   obj.AddChamp("activescan", True)
-  obj.AddChamp("MaxLenght", 30)
+  obj.AddChamp("MaxLength", 30)
   prop.Add(obj)
   
   mat = New SaiTableau(prop, pan)
@@ -1627,7 +1627,7 @@ Public Sub CreRec() As Boolean          ''ouvre la fenetre des réceptions et re
   win.Name = "rec"
   
   obj = New ObjProp(Null, "Code")
-  obj.AddChamp("MaxLenght", 15)
+  obj.AddChamp("MaxLength", 15)
   obj.AddChamp("ReadOnly", True)
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 12
@@ -1635,7 +1635,7 @@ Public Sub CreRec() As Boolean          ''ouvre la fenetre des réceptions et re
   
   obj = New ObjProp(Null, "Désignation")
   obj.AddChamp("ReadOnly", True)
-  obj.AddChamp("MaxLenght", 50)
+  obj.AddChamp("MaxLength", 50)
   obj.Height = win.Font.H + 4
   obj.Width = win.Font.Size * 39
   prop.Add(obj)
