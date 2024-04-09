@@ -49,6 +49,10 @@ Public Const nofilter As String = ".*"
 'comme les paterns sont parfois un peu difficiles à trouver et à mettre au point il serait peut être bien de les mettres en constantes ?
 ' il ne faut pas mettre de caractéres obligatoires dans les paterns par ex dans mail @{1} ne fonctionne pas.
 'propriétés
+
+Public Const _Properties As String = "*,Value,Format,Type{TextReg.EstText;EstNum;EstDate;EstDateTime}=EstText,MaxLength,Text,recherche=False,condition,RechX,RechY,Choirech{TextReg.Rien;EstRecherche;EstHisto}=Rien,activescan=False,reg,recherche=False"
+Public Const _DrawWith As String = "TextBox"
+
 Property Value As Float       ''gére la valeur numérique de l'objet
 'Property numerique As Boolean     ''si cette objet est que numérique
 'Property Dat As Boolean               ''si cette objet est une date
