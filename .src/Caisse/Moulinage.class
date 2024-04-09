@@ -2618,7 +2618,7 @@ Private Sub genfac()
   Dim res, respu, resentz, resligz, resentfac, resligfac, respar, reslig, restx As Result
   Dim i, j, inda As Integer
   Dim rem As Float
-  Dim pu, pxttc, mttc, mht, mtva, mremise As Float
+  Dim qt As Float
   Dim snfac, snumlig, dnfac As String
   Dim ccd As ObjFacB
   Dim nbvente As Integer = 0
@@ -2750,11 +2750,12 @@ Private Sub genfac()
           resligfac!code_ligfac = reslig!code
           resligfac!typel_ligfac = reslig!type
           resligfac!dtligbl_ligfac = DateChooser1.Value
+          If Val(Utils.cpoint(reslig!quantite)) <> 0 Then qt = reslig!montant / reslig!quantite Else qt = 0
           If $soption = "T" Or $soption = "B" Then
-            drt = New Calculdroit1(reslig!montant / reslig!quantite, reslig!quantite, res!art_cdarr, "", res!art_dra, res!art_volm, res!art_deg, res!art_fam)
+            drt = New Calculdroit1(qt, reslig!quantite, res!art_cdarr, "", res!art_dra, res!art_volm, res!art_deg, res!art_fam)
             If drt.drsurfac Then drt = New Calculdroit1(drt.mnt - drt.accise_droit().Montant(drt, True).Mnt, reslig!quantite, res!art_cdarr, "", res!art_dra, res!art_volm, res!art_deg, res!art_fam)
           Else
-            drt = New Calculdroit1(reslig!montant / reslig!quantite, reslig!quantite)
+            drt = New Calculdroit1(qt, reslig!quantite)
           Endif
           'lecture des données sur fiche article
           If res.Available Then
