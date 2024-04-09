@@ -1050,7 +1050,7 @@ Public Sub vldbordereau_Click()
   If ret = 0 Then
     $Lecr.etat = VarEcr.L_valide
     $Lecr.type = VarEcr.Treso
-  $Lecr.dte = LDate(Now)
+    $Lecr.dte = dtecr.dte
     pb = New ProgBar("Validation du bordereau", 1)
     pb.Show
     pb.Avancement("Validation")
@@ -1061,14 +1061,14 @@ Public Sub vldbordereau_Click()
     If ereg.ecriture() Then
       Message.Error("Impossible de valider cette écriture" & $Lecr.compte & " " & $Lecr.libelle)
     Endif
-  imp = ereg.Imp
-  imp = ereg.Impression(imp)
-  If Object.IsValid(imp) Then
-    imp = ereg.FinImp(imp)
-    prt.OutputFile = User.Home & "/tmp/EcrReg.pdf"
-    imp.Print(prt)
-    Visualiseur.Prog(prt.OutputFile)
-  Endif
+    imp = ereg.Imp
+    imp = ereg.Impression(imp)
+    If Object.IsValid(imp) Then
+      imp = ereg.FinImp(imp)
+      prt.OutputFile = User.Home & "/tmp/EcrReg.pdf"
+      imp.Print(prt)
+      Visualiseur.Prog(prt.OutputFile)
+    Endif
     $modif = False
     mabl
     mabreg()
