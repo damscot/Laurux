@@ -810,6 +810,7 @@ Public Sub SupAchat(etat As Integer, Cle As Collection, Optional stock As Boolea
           Endif
           If stock Then
             'on decremente le stock et le pamp
+            $ressup.MoveFirst()
             Repeat
               Utils.db.Lockstock($ressup!code, $ressup!qte, "-", True, $ressup!paht)
             Until $ressup.MoveNext()
@@ -818,6 +819,8 @@ Public Sub SupAchat(etat As Integer, Cle As Collection, Optional stock As Boolea
         Else
           $sup = True
         Endif
+      Else
+        $sup = False
       Endif
   End Select
   

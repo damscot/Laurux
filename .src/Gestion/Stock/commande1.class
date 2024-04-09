@@ -571,7 +571,7 @@ Private Sub ValCom() As Boolean
       Endif
     Next
   Endif
-  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, $Bval, False, False) Then Return True
+  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, $Bval, True, False) Then Return True
   If tbl.EnrAch($etat, dte.dte, nco, fcode.Text) Then Return True
   Utils.db.Commit
   
