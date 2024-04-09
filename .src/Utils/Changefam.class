@@ -499,19 +499,20 @@ End
 
 Public Sub Modifart(oldcode As String, newfam As String, newcode As String)
 
-  'Table avec Famille & Code
-  Utils.db.Exec("UPdate Fiches_Art  SET  art_fam = &2, art_code = &3 where art_code = &1", oldcode, newfam, newcode)
-  Utils.db.Exec("UPdate Fiches_HistoLigfac  SET  fam_ligfac = &2, code_ligfac = &3 where code_ligfac = &1", oldcode, newfam, newcode)
-  Utils.db.Exec("UPdate Fiches_Ligbl  SET  fam_ligbl = &2, code_ligbl = &3 where code_ligbl = &1", oldcode, newfam, newcode)
-  Utils.db.Exec("UPdate Fiches_LigblM SET  fam_ligbl = &2, code_ligbl = &3 where code_ligbl = &1", oldcode, newfam, newcode)
-  Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2, code_ligfac = &3 where code_ligfac = &1", oldcode, newfam, newcode)
-  Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
-  Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
-  utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
-  utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
-  
+  If IsNull(oldcode) Or IsNull(newfam) Then Return
   If Not IsNull(newcode) And oldcode <> newcode Then
-  'Table avec Code
+    'Table avec Famille & Code
+    Utils.db.Exec("UPdate Fiches_Art  SET  art_fam = &2, art_code = &3 where art_code = &1", oldcode, newfam, newcode)
+    Utils.db.Exec("UPdate Fiches_HistoLigfac  SET  fam_ligfac = &2, code_ligfac = &3 where code_ligfac = &1", oldcode, newfam, newcode)
+    Utils.db.Exec("UPdate Fiches_Ligbl  SET  fam_ligbl = &2, code_ligbl = &3 where code_ligbl = &1", oldcode, newfam, newcode)
+    Utils.db.Exec("UPdate Fiches_LigblM SET  fam_ligbl = &2, code_ligbl = &3 where code_ligbl = &1", oldcode, newfam, newcode)
+    Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2, code_ligfac = &3 where code_ligfac = &1", oldcode, newfam, newcode)
+    Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
+    Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
+    utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
+    utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
+    
+    'Table avec Code
     utils.db.Exec("UPdate Docs_Ged SET code=&3 WHERE code=&1 and type = &2", oldcode, LGed.Articles, newcode)
     utils.db.Exec("UPdate Fiches_ArtPromo SET code=&2 WHERE code=&1", oldcode, newcode)
     utils.db.Exec("UPdate Fiches_CdBarre SET codep=&2 WHERE codep=&1", oldcode, newcode)
@@ -539,10 +540,20 @@ Public Sub Modifart(oldcode As String, newfam As String, newcode As String)
     utils.db.Exec("UPdate Fiches_TarTypcli SET cart=&2 WHERE cart=&1", oldcode, newcode)
     utils.db.Exec("UPdate Rupture SET codea=&2 WHERE codea=&1", oldcode, newcode)
     utils.db.Exec("UPdate RuptureC SET codea=&2 WHERE codea=&1", oldcode, newcode)
+  Else
+    Utils.db.Exec("UPdate Fiches_Art  SET  art_fam = &2 where art_code = &1", oldcode, newfam)
+    Utils.db.Exec("UPdate Fiches_HistoLigfac  SET  fam_ligfac = &2 where code_ligfac = &1", oldcode, newfam)
+    Utils.db.Exec("UPdate Fiches_Ligbl  SET  fam_ligbl = &2 where code_ligbl = &1", oldcode, newfam)
+    Utils.db.Exec("UPdate Fiches_LigblM SET  fam_ligbl = &2 where code_ligbl = &1", oldcode, newfam)
+    Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2 where code_ligfac = &1", oldcode, newfam)
+    Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2 where mat_code = &1", oldcode, newfam)
+    Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2 where mat_code = &1", oldcode, newfam)
+    utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2 WHERE code=&1", oldcode, newfam)
+    utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2 WHERE code=&1", oldcode, newfam)
   Endif
   
-
 End
+
 Public Sub Liste_Click()
 
   Dim TabF As String = "CFamille"
