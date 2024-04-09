@@ -11,7 +11,6 @@ Private $dtei As LDate
 Private $dtes As LDate
 Private $scpt As String
 Private $jouran As String
-Private $req As String
 
 Public Struct borne
   nomfich As String
@@ -21,7 +20,9 @@ End Struct
 
 Private $brn As Borne[]
 
-Const champ As String = " montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind "
+Property requete As String Use $req
+
+Const champ As String = " montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv "
 
 Public Sub _call(Optional cpt As String, Optional dtei As String = LDate(DateAdd(Now, gb.Year, -8)).L, Optional dtes As String = LDate(DateAdd(Now, gb.Year, 8)).L, Optional ltr As String = "n", Optional stri As String = " dte", Optional origin As String, Optional dteech As String) As Listextcpt
 
@@ -103,27 +104,27 @@ Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(
             res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND compte=&3 AND provisoire=False  LIMIT 1", $brn[i].dteinf.D, dte.DT, cpt)
           Endif 
           If res1.Available Then
-            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", DateAdd($dtei.G, gb.Day, -1), $brn[i].dteinf.D, dte.DT, cpt)
+            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree,pointee, 'n' as parse_having_P, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind, nrlv, '' as bgcolor FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", DateAdd($dtei.G, gb.Day, -1), $brn[i].dteinf.D, dte.DT, cpt)
             dte = dtsup(i)
-            req = Utils.db.Subst("SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.DT, cpt) & req
+            req = Utils.db.Subst("SELECT" & champ & "," & LCoul.Ecr_DB_bgcolor(False) & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.DT, cpt) & req
           Else
             'sans calcul du report a nouveau
              ok = False
             dte = dtsup(i)
-            req &= Utils.db.Subst("SELECT" & champ & "FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.DT, cpt)
+            req &= Utils.db.Subst("SELECT" & champ & "," & LCoul.Ecr_DB_bgcolor(False) & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.DT, cpt)
           Endif
         Else
           'requete sur année complete
           If $dtei = $brn[i].dteinf Or ltr <> "t" Then
            ok = False
           dte = dtsup(i)
-          req = Utils.db.Subst("SELECT " & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND" & cli & lett, $dtei.D, dte.DT, cpt)
+          req = Utils.db.Subst("SELECT " & champ & "," & LCoul.Ecr_DB_bgcolor(False) & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND" & cli & lett, $dtei.D, dte.DT, cpt)
           Endif
         Endif
       Else
         'requete sur année suivante
         dte = dtsup(i)
-        req &= Utils.db.Subst(" UNION (SELECT" & champ & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett & "  AND jour<>&4)", $dtei.D, dte.DT, cpt, $jouran)
+        req &= Utils.db.Subst(" UNION (SELECT" & champ & "," & LCoul.Ecr_DB_bgcolor(True) & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett & "  AND jour<>&4)", $dtei.D, dte.DT, cpt, $jouran)
       Endif
     Next
     req &= " ORDER BY " & stri
@@ -300,6 +301,70 @@ Public Function rechedoc(numdoc As String, Optional egal As String = " = ") As R
   res = Utils.db.Exec(req, numdoc)
   Return res
 
+
+End
+'********Tous ce qui concerne le pointage**********************
+
+Public Sub totalpointe(selected As String[], cpt As String) As Result     ''calcul le total débit et crédit des lignes pointées
+
+  Dim res As Result
+  Dim req As String
+  Dim i As Integer
+  Dim dte As LDate
+  
+  If IsNull(selected) Then Return
+  If selected.Count < 1 Then Return
+  dte = dtsup(0)
+  req = Utils.db.Subst("(SELECT montantd,montantc,compte FROM " & $brn[0].nomfich & " WHERE compte=&1 AND numero in (" & Selected.Join(",") & ") AND dte BETWEEN &2 AND &3 AND provisoire= False ", cpt, $brn[0].dteinf.D, dte.D)
+  For i = 1 To $brn.Max
+    dte = dtsup(i)
+    req &= Utils.db.Subst("UNION SELECT montantd,montantc,compte FROM " & $brn[i].nomfich & " WHERE compte=&1 AND numero in (" & Selected.Join(",") & ") AND dte BETWEEN &2 AND &3 AND provisoire= False ", cpt, $brn[i].dteinf.D, dte.D) 
+  Next
+  req = "SELECT SUM(montantd) AS totdeb,SUM(montantc) AS totcred,compte FROM " & req & ") AS a GROUP BY compte"
+  res = Utils.db.Exec(req)
+  
+  Return res
+
+End
+
+Public Sub enregistrepointage(selected As String[], point As Boolean, cpt As String, nrel As String)      ''enregistre les écritures pointées
+
+  Dim i As Integer
+  Dim r As String
+  
+  If Not point Then r = "" Else r = nrel
+  If IsNull(selected) Then Return
+  If selected.Count < 1 Then Return
+  Application.Busy = 1
+  For i = 0 To $brn.Max
+    Utils.db.Exec("UPDATE " & $brn[i].nomfich & " SET pointee = &1, nrlv = &2 WHERE compte = &3 AND numero in (" & Selected.Join(",") & ") AND nrlv = &4 AND provisoire= False ", point, r, cpt, nrel)
+  Next
+  Application.Busy = 0
+
+End
+
+Public Sub litpointee(cpt As String, nrel As String) As String[]      ''retourne sous forme de tableau la liste des écritures pointées d'un compte et d'un relevé
+
+  Dim res As Result
+  Dim req As String
+  Dim i As Integer
+  Dim dte As LDate
+  Dim selected As New String[]
+  
+  dte = dtsup(0)
+  req = Utils.db.Subst("SELECT numero FROM " & $brn[0].nomfich & " WHERE compte=&1 AND nrlv=&2 AND dte BETWEEN &3 AND &4 AND provisoire= False ", cpt, nrel, $brn[0].dteinf.D, dte.D)
+  For i = 1 To $brn.Max
+    dte = dtsup(i)
+    req &= Utils.db.Subst("UNION SELECT numero FROM " & $brn[i].nomfich & " WHERE compte=&1 AND nrlv=&2 AND dte BETWEEN &3 AND &4 AND provisoire= False ", cpt, nrel, $brn[i].dteinf.D, dte.D) 
+  Next
+  res = Utils.db.Exec(req)
+  If res.Available Then
+    Repeat
+      selected.Add(res!numero)
+    Until res.MoveNext()
+  Endif
+  
+  Return selected
 
 End
 

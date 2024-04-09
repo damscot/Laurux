@@ -31,11 +31,12 @@ Public Bval As Variant
 Private Col As Collection
 Private tr As TriGen
 Private Selected As String[]
+Private OldSelected As String[]     ''on garde les sélections de départ en cas de modification
 Private IsLast As Boolean
-
+Private $lst As Listextcpt
 
 Public Sub _New()
-
+  
   Me.Center
   dte.Type = TextReg.EstDate
   dte.Text = LDate(Now).L
@@ -53,6 +54,9 @@ Public Sub _New()
   Sldtheorique.Text = "0,00"
   Ecart.Text = "0,00"
   Sldfinal.Text = "0,00"
+  
+  dtinf.Text = LDate(Now).EFin.L
+  dtsup.Text = LDate(Now).FinMois.L
   
   Selected = New String[]
   IsLast = False
@@ -120,19 +124,21 @@ Public Sub Update_Req()
   prop = New ObjProp("numlot", k)
   Col.Add(prop, k)
   
-  If N1.Value = True Then
-    'La table Mvt est prioritaire sur la table Mvt1 pour les ecritures dupliquée, voir le group by ci-dessous.
-    Req = Utils.db.Subst("SELECT * FROM (SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt") & " union SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(True) & " FROM " & Cbase.Table("TabMvt1") & ") as Combined_Mvt")
-  Else
-    Req = Utils.db.Subst("SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt"))
-  Endif
+  ' If N1.Value = True Then
+  '   'La table Mvt est prioritaire sur la table Mvt1 pour les ecritures dupliquée, voir le group by ci-dessous.
+  '   Req = Utils.db.Subst("SELECT * FROM (SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt") & " union SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(True) & " FROM " & Cbase.Table("TabMvt1") & ") as Combined_Mvt")
+  ' Else
+  '   Req = Utils.db.Subst("SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt"))
+  ' Endif
 
-  tr = New TriGen(Panel1, Col, Res, Req, 20, Me, "numero") As "TriGen"
-  If N1.Value = True Then
-    'En affichage N-1, les ecritures peuvent etre doublé si elles sont présente dans les deux tables (cloture apres avoir saisie/pointee des ecritures apres la date de fin de l'exercice)
-    'Logiquement c'est une copie de l'ecriture, le groupement ne pose pas de pb.
-    tr.GroupBy("group by numero")
-  Endif
+  $lst = New Listextcpt(cpt.Text, dtinf.dte.L, dtsup.dte.L, "t")
+  req = "SELECT * FROM (" & Left($lst.requete, -14) & ") AS a"
+  tr = New TriGen(Panel1, Col, Res, Req, 20, Me) As "TriGen"
+  ' If N1.Value = True Then
+  '   'En affichage N-1, les ecritures peuvent etre doublé si elles sont présente dans les deux tables (cloture apres avoir saisie/pointee des ecritures apres la date de fin de l'exercice)
+  '   'Logiquement c'est une copie de l'ecriture, le groupement ne pose pas de pb.
+  '   tr.GroupBy("group by numero")
+  ' Endif
   Filter_Calc()
   tr.FontSize(-2)
   tr.Update() 
@@ -192,21 +198,19 @@ Private Sub Filter_Calc()
   
   If IsNull(cpt.Text) Then Return
   
-  If Toutes.Value Then
-    filter = Utils.db.Subst("compte = &1 and tresorerie = &2 and validee = &3", cpt.text, 1, 1)
-  Else If Ep.Value Then
-    filter = Utils.db.Subst("compte = &1 and tresorerie = &2 and validee = &3 and pointee is TRUE", cpt.text, 1, 1)
-    If Nrel.Text And RelUniq.Value = True Then
-      filter = filter & Utils.db.Subst(" and nrlv = &1", Nrel.Text)
+  If Not Toutes.Value Then
+    If Ep.Value Then
+      filter = Utils.db.Subst(" pointee IS TRUE AND lind <>' '")
+      If Nrel.Text And RelUniq.Value = True Then
+        filter = filter & Utils.db.Subst(" AND nrlv = &1", Nrel.Text)
+      Endif
     Endif
-  Else If Enp.Value Then
-    filter = Utils.db.Subst("compte = &1 and tresorerie = &2 and validee = &3 and (pointee is NULL or pointee is FALSE)", cpt.text, 1, 1)
+    If Enp.Value Then
+      filter = Utils.db.Subst(" (pointee is NULL or pointee is FALSE) AND lind <>' '")
+    Endif
+  Else
+    filter = " lind <> ' '"
   Endif
-  
-  If MaskRecent.Value Then
-    filter = filter & Utils.db.Subst(" and dte <= &1", LDate(dte.Text).D)
-  Endif
-
   tr.ExtraSel(filter, "and")
 
 End
@@ -323,6 +327,8 @@ Public Sub Colrlv_Man(releve As String) As Boolean
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and nreleve = &2", cpt.Text, releve)
   If rResult.Available Then
     ClearChampsAll()
+    Selected = $lst.litpointee(cpt.Text, releve)
+    OldSelected = Selected.Copy()
     'avec un relevé selectionné existant on souhaite probablement plus voir uniquement les ecritures pointee pour ce relevé
     RelUniq.Value = True
     Nrel.Text = rResult!nreleve
@@ -498,13 +504,6 @@ Public Sub Modesel_Click()
 
 End
 
-Public Sub N1_Click()
-
-  Selected.Clear()
-  Update_Req()
-
-End
-
 Public Sub SelectAllFil_Click()
 
   Dim Res As Result
@@ -585,16 +584,17 @@ Public Sub Calc_Solde()
 
   Ecart.Text = LPrix(0).L
   If Selected.Count > 0 Then
-    If N1.Value = True Then
-      rResult = Utils.db.Exec("Select totdeb, totcred FROM ( Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ") Union Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt1") & " where compte=&1 and numero in (" & Selected.Join(",") & ") ) as Combined_Mvt where compte=&1 and numero in (" & Selected.Join(",") & ") group by numero", Cpt.Text)
-    Else
-      rResult = Utils.db.Exec("Select sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ")", Cpt.Text)
-    Endif
-    If rResult.Available Then
-      totd = LPrix(rResult!totdeb).G
-      totc = LPrix(rResult!totcred).G
-    Endif
-  Endif
+    rResult = $lst.totalpointe(Selected, cpt.Text)
+  '   If N1.Value = True Then
+  '     rResult = Utils.db.Exec("Select totdeb, totcred FROM ( Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ") Union Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt1") & " where compte=&1 and numero in (" & Selected.Join(",") & ") ) as Combined_Mvt where compte=&1 and numero in (" & Selected.Join(",") & ") group by numero", Cpt.Text)
+  '   Else
+  '     rResult = Utils.db.Exec("Select sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ")", Cpt.Text)
+  '   Endif
+     If rResult.Available Then
+       totd = LPrix(rResult!totdeb).G
+       totc = LPrix(rResult!totcred).G
+     Endif
+   Endif
   
   Totdeb.Text = LPrix(totd).L
   Totcred.Text = LPrix(totc).L
@@ -619,7 +619,7 @@ Public Sub Sld_KeyPress()
 
 End
 
-Public Sub Pointage_Click()
+Public Sub Pointage2_Click()
 
   Dim rResult As Result
 
@@ -647,7 +647,9 @@ Public Sub Pointage_Click()
   Endif
 
   If Selected.Count Then
-    Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte = &3 and numero in (" & Selected.Join(",") & ")", 1, Nrel.Text, Cpt.Text)
+    $lst.enregistrepointage(OldSelected, False, cpt.Text, nrel.Text)
+    $lst.enregistrepointage(Selected, True, cpt.Text, nrel.Text)
+    'Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte = &3 and numero in (" & Selected.Join(",") & ")", 1, Nrel.Text, Cpt.Text)
   Endif
 
   ClearChamps()
@@ -681,7 +683,9 @@ Public Sub Depointage_Click()
   Endif
 
   If Selected.Count Then
-    Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte=&3 and numero in (" & Selected.Join(",") & ")", 0, "", Cpt.Text)
+    $lst.enregistrepointage(OldSelected, False, cpt.Text, nrel.Text)
+    $lst.enregistrepointage(Selected, False, cpt.Text, nrel.Text)
+    'Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte=&3 and numero in (" & Selected.Join(",") & ")", 0, "", Cpt.Text)
   Endif
 
   ClearChamps()
