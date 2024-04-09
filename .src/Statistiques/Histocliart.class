@@ -709,7 +709,7 @@ Private Sub edition()
   lab.BackGround = ReportBrush.Color(coul)
   lab.Alignment = Align.Center
   lab.Fixed = True
-  lab.Font = font["Serif,11"]
+  lab.Font = font["Serif,13"]
   'edition de l'entete
   hb = New ReportHBox($rpt)
   hb.Height = "4mm"
@@ -718,7 +718,7 @@ Private Sub edition()
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Center
-  lab.Font = font["Serif,9"]
+  lab.Font = font["Serif,12"]
   lab.Width = "25mm"
   lab.Border = ReportBorder["Right:1pt #000000"]
   If Radiocli.Value Or Radiofam.Value Then lab.Text = "N° Article"
@@ -726,14 +726,14 @@ Private Sub edition()
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Center
-  lab.Font = font["Serif,9"]
+  lab.Font = font["Serif,12"]
   lab.Expand = True
   lab.Border = ReportBorder["Right:1pt #000000"]
   lab.Text = "Libelle"
   lab = New ReportLabel(hb)
   lab.Height = "4mm"
   lab.Alignment = Align.Center
-  lab.Font = font["Serif,9"]
+  lab.Font = font["Serif,12"]
   lab.Width = "20mm"
   lab.Border = ReportBorder["Right:1pt #000000"]
   lab.Text = "Qte"
@@ -741,7 +741,7 @@ Private Sub edition()
     lab = New ReportLabel(hb)
     lab.Height = "4mm"
     lab.Alignment = Align.Center
-    lab.Font = font["Serif,9"]
+    lab.Font = font["Serif,12"]
     lab.Width = "20mm"
     lab.Border = ReportBorder["Right:1pt #000000"]
     lab.Text = "CA"
@@ -750,7 +750,7 @@ Private Sub edition()
     lab = New ReportLabel(hb)
     lab.Height = "4mm"
     lab.Alignment = Align.Center
-    lab.Font = font["Serif,10"]
+    lab.Font = font["Serif,12"]
     lab.Width = "20mm"
     lab.Border = ReportBorder["Right:1pt #000000"]
     lab.Text = "Marge"
