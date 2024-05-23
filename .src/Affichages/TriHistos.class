@@ -543,7 +543,7 @@ Public Sub DocVentes()
                 If Not Colrcp3.Item[3] Then Colrcp3.Item[3] = 0
                 Colrcp3.Item[5] = Rcli!rem_ligfac
                 Colrcp3.Item[6] = Rcli!netht_ligfac
-                If Colrcp3.Item[6] Then Totalfac.Text = Format$(Val(Totalfac.Text) + (Val(Rcli!netht_ligfac) * Val(Colrcp3.Item[3])), "0.00")
+                If Colrcp3.Item[6] Then Totalfac.Text = Format$(Val(Totalfac.Text) + (Val(Rcli!netht_ligfac)), "0.00")
               Else
                 If Rcli!typel_ligfac = "C"
                   For Each sline In Split(Rcli!com_ligfac, "\n")
@@ -574,7 +574,7 @@ Public Sub DocVentes()
                 If Not Colrcp3.Item[3] Then Colrcp3.Item[3] = 0
                 Colrcp3.Item[5] = Rcli!rem_ligbl
                 Colrcp3.Item[6] = Rcli!netht_ligbl
-                If Colrcp3.Item[6] Then Totalfac.Text = Format$(Val(Totalfac.Text) + (Val(Rcli!netht_ligbl) * Val(Colrcp3.Item[3])), "0.00")
+                If Colrcp3.Item[6] Then Totalfac.Text = Format$(Val(Totalfac.Text) + (Val(Rcli!netht_ligbl)), "0.00")
               Else
                 If Rcli!typel_ligbl = "C" Or If Rcli!typel_ligbl = "R"
                   For Each sline In Split(Rcli!com_ligbl, "\n")
