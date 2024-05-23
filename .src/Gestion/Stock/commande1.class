@@ -158,6 +158,12 @@ Public Sub fcode_LostFocus()
 
 End
 
+Public Sub fcode_KeyPress()
+
+  If Key.Code = Key.F2 Then RecFo_Click()
+
+End
+
 Public Sub com_LostFocus()
 
   If Not IsNull(tbl) Then tbl.commentaire = com.Text

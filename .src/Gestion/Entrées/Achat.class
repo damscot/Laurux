@@ -966,6 +966,7 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
         res!volumeap = cdd.volume_total().TotNHT.G 
         If cdd.secu_droit().Montant(cdd, True).Mnt <> 0 Then res!volumess = cdd.volume_total().TotNHT.G 
         res!vignette = vignette
+        res!cloture = False
         res.Update
       Endif
       EnrConsigne(cdd.cdepal, cdd.nbpal, Format(sl.Ind + 1, "000"), cdd, dte, num, four)
