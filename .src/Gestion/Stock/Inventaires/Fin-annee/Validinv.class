@@ -84,78 +84,78 @@ Public Sub Button2_click()
               If IsNull(rartinv!inv_qtecomptee) Then qteC = 0 Else qteC = rartinv!inv_qtecomptee
               If IsNull(rartinv!inv_qtestock) Then qteSt = 0 Else qteSt = rartinv!inv_qtestock
               ' On regarde si l'article inventorié est dans les historiques de ventes
-              Rqte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisLigFac") & " where code_ligfac = &1 ", rartinv!inv_code)
-              If Rqte.Available Then
-                Repeat
-                  ' On récupère la date de la facture
-                  If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = True Then
-                    Try dte = Utils.db.Exec("SELECT * FROM  " & Cbase.Table("TabHisFac") & " where numfac = &1 union select * from " & Cbase.Table("TabHisFacm") & " where numfac = &1", Rqte!num_ligfac)
-                  Else
-                    Try dte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisFac") & " where numfac = &1 ", Rqte!num_ligfac)
-                  Endif
-                  ' Si la date est inférieure à la date de fin d'année et postérieure à la date de l'inventaire et si le code est bien un article
-                  ' Cas ou l'inventaire a été généré avant la date de fin d'exercice
-                  If Not Error And dte.Available And Utils.Cdate_Comp(dte!datefac) > utils.Cdate_Comp(rartinv!inv_date) And utils.Cdate_Comp(dte!datefac) < utils.Cdate_Comp(finexo) And Rqte!typel_ligfac = "A" And Rqte!code_ligfac = rartinv!inv_code Then
-                    qteVtes = qteVtes + Val(Rqte!qte_ligfac)
-                  Endif
-                  ' Si la date est postérieure à la date de fin d'année et antérieure à la date de l'inventaire et si le code est bien un article
-                  ' Cas ou l'inventaire a été généré après la date de fin d'exercice
-                  If Not Error And dte.Available And .Cdate_Comp(dte!datefac) < .Cdate_Comp(rartinv!inv_date) And .Cdate_Comp(dte!datefac) > .Cdate_Comp(finexo) And Rqte!typel_ligfac = "A" And Rqte!code_ligfac = rartinv!inv_code Then
-                    qteVtes = qteVtes + Val(Rqte!qte_ligfac)
-                  Endif
-                Until Rqte.MoveNext()
-              Endif
-              ' On recupere les ventes dans les bl.
-              Rbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabBl") & " WHERE type = &1 or type = &2", "B", "F")
-              If Rbl.Available Then
-                Repeat
-                  If .Cdate_Comp(rartinv!inv_date) < .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(rartinv!inv_date) Or .Cdate_Comp(rartinv!inv_date) > .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(finexo) Then
-                    ' Ensuite on récupère les lignes de produits utilisés
-                    Ligbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigbl") & " WHERE num_ligbl = &1 and code_ligbl = &2  and typel_ligbl = &3", Rbl!numbl, rartinv!inv_code, "A")
-                    If Ligbl.Available Then
-                      Repeat
-                        qteVtes = qteVtes + Val(Ligbl!qte_ligbl)
-                      Until Ligbl.MoveNext()
-                    Endif
-                  Endif
-                Until Rbl.MoveNext()
-              Endif
-              ' Puis dans les bl matériaux.
-              If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = True Then
-                Rbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabBlM") & " WHERE type = &1 or type = &2", "B", "F")
-                If Rbl.Available Then
-                  Repeat
-                    If .Cdate_Comp(rartinv!inv_date) < .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(rartinv!inv_date) Or .Cdate_Comp(rartinv!inv_date) > .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(finexo) Then
-                      ' Ensuite on récupère les lignes de produits utilisés
-                      Ligbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigblM") & " WHERE num_ligbl = &1 and code_ligbl = &2  and typel_ligbl = &3", Rbl!numbl, rartinv!inv_code, "A")
-                      If Ligbl.Available Then
-                        Repeat
-                          qteVtes = qteVtes + Val(Ligbl!qte_ligbl)
-                        Until Ligbl.MoveNext()
-                      Endif
-                    Endif
-                  Until Rbl.MoveNext()
-                Endif
-              Endif
-              'On recupere la reference fournisseur.
-              rarts = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabArt") & " where art_code = &1 ", rartinv!inv_code)
-              ' On regarde si l'article inventorié est dans les historiques d'achats
-              Rqte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigrecpt") & " where code = &1 or code = &2 ", rartinv!inv_code, rarts!art_cfour)
-              If Rqte.Available Then
-                Repeat
-                  ' Si la date est inférieure à la date de fin d'année et postérieure à la date de l'inventaire et si le code est bien un article
-                  ' Cas de l'inventaire généré avant la date de fin d'exercice
-                  If .Cdate_Comp(Rqte!daterecpt) > .Cdate_Comp(rartinv!inv_date) And .Cdate_Comp(Rqte!daterecpt) < .Cdate_Comp(finexo) Then
-                    qteAch = qteAch + Val(Rqte!qte) * Rarts!art_txconv
-                  Else
-                    ' Si la date est postérieure à la date de fin d'année et antérieure à la date de l'inventaire et si le code est bien un article
-                    ' Cas de l'inventaire généré après la date de fin d'exercice
-                    If .Cdate_Comp(Rqte!daterecpt) < .Cdate_Comp(rartinv!inv_date) And .Cdate_Comp(Rqte!daterecpt) > .Cdate_Comp(finexo) Then
-                      qteAch = qteAch + Val(Rqte!qte) * Rarts!art_txconv
-                    Endif
-                  Endif
-                Until Rqte.MoveNext()
-              Endif
+              ' Rqte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisLigFac") & " where code_ligfac = &1 ", rartinv!inv_code)
+              ' If Rqte.Available Then
+              '   Repeat
+              '     ' On récupère la date de la facture
+              '     If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = True Then
+              '       Try dte = Utils.db.Exec("SELECT * FROM  " & Cbase.Table("TabHisFac") & " where numfac = &1 union select * from " & Cbase.Table("TabHisFacm") & " where numfac = &1", Rqte!num_ligfac)
+              '     Else
+              '       Try dte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisFac") & " where numfac = &1 ", Rqte!num_ligfac)
+              '     Endif
+              '     ' Si la date est inférieure à la date de fin d'année et postérieure à la date de l'inventaire et si le code est bien un article
+              '     ' Cas ou l'inventaire a été généré avant la date de fin d'exercice
+              '     If Not Error And dte.Available And Utils.Cdate_Comp(dte!datefac) > utils.Cdate_Comp(rartinv!inv_date) And utils.Cdate_Comp(dte!datefac) < utils.Cdate_Comp(finexo) And Rqte!typel_ligfac = "A" And Rqte!code_ligfac = rartinv!inv_code Then
+              '       qteVtes = qteVtes + Val(Rqte!qte_ligfac)
+              '     Endif
+              '     ' Si la date est postérieure à la date de fin d'année et antérieure à la date de l'inventaire et si le code est bien un article
+              '     ' Cas ou l'inventaire a été généré après la date de fin d'exercice
+              '     If Not Error And dte.Available And .Cdate_Comp(dte!datefac) < .Cdate_Comp(rartinv!inv_date) And .Cdate_Comp(dte!datefac) > .Cdate_Comp(finexo) And Rqte!typel_ligfac = "A" And Rqte!code_ligfac = rartinv!inv_code Then
+              '       qteVtes = qteVtes + Val(Rqte!qte_ligfac)
+              '     Endif
+              '   Until Rqte.MoveNext()
+              ' Endif
+              ' ' On recupere les ventes dans les bl.
+              ' Rbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabBl") & " WHERE type = &1 or type = &2", "B", "F")
+              ' If Rbl.Available Then
+              '   Repeat
+              '     If .Cdate_Comp(rartinv!inv_date) < .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(rartinv!inv_date) Or .Cdate_Comp(rartinv!inv_date) > .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(finexo) Then
+              '       ' Ensuite on récupère les lignes de produits utilisés
+              '       Ligbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigbl") & " WHERE num_ligbl = &1 and code_ligbl = &2  and typel_ligbl = &3", Rbl!numbl, rartinv!inv_code, "A")
+              '       If Ligbl.Available Then
+              '         Repeat
+              '           qteVtes = qteVtes + Val(Ligbl!qte_ligbl)
+              '         Until Ligbl.MoveNext()
+              '       Endif
+              '     Endif
+              '   Until Rbl.MoveNext()
+              ' Endif
+              ' ' Puis dans les bl matériaux.
+              ' If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = True Then
+              '   Rbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabBlM") & " WHERE type = &1 or type = &2", "B", "F")
+              '   If Rbl.Available Then
+              '     Repeat
+              '       If .Cdate_Comp(rartinv!inv_date) < .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(rartinv!inv_date) Or .Cdate_Comp(rartinv!inv_date) > .Cdate_Comp(finexo) And .Cdate_Comp(Rbl!datebl) > .Cdate_Comp(finexo) Then
+              '         ' Ensuite on récupère les lignes de produits utilisés
+              '         Ligbl = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigblM") & " WHERE num_ligbl = &1 and code_ligbl = &2  and typel_ligbl = &3", Rbl!numbl, rartinv!inv_code, "A")
+              '         If Ligbl.Available Then
+              '           Repeat
+              '             qteVtes = qteVtes + Val(Ligbl!qte_ligbl)
+              '           Until Ligbl.MoveNext()
+              '         Endif
+              '       Endif
+              '     Until Rbl.MoveNext()
+              '   Endif
+              ' Endif
+              ' 'On recupere la reference fournisseur.
+              ' rarts = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabArt") & " where art_code = &1 ", rartinv!inv_code)
+              ' ' On regarde si l'article inventorié est dans les historiques d'achats
+              ' Rqte = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigrecpt") & " where code = &1 or code = &2 ", rartinv!inv_code, rarts!art_cfour)
+              ' If Rqte.Available Then
+              '   Repeat
+              '     ' Si la date est inférieure à la date de fin d'année et postérieure à la date de l'inventaire et si le code est bien un article
+              '     ' Cas de l'inventaire généré avant la date de fin d'exercice
+              '     If .Cdate_Comp(Rqte!daterecpt) > .Cdate_Comp(rartinv!inv_date) And .Cdate_Comp(Rqte!daterecpt) < .Cdate_Comp(finexo) Then
+              '       qteAch = qteAch + Val(Rqte!qte) * Rarts!art_txconv
+              '     Else
+              '       ' Si la date est postérieure à la date de fin d'année et antérieure à la date de l'inventaire et si le code est bien un article
+              '       ' Cas de l'inventaire généré après la date de fin d'exercice
+              '       If .Cdate_Comp(Rqte!daterecpt) < .Cdate_Comp(rartinv!inv_date) And .Cdate_Comp(Rqte!daterecpt) > .Cdate_Comp(finexo) Then
+              '         qteAch = qteAch + Val(Rqte!qte) * Rarts!art_txconv
+              '       Endif
+              '     Endif
+              '   Until Rqte.MoveNext()
+              ' Endif
               If qtest < 0 Then qtest = 0
               If qtevtes < 0 Then
                 qtec = qtec + qtevtes
