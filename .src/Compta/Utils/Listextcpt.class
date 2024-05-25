@@ -370,7 +370,7 @@ End
 
 Private Function resext_Read() As Result      ''Retourne le résultat de la requête définie par _new
 
-  $resext = Utils.db.Exec($req) 
+  If $req Then $resext = Utils.db.Exec($req) 
   Return $resext
 
 End

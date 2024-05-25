@@ -243,7 +243,7 @@ Public Sub Ex1()
       dte2.L = dteN1.Text
     Endif
   End With
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -268,7 +268,7 @@ Public Sub Exo()
     rrResult = Utils.db.Exec("SELECT compte_cc, intitule_cc, cent_cc  FROM " & Tab2 & " WHERE type_cc = &1 order by cast(compte_cc AS char)", type)
     If rrResult.Available Then affichage()
  
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -289,7 +289,7 @@ Public Sub nmoins_click()
     dteN1.Text = dte2.L
     clear()
     affichage()
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -464,6 +464,13 @@ Public Sub compteman()
     cpt.Text = Cmpts!compte_cc
     nom.Text = Cmpts!intitule_cc
     Compt = "5"
+    centr = Cmpts!cent_cc
+    Ctrl.Value = Cmpts!cent_cc
+    If Cmpts Then
+      Object.Lock(detail)
+      detail.Value = True
+      Object.Unlock(detail)
+    Endif
     affichage()
     b = 0
   Else
@@ -523,13 +530,7 @@ Public Sub affichage()
       rrResult.MoveFirst
       cpt.Text = rrResult!compte_cc
       nom.Text = rrResult!intitule_cc
-      Centr = rrResult!cent_cc
-      If Centr = True Then
-        Ctrl.Value = True
-      Else
-        Ctrl.value = False
-      Endif
-      Compt = ""
+     ctrlchange
     Else
       rrResult.MoveFirst()
       Repeat
@@ -544,29 +545,17 @@ Public Sub affichage()
       rrResult.MoveFirst
       cpt.Text = rrResult!compte_cc
       nom.Text = rrResult!intitule_cc
-      Centr = rrResult!cent_cc
-      Compt = ""
-      If Centr = True Then
-        Ctrl.Value = True
-      Else
-        Ctrl.value = False
-      Endif
+      ctrlchange
     Endif
     If rrResult.Available And Compt = "2" Then
       rrResult.Movenext
       If rrResult.Available Then
         cpt.Text = rrResult!compte_cc
         nom.Text = rrResult!intitule_cc
-        Centr = rrResult!cent_cc
       Else
         rrResult.MoveLast
       Endif
-      Compt = ""
-      If Centr = True Then
-        Ctrl.Value = True
-      Else
-        Ctrl.value = False
-      Endif
+      ctrlchange
     Endif
 
     If rrResult.Available And Compt = "3" Then
@@ -574,40 +563,20 @@ Public Sub affichage()
       If rrResult.Available Then
         cpt.Text = rrResult!compte_cc
         nom.Text = rrResult!intitule_cc
-        Centr = rrResult!cent_cc
       Else
         rrResult.MoveFirst
       Endif
-      Compt = ""
-      If Centr = True Then
-        Ctrl.Value = True
-      Else
-        Ctrl.value = False
-      Endif
+     ctrlchange
     Endif
 
     If Compt = "4" Then
       rrResult.MoveLast
       cpt.Text = rrResult!compte_cc
       nom.Text = rrResult!intitule_cc
-      Centr = rrResult!cent_cc
-      Compt = ""
-      If Centr = True Then
-        Ctrl.Value = True
-      Else
-        Ctrl.value = False
-      Endif
+      ctrlchange
     Endif
 
-    If Compt = "5" Then
-      Compt = ""
-      Centr = rrResult!cent_cc
-      If Centr = True Then
-        Ctrl.Value = True
-      Else
-        Ctrl.value = False
-      Endif
-    Endif
+    If Compt = "5" Then ctrlchange()
 
     If Enl.value = True Then
       $lstex = New Listextcpt(cpt.Text, DteN0.Text, dteN1.Text, "n", sTri)
@@ -622,34 +591,29 @@ Public Sub affichage()
     Endif
     
     rResult = $lstex.resext
-    If rResult.Available Then
-    If Centr Then
-      Utils.db.Exec("drop Table IF exists " & Tab1 & "")
-      Utils.db.Exec("CREATE TABLE " & Tab1 &
-        "(compte Char(8) NOT NULL," &
-        "intitule Char(30)," &
-        "jour Char(2)," &
-        "mois Char(6) NOT NULL," &
-        "libelle Char(30) ," &
-        "dte Integer ," &
-        "montantd Decimal(12,2)," &
-        "montantc Decimal(12,2)," &
-        "PRIMARY KEY (compte, mois))" & "ENGINE = MYISAM")
-    Endif
+    If rResult And rResult.Available Then
+      If Centr Then
+        Utils.db.Exec("drop Table IF exists " & Tab1 & "")
+        Utils.db.Exec("CREATE TABLE " & Tab1 &
+          "(compte Char(8) NOT NULL," &
+          "intitule Char(30)," &
+          "jour Char(2)," &
+          "mois Char(6) NOT NULL," &
+          "libelle Char(30) ," &
+          "dte Integer ," &
+          "montantd Decimal(12,2)," &
+          "montantc Decimal(12,2)," &
+          "PRIMARY KEY (compte, mois))" & "ENGINE = MYISAM")
+      Endif
       
       rResult.MoveFirst
       Repeat
         dt = New LDate(rResult!dte)
         If Ctrl.Value = False Or detail.Value = True Then
- '         If dt.Apres(dte2) and Then
+          'If dt.Apres(dte2) and Then
           If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
             Colcli.Add(rResult.Index, rResult.Index)
-            ged = LGed.Search(LGed.Comptabilite, rResult!numero)
-            If ged <> Null Then
-              Colcli.Item[0] = "* " & rResult!compte
-            Else
-              Colcli.Item[0] = "  " & rResult!compte
-            Endif
+            Colcli.Item[0] = rResult!compte
             Colcli.Item[1] = dt.L
             Colcli.Item[2] = rResult!libelle
             Colcli.Item[3] = rResult!numdoc
@@ -675,7 +639,7 @@ Public Sub affichage()
           Endif
         Else
           If dt.Apres(dte1) And dt.Avant(dte2) Then
- '         If .Cdate_Comp(rResult!dte) >= .Cdate_dbase(dten0.Text) And .Cdate_Comp(rResult!dte) <= .Cdate_dbase(dten1.Text) Then
+ 
             $journal = rResult!jour
             Datj = New LDate(dt.L)
             montantd = rResult!montantd
@@ -709,6 +673,25 @@ Public Sub affichage()
 
 End
 
+Private Sub ctrlchange()
+  
+  Compt = ""
+  Centr = rrResult!cent_cc
+  If Centr = True Then
+  '   Ctrl.Value = True
+  '   Object.Lock(detail)
+  '   detail.Value = True
+  '   Object.Unlock(detail)
+   Else
+    Ctrl.value = False
+    Object.Lock(detail)
+    detail.Value = False
+    Object.Unlock(detail)
+  Endif
+  
+End
+
+
 '**************************************************
 '* On récupere le solde des comptes centralisés   *
 '**************************************************
@@ -724,14 +707,14 @@ Public Sub aff()
         An = CResult!dte
         An = Right$(An, 2) & "." & Mid$(An, 5, 2) & "." & Left$(An, 4)
         Colcli.Add(CResult!dte, CResult!dte)
-        Colcli.Item[0] = "   " & CResult!compte
+        Colcli.Item[0] = CResult!compte
         Colcli.Item[1] = An
         Colcli.Item[2] = " Centralisation"
         Colcli.Item[4] = Format$(CResult!montantd, "0.00")
         Colcli.Item[5] = Format$(CResult!montantc, "0.00")
         Colcli.Item[8] = CResult!jour
-        DebP = DebP + CResult!montantd
-        CredP = CredP + CResult!montantc
+        DebP = CResult!montantd
+        CredP = CResult!montantc
       Until CResult.MoveNext()
     Endif
   End With
@@ -791,6 +774,7 @@ Public Sub detail_Click()
     detail.Value = False
   Endif
   Raz()
+  'compteman()
   Affichage()
 
 End
@@ -804,7 +788,7 @@ Public Sub Toutes_Click()
     clear()
     affichage()
   Endif
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -817,7 +801,7 @@ Public Sub Enl_Click()
     clear()
     affichage()
   Endif
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -830,7 +814,7 @@ Public Sub El_Click()
     clear()
     affichage()
   Endif
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -846,7 +830,7 @@ Public Sub Bclient_Click()
   cpt.Select
   type = "C"
   rrResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE type_cc = &1 order by cast(compte_cc AS char)", type)
-  detail.Value = False
+  'detail.Value = False
   If IsNull($Org) Then Button4_Click()
 
 End
@@ -863,7 +847,7 @@ Public Sub Bfournisseur_Click()
   cpt.Select
   type = "F"
   rrResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE type_cc = &1 order by cast(compte_cc AS char)", type)
-  detail.Value = False
+  'detail.Value = False
   Button4_Click()
 
 End
@@ -880,7 +864,7 @@ Public Sub Bgestion_Click()
   cpt.Select
   type = "G"
   rrResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE type_cc = &1 order by cast(compte_cc AS char)", type)
-  detail.Value = False
+  'detail.Value = False
   Button4_Click()
 
 End
@@ -897,7 +881,7 @@ Public Sub Bbilan_Click()
   cpt.Select
   type = "B"
   rrResult = Utils.db.Exec("SELECT * FROM " & Tab2 & " WHERE type_cc = &1 order by cast(compte_cc AS char)", type)
-  detail.Value = False
+  'detail.Value = False
   Button4_Click()
 
 End
@@ -908,7 +892,7 @@ End
 Public Sub E0_Click()
 
   Ex1()
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -930,7 +914,7 @@ Public Sub Button4_Click()
   cpt.Text = ""
   Compt = "0"
   affichage()
-  detail.Value = False
+  'detail.Value = False
 
 End
  
@@ -949,7 +933,7 @@ Public Sub Button1_Click()
   Endif
   Raz()
   affichage()
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -966,7 +950,7 @@ Public Sub Button2_Click()
     Compt = "2"
   Endif
   affichage()
-  detail.Value = False
+  'detail.Value = False
 
 End
 
@@ -980,7 +964,7 @@ Public Sub Button3_Click()
   cpt.Text = ""
   Compt = "4"
   affichage()
-  detail.Value = False
+  'detail.Value = False
 
 End
 
