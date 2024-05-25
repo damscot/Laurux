@@ -74,7 +74,26 @@ Public Sub _New(Optional lind As Integer = 0, Optional type As Integer = Autres,
   
 End
 
+Public Sub Exist(type As Integer, code As String, Optional compte As String = "", Optional orig As String = "") As Boolean
+  
+  Dim ret As Boolean
+  
+  ret = trouve(type, code, compte, orig, True)
+  Return ret
+  
+End
+
 Public Sub Search(type As Integer, code As String, Optional compte As String = "", Optional orig As String = "") As LGed
+  
+  Dim ret As LGed
+  
+  ret = trouve(type, code, compte, orig, False)
+  Return ret
+  
+End
+
+
+Private Sub trouve(type As Integer, code As String, Optional compte As String = "", Optional orig As String = "", exist As Boolean = False) As Variant
   
   Dim Res As Result
   Dim Ret As LGed
@@ -93,11 +112,12 @@ Public Sub Search(type As Integer, code As String, Optional compte As String = "
     Endif
   Endif
   If Res.Available Then
+    If exist Then Return True
     Ret = New LGed(Null, Res!lind)
     Return Ret
   Endif
 
-  Return Null
+  If exist Then Return False Else Return Null
   
 End
 
