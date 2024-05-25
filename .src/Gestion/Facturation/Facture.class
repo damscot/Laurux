@@ -7519,8 +7519,6 @@ Public Sub Dec_Click()
 
   decimal()
   foccons
-  '  Artqte.SetFocus
-  ' Artqte.Select
 
 End
 
@@ -8370,8 +8368,8 @@ Public Sub Coldetail_KeyRelease()
               While Left$(Coldetail.Key, 4) <> (Format$(Val(l) - np, "0000"))
                 Coldetail.MoveNext()
                 Try Coldetail.item.Selected = True
-                Coldetail.current.EnsureVisible
                 If Error Then Break
+                Coldetail.current.EnsureVisible
               Wend
             Endif
           Endif
@@ -12379,7 +12377,7 @@ Public Sub $textpal_LostFocus()
       Endif
       If $inbcol <> 0 Then
         $textcol.Text = Str($inbcol * Val($textpal.Text))
-        $inbcol = 0
+        '$inbcol = 0
       Endif
     Endif
   Endif
@@ -12401,12 +12399,10 @@ Public Sub $textcol_LostFocus()
       Endif
       If $inbbout <> 0 Then
         Artqte.Text = Str($inbbout * Val($textcol.Text))
-        $inbbout = 0
+        '$inbbout = 0
       Endif
     Endif
   Endif
-  Artqte.SetFocus
-  Artqte.Select
 
 End
 
@@ -12414,7 +12410,8 @@ Public Sub $textpal_KeyPress()
 
   If Key.Code = Key.Enter Or Key.Code = Key.Return Or Key.Code = Key.Tab Then
     Stop Event
-    $textpal_LostFocus
+    $textcol.SetFocus
+    '$textpal_LostFocus
   Endif
 
 End
@@ -12423,7 +12420,8 @@ Public Sub $textcol_KeyPress()
 
   If Key.Code = Key.Enter Or Key.Code = Key.Return Or Key.Code = Key.Tab Then
     Stop Event
-    $textcol_LostFocus
+    Artqte.SetFocus
+    '$textcol_LostFocus
   Endif
 
 End
