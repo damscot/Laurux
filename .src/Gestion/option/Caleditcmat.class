@@ -537,7 +537,7 @@ Public Sub detail_Click()
               volef.vfp = volef.vdp + volef.ven
               totef.ven += volef.ven
               volap.ven = res!volumeap
-              volap.vfp = volap.vdp - volap.ven
+              volap.vfp = volap.vdp + volap.ven
               totap.ven += volap.ven
           End Select         
           ligne(rpr, volef, volap, res!coderegie, res!art_code, res!art_design, res!num, res!dtmouv, res!art_volm, res!art_deg)
@@ -546,8 +546,7 @@ Public Sub detail_Click()
         Until res.MoveNext()
         soustot(rpr, totef, totap)
         'on regarde dans les entrées et sorties en cours non validées
-        resecour = utils.db.Exec("SELECT art_code,art_volm,art_deg,art_design,art_dra,numbl AS num,dte_ligbl AS dte,qte_ligbl AS qte, 'S' AS type FROM Fiches_Bl,Fiches_Ligbl,Fiches_Art WHERE numbl=num_ligbl AND art_code=code_ligbl AND art_dra=&3 AND Fiches_Bl.type='B' AND dte_ligbl BETWEEN &1 AND &2 " & 
-        "UNION ALL SELECT art_code,art_volm,art_deg,art_design,art_dra,Fiches_Entrecpt.numrecpt AS num,daterecpt AS dte,qte, 'E' AS type FROM Fiches_Ligrecpt,Fiches_Entrecpt,Fiches_Art WHERE Fiches_Ligrecpt.numrecpt = Fiches_Entrecpt.numrecpt  AND art_code=code AND art_dra=&3 AND validee=False AND daterecpt BETWEEN &1 AND &2", $dteinf.D, $dteinf.FinMois.D, resreg!code)
+        resecour = utils.db.Exec("SELECT art_code,art_volm,art_deg,art_design,art_dra,numbl AS num,dte_ligbl AS dte,qte_ligbl AS qte, 'S' AS type FROM Fiches_Bl,Fiches_Ligbl,Fiches_Art WHERE numbl=num_ligbl AND art_code=code_ligbl AND art_dra=&3 AND Fiches_Bl.type='B' AND dte_ligbl BETWEEN &1 AND &2 ", $dteinf.D, $dteinf.FinMois.D, resreg!code)
         If resecour.Available Then
           totef = New Volume
           totap = New Volume
