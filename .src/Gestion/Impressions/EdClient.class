@@ -358,6 +358,7 @@ Public Sub Button2_Click()
   Dim Nbpage As Integer
   Dim pdf As Cclients
   Dim Tri As String
+  Dim req As String
 
   dte = Format$(Now, "dd.mm.yyyy")
   Tab = "Fiches_Cli"
@@ -380,35 +381,12 @@ Public Sub Button2_Click()
   Else
     Tri = "cli_nom"
   Endif
-  If IsNull(Stat1.Text) And If IsNull(Stat2.Text) And If IsNull(Type1.Text) And If IsNull(Type2.Text) Then
-    If Not IsNull(Mreg.Text) Then
-      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 and cli_reg = &3 order by " & Tri & "", Cli.text, Cli2.text, Mreg.Text)
-    Else
-      rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 order by " & Tri & "", Cli.text, Cli2.text)
-    Endif
-  Else
-    If IsNull(Stat1.Text) And If IsNull(Stat2.Text) Then
-      If Not IsNull(Mreg.Text) Then
-        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 and cli_typec >= &5  and cli_typec <= &6  and cli_reg = &7 order by " & Tri & ", cli_typec", Cli.text, Cli2.text, Stat1.Text, Stat2.text, Type1.Text, Type2.Text, Mreg.Text)
-      Else
-        rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 and cli_typec >= &5  and cli_typec <= &6 order by " & Tri & ", cli_typec", Cli.text, Cli2.text, Stat1.Text, Stat2.text, Type1.Text, Type2.Text)
-      Endif
-    Else
-      If IsNull(Type1.Text) And If IsNull(Type2.Text) Then
-        If Not IsNull(Mreg.Text) Then
-          rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 and cli_statut >= &3  and cli_statut <= &4  and cli_reg = &7 order by " & Tri & ", cli_statut", Cli.text, Cli2.text, Stat1.Text, Stat2.text, Type1.Text, Type2.Text, Mreg.Text)
-        Else
-          rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 and cli_statut >= &3  and cli_statut <= &4  order by " & Tri & ", cli_statut", Cli.text, Cli2.text, Stat1.Text, Stat2.text, Type1.Text, Type2.Text)
-        Endif
-      Else
-        If Not IsNull(Mreg.Text) Then
-          rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 and cli_statut >= &3  and cli_statut <= &4  and cli_typec >= &5  and cli_typec <= &6  and cli_reg = &7 order by " & Tri & ", cli_statut, cli_typec", Cli.text, Cli2.text, Stat1.Text, Stat2.text, Type1.Text, Type2.Text, Mreg.Text)
-        Else
-          rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE cli_code >= &1  and cli_code <= &2 and cli_statut >= &3  and cli_statut <= &4  and cli_typec >= &5  and cli_typec <= &6  order by " & Tri & ", cli_statut, cli_typec", Cli.text, Cli2.text, Stat1.Text, Stat2.text, Type1.Text, Type2.Text)
-        Endif
-      Endif
-    Endif
-  Endif
+  If Cli.Text Or Cli2.Text Then req = " AND CAST(cli_code AS CHAR) BETWEEN &1  AND  &2"
+  If Stat1.Text Or Stat2.Text Then req &= " AND cli_statut >= &3  AND cli_statut <= &4"
+  If Type1.Text Or Type2.Text Then req &= " AND cli_typec >= &5  AND cli_typec <= &6 "
+  If Mreg.Text Then req = " AND cli_reg = &7"
+  If req Then req = Right(req, -4)
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE " & req & " ORDER BY " & tri, cli.Text, Cli2.Text, Stat1.Text, Stat2.Text, Type1.Text, Type2.Text, Mreg.Text)
   If rResult.Available Then
     Repeat
       code = rResult!cli_code
