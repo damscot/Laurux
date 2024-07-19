@@ -247,7 +247,7 @@ Public Sub Code_lostfocus()
   If Last.Text <> $code Then
     If Last.text Then ligne_LecCode(Last.Text)
     Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
-    Me.ligne[Me.ind].MonControle["Désignation"].setfocus
+    'Me.ligne[Me.ind].MonControle["Désignation"].setfocus
   Endif
   If Me.ind > -1 Then Raise lostfocus(Me.ligne[Me.ind])
   
@@ -277,7 +277,7 @@ Public Sub Rech_click()
        Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
     Endif
     ligne_LecCode(Bval)
-    Me.ligne[Me.ind].MonControle["Désignation"].setfocus
+    If Object.IsValid(Me.ligne[Me.ind].AutresObj[Consignes]) Then Me.ligne[Me.ind].MonControle["Pal"].setfocus Else Me.ligne[Me.ind].MonControle["Qte"].setfocus
   Endif
 
 End
