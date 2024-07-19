@@ -5755,6 +5755,8 @@ end_utf8:
   Try utils.db.Exec("alter table Fiches_Four add primary key (fo_code)")
   Try utils.db.Exec("alter table Fiches_Mo add primary key (mo_code)")
   Try utils.db.Exec("alter table Fiches_Fam add primary key (code_fam)")
+  Try utils.db.Exec("alter table Fiches_HistoFac add primary key (numfac)")
+  Try utils.db.Exec("alter table Fiches_HistoFacM add primary key (numfac)")
   
   Try Utils.db.Exec("ALTER TABLE Fiches_Docactif MODIFY doc_num CHAR(25)")
   

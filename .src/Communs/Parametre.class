@@ -28,6 +28,7 @@ Private Tab As String
 Private B As Integer ' Flag gestion erreur
 Private son As String
 Private $soption As String
+Private $tab As SaiTableau
 
 Public Sub _New()
 
@@ -45,7 +46,9 @@ Public Sub _New()
   If $soption = "B" Or $soption = "T" Then
     Frame1.Visible = True
   Endif
-  If $soption = "P" Or $soption = "T" Then Frame3.Visible = True
+  If $soption = "P" Or $soption = "T" Then 
+    Frame3.Visible = True
+  Endif
   datec.Type = TextReg.EstDate
   Date1.Type = TextReg.EstDate
   date2.Type = TextReg.EstDate
@@ -83,6 +86,8 @@ End
 Public Sub Form_Open()
 
   Dim rResult As Result
+  Dim obj As Object
+  Dim i As Integer
 
   Tab = "Fiches_Parametres"
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
@@ -152,6 +157,22 @@ Public Sub Form_Open()
       rResult = utils.db.Exec("SELECT * FROM Fiches_Societes")
       If rResult.Available Then
         Try reg.Text = rResult!tipp
+      Endif
+      cretipp
+      rResult = utils.db.Exec("SELECT * FROM Art_Tipp LEFT JOIN Fiches_Art ON art_code=code")
+      If rResult.Available Then
+        Repeat
+          i = 0
+          For Each obj In $tab.ligne[$tab.ind].MonControle
+            If $tab.$prop[i].TypeClass = ObjProp.ComboBox Then
+              obj.Index = rResult[$tab.$prop[i].name]
+            Else
+              obj.Text = rResult[$tab.$prop[i].name]
+            Endif
+            i += 1
+          Next
+          $tab.ajout
+        Until rResult.MoveNext()
       Endif
     Endif
   End With
@@ -580,5 +601,88 @@ End
 Public Sub Version_DblClick()
 
   Version.ReadOnly = False
+
+End
+
+Private Sub cretipp()
+  
+  Dim res As Result
+  Dim obj As ObjProp
+  Dim prop As New ObjProp[]
+  Dim w As Integer
+  
+  res = utils.db.Exec("SELECT * FROM Art_Tipp LEFT JOIN Fiches_Art ON art_code=code LIMIT 1")
+  obj = New ObjProp(res.Fields["code"], "Code")
+  obj.AddChamp("MaxLength", 15)
+  obj.Height = Me.Font.H + 4
+  obj.Width = 150
+  prop.Add(obj)
+
+  obj = New ObjProp(res.Fields["art_design"], "Désignation")
+  obj.Height = Me.Font.H + 4
+  obj.Width = 300
+  prop.Add(obj)
+  
+  obj = New ObjProp(res.Fields["ticpe"], "Catégories", ObjProp.ComboBox)
+  obj.Height = Me.Font.H + 4
+  obj.Width = 145
+  obj.AddChamp("ReadOnly", True)
+  'obj.AddChamp("List", [ticpe(Null).categorie])   'ne fonctionne pas, renvoi erreur "paramètre manquant" quelque soit la solution essayé 
+  prop.Add(obj)
+  
+  $tab = New SaiTableau(prop, ScrollView1) As "tab"
+  $tab.VisibleChoi = False
+  $tab.VisibleEntete = True
+  $tab.VisibleTot = False
+  $tab.VisibleTuto = False
+  $tab.show
+  $tab.ajout()
+
+End
+
+Public Sub tab_ajou(s As Sailig)
+
+  Dim obs As Observer
+  
+  obs = New Observer(s.MonControle["Code"]) As "code"
+  s.MonControle["Catégories"].List = ["GNR détaxé", "Carburant"]    'renvoi erreur "paramètre manquant" si on utilise ticpe.categorie a voir sur une version gambas > 3.14
+
+End
+
+Public Sub code_LostFocus()
+
+  Dim res As Result
+  
+  If Last.text Then
+    res = utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_code = &1", Last.text)
+    If res.Available Then
+      $tab.ligne[$tab.ind].MonControle["Désignation"].text = res!art_design
+    Else
+      Message.Error("Article innexistant")
+      Last.SetFocus
+    Endif
+  Endif
+
+End
+
+Public Sub Valtip_Click()
+
+  Dim s As Sailig
+  Dim res As Result
+  
+  If Not IsNull($tab) Then
+    $tab.Netoyage("Code")
+    utils.db.Begin
+    For Each s In $tab
+      res = utils.db.Edit("Art_Tipp", "code=&1", s.MonControle["Code"].Text)
+      If Not res.Available Then
+        res = utils.db.Create("Art_Tipp")
+        res!code = s.MonControle["Code"].Text
+      Endif
+      res!ticpe = s.MonControle["Catégories"].Index
+      res.Update
+    Next
+    
+  Endif
 
 End

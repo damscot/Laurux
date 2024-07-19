@@ -99,7 +99,9 @@ commun
 End
 
 Public Sub fichiercarbu()
-
+  
+  Dim col As String = " COLLATE utf8mb4_general_ci"
+  
 commun
 'Fichier des régions pour le calcul de la tipp régionale
    Try Utils.db.EXEC("CREATE TABLE Fiches_region " &
@@ -124,7 +126,12 @@ commun
     "normht decimal(7,2) ," &
     "supht decimal(7,2) ," &
     "PRIMARY KEY (code,ligne))")
-
+  
+   Try Utils.db.Exec("CREATE TABLE Art_Tipp " &
+    "(code char(15) ," &
+    "ticpe integer ," &
+    "PRIMARY KEY(code)) " & Utils.db.Engine())
+    
   'ajout Fichier article
   Try Utils.db.Exec("ALTER TABLE Fiches_Art ADD art_ecof decimal(7,3) DEFAULT 0.000")
   'ajout fichier client
@@ -143,6 +150,21 @@ commun
   Try Utils.db.Exec("ALTER TABLE Fiches_Ligrecpt MODIFY qte char(9)")
   Try Utils.db.Exec("ALTER TABLE Fiches_Ligcom MODIFY qte char(9)")
   Try Utils.db.Exec("ALTER TABLE Fiches_Societes ADD tipp char(2)")
+  'modif juillet 24 ticpe agri
+  Try Utils.db.Exec("ALTER TABLE Fiches_AdrlivC ADD numtipp char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_AdrlivC ADD numagri char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_AdrlivC ADD dtagri DATE")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Cli ADD numtipp char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_Cli ADD numagri char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_Cli ADD dtagri DATE")
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac ADD numagri_ligfac char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM ADD numagri_ligfac char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl ADD numagri_ligbl char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM ADD numagri_ligbl char(14)" & col)
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac ADD numadr_ligfac integer" & col & " DEFAULT -1")
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfacM ADD numadr_ligfac integer" & col & " DEFAULT -1")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl ADD numadr_ligbl integer" & col & " DEFAULT -1")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM ADD numadr_ligbl integer" & col & " DEFAULT -1")
   
 End
 

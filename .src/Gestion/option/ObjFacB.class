@@ -979,7 +979,11 @@ Public Sub transblfac()       ''Transfert d'une facture en archive
       ligfac!mrgart_ligfac = Me.reslig!mrgart_ligbl
       ligfac!mrgmo_ligfac = Me.reslig!mrgmo_ligbl
       ligfac!tour_ligfac = Me.reslig!tour_ligbl
-      If $option = "T" Or $option = "P" Then ligfac!tipp_ligfac = Me.reslig!tipp_ligbl
+      If $option = "T" Or $option = "P" Then 
+        ligfac!tipp_ligfac = Me.reslig!tipp_ligbl
+        ligfac!numagri_ligfac = Me.reslig!numagri_ligbl
+        ligfac!numadr_ligfac = Me.reslig!numadr_ligbl
+      Endif
       ligfac!dtligbl_ligfac = Me.reslig!dte_ligbl
       ligfac!numbl_ligfac = Me.reslig!num_ligbl
       If Me.gmateriel Then         'on met a jour le numéro de facture sur Fiches_materiels
