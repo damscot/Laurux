@@ -3,7 +3,7 @@
 Event RegCaisse(mnt As Float, typ As Integer, ntk As String)
 
 Private Enum dtes, numdocs, numlots, libels, montds, montcs, journals, oks
-Private sel As String[] = ["Date", "Document", "Lot", "Libellé", "Debit", "Crédit", "Jrnal", "Sel"]
+Private sel As String[] = ["Date", "Document", "Lot", "Libellé", "Débit", "Crédit", "Jrnal", "Sel"]
 
 Private Enum dteb, numdocb, numlotb, libelb, montcb, etatb
 Private brd As String[] = ["Date", "Document", "Lot", "Libellé", "Montant", "Etat"]
@@ -222,7 +222,7 @@ Public Sub nreg_LostFocus()
             'on a rajouté le tableau des sélections => les écritures du client qui ont le même n° de lot seront montrées comme sélectionnées à l'écran
             'en même temps on garde les infos nécessaires pour les modifs
           Else
-            Try Message.Error("Il n'existe pas de compte tiers pour l'écriture ou compte non léttré " & res!numero & " compte " & res!compte & "\nReprise du bordereau impossible ", "OK")
+            Try Message.Error("Il n'existe pas de compte tiers pour l'écriture ou compte non lettre " & res!numero & " compte " & res!compte & "\nReprise du bordereau impossible ", "OK")
             pb.Delete
             Return
           Endif

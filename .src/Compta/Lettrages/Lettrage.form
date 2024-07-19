@@ -25,7 +25,7 @@
   }
   { Cpt TextBox Let
     Name = "Cpt"
-    MoveScaled(57,1.5714,19,3)
+    MoveScaled(57,1.5556,19,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     Tag = "1"
@@ -44,19 +44,19 @@
   }
   { Button6 Button Btn
     Name = "Button6"
-    MoveScaled(89,67,14.4286,4.2857)
+    MoveScaled(89,67,14.4444,4.3333)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     Tag = "4"
     ToolTip = ("Quitter le programme de lettrage.")
     Drop = True
-    Text = ("&Quitter")
+    Text = Shortcut(("Quitter"), "Q")
     Picture = Picture["Icones/exit.png"]
   }
   { TextLabel2 TextLabel
-    MoveScaled(3,68,14.4286,3)
+    MoveScaled(3,68,14.4444,3)
     Font = Font["Serif,-1"]
-    Text = ("Total selection")
+    Text = ("Total sélection")
   }
   { Totselection Label
     MoveScaled(20,68,13,3)
@@ -66,45 +66,45 @@
     MoveScaled(56,9,21,4)
     Font = Font["Serif,-1"]
     { Button4 Button
-      MoveScaled(1,0.1429,4,3.7143)
+      MoveScaled(1,0.1111,4,3.6667)
       Background = Color.TextBackground
       ToolTip = ("Premier compte.")
       Picture = Picture["Icones/back2.png"]
     }
     { Button1 Button
-      MoveScaled(6,0.1429,4,3.7143)
+      MoveScaled(6,0.1111,4,3.6667)
       Background = Color.TextBackground
       ToolTip = ("Compte précédent.")
       Picture = Picture["Icones/back.png"]
     }
     { Button2 Button
-      MoveScaled(11,0.1429,4,3.7143)
+      MoveScaled(11,0.1111,4,3.6667)
       Background = Color.TextBackground
       ToolTip = ("Compte suivant.")
       Picture = Picture["Icones/forward.png"]
     }
     { Button3 Button
-      MoveScaled(16,0.1429,4,3.7143)
+      MoveScaled(16,0.1111,4,3.6667)
       Background = Color.TextBackground
       ToolTip = ("Dernier compte.")
       Picture = Picture["Icones/forward2.png"]
     }
   }
   { Toutes RadioButton
-    MoveScaled(3,6.4286,22.4286,3)
+    MoveScaled(3,6.4444,22.4444,3)
     Font = Font["Serif,-1"]
-    Text = ("&Toutes les écritures")
+    Text = Shortcut(("Toutes les écritures"), "T")
   }
   { Enl RadioButton
-    MoveScaled(3,10.4286,26,3)
+    MoveScaled(3,10.4444,26,3)
     Font = Font["Serif,-1"]
-    Text = ("Ecritures &non lettrées")
+    Text = Shortcut(("Ecritures non lettrées"), "n")
     Value = True
   }
   { El RadioButton
-    MoveScaled(3,14.4286,22.4286,3)
+    MoveScaled(3,14.4444,22.4444,3)
     Font = Font["Serif,-1"]
-    Text = ("&Ecritures lettrées")
+    Text = Shortcut(("Ecritures lettrées"), "E")
   }
   { Frame2 Frame
     MoveScaled(2,1,41,5)
@@ -112,54 +112,54 @@
     { Bclient RadioButton
       MoveScaled(1,1,12,3)
       Font = Font["Serif,-1"]
-      Text = ("&Clients")
+      Text = Shortcut(("Clients"), "C")
       Value = True
     }
     { Bfournisseur RadioButton
       MoveScaled(14,1,17,3)
       Font = Font["Serif,-1"]
-      Text = ("&Fournisseurs")
+      Text = Shortcut(("Fournisseurs"), "F")
     }
     { Bbilan RadioButton
       MoveScaled(29,1,11,3)
       Font = Font["Serif,-1"]
-      Text = ("&Bilan")
+      Text = Shortcut(("Bilan"), "B")
     }
   }
   { Button5 Button Btn
     Name = "Button5"
-    MoveScaled(68,67,18,4.2857)
+    MoveScaled(68,67,18,4.3333)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     Tag = "3"
     ToolTip = ("Lettre les écritures sélectionnées")
     Drop = True
-    Text = ("&Lettrer")
+    Text = Shortcut(("Lettrer"), "L")
     Picture = Picture["Icones/charset.png"]
   }
   { Button7 Button Btn
     Name = "Button7"
-    MoveScaled(49,67,18,4.2857)
+    MoveScaled(49,67,18,4.3333)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     Tag = "2"
-    ToolTip = ("Delettre les écritures sélectionnées")
+    ToolTip = ("Délettre les écritures sélectionnées")
     Drop = True
-    Text = ("&Delettrer")
+    Text = Shortcut(("Délettrer"), "D")
     Picture = Picture["Icones/charset.png"]
   }
   { Frame3 Frame
-    MoveScaled(81,0,27,6.4286)
+    MoveScaled(81,0,27,6.4444)
     Font = Font["Serif,-1"]
     Text = ("Solde Ecritures")
     { Sld Label
-      MoveScaled(2,2.4286,20,3)
+      MoveScaled(2,2.4444,20,3)
       Font = Font["Serif,Bold,-1"]
     }
   }
   { Button8 Button Btn
     Name = "Button8"
-    MoveScaled(41,67,4,4.2857)
+    MoveScaled(41,67,4,4.3333)
     Font = Font["Serif,-1"]
     Tag = "1"
     ToolTip = ("Doc HTML")

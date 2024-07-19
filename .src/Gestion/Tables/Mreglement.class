@@ -2,7 +2,7 @@
 
 Public Enum sans_lcr, lcr_nacc, lcr_acc
 Public Enum sans_caisse, espece, rendu, carte, cheque, bon_achat, cheque_cadeaux, autre, bonus, ticket_resto
-Public RegCais As String[] = ["Sans", "Espéce", "Rendu", "Carte", "Chèque", "Bon d'achat", "Chèque cadeaux", "Autres", "Bonus", "Tickets restaurant"]
+Public RegCais As String[] = ["Sans", "Espèce", "Rendu", "Carte", "Chèque", "Bon d'achat", "Chèque cadeaux", "Autres", "Bonus", "Tickets restaurant"]
 Public CodeCais As String[] = ["", "N", "Q", "U", "V", "X", "Y", "E", "B", "1"]
 
 Private $ressel As Result
@@ -24,7 +24,7 @@ Public Sub _new()
   GridView1.Columns[0].Text = "Code"
   GridView1.Columns[0].Alignment = Align.Center
   GridView1.Columns[0].Width = 70
-  GridView1.Columns[1].Text = "Libéllé"
+  GridView1.Columns[1].Text = "Libellé"
   GridView1.Columns[1].Alignment = Align.Center
   GridView1.Columns[1].Expand = True
   GridView1.Columns[2].Text = "Journal"

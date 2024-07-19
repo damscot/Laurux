@@ -105,7 +105,7 @@ Public Sub Update_Req()
       k = Space(3) & "---- Code ----" & Space(3)
       prop = New ObjProp(Res.Fields[Tri2Art], k)
       Col.Add(prop, k)
-      k = Space(7) & "----------- Intitule -------------" & Space(7)
+      k = Space(7) & "----------- Intitulé -------------" & Space(7)
       prop = New ObjProp(Res.Fields["art_design"], k)
       prop.tri = True
       Col.Add(prop, k)
@@ -122,7 +122,7 @@ Public Sub Update_Req()
       prop = New ObjProp(Res.Fields["art_pvttc"], K)
       prop.AddChamp("Alignment", Align.Right, "0.000")
       Col.Add(prop, k)
-      k = "- Qte -"
+      k = "- Qté -"
       prop = New ObjProp(Res.Fields["art_qte"], k)
       prop.AddChamp("Alignment", Align.Right, "0.000")
       Col.Add(prop, k)
@@ -133,7 +133,7 @@ Public Sub Update_Req()
       k = "-----code-----"
       prop = New ObjProp(Res.Fields[Tri2Art], k)
       Col.Add(prop, k)
-      k = "-------------------intitule-------------------"
+      k = "-------------------intitulé-------------------"
       prop = New ObjProp(Res.Fields["mo_design"], k)
       Col.Add(prop, k)
       k = "-famille-"
