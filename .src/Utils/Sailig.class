@@ -70,6 +70,13 @@ Public Sub _new(Optional prop As ObjProp[], parent As Control, etat As Integer =
       Case ObjProp.TextLabel
         clas = New TextLabel(Panel1)
         obs = New Observer(clas) As "groupe"
+      Case ObjProp.CheckBox
+        Clas = New CheckBox(Panel1)
+        obs = New Observer(clas) As "groupe"
+      Case ObjProp.ComboBox
+        Clas = New ComboBox(Panel1)
+        obs = New Observer(clas) As "groupe"
+        chain.add([clas])
     End Select
     If $etat = lecture Then Try clas.enabled = False
     clas.name = obj.NomControl

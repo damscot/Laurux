@@ -102,7 +102,7 @@ Public Sub show()
     Pentete.Border = Border.Plain
     prop = New ObjProp[]
     For Each obj In $prop
-      nouobj = New ObjProp(Null, obj.NomControl, ObjProp.Label)
+      nouobj = New ObjProp(Null, obj.NomControl, ObjProp.TextReg)
       nouobj.AddChamp("reg", TextReg.all)
       nouobj.AddChamp("Text", obj.NomControl)
       nouobj.AddChamp("Alignment", Align.Center)

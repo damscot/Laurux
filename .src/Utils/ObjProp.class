@@ -23,7 +23,7 @@ Public historique As New String[10]
 Public tri As Boolean = False       ''Indique si on tri sur cette colonne a l'ouverture de la recherche
 Public cle As Boolean = False       '' Si ce champ est une clé de l'enregistrement. Si aucune clé n'est définie la valeur du 1° champ sera retournée sinon on retourne une collection avec le result.field en clé et la valeur cliquée en donnée.
 
-Public Enum TextReg, TextBox, Button, Label, TextLabel, Param        ''Indique quelle classe doit être créé. A completer selon les besoins, param est pour la lecture des parametres dans un fichier conf dans ce cas NomColonne devient le nom du fichier a lire
+Public Enum TextReg, TextBox, Button, Label, TextLabel, CheckBox, ComboBox, Param        ''Indique quelle classe doit être créé. A completer selon les besoins, param est pour la lecture des parametres dans un fichier conf dans ce cas NomColonne devient le nom du fichier a lire
 
 Property filter As TextReg
 Property Read name As String 
@@ -50,6 +50,7 @@ Public Sub _new(Clef As Variant, Nom As String, Optional TypeClass As Integer = 
     Endif
   Endif
   $nom = Nom
+  $type = TypeClass
   If TypeClass = Me.Param Then
     LecParam($nom)
   Endif
