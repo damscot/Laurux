@@ -489,7 +489,8 @@ Public Sub Button3_Click()
       montant = Format$(Val(montant) * 100, "000000000000")
       datech = Left$(ColLcr.Item[3], 2) & Mid$(ColLcr.Item[3], 4, 2) & Right$(ColLcr.Item[3], 2)
       datecreation = Left$(ColLcr.Item[2], 2) & Mid$(ColLcr.Item[2], 4, 2) & Right$(ColLcr.Item[2], 2)
-      If reftireur = Space(10) And ColLcr.Item[4] Then reftireur = ColLcr.Item[4]
+      If ColLcr.Item[4] Then reftireur = ColLcr.Item[4] Else reftireur = Space(10)
+      If reftireur.Len < 10 Then reftireur &= Space(10 - reftireur.Len)
       Print #HFile, "0660" & Format$(Numero, "00000000") & Emetteur & String$(2, " ") & reftire & nmtire & dmlntire & cdacc & String$(2, " ") & cdbanque & cdguichet & numcpt & montant & String$(4, " ") & datech & datecreation & String$(20, " ") & reftireur & fin
       Inc numero
       If adrimp Then
