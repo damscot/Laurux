@@ -72,7 +72,7 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As In
   Endif
   'requetes préparées
   'Achats
-  Utils.db.Prepare("requ_cli", "SELECT a.*,Fiches_TarTemp.*,Fiches_Tarcli.*,art_code,art_paht,art_pbht,art_txconv,art_tr,art_prvt,art_cdarr,art_coef,cli_code,cli_nom FROM (SELECT DISTINCT cart,ccli FROM Fiches_Tarcli WHERE cart = @code UNION SELECT DISTINCT art AS cart,code AS ccli FROM Fiches_TarTemp WHERE art = code AND temp_type = &1) AS a LEFT JOIN Fiches_TarTemp ON art=a.cart AND temp_type=&1 AND code = a.ccli LEFT JOIN  Fiches_Tarcli ON Fiches_Tarcli.cart = a.cart AND a.ccli = Fiches_Tarcli.ccli LEFT JOIN Fiches_Cli ON cli_code=a.ccli LEFT JOIN Fiches_Art ON art_code=a.cart WHERE a.cart=@code ", GesTar.TarCli)
+  Utils.db.Prepare("requ_cli", "SELECT a.*,Fiches_TarTemp.*,Fiches_Tarcli.*,art_code,art_paht,art_pbht,art_txconv,art_tr,art_prvt,art_cdarr,art_coef,cli_code,cli_nom FROM (SELECT DISTINCT cart,ccli FROM Fiches_Tarcli WHERE cart = @code UNION SELECT DISTINCT art AS cart,code AS ccli FROM Fiches_TarTemp WHERE art = @code AND temp_type = &1) AS a LEFT JOIN Fiches_TarTemp ON art=a.cart AND temp_type=&1 AND code = a.ccli LEFT JOIN  Fiches_Tarcli ON Fiches_Tarcli.cart = a.cart AND a.ccli = Fiches_Tarcli.ccli LEFT JOIN Fiches_Cli ON cli_code=a.ccli LEFT JOIN Fiches_Art ON art_code=a.cart WHERE a.cart=@code ", GesTar.TarCli)
   Utils.db.Prepare("requ_typ", "SELECT a.*,Fiches_TarTemp.*,Fiches_TarTypcli.*,art_code,art_paht,art_pbht,art_txconv,art_tr,art_prvt,art_cdarr,art_coef,Fiches_Typec.code,Fiches_Typec.* FROM (SELECT DISTINCT cart,type FROM Fiches_TarTypcli WHERE cart = @code UNION SELECT DISTINCT art AS cart,code AS type FROM Fiches_TarTemp WHERE art = @code AND temp_type = &1) AS a left JOIN Fiches_TarTemp ON art=a.cart AND temp_type= &1 AND Fiches_TarTemp.code = a.type  LEFT JOIN Fiches_TarTypcli ON a.cart=Fiches_TarTypcli.cart AND a.type=Fiches_TarTypcli.type LEFT JOIN Fiches_Typec ON Fiches_Typec.code=a.type JOIN Fiches_Art ON  art_code=a.cart WHERE a.cart=@code ", GesTar.TarTcli)
   
 End
@@ -569,16 +569,17 @@ Private Sub ValCom() As Boolean
     If Not tbl.CreMat() Then Return True
   Endif
 
+  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, $Bval, True, False) Then Return True
+  If tbl.EnrAch($etat, dte.dte, nco, fcode.Text) Then Return True
   If $etat = Achat.Reception Then     'si c'est la derniere entrée on maj l'article
     For Each lg In tbl
       res = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE code = &1 AND daterecpt > &2", lg.MonControle["Code"].Text, dte.dte.D)
       If Not res.Available Then 
-        lg.AutresObj[Achat.Tarif].EnrTarArt(lg)
+        lg.AutresObj[Achat.Tarif].EnrTar(lg, fcode.Text)
+        lg.AutresObj[Achat.Tarif].EnrArt(fcode.Text, dte.dte)
       Endif
     Next
   Endif
-  If $etat <> Achat.CreaCommande And If tbl.SupAchat($etat, $Bval, True, False) Then Return True
-  If tbl.EnrAch($etat, dte.dte, nco, fcode.Text) Then Return True
   Utils.db.Commit
   
   rep = tbl.imprime(False)
@@ -780,12 +781,12 @@ Public Sub rececp_Click()
         If tbl.SupAchat($etat, $Bval) Then Return
       Endif
       'on enregistre la nouvelle
+      tbl.EnrAch(Achat.Reception, dte.dte, nbl.Text, fcode.Text, vgn)
       For Each lg In tbl
-        lg.AutresObj[Achat.Tarif].EnrTarArt(lg)
+        lg.AutresObj[Achat.Tarif].EnrTar(lg, fcode.Text)
         lg.AutresObj[Achat.Tarif].EnrArt(fcode.Text, dte.dte)
         lg.AutresObj[Achat.Tarif].EnrEtiqu(lg)
       Next
-      tbl.EnrAch(Achat.Reception, dte.dte, nbl.Text, fcode.Text, vgn)
       'on enregistre le pdf de réception
       rep = tbl.imprime(False)
       If IsNull(rep) Then Return

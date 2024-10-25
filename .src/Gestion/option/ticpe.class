@@ -1,1 +1,61 @@
 ' Gambas class file
+
+Create Static
+
+Public Enum GnrAgri, Carburant
+Public Enum Adlivraison, Adcli
+Private $categorie As String[] = ["GNR détaxé", "Carburant"]
+
+Private $adr As Integer
+Private $val As Boolean
+Private $rcli As Result
+
+Property Read date As LDate Use $dtval
+Property Read NumAgri As String Use $numa
+Property Read NumCarb As String Use $numc
+Property Read region As String Use $regi
+Property Read categorie As String[]
+
+Public Sub _new(client As Variant)
+
+  If IsNull(client) Then Return
+  If TypeOf(client) = gb.String Then
+    $rcli = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", client)
+    If Not $rcli.Available Then Error.Raise("Client innexistant")
+  Else
+    $rcli = client
+  Endif
+  
+  If $rcli.Fields.Exist("cli_code") Then
+    $adr = Adcli
+  Else
+    $adr = Adlivraison
+  Endif
+
+End
+
+Public Sub _call(client As Variant) As Ticpe
+
+  Dim t As Ticpe
+  
+  t = New Ticpe(client)
+  Return t
+  
+End
+
+Public Sub Valide(art As String)
+
+  Dim res As Result
+  
+  res = Utils.db.Exec("SELECT * FROM Art_Tipp LEFT JOIN Fiches_Art ON art_code=code WHERE art_code=&1,art")
+  If res.Available Then
+    
+  Endif
+
+End
+
+Private Function categorie_Read() As String[]
+
+  Return $categorie
+
+End

@@ -931,7 +931,8 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
   reslig!qte = sl.MonControle["Qte"].Value
   reslig!pbht = sl.MonControle["Px_Brut"].Value
   If sl.MonControle["Rem"].text Match "%" Then
-    rem = Val(Left(sl.MonControle["Rem"].text, -1))
+    Try rem = Val(Left(sl.MonControle["Rem"].text, -1))
+    If Error Then rem = 0
   Else
     rem = ((sl.MonControle["Px_Brut"].Value - sl.MonControle["Px_Net"].Value) / sl.MonControle["Px_Brut"].Value) * 100
   Endif

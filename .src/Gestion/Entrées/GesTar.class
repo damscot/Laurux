@@ -666,6 +666,7 @@ Public Sub EnrTarArt(ach As Sailig)
   Dim sl As Sailig
   Dim lp As LPrix
   Dim lt As LTaxe
+  Dim tx As Float
   
   sl = $targen.ligne[1]
   If Not sl.AutresObj[SupLigne] And majtarif.Value Then
@@ -683,7 +684,11 @@ Public Sub EnrTarArt(ach As Sailig)
       res!art_paht = lp.PuNHT.G
       res!art_txconv = ach.MonControle["TX_Conv"].value
       res!art_tr = Val(Left(ach.MonControle["Rem"].Text, -1))
+      tx = 1 + (Val(Left(sl.MonControle["Coef"].Text, -1)) / 100)
+      res!art_coef = tx
       res.Update
+      
+      Utils.db.Delete("Fiches_TarTemp", "art = &1 AND temp_type = &2 AND code = &3", $resart!art_code, TarGen, " ")
     Endif
   Endif
   
@@ -699,7 +704,6 @@ Public Sub EnrTar(ach As Sailig, fournisseur As String)           ''enregistreme
   If Not majtarif.Value Then Return
   If Not dtmaj.Value Or (dtmaj.Value And dte.dte.Avant(LDate(Now))) Then
     EnrTarArt(ach)
-    Utils.db.Delete("Fiches_TarTemp", "art = &1 AND temp_type = &2", $resart!art_code, TarGen)
     'tarif par client
     Utils.db.Delete("Fiches_Tarcli", "cart = &1", $resart!art_code)
     $tarpcli.Netoyage("Numéro")
