@@ -948,7 +948,7 @@ Public Sub Butexp_Click()
   $res.MoveFirst
   
   Repeat
-    lge = $res!code & ";" & $res!libelle & ";" & LDate($res!dte).L & ";" & Replace(Str($res!qtem), ".", ",") & ";" & Replace(Str($res!qtep), ".", ",") & ";" & Replace(Str($res!ca), ".", ",") & ";" & Replace(Str($res!mrgart), ".", ",") & ";" & Replace(Str($res!mrgart), ".", ",")
+    lge = $res!code & ";" & $res!libelle & ";" & Replace(LDate($res!dte).L, ".", "/") & ";" & $res!nom & ";" & Replace(Str($res!qtem), ".", ",") & ";" & Replace(Str($res!qtep), ".", ",") & ";" & Replace(Str($res!ca), ".", ",") & ";" & Replace(Str($res!mrgart), ".", ",") 
     Print #hFile, lge
   Until $res.MoveNext()
   Close #hFile
