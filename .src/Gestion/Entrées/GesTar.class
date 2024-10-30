@@ -352,7 +352,6 @@ Private Sub LecArt_Write(Value As Sailig)
   $ligach = value
   $resart = Utils.db.Exec("SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva LEFT JOIN Fiches_TarTemp ON art_code=art AND temp_type=&2 WHERE art_code=&1 ", value.MonControle["Code"].Text, TarGen)
   If $resart.Available Then
-    'Utils.db.Exec("SET @TarCli = '" & TarCli & "', @TarTcli = '" & TarTcli & "', @code = ' '")
     Label1.Text = $resart!art_code & " " & $resart!art_design
     If $resart!art Then 
       Enreg.Background = Color.Red
@@ -380,7 +379,6 @@ Private Sub LecArt_Write(Value As Sailig)
       Endif
     Next
     $ligart = $targen.ligne[1]
-    'If $resart!majtarif Then majtarif.Value = $resart!majtarif
     If $resart!dtmaj Then dtmaj.Value = $resart!dtmaj
     If $resart!date Then dte.dte.G = $resart!date
     obs = New Observer($targen.ligne[1].prx) As "LpxTar"
@@ -407,6 +405,7 @@ Private Sub LecArt_Write(Value As Sailig)
   Endif
   $tarpcli.ajout
   $tartypcli.ajout
+  
 
 End
 
@@ -471,11 +470,9 @@ Public Sub Tarif_ajou(sl As Sailig)     ''s'execute à l'ajout d'une ligne de sa
     sl.chain.sup(sl.MonControle["Libellé"], 6)
   Endif
   sl.MonControle["Coef"].setfocus
-  'obs = New Observer($ligart.prx) As "LpxTar"
   sl.prx = New LPrix(sl.MonControle["Px_Rev"].Value, 1, $resart!art_cdarr) As "LpxTar"
   sl.AutresObj = New Variant[SupFin]
   sl.AutresObj[SupLigne] = False          'Si on supprime la ligne
-  $ligart = sl
   
 End
 
@@ -603,7 +600,7 @@ Private Sub affman()
   
   $ligart.MonControle["Px_Rev_Ar"].value = $resart!art_prvt
   $ligart.MonControle["Coef_Ar"].Text = Str(($resart!art_coef - 1) * 100) & "%"
-  $ligart.MonControle["Coef"].Text = Str(($resart!art_coef - 1) * 100) & "%"
+  If IsNull($ligart.MonControle["Coef"].Text) Then $ligart.MonControle["Coef"].Text = Str(($resart!art_coef - 1) * 100) & "%"
   $ligart.MonControle["Px_HT_Ar"].value = $resart!art_pvht
   $ligart.MonControle["Px_TTC_Ar"].value = $resart!art_pvttc
   $ligart.MonControle["Px_Rev"].value = $targen.ligne[1].MonControle["Px_Rev"].value
