@@ -335,11 +335,11 @@ Public Sub enregistrepointage(selected As String[], point As Boolean, cpt As Str
   If Not point Then r = "" Else r = nrel
   If IsNull(selected) Then Return
   If selected.Count < 1 Then Return
-  Application.Busy = 1
+  Application.Busy += 1
   For i = 0 To $brn.Max
     Utils.db.Exec("UPDATE " & $brn[i].nomfich & " SET pointee = &1, nrlv = &2 WHERE compte = &3 AND numero in (" & Selected.Join(",") & ") AND nrlv = &4 AND provisoire= False ", point, r, cpt, nrel)
   Next
-  Application.Busy = 0
+  Application.Busy -= 1
 
 End
 

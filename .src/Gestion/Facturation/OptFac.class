@@ -463,6 +463,7 @@ Public Sub edite_Click()
   Dim tri As String
   
   Select Case $choix
+    
     Case ObjFac.finmois, ObjFac.abonnement
       If Tnum.Value Then tri = " code "
       If Tnom.Value Then
@@ -478,7 +479,9 @@ Public Sub edite_Click()
       $vfac.editefm(False, tri)
       Me.Close
     Case ObjFac.facture
+      edite.Enabled = False
       $vfac.editef()
+      edite.Enabled = True
     Case Else
       $vfac.editebl()
   End Select
