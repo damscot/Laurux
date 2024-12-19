@@ -680,6 +680,9 @@ Private Sub calc(numlig As String)
 '  Else
     ligneart.libel = reslig!libel_ligbl
  ' Endif
+ If simpcond Then
+   ligneart.unit = resart!art_vol
+ Endif
   ligneart.qte = reslig!qte_ligbl
   If Val(utils.cpoint(reslig!rem_ligbl)) = 0 Then ligneart.rem = " " Else ligneart.rem = reslig!rem_ligbl
   ligneart.tx = reslig!tx_ligbl

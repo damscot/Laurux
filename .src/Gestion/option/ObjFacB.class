@@ -726,7 +726,7 @@ Public Function editef() As Boolean         ''Edite les factures
   Endif
   Me.edit = New EditfacB(Me, Me)
   Me.imp.NumCopies = Me.nbexplemplaire
-  If Me.imp.NumCopies > 0 Then 
+  'If Me.imp.NumCopies > 0 Then 
     Me.edit.Print(Me.imp)
     If Me.pdf Then
       Impression.Facture(Me.pdf, 1, Me.imp.Name)
@@ -734,7 +734,7 @@ Public Function editef() As Boolean         ''Edite les factures
     If Me.joinfac Then
       If Me.condvent Then Impression.Facture(Me.condvent, 1, Me.imp.Name)
     Endif
-  Endif
+  'Endif
   Me.CopieGedFac()
   Application.Busy -= 1
   If Me.saisreg Then
@@ -774,8 +774,12 @@ Public Function editebl() As Boolean        ''Edite un bl
   
   Me.edit = New EditfacB(Me, Me)
   Me.imp.NumCopies = Me.nbexplemplaire
-  If Me.imp.NumCopies > 0 Then Me.edit.Print(Me.imp)
-  
+  If Me.imp.NumCopies > 0 Then 
+    Me.edit.Print(Me.imp)
+    If Me.joinfac Then
+      If Me.condvent Then Impression.Facture(Me.condvent, 1, Me.imp.Name)
+    Endif
+  Endif
   Me.CopieGedFac()
   Me.choix = ch
   Application.Busy -= 1
