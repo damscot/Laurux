@@ -65,7 +65,7 @@ Public Sub _New()
   datej.Type = TextReg.EstDate
   datej.dte.G = Now
   Qterecue.Type = TextReg.EstNum
-  $ch = New Chainage([datej, Cart, Dart, qterecue, Comment, Button1])
+  $ch = New Chainage([datej, Cart, qterecue, Comment, Button1])
   $soption = utils.Option()
   
 End
@@ -266,8 +266,16 @@ Public Sub SelectionArt()
   If Bsel = True Then
     Cart.text = Bval
   Endif
-  Cart.SetFocus
-  Cart.Select
+  If Not IsNull(Cart.Text) Then
+    If Left$(Cart.Text) = "*" Then
+      Cart.Text = Mid$(Cart.Text, 2, Len(Cart.Text))
+      Cart.Text = Utils.Find_cbarre(Cart.Text)
+      art_Man()
+    Else
+      art_Man()
+    Endif
+  Endif
+  Qterecue.SetFocus
 
 End
 
