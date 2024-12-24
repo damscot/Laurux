@@ -562,6 +562,10 @@ End
 
 Public Sub CleanChamps()
 
+  Dim res As Result
+  
+  res = utils.db.Exec("SELECT * FROM Fiches_Art WHERE art_code = LAST_INSERT_ID()")
+  If res.Available Then Dera.Text = res!art_code Else Dera.Text = ""
   Arr.Text = "0,01"
   code.Clear
   Desg.Clear
