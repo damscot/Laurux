@@ -2974,6 +2974,7 @@ Public Sub LignAbt()
   Dim num_lot As String
   Dim localvars As Collection
 
+  'If modif = "0" Then Return
   Ecrit1.clear
   If Colabt.Item[3] = "Montant" Then
     recr = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " as l inner join " & Cbase.Table("TabNumabon") & " as d on d.numero = l.numero where l.numero = &1 order by lig", Colabt.Current[0])
@@ -3029,7 +3030,7 @@ Public Sub LignAbt()
         
         localvars = New Collection
         If Not IsNull(Montant.Text) Then
-          localvars.Add(Montant.Text, "$montant")
+          localvars.Add(Replace(Montant.Text, ",", "."), "$montant")
         Else
           localvars.Add("0", "$montant")
         Endif

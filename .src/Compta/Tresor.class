@@ -2536,7 +2536,7 @@ Public Sub LignAbt()
         
         localvars = New Collection
         If Not IsNull(Montant.Text) Then
-          localvars.Add(Montant.Text, "$montant")
+          localvars.Add(Replace(Montant.Text, ",", "."), "$montant")
         Else
           localvars.Add("0", "$montant")
         Endif
