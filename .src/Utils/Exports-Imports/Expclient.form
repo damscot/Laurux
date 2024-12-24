@@ -13,7 +13,7 @@
     MoveScaled(1,3,69,40)
     Font = Font["Serif,-1"]
     Background = &HFFB798&
-    Text = ("Ce programme va exporter les clients dans un fichier csv dont \nla structure suivra les principes suivants:\n\n 1- Code\n 2- Civilité\n 3- Nom\n 4- Prénom\n 5- Adresse 1\n 6- Adresse 2\n 7- Code postal\n 8- Bureau distributeur\n 9- Email\n\nChaque champs sera séparé par un ; (point virgule)\nLe fichier généré s'appellera \"Liste_clients.csv\"")
+    Text = ("Ce programme va exporter les clients dans un fichier csv dont \nla structure suivra les principes suivants:\n\n 1 - Code\n 2 - Civilité\n 3 - Nom\n 4 - Prénom\n 5 - Adresse 1\n 6 - Adresse 2\n 7 - Code postal\n 8 - Bureau distributeur\n 9 - Téléphone portable\n10- Email\n\nChaque champs sera séparé par un ; (point virgule)\nLe fichier généré s'appellera \"Liste_clients.csv\"")
   }
   { Label3 Label
     MoveScaled(8,50,35,4)
@@ -22,35 +22,35 @@
     Alignment = Align.Center
   }
   { Sauves TextBox
-    MoveScaled(9.625,55.625,32,3)
+    MoveScaled(9.6,55.6,32,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
   }
   { Svs Button
-    MoveScaled(42,55,12.625,3.75)
+    MoveScaled(42,55,12.6,3.8)
     Font = Font["Serif,Bold,-1"]
-    Text = ("&Choisir")
+    Text = Shortcut(("Choisir"), "C")
   }
   { Button3 Button
-    MoveScaled(48,61.625,16,4.375)
+    MoveScaled(48,61.6,16,4.4)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Pensez à enregistrer votre travail avant de quitter !")
     Drop = True
-    Text = ("&Quitter")
+    Text = Shortcut(("Quitter"), "Q")
     Picture = Picture["Icones/exit.png"]
   }
   { Button2 Button
-    MoveScaled(17,62,23,4.375)
+    MoveScaled(17,62,23,4.4)
     Font = Font["Serif,Bold,-1"]
     Background = Color.ButtonBackground
     ToolTip = ("Lance le traitement.")
     Drop = True
-    Text = ("&Lancer export")
+    Text = Shortcut(("Lancer export"), "L")
     Picture = Picture["Icones/extrait.png"]
   }
   { Button1 Button
-    MoveScaled(1,62,4,4.375)
+    MoveScaled(1,62,4,4.4)
     Font = Font["Serif,-1"]
     ToolTip = ("Doc HTML")
     Picture = Picture["Icones/khelp.png"]

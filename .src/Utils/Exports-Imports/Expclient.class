@@ -83,7 +83,7 @@ Public Sub Button2_Click()
       Cp = rClient!cli_cd_ptl
       Bd = rClient!cli_ville
       Mail = rClient!cli_email
-      Print #HFil, Num & ";" & Cv & ";" & Nm & ";" & Pnm & ";" & Adr1 & ";" & Adr2 & ";" & Cp & ";" & Bd & ";" & Mail & ";"
+      Print #HFil, Num & ";" & Cv & ";" & Nm & ";" & Pnm & ";" & Adr1 & ";" & Adr2 & ";" & Cp & ";" & Bd & ";" & rClient!cli_pble & ";" & Mail & ";" 
     Until rClient.MoveNext()
     Me.Mouse = Mouse.Default
     If son Then
