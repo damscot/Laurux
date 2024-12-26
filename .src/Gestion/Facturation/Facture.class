@@ -4956,14 +4956,12 @@ Public Sub Maj_zonesArt()
             $tarif.Hide
             $tarif.x = artpu.X + 48
             $tarif.Y = artpu.Y + 100
-            If Not retro.Value Then
-              Artpu.Text = Format$($tarif.prixht, Ar$)
-              Artbrut.Text = artpu.Text
-              Balloon.Info($tarif.detail, artpu)
-'              Artrm.Text = Format($tarif.remise, "0.00")
-              If $tarif.promo Then Artrm.Text = "0,00"
-              RemType = Artrm.Text
-            Endif
+            If Retro.Value Then artpu.Text = Format($tarif.prixrht, ar$) Else Artpu.Text = Format$($tarif.prixht, Ar$)
+            Artbrut.Text = artpu.Text
+            Balloon.Info($tarif.detail, artpu)
+            'Artrm.Text = Format($tarif.remise, "0.00")
+            If $tarif.promo Then Artrm.Text = "0,00"
+            RemType = Artrm.Text
             
             Try spvcons = Format$(Rarts!art_pvcons, Ar$)
             $UV = Rarts!art_uv

@@ -2,6 +2,7 @@
 
 Private $lstpx As New Collection
 Public prixht As Float
+Public prixrht As Float
 Public nego As Boolean = False
 Public promo As Boolean = False
 Public detail As String
@@ -23,6 +24,7 @@ Public Sub _new(nart As String, ncli As String, Optional typec As String = "", O
   Else
     resart = Utils.db.Exec("SELECT art_fam,art_pvht,libell_fam,art_prvt FROM Fiches_Art,Fiches_Fam WHERE art_fam=code_fam AND art_code=&1", nart)
   Endif
+  prixrht = resart!art_prvt
   If Not resart.Available Then Return
   If $option = "B" Or $option = "T" Then
     If resart!art_dra Then
