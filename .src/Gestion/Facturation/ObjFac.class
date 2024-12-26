@@ -670,7 +670,7 @@ Private Sub calc(numlig As String)
       If ttc Then eco.tea += ((eco.tea * txtva) * utils.arrondi(reslig!qte_ligbl, 3)) Else eco.tea += (resart!art_eco2 * utils.arrondi(reslig!qte_ligbl, 3))
     Endif
   Else
-    resart = Utils.db.Exec("SELECT mo_code AS art_code, 0 AS art_qte, '0' AS art_dec, '2' AS art_nbd,mo_txht AS art_pvht FROM Fiches_Mo WHERE mo_code=&1", reslig!code_ligbl)
+    resart = Utils.db.Exec("SELECT mo_code AS art_code, 0 AS art_qte, '0' AS art_dec, '2' AS art_nbd,mo_txht AS art_pvht,' ' AS art_vol FROM Fiches_Mo WHERE mo_code=&1", reslig!code_ligbl)
   Endif
   ligneart = New Ledit
   ligneart.Index = reslig.Index                   'renseignements communs
