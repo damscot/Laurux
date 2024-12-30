@@ -13,8 +13,12 @@ Private filename As String
 '*********************************
 Public Sub _New()
 
+  Dim ch As Chainage
+  
   Utils.Observers(Me)
-
+  
+  ch = New Chainage([Nseq, qtecomptee, Button1])
+  qtecomptee.reg = "[0-9]*[.,]?[0-9]*"
   Music.Load(Start.Musique)
   Me.Center
   Colinv.Columns.count = 6
@@ -243,6 +247,26 @@ End
 '*********************************
 '* gestion des champs de saisie  *
 '*********************************
+Public Sub qtecomptee_LostFocus()
+
+  If qtecomptee.Text Then
+    qtecomptee.Text = utils.cpoint(qtecomptee.Text)
+    If Val(qtecomptee.Text) <> Null Then
+      qtecomptee.Text = utils.Cdec(Dcem, qtecomptee.Text)
+      Button1.SetFocus
+    Else
+      If son Then
+        Music.Play
+      Endif
+      Message.Error("Attention ! Votre saisie est erronée.", "Ok")
+      qtecomptee.SetFocus
+      qtecomptee.Select
+    Endif
+  Endif
+  Stop Event
+  
+End
+
 Public Sub Rcpt_KeyPress()
 
   With utils
@@ -261,30 +285,6 @@ Public Sub Rcpt_KeyPress()
           Stop Event
 
         Case 2
-          If qtecomptee.Text Then
-            qtecomptee.Text = .cpoint(qtecomptee.Text)
-            If Val(qtecomptee.Text) < 0 Then
-              If son Then
-                Music.Play
-              Endif
-              Message.Error("Attention ! Vous ne pouvez pas saisir de quantité négative.", "Ok")
-              qtecomptee.SetFocus
-              qtecomptee.Select
-            Else
-              If Val(qtecomptee.Text) <> Null Then
-                qtecomptee.Text = .Cdec(Dcem, qtecomptee.Text)
-                Button1.SetFocus
-              Else
-                If son Then
-                  Music.Play
-                Endif
-                Message.Error("Attention ! Votre saisie est erronée.", "Ok")
-                qtecomptee.SetFocus
-                qtecomptee.Select
-              Endif
-            Endif
-          Endif
-          Stop Event
 
         Case 3
           If Cart.Text Then
