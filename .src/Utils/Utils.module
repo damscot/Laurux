@@ -1481,27 +1481,36 @@ Public Function PageFormatGetY(Page As String) As Integer
 
 End
 
-Public Sub Fill_DataBase(Tab As String, filepath As String)
+Public Sub Fill_DataBase(Tab As String, filepath As String) As String
   
   Dim sTemp As String
   Dim fTemp As String
-  
+  Dim rTemp As String
+  Dim host As String
+  Dim txterror As String
+
   sTemp = Temp$("Lauruxdb")
   Try Mkdir sTemp
   fTemp = sTemp & "/" & File.Name(filepath)
+  rTemp = sTemp & "/resultat"
   Try Kill fTemp
+  Try Kill rTemp
   Copy filepath To fTemp 'la copie est nécessaire si le fichier est embarqué dans le binaire Laurux
-  If IsNull(Start.LocalSettings["/dbase/Host"]) Then
-    Shell "mysql -u " & Utils.db.login & " -p" & Utils.db.Password & " " & Tab & " < " & fTemp Wait
-  Else
-    Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " " & Tab & " < " & fTemp Wait
+  'Workaround for mariadb dump including unsupported sandbox primitive for regular mysql tools
+  Shell "sed -i '1{/999999.*sandbox/d}' " & fTemp Wait
+  If Not IsNull(Start.LocalSettings["/dbase/Host"]) Then
+    host = "-h " & Start.LocalSettings["/dbase/Host"]
   Endif
-  
+  Shell "mysql " & host & " -u " & Utils.db.login & " -p" & Utils.db.Password & " " & Tab & " < " & fTemp & " > " & rTemp & " 2>&1" Wait
+  txterror = File.Load(rTemp)
   Kill fTemp
+  Try Kill rTemp
   Rmdir sTemp
+  Try Utils.db.Exec("SET@@global.sql_mode = NO_ENGINE_SUBSTITUTION") 'normally default mode, this should be not required anymore
   Utils.db.Exec("ALTER DATABASE " & Tab & " DEFAULT COLLATE utf8mb4_unicode_ci")
   Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
-  
+
+  Return txterror
 End
 
 Public Sub Clear_DataBase(Tab As String)

@@ -56,16 +56,12 @@ Public Sub Button2_Click()
   Dim cle As String
   Dim iPos As Integer
   Dim lg As Integer
-  Dim Hnew As File
-  Dim filename As String
   Dim Tactive As String
   Dim sversion As String[]
   Dim $version As String
   Dim bmariadb As Boolean = False
 
   Tactive = Cbase.Table("TabActif")
-  filename = User.Home & "/tmp/resultat"
-  hnew = Open filename For Create
   Uncp.Type = "zlib"
   Me.Mouse = Mouse.Wait
   Utilisateur = Recup.Utilisateur()
@@ -117,7 +113,6 @@ Public Sub Button2_Click()
           Heure_Sauve = cle
       End Select
     Next
-    hnew = Open filename For Create 'On vide le fichier
     Me.Mouse = Mouse.Default
     lg = Mmysql.Process_List(0)
     If lg = 0 Then
@@ -128,21 +123,12 @@ Public Sub Button2_Click()
         Me.Mouse = Mouse.Default
         Panel1.Visible = True
       Else
-        hnew = Open filename For Create 'On vide le fichier
         Syntheses.Message("Attention ! Vous allez effectuer une restauration.")
         If Message.Question("Vous allez restaurer la base " & Utils.db.Name & ".sql" & " sauvegardée par " & Utilisateur & " le " & Date_Sauve & " à " & Heure_Sauve & " heures ! ", "Oui", "Non") = 1 Then
           Me.Mouse = Mouse.Wait
-          Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " -e \"Drop database " & Utils.db.Name & ";\" " Wait
-          Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " -e \"Create database " & Utils.db.Name & ";\" " Wait
-          If IsNull(Utils.db.Password) Then  'Gère l'absence de mot de passe
-            Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " " & Utils.db.Name & " < " & SauveB.Text & "/" & Utils.db.Name & ".sql > " & User.home & "/tmp/resultat 2>&1" Wait
-          Else
-            Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.login & " -p" & Utils.db.Password & " " & Utils.db.Name & " < " & SauveB.Text & "/" & Utils.db.Name & ".sql >  " & User.home & "/tmp/resultat 2>&1" Wait
-          Endif
-          Shell "mysql -h " & Start.LocalSettings["/dbase/Host"] & " " & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " -e \"use " & Utils.db.Name & ";" & "SET @@global.sql_mode= NO_ENGINE_SUBSTITUTION " & "; \"" Wait
-          Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8mb4_unicode_ci")
-          Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
-          If Exist(User.Home & "/tmp/resultat") Then txterror = File.Load(User.Home & "/tmp/resultat")
+          Utils.Clear_DataBase(Utils.db.Name)
+          Utils.Create_DataBase(Utils.db.Name)
+          txterror = Utils.Fill_DataBase(Utils.db.Name, SauveB.Text & "/" & Utils.db.Name & ".sql")
           If InStr(txterror, "Using a password") <> 18 And Not bmariadb Or If Not IsNull(txterror) And bmariadb Then
             If son Then
               Music.Play
