@@ -5,18 +5,18 @@ Public Sub Ticket(Fic As String, nb As Integer) As String
   Dim $Exec As String
 
   Shell "cd " & User.Home & ""
-  If Start.LocalSettings["/TKpdf"] Then
+  If Start.LocalSettings["/Soc" & Start.Societe & "/caisse/TKpdf"] Then
     Visualiseur.Prog(Fic)
   Endif
   
-  If Start.LocalSettings["/CmdImp"] Then
-    $Exec = Start.LocalSettings["/CmdImp"]
+  If Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdImp"] Then
+    $Exec = Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdImp"]
   Else
     $Exec = "lpr"
   Endif
   
-  If Not IsNull(Start.LocalSettings["/Cimp"]) Then
-    Shell $Exec & " -P " & Start.LocalSettings["/Cimp"] & " -# " & nb & " " & Fic Wait
+  If Not IsNull(Start.LocalSettings["/Soc" & Start.Societe & "/caisse/Cimp"]) Then
+    Shell $Exec & " -P " & Start.LocalSettings["/Soc" & Start.Societe & "/caisse/Cimp"] & " -# " & nb & " " & Fic Wait
   Else
     Shell $Exec & " -# " & nb & " " & Fic Wait
   Endif
