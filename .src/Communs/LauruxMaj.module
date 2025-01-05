@@ -16,6 +16,9 @@ Private bMaj As Boolean = False
 
 Public Sub Verif_Version()
 
+  'A partir de 3.69 passage de la base en UTF8_mb4, les versions précédentes sont en latin1
+  Utils.db.Exec("SET NAMES latin1 COLLATE latin1_swedish_ci")
+
   TabSoc = "Fiches_Societes"
   SocResult = Utils.db.Exec("SELECT * from  " & TabSoc & "")
   If SocResult.Available Then Soc = SocResult!cd_sc
@@ -1104,15 +1107,18 @@ Public Sub Verif_Version()
     Try Utils.db.Exec("update Fiches_Parametres set version = &1 ", "3.69")
     'Laurux-Pos is now integrated with Laurux
   Endif
-  
+
+  'A partir de 3.69 passage de la base en UTF8_mb4
+  Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
+
   If bMaj Then Shell "xdg-open 'http://www.laurux.fr/changelog'"
-  
+
 Catch
-  
+
   If Majversion.RecupVersion(False) <> Majversion.RecupVersionApp() Then
     Message("Une erreur importante a eu lieu lors de la mise a jour de la base de donnée!\nVersion " & Majversion.RecupVersion(False) & " vers " & Majversion.RecupVersionApp() & "\n" & Error.Text & " " & Error.Where & "\nIl est imperatif de restaurer votre précédente version de Laurux ainsi que l'archive de votre base de donnée!\nVous pouvez faire suivre cette archive sur le forum pour analyse du problème")
   Endif
-  
+
 End
 
 Public Sub Maj40()
@@ -5045,7 +5051,7 @@ Public Sub Maj369()
   Shell "mysqldump -h " & Start.LocalSettings["/dbase/Host"] & " -u " & Utils.db.Login & " -p" & Utils.db.Password & " " & Utils.db.Name & " " & "--add-drop-table" & " " & ">" & " " & User.home & "/SauveV368/" & Utils.db.Name & ".sql" & Format$(Now, "yyyymmdd") Wait
   pb.Close()
   'Modification charset to utf8
-  rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, UPPER(t1.COLUMN_TYPE), UPPER(t1.character_set_name) from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (UPPER(t1.column_type) like '%CHAR%' or UPPER(t1.column_type) like 'TEXT') and UPPER(t1.character_set_name) != 'UTF8'", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("select t1.table_name, t1.COLUMN_NAME, UPPER(t1.COLUMN_TYPE), UPPER(t1.character_set_name) from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (UPPER(t1.column_type) like '%CHAR%' or UPPER(t1.column_type) like 'TEXT') and UPPER(t1.character_set_name) != 'UTF8MB4'", "Laurux" & Start.Societe)
   If rReq.Count = 0 Then
     If Message.Warning("Il semble que la conversion UTF8 de la base de donnée a déjà été effectué\nAttention, executer deux fois la conversion peux corrompre les données de type texte!\nVoulez-vous quand même lancer la conversion?", "Non", "Oui") = 1 Then
       Goto end_utf8
@@ -5087,7 +5093,7 @@ Public Sub Maj369()
     PB.Close()
   Endif
   
-  rReq = Utils.db.Exec("SELECT concat('UPDATE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` SET `', t1.column_name, '` = CONVERT(CAST(CONVERT(`',t1.column_name,'` USING utf8mb4) AS BINARY) USING UTF8MB4)') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (t1.data_type like '%CHAR%' or t1.data_type = 'TEXT')", "Laurux" & Start.Societe)
+  rReq = Utils.db.Exec("SELECT concat('UPDATE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` SET `', t1.column_name, '` = CONVERT(CAST(CONVERT(`',t1.column_name,'` USING latin1) AS BINARY) USING UTF8MB4)') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1 and (UPPER(t1.data_type) like '%CHAR%' or UPPER(t1.data_type) = 'TEXT')", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Field Content", rReq.Count)
     PB.Show()
@@ -5113,6 +5119,7 @@ Public Sub Maj369()
     Until rReq.MoveNext()
     PB.Close()
   Endif
+  Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8mb4_unicode_ci")
   Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
 
 end_utf8:
