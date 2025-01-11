@@ -4,8 +4,8 @@ Public Sub Prog(Fic As String, Optional mime_type As String = "application/pdf")
 
   Dim $Exec As String
 
-  If Start.LocalSettings["/caisse/CmdVis"] Then
-    Shell Start.LocalSettings["/caisse/CmdVis"] & " " & Fic
+  If Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] Then
+    Shell Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] & " " & Fic
   Else
     Desktop.Open(Fic)
   Endif
