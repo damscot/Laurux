@@ -374,6 +374,7 @@ End
 Public Sub Maj_Email()
 
   Dim rmail As Result
+  Dim smail As String = email.Text
 
   If Not IsNull(Email.Text) Then
     Try Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMailFour") & " (code, mail) VALUES (&1, &2)", Cd.text, Email.text)
@@ -384,6 +385,7 @@ Public Sub Maj_Email()
       Repeat
         Email.Add(Rmail!mail)
       Until Rmail.MoveNext()
+      Email.Text = smail
     Endif
   Endif
 
