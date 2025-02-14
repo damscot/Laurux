@@ -523,7 +523,6 @@ End
 Public Sub Button2_Click()
 
   Dim Der As Result
-  Dim a$ As String
 
   If centrale.value = True Then
     If son Then
@@ -547,9 +546,6 @@ Public Sub Button2_Click()
         If son Then
           Music.Play
         Endif
-        a$ = "Le code du dernier article est alphanumérique ! \nLa numérotation des nouveaux produits à créer ne sera donc pas possible\n"
-        a$ = a$ & "Que voulez-vous faire ? \n"
-        a$ = a$ & "1- Quitter \n2- Saisir le code de départ pour la création \n3- Lancer la mise à jour sans créer les nouveaux produits.\n"
         Fam_LostFocus()
         If b <> 1 Then
           Four_LostFocus()
@@ -566,26 +562,9 @@ Public Sub Button2_Click()
         Endif
         ChargementFichierDef()
         If b = 0 And IsNull(code) And If cda = False Then
-          Der = Utils.db.Exec("SELECT art_code from " & Cbase.Table("TabArt") & " order by lpad(art_code,15,' ') asc limit 1")
-          If Der.Available Then
-            Try Derart = Val(Der!art_code)
-            If Error Or If IsNull(Derart) Then
-              Select Case Message.Question(a$, "1", "2", "3")
-                Case 1
-                  b = 1
-                  Me.Close
-                Case 2
-                  b = 1
-                  Panel3.Visible = True
-                  TextBox1.SetFocus
-                  Return
-                Case 3
-                  Creation.value = False
-              End Select
-            Else
-              code = Derart
-            Endif
-          Else
+          Der = Utils.db.Exec("SELECT dnart FROM Fiches_Parametres")
+          If Der.Available Then code = Der!dnart
+          If IsNull(Der!dnart) Then
             Message.Warning("Vous devez créer au moins un article dans la table des articles !")
             Return
           Endif
@@ -1165,7 +1144,7 @@ Public Sub Import()
               If rArt.Available Then
                 code = rArt!art_code
               Else
-                Code = Val(code) + 1
+                Code = Utils.Next_code(Code)
                 Maj = True
               Endif
             Else
@@ -1183,7 +1162,7 @@ Public Sub Import()
                 Maj = False
               Else
                 If Not rArt.Available Then
-                  Try Code = Val(code) + 1
+                  Try Code = Utils.Next_code(Code)
                   Maj = True
                 Endif
               Endif
