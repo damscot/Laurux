@@ -445,7 +445,7 @@ Public Sub Change2()
   Utils.db.Exec("UPdate Fiches_LigblM  SET  fam_ligbl = &2 where fam_ligbl = &1", Afam2.text, Nfam2.text)
   Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2 where fam_ligfac = &1", Afam2.text, Nfam2.text)
   Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2 where mat_fam = &1", Afam2.text, Nfam2.text)
-  Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2 where mat_fam = &1", Afam2.text, Nfam2.text)
+  'Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2 where mat_fam = &1", Afam2.text, Nfam2.text)
   utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2 WHERE fam=&1", Afam2.text, Nfam2.text)
   utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2 WHERE fam=&1", Afam2.text, Nfam2.text)
   Me.Mouse = Mouse.Default
@@ -508,7 +508,7 @@ Public Sub Modifart(oldcode As String, newfam As String, newcode As String)
     Utils.db.Exec("UPdate Fiches_LigblM SET  fam_ligbl = &2, code_ligbl = &3 where code_ligbl = &1", oldcode, newfam, newcode)
     Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2, code_ligfac = &3 where code_ligfac = &1", oldcode, newfam, newcode)
     Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
-    Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
+    'Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2, mat_code= &3 where mat_code = &1", oldcode, newfam, newcode)
     utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
     utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2, code=&3 WHERE code=&1", oldcode, newfam, newcode)
     
@@ -547,7 +547,7 @@ Public Sub Modifart(oldcode As String, newfam As String, newcode As String)
     Utils.db.Exec("UPdate Fiches_LigblM SET  fam_ligbl = &2 where code_ligbl = &1", oldcode, newfam)
     Utils.db.Exec("UPdate Fiches_HistoLigfacM  SET  fam_ligfac = &2 where code_ligfac = &1", oldcode, newfam)
     Utils.db.Exec("UPdate Fiches_Materiels  SET  mat_fam = &2 where mat_code = &1", oldcode, newfam)
-    Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2 where mat_code = &1", oldcode, newfam)
+    'Utils.db.Exec("UPdate Fiches_Mats  SET  mat_fam = &2 where mat_code = &1", oldcode, newfam)
     utils.db.Exec("UPdate Fiches_HisLigTickets SET fam = &2 WHERE code=&1", oldcode, newfam)
     utils.db.Exec("UPdate Fiches_LigTicketz SET fam = &2 WHERE code=&1", oldcode, newfam)
   Endif
@@ -729,7 +729,7 @@ End
 
 Public Sub verrou()
 
-  Utils.db.Exec("LOCK TABLES Fiches_Art WRITE, Fiches_HistoLigfac WRITE, Fiches_HistoLigfacM WRITE, Fiches_Ligbl WRITE, Fiches_LigblM WRITE, Fiches_Materiels WRITE, Fiches_Mats WRITE, Fiches_HisLigTickets WRITE, Fiches_LigTicketz WRITE , Docs_Ged Write , Fiches_ArtPromo Write , Fiches_CdBarre Write , Fiches_CdFour Write , Fiches_Cequ Write , Fiches_EtiGond Write , Fiches_EtiProd Write , Fiches_HisInvT Write , Fiches_Inv Write , Fiches_InvT Write , Fiches_Ligcom Write , Fiches_Ligrecpt Write , Fiches_Mvtexp Write , Fiches_Mvtexpdc Write , Fiches_PrdComp Write , Fiches_Rpl1 Write , Fiches_Rpl2 Write , Fiches_Tarcli Write , Fiches_TarTypcli Write , Rupture Write , RuptureC Write")
+  Utils.db.Exec("LOCK TABLES Fiches_Art WRITE, Fiches_HistoLigfac WRITE, Fiches_HistoLigfacM WRITE, Fiches_Ligbl WRITE, Fiches_LigblM WRITE, Fiches_Materiels WRITE, Fiches_HisLigTickets WRITE, Fiches_LigTicketz WRITE , Docs_Ged Write , Fiches_ArtPromo Write , Fiches_CdBarre Write , Fiches_CdFour Write , Fiches_Cequ Write , Fiches_EtiGond Write , Fiches_EtiProd Write , Fiches_HisInvT Write , Fiches_Inv Write , Fiches_InvT Write , Fiches_Ligcom Write , Fiches_Ligrecpt Write , Fiches_Mvtexp Write , Fiches_Mvtexpdc Write , Fiches_PrdComp Write , Fiches_Rpl1 Write , Fiches_Rpl2 Write , Fiches_Tarcli Write , Fiches_TarTypcli Write , Rupture Write , RuptureC Write")
 
 End
 
