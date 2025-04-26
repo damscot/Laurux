@@ -628,7 +628,7 @@ Public Sub affichage()
             Else
               Colcli.Item[9] = ""
             Endif
-            If rResult!tresorerie Then Colcli.Item[10] = "T"
+            Colcli.Item[10] = rResult!tresorerie
             DebP = DebP + rResult!montantd
             CredP = CredP + rResult!montantc
           Else
@@ -1208,7 +1208,7 @@ Public Sub Necrit_Click()
 '    tresr = CBool(Colcli.Current[10])
     If Cloturee = 0 Then
       'Verification si l'ecriture est une ecriture de tresorerie
-      If Colcli.Current[10] == "0" Then
+      If Colcli.Current[10] = "0" Then
         hForm = New Saisecrit(num, Me.Parent, True)
         Try hForm.Showmodal()
       Else
