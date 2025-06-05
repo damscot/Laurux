@@ -569,8 +569,6 @@ Public Sub calcul(Optional nom As String)     ''nom contient le nom du client si
             ligneart.libel = reslig!libel_ligbl
             ligneart.type = reslig!typel_ligbl
             ligne.Add(ligneart, numlig)
-          Else
-            numlig = Format(Val(numlig) - 1, "0000")
           Endif
           
           Case "E", "D", "P"
