@@ -27,6 +27,7 @@ End
 Public Sub Facture(Fic As String, nb As Integer, Optional Imprimante As String = "") As String
 
   Dim $Exec As String
+  Dim i As Integer
   
   Shell "cd " & User.Home & ""
   If Start.LocalSettings["/FACpdf"] Then
@@ -39,15 +40,18 @@ Public Sub Facture(Fic As String, nb As Integer, Optional Imprimante As String =
     $Exec = "lpr"
   Endif
   If Start.LocalSettings["/choiximp2"] Then
-    Shell $Exec & " -# " & nb & " " & Fic Wait
+    $Exec = $Exec & " " & Fic 'Wait
   Else
     If Not IsNull(Imprimante) Then
-      Shell $Exec & " -P " & Imprimante & " -# " & nb & " " & Fic Wait
+      $Exec = $Exec & " -P " & Imprimante & " " & Fic 
     Else If Not IsNull(Start.LocalSettings["/Cimp"]) Then
-      Shell $Exec & " -P " & Start.LocalSettings["/Cimp"] & " -# " & nb & " " & Fic Wait
+      $Exec = $Exec & " -P " & Start.LocalSettings["/Cimp"] & " " & Fic 
     Else
-      Shell $Exec & " -# " & nb & " " & Fic Wait
+      $Exec = $Exec & " " & Fic
     Endif
+    For i = 1 To nb
+      Shell $Exec Wait
+    Next
   Endif
 
 End
