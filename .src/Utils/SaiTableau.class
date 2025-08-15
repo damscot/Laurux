@@ -114,12 +114,7 @@ Public Sub show()
     entete = New Sailig(prop, Pentete, SaiLig.lecture) As "entete"
   Endif
   
-  tableau = New ScrollView($parent) As "tableau"
-  tableau.Expand = True
-  Tableau.Arrangement = Arrange.Vertical
-  tableau.Font = Font["Italic,-1"]
-  tableau.Background = Color.White
-  tableau.ScrollBar = Scroll.Both
+  cretableau()
   
   If VisibleTot Then
     Ptot = New ScrollView($parent) As "pto"
@@ -155,7 +150,6 @@ Public Sub ajout(Optional etat As Integer = SaiLig.ecriture)          ''Ajoute u
   lg.Ind = ligne.Count
   evenement(lg)
   ligne.Add(lg)
-  If ind > -1 Then HideAutreO(ligne[ind])
   ind = ligne.Max
   If Not Even(ind) Then ligne[ind].Background = Background 
   Raise ajou(ligne[ind])
@@ -169,11 +163,15 @@ Public Sub Delete()               ''supression de toutes les lignes du tableau
   Dim lg As Sailig
   
   For Each lg In Me
+    Object.Detach(lg)
+    Try Object.Detach(lg.prx)
     lg.Delete
   Next
   ligne.Clear
   ind = -1
-
+  Tableau.Delete
+  cretableau()
+  
 End
 
 Public Sub Extract(i As Integer)          ''supression de la ligne i et renumérotation des index
@@ -212,6 +210,17 @@ Public Sub Netoyage(nom As String)         ''on supprime les lignes vides, nom e
   
 End
 
+Private Sub cretableau()
+  
+  tableau = New ScrollView($parent) As "tableau"
+  tableau.Expand = True
+  Tableau.Arrangement = Arrange.Vertical
+  tableau.Font = Font["Italic,-1"]
+  tableau.Background = Color.White
+  tableau.ScrollBar = Scroll.Both
+  
+End
+
 
 Private Sub evenement(lg As Sailig)   ''on rattache tous les évenements des controles de SaiLig ici, ils sont donc accessibles dans les classes héritées de SaiTableau
   
@@ -222,28 +231,6 @@ Private Sub evenement(lg As Sailig)   ''on rattache tous les évenements des con
   Next
   Object.Attach(lg.prx, Me, "LPrix")
   Object.Attach(lg.txl, Me, "Ltaxe")
-  
-End
-
-Private Sub AfficheAutreO(Value As Sailig)      ''on gére l'affichage des éventuels autres objets
-  
-  Dim obj As Variant
-  
-  If IsNull(value.AutresObj) Then Return
-  For Each obj In value.AutresObj
-    Try obj.visible = True
-  Next
-  
-End
-
-Private Sub HideAutreO(value As Sailig)
-  
-  Dim obj As Variant
-  
-  If IsNull(value.AutresObj) Then Return
-  For Each obj In value.AutresObj
-    Try obj.Hide
-  Next
   
 End
 
@@ -261,8 +248,6 @@ End
 
 Public Sub ligne_gotfocus(Value As SaiLig)
 
-  If ind > -1 Then HideAutreO(ligne[ind])
-  AfficheAutreO(Value)
   ind = value.Ind
   Raise gotfocus(Value)
   
@@ -271,7 +256,7 @@ End
 Public Sub ligne_lostfocus(Value As Sailig)
 
     Raise lostfocus(Value)
-    
+  
 End
 
 Public Sub ligne_SupLig(etat As Integer)

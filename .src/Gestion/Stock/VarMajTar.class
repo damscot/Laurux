@@ -1,0 +1,174 @@
+' Gambas class file
+
+Private $var As New VarMajTar[]
+Private $ligach As Sailig
+
+Property IgnoreTarif As Boolean Use $IgnoreTarif
+Property MajTar As Boolean Use $MajTar
+Property DateTarif As LDate Use $DateTarif
+Property TarGen As Collection[] Use $TarGen
+Property TarCli As Collection[] Use $TarCli
+Property TarTcli As Collection[] Use $TarTcli
+
+Property Read ResArt As Result Use $resart
+
+
+Public Sub _new()
+
+  $IgnoreTarif = True
+  $MajTar = False
+  $DateTarif = Null
+  
+
+End
+
+Public Sub Delete()
+
+  Try $targen.Clear
+  Try $TarTcli.Clear
+  Try $TarCli.Clear
+
+End
+
+Public Sub LecArt(Value As Sailig, targ As ObjProp[], tarc As ObjProp[], tart As ObjProp[])
+
+  Dim res, res1 As Result
+  Dim obj As ObjProp
+  Dim i As Integer
+  Dim req As String
+  Dim obs As Observer
+  Dim col As Collection
+  Dim lcol As New Collection[2]
+
+  If Not value.MonControle["Code"].Text Then Return
+  $ligach = value
+  'obs = New Observer($ligach.prx) As "LPrixAchat"
+  $resart = Utils.db.Exec("SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva LEFT JOIN Fiches_TarTemp ON art_code=art AND temp_type=&2 WHERE art_code=&1 ", value.MonControle["Code"].Text, GesTar.TarGen)
+  If $resart.Available Then
+    If $resart!dtmaj Then 
+      $DateTarif = LDate($resart!date)
+      $MajTar = True
+    Else
+      $MajTar = False
+    Endif
+    $IgnoreTarif = True
+    For i = 0 To 1
+      col = New Collection
+      For Each obj In targ
+        If obj.name Then
+          If obj.NomControl = "Coef" Or obj.NomControl = "Coef_Ar" Then
+            If IsNull($resart[obj.name]) Or i = 0 Then 
+              col.add(Str(($resart!art_coef - 1) * 100) & "%", obj.NomControl)
+              col.add($resart!art_pvht, "Px_HT")
+              col.add($resart!art_pvttc, "Px_TTC")
+            Else 
+              col.add(Str(($resart[obj.name] - 1) * 100) & "%", obj.NomControl)
+            Endif
+          Else
+            col.add($resart[obj.name], obj.NomControl)
+          Endif
+        Endif
+      Next
+      If IsNull($resart!temp_sup) Then col.Add(False, "sup") Else col.Add($resart!temp_sup, "sup")
+      If $resart!art Then col.Add(False, "modif") Else col.Add(True, "modif")
+      lcol[i] = col
+    Next   
+    $TarGen = lcol 
+    Utils.db.Set("@code", $resart!art_code)
+
+    res = Utils.db.execute("requ_cli")
+    If res.Available Then $TarCli = constructiontableau(tarc, res, value.MonControle["Px_Rev"].Value)
+    
+    res = Utils.db.Execute("requ_typ")
+    If res.Available Then $TarTcli = constructiontableau(tart, res, value.MonControle["Px_Rev"].Value)
+     
+  Endif
+
+End
+
+Private Sub constructiontableau(tar As ObjProp[], res As Result, Px_Rev As Float) As Collection[]
+  
+  Dim obj As ObjProp
+  Dim obs As Observer
+  Dim col As Collection
+  Dim lcol As New Collection[]
+  Dim lp As LPrix
+  Dim lt As LTaxe
+  
+  res.MoveFirst()
+  
+  Repeat
+    col = New Collection
+    For Each obj In tar
+      If obj.name Then
+        If obj.NomControl = "Coef" Or obj.NomControl = "Coef_Ar" Then
+          If Not IsNull(res[obj.name]) Then 
+            col.Add(Str((res[obj.name] - 1) * 100) & "%", obj.NomControl)
+            '$ligart.MonControle[obj.NomControl].Text = Str((res[obj.name] - 1) * 100) & "%"
+          Else
+            If obj.NomControl = "Coef_Ar" Then col.Add(Str((res!art_coef - 1) * 100) & "%", obj.NomControl) Else col.Add(Str((res!coef - 1) * 100) & "%", obj.NomControl)
+          Endif
+        Else
+          If obj.NomControl = "Px_Rev" Then
+            col.Add(Px_Rev, "Px_Rev")
+          Else
+            col.Add(res[obj.name], obj.NomControl)
+          Endif
+          
+        Endif
+      Endif
+    Next
+    If IsNull(res!temp_sup) Then col.Add(False, "sup") Else col.Add($resart!temp_sup, "sup")
+    If res!art Then col.Add(False, "modif") Else col.Add(True, "modif")
+    lp = New LPrix(col["Px_Rev_Ar"], 1, $resart!art_cdarr)
+    lt = New LTaxe("-" & col["Coef_Ar"], LTaxe.Remise)
+    lp.Add_taxe(lt)
+    lt = New LTaxe($resart!taux_tva & "%", LTaxe.TVA)
+    lp.Add_taxe(lt)
+    col.Add(lp.PuNHT.G, "Px_HT_Ar")
+    col.Add(lp.PuNTC.G, "Px_TTC_Ar")
+    
+    lp = New LPrix(Px_Rev, 1, $resart!art_cdarr)
+    lt = New LTaxe("-" & col["Coef"], LTaxe.Remise)
+    lp.Add_taxe(lt)
+    lt = New LTaxe($resart!taux_tva & "%", LTaxe.TVA)
+    lp.Add_taxe(lt)
+    col.Add(lp.PuNHT.G, "Px_HT")
+    col.Add(lp.PuNTC.G, "Px_TTC")
+    
+    lcol.Add(col)
+  Until res.MoveNext()
+  Return lcol
+  
+End
+
+
+Public Sub SauvColl(tg As SaiTableau, tc As SaiTableau, tt As SaiTableau)
+
+  $TarGen = affecttar(tg)
+  $TarCli = affecttar(tc)
+  $TarTcli = affecttar(tt)
+
+End
+
+Private Function affecttar(tar As SaiTableau) As Collection[]
+  
+  Dim obj As Object
+  Dim col As Collection
+  Dim lcol As New Collection[]
+  Dim sl As Sailig
+  
+   For Each sl In tar
+    col = New Collection
+    For Each obj In sl.MonControle
+      If Object.Class(obj).Name = "TextReg" Then
+        col.Add(obj.Text, obj.name)
+      Endif
+    Next
+    col.Add(sl.AutresObj[GesTar.SupLigne], "sup")
+    col.Add(sl.valide, "modif")
+    lcol.Add(col)
+  Next
+  Return lcol
+  
+End

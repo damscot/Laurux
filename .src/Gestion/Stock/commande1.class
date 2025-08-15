@@ -16,6 +16,8 @@ Private $validBR As Boolean           ''a true si la modif vient de la validatio
 Private $Apdf As Boolean               ''si copie ged
 Private $rd As RadioButton
 Private $Bval As Variant = Null
+Private $gestarif As GesTar
+Private $artopt As Artopt
 
 Public Bsel As Boolean = False
 Public Bval As Variant = Null
@@ -31,6 +33,11 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As In
     TabStrip1.Count += 1
     TabStrip1.Text = "Options"
     TabStrip1.Picture = Picture["Icones/Saisiefacture.png"]
+
+    TabStrip1.Index = TabStrip1.Count - 1
+    $artopt = New Artopt(TabStrip1, $opt, Null, Null, Null, Null, Null, TabStrip1) As "opt"
+    TabStrip1.Index = 0
+    $artopt.Font = Font["+2"]
   Endif
   If Not Start.LocalSettings["/Soc" & Start.Societe & "/prixRecpt"] Then
     TabStrip1[1].Visible = False
@@ -56,6 +63,7 @@ Public Sub _new(Optional num As String, nfour As String, dt As LDate, etat As In
   tbl = New Achat($prop, Panel2, panel3) As "Achat"
   tbl.VisibleTot = False
   tbl.show
+  $gestarif = New GesTar(Ptarif) As "Tarif"
   $etat = Achat.Reception
   
   If nfour Then
@@ -127,11 +135,14 @@ Public Sub form_Close()
     Else
       If $etat <> Achat.CreaCommande Then DocActif.free_lock("Achat", $numlock)
       $validBR = True
+      annul_Click()
       $win.Close()
     Endif
   Else
     $win.Close()
   Endif
+  Try col.Clear
+  $prop.Clear
 
 End
 
@@ -182,6 +193,21 @@ Public Sub ncom_LostFocus()
 
 End
 
+Public Sub TabStrip1_Click()
+
+  Select Case TabStrip1.Index
+    Case 0
+      
+    Case 1
+      If tbl.ligne And If tbl.ligne.Count > 0 Then
+        $gestarif.ligachat = tbl.ligne[tbl.ind]
+      Endif
+    Case 2
+      If tbl.ligne And If tbl.ligne.Count > 0 Then $artopt.numart = tbl.ligne[tbl.ind].MonControle["Code"].text
+  End Select
+
+End
+
 Public Sub dte_LostFocus()
 
   If Not IsNull(tbl) Then tbl.date = dte.dte
@@ -194,12 +220,7 @@ Public Sub Achat_Ajou(Value As Sailig)
   Dim opt As Artopt
   Dim obs As Observer
   
-  gt = New GesTar(Ptarif, Value) As "Tarif"
   If $opt <> "N" Then 
-    TabStrip1.Index = TabStrip1.Count - 1
-    opt = New Artopt(TabStrip1, $opt, value.MonControle["Frais"], value.MonControle["Px_Net"], value.MonControle["Px_Rev"], Null, value.MonControle["Code"], TabStrip1) As "opt"
-    TabStrip1.Index = 0
-    opt.Font = Font["+2"]
     value.Dernier = "Rem"
     Value.chain.sup(Value.MonControle["Frais"])
   Else
@@ -211,13 +232,16 @@ Public Sub Achat_Ajou(Value As Sailig)
   stk.Text = ""
   qtecom.Text = ""
   Encom.Text = ""
-  Value.AutresObj = New Object[Achat.ObjFin]
-  Value.AutresObj[Achat.Tarif] = gt
-  Value.AutresObj[Achat.Frais] = opt
   Value.chain.sup(Value.MonControle["Px_Net"])
   Value.chain.sup(Value.MonControle["Px_Rev"])
   obs = New Observer(Value.prx) As "LPrix"
 
+End
+
+Public Sub Achat_LecArt(Value As Sailig)
+  
+  $gestarif.LecArt = value
+  
 End
 
 Public Sub LPrix_change(lp As LPrix)
@@ -245,7 +269,6 @@ Public Sub LPrix_change(lp As LPrix)
   Next
   
 End
-
 
 '***************Table de choix des commandes
 Public Sub Update_Req()
@@ -326,7 +349,7 @@ Public Sub ColTri_MajSel(val As Variant)
       ChangVal($etat)
       $numlock = tbl.ndoc
       If Not DocActif.get_lock("Achat", tbl.ndoc) Then 
-        tbl.Delete()
+        annul_Click
         Return
       Endif
       com.Text = tbl.commentaire
@@ -482,7 +505,7 @@ Public Sub suppr_Click()
   If tbl.ligne.Count < 1 Or $etat = Achat.CreaCommande Then Return
   Utils.db.Begin
   For Each lg In tbl
-    lg.AutresObj[Achat.Tarif].SupTarTemp()
+    $gestarif.SupTarTemp()
   Next
   If tbl.SupAchat($etat, $Bval, True) Then 
     Utils.db.Rollback
@@ -501,16 +524,25 @@ Public Sub annul_Click()
     Me.Close
     Return
   Endif
+  If IsNull(tbl) Then Return
   If tbl.ligne.Count < 1 Then Return
   'on supprime tous les tarifs
   Application.Busy = 1
   generer.Visible = False
-  For Each lg In tbl
-    lg.AutresObj[Achat.Tarif].Delete
-    If $opt <> "N" Then lg.AutresObj[Achat.Frais].Close
-  Next
+  Print Object.Count(tbl)
+  Shell "free"
+   For Each lg In tbl
+     Object.Detach(lg.prx)
+     lg.Delete
+   Next
+   Object.Detach($gestarif)
   'on supprime les lignes saisies + mise à blanc
   tbl.Delete
+  $gestarif.Delete
+  Etarif.Background = Color.ButtonBackground
+  'tbl = Null
+  Shell "free"
+  Print Object.Count(tbl)
   BlqSai(True)
   fcode.Clear
   fo_nom.Text = ""
@@ -575,8 +607,8 @@ Private Sub ValCom() As Boolean
     For Each lg In tbl
       res = Utils.db.Exec("SELECT * FROM Fiches_Ligrecpt WHERE code = &1 AND daterecpt > &2", lg.MonControle["Code"].Text, dte.dte.D)
       If Not res.Available Then 
-        lg.AutresObj[Achat.Tarif].EnrTar(lg, fcode.Text)
-        lg.AutresObj[Achat.Tarif].EnrArt(fcode.Text, dte.dte)
+        $gestarif.EnrTar(lg, fcode.Text)
+        $gestarif.EnrArt(fcode.Text, dte.dte)
       Endif
     Next
   Endif
@@ -782,10 +814,10 @@ Public Sub rececp_Click()
       Endif
       'on enregistre la nouvelle
       tbl.EnrAch(Achat.Reception, dte.dte, nbl.Text, fcode.Text, vgn)
-      For Each lg In tbl
-        lg.AutresObj[Achat.Tarif].EnrTar(lg, fcode.Text)
-        lg.AutresObj[Achat.Tarif].EnrArt(fcode.Text, dte.dte)
-        lg.AutresObj[Achat.Tarif].EnrEtiqu(lg)
+      For Each lg In tbl        
+        $gestarif.EnrTar(lg, fcode.Text)
+        $gestarif.EnrArt(fcode.Text, dte.dte)
+        $gestarif.EnrEtiqu(lg)
       Next
       'on enregistre le pdf de réception
       rep = tbl.imprime(False)
@@ -809,7 +841,7 @@ Public Sub Etarif_Click()       ''on enregistre tous les tarifs de la commande
   If Not IsNull(tbl) And If tbl.ligne.Count > 0 Then
     Utils.db.Begin
     For Each lg In tbl
-      lg.AutresObj[Achat.Tarif].EnrTar(lg, tbl.fourisseur)
+      $gestarif.EnrTar(lg, tbl.fourisseur)
     Next
     Utils.db.Commit
   Endif
@@ -838,8 +870,14 @@ Public Sub Tarif_EnrTar()
   
   lg = tbl.ligne[tbl.ind]
   Utils.db.Begin
-  lg.AutresObj[Achat.Tarif].EnrTar(lg, tbl.fourisseur)
+  $gestarif.EnrTar(lg, tbl.fourisseur)
   Utils.db.Commit
+
+End
+
+Public Sub Achat_EnrTarTemp(pbht As Float, txconv As Float, rem As Float, paht As Float, frais As Float, prvt As Float, sl As Sailig)
+
+  $gestarif.EnrTarTemp(pbht, txconv, rem, paht, frais, prvt, sl)
 
 End
 
@@ -1028,3 +1066,4 @@ Private Sub affstk()
   Endif
   
 End
+

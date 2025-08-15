@@ -35,6 +35,8 @@ Private $ressup As Result           ''contient la commande à supprimer
 Private $sup As Boolean             ''si la commande est a supprimer
 
 Event ajou(Value As Sailig)
+Event LecArt(value As Sailig)
+Event EnrTarTemp(pbht As Float, txconv As Float, rem As Float, paht As Float, frais As Float, prvt As Float, sl As Sailig)
 
 Public Enum CreaCommande, EnCommande, Reception, Validee, Sans
 Public Enum Tarif, Frais, Materiel, Consignes, FicheArt, ObjFin
@@ -208,9 +210,6 @@ Public Sub ligne_LecCode(ligne As Variant)
     
     Me.ligne[Me.ind].prx.Mnt = Me.ligne[Me.ind].MonControle["Px_Brut"].Value
     If Me.opt = "T" Or Me.opt = "B" Then
-      Me.ligne[Me.ind].AutresObj[Frais].prixachat = Me.ligne[Me.ind].MonControle["Px_Net"].Text
-      Me.ligne[Me.ind].AutresObj[Frais].prixrev = Me.ligne[Me.ind].MonControle["Px_Rev"].Text
-      Me.ligne[Me.ind].AutresObj[Frais].numart = code
       If IsNull(Me.ligne[Me.ind].AutresObj[Consignes].ccd) Then
         Me.ligne[Me.ind].AutresObj[Consignes].ccd = New Consigne(Me.ligne[Me.ind].MonControle["Px_Net"].Value, Me.ligne[Me.ind].MonControle["Qte"].Value, LPrix.Arr_0001, "", res!art_dra, res!art_volm, res!art_deg, "", res!art_consp, Me.ligne[Me.ind].MonControle["Pal"].Value, res!art_consc, Me.ligne[Me.ind].MonControle["Col"].Value, res!art_consb)
       Else
@@ -246,8 +245,8 @@ Public Sub Code_lostfocus()
 
   If Last.Text <> $code Then
     If Last.text Then ligne_LecCode(Last.Text)
-    Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
-    'Me.ligne[Me.ind].MonControle["Désignation"].setfocus
+    Raise LecArt(Me.ligne[Me.ind])
+    Me.ligne[Me.ind].MonControle["Désignation"].setfocus
   Endif
   If Me.ind > -1 Then Raise lostfocus(Me.ligne[Me.ind])
   
@@ -273,10 +272,11 @@ Public Sub Rech_click()
   If Bsel = True Then
     Me.ligne[Me.ind].MonControle["Code"].Text = Bval
      If Bval <> $code Then
-       If Bval Then ligne_LecCode(Bval)
-       Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+       If Bval Then 
+        ligne_LecCode(Bval)
+        Raise LecArt(Me.ligne[Me.ind])
+      Endif
     Endif
-    ligne_LecCode(Bval)
     If Object.IsValid(Me.ligne[Me.ind].AutresObj[Consignes]) Then Me.ligne[Me.ind].MonControle["Pal"].setfocus Else Me.ligne[Me.ind].MonControle["Qte"].setfocus
   Endif
 
@@ -353,10 +353,6 @@ Public Sub LPrix_change(Data As LPrix)
 
   Me.ligne[Me.ind].MonControle["Px_Net"].Value = Data.PuBHT.Mnt + $LtRem.Montant(Data, True).G
   Me.ligne[Me.ind].MonControle["Px_Rev"].Value = Data.PuNHT.Mnt
-  If Me.opt <> "N" Then
-    Me.ligne[Me.ind].AutresObj[Frais].prixachat = Me.ligne[Me.ind].MonControle["Px_Net"].Text
-    Me.ligne[Me.ind].AutresObj[Frais].cmpt_lostfocus()
-  Endif
   
 End
 
@@ -400,7 +396,6 @@ Public Sub ligne_RetLigne(etat As Integer)
   If Me.ind = Me.ligne.Max Then 
     If etat = SaiLig.ecriture And Not (Me.ligne[Me.ind].MonControle["Code"].HasFocus) Then ajout()
   Else
-    Me.ligne[Me.ind].AutresObj[Tarif].hide
     Me.ligne[Me.ind + 1].MonControle[Me.$prop[0].NomControl].SetFocus
     Me.ind += 1
   Endif
@@ -477,15 +472,14 @@ Public Sub ajout(Optional etat As Integer = SaiLig.ecriture)
   
   If Me.ind > -1 Then calcul
   Super.ajout(etat)
+  Me.ligne[Me.ind].AutresObj = New Variant[Achat.ObjFin]
+  Me.ligne[Me.ind].AutresObj[Tarif] = New VarMajTar   'Variant[GesTar.TarFin]
   Me.ligne[Me.ind].prx.Arr = LPrix.Arr_0001
   Me.ligne[Me.ind].chain.tableaux.Extract(1)
   If Not $PxRec Then
     Me.ligne[Me.ind].chain.sup(Me.ligne[Me.ind].MonControle["Px_Brut"])
-    Me.ligne[Me.ind].chain.sup(Me.ligne[Me.ind].MonControle["Px_Net"])
-    Me.ligne[Me.ind].chain.sup(Me.ligne[Me.ind].MonControle["Px_Rev"])
     Me.ligne[Me.ind].Dernier = "TX_Conv"
   Endif
-  
 End
 
 Public Sub Show()
@@ -495,6 +489,15 @@ Public Sub Show()
   Me.art.Value = True
   Me.mo.Text = "Affichage référence fournisseur"
   Me.artstk.Text = "Affichage référence centrale"
+
+End
+
+Public Sub Delete()
+
+  Try OptAr.Delete
+  Try mat.Delete
+  Try rec.Delete
+  Super.Delete
 
 End
 
@@ -511,7 +514,7 @@ Public Sub Doublon() As Boolean         ''on regarde si il existe des doublons d
    For Each comp In Me
      If sl <> comp Then
        If sl.MonControle["Code"].Text = comp.MonControle["Code"].Text Then
-         If sl.AutresObj[Tarif].majtarif.Value And comp.AutresObj[Tarif].majtarif.Value Then
+         If sl.AutresObj[Tarif][GesTar.TarMaj][GesTar.MajTar] And comp.AutresObj[Tarif][GesTar.TarMaj][GesTar.MajTar] Then
            dbl = True
            If Not lst.Exist(sl.MonControle["Code"].Text) Then lst.Add(sl, sl.MonControle["Code"].Text)
          Endif
@@ -588,7 +591,7 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
     res.MoveFirst()
     Repeat
       pg.Avancement("", av)
-      Me.ajout(LecEcr)
+      ajout(LecEcr)
       Me.ligne[Me.ind].MonControle["Code"].Text = res!code
       ligne_LecCode(res!code)
       Me.ligne[Me.ind].MonControle["Désignation"].text = res!design
@@ -600,7 +603,6 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
       Me.ligne[Me.ind].MonControle["Frais"].Value = res!frais
       Me.ligne[Me.ind].MonControle["Px_Rev"].Value = res!prvt
       Me.ligne[Me.ind].prx.Qte = Me.ligne[Me.ind].MonControle["Qte"].Value
-      Me.ligne[Me.ind].AutresObj[Tarif].majtarif.Value = res!majtarif
       If Me.opt = "B" Or Me.opt = "T" Then
         If etat = Achat.EnCommande Or etat = Achat.CreaCommande Then
           Me.ligne[Me.ind].MonControle["Pal"].Text = res!palet
@@ -615,8 +617,9 @@ Public Sub LitCommande(where As String, etat As Integer)    ''Lit et affiche une
         If Me.ligne[Me.ind].AutresObj[Consignes].ccd.code And etat = Reception Then dra = True
       
       Endif
-      Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+      Raise LecArt(Me.ligne[Me.ind])
       Me.ligne[Me.ind].valide = False
+      Me.ligne[Me.ind].AutresObj[Tarif].IgnoreTarif = res!majtarif
     Until res.MoveNext()
   Endif
   calcul
@@ -667,7 +670,7 @@ Public Sub generer(four As String)
           ligne_LecCode(res!art_code)
           Me.ligne[Me.ind].MonControle["Qte"].Value = qte
           calcul
-          Me.ligne[Me.ind].AutresObj[Tarif].LecArt = Me.ligne[Me.ind]
+          Raise LecArt(Me.ligne[Me.ind])
           Me.ajout()
         Endif
       Endif
@@ -944,13 +947,12 @@ Private Sub EnrRec(reslig As Result, sl As Sailig, dte As LDate, num As String, 
   reslig!pattc = sl.prx.PuNTC.G
   reslig!nligne = Format(sl.Ind + 1, "000")
   If Object.IsValid(sl.AutresObj[Tarif]) Then 
-    sl.AutresObj[Tarif].EnrTarTemp(reslig!pbht, reslig!txconv, rem, reslig!paht, reslig!frais, reslig!prvt)
-    reslig!majtarif = sl.AutresObj[Tarif].majtarif.Value
+    Raise EnrTarTemp(reslig!pbht, reslig!txconv, rem, reslig!paht, reslig!frais, reslig!prvt, sl)
+    reslig!majtarif = sl.AutresObj[Tarif].IgnoreTarif
   Endif
   reslig.Update
   'on enregistre les options boissons
   If Me.opt = "B" Or Me.opt = "T" Then
-    sl.AutresObj[Frais].enregiste(False)
     If Not modif Then
       cdd = sl.AutresObj[Consignes].ccd
       If cdd.code Then      'si la ligne contient des alcools
@@ -1725,6 +1727,7 @@ Public Sub CreReliquat() As Boolean    ''Creer et affiche la commande de reliqua
   Dim lig As Sailig
   
   If $reli = 2 Then Return False
+  
   For Each lig In rec
     If lig.AutresObj[RelQte] > 0 Then
       $etat = achat.CreaCommande

@@ -26,8 +26,8 @@ Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As Object, PaUA As
   Dim chn As Chainage
   
   TabStrip1.Current.Text = "Options"
-  Frais.ReadOnly = True
-  Frais.Background = &HD4D0C8&
+  Try Frais.ReadOnly = True
+  Try Frais.Background = &HD4D0C8&
   If choix <> "T" Then
     If choix = "P" Then Panel1.Enabled = False
     If choix = "B" Then Panel2.Enabled = False
@@ -40,7 +40,7 @@ Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As Object, PaUA As
   $texttxtva = TxTva
   $code = code
   
-  Textpapp.Text = $TextPaUA.Text
+  Try Textpapp.Text = $TextPaUA.Text
   
   'gestion des évenements des zones de saisie
   obs = New Observer(Texttrs) As "cmpt"
@@ -126,6 +126,14 @@ Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As Object, PaUA As
 
 End
 
+Public Sub form_Close()
+
+  Try $Textfrais.delete
+  Try $TextPaUA.delete
+  Try $textPrvt.delete
+  Try $texttxtva.Delete
+
+End
 Public Sub cmpt_lostfocus()
 
   If Last = Texttrs Or Last = Texttrspp Then
@@ -297,10 +305,10 @@ Private Sub calculpxrev()
   Textstot.Value = pxrev
   frs += Textdra.Value + Textvss.Value
   pxrev = Textpa.Value + frs
-  $Textfrais.Text = Format(frs, "0.00")
-  Textprxr.Value = pxrev
-  $textPrvt.Text = Format(pxrev, "0.000")
-  Textprxrpp.Value = pxrev
+  Try $Textfrais.Text = Format(frs, "0.00")
+  Try Textprxr.Value = pxrev
+  Try $textPrvt.Text = Format(pxrev, "0.000")
+  Try Textprxrpp.Value = pxrev
   
   Raise recalculpx()
 End

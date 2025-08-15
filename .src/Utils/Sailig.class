@@ -93,19 +93,28 @@ Public Sub Delete()
 
   Dim obj As Variant
   
-  chain.tableaux.Clear
-  If Not IsNull(AutresObj) Then
-     ' For Each obj In AutresObj
-     '   Try obj.Close    
-     ' Next
-    AutresObj.Clear
-  Endif
-  ' For Each obj In Panel1.Children
-  '   Try obj.Delete
-  ' Next
-  MonControle.Clear
-  Panel1.Delete
-
+   chain.tableaux.Clear
+   Try Object.Detach(prx)
+   Try Object.Detach(txl)
+   prx = Null
+   txl = Null
+   If Not IsNull(AutresObj) Then
+      For Each obj In AutresObj
+        Try Object.Detach(obj)
+        Try obj.Delete
+        Try obj.Clear
+      Next
+     Try AutresObj.Clear
+   Endif
+   If MonControle.Count > 0 Then
+     For Each obj In MonControle
+       Try Object.Detach(obj)
+       obj.Delete
+     Next
+   Endif
+   Try Panel1.Delete
+   MonControle.Clear
+  
 End
 
 Public Sub groupe_lostfocus()
