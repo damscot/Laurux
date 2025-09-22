@@ -514,7 +514,7 @@ Public Sub Doublon() As Boolean         ''on regarde si il existe des doublons d
    For Each comp In Me
      If sl <> comp Then
        If sl.MonControle["Code"].Text = comp.MonControle["Code"].Text Then
-         If sl.AutresObj[Tarif][GesTar.TarMaj][GesTar.MajTar] And comp.AutresObj[Tarif][GesTar.TarMaj][GesTar.MajTar] Then
+         If sl.AutresObj[Tarif].IgnoreTarif And comp.AutresObj[Tarif].IgnoreTarif Then
            dbl = True
            If Not lst.Exist(sl.MonControle["Code"].Text) Then lst.Add(sl, sl.MonControle["Code"].Text)
          Endif
