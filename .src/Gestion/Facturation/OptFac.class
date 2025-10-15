@@ -462,6 +462,11 @@ Public Sub edite_Click()
   
   Dim tri As String
   
+  mail.Enabled = False
+  sms.Enabled = False
+  visu.Enabled = False
+  Fermer.Enabled = False
+  
   Select Case $choix
     
     Case ObjFac.finmois, ObjFac.abonnement
@@ -486,6 +491,11 @@ Public Sub edite_Click()
       $vfac.editebl()
   End Select
   Fermer.Tooltip = "Fermer"
+  
+  mail.Enabled = True
+  sms.Enabled = True
+  visu.Enabled = True
+  Fermer.Enabled = True
 
 End
 
