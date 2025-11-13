@@ -88,10 +88,10 @@ Public Sub Aff_date()
     dtepc = "01"
     dpc = Left$(Dtpc, 6) & Str(Val(Right$(dpc, 4)) + 1)
   Endif
-  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 01), "mmmm  yyyy")
+  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 1), "mmmm  yyyy")
   datecl.Text = Format$(Date(datec3), "dd mmmm  yyyy")
   dtepc = Format$(Val(dtepc), "00")
-  dateprc.Text = Format$(Date(Right(dpc, 4), dtepc, 01), "dd mmmm  yyyy")
+  dateprc.Text = Format$(Date(Right(dpc, 4), dtepc, 1), "dd mmmm  yyyy")
 
 End
 
@@ -105,9 +105,9 @@ Public Sub Calc_Daterpt(Dtpc2 As String)
   Else
     dpc = Right$(datecl.Text, 4)
   Endif
-  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 01), "mmmm  yyyy")
+  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 1), "mmmm  yyyy")
   dtepc = Format$(Val(dtepc), "00")
-  dterpt = Format$(Date(dpc, dtepc, 01), "yyyymmdd")
+  dterpt = Format$(Date(dpc, dtepc, 1), "yyyymmdd")
 
 End
 

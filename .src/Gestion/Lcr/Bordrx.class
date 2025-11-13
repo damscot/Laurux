@@ -322,7 +322,7 @@ Public Sub Gen_Bordereau(Org As String)
   Coulfond = Utils.Coulfd()
   PosY = 100
   Try filename2 = Start.LocalSettings["/Soc" & Start.Societe & "/Fichiers"] & "/Bordereau" & ColBrd[ColBrd.row, 0].Text & ".pdf "
-  Print Error , Error.Text
+  Print Error, Error.Text
 '  If Not Error Then
     Shell "cd " & Start.LocalSettings["/Soc" & Start.Societe & "/Fichiers"] & ""
     Filename = Start.LocalSettings["/Soc" & Start.Societe & "/Fichiers"] & "/Lcr" & Start.Societe & ColBrd[ColBrd.row, 0].Text & ".pdf"

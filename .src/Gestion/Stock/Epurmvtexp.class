@@ -57,7 +57,7 @@ Public Sub Form_Open()
     Dpc = Right$(Dtpc, 4)
     Dpc = Val(Dpc)
     Aff_date()
-    dterpt = Format$(Date(Right(dpc, 4), dtepc, 01), "yyyymmdd")
+    dterpt = Format$(Date(Right(dpc, 4), dtepc, 1), "yyyymmdd")
     date2.Text = .Cdate_Aff(rResult!dteclec)
     date2.Text = Format$(Date(Right(date2.Text, 4), Mid(date2.Text, 4, 2), Left(date2.Text, 2)), "dd.mm.yyyy")
   End With
@@ -72,7 +72,7 @@ Public Sub Aff_date()
     dtepc = "01"
     dpc = Left$(Dtpc, 6) & Str(Val(Right$(dpc, 4)) + 1)
   Endif
-  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 01), "dd.mm.yyyy")
+  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 1), "dd.mm.yyyy")
   date1.Text = Dtpc
 
 End

@@ -80,10 +80,10 @@ Public Sub Aff_date()
     dtepc = "01"
     dpc = Left$(Dtpc, 6) & Str(Val(Right$(dpc, 4)) + 1)
   Endif
-  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 01), "mmmm  yyyy")
+  Dtpc = Format$(Date(Right(dpc, 4), dtepc, 1), "mmmm  yyyy")
   datecl.Text = "  " & Dtpc
   dtepc = Format$(Val(dtepc), "00")
-  dateprc.Text = Format$(Date(Right(dpc, 4), dtepc, 01), "dd mmmm  yyyy")
+  dateprc.Text = Format$(Date(Right(dpc, 4), dtepc, 1), "dd mmmm  yyyy")
 
 End
 
