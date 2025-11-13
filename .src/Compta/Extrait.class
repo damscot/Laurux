@@ -628,7 +628,7 @@ Public Sub affichage()
             Else
               Colcli.Item[9] = ""
             Endif
-            Colcli.Item[10] = rResult!tresorerie
+            If CInt(rResult!tresorerie) <> 0 Then Colcli.Item[10] = "T"
             DebP = DebP + rResult!montantd
             CredP = CredP + rResult!montantc
           Else
@@ -732,7 +732,7 @@ Public Sub Centralisation()
   Dim jrs1 As String
 
   Libel = "Centralisation"
-  jrs = Date(Right$(Datj.L, 4), Format$(Val(Mid$(Datj.L, 4, 2)), "00"), 01)
+  jrs = Date(Right$(Datj.L, 4), Format$(Val(Mid$(Datj.L, 4, 2)), "00"), 1)
   $Mois = Right$(Datj.L, 4) & Mid$(Datj.L, 4, 2)
   Jrs1 = finmois(jrs)
   Jrs1 = Right$(Datj.L, 4) & Format$(Val(Mid$(Datj.L, 4, 2)), "00") & Jrs1
@@ -1203,12 +1203,13 @@ Public Sub Necrit_Click()
 
   Dim hForm As Saisecrit
   Dim hForm2 As Tresor
+  Dim tresr As Boolean
 
   If Journaux.visible = False Then
-'    tresr = CBool(Colcli.Current[10])
+    tresr = CBool(Colcli.Current[10])
     If Cloturee = 0 Then
       'Verification si l'ecriture est une ecriture de tresorerie
-      If Colcli.Current[10] = "0" Then
+      If Not tresr Then
         hForm = New Saisecrit(num, Me.Parent, True)
         Try hForm.Showmodal()
       Else

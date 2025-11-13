@@ -14,14 +14,14 @@ Private EntMysql As String[] = ["Table", "Format", "Champ", "Type", "Long.", "De
 
 Public Sub _new(dbconnection As DB_Connection)
   Dim i As Integer
-  
-  
+
+
   DB_Con = dbconnection
 
   GridView1.Header = GridView.Both
   GridView1.ScrollBar = Scroll.Both
   GridView1.Columns.Count = EntMysql.Count
-  
+
   For i = 0 To EntMysql.Max
     GridView1.Columns[i].Text = EntMysql[i]
     GridView1.Columns[i].Alignment = Align.Center
@@ -37,13 +37,13 @@ Public Sub _new(dbconnection As DB_Connection)
   GridView1.Columns[PrimK].Width = 50
   GridView1.Columns[Valide].Width = 50
   GridView1.Columns[ValNul].Width = 80
-  
+
 End
 
 Public Sub Refresh()
-  
+
   Refresh_Data()
-  
+
 End
 
 Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String = "")
@@ -63,107 +63,121 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
   Dim $hfileout As File
   Dim $hfilein As File
   Dim $found As Boolean
-  Dim res As Result
+  Dim $res As Result
   Dim obj As Object
-  GridView1.Clear()
+
+  If csvout Then
+    $hFileout = Open csvout For Write Create
+
+    If Expected.Value Then
+      For Each $elem In Data_Expected
+        Print #$hfileout, $elem.Join(";")
+      Next
+    Else
+      For Each $elem In Data
+        Print #$hfileout, $elem.Join(";")
+      Next
+    Endif
+
+    Close #$hfileout
+    Message.Info("Export fait au format CSV dans le fichier :\n" & csvout)
+
+    Return
+  Endif
   
+  GridView1.Clear()
+
   Data = New String[][]
   Data_Expected = New String[][]
   Valid = New Integer[][]
 
-  If csvout Then
-    $hFileout = Open csvout For Write Create
-  Endif
   If csvin Then
     Datain = New String[][]
     Found = New Boolean[]
     $hFilein = Open csvin For Input
+
     While Not Eof($hFilein)
       Line Input #$hFilein, $sLine
       $curline = Split($sLine, ";")
       Datain.Add($curline)
       Found.Add(False)
     Wend
-  Endif
-  
-  For Each $table In DB_Con.Tables
-    $primary = $table.PrimaryKey
-    res = Utils.db.Exec("DESCRIBE " & $table.Name)
-    For Each $field In $table.Fields
-      $curline = New String[EntMysql.Count]
-      $curline[tabl] = $table.Name '#0
-      $curline[format] = $table.Type '#1
-      $curline[name] = $field.Name '#2
-      $curline[type] = res!Type '#3
-      $curline[long] = $field.Length '#4
-      $curline[def] = res!Default '#5
-      $curline[ValNul] = res!Null
-      $curline[collation] = $field.Collation '#7
-      $curline[PrimK] = res!Key '#8
 
-      'Valid Flag
-      $curline[Valide] = "?" '#9
-      $valid = New Integer[EntMysql.Count]
-      $valid.Fill(-1)
-      $expline = New String[]
-      $expline = $curline.Copy()
-      
-      If Not IsNull(Datain) Then
-        $j = 0
-        $found = False
-        For Each $elem In Datain
-          'On recherche dans les données de référence
-          If Trim($table.Name) = Trim($elem[tabl]) Then
-            If Trim($elem[Name]) = "supprimee" Then
-              Print "supprimee"
-            Endif
-            If Trim($field.Name) = Trim($elem[Name]) Then
-              Found[$j] = True
-              $found = True
-              $k = 0
-              'on verifie tous les champs
-              While $k < EntMysql.Count
-                If $curline[$k] = $elem[$k] Or $elem[$k] = "?" Then
-                  $valid[$k] = 1
-                Else
-                  $valid[$k] = 0
-                  $expline[$k] = $elem[$k]
-                Endif
-                $k = $k + 1
-              Wend
-            Endif
-          Endif
-          
-          $j = $j + 1
-        Next
-
-        If $found = False And Controlled.Value = True Then
-          Continue
-        Else If $found = True And Supplem.Value = True Then
-          Continue
-        Endif
-      Endif
-
-      Data.Add($curline)
-      Data_Expected.Add($expline)
-      Valid.Add($valid)
-
-      If csvout Then
-        Print #$hfileout, $curline.Join(";")
-      Endif
-      $i = $i + 1
-      res.MoveNext()
-    Next
-  Next
-
-  If csvout Then
-    Close #$hfileout
-    Message.Info("Export fait au format CSV dans le fichier :\n" & csvout)
-  Endif
-  If csvin Then
     Close #$hfilein
   Endif
-  
+
+  For Each $table In DB_Con.Tables
+    $primary = $table.PrimaryKey
+    $res = Utils.db.Exec("DESCRIBE " & $table.Name)
+    If $res.Available Then
+      Repeat
+        'For Each $elemres In $res
+        $curline = New String[EntMysql.Count]
+        $curline[tabl] = $table.Name '#0
+        $curline[format] = $table.Type '#1
+        $curline[name] = $res!Field '#2
+        $curline[type] = $res!Type '#3
+        $curline[long] = $table.fields[$res!Field].Length '#4
+        $curline[def] = $res!Default '#5
+        $curline[ValNul] = $res!Null '#6
+        $curline[collation] = $table.fields[$res!Field].Collation '#7
+        $curline[PrimK] = $res!Key '#8
+
+        'Valid Flag
+        $curline[Valide] = "?" '#9
+        $valid = New Integer[EntMysql.Count]
+        $valid.Fill(-1)
+        $expline = New String[]
+        $expline = $curline.Copy()
+
+        If Not IsNull(Datain) Then
+          $j = 0
+          $found = False
+          For Each $elem In Datain
+            $expline[Valide] = $elem[Valide]
+            'On recherche dans les données de référence
+            If Trim($curline[tabl]) = Trim($elem[tabl]) Then
+              If Trim($curline[name]) = Trim($elem[Name]) Then
+                Found[$j] = True
+                $found = True
+                $k = 0
+                'on verifie tous les champs
+                While $k < EntMysql.Count
+                  If $curline[$k] = $elem[$k] Or $curline[$k] = "?" Or $elem[$k] = "?" Then
+                    $valid[$k] = 1
+                  Else
+                    $valid[$k] = 0
+                    $expline[$k] = $elem[$k]
+                    'on place les flags de valid a KO.
+                    $valid[Valide] = 0
+                    $curline[Valide] = 0
+                  Endif
+                  $k = $k + 1
+                Wend
+              Endif
+            Endif
+
+            $j = $j + 1
+          Next
+
+          If $found = False And Controlled.Value = True Then
+            Continue
+          Else If $found = True And Supplem.Value = True Then
+            Continue
+          Else If ControlledFailed.Value = True And Not $valid.Exist(0) Then
+            Continue
+          Endif
+        Endif
+
+        Data.Add($curline)
+        Data_Expected.Add($expline)
+        Valid.Add($valid)
+
+        $i = $i + 1
+      Until $res.MoveNext()
+    Endif
+  Next
+
   If $i <> 0 Then
     GridView1.rows.count = $i
     GridView1.MoveTo(0, 0)
@@ -174,8 +188,7 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
     GridView1.MoveTo(0, 0)
     GridView1.Refresh
   Endif
-  
-  
+
 End
 
 Public Sub Refresh_Data_Missing() As Boolean
@@ -184,7 +197,7 @@ Public Sub Refresh_Data_Missing() As Boolean
   Dim $i As Integer = 0
   Dim $j As Integer = 0
   Dim $valid As New Integer[]
-  
+
   GridView1.Clear()
 
   Data = New String[][]
@@ -214,7 +227,7 @@ Public Sub Refresh_Data_Missing() As Boolean
     Endif
     Return False
   Else
-  
+
     GridView1.rows.count = 0
     GridView1.MoveTo(0, 0)
     GridView1.Refresh
@@ -295,6 +308,9 @@ Public Sub Control_Click()
 
   Me.mouse = mouse.Wait
   Refresh_Data("db_control.csv", Null)
+  If Missing.Value Then 
+    Refresh_Data_Missing()
+  Endif
   Me.mouse = mouse.Default
 
 End
@@ -311,6 +327,12 @@ Public Sub Controlled_Click()
 
 End
 
+Public Sub ControlledFailed_Click()
+
+  Control_Click()
+
+End
+
 Public Sub Supplem_Click()
 
   Control_Click()
@@ -319,10 +341,7 @@ End
 
 Public Sub Missing_Click()
 
-  If Refresh_Data_Missing() Then
-    Control_Click()
-    Refresh_Data_Missing()
-  Endif
+  Control_Click()
 
 End
 
@@ -351,13 +370,13 @@ Public Sub Corriger_Click()
   Dim req As String
   Dim pb As ProgBar
   Dim egn As Boolean
-  
+
   If IsNull(Datain) Then
     Message.Error("Vous devez d'abord lancer un contrôle ou une recherche de champ absent, pour faire cette opération!")
     Return
   Endif
   If Message.Warning("Une tentative de correction de la base de donnée va être tenté!\nUne sauvegarde préalable est indispensable!", "Annuler", "Corriger") = 1 Then Return
-  
+
   pb = New ProgBar("Correction de la base", Valid.Count, Null, True, "", True)
   pb.Show
   For i = 0 To Valid.Max
@@ -372,20 +391,26 @@ Public Sub Corriger_Click()
               If res!ENGINE <> Data_Expected[i][J] Then
                 Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & "ENGINE=" & Data_Expected[i][J])
               Endif
-            
+
             Case type
               Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type])
-            
+
             Case def
-              Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " DEFAULT " & Data_Expected[i][def])
-            
+              If Data_Expected[i][ValNul] = "YES" Then
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NULL DEFAULT &1", Data_Expected[i][def])
+              Else
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NOT NULL DEFAULT &1", Data_Expected[i][def])
+              Endif
+              'force fixing default null/not null validity when fixing also default value
+              Valid[i][ValNul] = 1 
+
             Case ValNul 
               If Data_Expected[i][ValNul] = "YES" Then
                 Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NULL")
               Else
                 Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NOT NULL")
               Endif
-            
+
             Case collation
               'on teste collation par default sur la table 
               res = Utils.db.Exec("SELECT TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2", "Laurux" & Start.Societe, Data_Expected[i][tabl])
@@ -394,7 +419,7 @@ Public Sub Corriger_Click()
               Endif
               'on modifie collation sur le champ
               Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " CHARACTER SET utf8mb4 COLLATE " & Data_Expected[i][collation])
-            
+
             Case PrimK      'on gére les clées
               'on rajoute la clée
               If Data_Expected[i][PrimK] = "PRI" Then
@@ -413,7 +438,7 @@ Public Sub Corriger_Click()
                 Endif
               Endif
           End Select
-        
+
         Case 2        'on rajoute les champs
           egn = False
           res = Utils.db.Exec("SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2", "Laurux" & Start.Societe, Data_Expected[i][tabl])
@@ -436,15 +461,15 @@ Public Sub Corriger_Click()
       End Select
     Next
   Next
-  
+
   Finally
     pb.Close
     Refresh_Data()
     Message.Warning("Continuer à travailler sur Laurux après une réparation de la base pourrait endommager vos données \n Veuillez quitter Laurux")
-  
+
   Catch
     Message.Error("Erreur " & Error.Text & " sur le fichier : " & Data_Expected[i][tabl] & " Champ : " & Data_Expected[i][name])
-    
+
 End
 
 Private Sub RecPri(NomTable As String, Optional vld As Integer)      ''on redefini les clées primaires sur une table
@@ -453,7 +478,7 @@ Private Sub RecPri(NomTable As String, Optional vld As Integer)      ''on redefi
   Dim cle As New String[]
   Dim ok As Boolean
   Dim res As Result
-  
+
   If vld = 2 Then 
     'Si un champ avec une clée primaire n'existe pas on ne fait rien, uniquement en création
     For i = 0 To Valid.Max 
@@ -465,10 +490,10 @@ Private Sub RecPri(NomTable As String, Optional vld As Integer)      ''on redefi
         Endif
       Endif
     Next
-  
+
     If ok Then Return
   Endif
-  
+
   For i = 0 To Valid.Max
     If Data_Expected[i][tabl] = NomTable Then
       If Data_Expected[i][PrimK] = "PRI" Then
@@ -481,6 +506,5 @@ Private Sub RecPri(NomTable As String, Optional vld As Integer)      ''on redefi
   If cle.Count > 0 Then
     Utils.db.Exec("ALTER TABLE " & NomTable & " ADD PRIMARY KEY (" & cle.Join(",") & ")")
   Endif
-  
-End
 
+End

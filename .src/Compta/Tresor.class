@@ -2161,8 +2161,8 @@ Public Sub Ecrit3()
           montantcd = 0
           Journal_LF()
           comptetresorerie()
-          soldeCptt.Text = Format$(Val(soldeCptt.Text) - soldec, "0.00")
-          Mnt = Val(soldecptt.Text)
+          soldeCptt.Text = Format$(Val(Utils.cpoint(soldeCptt.Text)) - soldec, "0.00")
+          Mnt = Val(Utils.cpoint(soldecptt.Text))
           rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & "  WHERE compte_cc= &1", Cptt.Text)
           If rResult.Available Then
             Utils.db.Exec("Update " & Cbase.Table("TabComptes") & " set solde = &1 Where compte_cc = &2", Mnt, Cptt.Text)

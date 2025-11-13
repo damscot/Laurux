@@ -5068,8 +5068,7 @@ Public Sub Maj369()
     Until rReq.MoveNext()
     PB.Close()
   Endif
-  PB.Close()
-  
+
   rReq = Utils.db.Exec("SELECT DISTINCT concat('ALTER DATABASE `', TABLE_SCHEMA, '` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;') as req from information_schema.tables where TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
   If rReq.Available Then
     PB = New ProgBar("Conversion UTF8 Schema", 1)
@@ -5138,9 +5137,13 @@ end_utf8:
       pb.Avancement("", 10)
       Try Utils.db.Exec("UPDATE Fiches_Materiels SET dt =&1 WHERE mat_serie = &2 AND mat_code=&3", LDate(res!mat_ddate).G, res!mat_serie, res!mat_code)
     Until res.MoveNext()
+    PB.Close()
   Endif
   Try utils.db.Exec("ALTER TABLE Fiches_Materiels DROP mat_ddate")
   Try utils.db.Exec("ALTER table Fiches_Materiels CHANGE dt mat_ddate datetime")
+  Try utils.db.Exec("ALTER table Fiches_Materiels MODIFY mat_ect tinyint(1)")
+  Try utils.db.Exec("ALTER table Fiches_Materiels MODIFY mat_vendu tinyint(1)")
+
   'création de la table des tarifs à changer
   Try Utils.db.Exec("CREATE TABLE Fiches_TarTemp" &
    " (art VarChar(15) NOT NULL," &
@@ -5274,7 +5277,7 @@ end_utf8:
       res.Update
       Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='40' WHERE cli_reg='Autre'")
     Endif
-    pb.Close
+    pb.Close()
     Utils.db.Commit
   Endif
   
@@ -5290,6 +5293,8 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab1 & " drop dntk")
   Try Utils.db.Exec("ALTER TABLE " & Tab1 & " add (cutk char(7))")
   Try Utils.db.Exec("ALTER TABLE " & Tab1 & " add (vdr_code char(2))")
+  Try Utils.db.Exec("ALTER TABLE " & Tab1 & " MODIFY tkz tinyint(1)")
+  Try Utils.db.Exec("ALTER TABLE " & Tab1 & " MODIFY connecte tinyint(1)")
 
   PB.Avancement("Table Tickets", 1)
   rResult = Utils.db.Exec("SELECT * FROM " & Tab1 & " ")
@@ -5449,9 +5454,26 @@ end_utf8:
   PB.Show()
   PB.Avancement("Table BL", 1)
   Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl ADD dte_ligbl datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY pu_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY brut_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY netht_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY nettc_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY qte_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY imp tinyint(1)")
   Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl MODIFY typel_ligbl char(2)")
   PB.Avancement("Table BL Matériels", 1)
   Try Utils.db.Exec("ALTER TABLE Fiches_LigblM ADD dte_ligbl datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY num_ligbl varchar(6)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY numlig_ligbl varchar(6)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY pu_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY dec_ligbl varchar(1)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY brut_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY rem_ligbl varchar(6)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY netht_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY nettc_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY tm_ligbl varchar(1)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY qte_ligbl varchar(12)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY imp tinyint(1)")
   Try Utils.db.Exec("ALTER TABLE Fiches_LigblM MODIFY typel_ligbl char(2)")
   PB.Avancement("Ligned BL", 1)
   Try Utils.db.Exec("UPDATE Fiches_Ligbl SET dte_ligbl=(SELECT datebl FROM Fiches_Bl WHERE numbl=num_ligbl) WHERE dte_ligbl IS NULL")
@@ -5603,11 +5625,61 @@ end_utf8:
   PB.Avancement("Libelle / Intitule", 1)
   'Compta intitule / libelle homogenisation
   Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY intitule varchar(40)")
-  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY libelle varchar(50)")
   Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY intitule varchar(40)")
-  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY libelle varchar(50)")
   Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY intitule varchar(40)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY libelle varchar(50)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY libelle varchar(50)")
   Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY libelle varchar(50)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY jour varchar(2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY jour varchar(2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY jour varchar(2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY compte varchar(8) NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY compte varchar(8) NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY compte varchar(8) NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY dte datetime NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY dte datetime NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY dte datetime NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY datee datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY datee datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY dateech datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY dateech datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY dteval datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY dteval datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY datem datetime")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY numcol varchar(3)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY numcol varchar(3)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY montantd decimal(12,2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY montantd decimal(12,2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY montantd decimal(12,2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY montantc decimal(12,2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY montantc decimal(12,2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY montantc decimal(12,2)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY nrlv int(11)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY nrlv int(11)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY relance int(11)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY relance int(11)")
+
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY lind int(11)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt DROP PRIMARY KEY")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt MODIFY lind INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(lind)")
+
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY lind int(11)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM DROP PRIMARY KEY")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY lind INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(lind)")
+
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY lind int(11)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA DROP PRIMARY KEY")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY lind INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(lind)")
+
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtA MODIFY numero int(11) NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt DROP supprimee")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt DROP lind2")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt DROP numerop")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvt DROP numeropdef")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM DROP numerop")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM DROP numeropdef")
+  Try Utils.db.Exec("ALTER TABLE Fiches_MvtM MODIFY collectif tinyint(1)")
+
   $i = 1
   While $i < 6 ' iteration de 1 a 5
     Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY intitule varchar(40)")
@@ -5616,6 +5688,55 @@ end_utf8:
     Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY libelle varchar(50)")
     Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY libelle varchar(50)")
     Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY libelle varchar(50)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY jour varchar(2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY jour varchar(2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY jour varchar(2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY compte varchar(8) NOT NULL")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY compte varchar(8) NOT NULL")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY compte varchar(8) NOT NULL")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY dte datetime NOT NULL")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY dte datetime NOT NULL")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY dte datetime NOT NULL")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY datee datetime")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY datee datetime")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY dateech datetime")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY dateech datetime")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY dteval datetime")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY dteval datetime")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY datem datetime")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY numcol varchar(3)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY numcol varchar(3)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY montantd decimal(12,2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY montantd decimal(12,2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY montantd decimal(12,2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY montantc decimal(12,2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY montantc decimal(12,2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY montantc decimal(12,2)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY nrlv int(11)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY nrlv int(11)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY relance int(11)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY relance int(11)")
+
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY lind int(11)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " DROP PRIMARY KEY")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " MODIFY lind INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(lind)")
+
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY lind int(11)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " DROP PRIMARY KEY")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY lind INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(lind)")
+
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY lind int(11)")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " DROP PRIMARY KEY")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY lind INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY(lind)")
+
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtA" & $i & " MODIFY numero int(11) NOT NULL")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " DROP supprimee")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " DROP numerop")
+    Try Utils.db.Exec("ALTER TABLE Fiches_Mvt" & $i & " DROP numeropdef")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " DROP numerop")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " DROP numeropdef")
+    Try Utils.db.Exec("ALTER TABLE Fiches_MvtM" & $i & " MODIFY collectif tinyint(1)")
+
     $i = $i + 1
   Wend
   
@@ -5635,7 +5756,6 @@ end_utf8:
   Utils.db.Exec("UPDATE Fiches_Comptes SET lettrable = True WHERE lettrable = '-1'")
   
   PB.Close()
-  
   
   Tab = "Docs_Ged"
   Try Utils.db.EXEC("CREATE TABLE " & Tab &
@@ -5727,10 +5847,12 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " modify numDoc TINYTEXT")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " modify numLot TINYTEXT")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " modify libelle TINYTEXT")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " modify lig INT(11)")
   
   Tab = "Fiches_Numabon"
   'On ajoute un compteur du nombre d'appel au masque de saisie pour incrémenter potentiellement les champs des ecritures.
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (compteur INT(11) DEFAULT 0)")
+  Try Utils.db.Exec("ALTER TABLE " & Tab & " MODIFY (numero INT(11) NOT NULL DEFAULT 0)")
   
   Try Utils.db.Exec("DROP TABLE Docs_Autres")
   Try Utils.db.Exec("DROP TABLE Docs_Clients")
@@ -5766,6 +5888,8 @@ end_utf8:
   Try utils.db.Exec("alter table Fiches_HistoFacM add primary key (numfac)")
   
   Try Utils.db.Exec("ALTER TABLE Fiches_Docactif MODIFY doc_num CHAR(25)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mats MODIFY mat_fam CHAR(20)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mats MODIFY mat_ect tinyint(1)")
   
   Sha1Calc.CalcSha1_all("Fiches_Mvt")
   'Sha1Calc.CalcSha1_all("Fiches_Mvt1") 'A REMETTRE AVANT COMMIT : DO NOT PUSH

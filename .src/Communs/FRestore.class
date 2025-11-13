@@ -69,7 +69,7 @@ Public Sub Button2_Click()
   $version = File.Load(User.Home & "/tmp/resultat")
   sversion = Split($version, "\n")
   If sversion.Count >= 2 Then
-    If InStr(sversion[1], "MariaDB") = 17 Then bmariadb = True
+    If InStr(sversion[1], "MariaDB") > 1 Then bmariadb = True
   Endif
   If Compb Then Try uncp.File(SauveB.Text & "/" & Utils.db.Name & ".sql.gz", SauveB.Text & "/" & Utils.db.Name & ".sql")
   If Error Then Compb = False

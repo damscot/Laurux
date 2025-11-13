@@ -394,10 +394,8 @@ Public Sub Button1_Click()
               "dteval date, " &
               "relance INTEGER(1)," &
               "numerop Integer(11)," &
-              "numeropdef Integer(11)," &
               "export Char(1)," &
               "control VARCHAR(40)," &
-              "lind2 INT," &
               Utils.db.AutoIncrement("lind") & ")" & Utils.db.Engine())
 
             TabM = "Fiches_MvtM"
@@ -427,7 +425,6 @@ Public Sub Button1_Click()
               "dteval date, " &
               "relance INTEGER(1)," &
               "numerop Integer(11)," &
-              "numeropdef Integer(11)," &
               "export Char(1)," &
               "control VARCHAR(40)," &
               "supprimee TINYINT(1), " &
@@ -673,16 +670,6 @@ Public Sub Button1_Click()
             Inc Numecr1
             Inc Numecr3
             Utils.db.Exec("UPdate  " & Tab0 & "  SET  dteclec = &1, dteclec1 = &2, dteclec2 = &3, dteclec3= &4, dteclec4 = &5, dteclec5 = &6, dtetdec= &7, dtefedec = &8, numecriture = &9, numecriture1 = &{10}, numecriture2 = &{11} ", dt.G, rResult!dteclec, rResult!dteclec1, rResult!dteclec2, rResult!dteclec3, rResult!dteclec4, .Cdate_Dbase(jour), rResult!dteclec, numecr1, 0, numecr3)
-
-            'On mouvemente les écritures
-            Tab = "Fiches_Mvt"
-            rResult = Utils.db.Exec("SELECT * FROM " & Tab & " order by numero")
-            If rResult.Available Then
-              Repeat
-                num = rResult!numero
-                Utils.db.Exec("UPdate  " & Tab & "  SET numerop = &1 where numero = &1", rResult!numero)
-              Until rResult.MoveNext()
-            Endif
 
             ' On efface les écritures modifiées/supprimées.
             Utils.db.Exec("delete FROM Fiches_MvtM where dte <= &1", datec3)
