@@ -266,7 +266,11 @@ End
 
 Public Function cpoint(mtt As String) As String
 
-  Return (Replace$(LTrim$(mtt), ".", ","))
+  If IsNull(mtt) Then
+    Return "0"
+  Else
+    Return (Replace$(LTrim$(mtt), ".", ","))
+  Endif
 
 End
 
