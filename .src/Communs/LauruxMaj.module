@@ -5063,9 +5063,10 @@ Public Sub Maj369()
     PB = New ProgBar("Conversion MYISAM -> InnoDB Engine", rReq.Count)
     PB.Show()
     Repeat
-      PB.Avancement(rReq!req, 1)
+      PB.Avancement(rReq!req, 10)
       Try Utils.db.Exec(rReq!req)
     Until rReq.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
 
@@ -5075,9 +5076,10 @@ Public Sub Maj369()
     PB.Show()
     Utils.db.Exec("ALTER DATABASE Laurux" & Start.Societe & " DEFAULT COLLATE utf8mb4_unicode_ci")
     Repeat
-      PB.Avancement(rReq!req, 1)
+      PB.Avancement(rReq!req, 10)
       Try Utils.db.Exec(rReq!req)
     Until rReq.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   
@@ -5086,9 +5088,10 @@ Public Sub Maj369()
     PB = New ProgBar("Conversion UTF8 Tables", rReq.Count)
     PB.Show()
     Repeat
-      PB.Avancement(rReq!req, 1)
+      PB.Avancement(rReq!req, 10)
       Try Utils.db.Exec(rReq!req)
     Until rReq.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   
@@ -5097,9 +5100,10 @@ Public Sub Maj369()
     PB = New ProgBar("Conversion UTF8 Field Content", rReq.Count)
     PB.Show()
     Repeat
-      PB.Avancement(rReq!req, 1)
+      PB.Avancement(rReq!req, 10)
       Try Utils.db.Exec(rReq!req)
     Until rReq.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   rReq = Utils.db.Exec("SELECT concat('ALTER TABLE `', t1.TABLE_SCHEMA, '`.`', t1.table_name, '` MODIFY `', t1.column_name, '` ', t1.data_type , '(' , t1.CHARACTER_MAXIMUM_LENGTH , ')' , ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;') as req from information_schema.columns t1 where t1.TABLE_SCHEMA like &1", "Laurux" & Start.Societe)
@@ -5107,7 +5111,7 @@ Public Sub Maj369()
     PB = New ProgBar("Conversion UTF8 Field Type", rReq.Count)
     PB.Show()
     Repeat
-      PB.Avancement(rReq!req, 1)
+      PB.Avancement(rReq!req, 10)
       If rReq!req Then
         Try Utils.db.Exec(rReq!req)
         If Error Then     'si erreur c'est que la chaine est illimité => on supprime (xx)
@@ -5116,6 +5120,7 @@ Public Sub Maj369()
         Endif
       Endif
     Until rReq.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   Utils.db.Exec("ALTER DATABASE " & Utils.db.name & " DEFAULT COLLATE utf8mb4_unicode_ci")
@@ -5137,6 +5142,7 @@ end_utf8:
       pb.Avancement("", 10)
       Try Utils.db.Exec("UPDATE Fiches_Materiels SET dt =&1 WHERE mat_serie = &2 AND mat_code=&3", LDate(res!mat_ddate).G, res!mat_serie, res!mat_code)
     Until res.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   Try utils.db.Exec("ALTER TABLE Fiches_Materiels DROP mat_ddate")
@@ -5277,7 +5283,8 @@ end_utf8:
       res.Update
       Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg='40' WHERE cli_reg='Autre'")
     Endif
-    pb.Close()
+    PB.Finalize()
+    PB.Close()
     Utils.db.Commit
   Endif
   
@@ -5355,7 +5362,9 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (mtva CHAR(12))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (block CHAR(6))")
   Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD (date DATETIME)")
+  PB.Finalize()
   PB.Close()
+
   rResult = Utils.db.Exec("SELECT numero, numlig, lInd, block, type FROM " & Tab & " order by numero, cast(numlig as unsigned)")
   If rResult.Available Then
     PB = New ProgBar("Correction des blocks sur tickets archivés", rResult.Count)
@@ -5373,6 +5382,7 @@ end_utf8:
       Endif
       Try Utils.db.Exec("UPdate   " & Tab & " SET block = &1 WHERE lind = &2", Format(block, "000000"), rResult!lInd)
     Until rResult.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
 
@@ -5406,6 +5416,7 @@ end_utf8:
         Message.Error("Conversion de date non implementé! Ceci ne devrait jamais arriver")
       Endif
     Until rResult.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   Try Utils.db.Exec("ALTER TABLE " & Tab & " drop art_ddate")
@@ -5427,6 +5438,7 @@ end_utf8:
         Message.Error("Conversion de date non implementé! Ceci ne devrait jamais arriver")
       Endif
     Until rResult.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   Try Utils.db.Exec("ALTER TABLE " & Tab & " drop dte")
@@ -5448,6 +5460,7 @@ end_utf8:
   Try Utils.db.Exec("UPDATE Fiches_HistoLigfac SET dtligbl_ligfac=(SELECT datefac FROM Fiches_HistoFac WHERE numfac=num_ligfac)  WHERE dtligbl_ligfac IS NULL")
   PB.Avancement("Lignes Factures Materiels", 1)
   Try Utils.db.Exec("UPDATE Fiches_HistoLigfacM SET dtligbl_ligfac=(SELECT datefac FROM Fiches_HistoFacM WHERE numfac=num_ligfac)  WHERE dtligbl_ligfac IS NULL")
+  PB.Finalize()
   PB.Close()
   'Fichier BL rajout date de sasie
   PB = New ProgBar("Conversion des dates BL", 4)
@@ -5479,7 +5492,9 @@ end_utf8:
   Try Utils.db.Exec("UPDATE Fiches_Ligbl SET dte_ligbl=(SELECT datebl FROM Fiches_Bl WHERE numbl=num_ligbl) WHERE dte_ligbl IS NULL")
   PB.Avancement("Ligned BL Matériels", 1)
   Try Utils.db.Exec("UPDATE Fiches_LigblM SET dte_ligbl=(SELECT datebl FROM Fiches_Bl WHERE numbl=num_ligbl) WHERE dte_ligbl IS NULL")
+  PB.Finalize()
   PB.Close()
+
   utils.db.Exec("UPDATE Fiches_Ligbl,Fiches_Tvaav SET mtx_ligfac=taux_tva WHERE code_tva=tx_ligbl AND mtx_ligfac IS NULL")
   utils.db.Exec("UPDATE Fiches_LigblM,Fiches_Tvaav SET mtx_ligfac=taux_tva WHERE code_tva=tx_ligbl AND mtx_ligfac IS NULL")
   'maj des options
@@ -5514,6 +5529,7 @@ end_utf8:
       Endif
       lasttk = rResult!numero
     Until rResult.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
 
@@ -5754,7 +5770,8 @@ end_utf8:
   PB.Avancement("Correction champ lettrage", 1)
   'Remettre le lettrage à vrais dans le fichier des codes comptables
   Utils.db.Exec("UPDATE Fiches_Comptes SET lettrable = True WHERE lettrable = '-1'")
-  
+
+  PB.Finalize()
   PB.Close()
   
   Tab = "Docs_Ged"
@@ -5837,6 +5854,7 @@ end_utf8:
         Endif
       Next
     Until rResult.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   'On autorise pour les masques de saisies la possibilité d'utiliser des variables

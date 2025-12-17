@@ -87,6 +87,7 @@ Public Function CalcSha1_all(Tab As String)
       If PB.Avancement("Ecriture " & sResult!numero, 130) = True Then Break
       CalcSha1(Tab, sResult!numero)
     Until sResult.MoveNext()
+    PB.Finalize()
     PB.Close()
   Endif
   

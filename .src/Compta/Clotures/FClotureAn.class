@@ -171,7 +171,8 @@ Public Sub Button1_Click()
   Dim Cbfournisseur As String
   Dim Sbfournisseur As String
   Dim Col As String
-  Dim dt As LDate 
+  Dim dt As LDate
+  Dim PB As ProgBar
 
   Tab0 = "Fiches_Parametres"
   'On récupère les numéros d'écritures
@@ -217,10 +218,13 @@ Public Sub Button1_Click()
     If Message.Question("La legislation prévoit d'archiver les sauvegardes avant cloture annuelle pendant cinq ans.\n Avez-vous correctement fait votre sauvegarde ?", "Oui", "Non") = "1" Then
       Message.Info("Le programme va maintenant vérifier votre balance générale")
       If rrResult.Available Then
+        PB = New ProgBar("Controle balance générale", rrResult.Count, Null, False, "", True)
+        PB.Show()
         Repeat
           compt = rrResult!compte_cc
           type = rrResult!type_cc
           Col = rrResult!coll
+          PB.Avancement("compte " & compt, 50)
           rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE compte = &1  and validee = &2 and dte >= &3 and dte <= &4", compt, 1, datec2, datec3)
           If rResult.count <> 0 Then
             i = 0
@@ -271,6 +275,8 @@ Public Sub Button1_Click()
             Wend
           Endif
         Until rrResult.MoveNext()
+        PB.Finalize()
+        PB.Close()
         Dgenerale = Format$(Val(.cpoint(Dgestion)) + Val(.cpoint(Dbilan)), "0.00")
         Cgenerale = Format$(Val(.cpoint(Cgestion)) + Val(.cpoint(Cbilan)), "0.00")
         Sgenerale = Format$(Val(.cpoint(Dgenerale)) - Val(.cpoint(Cgenerale)), "0.00")
@@ -284,17 +290,24 @@ Public Sub Button1_Click()
         Message.Info(" Votre balance générale est équilibrée ! \n Le programme va maintenant lancer la cloture de l'exercice !")
         If Message.Question("Etes vous sur de vouloir lancer la cloture de l'exercice au " & datecl.Text, "Oui", "Non") = 1 Then
           If datec >= datec3 Then
+            PB = New ProgBar("Cloture Annuelle (Etape 1)", 6, Null, False, "", True)
+            PB.Show()
             Me.Mouse = Mouse.Wait
             dateprc.Text = Left$(dateprc.Text, 6) & Right$(datecl.Text, 4)
+
+            ' Sauvegarde de la base
+            PB.Avancement("Sauvegarde de la base", 1)
             Sauve()
 
             ' On remet tous les soldes à zéro
+            PB.Avancement("Réinitialisation des soldes", 1)
             rrResult = Utils.db.Exec("SELECT * FROM " & Tab7 & "")
             Repeat
               Utils.db.Exec("UPdate  " & Tab7 & "  SET  solde = &2 where compte_cc = &1", rrResult!compte_cc, 0)
             Until rrResult.MoveNext()
 
-            ' On recalcule les soldes pour l'exercice en cours de bilan
+            ' On recalcule les soldes pour l'exercice en cours avant cloture
+            PB.Avancement("Recalcul des soldes de l'exercice avant cloture", 1)
             rrResult = Utils.db.Exec("SELECT * FROM " & Tab7 & " order by cast(compte_cc AS char)")
             If rrResult.Available Then
               Repeat
@@ -321,6 +334,8 @@ Public Sub Button1_Click()
                 totsld = 0
               Until rrResult.MoveNext()
             Endif
+
+            PB.Avancement("Décalage des exercices comptable", 1)
             Tab6 = "Report"
             Tab5 = "Fiches_Mvt5"
             Tab4 = "Fiches_Mvt4"
@@ -339,99 +354,23 @@ Public Sub Button1_Click()
             Utils.db.Exec("alter Table " & Tab2 & " Rename " & Tab3 & "")
             Utils.db.Exec("alter Table " & Tab1 & " Rename " & Tab2 & "")
             Utils.db.Exec("alter Table " & Tab & " Rename " & Tab1 & "")
+            Utils.db.CopieTable(Tab1, Tab)
             Utils.db.Exec("drop Table IF exists " & TabA5 & "")
             Utils.db.Exec("alter Table " & TabA4 & " Rename " & TabA5 & "")
             Utils.db.Exec("alter Table " & TabA3 & " Rename " & TabA4 & "")
             Utils.db.Exec("alter Table " & TabA2 & " Rename " & TabA3 & "")
             Utils.db.Exec("alter Table " & TabA1 & " Rename " & TabA2 & "")
             Utils.db.Exec("alter Table " & TabA & " Rename " & TabA1 & "")
+            Utils.db.CopieTable(TabA1, TabA)
             Utils.db.Exec("drop Table IF exists Fiches_MvtM5")
             Utils.db.Exec("alter Table Fiches_MvtM4 Rename Fiches_MvtM5")
             Utils.db.Exec("alter Table Fiches_MvtM3 Rename Fiches_MvtM4")
             Utils.db.Exec("alter Table Fiches_MvtM2 Rename Fiches_MvtM3")
             Utils.db.Exec("alter Table Fiches_MvtM1 Rename Fiches_MvtM2")
             Utils.db.Exec("alter Table Fiches_MvtM Rename Fiches_MvtM1")
+            Utils.db.CopieTable("Fiches_MvtM1", "Fiches_MvtM")
 
-            TabA = "Fiches_MvtA"
-            Utils.db.Exec("CREATE TABLE " & TabA &
-              " (numero Integer(6) NOT NULL," &
-              "compte CHAR(8) NOT NULL," &
-              "intitule VarChar(40)," &
-              "dte date," &
-              "numdoc CHAR(10) NOT NULL," &
-              "libelle VarChar(50)," &
-              "pourcent CHAR(5)," &
-              "montantd Decimal(12,2)," &
-              "montantc Decimal(12,2)," &
-              "jour Char(2)," &
-              "poste Char(3)," &
-              "validee TINYINT(1)," &
-              Utils.db.AutoIncrement("lind") & ")" & Utils.db.Engine())
-
-            Utils.db.Exec("CREATE TABLE " & Tab &
-              " (jour Char(2)," &
-              "numero Integer(11) NOT NULL," &
-              "numerodef Integer(11)," &
-              "compte CHAR(8) NOT NULL," &
-              "collectif TINYINT(1)," &
-              "intitule VarChar(40)," &
-              "dte date," &
-              "datee date, " &
-              "dateech date, " &
-              "numcol Char(3)," &
-              "numdoc CHAR(10)," &
-              "numlot CHAR(10)," &
-              "libelle VarChar(50)," &
-              "montantd Decimal(12,2)," &
-              "montantc Decimal(12,2)," &
-              "validee TINYINT(1)," &
-              "provisoire TINYINT(1)," &
-              "tresorerie  TINYINT(1)," &
-              "pointee TINYINT(1)," &
-              "nrlv INTEGER(8)," &
-              "lettree TINYINT(1)," &
-              "cloturee TINYINT(1)," &
-              "dteval date, " &
-              "relance INTEGER(1)," &
-              "numerop Integer(11)," &
-              "export Char(1)," &
-              "control VARCHAR(40)," &
-              Utils.db.AutoIncrement("lind") & ")" & Utils.db.Engine())
-
-            TabM = "Fiches_MvtM"
-            Utils.db.Exec("CREATE TABLE " & TabM &
-              " (jour Char(2)," &
-              "numero Integer(11) NOT NULL," &
-              "numerodef Integer(11)," &
-              "compte CHAR(8) NOT NULL," &
-              "collectif TINYINT(1)," &
-              "intitule VarChar(40)," &
-              "dte date," &
-              "datee date, " &
-              "dateech date, " &
-              "numcol Char(3)," &
-              "numdoc CHAR(10)," &
-              "numlot CHAR(10)," &
-              "libelle VarChar(50)," &
-              "montantd Decimal(12,2)," &
-              "montantc Decimal(12,2)," &
-              "validee TINYINT(1)," &
-              "provisoire TINYINT(1)," &
-              "tresorerie  TINYINT(1)," &
-              "pointee TINYINT(1)," &
-              "nrlv INTEGER(8)," &
-              "lettree TINYINT(1)," &
-              "cloturee TINYINT(1)," &
-              "dteval date, " &
-              "relance INTEGER(1)," &
-              "numerop Integer(11)," &
-              "export Char(1)," &
-              "control VARCHAR(40)," &
-              "supprimee TINYINT(1), " &
-              "datem date, " &
-              "lind2 INT," &
-              Utils.db.AutoIncrement("lind") & ")" & Utils.db.Engine())
-
+            'Report and ReportM sont des tables temporaires
             Utils.db.Exec("drop Table IF exists " & Tab6 & "")
             Utils.db.Exec("CREATE TABLE " & Tab6 &
               " (jour Char(2)," &
@@ -496,7 +435,7 @@ Public Sub Button1_Click()
               Utils.db.AutoIncrement("lind") & ")" & Utils.db.Engine())
 
             ' On recupere les écritures analytiques
-
+            PB.Avancement("Reprise des écritures analytiques de l'exercice en cours", 1)
             rResult = Utils.db.Exec("SELECT * FROM " & TabA1 & "")
             If rResult.Available Then
               Repeat
@@ -508,6 +447,7 @@ Public Sub Button1_Click()
             Endif
 
             'On récupère les écritures modifiées/supprimées
+            PB.Avancement("Reprise des écritures modifiées/supprimées de l'exercice en cours", 1)
             rResult = Utils.db.Exec("SELECT * FROM Fiches_MvtM1")
             If rResult.Available Then
               Repeat
@@ -517,12 +457,16 @@ Public Sub Button1_Click()
               Until rResult.MoveNext()
               Utils.db.Exec("DELETE FROM Fiches_MvtM1 WHERE dte > &1", datec3)
             Endif
+            PB.Finalize()
+            PB.Close()
 
             ' On recupere les comptes clients et fournisseurs
-
             rResult = Utils.db.Exec("SELECT * FROM " & Tab1 & "")
             If rResult.Available Then
+              PB = New ProgBar("Cloture Annuelle (Etape 2)", rResult.Count, Null, False, "", True)
+              PB.Show()
               Repeat
+                PB.Avancement("compte " & rResult!compte, 50)
                 cResult = Utils.db.Exec("SELECT * FROM " & Tab7 & " WHERE compte_cc = &1", rResult!compte)
                 If cResult.Available Then
                   If cResult!type_cc = "C" Or If cResult!type_cc = "F" Then
@@ -550,8 +494,8 @@ Public Sub Button1_Click()
                       Endif
                     Endif
                   Endif
-                  ' On recupere les comptes de bilan
 
+                  ' On recupere les comptes de bilan
                   If cResult!type_cc = "B" Then ' Si compte de bilan
                     If .Cdate_Comp(rResult!dte) > Datec2 And .Cdate_Comp(rResult!dte) <= datec3 Then
                       rrResult = Utils.db.Exec("SELECT * FROM " & Tab6 & " WHERE  compte = &1", rResult!compte)
@@ -578,7 +522,6 @@ Public Sub Button1_Click()
                   Endif
 
                   ' On totalise les comptes de gestion
-
                   If cResult!type_cc = "G" Then
                     If .Cdate_Comp(rResult!dte) > Datec2 And .Cdate_Comp(rResult!dte) <= datec3 Then
                       num = rResult!numero
@@ -603,9 +546,14 @@ Public Sub Button1_Click()
                   Endif
                 Endif
               Until rResult.MoveNext()
+              PB.Finalize()
+              PB.Close()
             Endif
 
             'On mouvemente la table des mouvements pour les reports
+            PB = New ProgBar("Cloture Annuelle (Etape 3)", 4, Null, False, "", True)
+            PB.Show()
+            PB.Avancement("Creation des mouvement des reports `a nouveau`", 1)
             rrResult = Utils.db.Exec("SELECT * FROM " & Tab6 & "")
             If rrResult.Available Then
               Repeat
@@ -634,10 +582,12 @@ Public Sub Button1_Click()
             Endif
 
             ' On remet tous les soldes à zéro
+            PB.Avancement("Réinitialisation des soldes", 1)
             rrResult = Utils.db.Exec("SELECT * FROM " & Tab7 & "")
             Utils.db.Exec("UPdate  " & Tab7 & "  SET  solde = &1", 0)
 
-            ' On recalcule les soldes
+            ' On recalcule les soldes pour l'exercice en cours apres cloture
+            PB.Avancement("Recalcul des soldes de l'exercice apres cloture", 1)
             Utils.db.Exec("UPdate  " & tab & "  SET  validee = &1", 1) 'Toutes les écritures sont validées.
             rrResult = Utils.db.Exec("SELECT * FROM " & Tab7 & " order by cast(compte_cc AS char)")
             If rrResult.Available Then
@@ -672,7 +622,11 @@ Public Sub Button1_Click()
             Utils.db.Exec("UPdate  " & Tab0 & "  SET  dteclec = &1, dteclec1 = &2, dteclec2 = &3, dteclec3= &4, dteclec4 = &5, dteclec5 = &6, dtetdec= &7, dtefedec = &8, numecriture = &9, numecriture1 = &{10}, numecriture2 = &{11} ", dt.G, rResult!dteclec, rResult!dteclec1, rResult!dteclec2, rResult!dteclec3, rResult!dteclec4, .Cdate_Dbase(jour), rResult!dteclec, numecr1, 0, numecr3)
 
             ' On efface les écritures modifiées/supprimées.
+            PB.Avancement("Suppression des écritures déjà archivées dans l'exercice en cours", 1)
             Utils.db.Exec("delete FROM Fiches_MvtM where dte <= &1", datec3)
+            PB.Finalize()
+            PB.Close()
+
             'On recalcule toutes les clés pour supprimer la dépendance à l'ecriture précédente qui est passé dans la base N-1
             Sha1Calc.CalcSha1_all(Tab)
 

@@ -627,6 +627,16 @@ Public Sub Create9(Table As String) As Result
 
 End
 
+Public Sub CopieTable(SrcTable As String, DstTable As String)
+  
+  If Super.type = "sqlite3" Then
+    Exec("PRAGMA foreign_keys = OFF;BEGIN TRANSACTION;SELECT Replace(sql, 'CREATE TABLE " & SrcTable & "','CREATE TABLE " & DstTable & "' ) || ';' From sqlite_master WHERE type = 'table' AND name = '" & SrcTable & "'; SELECT Replace( Replace(sql, 'CREATE INDEX ', 'CREATE INDEX idx_" & DstTable & "_' ), ' ON " & SrcTable & "', ' ON " & DstTable & "' ) || ';' From sqlite_master WHERE type = 'index' And tbl_name = '" & SrcTable & "' AND sql IS NOT NULL; COMMIT; PRAGMA foreign_keys = ON;")
+  Else
+    Exec("CREATE TABLE `" & DstTable & "` LIKE `" & SrcTable & "`")
+  Endif
+
+End
+
 Public Sub Edit(Table As String, Request As String, ...) As Result 
   
   Dim rResult As Result
