@@ -5908,7 +5908,11 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE Fiches_Docactif MODIFY doc_num CHAR(25)")
   Try Utils.db.Exec("ALTER TABLE Fiches_Mats MODIFY mat_fam CHAR(20)")
   Try Utils.db.Exec("ALTER TABLE Fiches_Mats MODIFY mat_ect tinyint(1)")
-  
+
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligrecpt MODIFY daterecpt datetime NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvtexp MODIFY daterecpt datetime NOT NULL")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Mvtexpdc MODIFY daterecpt datetime NOT NULL")
+
   Sha1Calc.CalcSha1_all("Fiches_Mvt")
   'Sha1Calc.CalcSha1_all("Fiches_Mvt1") 'A REMETTRE AVANT COMMIT : DO NOT PUSH
   

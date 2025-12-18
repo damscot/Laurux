@@ -9,7 +9,7 @@ Private Journal As String
 Private Libelle As String
 Private intitule As String
 Private $sens As String
-Private $date As String
+Private $date As LDate
 Private Numdoc As String
 Private Enrgt As Boolean = False
 Private Poste As New String[20]
@@ -24,7 +24,7 @@ Public Sub _new(Code As String, Mtd As String, Necrit As String, sens As String,
   $Necrit = necrit
   $sens = sens
   Journal = Jour
-  $Date = dte
+  $Date = New LDate(dte)
   Libelle = $libel
   Intitule = $intitule
   numdoc = nmdoc
@@ -195,7 +195,7 @@ Public Sub Button2_Click()
         Montantc = Val(Utils.cpoint(Tbrem[Ligne, 2].text))
         Montantd = "0.00"
       Endif
-      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvtA") & "(poste, jour, numero,compte,intitule,dte,numdoc, libelle, pourcent, montantd, montantc, validee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12})", Poste2, Journal, $Necrit, compte, intitule, Utils.Cdate_Dbase($Date), numdoc, Libelle, Pourcent, montantd, montantc, 0)
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvtA") & "(poste, jour, numero,compte,intitule,dte,numdoc, libelle, pourcent, montantd, montantc, validee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12})", Poste2, Journal, $Necrit, compte, intitule, $Date.DT, numdoc, Libelle, Pourcent, montantd, montantc, 0)
       Enrgt = True
       Inc Ligne
       If ligne >= nResult.count Then Break

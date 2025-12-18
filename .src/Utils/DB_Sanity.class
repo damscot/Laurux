@@ -108,20 +108,37 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
 
   For Each $table In DB_Con.Tables
     $primary = $table.PrimaryKey
-    $res = Utils.db.Exec("DESCRIBE " & $table.Name)
+    If Utils.db.IsType(Utils.db.type_mysql) Then
+      $res = Utils.db.Exec("DESCRIBE " & $table.Name)
+    Else
+      $res = Utils.db.Exec("PRAGMA table_info(" & $table.Name & ")")
+    Endif
     If $res.Available Then
       Repeat
         'For Each $elemres In $res
         $curline = New String[EntMysql.Count]
         $curline[tabl] = $table.Name '#0
-        $curline[format] = $table.Type '#1
-        $curline[name] = $res!Field '#2
-        $curline[type] = $res!Type '#3
-        $curline[long] = $table.fields[$res!Field].Length '#4
-        $curline[def] = $res!Default '#5
-        $curline[ValNul] = $res!Null '#6
-        $curline[collation] = $table.fields[$res!Field].Collation '#7
-        $curline[PrimK] = $res!Key '#8
+        If Utils.db.IsType(Utils.db.type_mysql) Then
+          $curline[format] = $table.Type '#1
+          $curline[name] = $res!Field '#2
+          $curline[type] = $res!Type '#3
+          $curline[long] = $table.fields[$res!Field].Length '#4
+          $curline[def] = $res!Default '#5
+          $curline[ValNul] = $res!Null '#6
+          $curline[collation] = $table.fields[$res!Field].Collation '#7
+          $curline[PrimK] = $res!Key '#8
+        Else
+          'Fake Innodb on sqlite3
+          $curline[format] = "InnoDB" '#1
+          $curline[name] = $res!name '#2
+          $curline[long] = $table.fields[$res!name].Length '#4
+          $curline[type] = Lower($res!type) '#3
+          $curline[def] = IIf(IsNull($res!dflt_value) Or $res!dflt_value == "NULL", "", $res!dflt_value) '#5
+          $curline[ValNul] = IIf($res!notnull == 1, "NO", "YES") '#6
+          'fake collation SQLITE3 is UTF8 collation only
+          $curline[collation] = IIf($res!type Like "*char*" Or $res!type Like "*text*", "utf8mb4_unicode_ci", "") '#7
+          $curline[PrimK] = IIf($res!pk >= 1, "PRI", "") '#8
+        Endif
 
         'Valid Flag
         $curline[Valide] = "?" '#9
@@ -146,11 +163,16 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
                   If $curline[$k] = $elem[$k] Or $curline[$k] = "?" Or $elem[$k] = "?" Then
                     $valid[$k] = 1
                   Else
-                    $valid[$k] = 0
-                    $expline[$k] = $elem[$k]
-                    'on place les flags de valid a KO.
-                    $valid[Valide] = 0
-                    $curline[Valide] = 0
+                    'ugly fix for common integer type in sqlite3
+                    If $k = type And $curline[type] == "integer" And $expline[type] Like "*int*" And Utils.db.IsType(Utils.db.type_sqlite3) Then
+                      $valid[$k] = 1
+                    Else
+                      $valid[$k] = 0
+                      $expline[$k] = $elem[$k]
+                      'on place les flags de valid a KO.
+                      $valid[Valide] = 0
+                      $curline[Valide] = 0
+                    Endif
                   Endif
                   $k = $k + 1
                 Wend

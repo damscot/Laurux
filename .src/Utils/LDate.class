@@ -56,7 +56,7 @@ Public Sub _New(Optional DateOrYear As Variant, Optional Month As Integer = 1, O
       Else
         Dte = Date(DateOrYear, Month, Day, Hour, Minute, Second, Millisecond)
       Endif
-    Else If TypeOf(DateOrYear) = gb.Integer
+    Else If TypeOf(DateOrYear) = gb.Integer Or TypeOf(DateOrYear) = gb.Long
       Dte = Date(DateOrYear, Month, Day, Hour, Minute, Second, Millisecond)
     Else 'Probably an objet
       Dte = Date(DateOrYear)

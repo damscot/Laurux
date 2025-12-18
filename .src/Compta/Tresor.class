@@ -299,7 +299,7 @@ Public Sub DelMvt()
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1 ", numecrit.Text)
   If rResult.Available Then
     Utils.db.Exec("DELETE FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1", numecrit.Text)
-    Utils.db.Exec("UPDATE Fiches_MvtM SET supprimee = &1, datem = &3 WHERE numero =  &2", 1, numecrit.Text, Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
+    Utils.db.Exec("UPDATE Fiches_MvtM SET supprimee = &1, datem = &3 WHERE numero =  &2", 1, numecrit.Text, LDate().DT)
   Endif
   
   ged = LGed.Search(LGed.Comptabilite, numecrit.Text)
@@ -365,15 +365,15 @@ Public Sub Movt()
   With utils
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1 and compte = &2 and numdoc = &3 and numlot = &4 ", numecrit.Text, numcpt, numdoc.Text, numlot.Text)
     If rResult.Available Then
-      Utils.db.Exec("UPDATE  " & Cbase.Table("TabMvt") & "  SET  jour = &1, numero = &2, compte = &3, intitule = &4, dte = &5, numdoc = &6, numlot = &7, libelle = &8, montantd = &9, montantc = &{10}, validee = &{11}, provisoire = &{12}, tresorerie = &{13}, lettree = &{14}, cloturee = &{15}, datee = &{16} where numero = &2 and compte = &3 and numdoc = &6 and numlot = &7", Journal.Text, numecrit.Text, numcpt, Left$(Intitulcompte.Text, 30), .Cdate_Dbase(Datej.Text), numdoc.Text, numlot.Text, Libelecrit.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, .Cdate_Dbase(datee.Text))
+      Utils.db.Exec("UPDATE  " & Cbase.Table("TabMvt") & "  SET  jour = &1, numero = &2, compte = &3, intitule = &4, dte = &5, numdoc = &6, numlot = &7, libelle = &8, montantd = &9, montantc = &{10}, validee = &{11}, provisoire = &{12}, tresorerie = &{13}, lettree = &{14}, cloturee = &{15}, datee = &{16} where numero = &2 and compte = &3 and numdoc = &6 and numlot = &7", Journal.Text, numecrit.Text, numcpt, Left$(Intitulcompte.Text, 30), LDate(datej.Text).DT, numdoc.Text, numlot.Text, Libelecrit.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, LDate(datee.Text).DT)
     Else
-      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16})", Journal.Text, numecrit.Text, numcpt, Left$(Intitulcompte.Text, 30), .Cdate_Dbase(Datej.Text), numdoc.Text, numlot.Text, Libelecrit.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, .Cdate_Dbase(datee.Text))
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16})", Journal.Text, numecrit.Text, numcpt, Left$(Intitulcompte.Text, 30), LDate(datej.Text).DT, numdoc.Text, numlot.Text, Libelecrit.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, LDate(datee.Text).DT)
     Endif
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " Where numero = &1 and compte = &2", numecrit.Text, Cptt.Text)
     If rResult.Available Then
-      Utils.db.Exec("UPDATE  " & Cbase.Table("TabMvt") & "  SET  jour = &1, numero = &2, compte = &3, intitule = &4, dte = &5, numdoc = &6, numlot = &7, libelle = &8, montantd = &9, montantc = &{10}, validee = &{11}, provisoire = &{12}, tresorerie = &{13}, lettree = &{14}, cloturee = &{15}, datee = &{16} where numero = &2 and compte = &3 and numdoc = &6 and numlot = &7", Journal.Text, numecrit.Text, Cptt.Text, LbCptbanque, .Cdate_Dbase(Datej.Text), numdoc.Text, numlot.Text, libelletresor.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, .Cdate_Dbase(datee.Text), 0)
+      Utils.db.Exec("UPDATE  " & Cbase.Table("TabMvt") & "  SET  jour = &1, numero = &2, compte = &3, intitule = &4, dte = &5, numdoc = &6, numlot = &7, libelle = &8, montantd = &9, montantc = &{10}, validee = &{11}, provisoire = &{12}, tresorerie = &{13}, lettree = &{14}, cloturee = &{15}, datee = &{16} where numero = &2 and compte = &3 and numdoc = &6 and numlot = &7", Journal.Text, numecrit.Text, Cptt.Text, LbCptbanque, LDate(datej.Text).DT, numdoc.Text, numlot.Text, libelletresor.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, LDate(datee.Text).DT, 0)
     Else
-      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee, Pointee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Journal.Text, numecrit.Text, Cptt.Text, LbCptbanque, .Cdate_Dbase(Datej.Text), numdoc.Text, numlot.Text, libelletresor.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, .Cdate_Dbase(datee.Text), 0)
+      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee, Pointee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Journal.Text, numecrit.Text, Cptt.Text, LbCptbanque, LDate(datej.Text).DT, numdoc.Text, numlot.Text, libelletresor.Text, montantdb, montantcd, 0, 1, 1, iLet, 0, LDate(datee.Text).DT, 0)
     Endif
     Sha1Calc.CalcSha1(Cbase.Table("TabMvt"), numecrit.Text)
     If DocActif.is_lock("Reglement", numecrit.Text, False) Then DocActif.free_lock("Reglement", numecrit.Text)
@@ -1637,7 +1637,7 @@ Public Sub Enrg_Ecr()
         montantcd = Val(ecrit1.Item[5])
         Totalcd = Totalcd + montantcd
         Libelecrit.Text = Ecrit1.Item[1]
-        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16})", Journal.Text, numecrit.Text, numcpt, Left$(Intitulcompte.Text, 30), .Cdate_Dbase(Datej.Text), numdocT, numlotT, Libelecrit.Text, montantdb, montantcd, 1, 0, 1, iLet, 0, .Cdate_Dbase(Ecrit1.Item[9]))
+        Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16})", Journal.Text, numecrit.Text, numcpt, Left$(Intitulcompte.Text, 30), LDate(Datej.Text).DT, numdocT, numlotT, Libelecrit.Text, montantdb, montantcd, 1, 0, 1, iLet, 0, LDate(Ecrit1.Item[9]).DT)
         rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", numcpt)
         If rResult.Available Then
           Mnt = rResult!solde
@@ -1658,7 +1658,7 @@ Public Sub Enrg_Ecr()
               Utils.db.Exec("update " & Cbase.Table("TabMvt") & " set  validee = &1, provisoire = &2 , libelle = &3, cloturee = &9, tresorerie = &{10}, datee = &{12}, montantd = &{13}, montantc = &{14} Where compte = &6 and numero = &7 and jour = &{11}", 1, 0, Libelecrit.Text, numlotT, numdocT, num_coll, numecrit.Text, numlot.Text, 0, 1, Journal.Text, .Cdate_Dbase(datej.Text), montand, montanc)
             Else
 
-              Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,cloturee,collectif) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15})", Journal.Text, numecrit.Text, num_coll, Left$(Intitulcompte.Text, 30), .Cdate_Dbase(Datej.Text), numdocT, numlotT, Libelecrit.Text, montantdb, montantcd, 1, 0, 1, 0, 1)
+              Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,cloturee,collectif) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15})", Journal.Text, numecrit.Text, num_coll, Left$(Intitulcompte.Text, 30), LDate(Datej.Text).DT, numdocT, numlotT, Libelecrit.Text, montantdb, montantcd, 1, 0, 1, 0, 1)
             Endif
           Else
             If rResult!comptr_cc = 0 Then
@@ -1692,9 +1692,9 @@ Public Sub Enrg_Ecr()
       If Val(Utils.CPoint(soldeecrit.Text)) <> 0 Then
         rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " Where numero = &1 and compte = &2", numecrit.Text, Cptt.Text)
         If rResult.Available Then
-          Utils.db.Exec("update " & Cbase.Table("TabMvt") & " set validee = &1, provisoire = &2 , libelle = &3, numlot = &4 , numdoc = &5, montantd = &8, montantc = &9, datee = &{10}, dte = &{10} Where compte = &6 and numero = &7 ", 1, 0, libelletresor.Text, numlotT, numdocT, Cptt.Text, numecrit.Text, Montand, Montanc, .Cdate_Dbase(datej.Text))
+          Utils.db.Exec("update " & Cbase.Table("TabMvt") & " set validee = &1, provisoire = &2 , libelle = &3, numlot = &4 , numdoc = &5, montantd = &8, montantc = &9, datee = &{10}, dte = &{10} Where compte = &6 and numero = &7 ", 1, 0, libelletresor.Text, numlotT, numdocT, Cptt.Text, numecrit.Text, Montand, Montanc, LDate(datej.Text).DT)
         Else
-          Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & " (jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,datee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16})", Journal.Text, numecrit.Text, Cptt.Text, LbCptbanque, Utils.Cdate_Dbase(Datej.Text), numdocT, numlotT, libelletresor.Text, Montand, Montanc, 1, 0, 1, iLet, 0, Utils.Cdate_Dbase(datej.Text))
+          Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & " (jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,datee) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16})", Journal.Text, numecrit.Text, Cptt.Text, LbCptbanque, LDate(datej.Text).DT, numdocT, numlotT, libelletresor.Text, Montand, Montanc, 1, 0, 1, iLet, 0, LDate(datej.Text).DT)
         Endif
       Endif
       Sha1Calc.CalcSha1("Fiches_Mvt", Numecrit.Text)
@@ -1962,7 +1962,7 @@ Public Sub ecrit2()
           Repeat
             numecriture = rResult!numero
             Cpt = rResult!compte
-            Utils.db.Exec("INSERT INTO  Fiches_MvtM (jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,pointee, numcol, dateech, lind2, control, datem) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21})", rResult!jour, rResult!numero, rResult!compte, rResult!intitule, rResult!dte, rResult!numdoc, rResult!numlot, rResult!libelle, rResult!montantd, rResult!montantc, rResult!validee, rResult!provisoire, rResult!tresorerie, rResult!lettree, rResult!cloturee, rResult!pointee, rResult!numcol, rResult!dateech, rResult!lind, rResult!control, Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
+            Utils.db.Exec("INSERT INTO  Fiches_MvtM (jour,numero,compte,intitule,dte,datee,dteval,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,pointee, numcol, dateech, lind2, control, datem) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21}, &{22}, &{23})", rResult!jour, rResult!numero, rResult!compte, rResult!intitule, LDate(rResult!dte).DT, LDate(rResult!datee).DT, LDate(rResult!dteval).DT, rResult!numdoc, rResult!numlot, rResult!libelle, rResult!montantd, rResult!montantc, rResult!validee, rResult!provisoire, rResult!tresorerie, rResult!lettree, rResult!cloturee, rResult!pointee, rResult!numcol, LDate(rResult!dateech).DT, rResult!lind, rResult!control, LDate().DT)
             If Left(Cpt, 3) <> "512" And If Left(Cpt, 2) <> "53" Then
               Ecrit1.Add(rResult!lind, rResult!lind)
               Ecrit1.Item[0] = rResult!compte
@@ -2081,7 +2081,7 @@ Public Sub Ecrit3()
                 Cpt = rResult!compte
                 coll = rResult!collectif
                 numecriture = rResult!numero
-                Utils.db.Exec("INSERT INTO  Fiches_MvtM (jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,pointee, numcol, dateech, lind2, control, datem) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21})", rResult!jour, rResult!numero, rResult!compte, rResult!intitule, rResult!dte, rResult!numdoc, rResult!numlot, rResult!libelle, rResult!montantd, rResult!montantc, rResult!validee, rResult!provisoire, rResult!tresorerie, rResult!lettree, rResult!cloturee, rResult!pointee, rResult!numcol, rResult!dateech, rResult!lind, rResult!control, Utils.Cdate_Dbase(Format$(Now, "dd.mm.yyyy")))
+                Utils.db.Exec("INSERT INTO  Fiches_MvtM (jour,numero,compte,intitule,dte,datee,dteval,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,pointee, numcol, dateech, lind2, control, datem) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17}, &{18}, &{19}, &{20}, &{21}, &{22}, &{23})", rResult!jour, rResult!numero, rResult!compte, rResult!intitule, LDate(rResult!dte).DT, LDate(rResult!datee).DT, LDate(rResult!dteval).DT, rResult!numdoc, rResult!numlot, rResult!libelle, rResult!montantd, rResult!montantc, rResult!validee, rResult!provisoire, rResult!tresorerie, rResult!lettree, rResult!cloturee, rResult!pointee, rResult!numcol, LDate(rResult!dateech).DT, rResult!lind, rResult!control, LDate().DT)
                 If Cpt <> Cptj Then
                   'Cle = rResult!compte & rResult!numdoc & numecriture
                   Ecrit1.Add(rResult!lind, rResult!lind)

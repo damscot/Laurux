@@ -22,7 +22,7 @@ Private $brn As Borne[]
 
 Property requete As String Use $req
 
-Const champ As String = " montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv "
+Const champ As String = " montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv "
 
 Public Sub _call(Optional cpt As String, Optional dtei As String = LDate(DateAdd(Now, gb.Year, -8)).L, Optional dtes As String = LDate(DateAdd(Now, gb.Year, 8)).L, Optional ltr As String = "n", Optional stri As String = " dte", Optional origin As String, Optional dteech As String) As Listextcpt
 
@@ -104,7 +104,7 @@ Public Sub _new(Optional cpt As String, Optional dtei As String = LDate(DateAdd(
             res1 = Utils.db.Exec("SELECT * FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND compte=&3 AND provisoire=False  LIMIT 1", $brn[i].dteinf.D, dte.DT, cpt)
           Endif 
           If res1.Available Then
-            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,CAST(&1 AS DATE) AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree,pointee, 'n' as parse_having_P, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind, nrlv, '' as bgcolor FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", DateAdd($dtei.G, gb.Day, -1), $brn[i].dteinf.D, dte.DT, cpt)
+            req = Utils.db.Subst(" UNION SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc,&1 AS dte,compte,'Report a nouveau' AS libelle,0 as numero,' ' AS intitule,'  ' as jour,' ' AS numdoc, ' ' AS tresorerie,' ' as lettree,pointee, 'n' as parse_having_P, 'T' AS cloturee,' ' AS dateech,' ' AS collectif,' ' AS numlot,' ' AS relance,' ' AS lind, nrlv, '' as bgcolor FROM " & $brn[i].nomfich & " WHERE dte <= &3 AND compte=&4 AND provisoire=False ", LDate(DateAdd($dtei.G, gb.Day, -1)).D, $brn[i].dteinf.D, dte.DT, cpt)
             dte = dtsup(i)
             req = Utils.db.Subst("SELECT" & champ & "," & LCoul.Ecr_DB_bgcolor(False) & " FROM " & $brn[i].nomfich & " WHERE dte BETWEEN &1 AND &2 AND provisoire=False  AND " & cli & lett, $dtei.D, dte.DT, cpt) & req
           Else
@@ -176,7 +176,7 @@ Private Function cherche(num As Variant, chp As String) As Integer
     ok = False
    For i = 0 To $brn.Max
      dtes = dtsup(i)
-     If Format($resext!dte, "yyyymmdd") >= Format($brn[i].dteinf.G, "yyyymmdd") And Format($resext!dte, "yyyymmdd") <= Format(dtes.G, "yyyymmdd") Then
+     If Format(LDate($resext!dte).G, "yyyymmdd") >= Format($brn[i].dteinf.G, "yyyymmdd") And Format(LDate($resext!dte).G, "yyyymmdd") <= Format(dtes.G, "yyyymmdd") Then
        ok = True
        Break
      Endif
@@ -227,10 +227,10 @@ Private Function ctrl(numlot As String, Optional numcpt As String) As Result
   
   If numcpt Then cpt = numcpt Else cpt = $scpt
   dtes = dtsup(0)
-  req = Utils.db.Subst("SELECT montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM " & $brn[i].nomfich & " WHERE compte = &1 AND numlot = &2 AND provisoire=False AND dte BETWEEN &3 AND &4", cpt, numlot, $brn[i].dteinf.D, dtes.D)
+  req = Utils.db.Subst("SELECT montantd,montantc,dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM " & $brn[i].nomfich & " WHERE compte = &1 AND numlot = &2 AND provisoire=False AND dte BETWEEN &3 AND &4", cpt, numlot, $brn[i].dteinf.D, dtes.D)
   For i = 1 To $brn.Max
     dtes = dtsup(i)
-    req &= Utils.db.Subst(" UNION (SELECT montantd,montantc,CAST(dte AS DATE) AS dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind  FROM " & $brn[i].nomfich & " WHERE compte = &1 and numlot = &2 AND provisoire=False AND dte BETWEEN &3 AND &4)", cpt, numlot, $brn[i].dteinf.D, dtes.D)
+    req &= Utils.db.Subst(" UNION SELECT montantd,montantc,dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind  FROM " & $brn[i].nomfich & " WHERE compte = &1 and numlot = &2 AND provisoire=False AND dte BETWEEN &3 AND &4", cpt, numlot, $brn[i].dteinf.D, dtes.D)
   Next
   res = Utils.db.Exec(req)
   Return res

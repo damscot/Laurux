@@ -326,9 +326,21 @@ End
 Public Function Cdate_Comp(dte As Variant) As String
 
   Dim cvdate As String[]
+  Dim ld As LDate
 
   If TypeOf(dte) = gb.Date
     Return Format$(dte, "yyyymmdd")
+  Else If TypeOf(dte) = gb.Long Or TypeOf(dte) = gb.Integer
+    If dte > 1999 And dte <= 9999 Then
+      ld = LDate(dte)
+    Else If dte >= 999901 And dte <= 999912 Then
+      ld = LDate(Lsl(dte, 8) & 65535, dte & 255).L
+    Else If dte >= 99990101 And dte <= 99991231 Then
+      ld = LDate(Lsl(dte, 16) & 65535, Lsl(dte, 8) & 255, dte & 255).L
+    Else
+      ld = LDate() 'Use Now() as fallback
+    End If
+    Return Format$(ld.GnT, "yyyymmdd")
   Else
     If dte Match "-" Then
       cvdate = Split(dte, "-")

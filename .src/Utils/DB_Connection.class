@@ -22,6 +22,8 @@ Private Show_Backtrace As Boolean
 Private $req As New Collection
 Private $context As New Collection
 
+Public Enum type_mysql, type_sqlite3
+
 
 Public Sub _new()
   
@@ -282,6 +284,20 @@ Public Sub Engine() As String
     Return ""
   Endif
   
+End
+
+Public Sub IsType(Optional type As Integer = type_mysql) As Boolean
+  
+  Select Case type
+    Case type_mysql
+      If Super.Type = "mysql" Then Return True
+    Case type_sqlite3
+      If Super.Type = "sqlite3" Then Return True
+    Default
+      Return False
+  End Select
+  Return False
+
 End
 
 Public Sub AutoIncrement(Optional Fld As String = "lind", Optional Type As String = "INT", Optional Size As Integer = -1) As String
