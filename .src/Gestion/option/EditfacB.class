@@ -70,7 +70,7 @@ Public Sub _new(cal As ObjFacB)
       Me.repligne.Autoresize = True
       Me.repligne.DataCount = cal.ligne.Count
       Me.ligne.DataCount = 1
-      If cal.rescli!cli_tel_bur Then Me.telcli.Text = "    Tel : " & cal.rescli!cli_tel_bur
+      If cal.rescli!cli_tel_bur Then Me.telcli.Text &= "    Tel : " & cal.rescli!cli_tel_bur
       If cal.rescli!cli_pble Then Me.telcli.Text &= "    Portable : " & cal.rescli!cli_pble
       Me.comdsa.Text = "(DSA) COMMUNAUTÉ EUROPÉENNE-DOCUMENT SIMPLIFIÉ D'ACCOMPAGNEMENT COMMERCIAL POUR LE CONTROLE FISCAL DES PRODUITS\nSOUMS A ACCISES EN REGIMES : O DE DROITS ACQUITTÉS  O D'EXONÉRATION DE DROITS   Exemplaire 1 à conserver par le destinataire\n  Exemplaire 2 à conserver par le fournisseur\n\ncontrol.A"
       'corp de facture

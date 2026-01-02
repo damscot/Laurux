@@ -105,6 +105,7 @@ Public Sub _new(vfac As ObjFacB)
         Me.rcoupon.Width = "50mm"
         Me.rcoupon.Border = ReportBorder["Top:1pt #000000;Bottom:1pt #000000;Left:1pt #000000;Right:1pt #000000"]
       Endif
+      If vfac.choix <> ObjFac.archive Then Me.telcli.Text = " Impression du : " & LDate(Now).L
       'reglements
       Me.delais.Text = vfac.tsaisreg
       'edition des réserves
