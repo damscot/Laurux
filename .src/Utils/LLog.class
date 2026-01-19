@@ -31,7 +31,7 @@ Public Sub _new(Name As String, Enabling As Boolean, Optional MinLevel As Intege
   Fileh = New FileHandler(User.Home & "/tmp/Debug/" & LogName & ".log")
   fileh.RotateAfter(64 * 1024) '64KB
 
-  fileh.Open()
+  Try fileh.Open()
   Super.addHandler(fileh)
   Super.Enabled = Enabling
   Super.Handlers[LLog.console].Level = Start.ConsoleLogLevel

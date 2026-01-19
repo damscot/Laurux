@@ -91,7 +91,7 @@ Public Sub Start(Optional Enabling As Boolean = False, Optional Clear As Boolean
   log.Enabled = False
   level = iLevel
   Set_Level(level)
-  log.Begin()
+  Try log.Begin()
   log.Enabled = Enabling
 
 End
