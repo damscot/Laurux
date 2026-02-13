@@ -1224,6 +1224,7 @@ Public Sub form_close()
 
   Start.UnLock()
   Start.LocalSettings["/Soc" & Start.Societe & "/Ecran"] = Me.Width & ";" & Me.Height
+  Start.LocalSettings.Save
   If Start.LocalSettings["/Soc" & Start.Societe & "/Sauvauto"] And If Start.LocalSettings["/dbase/Maj"] Then SauvesAuto.Sauvegarde(Me)
   If Start.son Then
     Music.Load("son/fermeture-menu.ogg")
