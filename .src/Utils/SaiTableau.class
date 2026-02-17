@@ -154,7 +154,6 @@ Public Sub ajout(Optional etat As Integer = SaiLig.ecriture)          ''Ajoute u
   If Not Even(ind) Then ligne[ind].Background = Background 
   Raise ajou(ligne[ind])
   ligne[ind].MonControle[$prop[0].NomControl].SetFocus
-  tableau.Scroll(tableau.X, tableau.y + tableau.H)
   
 End
 
@@ -250,6 +249,7 @@ Public Sub ligne_gotfocus(Value As SaiLig)
 
   ind = value.Ind
   Raise gotfocus(Value)
+  tableau.Scroll(0, value.Y)
   
 End
 
