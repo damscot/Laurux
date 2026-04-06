@@ -11,6 +11,7 @@ Private Found As Boolean[]
 
 Private Enum tabl, format, name, type, long, def, ValNul, collation, PrimK, Valide
 Private EntMysql As String[] = ["Table", "Format", "Champ", "Type", "Long.", "Def.", "Null", "Collation", "Clée", "Valid."]
+Private $indexes As Object
 
 Public Sub _new(dbconnection As DB_Connection)
   Dim i As Integer
@@ -54,6 +55,8 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
   Dim $valid As Integer[]
   Dim $primary As String[]
   Dim $elem As String[]
+  Dim $indexes As Collection
+  Dim $index As Index
   Dim $i As Integer = 0
   Dim $j As Integer = 0
   Dim $k As Integer = 0
@@ -108,6 +111,12 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
 
   For Each $table In DB_Con.Tables
     $primary = $table.PrimaryKey
+    'For Each $index In $table.Indexes
+      'requete SQL de suppression des index non primaire
+      'If Not $index.Primary Then
+      '  Print "ALTER TABLE " & $table.Name & " DROP INDEX " & $index.Name & ";"
+      'Endif
+    'Next
     If Utils.db.IsType(Utils.db.type_mysql) Then
       $res = Utils.db.Exec("DESCRIBE " & $table.Name)
     Else
@@ -126,7 +135,11 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
           $curline[def] = $res!Default '#5
           $curline[ValNul] = $res!Null '#6
           $curline[collation] = $table.fields[$res!Field].Collation '#7
-          $curline[PrimK] = $res!Key '#8
+          If $res!Extra == "auto_increment" Then '#8 today we use autoincrement only for primary key
+            $curline[PrimK] = $res!Key & "_AI" 'apply only to PRI not MUL
+          Else 
+            $curline[PrimK] = $res!Key
+          Endif
         Else
           'Fake Innodb on sqlite3
           $curline[format] = "InnoDB" '#1
@@ -137,7 +150,18 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
           $curline[ValNul] = IIf($res!notnull == 1, "NO", "YES") '#6
           'fake collation SQLITE3 is UTF8 collation only
           $curline[collation] = IIf($res!type Like "*char*" Or $res!type Like "*text*", "utf8mb4_unicode_ci", "") '#7
-          $curline[PrimK] = IIf($res!pk >= 1, "PRI", "") '#8
+          If $res!Extra == "auto_increment" And $res!pk >= 1 Then '#8 not working on sqlite check autoincrement field:
+          'SELECT 1
+          'From sqlite_master
+          'WHERE type = 'table'
+          ' And name = 'tablename_in_here'
+          ' And sql Like '%AUTOINCREMENT%'
+            $curline[PrimK] = "PRI_AI"
+          Else If $res!pk >= 1 Then
+            $curline[PrimK] = "PRI"
+          Else
+            $curline[PrimK] = ""
+          Endif
         Endif
 
         'Valid Flag
@@ -146,6 +170,7 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
         $valid.Fill(-1)
         $expline = New String[]
         $expline = $curline.Copy()
+        $expline[PrimK] = "" 'on ne copie pas l'etat courant des clefs (notamment pour les champs supplémentaires) pour ne pas les reinjecter dans la liste des clefs.
 
         If Not IsNull(Datain) Then
           $j = 0
@@ -153,8 +178,8 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
           For Each $elem In Datain
             $expline[Valide] = $elem[Valide]
             'On recherche dans les données de référence
-            If Trim($curline[tabl]) = Trim($elem[tabl]) Then
-              If Trim($curline[name]) = Trim($elem[Name]) Then
+            If Lower(Trim($curline[tabl])) = Lower(Trim($elem[tabl])) Then
+              If Lower(Trim($curline[name])) = Lower(Trim($elem[Name])) Then
                 Found[$j] = True
                 $found = True
                 $k = 0
@@ -191,6 +216,9 @@ Public Sub Refresh_Data(Optional csvin As String = "", Optional csvout As String
           Endif
         Endif
 
+        If $found = False Then
+          $valid.Fill(3)
+        Endif
         Data.Add($curline)
         Data_Expected.Add($expline)
         Valid.Add($valid)
@@ -289,16 +317,16 @@ Public Sub GridView1_Data(Row As Integer, Column As Integer)
       Endif
       GridView1.data.Background = Color.Pink
     Endif
-  Else
+  Else If Valid[Row][Column] = 3 Then
     If Not IsNull(Datain) Then
       If Column = valide Then
         Data[Row][Column] = "SUP"
       Endif
       GridView1.data.Background = Color.Orange
-    Else
-      If Column = valide Then
-        Data[Row][Column] = "?"
-      Endif
+    Endif
+  Else
+    If Column = valide Then
+      Data[Row][Column] = "?"
     Endif
   Endif
 
@@ -375,13 +403,49 @@ End
 
 Public Sub Nettoyer_Click()
 
+  Dim pb As ProgBar
+  Dim i, j As Integer
+  Dim Res, Res2 As Result
+
   If IsNull(Datain) Then
     Message.Error("Vous devez d'abord lancer un contrôle, pour faire cette opération!")
     Return
   Endif
   If Message.Warning("Toutes les tables et champs inutilisés par Laurux vont être supprimés!\nUne sauvegarde préalable est conseillé!", "Annuler", "Nettoyer") = 1 Then Return
+  
+  pb = New ProgBar("Nettoyage de la base", Valid.Count, Null, True, "", True)
+  pb.Show
+  For i = 0 To Valid.Max
+    If pb.Avancement("Table : " & Data[i][tabl] & " Champ : " & Data[i][name]) Then Break
+    If Valid[i][Valide] = 3 Then
+      Res = Utils.db.Exec("SELECT * from information_schema.columns WHERE table_schema = &1 AND table_name = &2", "Laurux" & Start.Societe, Data[i][tabl])
+      If Res.Available Then
+        res.MoveFirst()
+        Repeat
+          If Res!COLUMN_NAME <> Data[i][name] Then Continue 
+          'Il n'y plus qu'une seule columns dans cette table si c'est la bonne et donc la dernière on peut supprimer la table
+          If Res.Count = 1 Then
+            Utils.db.Exec("DROP TABLE " & Data[i][tabl])
+            Continue
+          Else If Res!COLUMN_KEY = "PRI" Then
+            DropKey(Data[i][tabl], Data[i][name])
+          Else If Res!COLUMN_KEY = "MUL" Then
+            Res2 = Utils.db.Exec("SELECT INDEX_NAME, NON_UNIQUE, SEQ_IN_INDEX from information_schema.STATISTICS WHERE table_schema = &1 AND table_name = &2 AND column_name = &3", "Laurux" & Start.Societe, Data[i][tabl], Data[i][name])
+            If Res2.Available Then
+              Utils.db.Exec("ALTER TABLE " & Data[i][tabl] & " DROP INDEX " & Res2!INDEX_NAME)
+            Endif
+          Endif
+          Utils.db.Exec("ALTER TABLE " & Data[i][tabl] & " DROP COLUMN " & Data[i][name])
+        Until Res.MoveNext()
+      Endif
 
-  Message.Info("Non implementé")
+    Endif
+  Next
+  pb.Close()
+  Refresh_Data()
+
+  Catch
+    Message.Error("Erreur " & Error.Text & " sur la table : " & Data_Expected[i][tabl] & " Champ : " & Data_Expected[i][name])
 
 End
 
@@ -390,6 +454,7 @@ Public Sub Corriger_Click()
   Dim i, j As Integer
   Dim res As Result
   Dim req As String
+  Dim defstr As String
   Dim pb As ProgBar
   Dim egn As Boolean
 
@@ -418,10 +483,15 @@ Public Sub Corriger_Click()
               Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type])
 
             Case def
+              defstr = ""
+              If (Data_Expected[i][def] <> Null) Then
+                defstr = " DEFAULT " & Data_Expected[i][def]
+              Endif
+
               If Data_Expected[i][ValNul] = "YES" Then
-                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NULL DEFAULT &1", Data_Expected[i][def])
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " CHANGE " & Data_Expected[i][name] & " " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NULL" & defstr)
               Else
-                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NOT NULL DEFAULT &1", Data_Expected[i][def])
+                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " CHANGE " & Data_Expected[i][name] & " " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " NOT NULL" & defstr)
               Endif
               'force fixing default null/not null validity when fixing also default value
               Valid[i][ValNul] = 1 
@@ -443,21 +513,33 @@ Public Sub Corriger_Click()
               Utils.db.Exec("ALTER TABLE Laurux" & Start.Societe & "." & Data_Expected[i][tabl] & " MODIFY " & Data_Expected[i][name] & " " & Data_Expected[i][type] & " CHARACTER SET utf8mb4 COLLATE " & Data_Expected[i][collation])
 
             Case PrimK      'on gére les clées
-              'on rajoute la clée
-              If Data_Expected[i][PrimK] = "PRI" Then
-                RecPri(Data_Expected[i][tabl])
-              Endif
-              If Data_Expected[i][PrimK] = "MUL" Then
-                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " ADD KEY (" & Data_Expected[i][name] & ");")
-              Endif
-              'on supprime les clées
-              If Data[i][PrimK] = "MUL" And (IsNull(Data_Expected[i][PrimK]) Or Data_Expected[i][PrimK] = "PRI") Then
-                Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " DROP KEY " & Data_Expected[i][name])
-              Endif
-              If IsNull(Data_Expected[i][PrimK]) Or Data_Expected[i][PrimK] = "MUL" Then
-                If data[i][PrimK] = "PRI" Then
+              'on rajoute la clée sur un champ existant
+              If Data[i][PrimK] = "" Then
+                If Data_Expected[i][PrimK] = "PRI" Then
                   RecPri(Data_Expected[i][tabl])
+                Else If Data_Expected[i][PrimK] = "PRI_AI"
+                  RecPri(Data_Expected[i][tabl], True)
+                Else If Data_Expected[i][PrimK] = "MUL"
+                  Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & " ADD KEY (" & Data_Expected[i][name] & ");")
                 Endif
+              Endif
+              'on supprime les clées sur un champ existant
+              'cas MUL -> (Null, PRI/PRI_AI)
+              If Data[i][PrimK] = "MUL" And (IsNull(Data_Expected[i][PrimK]) Or Data_Expected[i][PrimK] = "PRI" Or Data_Expected[i][PrimK] = "PRI_AI") Then
+                DropKey(Data_Expected[i][tabl], Data_Expected[i][name])
+                If (Data_Expected[i][PrimK] = "PRI") Then
+                  RecPri(Data_Expected[i][tabl])
+                Else If (Data_Expected[i][PrimK] = "PRI_AI") Then
+                  RecPri(Data_Expected[i][tabl], True)
+                Endif
+              Endif
+              'cas PRI -> PRI_AI
+              If (data[i][PrimK] = "PRI" And Data_Expected[i][PrimK] = "PRI_AI") Then
+                RecPri(Data_Expected[i][tabl], True)
+              Endif
+              'cas (PRI/PRI_AI) -> Null
+              If IsNull(Data_Expected[i][PrimK]) And (data[i][PrimK] = "PRI" Or data[i][PrimK] = "PRI_AI") Then
+                RecPri(Data_Expected[i][tabl]) 'la reconstruction des clefs primaires fera disparaitre les clefs primaires supplémentaires
               Endif
           End Select
 
@@ -478,7 +560,8 @@ Public Sub Corriger_Click()
          If egn Then req &= ") ENGINE = " & Data_Expected[i][format]
          Utils.db.Exec(req)
          If Data_Expected[i][PrimK] = "MUL" Then Utils.db.Exec("ALTER TABLE " & Data_Expected[i][tabl] & "ADD KEY (" & Data_Expected[i][name] & ")")
-         If Data_Expected[i][PrimK] = "PRI" Then RecPri(Data_Expected[i][tabl], 2)
+         If Data_Expected[i][PrimK] = "PRI" Then RecPri(Data_Expected[i][tabl])
+         If Data_Expected[i][PrimK] = "PRI_AI" Then RecPri(Data_Expected[i][tabl], True)
          j = EntMysql.Max
       End Select
     Next
@@ -486,47 +569,115 @@ Public Sub Corriger_Click()
 
   Finally
     pb.Close
+    Utils.db.Commit() 'Workaround sur bug a l'affichage (Refresh_Data), il semble que DB_Con.Tables ne soit pas a jour lors d'ajout de nouveau champ
     Refresh_Data()
     Message.Warning("Continuer à travailler sur Laurux après une réparation de la base pourrait endommager vos données \n Veuillez quitter Laurux")
 
   Catch
-    Message.Error("Erreur " & Error.Text & " sur le fichier : " & Data_Expected[i][tabl] & " Champ : " & Data_Expected[i][name])
+    Message.Error("Erreur " & Error.Text & " sur la table : " & Data_Expected[i][tabl] & " Champ : " & Data_Expected[i][name])
 
 End
 
-Private Sub RecPri(NomTable As String, Optional vld As Integer)      ''on redefini les clées primaires sur une table
+  
+Private Sub DropKey(NomTable As String, field As String) ''on redefini les clées primaires sur une table
+  
+  Dim res As Result
+  
+  res = Utils.db.Exec("SELECT * FROM information_schema.STATISTICS as s left join information_schema.columns as c ON (s.table_schema = c.table_schema AND s.table_name = c.table_name AND s.column_name = c.column_name) WHERE s.table_schema = &1 AND s.table_name = &2 AND s.column_name = &3", "Laurux" & Start.Societe, NomTable, field)
 
+  If res.Available Then
+    res.MoveFirst
+      Repeat
+        If res!INDEX_NAME = "PRIMARY" And If res!EXTRA = "auto_increment" Then
+          'on enleve d'abord l'autoincrement
+          Utils.db.Exec("ALTER TABLE " & NomTable & " CHANGE " & field & " " & field & " INT(11) NOT NULL")
+        Endif
+        If res!INDEX_NAME = "PRIMARY"
+          'puis on supprime la primary key
+          Utils.db.Exec("ALTER TABLE " & NomTable & " DROP PRIMARY KEY")
+        Else
+          'ou on supprime la key si elle n'a pas le nom "primaire" (seule la clef primaire peut etre en auto_increment)
+          Utils.db.Exec("ALTER TABLE " & NomTable & " DROP KEY " & res!INDEX_NAME)
+        Endif
+      Until res.MoveNext()
+  Endif
+
+End
+
+
+Private Sub RecPri(NomTable As String, Optional auto_increment As Boolean = False) ''on redefini les clées primaires sur une table
+
+  'A tester entirement.
   Dim i As Integer
   Dim cle As New String[]
+  Dim cleprimai_from As String
+  Dim cleprimai_to As String
+  Dim cleprimai_to_type As String
+  Dim other_primkeys As String
   Dim ok As Boolean
   Dim res As Result
 
-  If vld = 2 Then 
-    'Si un champ avec une clée primaire n'existe pas on ne fait rien, uniquement en création
-    For i = 0 To Valid.Max 
-      If Data_Expected[i][tabl] = NomTable And Data_Expected[i][PrimK] = "PRI" Then
-        res = Utils.db.Exec("SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = &1 AND TABLE_NAME= &2 AND COLUMN_NAME = &3", "Laurux" & Start.Societe, NomTable, Data_Expected[i][name])
-        If Not res.Available Then 
-          ok = True 
-          Break
-        Endif
-      Endif
-    Next
-
-    If ok Then Return
-  Endif
-
   For i = 0 To Valid.Max
     If Data_Expected[i][tabl] = NomTable Then
+      'Il peut y avoir plusieurs clef primaire
       If Data_Expected[i][PrimK] = "PRI" Then
         cle.Add(Data_Expected[i][name])
         Valid[i][PrimK] = 0
       Endif
+      'Il n'y a qu'une seule clef primaire avec Autoincrement
+      If Data_Expected[i][PrimK] = "PRI_AI" Then
+        cle.Add(Data_Expected[i][name])
+        cleprimai_to = Data_Expected[i][name]
+        cleprimai_to_type = Data_Expected[i][type]
+        Valid[i][PrimK] = 0
+      Endif
+      If Data[i][PrimK] Like "PRI_AI" Then
+        cleprimai_from = Data[i][name]
+        Valid[i][PrimK] = 0
+      Endif
     Endif
   Next
-  Try Utils.db.Exec("ALTER TABLE " & NomTable & " DROP PRIMAY KEY")  'on supprime la clée primaire si elle existe
+  Try Utils.db.Exec("ALTER TABLE " & NomTable & " MODIFY " & cleprimai_from & " INT Not Null, DROP PRIMARY KEY")
+  Try Utils.db.Exec("ALTER TABLE " & NomTable & " DROP PRIMARY KEY")  'on supprime toutes les clées primaire qui existe avant de recreer les nouvelles on autorise le try car sans primary keys existante la requete peut fail
   If cle.Count > 0 Then
-    Utils.db.Exec("ALTER TABLE " & NomTable & " ADD PRIMARY KEY (" & cle.Join(",") & ")")
+    If cleprimai_from <> Null Then
+      If cleprimai_to <> cleprimai_from Then
+        'nous avons un seule cle primaire avec auto increment on change le nom du champ et on applique la nouvelle taille
+        Utils.db.Exec("ALTER TABLE " & NomTable & " CHANGE " & cleprimai_from & " " & cleprimai_to & " " & cleprimai_to_type & " Not Null AUTO_INCREMENT, ADD PRIMARY KEY(" & cle.Join(",") & ")")
+      Else
+        'uniquement la taille du champ autoincrement change on espere que la nouvelle taille (probablement supérieure) evite tout conflit de clef
+        Utils.db.Exec("ALTER TABLE " & NomTable & " MODIFY " & cleprimai_to & " " & cleprimai_to_type & " Not Null AUTO_INCREMENT, ADD PRIMARY KEY (" & cle.Join(",") & ")")
+      Endif
+    Else If cleprimai_to <> Null Then
+      'cas complex d'un champ existant non autoincrement voir non primaire
+      res = Utils.db.Exec("SELECT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = &1 AND table_name = &2 AND column_name = &3)", "Laurux" & Start.Societe, NomTable, cleprimai_to)
+      If res.Available Then
+        Utils.db.Exec("ALTER TABLE " & NomTable & " ADD COLUMN " & "row_id_" & cleprimai_to & " " & cleprimai_to_type & " AUTO_INCREMENT PRIMARY KEY")
+        Utils.db.Exec("ALTER TABLE " & NomTable & " ADD COLUMN " & "tmp_" & cleprimai_to & " " & cleprimai_to_type & " DEFAULT NULL")
+        Utils.db.Exec("UPDATE " & NomTable & " SET " & "tmp_" & cleprimai_to & "=" & cleprimai_to & " WHERE " & "row_id_" & cleprimai_to & " IN (SELECT min_id FROM(SELECT MIN(" & "row_id_" & cleprimai_to & ") as min_id FROM " & NomTable & " WHERE " & cleprimai_to & " != 0 GROUP BY " & cleprimai_to & ") AS first_rows)")
+        Utils.db.Exec("SET @counter = (SELECT MAX(" & cleprimai_to & ") FROM " & NomTable & ")")
+        Utils.db.Exec("UPDATE " & NomTable & " SET " & "tmp_" & cleprimai_to & " = (@counter := @counter + 1) WHERE " & "tmp_" & cleprimai_to & " Is Null ORDER BY " & "row_id_" & cleprimai_to)
+        Utils.db.Exec("ALTER TABLE " & NomTable & " DROP PRIMARY KEY, DROP COLUMN " & "row_id_" & cleprimai_to & ", MODIFY " & "tmp_" & cleprimai_to & " " & cleprimai_to_type & " Not Null AUTO_INCREMENT, ADD PRIMARY KEY(" & "tmp_" & cleprimai_to & ")")
+        'as we alter table remove the primary ai key to the list
+        If cle.Exist(cleprimai_to) Then
+          cle.Remove(cle.Find(cleprimai_to))
+        Endif
+        If cle.Count Then 
+          'other_primkeys = ", ADD PRIMARY KEY (" & cle.Join(",") & ")"
+          other_primkeys = ""
+          Message.Error("Multiple Primary Key with Auto_Increment index n'est actuellement pas supporté, mais ceci ne devrait pas arriver")
+        Else 
+          other_primkeys = ""
+        Endif
+        Utils.db.Exec("ALTER TABLE " & NomTable & " DROP COLUMN " & cleprimai_to & ", CHANGE " & "tmp_" & cleprimai_to & " " & cleprimai_to & " " & cleprimai_to_type & " Not Null AUTO_INCREMENT " & other_primkeys)
+      Else
+        'cas simple d'une nouvelle clef primaire avec autoincrement
+        Utils.db.Exec("ALTER TABLE " & NomTable & " ADD " & cleprimai_to & " " & cleprimai_to_type & " Not Null AUTO_INCREMENT, ADD PRIMARY KEY (" & cle.Join(",") & ")")
+      Endif
+    Else
+      'cas simple avec 1/plusieurs cle primaire sans clef autoincrement
+      Utils.db.Exec("ALTER TABLE " & NomTable & " ADD PRIMARY KEY (" & cle.Join(",") & ")")
+    Endif
   Endif
 
 End
