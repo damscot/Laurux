@@ -57,6 +57,7 @@ Public Evl As Integer
 
 Public Success As Boolean 'valeur de retour du programme par default success => return 0
 Public Exit As Boolean 'autorise la sortie du programme
+Public Restart As Boolean 'special case pour redemarrer le programme lors du changement de société conf BDD
 
 Public LLogColl As Collection
 Public ConsoleLogLevel As Integer = Logger.Info
@@ -75,118 +76,133 @@ Public Sub Main()
   Try Start.version_branch = Trim(File.Load("branch.txt"))
   Try Start.version_sha1 = Trim(File.Load("sha1.txt"))
   
-  'Controle de la sortie
-  Start.Success = True
   Start.Exit = False
   
-  Parse_Args()
-  StartDate = Now
+  While (Not Start.Exit)
   
-  'Debug Level on Console and File
-  Try ConsoleLogLevel = Split(Arg_Debug, ",")[LLog.console]
-  Try FileLogLevel = Split(Arg_Debug, ",")[LLog.file]
-  LLogColl = New Collection
-  Try Mkdir User.Home & "/tmp/Debug"
-  If Exist(User.Home & "/tmp/Debug", "*.log") Then
-    For Each Fichlog In Dir(User.Home & "/tmp/Debug", "*.log").Sort()
-      Kill User.Home & "/tmp/Debug/" & Fichlog
-    Next
-  Endif
+    'Controle de la sortie
+    Start.Success = True
+    Start.Restart = False
   
-  Start.LocalSettings = New Settings(Arg_Config_File, Application.Name & " local configuration")
-
-  If IsNull(Arg_Start_Societe) Then
-    Try Societe = Start.LocalSettings["/Soc"]
-    If IsNull(Societe) Then Societe = "01"
-  Else
-    Societe = Format(CInt(Arg_Start_Societe), "00")
-    Start.LocalSettings["/Soc"] = Societe
-    Start.LocalSettings["/dbase/Name"] = Start.LocalSettings["/dbase/Prefixe"] & "Laurux" & Societe
-  Endif
-
-  If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
-    Btunnel = Utils.ControlTunnel()
-    If Not Btunnel Then
-      Message.Error("La réplication est inactive ! Continuer le travail avec Laurux peut causer des soucis.")
-      Return
+    Parse_Args()
+    StartDate = Now
+    
+    'Debug Level on Console and File
+    Try ConsoleLogLevel = Split(Arg_Debug, ",")[LLog.console]
+    Try FileLogLevel = Split(Arg_Debug, ",")[LLog.file]
+    LLogColl = New Collection
+    Try Mkdir User.Home & "/tmp/Debug"
+    If Exist(User.Home & "/tmp/Debug", "*.log") Then
+      For Each Fichlog In Dir(User.Home & "/tmp/Debug", "*.log").Sort()
+        Kill User.Home & "/tmp/Debug/" & Fichlog
+      Next
     Endif
-  Endif
-
-  Try Son = Start.LocalSettings["/son"]
-  Music.Load(Musique)
-  Proform = Start.LocalSettings["/Coul/Prf"]
-  Commande = Start.LocalSettings["/Coul/Cmde"]
-  Devis = Start.LocalSettings["/Coul/Devis"]
-  Devis2 = Start.LocalSettings["/Coul/Devis2"]
-  Bon = Start.LocalSettings["/Coul/Bl"]
-  Facture = Start.LocalSettings["/Coul/Facts"]
-  Epuises = Start.LocalSettings["/Coul/Eps"]
-  Stockes = Start.LocalSettings["/Coul/Stk"]
-  Nstockes = Start.LocalSettings["/Coul/Nstk"]
-  Suspendus = Start.LocalSettings["/Coul/Spd"]
-  If Error Or If IsNull(Start.LocalSettings["/Coul" & "/Fnets"]) Then
-    Start.LocalSettings["/Coul" & "/Fnets"] = "Background: &HDDDDDD&; "
-    Start.LocalSettings["/Coul" & "/Btns"] = "Background: &HBDBDBD&; "
-    Start.LocalSettings["/Coul" & "/Znss"] = "Background: &HFAFAFA&; "
-    Start.LocalSettings["/Coul" & "/Znaff"] = "Background: &HEEEEEE&; "
-    Start.LocalSettings["/Coul" & "/Focus"] = "Background: &HF9FFC7&; "
-    Start.LocalSettings["/Coul" & "/Coulfonds"] = "Background: &FFEE81&; "
-    Start.LocalSettings["/Coul" & "/Others"] = "Background: &FFE0B8&; "
-    Start.LocalSettings["/Coul" & "/Fcs"] = "Background: &HF9FFC7&"
-    Start.LocalSettings["/Coul" & "/Stk"] = "Background: &HCFF58E&; Font: serif,9; "
-    Start.LocalSettings["/Coul" & "/Coulfonds"] = "255;252;216;"
-    Start.LocalSettings["/Coul" & "/Others"] = "255;232;199;"
-    Start.LocalSettings["/Coul" & "/Facts"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Avs"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Bl"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Devis"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Devis2"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Cmde"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Prf"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Nstk"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Eps"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Spd"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Motps"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings["/Coul" & "/Momnt"] = "Background: &HFFFFFF&; Font: Serif,9; "
-    Start.LocalSettings.Save
-    Start.LocalSettings.Reload
-  Endif
-  If Not Exist(User.home & "/tmp") Then Mkdir User.home & "/tmp"
-  Try Fontes = Start.LocalSettings["/Soc" & Societe & "/Font"]
-  If IsNull(fontes) Then
-    Application.Font = Font["Serif,10"]
-  Else
-    Application.Font = Font[Fontes]
-  Endif
-  Coul()
-  If Exist(User.home & "/" & Application.Name & ".lock") Then
-    If son Then
-      Music.Play
+    
+    Start.LocalSettings = New Settings(Arg_Config_File, Application.Name & " local configuration")
+  
+    If IsNull(Arg_Start_Societe) Then
+      Try Societe = Start.LocalSettings["/Soc"]
+      If IsNull(Societe) Then Societe = "01"
+    Else
+      Societe = Format(CInt(Arg_Start_Societe), "00")
+      Start.LocalSettings["/Soc"] = Societe
+      Start.LocalSettings["/dbase/Name"] = Start.LocalSettings["/dbase/Prefixe"] & "Laurux" & Societe
     Endif
-    Pids = File.Load(User.home & "/" & Application.Name & ".lock")
-    If Not IsNull(Pids) Then
-      psExist = Shell "ps -p " & Pids & " >/dev/null" Wait
-      If psExist.Value = 0 Then
-        If Message.Warning(("Il semblerait que " & Application.Name & "\nProcess : " & Pids & "\nsoit encore ouvert!\n\nOuvrir deux fois Laurux peut causer des dysfonctionnements (erreur de stock etc...)\net utiliser un programme qui n'a pas été fermé normalement \nsignifie que la base n'est peut-être pas à jour et que vous devriez faire une restauration."), ("Ne pas ouvrir"), ("Ouvrir")) = 1 Then
+  
+    If Start.LocalSettings["/dbase/Con-ssh"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Replique"] And If Start.LocalSettings["/Soc" & Start.Societe & "/Breplique"] Then
+      Btunnel = Utils.ControlTunnel()
+      If Not Btunnel Then
+        Message.Error("La réplication est inactive ! Continuer le travail avec Laurux peut causer des soucis.")
+        Return
+      Endif
+    Endif
+  
+    Try Son = Start.LocalSettings["/son"]
+    Music.Load(Musique)
+    Proform = Start.LocalSettings["/Coul/Prf"]
+    Commande = Start.LocalSettings["/Coul/Cmde"]
+    Devis = Start.LocalSettings["/Coul/Devis"]
+    Devis2 = Start.LocalSettings["/Coul/Devis2"]
+    Bon = Start.LocalSettings["/Coul/Bl"]
+    Facture = Start.LocalSettings["/Coul/Facts"]
+    Epuises = Start.LocalSettings["/Coul/Eps"]
+    Stockes = Start.LocalSettings["/Coul/Stk"]
+    Nstockes = Start.LocalSettings["/Coul/Nstk"]
+    Suspendus = Start.LocalSettings["/Coul/Spd"]
+    If Error Or If IsNull(Start.LocalSettings["/Coul" & "/Fnets"]) Then
+      Start.LocalSettings["/Coul" & "/Fnets"] = "Background: &HDDDDDD&; "
+      Start.LocalSettings["/Coul" & "/Btns"] = "Background: &HBDBDBD&; "
+      Start.LocalSettings["/Coul" & "/Znss"] = "Background: &HFAFAFA&; "
+      Start.LocalSettings["/Coul" & "/Znaff"] = "Background: &HEEEEEE&; "
+      Start.LocalSettings["/Coul" & "/Focus"] = "Background: &HF9FFC7&; "
+      Start.LocalSettings["/Coul" & "/Coulfonds"] = "Background: &FFEE81&; "
+      Start.LocalSettings["/Coul" & "/Others"] = "Background: &FFE0B8&; "
+      Start.LocalSettings["/Coul" & "/Fcs"] = "Background: &HF9FFC7&"
+      Start.LocalSettings["/Coul" & "/Stk"] = "Background: &HCFF58E&; Font: serif,9; "
+      Start.LocalSettings["/Coul" & "/Coulfonds"] = "255;252;216;"
+      Start.LocalSettings["/Coul" & "/Others"] = "255;232;199;"
+      Start.LocalSettings["/Coul" & "/Facts"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Avs"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Bl"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Devis"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Devis2"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Cmde"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Prf"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Nstk"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Eps"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Spd"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Motps"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings["/Coul" & "/Momnt"] = "Background: &HFFFFFF&; Font: Serif,9; "
+      Start.LocalSettings.Save
+      Start.LocalSettings.Reload
+    Endif
+    If Not Exist(User.home & "/tmp") Then Mkdir User.home & "/tmp"
+    Try Fontes = Start.LocalSettings["/Soc" & Societe & "/Font"]
+    If IsNull(fontes) Then
+      Application.Font = Font["Serif,10"]
+    Else
+      Application.Font = Font[Fontes]
+    Endif
+    Coul()
+    If Exist(User.home & "/" & Application.Name & ".lock") Then
+      If son Then
+        Music.Play
+      Endif
+      Pids = File.Load(User.home & "/" & Application.Name & ".lock")
+      If Not IsNull(Pids) Then
+        psExist = Shell "ps -p " & Pids & " >/dev/null" Wait
+        If psExist.Value = 0 Then
+          If Message.Warning(("Il semblerait que " & Application.Name & "\nProcess : " & Pids & "\nsoit encore ouvert!\n\nOuvrir deux fois Laurux peut causer des dysfonctionnements (erreur de stock etc...)\net utiliser un programme qui n'a pas été fermé normalement \nsignifie que la base n'est peut-être pas à jour et que vous devriez faire une restauration."), ("Ne pas ouvrir"), ("Ouvrir")) = 1 Then
+            Quit
+          Endif
+          'Try Kill User.home & "/" & Application.Name & ".lock"
+          Lancement()
+        Else
+        'le process est inexistant
+          Try Kill User.home & "/" & Application.Name & ".lock"
+          Lancement()
+        Endif
+      Else
+        If Message.Warning(("Il semblerait que " & Application.Name & "\nsoit encore ouvert (Fichier de lock existe mais est vide : " & User.home & "/" & Application.Name & ".lock)!\n\nOuvrir deux fois Laurux peut causer des dysfonctionnements(erreur de stock etc...)\net utiliser un programme qui n'a pas été fermé normalement\nsignifie que la base n'est peut-être pas à jour et que vous devriez faire une restauration."), ("Ne pas ouvrir"), ("Ouvrir")) = 1 Then
           Quit
         Endif
         'Try Kill User.home & "/" & Application.Name & ".lock"
         Lancement()
-      Else
-      'le process est inexistant
-        Try Kill User.home & "/" & Application.Name & ".lock"
-        Lancement()
       Endif
     Else
-      If Message.Warning(("Il semblerait que " & Application.Name & "\nsoit encore ouvert (Fichier de lock existe mais est vide : " & User.home & "/" & Application.Name & ".lock)!\n\nOuvrir deux fois Laurux peut causer des dysfonctionnements(erreur de stock etc...)\net utiliser un programme qui n'a pas été fermé normalement\nsignifie que la base n'est peut-être pas à jour et que vous devriez faire une restauration."), ("Ne pas ouvrir"), ("Ouvrir")) = 1 Then
-        Quit
-      Endif
-      'Try Kill User.home & "/" & Application.Name & ".lock"
       Lancement()
     Endif
-  Else
-    Lancement()
-  Endif
+  
+    If Start.Restart Then
+      Start.Exit = False
+    Else If (Start.Exit) Then
+      Quit (Not Start.Success)
+    Else
+      Message.Error("Sortie du programme non controllé, ceci ne devrait pas arriver")
+      Continue
+    Endif
+
+  Wend
 
 End
 
@@ -347,20 +363,22 @@ Public Sub Lancement()
   If Arg_Test Then
     Start_Test()
   Endif
-  
+
   Signal[Signal.SIGINT].Catch
-  
+
   While (Not Start.Exit)
-    Wait 60
+    If Start.Arg_Devel Then
+      Wait 60
+    Else
+      Wait Next
+    Endif
   Wend
-  
-  Quit (Not Start.Success)
 
 End
 
 Public Sub Application_Signal(Sig As Integer)
 
-  If Sig = Signal.SIGINT And Start.Exit = True Then
+  If Sig = Signal.SIGINT And Start.Exit And Not Start.Restart Then
     Quit (Not Start.Success)
   Endif
 

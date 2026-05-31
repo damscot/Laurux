@@ -190,13 +190,13 @@ Public Sub Verif_Version()
     Message.Warning("La version de la base restaurée est tres ancienne!\nVeuillez modifier le champ Version du fichier ~/.config/gambas3/" & Application.Name & ".conf et relancer Laurux SVP !\nLes préférences ne sont pas restaurées")
     Start.UnLock()
     Utils.fermeTunnel()
-    Utils.db.Close
+    Utils.db.Close()
     Utils.Exit(False)
   Else If AppVersion <> rResult!version Then
     Message.Warning("La version de la base restaurée est différente de celle de l'exécutable !\nVeuillez relancer Laurux SVP !\nLes préférences ne sont pas restaurées")
     Start.UnLock()
     Utils.fermeTunnel()
-    Utils.db.Close
+    Utils.db.Close()
     Utils.Exit(False)
   Endif
   If Exist(SauveB.text & "/Laurux.conf") And If Message.Question("Voulez vous restaurer les préférences ? ", "Oui", "Non") = 1 Then
@@ -204,7 +204,7 @@ Public Sub Verif_Version()
     Copy SauveB.text & "/Laurux.conf" To Start.LocalSettings.Path
     Start.UnLock()
     Utils.fermeTunnel()
-    Utils.db.Close
+    Utils.db.Close()
     Utils.Exit(False)
   Endif
 

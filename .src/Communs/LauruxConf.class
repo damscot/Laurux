@@ -268,7 +268,7 @@ Public Sub Button1_Click()
   Endif
 
   If $ready_connect Then
-    Try Utils.db.Close
+    Try Utils.db.Close()
     
     
     If Start.LocalSettings["/dbase/type"] = "mysql"
@@ -331,7 +331,7 @@ Public Sub Createbase(Base As String, Optional AsCurrent As Boolean = True) As B
   Endif
   If message.Question("Le programme va créer la base " & Base & ".", "Oui", "Non") = 1 Then
     Me.mouse = Mouse.wait
-    Try Utils.db.Close
+    Try Utils.db.Close()
 
     hcon.type = "mysql"
     hcon.Name = ""
@@ -458,10 +458,11 @@ Public Sub Form_Close()
     Me.Hide
     Start.UnLock()
     Utils.fermeTunnel()
-    Utils.db.Close
+    Utils.db.Close()
+    Start.Restart = True
     Try Me.close
     Try Start.MainWindow.Close()
-    Start.Main()
+    'Start.Main()
   Endif
 
 End

@@ -562,7 +562,7 @@ Public Sub Button4_Click()
     Start.LocalSettings["/dbase/Name"] = Start.LocalSettings["/dbase/Prefixe"] & "Laurux" & Code.Text
     Start.LocalSettings.Save
     Start.LocalSettings.Reload
-    Utils.db.Close
+    Utils.db.Close()
     Start.Societe = soc
     Utils.db.name = "Laurux" & code.Text
     Utils.db.Open
@@ -600,7 +600,7 @@ End
 Public Sub Soclist_Click()
 
   If Soclist.Item[0] <> Start.Societe Then
-    Utils.db.Close
+    Utils.db.Close()
     Utils.db.name = Soclist.Item[2]
     Utils.db.Open
     Utils.db.exec("SET NAMES 'utf8mb4'")
