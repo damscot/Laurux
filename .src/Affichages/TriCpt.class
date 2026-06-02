@@ -390,7 +390,7 @@ Private Sub tricond()
       If cond Then $tr.ExtraSel(cond, "AND")
     Case Tresorerie
       If cond Then cond &= " AND"
-      $tr.ExtraSel(cond & " type_cc='B' and comptr_cc=1", "AND")
+      $tr.ExtraSel(cond & " type_cc='B' and comptr_cc != 0", "AND")
   End Select
   
   $tr.Show(True)

@@ -31,7 +31,7 @@ Public Bval As Variant
 Private Col As Collection
 Private tr As TriGen
 Private Selected As String[]
-Private OldSelected As String[]     ''on garde les sélections de départ en cas de modification
+'Private OldSelected As String[]     ''on garde les sélections de départ en cas de modification
 Private IsLast As Boolean
 Private $lst As Listextcpt
 
@@ -55,7 +55,7 @@ Public Sub _New()
   Ecart.Text = "0,00"
   Sldfinal.Text = "0,00"
   
-  dtinf.Text = LDate(Now).EFin.L
+  dtinf.Text = LDate(Now).EDeb.L
   dtsup.Text = LDate(Now).FinMois.L
   
   Selected = New String[]
@@ -123,22 +123,11 @@ Public Sub Update_Req()
   k = "--- Lot ---"
   prop = New ObjProp("numlot", k)
   Col.Add(prop, k)
-  
-  ' If N1.Value = True Then
-  '   'La table Mvt est prioritaire sur la table Mvt1 pour les ecritures dupliquée, voir le group by ci-dessous.
-  '   Req = Utils.db.Subst("SELECT * FROM (SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt") & " union SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(True) & " FROM " & Cbase.Table("TabMvt1") & ") as Combined_Mvt")
-  ' Else
-  '   Req = Utils.db.Subst("SELECT *, CAST(IF(pointee=TRUE, 'O', 'n') As CHAR) AS parse_having_P, " & LCoul.Ecr_DB_bgcolor(False) & " FROM " & Cbase.Table("TabMvt"))
-  ' Endif
 
   $lst = New Listextcpt(cpt.Text, dtinf.dte.L, dtsup.dte.L, "t")
   req = "SELECT * FROM (" & Left($lst.requete, -14) & ") AS a"
   tr = New TriGen(Panel1, Col, Res, Req, 20, Me) As "TriGen"
-  ' If N1.Value = True Then
-  '   'En affichage N-1, les ecritures peuvent etre doublé si elles sont présente dans les deux tables (cloture apres avoir saisie/pointee des ecritures apres la date de fin de l'exercice)
-  '   'Logiquement c'est une copie de l'ecriture, le groupement ne pose pas de pb.
-  '   tr.GroupBy("group by numero")
-  ' Endif
+
   Filter_Calc()
   tr.FontSize(-2)
   tr.Update() 
@@ -191,6 +180,14 @@ Public Sub TriGen_Data(id As String, key As String, Data As _GridView_Data)
   
   
 End
+
+Private Sub Update_Rappro()
+  
+  Utils.db.Exec("UPdate " & Cbase.Table("TabRappro") & " SET cpt = &1, nreleve = &2, date_releve = &3, date_rappro = &4, solde = &5 where cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text, LDate(dte.Text).D, LDate(dterappro.Text).D, LPrix(Sldfinal.Text).D)
+  
+End
+
+
 
 Private Sub Filter_Calc()
   
@@ -307,11 +304,14 @@ Public Sub Colrlv_Man(releve As String) As Boolean
   Dim rResult2 As Result
   Dim rResult3 As Result
   
+  dte.Text = Ldate(Now).L
+  dterappro.Text = LDate(Now).L
+  dtinf.Text = LDate(Now).EDeb.L
+  dtsup.Text = LDate(Now).FinMois.L
+
   'Empeche la recursivité d'appel lié a l'usage de la classe Message + handler event lostfocus
   If IsNull(releve) Then
     RelUniq.Value = False
-    dte.Text = Ldate(Now).L
-    dterappro.Text = LDate(Now).L
     Return False
   Endif
 
@@ -327,13 +327,13 @@ Public Sub Colrlv_Man(releve As String) As Boolean
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and nreleve = &2", cpt.Text, releve)
   If rResult.Available Then
     ClearChampsAll()
-    Selected = $lst.litpointee(cpt.Text, releve)
-    OldSelected = Selected.Copy()
     'avec un relevé selectionné existant on souhaite probablement plus voir uniquement les ecritures pointee pour ce relevé
     RelUniq.Value = True
     Nrel.Text = rResult!nreleve
     dte.Text = Ldate(rResult!date_releve).L
     dterappro.Text = LDate(rResult!date_rappro).L
+    'lors de la selection d'un relevé on limite les écritures à sa date exacte par défaut
+    dtsup.Text = dte.Text
     'Rappel d'un relevé existant on passe en ecriture pointee sur ce relevé par défault
     Ep.Value = True
     rResult2 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 and date_releve < &2 order by date_releve desc limit 1", cpt.Text, LDate(dte.Text).D)
@@ -380,12 +380,15 @@ Public Sub Colrlv_Man(releve As String) As Boolean
       RelUniq.Value = True
       'Il s'agit du dernier relevé (à priori)
       IsLast = True
-      rResult2 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 order by date_releve desc limit 1", cpt.Text, LDate(dte.Text).D)
+      rResult2 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabRappro") & " WHERE cpt = &1 order by date_releve desc limit 1", cpt.Text)
       If rResult2.Available Then
         Sldepart.Text = LPrix(rResult2!solde).L
+        dte.Text = LDate(DateAdd(LDate(rResult2!date_releve).FinMois.G, gb.Day, 1)).FinMois.LT
+        'lors de la créations d'un nouveau relevé basé sur la date du précédent on limite les écritures à sa date
+        dtsup.Text = dte.Text
       Else
         Sldepart.Value = 0 
-        Message.Error("Impossible de trouver le dernier relevé existant veuillez saisir le solde de départ manuellement.")
+        Message.Error("Impossible de trouver le dernier relevé existant veuillez saisir la date et le solde de départ manuellement.")
       Endif
       rResult3 = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " where compte_cc = &1", cpt.Text)
       If rResult3.Available Then
@@ -420,6 +423,7 @@ End
 
 Public Sub Dte_LostFocus()
 
+  Update_Rappro()
   Update_Req()
   Stop Event
 
@@ -428,8 +432,22 @@ End
 Public Sub Dte_KeyPress()
 
   If Key.code = Key.Enter Or Key.code = Key.Return Then
-    Update_Req()
-    Stop Event
+    Dte_LostFocus()
+  Endif
+
+End
+
+Public Sub Dterappro_LostFocus()
+
+  Update_Rappro()
+  Stop Event
+
+End
+
+Public Sub Dterappro_KeyPress()
+
+  If Key.code = Key.Enter Or Key.code = Key.Return Then
+    Dterappro_LostFocus()
   Endif
 
 End
@@ -585,11 +603,6 @@ Public Sub Calc_Solde()
   Ecart.Text = LPrix(0).L
   If Selected.Count > 0 Then
     rResult = $lst.totalpointe(Selected, cpt.Text)
-  '   If N1.Value = True Then
-  '     rResult = Utils.db.Exec("Select totdeb, totcred FROM ( Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ") Union Select compte, numero, sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt1") & " where compte=&1 and numero in (" & Selected.Join(",") & ") ) as Combined_Mvt where compte=&1 and numero in (" & Selected.Join(",") & ") group by numero", Cpt.Text)
-  '   Else
-  '     rResult = Utils.db.Exec("Select sum(montantd) as totdeb, sum(montantc) as totcred FROM " & Cbase.Table("TabMvt") & " where compte=&1 and numero in (" & Selected.Join(",") & ")", Cpt.Text)
-  '   Endif
      If rResult.Available Then
        totd = LPrix(rResult!totdeb).G
        totc = LPrix(rResult!totcred).G
@@ -606,6 +619,7 @@ End
 
 Public Sub Sld_LostFocus()
 
+  Update_Rappro()
   Calc_Solde()
   Stop Event
 
@@ -639,7 +653,7 @@ Public Sub Pointage2_Click()
     If Message.Warning("Le solde final du relevé est nul, êtes-vous sur d'avoir saisi le bon solde?", "Continuer", "Sortir") = 2 Then Return
   Endif
 
-  Utils.db.Exec("UPdate " & Cbase.Table("TabRappro") & " SET cpt = &1, nreleve = &2, date_releve = &3, date_rappro = &4, solde = &5 where cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text, LDate(dte.Text).D, LDate(dterappro.Text).D, LPrix(Sldfinal.Text).D)
+  Update_Rappro()
 
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", cpt.Text)
   If rResult.Available And IsLast Then
@@ -647,9 +661,7 @@ Public Sub Pointage2_Click()
   Endif
 
   If Selected.Count Then
-    $lst.enregistrepointage(OldSelected, False, cpt.Text, nrel.Text)
     $lst.enregistrepointage(Selected, True, cpt.Text, nrel.Text)
-    'Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte = &3 and numero in (" & Selected.Join(",") & ")", 1, Nrel.Text, Cpt.Text)
   Endif
 
   ClearChamps()
@@ -676,16 +688,15 @@ Public Sub Depointage_Click()
     If Message.Warning("Le solde final du relevé est nul, êtes-vous sur d'avoir saisi le bon solde?", "Continuer", "Sortir") = 2 Then Return
   Endif
 
-  Utils.db.Exec("UPdate " & Cbase.Table("TabRappro") & " SET cpt = &1, nreleve = &2, date_releve = &3, date_rappro = &4, solde = &5 where cpt = &1 and nreleve = &2", cpt.Text, Nrel.Text, LDate(dte.Text).D, LDate(dterappro.Text).D, LPrix(Sldfinal.Text).D)  
+  Update_Rappro()
+
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", cpt.Text)
   If rResult.Available And IsLast Then
     Utils.db.Exec("UPdate " & Cbase.Table("TabComptes") & " SET soldep = &1 where compte_cc = &2", LPrix(Sldfinal.Text).D, cpt.Text)
   Endif
 
   If Selected.Count Then
-    $lst.enregistrepointage(OldSelected, False, cpt.Text, nrel.Text)
     $lst.enregistrepointage(Selected, False, cpt.Text, nrel.Text)
-    'Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET pointee = &1, nrlv = &2 where compte=&3 and numero in (" & Selected.Join(",") & ")", 0, "", Cpt.Text)
   Endif
 
   ClearChamps()

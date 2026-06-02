@@ -330,14 +330,16 @@ End
 Public Sub enregistrepointage(selected As String[], point As Boolean, cpt As String, nrel As String)      ''enregistre les écritures pointées
 
   Dim i As Integer
-  Dim r As String
-  
-  If Not point Then r = "" Else r = nrel
+
   If IsNull(selected) Then Return
   If selected.Count < 1 Then Return
   Application.Busy += 1
   For i = 0 To $brn.Max
-    Utils.db.Exec("UPDATE " & $brn[i].nomfich & " SET pointee = &1, nrlv = &2 WHERE compte = &3 AND numero in (" & Selected.Join(",") & ") AND nrlv = &4 AND provisoire= False ", point, r, cpt, nrel)
+    If point Then
+      Utils.db.Exec("UPDATE " & $brn[i].nomfich & " SET pointee = 1, nrlv = &1 WHERE compte = &2 AND numero in (" & Selected.Join(",") & ") AND provisoire=False ", nrel, cpt)
+    Else
+      Utils.db.Exec("UPDATE " & $brn[i].nomfich & " SET pointee = 0, nrlv = NULL WHERE compte = &1 AND numero in (" & Selected.Join(",") & ") AND provisoire=False ", cpt)
+    Endif
   Next
   Application.Busy -= 1
 
