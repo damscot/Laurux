@@ -49,8 +49,6 @@ Private TT As Float
 Private TD As String
 Private TC As String
 Private iLet As Integer
-Private ye2 As Integer
-Private dte3 As String
 Private numlet As String
 Private nvlle As Integer
 Private Lettrable As Integer
@@ -1280,19 +1278,16 @@ End
 
 Public Sub QuitteDate()
 
-  Dim rResult As Result
-  Dim dte As String
-  Dim dtee As String
+  Dim Params As Result
+  Dim dte, dte2 As LDate
   Dim numecr As String
 
-  rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & "")
-  dte = rResult!dtepc
-  dte = Left$(dte, 10)
-  dte3 = Right$(dte, 4) & Left$(dte, 2)
-  dtee = rResult!dteclec
-  dtee = Left$(dtee, 10)
-  ye2 = Right$(dtee, 4)
-  Inc Ye2
+  Params = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & "")
+  dte = New LDate(Params!dtepc)
+  dte2 = New LDate(Params!dteclec)
+  dte2 = LDate(DateAdd(dte2.G, gb.Year, 1))
+  dte2 = dte2.EFin
+
   With utils
     Datej.text = .CDate_calc(datej.text)
     Datej.Text = .Cdate_aff(Datej.Text)
@@ -1302,7 +1297,7 @@ Public Sub QuitteDate()
       Datej.SetFocus
       b = 1
     Else
-      If Right$(Datej.text, 4) & Mid$(Datej.text, 4, 2) <= dte3 Then
+      If LDate(Datej.text).G <= dte.G Then
         If son Then
           Music.Play
         Endif
@@ -1310,7 +1305,7 @@ Public Sub QuitteDate()
           B = 1
         Endif
       Else
-        If Right$(datej.text, 4) & Mid$(datej.text, 4, 2) & Left$(datej.text, 2) > (Ye2 + 1) & Left$(dtee, 2) & Mid$(dtee, 4, 2) Then
+        If LDate(Datej.text).G > dte2.G Then
           If son Then
             Music.Play
           Endif

@@ -597,6 +597,7 @@ Public Sub Exercice_Fin(Optional Annee As LDate = LDate(Now)) As LDate
   With utils
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & "")
     If Annee.G <= Date(Year(rResult!dteclec5), Month(rResult!dteclec5), Day(rResult!dteclec5), 23, 59, 59, 999) Then
+      'on ne descend pas en dessous de N-5
       edate = rResult!dteclec5
     Else If Annee.G <= Date(Year(rResult!dteclec4), Month(rResult!dteclec4), Day(rResult!dteclec4), 23, 59, 59, 999) Then
       edate = rResult!dteclec4
@@ -606,8 +607,10 @@ Public Sub Exercice_Fin(Optional Annee As LDate = LDate(Now)) As LDate
       edate = rResult!dteclec2
     Else If Annee.G <= Date(Year(rResult!dteclec1), Month(rResult!dteclec1), Day(rResult!dteclec1), 23, 59, 59, 999) Then
       edate = rResult!dteclec1
-    Else
+    Else If Annee.G <= Date(Year(rResult!dteclec), Month(rResult!dteclec), Day(rResult!dteclec), 23, 59, 59, 999) Then
       edate = rResult!dteclec
+    Else 'on utilise l'année de la date fournie auquel on assigne mois/jour/heure du dernier l'exercice
+      edate = Date(Year(Annee.G), Month(rResult!dteclec), Day(rResult!dteclec), 23, 59, 59, 999)
     Endif
   End With
 

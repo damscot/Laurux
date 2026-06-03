@@ -317,8 +317,13 @@ Public Sub affichage()
     Else
       odr = "dte Asc"
     Endif
-    dtei = New LDate(DateAdd(Now, gb.Year, -8))
-    dtes = New LDate(DateAdd(Now, gb.Year, 8))
+
+    rResult = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
+    ' Lettrage possible sur les ecritures non cloturée (debut de l'exercice N:non cloturé, jusqu'à la fin de l'exercice N+1)
+    dtei = New LDate(rResult!dteclec)
+    dtes = New LDate(DateAdd(dtei.G, gb.year, 1))
+    dtei = dtei.EDeb
+    dtes = dtes.EFin
     If Not cpt.Text Then Return
     If ConvBool(Enl.value) = 1 Then
     '  If Tdate.value = False Then
@@ -338,7 +343,7 @@ Public Sub affichage()
     If IsNull(rResult) Then Return
     If rResult.Available Then
       Repeat
-        Print rResult!lind, rResult!compte, .Cdate_Aff(rResult!dte), rResult!numdoc
+        'Print rResult!lind, rResult!compte, .Cdate_Aff(rResult!dte), rResult!numdoc
         Colcli.Add(rResult!lind & rResult!numero, rResult!lind)
         Colcli.Item[0] = rResult!compte
         Colcli.Item[1] = .Cdate_Aff(rResult!dte)
