@@ -1,29 +1,29 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(33.6667,54.2222,70,75)
+  MoveScaled(33.625,54.25,70,75)
   Background = Color.Background
   Text = ("Export des écritures au format A47 (FEC)")
   { Label3 Label
-    MoveScaled(9,17.3333,5,3)
+    MoveScaled(9,17.375,5,3)
     Font = Font["Serif,-1"]
     Text = ("Du :")
   }
   { DteN0 TextBox cmpt
     Name = "DteN0"
-    MoveScaled(14,17.3333,12,3)
+    MoveScaled(14,17.375,12,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     Tag = "1"
   }
   { Label2 Label
-    MoveScaled(41,17.3333,5,3)
+    MoveScaled(41,17.375,5,3)
     Font = Font["Serif,-1"]
     Text = ("Au :")
   }
   { Dten1 TextBox cmpt
     Name = "Dten1"
-    MoveScaled(46,17.3333,12,3)
+    MoveScaled(46,17.375,12,3)
     Font = Font["Serif,-1"]
     Background = Color.TextBackground
     Tag = "2"
@@ -42,31 +42,41 @@
   { Frame3 Frame
     MoveScaled(1,34,68,10)
     Font = Font["Serif,-1"]
-    { E0 RadioButton
-      MoveScaled(1.3333,1,13,3)
+    { EC RadioButton
+      MoveScaled(3,1,19,3)
       Font = Font["Serif,-1"]
-      Text = ("Exercice N")
+      Text = ("Exercice en cours")
       Value = True
     }
-    { E1 RadioButton
-      MoveScaled(15,1,21,3)
+    { EN RadioButton
+      MoveScaled(25,1,20,3)
       Font = Font["Serif,-1"]
       Text = ("Exercice précédent")
     }
-    { E2 RadioButton
-      MoveScaled(37,1,15,3)
+    { E1 RadioButton
+      MoveScaled(49,1,15,3)
       Font = Font["Serif,-1"]
-      Text = ("Exercice N -1")
+      Text = ("Exercice N-1")
+    }
+    { E2 RadioButton
+      MoveScaled(3,5,15,3)
+      Font = Font["Serif,-1"]
+      Text = ("Exercice N-2")
     }
     { E3 RadioButton
-      MoveScaled(52,1,15,3)
+      MoveScaled(19,5,15.5,3)
       Font = Font["Serif,-1"]
-      Text = ("Exercice N -2")
+      Text = ("Exercice N-3")
     }
     { E4 RadioButton
-      MoveScaled(1,5,15.5556,3)
+      MoveScaled(36,5,15.5,3)
       Font = Font["Serif,-1"]
-      Text = ("Exercice N -3")
+      Text = ("Exercice N-4")
+    }
+    { E5 RadioButton
+      MoveScaled(53,5,14,3)
+      Font = Font["Serif,-1"]
+      Text = ("Exercice N-5")
     }
   }
   { Button2 Button Btn
@@ -93,22 +103,22 @@
     Font = Font["Serif,-1"]
     Border = Border.Plain
     { Label4 Label
-      MoveScaled(1.3333,1,32.3333,4)
+      MoveScaled(1.375,1,32.375,4)
       Font = Font["Serif,-1"]
-      Text = ("Adresse d'envoi des fichiers")
       Alignment = Align.Center
+      Text = ("Adresse d'envoi des fichiers")
     }
     { Adrexport TextBox
-      MoveScaled(1.3333,5,32,3)
+      MoveScaled(1.375,5,32,3)
       Font = Font["Serif,-1"]
       Background = Color.TextBackground
       MaxLength = 40
     }
     { Label5 Label
-      MoveScaled(1.3333,9.3333,32.3333,4)
+      MoveScaled(1.375,9.375,32.375,4)
       Font = Font["Serif,-1"]
-      Text = ("Chemin du fichier d'export/import")
       Alignment = Align.Center
+      Text = ("Chemin du fichier d'export/import")
     }
     { Chmexport TextBox
       MoveScaled(1,15,32,3)
@@ -116,7 +126,7 @@
       Background = Color.TextBackground
     }
     { Svs2 Button
-      MoveScaled(34,14.3333,12.3333,3.7778)
+      MoveScaled(34,14.375,12.375,3.75)
       Font = Font["Serif,Bold,-1"]
       Text = Shortcut(("Choisir"), "C")
     }
