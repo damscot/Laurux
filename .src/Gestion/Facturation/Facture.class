@@ -100,7 +100,7 @@ Tva550 As Integer
 Codetva As String
 Artdsg2 As String
 dateech As String
-Impfac As Integer ' Flag pour savoir si la facture à été imprimée
+Impfac As Boolean ' Flag pour savoir si la facture à été imprimée
 qteecot As Float
 Bloc As String 'numéro de bloc de la ligne séléctionnée
 Ardi As String
@@ -742,7 +742,7 @@ Public Sub Entete2_KeyPress()
         Stop Event
 
       Case 2
-        If Impfac <> "1" And Not IsNull(code.text) Then
+        If Impfac <> True And Not IsNull(code.text) Then
           Cli_man()
           If IsNull(solde.Text) Then solde.Text = "0"
           If Val(Replace(solde.Text, ".", ",")) > 0 Then
@@ -1167,7 +1167,7 @@ Public Sub Lignes_Bon()
             TextLabel64.Visible = True
             Poids.Visible = True
           Endif
-          If Tp = "B" Or If Tp = "F" And ImpFac <> "1" Then
+          If Tp = "B" Or If Tp = "F" And ImpFac <> True Then
             'Bsuppr = True
             If Panel8.visible = False Then
               Maj_Quantite2()
@@ -1227,7 +1227,7 @@ Public Sub Button15_Click()
       calculfindoc
     Endif
     ChkFocus = 2
-    If Tp = "B" Or If Tp = "F" And ImpFac <> "1" Then
+    If Tp = "B" Or If Tp = "F" And ImpFac <> True Then
       If Panel8.visible = False Then
         Maj_Quantite()
       Else
@@ -1344,7 +1344,7 @@ Public Sub Form_Close()
     Endif
     If Sortie = True Then
       ChkFocus = 2
-      If Tp = "B" Or If Tp = "F" And ImpFac <> "1" Then
+      If Tp = "B" Or If Tp = "F" And ImpFac <> True Then
         If Panel8.visible = False Then
           Maj_Quantite()
         Else
@@ -1564,7 +1564,7 @@ Public Sub Button2_Click()
       Coldetail.Clear
       Button8.Visible = False
       Button6.Visible = True
-      Impfac = "0"
+      Impfac = False
       'ikey = ""
       'on enregistre le bl en cours
       button4_click()
@@ -1818,7 +1818,7 @@ End
 '**************************************************
 Public Sub button1_Click()
 
-  If Impfac = "1" Then
+  If Impfac = True Then
     Balloon.Warning(("La facture a été imprimée ! Modification de client impossible."), Code)
   Else
     'Button2_click()
@@ -1993,7 +1993,7 @@ Public Sub ColblSelection(bright As Boolean)
           num.text = rResult!numbl
           Code.text = rResult!cdclibl
           Impfac = rResult!imp
-          If Impfac = "1" Then
+          If Impfac = True Then
             Code.ReadOnly = True
             Code.Background = &HD4D0C8&
           Else
@@ -2006,7 +2006,7 @@ Public Sub ColblSelection(bright As Boolean)
           Code3.Text = Code.Text
           num2.Text = num.Text
           Nm.Text = Nom.Text
-          If Impfac = "1" Then
+          If Impfac = True Then
             Nom.ReadOnly = True
             Nom.Background = &HD4D0C8&
             Textfrais.ReadOnly = True
@@ -2018,7 +2018,7 @@ Public Sub ColblSelection(bright As Boolean)
             'Nom.Background = Color.TextBackground
           Endif
           Pnm.Text = rResult!pnmclibl
-          If Impfac = "1" Then
+          If Impfac = True Then
             Pnm.ReadOnly = True
             Pnm.Background = &HD4D0C8&
           Else
@@ -3066,7 +3066,7 @@ End
 Public Sub mo_man()
 
   chkfocus = 1
-  If Impfac <> "1" Then
+  If Impfac <> True Then
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMo") & " where mo_code = &1", Cmo.Text)
     If rResult.Available Then
       With utils
@@ -3905,7 +3905,7 @@ End
 '*****************************************************************
 Public Sub Bcomde_Click()
 
-  If Impfac <> 1 And (Numtk == Null) Then
+  If Impfac <> True And (Numtk == Null) Then
     Atype = Tp
     Tp = "C"
     Button13.Visible = True
@@ -3928,7 +3928,7 @@ End
 Public Sub Bbon_Click()
 
 
-  If (Impfac <> 1) And (Numtk == Null) Then
+  If (Impfac <> True) And (Numtk == Null) Then
     Atype = Tp
     Tp = "B"
     Button13.Visible = True
@@ -3959,7 +3959,7 @@ End
 
 Public Sub Bdevis_Click()
 
-  If Impfac <> 1 And (Numtk == Null) Then
+  If Impfac <> True And (Numtk == Null) Then
     Atype = Tp
     Tp = "D"
     Button13.Visible = True
@@ -3981,7 +3981,7 @@ End
 
 Public Sub Bprof_Click()
 
-  If Impfac <> 1 And (Numtk == Null) Then
+  If Impfac <> True And (Numtk == Null) Then
     Atype = Tp
     Tp = "P"
     Button13.Visible = True
@@ -4039,7 +4039,7 @@ Public Sub BfacA_Click()
     Tp = "A"
     If Not bTypeFacture Then
       If Not IsNull(Dtab) And Not IsNull(Aban) Then
-        If Impfac <> 1 Then
+        If Impfac <> True Then
           If Atype = "D" Or Atype = "P" Or Atype = "C" Then
             Bmajdte
             If num.Text Then utils.db.Exec("UPDATE Fiches_Ligbl SET dte_ligbl=&1 WHERE num_ligbl=&2", Now, num.Text) 
@@ -4067,7 +4067,7 @@ Public Sub BfacA_Click()
       Endif
     Else
 
-      If Impfac <> 1 Then
+      If Impfac <> True Then
         Atype = Tp
         Tp = "T"
         Maj_typeBL()
@@ -4753,7 +4753,7 @@ Public Sub Art_man(Prod As String)
   Tab = "Fiches_Art"
   chkfocus = 1
   Equ = False
-  If (Impfac <> 1) And (Numtk == Null) Then
+  If (Impfac <> True) And (Numtk == Null) Then
     If Left$(Cart.Text, 1) = "*" Then
       Cart.Text = Mid$(Cart.Text, 2, Len(Cart.Text))
       Rarts = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabArt") & " where art_code = &1", Cart.Text)
@@ -8034,7 +8034,7 @@ Public Sub Coldetail_Activate()
 
       '* On rappelle les lignes de main d'oeuvre
       If typel = "M" Then
-        If (Impfac <> "1") And (Numtk == Null) Then
+        If (Impfac <> True) And (Numtk == Null) Then
           Motm.Value = True
           Panel2.visible = True
           Panel3.Visible = False
@@ -8083,7 +8083,7 @@ Public Sub Coldetail_Activate()
 
       '* On rappelle les lignes de produits
       If typel = "A" Then
-        If (Impfac <> "1") And (Numtk == Null) Then
+        If (Impfac <> True) And (Numtk == Null) Then
           sTTC.value = False
           Panel2.visible = False
           Panel3.Visible = True
@@ -8316,7 +8316,7 @@ Public Sub Coldetail_KeyRelease()
     Wend
     If Key.code = Key.Delete And Coldetail.Count <> 0 Then
       If Coldetail.current[9 + i] = "M" Or Coldetail.current[9 + i] = "A" Or Coldetail.current[9 + i] = "C" Or Coldetail.current[9 + i] = "O" Or Coldetail.current[9 + i] = "R" Or If Coldetail.current[9 + i] = "T" Or Coldetail.current[9 + i] = "P" Or Coldetail.current[9 + i] = "O" Or Coldetail.current[9 + i] = "D" Or If Coldetail.current[9 + i] = "T" Or Coldetail.current[9 + i] = "E" Then
-        If ((Impfac <> 1) And (numtk == Null)) Or If Coldetail.current[9 + i] = "C" Then
+        If ((Impfac <> True) And (numtk == Null)) Or If Coldetail.current[9 + i] = "C" Then
           If start.son Then
             Music.Play
           Endif
@@ -9186,7 +9186,7 @@ Public Sub Maj_libelle()
     Tab = "Fiches_Ligbl"
   Endif
   If $soption = "B" Or $soption = "T" Then i = 2 Else i = 0
-  If Coldetail.Count <> 0 And Start.LocalSettings["/Soc" & Start.Societe & "/Casier"] <> 0 And Impfac = "0" Then
+  If Coldetail.Count <> 0 And Start.LocalSettings["/Soc" & Start.Societe & "/Casier"] <> 0 And Impfac = False Then
     Coldetail.MoveFirst
     Repeat
       Coldetail.item.Selected = True
@@ -9689,7 +9689,7 @@ Public Sub Colbl_Activate()
         Dtefac = utils.Cdate_Aff(Blarch!dtefac)
         Ech = utils.Cdate_Aff(Blarch!ech)
       Endif
-      If Impfac = "1" And colbl[colbl.row, 7].Text Then
+      If Impfac = True And colbl[colbl.row, 7].Text Then
         If start.son Then
           Music.Play
         Endif
@@ -10661,7 +10661,7 @@ End
 Public Sub ToggleButton1_MouseDown()
 
   If Not Mouse.Right Then
-    If Impfac = "0" Then
+    If Impfac = False Then
       SelectionClient()
     Else
       Balloon.Warning(("La facture a été imprimée ! Modification de client impossible."), Code)

@@ -258,9 +258,11 @@ Private Function Parse(Sdate As String, Optional ParseTime As Boolean = True) As
       Endif
     Endif
   Else If reg.Count = 2 Then
-    If Len(reg[1].Text) = 4 Then
-      Return Date(Val(reg[1].Text), Val(reg[2].Text), Val(Day(Now)), hour, min, sec)
-    Else
+    If Len(reg[1].Text) = 4 Then 'YYYY.MM
+      Return Date(Val(reg[1].Text), Val(reg[2].Text), Day(Now), hour, min, sec)
+    Else If Len(reg[2].Text) = 4 Then 'MM.YYYY
+      Return Date(Val(reg[2].Text), Val(reg[1].Text), Day(Now), hour, min, sec)
+    Else ' assumed DD.MM with current year
       Return Date(Year(Now), Val(reg[2].Text), Val(reg[1].Text), hour, min, sec)
     Endif
   Else If reg.Count = 1 Then

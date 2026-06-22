@@ -1109,6 +1109,8 @@ Public Sub Colcli_MouseUp()
   Dim type As Integer
   Dim i As Integer
   
+  If IsNull(Colcli.Current) Then Return
+
   If Mouse.Right Then
     i = 3
     If Bclient.Value Then type = LGed.Clients

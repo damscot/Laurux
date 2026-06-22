@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Private Jnl As String
+Private Jnl As String 'Journal de vente par défault
 Private numr As Integer ' Numero ecriture provisoire
 Private numr2 As Integer ' numero ecriture définitif
 Private numecr As String
@@ -1021,6 +1021,7 @@ Public Sub Moulinage() As Boolean
   'On récupère le journal de caisse
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabJour") & " where code_jo = &1", Jnal)
   If rResult.Available Then CptCaisse = rResult!cde_banque
+
   Datem = Format$(DateChooser1.Value, "dd.mm.yyyy")
   Datec = DateChooser1.Value
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & " ")
@@ -1031,6 +1032,8 @@ Public Sub Moulinage() As Boolean
       If LDate(rtck!date).G < DateChooser1.Value Then
         sDate = LDate(rtck!date).L 
         Message.Info("Il reste des tickets à la date du " & sdate & " !\nVeuillez faire un moulinage à cette date SVP.")
+      Else If LDate(DateChooser1.Value).PFin.G > LDate(rResult!dtepec).PFin.G
+        Message.Info("La date de facturation en cours " & LDate(rResult!dtepec).PFin.L & " est inférieur à la date du moulinage " & LDate(DateChooser1.Value).L & "\nVeuillez changer le mois en cours de facturation dans les paramètres généraux avant de poursuivre le moulinage.")
       Else
         rTck = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabEntTck") & " where DATE(date) = &1 and statut = &2 order by numero asc, date desc", LDate(DateChooser1.Value).D, "V")
         If rTck.Available Then
@@ -1311,8 +1314,44 @@ Public Sub Moulinage() As Boolean
                       If fac.editef() Then
                        Message.Error("Une erreur c'est produite sur le bon  " & numbon & " du client " & Blg!cdclibl)
                       Endif
+
+                      'On genere les Mvt pour le clients car fac.saisreg = False pour ne pas charger l'interface de reglement
+                      'on saisie l'ensemble des mouvements par la suite
+                      If Blg!totalttc < 0 Then
+                        bl_cli_credit = Abs(Blg!totalttc)
+                        bl_cli_debit = 0
+                      Else
+                        bl_cli_credit = 0
+                        bl_cli_debit = Blg!totalttc
+                      Endif
+
+                      ' complement de l'ecriture pour transfert de la facture du compte client vers le compte caisse
+                      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", fac.journal, fac.numeroecr, Client, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), fac.numfac, fac.numfac, Left$("Facture " & Blg!nmclibl, 30), bl_cli_credit, bl_cli_debit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), fac.numerodef)
+                      Sha1Calc.CalcSha1("Fiches_Mvt", fac.numeroecr)
+
+                      'Passage aux ecritures de règlement en caisse
                       numr = fac.numeroecr + 1
                       numr2 = fac.numerodef + 1
+
+                      Utils.db.Exec("update " & Cbase.Table("TabBl") & " set type = \"F\", numtick = NULL, imp = 1, acquitte = 1, reg = \"Caisse\", mtreg = &2, numfac = &3, dtefac = &4, ech = &4 where numbl = &1", fac.numbl, Blg!totalttc, fac.numfac, LDate(Date_Bl).DT)
+
+                      'lettrage de toutes les mvt d'écriture de cette facture acquittee
+                      res = utils.db.Exec("SELECT numero FROM " & Cbase.Table("TabMvt") & " where compte=&1 and (lettree = 0 or lettree is Null) and (numdoc = &2 or numlot = &2)", Blg!cdclibl, fac.numfac)
+                      If res.Available Then
+                        Utils.db.Exec("UPDATE " & Cbase.Table("TabMvt") & " set lettree = 1 where numero =&1", res!numero)
+                      Endif
+
+                      'Creation de l'ecriture de reglement depuis le compte client caisse -> compte client.
+                      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Blg!cdclibl, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), fac.numfac, fac.numfac, Left$("Rglt Caisse BL " & Blg!nmclibl, 30), bl_cli_credit, bl_cli_debit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+                      Sha1Calc.CalcSha1("Fiches_Mvt", numr)
+                      Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, "Reglement BL Caisse", Utils.Cdate_Dbase(Datem), fac.numfac, fac.numfac, Left$("Rglt Caisse BL " & Blg!nmclibl, 30), bl_cli_debit, bl_cli_credit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+                      Sha1Calc.CalcSha1("Fiches_Mvt", numr)
+                      'on incremente le numero d'ecriture pour la suite des Mvt
+                      numr = numr + 1
+                      numr2 = numr2 + 1
+                      'on recalcul le solde du compte client
+                      Csolde.Solde_caisse(Blg!cdclibl)
+
                     Else
                       res = utils.db.Exec("SELECT cli_nom FROM Fiches_Cli WHERE cli_code=&1", Bl!cdclibl)
                       Message.Warning("Le BL " & numbon & " du client " & res!cli_nom & " est inexistant le regroupement de BL n'a pas fonctionné")
@@ -1326,10 +1365,10 @@ Public Sub Moulinage() As Boolean
                 Date_Bl = LDate(rtck!date).G
                 If Bl.Available And Not rTck!suppr Then
                   Repeat
-                    numbon = Bl!numbl
-                    snfac = Bl!numfac
+                    fac = New ObjFacB(Bl!numbl, ObjFac.facture)
+
                     'On saisie la facture comme réglé
-                    Utils.db.Exec("UPDATE " & Cbase.Table("TabBl") & " set type = \"F\", numtick = NULL, imp = 1, acquitte = 1, reg = \"Caisse\", mtreg = &2, numfac = &3, dtefac = &4, ech = &4 where numbl = &1", numbon, Bl!totalttc, snfac, LDate(Date_Bl).DT)
+                    Utils.db.Exec("UPDATE " & Cbase.Table("TabBl") & " set type = \"F\", numtick = NULL, imp = 1, acquitte = 1, reg = \"Caisse\", mtreg = &2, numfac = &3, dtefac = &4, ech = &4 where numbl = &1", fac.numbl, Bl!totalttc, fac.numfac, LDate(Date_Bl).DT)
                     'On genere les Mvt pour le clients
                     If Bl!totalttc < 0 Then
                       bl_cli_credit = Abs(Bl!totalttc)
@@ -1338,15 +1377,24 @@ Public Sub Moulinage() As Boolean
                       bl_cli_credit = 0
                       bl_cli_debit = Bl!totalttc
                     Endif
+
+                    ' complement de l'ecriture pour transfert de la facture du compte client vers le compte caisse
+                    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", fac.journal, numr, Client, "Reglement Fac Caisse", Utils.Cdate_Dbase(Datem), fac.numfac, fac.numfac, Left$("Facture " & Bl!nmclibl, 30), bl_cli_credit, bl_cli_debit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+                    Sha1Calc.CalcSha1("Fiches_Mvt", numr)
+
+                    'Passage aux ecritures de règlement en caisse
+                    numr = numr + 1
+                    numr2 = numr2 + 1
+
                     'lettrage de toutes les mvt d'écriture de cette facture acquittee
-                    res = utils.db.Exec("SELECT numero FROM " & Cbase.Table("TabMvt") & " where compte=&1 and (lettree = 0 or lettree is Null) and (numdoc = &2 or numlot = &2)", Bl!cdclibl, snfac)
+                    res = utils.db.Exec("SELECT numero FROM " & Cbase.Table("TabMvt") & " where compte=&1 and (lettree = 0 or lettree is Null) and (numdoc = &2 or numlot = &2)", Bl!cdclibl, fac.numfac)
                     If res.Available Then
                       Utils.db.Exec("UPDATE " & Cbase.Table("TabMvt") & " set lettree = 1 where numero =&1", res!numero)
                     Endif
                     'Creation de l'ecriture de reglement depuis le compte client caisse.
-                    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Bl!cdclibl, "Reglement Fac Caisse", Utils.Cdate_Dbase(Datem), snfac, snfac, Left$("Rglt Caisse Facture " & Bl!nmclibl, 30), bl_cli_credit, bl_cli_debit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+                    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Bl!cdclibl, "Reglement Fac Caisse", Utils.Cdate_Dbase(Datem), fac.numfac, fac.numfac, Left$("Rglt Caisse Fac " & Bl!nmclibl, 30), bl_cli_credit, bl_cli_debit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
                     Sha1Calc.CalcSha1("Fiches_Mvt", numr)
-                    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, "Reglement Fac Caisse", Utils.Cdate_Dbase(Datem), snfac, snfac, Left$("Rglt Caisse Facture " & Bl!nmclibl, 30), bl_cli_debit, bl_cli_credit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
+                    Utils.db.Exec("INSERT INTO " & Cbase.Table("TabMvt") & "(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES (&1, &2, &3, &4, &5, &6, &7, &8, &9, &{10}, &{11}, &{12}, &{13}, &{14}, &{15}, &{16}, &{17})", Jnal, numr, Client, "Reglement Fac Caisse", Utils.Cdate_Dbase(Datem), fac.numfac, fac.numfac, Left$("Rglt Caisse Fac " & Bl!nmclibl, 30), bl_cli_debit, bl_cli_credit, 1, 0, 1, 1, 1, Utils.Cdate_Dbase(Datem), numr2)
                     Sha1Calc.CalcSha1("Fiches_Mvt", numr)
                     'on incremente le numero d'ecriture pour la suite des Mvt
                     numr = numr + 1
@@ -1951,7 +1999,7 @@ Public Sub Recup_Art(numero As String, ligne As String, code As String, qtea As 
       Endif
       Remises_quantitatives()
       Decimal()
-      diffttc = Val(.CPoint(Arttc)) - (Val(.CPoint(Qtea)) * Val(.CPoint(mttc)))
+      diffttc = Val(.CPoint(Arttc)) - (Val(.CPoint(Qtea)) * Val(.CPoint(mttc)) * (1 - (Val(.CPoint(Artrm)) / 100)))
       If Abs(diffttc) > 0 Then 'Le prix ttc calculé pour le bon de caisse du client est supérieur au prix public
         'Ceci peut provenir d'un arrondi de TVA puisque le calcul repars du HT pour faire le calcul ttc
         'au dela de 1 centimes par qte d'article on met un message, en dessous on applique une reduction du prix brut pour correspondre au prix public ttc

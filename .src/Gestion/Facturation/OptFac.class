@@ -4,7 +4,9 @@ Private $vfac As ObjFacB
 Private $courriel As String
 Private $choix As Integer
 Private $dte As LDate
- 
+Private $regl1 As String
+Private $regl2 As String
+
 Public Sub _new(choix As Integer, num As String, nfac As String, Optional mttc As String, Optional livraison As Boolean, Optional dte As LDate = LDate(Now), Optional courriel As String)
 
   Dim chaine As Chainage
@@ -280,12 +282,27 @@ End
 Public Sub Rgmt_Click()
 
   $vfac.saisreg = Rgmt.Value
+  If Rgmt.Value Then
+    regl1.Text = $regl1
+    regl2.Text = $regl2
+    regl_lostfocus()
+  Else
+    $regl1 = regl1.Text
+    $regl2 = regl2.Text
+    regl1.Text = ""
+    regl2.Text = ""
+    $vfac.tsaisreg = ""
+  Endif
   
 End
 
 Public Sub regl_lostfocus()
 
-  $vfac.tsaisreg = regl1.Text & "\n" & regl2.Text
+  If regl2.Text Then 
+    $vfac.tsaisreg = regl1.Text & "\n" & regl2.Text
+  Else
+    $vfac.tsaisreg = regl1.Text
+  Endif
 
 End
 

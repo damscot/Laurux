@@ -144,10 +144,8 @@ Public Sub Filter_Calc()
 
   filter = "type in " & CB1Conv[CB1.Text] & " "
 
-  If CB1.Index = TriFacture.BonFacNonPaye Then
+  If CB1.Index = TriFacture.BonFacNonPaye Or CB1.Index = TriFacture.FacNonPaye Then
     filter &= " and (acquitte = 0 or acquitte is null) "
-  Else If CB1.Index = TriFacture.FacNonPaye Then
-    filter &= " and acquitte = 0 "
   Else If CB1.Index = TriFacture.FacPaye Then
     filter &= " and acquitte = 1 "
   Endif

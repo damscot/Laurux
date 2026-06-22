@@ -98,6 +98,7 @@ Public lgo As Boolean                        ''logo sur facture
 Public rescli As Result                       ''fiche client 
 Public couleur As Integer                   ''couleur de fond à l'edition
 Public couleur2 As Integer
+Public journal As String                  ''journal de vente
 Public numeroecr As Integer               ''numero ecriture
 Public numerodef As Integer               ''numero ecriture definitif
 Public cheque As Boolean                    ''bordereau de cheque
@@ -138,6 +139,8 @@ Private $numcli As String
 Private $exemplaire As Integer
 Private $numfac As String
 Private $numbl As String
+Private $sreg As String
+Private $acquitte As Boolean
 Private $cdech As String
 
 
@@ -177,30 +180,28 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
     If choix = ObjFac.finmois Then
       tab = num
     Else
+      'recherche par numero de BL
       res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numbl=&1", num)
-      If res.Available Then
-        $numbl = res!numbl
-        $numfac = res!numfac
-      Else
+      If Not res.Available Then
         res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numbl=&1", num)
         If res.Available Then 
           tab = "M"
-          $numbl = res!numbl
-          $numfac = res!numfac
         Else
+          'recherche par numero de Facture
           res = utils.db.Exec("SELECT * FROM Fiches_Bl WHERE numfac=&1", num)
-          If res.Available Then
-            $numbl = res!numbl
-            $numfac = res!numfac
-          Else
-            res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numfac=&1", $numfac)
-            If res.Available Then 
+          If Not res.Available Then
+            res = utils.db.Exec("SELECT * FROM Fiches_BlM WHERE numfac=&1", num)
+            If res.Available Then
               tab = "M"
-              $numbl = res!numbl
-              $numfac = res!numfac
             Endif
           Endif
         Endif
+      Endif
+      If res.Available Then
+        $numbl = res!numbl
+        $numfac = res!numfac
+        $acquitte = res!acquitte
+        $sreg = res!reg
       Endif
     Endif
   Endif
@@ -222,8 +223,18 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
     tpied = New String[]
     tpied = Split(res!txtfac, "\n")
   Endif
-  res = Utils.db.Exec("SELECT devise FROM Fiches_Parametres")
-  If res.Available And If res!devise Then devise = res!devise Else devise = "Euro(s)"
+  res = Utils.db.Exec("SELECT * FROM Fiches_Parametres")
+  If res.Available
+    If res!devise Then 
+      devise = res!devise
+    Else
+      devise = "Euro(s)"
+    Endif
+    If res!jrnal4 Then
+      'journal de ventes par default
+      journal = res!jrnal4
+    Endif
+  Endif
   ligne2 = Start.LocalSettings["/Soc" & Start.Societe & "/Imp2L"]
   colon = Start.LocalSettings["/Soc" & Start.Societe & "/Col"]
   imp = New Printer
@@ -268,9 +279,9 @@ Public Sub _new(Optional num As String, Optional choi As Integer, Optional dte A
   intcheque = Start.LocalSettings["/Soc" & Start.Societe & "/Cheque"]
   intcarte = Start.LocalSettings["/Soc" & Start.Societe & "/Carte"]
  
-  Catch
-    Message.Error("Veuillez vérifier vos préférences avant de continer à facturer")
-    
+  'Catch
+  '  Message.Error("Veuillez vérifier vos préférences avant de continer à facturer")
+  
 End
 
 Private Sub calech()
@@ -342,7 +353,9 @@ Private Sub numcli_Write(Value As String)
   Endif
   'gestion des règlements
   If Not IsNull(tsaisreg) And (choix <> ObjFac.finmois And choix <> ObjFac.abonnement) Then Return
-  If breg Then
+  If $acquitte Then
+    tsaisreg = "Facture acquittée par " & $sreg & " le " & $dteech.L
+  Else If breg Then
     tsaisreg = treg
   Else
     res = utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code=&1", Left(rescli!cli_reg, 2))
@@ -983,6 +996,7 @@ Public Function ecriturecompt() As Boolean
     Message.Error("Une erreur est survenue lors de l'écriture : " & ecr.numecr)
     Return True
   Endif
+  journal = ecr.resjou!code_jo
   $numfac = ecr.numfac
   numeroecr = ecr.numecr
   numerodef = ecr.numerodef
