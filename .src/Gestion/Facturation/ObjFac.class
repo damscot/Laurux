@@ -1004,6 +1004,7 @@ Public Function ecriturecompt() As Boolean
     rescomp = utils.db.Edit("Fiches_Bl", "numbl=&1", $numbl)
     rescomp!numfac = ecr.numfac
     rescomp!imp = 1
+    rescomp!reg = "Gestion"
     rescomp!dtefac = $dtedoc.G
     rescomp!ech = $dteech.G
     rescomp.Update

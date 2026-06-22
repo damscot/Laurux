@@ -4129,6 +4129,8 @@ End
 Public Sub Maj_typeBL()
 
   Dim iskey As Integer = 0
+  Dim lResult As Result
+  
 
   If Not bTypeFacture Then
     Tab = "Fiches_Bl"
@@ -4138,6 +4140,19 @@ Public Sub Maj_typeBL()
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & " where numbl = &1", num.text)
   If rResult.Available Then
     Utils.db.Exec("UPDATE  " & Tab & "  SET  type = &2 WHERE numbl = &1", num.Text, Tp)
+    If Tp = "F" Then
+      'Probably not the best position to place it here...
+      lResult = Utils.db.Exec("SELECT (sum(montantc)-sum(montantd)) as solde FROM " & Cbase.Table("TabMvt") & " where numdoc = &1 and tresorerie = 1 and compte = &2", rResult!numfac, rResult!cdclibl)
+      If lResult.Available Then
+        If LPrix(lResult!solde).G == LPrix(rResult!totalttc).G Then
+          Utils.db.Exec("UPDATE  " & Tab & "  SET acquitte = 1, mtreg = &2 WHERE numbl = &1", num.Text, LPrix(rResult!totalttc).D)
+        Else
+          Utils.db.Exec("UPDATE  " & Tab & "  SET acquitte = NULL, mtreg = &2 WHERE numbl = &1", num.Text, LPrix(lResult!solde).D)
+        Endif
+      Else
+        Utils.db.Exec("UPDATE  " & Tab & "  SET acquitte = NULL, mtreg = NULL WHERE numbl = &1", num.Text)
+      Endif
+    Endif
   Endif
   sel = ""
   TYB.Clear
