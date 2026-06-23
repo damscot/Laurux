@@ -4309,15 +4309,27 @@ End
 
 Public Sub Cacomptes_Click()
 
+  Dim Acomptes_mode As Integer
+
+  If Val(Utils.cpoint(Rticket.text)) <= 0 Then
+    Cacomptes.Clear
+    Cacomptes.Visible = False
+  Endif
+
   If Val(Utils.cpoint(TotalTk.text)) < Val(Utils.cpoint(Cacomptes.Item[3])) Then
-    If Message.Warning("Attention! Vous avez selectionné un acompte supérieur au montant du ticket!\nVous devez rembourser la différence si vous continuez!\nVoulez-vous continuer?", "Non", "Oui") == 1 Then
+    Acomptes_mode = Message.Warning("Attention! Vous avez selectionné un acompte supérieur au montant du ticket!\nVous devez rembourser la différence si vous continuez!", "Sortir", "Continuer", "Montant restant uniquement")
+    If Acomptes_mode = 1 Then
       Cacomptes.Clear
       Cacomptes.Visible = False
       Return
     Endif
   Endif
   lindacompte = Cacomptes.Item[0]
-  Bacompte.Text = Cacomptes.Item[3]
+  If Acomptes_mode = 3 Then
+    Bacompte.Text = Utils.cpoint(Rticket.text)
+  Else
+    Bacompte.Text = Cacomptes.Item[3]
+  Endif
   sIacompte = Cacomptes.Item[2]
   numacompte = Cacomptes.Item[5]
   cliacompte = Cacomptes.Item[6]
