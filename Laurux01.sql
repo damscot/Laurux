@@ -58,7 +58,8 @@ CREATE TABLE `Docs_Ged` (
   `ttc` decimal(12,2) DEFAULT NULL,
   `ht` decimal(12,2) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_code` (`code`,`type`,`compte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -81,7 +82,8 @@ DROP TABLE IF EXISTS `Docs_Tag`;
 CREATE TABLE `Docs_Tag` (
   `doc_lind` int(11) NOT NULL,
   `tag_lind` int(11) NOT NULL,
-  PRIMARY KEY (`doc_lind`,`tag_lind`)
+  PRIMARY KEY (`doc_lind`,`tag_lind`),
+  KEY `idx_tag` (`tag_lind`,`doc_lind`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -336,7 +338,13 @@ CREATE TABLE `Fiches_Art` (
   `art_bredudate` date DEFAULT NULL,
   `art_breducond` text DEFAULT NULL,
   `art_bredumnt` decimal(15,2) DEFAULT 0.00,
-  PRIMARY KEY (`art_code`)
+  PRIMARY KEY (`art_code`),
+  KEY `idx_fam` (`art_fam`),
+  KEY `idx_cfour` (`art_cfour`,`art_four`),
+  KEY `idx_four` (`art_four`),
+  KEY `idx_cequ` (`art_cequ`),
+  KEY `idx_cbarre` (`art_cbarre`),
+  KEY `idx_refcentrale` (`art_refcentrale`,`art_centrale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -500,7 +508,11 @@ CREATE TABLE `Fiches_Bl` (
   `numtick` char(7) DEFAULT NULL,
   `email` varchar(150) DEFAULT NULL,
   `gestbl` decimal(5,2) DEFAULT 0.00,
-  PRIMARY KEY (`numbl`)
+  PRIMARY KEY (`numbl`),
+  KEY `idx_cdcli` (`cdclibl`,`type`),
+  KEY `idx_type_date` (`type`,`datebl`),
+  KEY `idx_numfac` (`numfac`),
+  KEY `idx_numtick` (`numtick`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -738,7 +750,8 @@ DROP TABLE IF EXISTS `Fiches_CdBarre`;
 CREATE TABLE `Fiches_CdBarre` (
   `codep` varchar(15) NOT NULL,
   `codeb` char(13) NOT NULL,
-  PRIMARY KEY (`codep`,`codeb`)
+  PRIMARY KEY (`codep`,`codeb`),
+  KEY `idx_codeb` (`codeb`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2050,7 +2063,9 @@ CREATE TABLE `Fiches_HisEntTickets` (
   `sautre` char(1) DEFAULT NULL,
   `mautre` char(12) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
-  PRIMARY KEY (`lInd`)
+  PRIMARY KEY (`lInd`),
+  KEY `idx_numero` (`numero`),
+  KEY `idx_date` (`date`,`client`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2112,7 +2127,10 @@ CREATE TABLE `Fiches_HisLigTickets` (
   `mtva` char(12) DEFAULT NULL,
   `block` char(6) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
-  PRIMARY KEY (`lInd`)
+  PRIMARY KEY (`lInd`),
+  KEY `idx_numero` (`numero`,`block`,`type`),
+  KEY `idx_date` (`date`,`code`),
+  KEY `idx_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2193,7 +2211,9 @@ CREATE TABLE `Fiches_HistoFac` (
   `cdep` varchar(37) DEFAULT NULL,
   `acquitte` tinyint(1) DEFAULT NULL,
   `gestfac` decimal(5,2) DEFAULT 0.00,
-  PRIMARY KEY (`numfac`)
+  PRIMARY KEY (`numfac`),
+  KEY `idx_cdcli` (`cdclifac`,`datefac`),
+  KEY `idx_datefac` (`datefac`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2287,7 +2307,9 @@ CREATE TABLE `Fiches_HistoLigfac` (
   `tour_ligfac` char(15) DEFAULT NULL,
   `dtligbl_ligfac` datetime DEFAULT NULL,
   `numbl_ligfac` char(6) DEFAULT NULL,
-  PRIMARY KEY (`num_ligfac`,`numlig_ligfac`)
+  PRIMARY KEY (`num_ligfac`,`numlig_ligfac`),
+  KEY `idx_code` (`code_ligfac`,`typel_ligfac`),
+  KEY `idx_dtligbl` (`dtligbl_ligfac`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2866,7 +2888,9 @@ CREATE TABLE `Fiches_Ligbl` (
   `refl_ligbl` varchar(40) DEFAULT NULL,
   `tour_ligbl` char(15) DEFAULT NULL,
   `dte_ligbl` datetime DEFAULT NULL,
-  PRIMARY KEY (`num_ligbl`,`numlig_ligbl`)
+  PRIMARY KEY (`num_ligbl`,`numlig_ligbl`),
+  KEY `idx_code` (`code_ligbl`,`typel_ligbl`),
+  KEY `idx_dte` (`dte_ligbl`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2986,7 +3010,8 @@ CREATE TABLE `Fiches_Ligrecpt` (
   `pattc` decimal(12,3) DEFAULT NULL,
   `txconv` decimal(10,4) DEFAULT 1.0000,
   `majtarif` tinyint(1) DEFAULT 1,
-  PRIMARY KEY (`code`,`numrecpt`,`four`,`daterecpt`,`nligne`)
+  PRIMARY KEY (`code`,`numrecpt`,`four`,`daterecpt`,`nligne`),
+  KEY `idx_numrecpt` (`numrecpt`,`four`,`daterecpt`,`nligne`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3219,9 +3244,10 @@ CREATE TABLE `Fiches_Mvt` (
   `export` char(1) DEFAULT NULL,
   `control` varchar(40) DEFAULT NULL,
   PRIMARY KEY (`lind`),
-  UNIQUE KEY `lind` (`lind`),
-  UNIQUE KEY `lind_2` (`lind`),
-  UNIQUE KEY `lind_3` (`lind`)
+  KEY `idx_jour` (`jour`,`dte`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`),
+  KEY `idx_numlot` (`numlot`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3269,7 +3295,11 @@ CREATE TABLE `Fiches_Mvt1` (
   `dteval` datetime DEFAULT NULL,
   `export` char(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_jour` (`jour`,`dte`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`),
+  KEY `idx_numlot` (`numlot`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3317,7 +3347,11 @@ CREATE TABLE `Fiches_Mvt2` (
   `dteval` datetime DEFAULT NULL,
   `export` char(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_jour` (`jour`,`dte`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`),
+  KEY `idx_numlot` (`numlot`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3365,7 +3399,11 @@ CREATE TABLE `Fiches_Mvt3` (
   `dteval` datetime DEFAULT NULL,
   `export` char(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_jour` (`jour`,`dte`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`),
+  KEY `idx_numlot` (`numlot`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3413,7 +3451,11 @@ CREATE TABLE `Fiches_Mvt4` (
   `dteval` datetime DEFAULT NULL,
   `export` char(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_jour` (`jour`,`dte`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`),
+  KEY `idx_numlot` (`numlot`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3461,7 +3503,11 @@ CREATE TABLE `Fiches_Mvt5` (
   `dteval` datetime DEFAULT NULL,
   `export` char(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_jour` (`jour`,`dte`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`),
+  KEY `idx_numlot` (`numlot`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3495,7 +3541,9 @@ CREATE TABLE `Fiches_MvtA` (
   `poste` char(3) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3529,7 +3577,9 @@ CREATE TABLE `Fiches_MvtA1` (
   `poste` char(3) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3563,7 +3613,9 @@ CREATE TABLE `Fiches_MvtA2` (
   `poste` char(3) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3597,7 +3649,9 @@ CREATE TABLE `Fiches_MvtA3` (
   `poste` char(3) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3631,7 +3685,9 @@ CREATE TABLE `Fiches_MvtA4` (
   `poste` char(3) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3665,7 +3721,9 @@ CREATE TABLE `Fiches_MvtA5` (
   `poste` char(3) DEFAULT NULL,
   `validee` tinyint(1) DEFAULT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`compte`),
+  KEY `idx_compte` (`compte`,`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3716,7 +3774,9 @@ CREATE TABLE `Fiches_MvtM` (
   `lind` int(11) NOT NULL AUTO_INCREMENT,
   `datem` datetime DEFAULT NULL,
   `supprimee` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`lind2`),
+  KEY `idx_dte` (`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3767,7 +3827,9 @@ CREATE TABLE `Fiches_MvtM1` (
   `lind` int(11) NOT NULL AUTO_INCREMENT,
   `supprimee` tinyint(1) DEFAULT NULL,
   `datem` datetime DEFAULT NULL,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`lind2`),
+  KEY `idx_dte` (`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3818,7 +3880,9 @@ CREATE TABLE `Fiches_MvtM2` (
   `lind` int(11) NOT NULL AUTO_INCREMENT,
   `supprimee` tinyint(1) DEFAULT NULL,
   `datem` datetime DEFAULT NULL,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`lind2`),
+  KEY `idx_dte` (`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3869,7 +3933,9 @@ CREATE TABLE `Fiches_MvtM3` (
   `lind` int(11) NOT NULL AUTO_INCREMENT,
   `supprimee` tinyint(1) DEFAULT NULL,
   `datem` datetime DEFAULT NULL,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`lind2`),
+  KEY `idx_dte` (`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3920,7 +3986,9 @@ CREATE TABLE `Fiches_MvtM4` (
   `lind` int(11) NOT NULL AUTO_INCREMENT,
   `supprimee` tinyint(1) DEFAULT NULL,
   `datem` datetime DEFAULT NULL,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`lind2`),
+  KEY `idx_dte` (`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3971,7 +4039,9 @@ CREATE TABLE `Fiches_MvtM5` (
   `lind` int(11) NOT NULL AUTO_INCREMENT,
   `supprimee` tinyint(1) DEFAULT NULL,
   `datem` datetime DEFAULT NULL,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_numero` (`numero`,`lind2`),
+  KEY `idx_dte` (`dte`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -5292,7 +5362,8 @@ DROP TABLE IF EXISTS `Fiches_Tag`;
 CREATE TABLE `Fiches_Tag` (
   `tag` tinytext NOT NULL,
   `lind` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`lind`)
+  PRIMARY KEY (`lind`),
+  KEY `idx_tag` (`tag`(64))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -5766,4 +5837,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-29 23:35:50
+-- Dump completed on 2026-10-23 22:03:40

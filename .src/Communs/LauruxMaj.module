@@ -5864,7 +5864,7 @@ end_utf8:
     PB.Close()
   Endif
   
-  PB = New ProgBar("Correction Finale", 4)
+  PB = New ProgBar("Correction Finale", 5)
   PB.Show()
   
   PB.Avancement("Abonnements", 1)
@@ -6071,7 +6071,34 @@ end_utf8:
   Try Utils.db.Exec("ALTER TABLE Fiches_Suivis DROP INDEX numdev")
   Try Utils.db.Exec("ALTER TABLE Fiches_Suivis DROP INDEX numfac")
   Try Utils.db.Exec("ALTER TABLE Fiches_Sdepots CHANGE Mind mind INT(11) NOT NULL AUTO_INCREMENT")
-  
+
+  PB.Avancement("Nouveau indexes", 1)
+  'Introduce new index based on Opus5.5 analysis
+  Try Utils.db.Exec("ALTER TABLE Fiches_HisLigTickets ADD INDEX IF NOT EXISTS idx_numero (numero, block, type), ADD INDEX IF NOT EXISTS idx_date (`date`, code), ADD INDEX IF NOT EXISTS idx_code (code)")
+  'Fiches_Mvt puis Fiches_Mvt1..5 (les index suivent les RENAME de cloture et CREATE TABLE LIKE)
+  For $i = 0 To 5
+    Tab = "Fiches_Mvt" & IIf($i = 0, "", CStr($i))
+    Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD INDEX IF NOT EXISTS idx_compte (compte, dte), ADD INDEX IF NOT EXISTS idx_numero (numero, compte), ADD INDEX IF NOT EXISTS idx_jour (jour, dte), ADD INDEX IF NOT EXISTS idx_numlot (numlot)")
+  Next
+  Try Utils.db.Exec("ALTER TABLE Fiches_HisEntTickets ADD INDEX IF NOT EXISTS idx_numero (numero), ADD INDEX IF NOT EXISTS idx_date (`date`, client)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoLigfac ADD INDEX IF NOT EXISTS idx_code (code_ligfac, typel_ligfac), ADD INDEX IF NOT EXISTS idx_dtligbl (dtligbl_ligfac)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligbl ADD INDEX IF NOT EXISTS idx_code (code_ligbl, typel_ligbl), ADD INDEX IF NOT EXISTS idx_dte (dte_ligbl)")
+  Try Utils.db.Exec("ALTER TABLE Docs_Tag ADD INDEX IF NOT EXISTS idx_tag (tag_lind, doc_lind)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_CdBarre ADD INDEX IF NOT EXISTS idx_codeb (codeb)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Art ADD INDEX IF NOT EXISTS idx_cbarre (art_cbarre), ADD INDEX IF NOT EXISTS idx_cfour (art_cfour, art_four), ADD INDEX IF NOT EXISTS idx_refcentrale (art_refcentrale, art_centrale), ADD INDEX IF NOT EXISTS idx_four (art_four), ADD INDEX IF NOT EXISTS idx_fam (art_fam), ADD INDEX IF NOT EXISTS idx_cequ (art_cequ)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Ligrecpt ADD INDEX IF NOT EXISTS idx_numrecpt (numrecpt, four, daterecpt, nligne)")
+  Try Utils.db.Exec("ALTER TABLE Docs_Ged ADD INDEX IF NOT EXISTS idx_code (code, type, compte)")
+  'tag est un TINYTEXT : index sur prefixe obligatoire
+  Try Utils.db.Exec("ALTER TABLE Fiches_Tag ADD INDEX IF NOT EXISTS idx_tag (tag(64))")
+  Try Utils.db.Exec("ALTER TABLE Fiches_Bl ADD INDEX IF NOT EXISTS idx_cdcli (cdclibl, type), ADD INDEX IF NOT EXISTS idx_numtick (numtick), ADD INDEX IF NOT EXISTS idx_numfac (numfac), ADD INDEX IF NOT EXISTS idx_type_date (type, datebl)")
+  Try Utils.db.Exec("ALTER TABLE Fiches_HistoFac ADD INDEX IF NOT EXISTS idx_cdcli (cdclifac, datefac), ADD INDEX IF NOT EXISTS idx_datefac (datefac)")
+  For $i = 0 To 5
+    Tab = "Fiches_MvtM" & IIf($i = 0, "", CStr($i))
+    Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD INDEX IF NOT EXISTS idx_numero (numero, lind2), ADD INDEX IF NOT EXISTS idx_dte (dte)")
+    Tab = "Fiches_MvtA" & IIf($i = 0, "", CStr($i))
+    Try Utils.db.Exec("ALTER TABLE " & Tab & " ADD INDEX IF NOT EXISTS idx_numero (numero, compte), ADD INDEX IF NOT EXISTS idx_compte (compte, dte)")
+  Next
+
   PB.Finalize()
   PB.Close()
   
