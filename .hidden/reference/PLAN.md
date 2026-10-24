@@ -225,12 +225,11 @@ soit par une autre fonction `Public` testée, soit par un replay. En effet, gb.t
 
 | Phase | Lot | Fichiers | État | Date | Commit utilisateur |
 |---|---|---|---|---|---|
-| 0 | PLAN.md | – | fait | 2026-10-24 | `a0bf712a` |
-| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `1a49d984`, `4767676b` |
-| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `a22f2fca` |
-| 1 | `.src/Communs` (133 reworks, 110 anomalies, 164 tests) | 22 | en revue | 2026-10-24 | |
-| 1 | `.src/Start.module`, `.src/Serveur.module` | 2 | à faire | | |
-| 1 | `.src/Compta` (sous-lots par sous-répertoire) | 83 | à faire | | |
+| 0 | PLAN.md | – | fait | 2026-10-24 | `92b99f46` |
+| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `cab25f21`, `789724f3` |
+| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `374ae97c` |
+| 1 | `.src/Communs` (134 reworks, 110 anomalies, 164 tests) | 22 | fait | 2026-10-24 | `06a44a30` |
+| 1 | `.src/Start.module`, `.src/Serveur.module` + `.src/Compta` (561 reworks, 380 anomalies, 634 tests) | 85 | en revue | 2026-10-24 | |
 | 1 | `.src/Gestion` (sous-lots par sous-répertoire) | 162 | à faire | | |
 | 1 | `.src/Caisse` | 28 | à faire | | |
 | 1 | `.src/Statistiques` | 19 | à faire | | |
