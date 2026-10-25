@@ -226,16 +226,14 @@ soit par une autre fonction `Public` testée, soit par un replay. En effet, gb.t
 | Phase | Lot | Fichiers | État | Date | Commit utilisateur |
 |---|---|---|---|---|---|
 | 0 | PLAN.md | – | fait | 2026-10-24 | `92b99f46` |
-| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `fe9cfeb9`, `fb8535d7` |
-| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `3b6e38b5` |
-| 1 | `.src/Communs` (134 reworks, 110 anomalies, 164 tests) | 22 | fait | 2026-10-24 | `a8b5ffd9` |
-| 1 | `.src/Start.module`, `.src/Serveur.module` + `.src/Compta` (561 reworks, 381 anomalies, 635 tests) | 85 | fait | 2026-10-24 | `84ebe128` |
-| 1 | `.src/Gestion` — sous-lot 1 : Facturation, Tables, Reglements, Entrées, Depots, fichiers racine (393 reworks, 290 anomalies, 413 tests) + passe d'outillage (deps.py, gambas_parse, gendoc, diffdeps) | 54 | fait | 2026-10-25 | `09741fa8` |
-| 1 | `.src/Gestion` — sous-lot 2 : Stock, option, Impressions, Etiquettes, Lcr, Mails, SMS (603 reworks, 428 anomalies, 769 tests) + passe d'outillage (types locaux par fonction, `.report`, `jamais_reference`, `sql_params`) | 108 | fait | 2026-10-26 | `9a94090e` |
-| 1 | `.src/Caisse` (172 reworks, 131 anomalies, 188 tests) + outillage (`auto_instance`, `collision_casse`, `Classe.$membre`) | 28 | en revue | 2026-10-26 | |
-| 1 | `.src/Statistiques` | 19 | à faire | | |
-| 1 | `.src/Affichages` | 16 | à faire | | |
-| 1 | `.src/Archivages` | 8 | à faire | | |
+| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `b6d6d2ed`, `7dc63a37` |
+| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `5c36b82a` |
+| 1 | `.src/Communs` (134 reworks, 110 anomalies, 164 tests) | 22 | fait | 2026-10-24 | `d4fb9772` |
+| 1 | `.src/Start.module`, `.src/Serveur.module` + `.src/Compta` (561 reworks, 381 anomalies, 635 tests) | 85 | fait | 2026-10-24 | `77c53475` |
+| 1 | `.src/Gestion` — sous-lot 1 : Facturation, Tables, Reglements, Entrées, Depots, fichiers racine (393 reworks, 290 anomalies, 413 tests) + passe d'outillage (deps.py, gambas_parse, gendoc, diffdeps) | 54 | fait | 2026-10-25 | `df702605` |
+| 1 | `.src/Gestion` — sous-lot 2 : Stock, option, Impressions, Etiquettes, Lcr, Mails, SMS (603 reworks, 428 anomalies, 769 tests) + passe d'outillage (types locaux par fonction, `.report`, `jamais_reference`, `sql_params`) | 108 | fait | 2026-10-26 | `504d67ae` |
+| 1 | `.src/Caisse` (172 reworks, 131 anomalies, 188 tests) + outillage (`auto_instance`, `collision_casse`, `Classe.$membre`) | 28 | fait | 2026-10-26 | `330f5393` |
+| 1 | `.src/Statistiques` + `.src/Affichages` + `.src/Archivages` (lots regroupés à la demande de l'utilisateur ; 278 reworks, 171 anomalies, 285 tests) | 43 | en revue | 2026-10-26 | |
 | 1 | `.src/Reports` | 24 | à faire | | |
 | 1 | `.src/Tests` | 1 | à faire | | |
 | 1 | `KPI.md` global | 457 | à faire | | |
