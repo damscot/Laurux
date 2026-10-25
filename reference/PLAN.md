@@ -177,7 +177,8 @@ Liste des tests à implémenter. Pour chaque test :
 5. **Modules complexes** (Facture, Caisse, Moulinage, Clôture, Inventaire…) : présenter à l'utilisateur la liste
    des scénarios proposés pour chacun, attendre sa validation, puis générer les tests en visant une couverture maximale.
 6. **Couverture et performance de base** : lancer `gbx3 -t` et `gbx3 -p` sur toute la suite.
-   `coverage.py` reporte les résultats dans chaque `rework.md` (ligne `baseline`) et dans `KPI.md`.
+   `coverage.py` reporte les résultats dans chaque `rework.md` (ligne `baseline`) et écrit
+   `reference/data/coverage.json` (`{"<rel>": {"coverage": %, "duration": s}}`), lu par `kpi_report.py` pour `KPI.md`.
 7. **Critère de sortie** :
    - `gbc3 -agt` passe sans erreur ;
    - `./Laurux -T all` renvoie 0 ;
@@ -207,7 +208,8 @@ Boucle sur `TODO.md`, dans l'ordre, sur la branche `rework/phase4`. Pour chaque 
 
 1. Implémenter le rework_id. Si une API `Public` change, mettre à jour les appelants. Aucun `.form` ni schéma n'est modifié.
 2. Valider : `gbc3 -agt`, puis `./Laurux -T all`, puis les replays concernés (selon `dependencies.md`). Le diff entre les deux clones doit être vide.
-3. Mettre à jour les KPI dans `rework.md` et `KPI.md`, puis cocher la case. Mettre à jour les liens de ligne
+3. Mettre à jour les KPI dans `rework.md` (`gendoc.py --history <REWORK_ID> --commit <sha>`), cocher la case,
+   puis régénérer `KPI.md` (`python3 reference/tools/kpi_report.py`). Mettre à jour les liens de ligne
    décalés par le rework dans les documents du fichier **et** de ses appelants, puis lancer `gendoc.py` et
    `links.py --check` (aucun problème toléré).
 4. `git commit` avec le message `<src_path>/rework.md <REWORK_ID>`. Le code, les docs et les KPI sont dans le même commit.
@@ -226,16 +228,16 @@ soit par une autre fonction `Public` testée, soit par un replay. En effet, gb.t
 | Phase | Lot | Fichiers | État | Date | Commit utilisateur |
 |---|---|---|---|---|---|
 | 0 | PLAN.md | – | fait | 2026-10-24 | `92b99f46` |
-| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `b6d6d2ed`, `7dc63a37` |
-| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `5c36b82a` |
-| 1 | `.src/Communs` (134 reworks, 110 anomalies, 164 tests) | 22 | fait | 2026-10-24 | `d4fb9772` |
-| 1 | `.src/Start.module`, `.src/Serveur.module` + `.src/Compta` (561 reworks, 381 anomalies, 635 tests) | 85 | fait | 2026-10-24 | `77c53475` |
-| 1 | `.src/Gestion` — sous-lot 1 : Facturation, Tables, Reglements, Entrées, Depots, fichiers racine (393 reworks, 290 anomalies, 413 tests) + passe d'outillage (deps.py, gambas_parse, gendoc, diffdeps) | 54 | fait | 2026-10-25 | `df702605` |
-| 1 | `.src/Gestion` — sous-lot 2 : Stock, option, Impressions, Etiquettes, Lcr, Mails, SMS (603 reworks, 428 anomalies, 769 tests) + passe d'outillage (types locaux par fonction, `.report`, `jamais_reference`, `sql_params`) | 108 | fait | 2026-10-26 | `504d67ae` |
-| 1 | `.src/Caisse` (172 reworks, 131 anomalies, 188 tests) + outillage (`auto_instance`, `collision_casse`, `Classe.$membre`) | 28 | fait | 2026-10-26 | `330f5393` |
-| 1 | `.src/Statistiques` + `.src/Affichages` + `.src/Archivages` (lots regroupés à la demande de l'utilisateur ; 278 reworks, 171 anomalies, 285 tests) | 43 | fait | 2026-10-26 | `5675a876` |
-| 1 | `.src/Reports` + `.src/Tests` (TriTest = test de TriGen, étude allégée à la demande de l'utilisateur ; 124 reworks, 39 anomalies, 130 tests) | 25 | en revue | 2026-10-26 | |
-| 1 | `KPI.md` global | 457 | à faire | | |
+| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `b35cec22`, `23c6742b` |
+| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `f461c4f4` |
+| 1 | `.src/Communs` (134 reworks, 110 anomalies, 164 tests) | 22 | fait | 2026-10-24 | `34fdb4f6` |
+| 1 | `.src/Start.module`, `.src/Serveur.module` + `.src/Compta` (561 reworks, 381 anomalies, 635 tests) | 85 | fait | 2026-10-24 | `c4ec7ca7` |
+| 1 | `.src/Gestion` — sous-lot 1 : Facturation, Tables, Reglements, Entrées, Depots, fichiers racine (393 reworks, 290 anomalies, 413 tests) + passe d'outillage (deps.py, gambas_parse, gendoc, diffdeps) | 54 | fait | 2026-10-25 | `bd92f827` |
+| 1 | `.src/Gestion` — sous-lot 2 : Stock, option, Impressions, Etiquettes, Lcr, Mails, SMS (603 reworks, 428 anomalies, 769 tests) + passe d'outillage (types locaux par fonction, `.report`, `jamais_reference`, `sql_params`) | 108 | fait | 2026-10-26 | `1f83d458` |
+| 1 | `.src/Caisse` (172 reworks, 131 anomalies, 188 tests) + outillage (`auto_instance`, `collision_casse`, `Classe.$membre`) | 28 | fait | 2026-10-26 | `8bb2d22c` |
+| 1 | `.src/Statistiques` + `.src/Affichages` + `.src/Archivages` (lots regroupés à la demande de l'utilisateur ; 278 reworks, 171 anomalies, 285 tests) | 43 | fait | 2026-10-26 | `00b38694` |
+| 1 | `.src/Reports` + `.src/Tests` (TriTest = test de TriGen, étude allégée à la demande de l'utilisateur ; 124 reworks, 39 anomalies, 130 tests) | 25 | fait | 2026-10-26 | `6a223c11` |
+| 1 | `KPI.md` global (généré par `tools/kpi_report.py`, 2 673 reworks, 1 800 anomalies, 3 086 tests) | 457 | en revue | 2026-10-26 | |
 | 2 | Infra Docker + runner + migration gb.test | – | à faire | | |
 | 2 | Tests par lot (même ordre que la phase 1) | 457 | à faire | | |
 | 2 | Couverture et performance de base | – | à faire | | |
