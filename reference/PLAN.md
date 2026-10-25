@@ -226,13 +226,13 @@ soit par une autre fonction `Public` testée, soit par un replay. En effet, gb.t
 | Phase | Lot | Fichiers | État | Date | Commit utilisateur |
 |---|---|---|---|---|---|
 | 0 | PLAN.md | – | fait | 2026-10-24 | `92b99f46` |
-| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `0dec5b91`, `3aaf2eee` |
-| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `cfad9f65` |
-| 1 | `.src/Communs` (134 reworks, 110 anomalies, 164 tests) | 22 | fait | 2026-10-24 | `77766ac2` |
-| 1 | `.src/Start.module`, `.src/Serveur.module` + `.src/Compta` (561 reworks, 381 anomalies, 635 tests) | 85 | fait | 2026-10-24 | `1b728135` |
-| 1 | `.src/Gestion` — sous-lot 1 : Facturation, Tables, Reglements, Entrées, Depots, fichiers racine (393 reworks, 290 anomalies, 413 tests) + passe d'outillage (deps.py, gambas_parse, gendoc, diffdeps) | 54 | fait | 2026-10-25 | `9eb63c48` |
-| 1 | `.src/Gestion` — sous-lot 2 : Stock, option, Impressions, Etiquettes, Lcr, Mails, SMS (603 reworks, 428 anomalies, 769 tests) + passe d'outillage (types locaux par fonction, `.report`, `jamais_reference`, `sql_params`) | 108 | en revue | 2026-10-26 | |
-| 1 | `.src/Caisse` | 28 | à faire | | |
+| 1 | `tools/` (kpi, deps, gendoc, links, diffdeps) + KPI initiaux + modèle LPrix | – | fait | 2026-10-24 | `fe9cfeb9`, `fb8535d7` |
+| 1 | `.src/Utils` (412 reworks, 239 anomalies, 503 tests) | 92 | fait | 2026-10-24 | `3b6e38b5` |
+| 1 | `.src/Communs` (134 reworks, 110 anomalies, 164 tests) | 22 | fait | 2026-10-24 | `a8b5ffd9` |
+| 1 | `.src/Start.module`, `.src/Serveur.module` + `.src/Compta` (561 reworks, 381 anomalies, 635 tests) | 85 | fait | 2026-10-24 | `84ebe128` |
+| 1 | `.src/Gestion` — sous-lot 1 : Facturation, Tables, Reglements, Entrées, Depots, fichiers racine (393 reworks, 290 anomalies, 413 tests) + passe d'outillage (deps.py, gambas_parse, gendoc, diffdeps) | 54 | fait | 2026-10-25 | `09741fa8` |
+| 1 | `.src/Gestion` — sous-lot 2 : Stock, option, Impressions, Etiquettes, Lcr, Mails, SMS (603 reworks, 428 anomalies, 769 tests) + passe d'outillage (types locaux par fonction, `.report`, `jamais_reference`, `sql_params`) | 108 | fait | 2026-10-26 | `9a94090e` |
+| 1 | `.src/Caisse` (172 reworks, 131 anomalies, 188 tests) + outillage (`auto_instance`, `collision_casse`, `Classe.$membre`) | 28 | en revue | 2026-10-26 | |
 | 1 | `.src/Statistiques` | 19 | à faire | | |
 | 1 | `.src/Affichages` | 16 | à faire | | |
 | 1 | `.src/Archivages` | 8 | à faire | | |
