@@ -233,9 +233,8 @@ soit par une autre fonction `Public` testée, soit par un replay. En effet, gb.t
 | 1 | `.src/Gestion` — sous-lot 1 : Facturation, Tables, Reglements, Entrées, Depots, fichiers racine (393 reworks, 290 anomalies, 413 tests) + passe d'outillage (deps.py, gambas_parse, gendoc, diffdeps) | 54 | fait | 2026-10-25 | `df702605` |
 | 1 | `.src/Gestion` — sous-lot 2 : Stock, option, Impressions, Etiquettes, Lcr, Mails, SMS (603 reworks, 428 anomalies, 769 tests) + passe d'outillage (types locaux par fonction, `.report`, `jamais_reference`, `sql_params`) | 108 | fait | 2026-10-26 | `504d67ae` |
 | 1 | `.src/Caisse` (172 reworks, 131 anomalies, 188 tests) + outillage (`auto_instance`, `collision_casse`, `Classe.$membre`) | 28 | fait | 2026-10-26 | `330f5393` |
-| 1 | `.src/Statistiques` + `.src/Affichages` + `.src/Archivages` (lots regroupés à la demande de l'utilisateur ; 278 reworks, 171 anomalies, 285 tests) | 43 | en revue | 2026-10-26 | |
-| 1 | `.src/Reports` | 24 | à faire | | |
-| 1 | `.src/Tests` | 1 | à faire | | |
+| 1 | `.src/Statistiques` + `.src/Affichages` + `.src/Archivages` (lots regroupés à la demande de l'utilisateur ; 278 reworks, 171 anomalies, 285 tests) | 43 | fait | 2026-10-26 | `5675a876` |
+| 1 | `.src/Reports` + `.src/Tests` (TriTest = test de TriGen, étude allégée à la demande de l'utilisateur ; 124 reworks, 39 anomalies, 130 tests) | 25 | en revue | 2026-10-26 | |
 | 1 | `KPI.md` global | 457 | à faire | | |
 | 2 | Infra Docker + runner + migration gb.test | – | à faire | | |
 | 2 | Tests par lot (même ordre que la phase 1) | 457 | à faire | | |
