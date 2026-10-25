@@ -9,12 +9,14 @@ Scripts Python 3 (bibliothèque standard uniquement), lancés depuis la racine d
 | `deps.py` | Graphe des dépendances inter-fichiers (heuristique statique), tables SQL, handlers GUI, portée réductible |
 | `gendoc.py` | Crée/rafraîchit les 5 documents de `.hidden/reference/<source>/` ; ne régénère que les blocs `<!-- AUTO:… -->`, puis appelle `links.py` |
 | `links.py` | Recalcule les pointeurs `[Fichier.class:Fonction]()` / `[Fichier.class:123]()` vers les sources ; `--check` pour contrôler |
+| `kpi_report.py` | Génère `.hidden/reference/KPI.md` : avancement (reworks, anomalies, tests), KPI globaux initial → actuel, par lot, points chauds et détail par fichier ; lit `data/kpi_initial.json`, les sources, les `rework.md`/`test.md` et, en phase 2, `data/coverage.json` |
 | `diffdeps.py` | Compare deux `deps.json` et liste les documents rédigés à revoir (appelants ajoutés ou retirés, portée annoncée réductible mais membre utilisé, fichier annoncé mort mais appelé) |
 
 ```bash
 python3 .hidden/reference/tools/kpi.py --label initial --json .hidden/reference/data/kpi_initial.json
 python3 .hidden/reference/tools/deps.py --json .hidden/reference/data/deps.json
 python3 .hidden/reference/tools/gendoc.py --history initial --commit 6b6b9dfc .src/Utils
+python3 .hidden/reference/tools/kpi_report.py                       # régénère .hidden/reference/KPI.md (après chaque rework_id)
 
 # Extrait ciblé de .hidden/reference/data/deps.json (sans réanalyser les sources)
 python3 .hidden/reference/tools/deps.py -q LPrix                          # un fichier, par nom
