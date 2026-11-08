@@ -111,6 +111,8 @@ End
 
 Public Sub Form_Open()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Dtef.Text = $dte.L
   $vfac.dtedoc = $dte
   $vfac.numcli = $vfac.numcli

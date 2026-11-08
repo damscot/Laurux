@@ -2,6 +2,8 @@
 
 Public Sub Form_Open()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Try Checkbox1.value = Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"]
 
 End

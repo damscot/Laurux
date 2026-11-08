@@ -1,10 +1,23 @@
+# Laurux sous Docker
+
+Dockerfile multi-stage :
+  - étape « db »  : MariaDB 10.11 configuré pour Laurux (mysql/laurux.cnf, mysql/initdb/10-laurux.sh) ;
+  - étape « app » : hérite de « db » et ajoute Gambas, X déporté (xpra, ssh) et Laurux / Laurux-Pos.
+
+## Base de test (tests de non-régression, .src/Tests/Framework/runner.py)
+
+docker compose -f docker-compose.test.yml up -d --build --wait     # 127.0.0.1:13306, utilisateur laurux/laurux
+docker compose -f docker-compose.test.yml down
+
+## Application complète (étape app)
+
 # you may use docker desktop (https://www.docker.com/products/docker-desktop/) package to ease docker usage
 
 # build image
-docker build . -t laurux_master
+docker build --target app . -t laurux-app
 
 # create named containers
-docker run --name laurux-master -p 13306:3306 -p 10022:22 -it -e HOST_USER_ID=$(id -u) -e HOST_USER_GID=$(id -g) laurux_master /bin/bash
+docker run --name laurux-app -p 13306:3306 -p 10022:22 -it -e HOST_USER_ID=$(id -u) -e HOST_USER_GID=$(id -g) laurux-app /bin/bash
 
 # cleanup ssh connection id to connect easily to containers when you alter docker image or start a fresh container
 ssh-keygen -f /home/$USER/.ssh/known_hosts -R '[localhost]:10022' 

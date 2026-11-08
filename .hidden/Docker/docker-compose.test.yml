@@ -1,0 +1,32 @@
+# Base de données jetable des tests de non-régression (phase 2 du rework).
+# Utilisée par .src/Tests/Framework/runner.py ; à lancer depuis ce répertoire :
+#   docker compose -p laurux-test-13306 -f docker-compose.test.yml up -d --build --wait
+#   docker compose -p laurux-test-13306 -f docker-compose.test.yml down
+# Plusieurs bases en parallèle (un agent par base) : LAURUX_TEST_DB_PORT=13307 et -p laurux-test-13307.
+#
+# Données en tmpfs (rapide, rien ne persiste). Port lié à la boucle locale uniquement.
+# LAURUX_SQL_MODE : sql_mode du serveur. Défaut NO_ENGINE_SUBSTITUTION (non strict), comme en production :
+# Fmenu.class:175 force « SET @@global.sql_mode=NO_ENGINE_SUBSTITUTION » à chaque démarrage de Laurux.
+
+services:
+  db:
+    build:
+      context: .
+      target: db
+    image: laurux-db:10.11
+    environment:
+      LAURUX_USER: laurux
+      LAURUX_PASSWORD: laurux
+      MARIADB_ROOT_PASSWORD: laurux-root
+      TZ: UTC
+    command:
+      - "--sql-mode=${LAURUX_SQL_MODE-NO_ENGINE_SUBSTITUTION}"
+    ports:
+      - "127.0.0.1:${LAURUX_TEST_DB_PORT:-13306}:3306"
+    tmpfs:
+      - /var/lib/mysql:rw,size=1g
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 5s
+      retries: 30

@@ -1,0 +1,1382 @@
+diff --git a/.project b/.project
+index 0200aeba..ea7c52de 100644
+--- a/.project
++++ b/.project
+@@ -27,6 +27,7 @@ Component=gb.xml.html
+ Component=gb.db.mysql
+ Component=gb.db.sqlite3
+ Component=gb.form.print
++Component=gb.test
+ Description="Laurux. Programme de Comptabilité, de gestion et de point de vente pour PME."
+ Authors="Jacky Tripoteau"
+ Arguments=[["-r"],["-l"],["-p"],["-t","all"],["-d","8,8","-l"],["--devel"]]
+diff --git a/.src/Affichages/ACom.class b/.src/Affichages/ACom.class
+index 400c19b1..c15d022a 100644
+--- a/.src/Affichages/ACom.class
++++ b/.src/Affichages/ACom.class
+@@ -4,6 +4,8 @@ Private numbl As String
+ 
+ Public Sub _new($num As String, $code As String, $date As String, $montant As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   numbl = $num
+   Codecli.Text = $code
+diff --git a/.src/Affichages/AFacture.class b/.src/Affichages/AFacture.class
+index 83e90b5d..307f0583 100644
+--- a/.src/Affichages/AFacture.class
++++ b/.src/Affichages/AFacture.class
+@@ -4,6 +4,8 @@ Private numbl As String
+ 
+ Public Sub _new($num As String, $code As String, $nom As String, $date As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   numbl = $num
+   Codecli.Text = $code
+diff --git a/.src/Affichages/TriCpt.class b/.src/Affichages/TriCpt.class
+index 1a349c72..140981fc 100644
+--- a/.src/Affichages/TriCpt.class
++++ b/.src/Affichages/TriCpt.class
+@@ -100,6 +100,8 @@ End
+ 
+ Public Sub form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   tricond()
+   
+ End
+diff --git a/.src/Affichages/TriFac.class b/.src/Affichages/TriFac.class
+index 46fa6620..b5d47c1c 100644
+--- a/.src/Affichages/TriFac.class
++++ b/.src/Affichages/TriFac.class
+@@ -17,6 +17,8 @@ Private lg As Integer
+ 
+ Public Sub _New(cclient As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   lg = Int(ColFac.height / ColFac.Rows.Height) - 1
+   Titre()
+   If Not IsNull(cclient) Then
+diff --git a/.src/Affichages/TriFac2.class b/.src/Affichages/TriFac2.class
+index 92be8084..9b3b6fb9 100644
+--- a/.src/Affichages/TriFac2.class
++++ b/.src/Affichages/TriFac2.class
+@@ -18,6 +18,8 @@ Private Client As String
+ 
+ Public Sub _New(cclient As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Titre()
+   lg = Int(ColFac.height / ColFac.Rows.Height) - 1
+   If Not IsNull(cclient) Then
+diff --git a/.src/Affichages/TriHistos.class b/.src/Affichages/TriHistos.class
+index 3242c46e..b3300681 100644
+--- a/.src/Affichages/TriHistos.class
++++ b/.src/Affichages/TriHistos.class
+@@ -11,6 +11,8 @@ Private Periode As Integer
+ 
+ Public Sub _new(Codea As String, Four As String, decimale As String, Triart As String, Thisto As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   decm = Decimale
+   Tri = Triart
+diff --git a/.src/Archivages/RazClientd.class b/.src/Archivages/RazClientd.class
+index 6518b7db..f0ee28b0 100644
+--- a/.src/Archivages/RazClientd.class
++++ b/.src/Archivages/RazClientd.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+ 
+ End
+diff --git a/.src/Archivages/RazDevis.class b/.src/Archivages/RazDevis.class
+index d4134d91..292b1798 100644
+--- a/.src/Archivages/RazDevis.class
++++ b/.src/Archivages/RazDevis.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] Then CheckBox1.Visible = True
+ 
+diff --git a/.src/Archivages/RazHistoFac.class b/.src/Archivages/RazHistoFac.class
+index 20483504..d3fa79ee 100644
+--- a/.src/Archivages/RazHistoFac.class
++++ b/.src/Archivages/RazHistoFac.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] Then CheckBox1.Visible = True
+ 
+diff --git a/.src/Archivages/RazHistoFbl.class b/.src/Archivages/RazHistoFbl.class
+index 93df8035..55f0bfbc 100644
+--- a/.src/Archivages/RazHistoFbl.class
++++ b/.src/Archivages/RazHistoFbl.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+ 
+ End
+diff --git a/.src/Archivages/RazHistoTk.class b/.src/Archivages/RazHistoTk.class
+index f4bc321a..ea449483 100644
+--- a/.src/Archivages/RazHistoTk.class
++++ b/.src/Archivages/RazHistoTk.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+ 
+ End
+diff --git a/.src/Archivages/RazRlvb.class b/.src/Archivages/RazRlvb.class
+index f64d3f20..20b92ed9 100644
+--- a/.src/Archivages/RazRlvb.class
++++ b/.src/Archivages/RazRlvb.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+ 
+ End
+diff --git a/.src/Caisse/Bordereaux.class b/.src/Caisse/Bordereaux.class
+index e597abd8..9b5602f6 100644
+--- a/.src/Caisse/Bordereaux.class
++++ b/.src/Caisse/Bordereaux.class
+@@ -5,6 +5,8 @@ Private pdf As Cbordereaux
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+ 
+ End
+diff --git a/.src/Caisse/Fclientc.class b/.src/Caisse/Fclientc.class
+index bffd9f9e..730ed465 100644
+--- a/.src/Caisse/Fclientc.class
++++ b/.src/Caisse/Fclientc.class
+@@ -46,6 +46,8 @@ Public Sub Form_Open()
+ 
+   Dim rResult As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Tab = "Fiches_ClientCaisse"
+   rResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
+   If rResult.Available Then
+diff --git a/.src/Caisse/LibelAvoirs.class b/.src/Caisse/LibelAvoirs.class
+index 548dd114..3ab4bc8e 100644
+--- a/.src/Caisse/LibelAvoirs.class
++++ b/.src/Caisse/LibelAvoirs.class
+@@ -37,6 +37,8 @@ Public Sub Form_Open()
+ 
+   Dim rResult As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLibelAvoirs") & "")
+   If rResult.Available Then TxtAvoirs.Text = rResult!libelav
+ 
+diff --git a/.src/Caisse/LibelTicket.class b/.src/Caisse/LibelTicket.class
+index d26409c2..37a05dd0 100644
+--- a/.src/Caisse/LibelTicket.class
++++ b/.src/Caisse/LibelTicket.class
+@@ -36,6 +36,8 @@ Public Sub Form_Open()
+ 
+   Dim rResult As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLibelTicket") & "")
+   If rResult.Available Then Txtbfac.Text = rResult!libeltk
+ 
+diff --git a/.src/Caisse/Moulinage.class b/.src/Caisse/Moulinage.class
+index 385045e7..5ec0e3be 100644
+--- a/.src/Caisse/Moulinage.class
++++ b/.src/Caisse/Moulinage.class
+@@ -55,6 +55,8 @@ End
+ 
+ Public Sub form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Parametres()
+   Ventilation()
+ 
+diff --git a/.src/Communs/Deblockbl.class b/.src/Communs/Deblockbl.class
+index 822c6e45..34273d16 100644
+--- a/.src/Communs/Deblockbl.class
++++ b/.src/Communs/Deblockbl.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Textbox1.SetFocus
+ 
+ End
+diff --git a/.src/Communs/DocActif.class b/.src/Communs/DocActif.class
+index 9b0e7c60..c5890ae4 100644
+--- a/.src/Communs/DocActif.class
++++ b/.src/Communs/DocActif.class
+@@ -20,6 +20,8 @@ End
+ 
+ Public Sub Form_Open()
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   DOCT.Text = "Type"
+   DOCN.Text = "Num"
+   USERN.Text = "Utilisateur"
+diff --git a/.src/Communs/FRestore.class b/.src/Communs/FRestore.class
+index f7761936..7ad7ff3d 100644
+--- a/.src/Communs/FRestore.class
++++ b/.src/Communs/FRestore.class
+@@ -30,6 +30,8 @@ Private Compb As Boolean
+ 
+ Public Sub _New()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Try SauveB.Text = Start.LocalSettings["/Rep_Sauv"]
+   Try Compb = Start.LocalSettings["/Compression"]
+ 
+diff --git a/.src/Communs/Fblocsoc.class b/.src/Communs/Fblocsoc.class
+index aa8fff66..3563fd8a 100644
+--- a/.src/Communs/Fblocsoc.class
++++ b/.src/Communs/Fblocsoc.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Try Checkbox1.value = Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"]
+ 
+ End
+diff --git a/.src/Communs/Fprepdus.class b/.src/Communs/Fprepdus.class
+index 5fc476a1..8220b09e 100644
+--- a/.src/Communs/Fprepdus.class
++++ b/.src/Communs/Fprepdus.class
+@@ -7,6 +7,8 @@ Public Sub _new()
+ 
+   Dim rParam As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   rParam = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & "")
+   If rParam.Available Then
+diff --git a/.src/Communs/Fsystem.class b/.src/Communs/Fsystem.class
+index b36af8a1..db9930c8 100644
+--- a/.src/Communs/Fsystem.class
++++ b/.src/Communs/Fsystem.class
+@@ -13,6 +13,8 @@ Public Sub Form_Open()
+   Dim sLib As String
+   Dim aDir As String[]
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   sTemp = Temp$("report")
+   Try Mkdir sTemp
+diff --git a/.src/Communs/MDP.class b/.src/Communs/MDP.class
+index cde72982..a132a0a3 100644
+--- a/.src/Communs/MDP.class
++++ b/.src/Communs/MDP.class
+@@ -4,6 +4,8 @@ Private global As Boolean
+ 
+ Public Sub _new(Optional Glob As Boolean = False)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   global = Glob
+   Me.Center
+ 
+diff --git a/.src/Communs/Majversion.class b/.src/Communs/Majversion.class
+index 1000e3f9..f2099add 100644
+--- a/.src/Communs/Majversion.class
++++ b/.src/Communs/Majversion.class
+@@ -23,6 +23,8 @@ Public Sub Form_Open()
+   Dim Elem As XmlElement[]
+   Dim i As Integer = 1
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Majtitle.Text = "Mise à Jour de " & Application.Name
+ 
+   hClient = New HttpClient As "hClient"
+diff --git a/.src/Communs/Raz.class b/.src/Communs/Raz.class
+index 00c6dfc8..26735772 100644
+--- a/.src/Communs/Raz.class
++++ b/.src/Communs/Raz.class
+@@ -1,5 +1,11 @@
+ ' Gambas class file
+ 
++Public Sub Form_Open()
++
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
++End
++
+ Public Sub Button1_Click()
+ 
+   Dim rarts As Result
+diff --git a/.src/Compta/Analytique.class b/.src/Compta/Analytique.class
+index 37c5cb3f..57fc767c 100644
+--- a/.src/Compta/Analytique.class
++++ b/.src/Compta/Analytique.class
+@@ -53,6 +53,8 @@ End
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   Deb1()
+   Button2.SetFocus
+diff --git a/.src/Compta/Impressions/Anomalies.class b/.src/Compta/Impressions/Anomalies.class
+index 2db86313..b7daeb96 100644
+--- a/.src/Compta/Impressions/Anomalies.class
++++ b/.src/Compta/Impressions/Anomalies.class
+@@ -7,6 +7,8 @@ Private dte2 As String
+ 
+ Public Sub Form_Open()
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   dteN1.Text = Format(Exercice_End(0), "dd.mm.yyyy")
+   dteN0.Text = Format(Exercice_Begin(0), "dd.mm.yyyy")
+   Tab = "Fiches_Mvt"
+diff --git a/.src/Compta/Impressions/BordereauxC.class b/.src/Compta/Impressions/BordereauxC.class
+index 37b265fe..69d588d5 100644
+--- a/.src/Compta/Impressions/BordereauxC.class
++++ b/.src/Compta/Impressions/BordereauxC.class
+@@ -24,6 +24,8 @@ Public Sub Form_Open()
+   Dim rBanque As Result
+   Dim Frmt As New String[]
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Frmt = Utils.FColr(Start.LocalSettings["/Coul/Focus"])
+   CoulFoc = Val(Frmt[0])
+   Frmt = Utils.FColr(Start.LocalSettings["/Coul/Znaff"])
+diff --git a/.src/Compta/Impressions/FTVA.class b/.src/Compta/Impressions/FTVA.class
+index 338e3dd4..a5109c37 100644
+--- a/.src/Compta/Impressions/FTVA.class
++++ b/.src/Compta/Impressions/FTVA.class
+@@ -35,6 +35,8 @@ Public Sub Form_Open()
+   Dim tmpMois, tmpMois2, i As Integer
+   Dim rResult As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Tabp = "Fiches_Parametres"
+   rResult = Utils.db.Exec("SELECT * FROM " & Tabp & " ")
+   datec2 = Utils.Cdate_Comp(rResult!dteclec1)
+diff --git a/.src/Compta/Pointage.class b/.src/Compta/Pointage.class
+index 23d07c6e..be24a030 100644
+--- a/.src/Compta/Pointage.class
++++ b/.src/Compta/Pointage.class
+@@ -37,6 +37,8 @@ Private $lst As Listextcpt
+ 
+ Public Sub _New()
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   dte.Type = TextReg.EstDate
+   dte.Text = LDate(Now).L
+diff --git a/.src/Compta/Relances/Ligcli.class b/.src/Compta/Relances/Ligcli.class
+index aa8e2033..a987fbab 100644
+--- a/.src/Compta/Relances/Ligcli.class
++++ b/.src/Compta/Relances/Ligcli.class
+@@ -23,6 +23,8 @@ Public Sub _new(numcli As Integer, numtag As Integer, devises As String, Scr As
+   Dim res As Result
+   Dim i, j As Integer
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   $inumcli = numcli
+   Me.tag = numtag
+   $scr = Scr
+diff --git a/.src/Compta/Relances/Ligext.class b/.src/Compta/Relances/Ligext.class
+index 6fcc6a66..7301a7db 100644
+--- a/.src/Compta/Relances/Ligext.class
++++ b/.src/Compta/Relances/Ligext.class
+@@ -10,6 +10,8 @@ Public Sub _new(rescli As Result, resext As Result, ind As Integer)
+ 
+   Dim res As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   $rescli = rescli
+   $resext = resext
+   $ind = ind
+diff --git a/.src/Compta/Utils/RazClos.class b/.src/Compta/Utils/RazClos.class
+index 3dbc5689..e39adfa8 100644
+--- a/.src/Compta/Utils/RazClos.class
++++ b/.src/Compta/Utils/RazClos.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   TextBox1.SetFocus
+ 
+ End
+diff --git a/.src/Compta/Utils/RazEcr.class b/.src/Compta/Utils/RazEcr.class
+index 900956b1..3dbb0d30 100644
+--- a/.src/Compta/Utils/RazEcr.class
++++ b/.src/Compta/Utils/RazEcr.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+ End
+ 
+ Public Sub Raz()
+diff --git a/.src/Compta/Utils/RecupDech.class b/.src/Compta/Utils/RecupDech.class
+index d9c6aee2..a6449c20 100644
+--- a/.src/Compta/Utils/RecupDech.class
++++ b/.src/Compta/Utils/RecupDech.class
+@@ -2,6 +2,12 @@
+ 
+ Static hfil As File
+ 
++Public Sub Form_Open()
++
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
++End
++
+ Static Public Sub run()
+ 
+   Dim rResult As Result
+diff --git a/.src/Gestion/Depots/ImpDepots.class b/.src/Gestion/Depots/ImpDepots.class
+index 102cc00f..c1a1bfac 100644
+--- a/.src/Gestion/Depots/ImpDepots.class
++++ b/.src/Gestion/Depots/ImpDepots.class
+@@ -8,6 +8,8 @@ Private pdf As Cstocks
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   Coulfond = Utils.Coulfd()
+   Coldep.Columns.count = 2
+diff --git a/.src/Gestion/Depots/Sdepots.class b/.src/Gestion/Depots/Sdepots.class
+index 827c2e99..9f1a2b23 100644
+--- a/.src/Gestion/Depots/Sdepots.class
++++ b/.src/Gestion/Depots/Sdepots.class
+@@ -7,6 +7,8 @@ Public B As Boolean = False
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   Coulfond = Utils.Coulfd()
+   Coldep.Columns.count = 2
+diff --git "a/.src/Gestion/Entr\303\251es/DateTar.class" "b/.src/Gestion/Entr\303\251es/DateTar.class"
+index c8473dcb..da4ed9c0 100644
+--- "a/.src/Gestion/Entr\303\251es/DateTar.class"
++++ "b/.src/Gestion/Entr\303\251es/DateTar.class"
+@@ -4,6 +4,8 @@ Private $restar As Result
+ 
+ Public Sub _new(Optional four As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   date.Type = TextReg.EstDate
+   date.dte.g = Now
+   fournisseur.Text = four
+diff --git "a/.src/Gestion/Entr\303\251es/GesTar.class" "b/.src/Gestion/Entr\303\251es/GesTar.class"
+index 969da3ab..92fb76d0 100644
+--- "a/.src/Gestion/Entr\303\251es/GesTar.class"
++++ "b/.src/Gestion/Entr\303\251es/GesTar.class"
+@@ -32,6 +32,8 @@ Public Sub _new(Optional lig As SaiLig)
+   Dim t3 As Integer = Font["Italic,-1"].Size * 5
+   Dim t4 As Integer = Font["Italic,-1"].Size * 12
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   $ligart = lig
+   $resart = Utils.db.Exec("SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva LEFT JOIN Fiches_TarTemp ON art_code=art  LIMIT 1")
+   If Not $resart.Available Then Return
+diff --git a/.src/Gestion/Facturation/ConVendeurs.class b/.src/Gestion/Facturation/ConVendeurs.class
+index 81afbd5b..6cbd0a08 100644
+--- a/.src/Gestion/Facturation/ConVendeurs.class
++++ b/.src/Gestion/Facturation/ConVendeurs.class
+@@ -7,6 +7,8 @@ Public Sub _new()
+ 
+   Dim Rrslt As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Music.Load("son/warning.ogg")
+   Try Rrslt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabVendeurs"))
+   If Not Error Then
+diff --git a/.src/Gestion/Facturation/Fcaras.class b/.src/Gestion/Facturation/Fcaras.class
+index 3aef75ea..bd50708b 100644
+--- a/.src/Gestion/Facturation/Fcaras.class
++++ b/.src/Gestion/Facturation/Fcaras.class
+@@ -6,6 +6,8 @@ Public Sub _new(Photo As String, $crst As String)
+ 
+   Dim himage As Image
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Photos.Visible = True
+   Photos.Clear
+   $photo = photo
+diff --git a/.src/Gestion/Facturation/OptFac.class b/.src/Gestion/Facturation/OptFac.class
+index 291bb01d..27cb29a6 100644
+--- a/.src/Gestion/Facturation/OptFac.class
++++ b/.src/Gestion/Facturation/OptFac.class
+@@ -111,6 +111,8 @@ End
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Dtef.Text = $dte.L
+   $vfac.dtedoc = $dte
+   $vfac.numcli = $vfac.numcli
+diff --git a/.src/Gestion/Lcr/Attribution.class b/.src/Gestion/Lcr/Attribution.class
+index 730f698a..5b3d5d07 100644
+--- a/.src/Gestion/Lcr/Attribution.class
++++ b/.src/Gestion/Lcr/Attribution.class
+@@ -83,6 +83,8 @@ End
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Tri = "date"
+   Tris()
+   Deb2()
+diff --git a/.src/Gestion/Lcr/Banque.class b/.src/Gestion/Lcr/Banque.class
+index a64ea720..fb0a692e 100644
+--- a/.src/Gestion/Lcr/Banque.class
++++ b/.src/Gestion/Lcr/Banque.class
+@@ -67,6 +67,8 @@ End
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Tab = "Fiches_Banques"
+   Tri = "banques_code"
+   Tris()
+diff --git a/.src/Gestion/Lcr/Lcr.class b/.src/Gestion/Lcr/Lcr.class
+index 039a1302..79210c71 100644
+--- a/.src/Gestion/Lcr/Lcr.class
++++ b/.src/Gestion/Lcr/Lcr.class
+@@ -86,6 +86,8 @@ End
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Tri = "date"
+   Tris()
+   Deb2()
+diff --git a/.src/Gestion/Stock/ValidBR1.class b/.src/Gestion/Stock/ValidBR1.class
+index 81b9b2b3..e0d37cda 100644
+--- a/.src/Gestion/Stock/ValidBR1.class
++++ b/.src/Gestion/Stock/ValidBR1.class
+@@ -24,6 +24,8 @@ Public Sub _new()
+   Dim lg As Float
+   Dim libel_var As LVar
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   res = Utils.db.Exec("SELECT four,fo_nom,0 AS montantht,0 AS montantttc FROM Fiches_Entrecpt JOIN Fiches_Four ON fo_code=four WHERE validee = '0' LIMIT 1")
+   $colfour = New Collection
+   
+diff --git a/.src/Gestion/Stock/commande1.class b/.src/Gestion/Stock/commande1.class
+index ddf394a8..90621eaa 100644
+--- a/.src/Gestion/Stock/commande1.class
++++ b/.src/Gestion/Stock/commande1.class
+@@ -89,6 +89,8 @@ Public Sub Form_Open()
+   
+   Dim rd As RadioButton
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   TabStrip1.Index = 0
+   $win = New Window As "Window"
+   $win.Arrangement = Arrange.Vertical
+diff --git a/.src/Gestion/Suivi.class b/.src/Gestion/Suivi.class
+index 6d8181ec..597e27c5 100644
+--- a/.src/Gestion/Suivi.class
++++ b/.src/Gestion/Suivi.class
+@@ -34,6 +34,8 @@ Public Sub _new(cod As String, Cv As String, Nm As String, Pnm As String, Num As
+ 
+   Dim rSuivi As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+ 
+   Music.Load(Start.Musique)
+diff --git a/.src/Gestion/SupprArt.class b/.src/Gestion/SupprArt.class
+index 50ab8e00..b87768c5 100644
+--- a/.src/Gestion/SupprArt.class
++++ b/.src/Gestion/SupprArt.class
+@@ -15,6 +15,8 @@ Public Sub _new()
+   Dim rResult As Result
+   Dim Frmt As New String[]
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Frmt = Utils.FColr(Start.LocalSettings["/Coul/Focus"])
+   Coulfc = Val(Frmt[0])
+   Frmt = Utils.FColr(Start.LocalSettings["/Coul/Fnets"])
+diff --git a/.src/Gestion/Tables/TarTypeCli.class b/.src/Gestion/Tables/TarTypeCli.class
+index 00e5f32a..59f1dc62 100644
+--- a/.src/Gestion/Tables/TarTypeCli.class
++++ b/.src/Gestion/Tables/TarTypeCli.class
+@@ -17,6 +17,8 @@ Public Sub _new(choix As Integer, Optional cat As String, article As String)
+ 
+   Dim ch As Chainage
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   ch = New Chainage([Tart, Tcoeff, Tpvht, Tpvttc, remise, Button6])
+   TypeC.MaxLength = 2
+diff --git a/.src/Gestion/option/Caleditcmat.class b/.src/Gestion/option/Caleditcmat.class
+index ef479978..45bda4f8 100644
+--- a/.src/Gestion/option/Caleditcmat.class
++++ b/.src/Gestion/option/Caleditcmat.class
+@@ -32,6 +32,8 @@ Public Sub _new()
+ 
+   Dim ch As Chainage
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   ch = New Chainage([Textmois, Textanne, nbdec])
+   nbdec.Type = TextReg.EstNum
+   nbdec.reg = "[0-9]{0,1}"
+diff --git a/.src/Gestion/option/Visucmat.class b/.src/Gestion/option/Visucmat.class
+index 076b0b04..4a541932 100644
+--- a/.src/Gestion/option/Visucmat.class
++++ b/.src/Gestion/option/Visucmat.class
+@@ -83,6 +83,8 @@ Public Sub Form_Open()
+ 
+   Dim req As String
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   req = "SELECT * FROM Fiches_ligregie" 
+   $tr = New TriGen(Panel1, $col, $res, req, 20, Me) As "coltri"
+   $tr.ExtraSel("(type='S' or type='E') AND " & dte(), "AND")
+diff --git a/.src/Gestion/option/artopt.class b/.src/Gestion/option/artopt.class
+index d769c6e0..7a156b5c 100644
+--- a/.src/Gestion/option/artopt.class
++++ b/.src/Gestion/option/artopt.class
+@@ -25,6 +25,8 @@ Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As Object, PaUA As
+   Dim obs As Observer
+   Dim chn As Chainage
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   TabStrip1.Current.Text = "Options"
+   Try Frais.ReadOnly = True
+   Try Frais.Background = &HD4D0C8&
+diff --git a/.src/Gestion/option/atribvignette.class b/.src/Gestion/option/atribvignette.class
+index 3e8ef136..9f3caf70 100644
+--- a/.src/Gestion/option/atribvignette.class
++++ b/.src/Gestion/option/atribvignette.class
+@@ -5,6 +5,8 @@ Private $bmod As Boolean
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+    ColumnView1.Columns[0].Text = "Vignettes non attribuées"
+    ColumnView1.Columns[0].Alignment = Align.Center
+ 
+diff --git a/.src/Gestion/option/rechcons.class b/.src/Gestion/option/rechcons.class
+index 6ff38f5d..8d854cd3 100644
+--- a/.src/Gestion/option/rechcons.class
++++ b/.src/Gestion/option/rechcons.class
+@@ -7,6 +7,8 @@ Private $schoix As String
+ 
+ Public Sub _new(choix As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   $schoix = choix
+   Me.Tag = choix
+   GridView1.Header = GridView.Horizontal
+diff --git a/.src/Gestion/option/rechtipp.class b/.src/Gestion/option/rechtipp.class
+index 52d0fcdd..19ad8fd4 100644
+--- a/.src/Gestion/option/rechtipp.class
++++ b/.src/Gestion/option/rechtipp.class
+@@ -7,6 +7,8 @@ Event trouve(cle As String)
+ 
+ Public Sub _new(choix As String)
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   $schoix = choix
+   
+   GridView1.Header = GridView.Horizontal
+diff --git a/.src/Gestion/option/rechtour.class b/.src/Gestion/option/rechtour.class
+index 9d09130a..368e87de 100644
+--- a/.src/Gestion/option/rechtour.class
++++ b/.src/Gestion/option/rechtour.class
+@@ -6,6 +6,8 @@ Event trouve(cle As String)
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   GridView1.Header = GridView.Horizontal
+   GridView1.Columns.Count = 2
+   GridView1.Columns[0].Width = 150
+diff --git a/.src/Start.module b/.src/Start.module
+index 7cfaf9e5..9d7d3b1f 100644
+--- a/.src/Start.module
++++ b/.src/Start.module
+@@ -40,7 +40,8 @@ Public Arg_Config_File As String
+ Public Arg_Log As Boolean
+ Public Arg_Replay As Boolean
+ Public Arg_Pos As Boolean
+-Public Arg_Test As String
++Public Arg_Test As String ''Tests gb.test à lancer (-T) : all, list ou Module[.Test],…
++Public Arg_Replay_Exit As Boolean ''Quitter à la fin du rejeu (--replay-exit)
+ Public Arg_Start_Societe As String
+ Public Arg_Restore_DB As String
+ Public Arg_LogFile As String
+@@ -85,6 +86,7 @@ Public Sub Main()
+     Start.Restart = False
+   
+     Parse_Args()
++    If Arg_Test Then Run_Tests()
+     StartDate = Now
+     
+     'Debug Level on Console and File
+@@ -360,10 +362,6 @@ Public Sub Lancement()
+     Endif
+   Endif
+   
+-  If Arg_Test Then
+-    Start_Test()
+-  Endif
+-
+   Signal[Signal.SIGINT].Catch
+ 
+   While (Not Start.Exit)
+@@ -401,6 +399,10 @@ Public Sub ReplayTimer_Timer()
+     hReplayTimer.Delay = rReplayTimer.Delay
+   Else
+     hReplayTimer.Enabled = False
++    If Arg_Replay_Exit Then
++      Print "Rejeu terminé : " & Evc & " événement(s)"
++      Utils.Exit(True)
++    Endif
+   Endif
+ 
+ End
+@@ -444,7 +446,8 @@ Public Sub Parse_Args()
+   
+   Arg_Start_Societe = Args.Get("s", "societe", "societe de demarrage", "01")
+   Arg_Restore_DB = Args.Get("", "restore", "fichier de database à restaurer au démarrage", Application.Name & ".sql")
+-  Arg_Test = Args.Get("t", "test", "Lance les tests interne (all, list) et retourne le status global", "all")
++  Arg_Test = Args.Get("T", "test", "Lance les tests gb.test via gbx3 -T (all, list ou Module[.Test],…) et retourne leur code", "tests")
++  Arg_Replay_Exit = Args.Has("", "replay-exit", "Quitte à la fin du rejeu (code 0 si complet, 3 si échec)")
+   
+   remaining_args = Args.End()
+   
+@@ -470,48 +473,65 @@ Public Sub Restore_Args()
+ 
+ End
+ 
+-Public Sub Start_Test()
+-
+-  Dim success As Boolean = True ' True is success, False is  fail
+-  Dim List_Test As String[]
+-  Dim lcla As String
+-  Dim cla As Class
+-  Dim obj As Object
+-  Dim Load_Classes As String[] = New String[]
+-  
+-  'force class to be loaded
+-  Load_Classes.Add("LPrix")
+-  Load_Classes.Add("LScript")
+-  
+-  Print "*****************************"
+-  Print "*    TEST INTERNE " & Application.Name & "    *"
+-  Print "*****************************"
+-  List_Test = Split(Arg_Test, ",")
+-  
+-  'force to load class
+-  For Each lcla In Load_Classes
+-    Class.Load(lcla)
++Public Sub Run_Tests()
++  ''Relaie l'option -T vers gb.test et quitte avec le code global (0 = aucun échec).
++  ''Chaque test (méthode publique d'un module .src/Tests/<lot>/*.test) est lancé dans son propre processus
++  ''« gbx3 -T Module.Méthode », comme le runner de non-régression : un résultat ne dépend ni de l'ordre des
++  ''tests ni de l'état statique laissé par un autre test. Les modules doivent être compilés (gbc3 -ag).
++  ''Arg_Test : all, list, Module, Module.Méthode, ou une liste séparée par des virgules.
++
++  Dim sRacine As String = Application.Path &/ ".src/Tests"
++  Dim aTests As New String[]
++  Dim aSel As New String[]
++  Dim sLot, sFic, sLigne, sTest, sDemande, sModule As String
++  Dim iEchecs As Integer
++
++  If Not Exist(sRacine) Then
++    Print "Tests indisponibles : répertoire source " & sRacine & " introuvable"
++    Quit 2
++  Endif
++  For Each sLot In Dir(sRacine, "*", gb.Directory).Sort()
++    For Each sFic In Dir(sRacine &/ sLot, "*.test").Sort()
++      sModule = File.BaseName(sFic)
++      For Each sLigne In Split(File.Load(sRacine &/ sLot &/ sFic), "\n")
++        sLigne = Trim(sLigne)
++        If Left(sLigne, 11) = "Public Sub " And If InStr(sLigne, "(") > 12 Then
++          sTest = Trim(Mid(sLigne, 12, InStr(sLigne, "(") - 12))
++          If Left(sTest, 1) <> "_" Then aTests.Add(sModule & "." & sTest)
++        Endif
++      Next
++    Next
+   Next
+-  
+-  'test loaded class
+-  For Each cla In Classes
+-    If cla.Exist("Internal_Test") Then
+-      Try obj = cla.AutoCreate()
+-      If Not Error Then
+-        If Not IsNull(obj) Then
+-          success = success And Object.Call(obj, "Internal_Test", [List_Test])
++  If Arg_Test = "list" Then
++    Print aTests.Join("\n")
++    Quit 0
++  Endif
++  For Each sTest In aTests
++    If Arg_Test = "all" Then
++      aSel.Add(sTest)
++    Else
++      For Each sDemande In Split(Arg_Test, ",")
++        If sTest = sDemande Or If Left(sTest, Len(sDemande) + 1) = sDemande & "." Then
++          aSel.Add(sTest)
++          Break
+         Endif
+-      Endif
++      Next
+     Endif
+   Next
+-  
+-  If success Then
+-    Print "*****************************"
++  If aSel.Count = 0 Then
++    Print "Aucun test ne correspond à : " & Arg_Test
++    Quit 2
++  Endif
++  For Each sTest In aSel
++    Shell "cd " & Shell$(Application.Path) & " && gbx3 -T " & Shell$(sTest) Wait
++    If Process.LastValue <> 0 Then Inc iEchecs
++  Next
++  Print "# " & (aSel.Count - iEchecs) & "/" & aSel.Count & " test(s) sans échec"
++  If iEchecs Then
++    Quit 1
+   Else
+-    Print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
++    Quit 0
+   Endif
+-  
+-  Utils.Exit(success)
+-  
++
+ End
+ 
+diff --git a/.src/Statistiques/TBord.class b/.src/Statistiques/TBord.class
+index 5fda9f19..0dcc509b 100644
+--- a/.src/Statistiques/TBord.class
++++ b/.src/Statistiques/TBord.class
+@@ -13,6 +13,8 @@ Public Sub _new()
+ 
+   Dim rResult As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & "")
+   dte2 = Format$(Now, "dd.mm.yyyy")
+diff --git a/.src/Statistiques/VisStatFour.class b/.src/Statistiques/VisStatFour.class
+index b23c73f9..fa8ca456 100644
+--- a/.src/Statistiques/VisStatFour.class
++++ b/.src/Statistiques/VisStatFour.class
+@@ -38,6 +38,8 @@ Coulfond As New String[]
+ 
+ Public Sub _New(Hitniv As StatFour, Soc As String, Sn As Integer, Dte1 As String, Dte2 As String)
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   With Liste
+     son = Sn
+diff --git a/.src/Utils/Agenda.class b/.src/Utils/Agenda.class
+index 6e79b8b0..6a0411c9 100644
+--- a/.src/Utils/Agenda.class
++++ b/.src/Utils/Agenda.class
+@@ -7,6 +7,8 @@ Nligne As String
+ '*********************************
+ Public Sub _New()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   Init()
+   Maj_Zones()
+diff --git a/.src/Utils/CalcRem.class b/.src/Utils/CalcRem.class
+index 084559d1..e04d0547 100644
+--- a/.src/Utils/CalcRem.class
++++ b/.src/Utils/CalcRem.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   
+ End
+diff --git a/.src/Utils/Carch.class b/.src/Utils/Carch.class
+index 468362e3..2e003ad5 100644
+--- a/.src/Utils/Carch.class
++++ b/.src/Utils/Carch.class
+@@ -36,6 +36,8 @@ B As Integer
+ '*********************************
+ Public Sub _New()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   Factures = Start.LocalSettings["/Coul/Facts"]
+   If IsNull(Factures) Then Factures = "&HF9F9BD&"
+diff --git a/.src/Utils/CompArt.class b/.src/Utils/CompArt.class
+index 0603c8a7..10ec5398 100644
+--- a/.src/Utils/CompArt.class
++++ b/.src/Utils/CompArt.class
+@@ -6,6 +6,8 @@ Private son As Integer = Start.Son
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Music.Load(Start.Musique)
+ 
+ End
+diff --git a/.src/Utils/DB_Log.class b/.src/Utils/DB_Log.class
+index 3fa6d099..d0aa70eb 100644
+--- a/.src/Utils/DB_Log.class
++++ b/.src/Utils/DB_Log.class
+@@ -90,6 +90,8 @@ End
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Filename.Text = DB_Con.Get_Localfile_Path()
+   Remote.Text = DB_Con.Get_Remotefile_Path()
+   Enable.Value = DB_Con.Get_Log()
+diff --git a/.src/Utils/DB_Sanity.class b/.src/Utils/DB_Sanity.class
+index 05dacc4d..48b522cc 100644
+--- a/.src/Utils/DB_Sanity.class
++++ b/.src/Utils/DB_Sanity.class
+@@ -302,6 +302,8 @@ End
+ 
+ Public Sub Form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Refresh()
+ 
+ End
+diff --git a/.src/Utils/Exports-Imports/Expcontact.class b/.src/Utils/Exports-Imports/Expcontact.class
+index 642aa5ae..12801e41 100644
+--- a/.src/Utils/Exports-Imports/Expcontact.class
++++ b/.src/Utils/Exports-Imports/Expcontact.class
+@@ -4,6 +4,8 @@ statut As String
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+ 
+ End
+diff --git a/.src/Utils/Exports-Imports/Impcpostaux.class b/.src/Utils/Exports-Imports/Impcpostaux.class
+index 59733eef..c2c3d091 100644
+--- a/.src/Utils/Exports-Imports/Impcpostaux.class
++++ b/.src/Utils/Exports-Imports/Impcpostaux.class
+@@ -2,6 +2,8 @@
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.Center
+   FilePath.Text = User.Home & "/Cpostaux.csv" 
+ 
+diff --git a/.src/Utils/Exports-Imports/ImportStk.class b/.src/Utils/Exports-Imports/ImportStk.class
+index 7d89ce9a..774c18bf 100644
+--- a/.src/Utils/Exports-Imports/ImportStk.class
++++ b/.src/Utils/Exports-Imports/ImportStk.class
+@@ -6,6 +6,8 @@ Private son As Integer = Start.Son
+ 
+ Public Sub _new()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Music.Load(Start.Musique)
+ 
+ End
+diff --git a/.src/Utils/Exports-Imports/ImptartypeC.class b/.src/Utils/Exports-Imports/ImptartypeC.class
+index a51cae8a..13eaba7f 100644
+--- a/.src/Utils/Exports-Imports/ImptartypeC.class
++++ b/.src/Utils/Exports-Imports/ImptartypeC.class
+@@ -6,6 +6,8 @@ Public Sub form_Open()
+ 
+   Dim rResult As Result
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Try rResult = Utils.db.Exec("SELECT * FROM Fiches_Typec")
+   If Not Error Then
+     If rResult.Available Then
+diff --git a/.src/Utils/GedR.class b/.src/Utils/GedR.class
+index df5e30cd..341bd593 100644
+--- a/.src/Utils/GedR.class
++++ b/.src/Utils/GedR.class
+@@ -15,6 +15,8 @@ Private seltags As String[]
+ 
+ Public Sub _New()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Me.center
+   
+   CB1Conv = New Collection
+diff --git a/.src/Utils/LBox.class b/.src/Utils/LBox.class
+index bbc0d42c..1921ac7b 100644
+--- a/.src/Utils/LBox.class
++++ b/.src/Utils/LBox.class
+@@ -18,6 +18,8 @@ Public Sub _New(Message As String, Inp As Variant, Optional obj As Object = Null
+   
+   Dim i As Variant
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   Question.Text = Message
+   Question.Tooltip = Tooltip
+   
+diff --git a/.src/Utils/LDateC.class b/.src/Utils/LDateC.class
+index bb4a65e3..de273c97 100644
+--- a/.src/Utils/LDateC.class
++++ b/.src/Utils/LDateC.class
+@@ -11,6 +11,12 @@ Private Escape As Boolean = False
+ 'End
+ 
+ 
++Public Sub Form_Open()
++
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
++End
++
+ Public Sub Select(mydate As Ldate, Optional mode As Integer = DateChooser.DateTime, Optional update As Boolean = True, CloseOnChange As Boolean = False) As LDate
+ 
+   Dim newdate As LDate
+diff --git a/.src/Utils/LGed.class b/.src/Utils/LGed.class
+index bee3a4a0..02dbe768 100644
+--- a/.src/Utils/LGed.class
++++ b/.src/Utils/LGed.class
+@@ -540,6 +540,8 @@ Public Sub form_Open()
+   Dim tag As Variant
+ 
+   'on affiche les valeurs dans le formulaire
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   findex.Text = $index
+   ftype.Add("Clients", Clients)
+   ftype.Add("Fournisseurs", Fournisseurs)
+diff --git a/.src/Utils/LPrix.class b/.src/Utils/LPrix.class
+index 7bc6d9b9..8357e11c 100644
+--- a/.src/Utils/LPrix.class
++++ b/.src/Utils/LPrix.class
+@@ -679,104 +679,3 @@ Public Sub Lit_Taxe(Ttx As Integer) As LTaxe
+   Return taxe[Ttx]
+ 
+ End
+-
+-'Methode Publique de test
+-
+-Public Sub Internal_Test(Test_List As String[]) As Boolean
+-
+-  Dim x As LPrix[]
+-  Dim tot As LPrix
+-  Dim tx As LTaxe
+-  Dim err As Integer = 0
+-  
+-  
+-  If Test_List.Find("list") <> -1 Then
+-    Print "Internal Test for Class " & Object.Class(Me).Name & ": " & Object.Class(Me).Name
+-    Return True
+-  Endif
+-  
+-  If ((Test_List.Find("all") = -1) And (Test_List.Find(Object.Class(Me).Name) = -1)) Then
+-    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SKIPPED"
+-    Return True
+-  Endif
+-  
+-  x = New LPrix[]
+-  
+-  'TODO supprimer les prints et remplacer par des tests
+-  
+-  Print LPrix("-3,1500", 1, LPrix.Arr_01).L
+-  Print LPrix("-3,15", 1.23456, LPrix.Arr_01).QD
+-  
+-  x.Add(LPrix("0,03", 1, LPrix.Arr_005))
+-  x.Add(LPrix("10", 1, LPrix.Arr_001))
+-  x.Add(LPrix("0.3"))
+-  tot = New LPrix(0, 2, LPrix.Arr_001)
+-  tx = New LTaxe("3", LTaxe.Remise)
+-  tot.Add_Taxe(tx)
+-  tx = New LTaxe("20%", LTaxe.Tva)
+-  tot.Add_Taxe(tx)
+-  'tot.Del_Taxe(LTaxe.TVA)
+-  tot.Sum(x)
+-  Print tot.Mnt
+-  
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_TTC).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_TTC).Mnt
+-
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.HT_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.HT_to_TTC).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.TTC_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Net, LPrix.TTC_to_TTC).Mnt
+-
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.TTC_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.TTC_to_TTC).Mnt
+-
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.HT_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.HT_to_TTC).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_TTC).Mnt
+-  
+-  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC), 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_TTC), 1, LPrix.Brut_to_Net, LPrix.TTC_to_HT).Mnt
+-  Print tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt
+-  
+-
+-  Print tot.PuBHT.L
+-  Print tot.PuBTC.L
+-  Print tot.PuNHT.L
+-  Print tot.PuNTC.L
+-
+-  Print tot.totBHT.L
+-  Print tot.totBTC.L
+-  Print tot.totNHT.L
+-  Print tot.TotNTC.L
+-
+-  'On applique un arrondi sur le TTC Pu / ou Tot (l'arrondi se fait sur l'element unitaire de toute façon) et on affiche les elements calculés
+-  tot.TotNTC = tot.Arrondi_New(tot.TotNTC, LPrix.Arr_05) 
+-  Print tot.TotNTC.L
+-  'autre methode pour l'arrondi sur le montant total on converti le Total en Pu avec le meme montant
+-  tot.PuNTC = New LPrix(tot.TotNTC.G, 1, LPrix.Arr_05)
+-  tot.Qte = 1
+-  Print tot.TotNTC.L
+-  
+-  'Une fois le TTC Net arrondi on affiche toutes les autres valeurs
+-  Print tot.totBHT.L
+-  Print tot.totBTC.L
+-  Print tot.totNHT.L
+-  Print tot.TotNTC.L
+-  
+-  If err <> 0 Then
+-    Print "Internal Test for Class : " & Object.Class(Me).Name & " => FAIL with " & err & " Errors!"
+-    Return False
+-  Else
+-    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SUCCESS"
+-    Return True
+-  Endif
+-
+-
+-End
+-
+diff --git a/.src/Utils/LScript.class b/.src/Utils/LScript.class
+index 0053fe71..6b2b279f 100644
+--- a/.src/Utils/LScript.class
++++ b/.src/Utils/LScript.class
+@@ -87,49 +87,3 @@ End
+ 
+ 'Methode Publique de test
+ 
+-Public Sub Internal_Test(Test_List As String[]) As Boolean
+-
+-  Dim x As LScript[]
+-  Dim r As LScript
+-  Dim tx As LTaxe
+-  Dim err As Integer = 0
+-  
+-  
+-  If Test_List.Find("list") <> -1 Then
+-    Print "Internal Test for Class " & Object.Class(Me).Name & ": " & Object.Class(Me).Name
+-    Return True
+-  Endif
+-  
+-  If ((Test_List.Find("all") = -1) And (Test_List.Find(Object.Class(Me).Name) = -1)) Then
+-    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SKIPPED"
+-    Return True
+-  Endif
+-  
+-  x = New LScript[]
+-  
+-  'TODO supprimer les prints et remplacer par des tests
+-  
+-  LScript(Start.LocalSettings["/Soc" & Start.Societe & "/scanbatch"], ["-m", "scanbatch", "-d \"", "toto", " \"-i", user.home & "/multipageproject/", "-o", user.home & "/multipageproject.pdf"]).Run()
+-  
+-  Print LScript("/bin/bash", ["-c", "echo test"]).Run()
+-  Print LScript("debug2", ["-c", "echo test"]).Run()
+-  
+-  x.Add(LScript("/bin/bash", ["-c", "\"echo test1\""]))
+-  x.Add(LScript("/bin/bash", ["-c", "echo test2"], False))
+-  Print LScript.RunA(x)
+-  
+-  Print LScript("/bin/faaalse", [], False).Run()
+-  Print LScript("/bin/false", [], False).Run()
+-  Print LScript("/bin/true").Run()
+-  
+-  If err <> 0 Then
+-    Print "Internal Test for Class : " & Object.Class(Me).Name & " => FAIL with " & err & " Errors!"
+-    Return False
+-  Else
+-    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SUCCESS"
+-    Return True
+-  Endif
+-
+-
+-End
+-
+diff --git a/.src/Utils/RazArt.class b/.src/Utils/RazArt.class
+index be676c1a..9d7aa922 100644
+--- a/.src/Utils/RazArt.class
++++ b/.src/Utils/RazArt.class
+@@ -8,6 +8,8 @@ End
+ 
+ Public Sub form_Open()
+ 
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+ End
+ 
+ Public Sub Button2_Click()
+diff --git a/.src/Utils/ReplayObserver.class b/.src/Utils/ReplayObserver.class
+index af1649b9..c036d315 100644
+--- a/.src/Utils/ReplayObserver.class
++++ b/.src/Utils/ReplayObserver.class
+@@ -276,7 +276,7 @@ Static Public Sub Replay_Event(hReplayTimer As Timer, Lastev As Date, Action As
+     If Application.ActiveWindow.Name <> win Then
+       Print "Erreur window " & win & " n'est pas actuellement active (" & Application.ActiveWindow.Name & "), impossible de rejouer l'action " & eve & " = " & val & ":" & ctrl.Join(",")
+       If Lower(eve) <> "close" Then 'Close may appear several time for the same object (ex Tabstrip)
+-        Quit
++        Quit 3
+       Else
+         Return Null
+       Endif
+@@ -287,6 +287,7 @@ Static Public Sub Replay_Event(hReplayTimer As Timer, Lastev As Date, Action As
+   
+   If IsNull(ctx) Then
+     Print "Window " & win & " introuvable, impossible de rejouer l'action " & eve & " = " & val & ":" & ctrl.Join(",")
++    If Start.Arg_Replay_Exit Then Quit 3
+   Else
+     Print eve & " = " & val & ":" & ctx.Name & ":" & ctrl.Join(",")
+   Endif
+@@ -353,6 +354,8 @@ Static Public Sub Replay_Event(hReplayTimer As Timer, Lastev As Date, Action As
+     
+     Return when
+   Else
++    Print "Controle introuvable (" & found & "/" & ctrl.Length & "), impossible de rejouer l'action " & eve & " = " & val & ":" & ctrl.Join(",")
++    If Start.Arg_Replay_Exit Then Quit 3
+     Return Null 'retourner null est probablement une mauvaise idee
+   Endif
+   
+diff --git a/.src/Utils/TarArt.class b/.src/Utils/TarArt.class
+index b11314f4..0b127d13 100644
+--- a/.src/Utils/TarArt.class
++++ b/.src/Utils/TarArt.class
+@@ -18,6 +18,8 @@ Public Sub _new(nart As String, ncli As String, Optional typec As String = "", O
+   Dim i As Integer
+   Dim pxprom, tax As Float
+   
++  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
++
+   $option = Utils.Option()
+   If $option = "B" Or $option = "T" Then 
+     resart = Utils.db.Exec("SELECT art_fam,art_pvht,libell_fam,art_prvt,art_dra,art_volm, art_deg FROM Fiches_Art,Fiches_Fam WHERE art_fam=code_fam AND art_code=&1", nart)
+diff --git a/.src/Utils/Utils.module b/.src/Utils/Utils.module
+index aec74458..bfbd21c9 100644
+--- a/.src/Utils/Utils.module
++++ b/.src/Utils/Utils.module
+@@ -1008,6 +1008,16 @@ Public Sub Recursive_Observers(hCont As Variant, Source As Variant[])
+ End
+ 
+ 
++Public Sub ReplayObservers(hCont As Form)
++  ''Harnais de test (phase 2) : pose uniquement les observateurs de journalisation/rejeu (-l, -r) sur la
++  ''fenêtre, sans appliquer les couleurs du thème (contrairement à Observers) : aucun effet visible.
++
++  Dim Source As Variant[] = New Variant[]
++
++  If Start.Arg_Devel = False Then Recursive_Observers(hCont, Source)
++
++End
++
+ Public Sub Observers(hCont As Form)
+ 
+   Dim CoulFn As Integer ' Variable pour la couleur du background des fenetres

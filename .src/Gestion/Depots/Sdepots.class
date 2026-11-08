@@ -7,6 +7,8 @@ Public B As Boolean = False
 
 Public Sub _new()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.center
   Coulfond = Utils.Coulfd()
   Coldep.Columns.count = 2

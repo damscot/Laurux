@@ -35,6 +35,8 @@ Public Sub Form_Open()
   Dim tmpMois, tmpMois2, i As Integer
   Dim rResult As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Tabp = "Fiches_Parametres"
   rResult = Utils.db.Exec("SELECT * FROM " & Tabp & " ")
   datec2 = Utils.Cdate_Comp(rResult!dteclec1)

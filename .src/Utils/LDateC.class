@@ -11,6 +11,12 @@ Private Escape As Boolean = False
 'End
 
 
+Public Sub Form_Open()
+
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
+End
+
 Public Sub Select(mydate As Ldate, Optional mode As Integer = DateChooser.DateTime, Optional update As Boolean = True, CloseOnChange As Boolean = False) As LDate
 
   Dim newdate As LDate

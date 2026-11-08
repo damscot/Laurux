@@ -18,6 +18,8 @@ Public Sub _new(nart As String, ncli As String, Optional typec As String = "", O
   Dim i As Integer
   Dim pxprom, tax As Float
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   $option = Utils.Option()
   If $option = "B" Or $option = "T" Then 
     resart = Utils.db.Exec("SELECT art_fam,art_pvht,libell_fam,art_prvt,art_dra,art_volm, art_deg FROM Fiches_Art,Fiches_Fam WHERE art_fam=code_fam AND art_code=&1", nart)

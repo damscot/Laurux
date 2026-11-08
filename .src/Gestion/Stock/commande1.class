@@ -89,6 +89,8 @@ Public Sub Form_Open()
   
   Dim rd As RadioButton
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   TabStrip1.Index = 0
   $win = New Window As "Window"
   $win.Arrangement = Arrange.Vertical

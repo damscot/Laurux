@@ -1,0 +1,88 @@
+' Gambas test file
+
+''Tests de LPrix (ex-Internal_Test de LPrix.class, converti en gb.test au début de la phase 2).
+''Valeurs attendues : assets/LPrixTest/expected.txt, produites dans le clone de référence.
+
+Private x As LPrix[]
+Private tot As LPrix
+
+Public Sub _Setup()
+
+  Dim tx As LTaxe
+
+  TestKit.Begin("Utils", "LPrixTest")
+  x = New LPrix[]
+  x.Add(LPrix("0,03", 1, LPrix.Arr_005))
+  x.Add(LPrix("10", 1, LPrix.Arr_001))
+  x.Add(LPrix("0.3"))
+  tot = New LPrix(0, 2, LPrix.Arr_001)
+  tx = New LTaxe("3", LTaxe.Remise)
+  tot.Add_Taxe(tx)
+  tx = New LTaxe("20%", LTaxe.Tva)
+  tot.Add_Taxe(tx)
+  tot.Sum(x)
+
+End
+
+Public Sub Conversion()
+
+  TestKit.Check("Conversion/L", LPrix("-3,1500", 1, LPrix.Arr_01).L)
+  TestKit.Check("Conversion/QD", LPrix("-3,15", 1.23456, LPrix.Arr_01).QD)
+
+End
+
+Public Sub Somme()
+
+  TestKit.Check("Somme/Mnt", tot.Mnt)
+
+End
+
+Public Sub Matrice()
+
+  Dim aBN As Integer[] = [LPrix.Brut_to_Brut, LPrix.Net_to_Net, LPrix.Brut_to_Net, LPrix.Net_to_Brut]
+  Dim aHT As Integer[] = [LPrix.HT_to_HT, LPrix.HT_to_TTC, LPrix.TTC_to_HT, LPrix.TTC_to_TTC]
+  Dim i, j As Integer
+
+  For i = 0 To aBN.Max
+    For j = 0 To aHT.Max
+      TestKit.Check("Matrice/" & i & "x" & j, tot.Conv_Brut_Net_HT_TTC(tot, 1, aBN[i], aHT[j]).Mnt)
+    Next
+  Next
+
+End
+
+Public Sub Compositions()
+
+  TestKit.Check("Compo/1", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt)
+  TestKit.Check("Compo/2", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC), 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT).Mnt)
+  TestKit.Check("Compo/3", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_TTC), 1, LPrix.Brut_to_Net, LPrix.TTC_to_HT).Mnt)
+  TestKit.Check("Compo/4", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt)
+
+End
+
+Public Sub Accesseurs()
+
+  TestKit.Check("Pu/BHT", tot.PuBHT.L)
+  TestKit.Check("Pu/BTC", tot.PuBTC.L)
+  TestKit.Check("Pu/NHT", tot.PuNHT.L)
+  TestKit.Check("Pu/NTC", tot.PuNTC.L)
+  TestKit.Check("Tot/BHT", tot.totBHT.L)
+  TestKit.Check("Tot/BTC", tot.totBTC.L)
+  TestKit.Check("Tot/NHT", tot.totNHT.L)
+  TestKit.Check("Tot/NTC", tot.TotNTC.L)
+
+End
+
+Public Sub Arrondi()
+
+  tot.TotNTC = tot.Arrondi_New(tot.TotNTC, LPrix.Arr_05)
+  TestKit.Check("Arrondi/TotNTC", tot.TotNTC.L)
+  tot.PuNTC = New LPrix(tot.TotNTC.G, 1, LPrix.Arr_05)
+  tot.Qte = 1
+  TestKit.Check("Arrondi/PuNTC", tot.TotNTC.L)
+  TestKit.Check("Arrondi/Tot/BHT", tot.totBHT.L)
+  TestKit.Check("Arrondi/Tot/BTC", tot.totBTC.L)
+  TestKit.Check("Arrondi/Tot/NHT", tot.totNHT.L)
+  TestKit.Check("Arrondi/Tot/NTC", tot.TotNTC.L)
+
+End

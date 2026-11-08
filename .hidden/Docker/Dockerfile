@@ -1,191 +1,113 @@
 #
-# Laurux Dockerfile
+# Laurux — Dockerfile multi-stage
+#
+#   Étape « db »  : serveur MariaDB 10.11 seul, configuré pour Laurux (utilisateur, jeu de caractères).
+#                   C'est l'image des tests de non-régression (voir docker-compose.test.yml).
+#   Étape « app » : hérite de « db » et ajoute Gambas, l'environnement X (xpra, ssh) et Laurux / Laurux-Pos.
+#                   Remplace l'ancien Dockerfile Ubuntu 20.04 + mysql-server.
+#
+# Construction :
+#   docker build --target db  -t laurux-db  .     # base de test seule
+#   docker build --target app -t laurux-app .     # application complète
 #
 
-# Pull base image.
-ARG DISTRIB_VERSION="20.04"
-ARG DISTRIB_NAME="ubuntu"
-FROM ${DISTRIB_NAME}:${DISTRIB_VERSION}
+ARG MARIADB_VERSION=10.11
 
-# Copy FR /etc/default/keyboard into container
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TERM=xterm
+########################################################################################################
+# Étape db : serveur MariaDB configuré pour Laurux
+########################################################################################################
+FROM mariadb:${MARIADB_VERSION} AS db
+
+# Identifiants par défaut (surchargeables au lancement : -e LAURUX_USER=… -e LAURUX_PASSWORD=…).
+# Le mot de passe « laurux » correspond au Password="2D0D0D0D0D0D" des Laurux.conf fournis.
+ENV LAURUX_USER=laurux \
+    LAURUX_PASSWORD=laurux \
+    MARIADB_ROOT_PASSWORD=laurux-root
+
+COPY mysql/laurux.cnf /etc/mysql/conf.d/laurux.cnf
+COPY mysql/initdb/ /docker-entrypoint-initdb.d/
+
+EXPOSE 3306
+# Point d'entrée et commande hérités de l'image officielle (docker-entrypoint.sh mariadbd).
+
+########################################################################################################
+# Étape app : application Laurux complète (Gambas + X déporté + ssh), au-dessus de la base « db »
+########################################################################################################
+FROM db AS app
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    TERM=xterm
 COPY keyboard /etc/default/keyboard
 
-# Install GAMBAS and Server dependencies
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get -y update && \
-  apt-get -y install apt-utils && \
-  apt-get -y install software-properties-common && \
-  apt-get install -y mysql-server evince evince lpr cups-pdf sqlite wget vim build-essential git && \
-  rm -rf /var/lib/apt/lists/*
-
-#Force update package to multiverse source
-RUN sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-    apt-get -y update
-    
-# Install locales
-RUN apt-get -y install locales locales-all && \
+# Locales françaises (Laurux est en français : formats de dates et de nombres)
+RUN apt-get -y update && \
+    apt-get -y install locales locales-all && \
     sed -i -e 's/# fr_FR.UTF-8/fr_FR.UTF-8 UTF-8/' /etc/locale.gen && \
     locale-gen fr_FR.UTF-8 && \
-    dpkg-reconfigure --frontend=noninteractive locales && \
     update-locale LANG=fr_FR.UTF-8
+ENV LANG=fr_FR.UTF-8 \
+    LC_ALL=fr_FR.UTF-8
 
-ENV LANG="fr_FR.UTF-8"
-ENV LC_CTYPE="fr_FR.UTF-8"
-ENV LC_NUMERIC="fr_FR.UTF-8"
-ENV LC_TIME="fr_FR.UTF-8"
-ENV LC_COLLATE="fr_FR.UTF-8"
-ENV LC_MONETARY="fr_FR.UTF-8"
-ENV LC_MESSAGES="fr_FR.UTF-8"
-ENV LC_PAPER="fr_FR.UTF-8"
-ENV LC_NAME="fr_FR.UTF-8"
-ENV LC_ADDRESS="fr_FR.UTF-8"
-ENV LC_TELEPHONE="fr_FR.UTF-8"
-ENV LC_MEASUREMENT="fr_FR.UTF-8"
-ENV LC_IDENTIFICATION="fr_FR.UTF-8"
+# Gambas 3 (PPA de l'équipe Gambas) et outils d'exécution de Laurux
+RUN apt-get -y install software-properties-common gnupg && \
+    add-apt-repository -y ppa:gambas-team/gambas3 && \
+    apt-get -y update && \
+    apt-get -y install gambas3 gambas3-gb-sdl-sound gambas3-gb-form-print \
+                       evince lpr cups-pdf sqlite3 wget vim build-essential git sudo
 
-##use gambas ppa or legacy packages
-RUN \
-  #add-apt-repository -y ppa:gambas-team/gambas3 && \
-  #apt-get -y update && \
-  #apt-get -y upgrade && \
-  apt-get install -y gambas3 gambas3-gb-sdl-sound gambas3-gb-form-print
+# Environnement X déporté (xpra, xdm) et ssh
+RUN apt-get -y install xpra rox-filer openssh-server pwgen xserver-xephyr x11-apps xterm xdm fluxbox xvfb \
+                       net-tools dbus-x11 && \
+    sed -i 's/DisplayManager.requestPort/!DisplayManager.requestPort/g' /etc/X11/xdm/xdm-config && \
+    sed -i '/#any host/c\*' /etc/X11/xdm/Xaccess && \
+    sed -i 's/session    required     pam_loginuid.so/#session    required     pam_loginuid.so/g' /etc/pam.d/sshd && \
+    rm -rf /var/lib/apt/lists/*
 
-# Or install local packages archives
-#RUN \
-#  mkdir /local_packages && \
-#  cd /local_packages && \ 
-#  wget https://www.laurux.fr/package/gambas/3.10.0/Gambas3_3.10.0_local_packages.tar.gz && \
-#  tar -zxvf Gambas3_3.10.0_local_packages.tar.gz
-
-#MYSQL Configuration
-RUN mkdir -p /var/run/mysqld && \
-  mkdir -p /var/lib/mysql && \
-  mkdir -p /var/log/mysql && \
-  chown -R mysql:mysql /var/lib/mysql && \
-  chown -R mysql:mysql /var/run/mysqld && \
-  chown -R mysql:mysql /var/log/mysql
-
-# create linux and mysql user
+# Utilisateur Linux (le même nom que l'utilisateur MariaDB créé par l'étape db)
 ARG USER=laurux
-
-RUN sed -i 's/^\(bind-address\s.*\)/# \1/' /etc/mysql/mysql.conf.d/mysqld.cnf && \
-  sed -i 's/^\(log_error\s.*\)/# \1/' /etc/mysql/mysql.conf.d/mysqld.cnf && \
-  sed -i 's/^# \(port\s.*=\)\s.*3306/\1 3306/' /etc/mysql/mysql.conf.d/mysqld.cnf && \
-  echo "mysqld_safe &" > /tmp/config && \
-  echo "mysqladmin --silent --wait=5 ping || exit 1" >> /tmp/config && \
-  echo "mysql -e 'CREATE USER \"${USER}\";'" >> /tmp/config && \
-  echo "mysql -e 'SET password FOR \"${USER}\" = \"${USER}\";'" >> /tmp/config && \
-  echo "mysql -e 'GRANT ALL PRIVILEGES ON *.* TO \"${USER}\" WITH GRANT OPTION;'" >> /tmp/config && \
-  bash /tmp/config && \
-  rm -f /tmp/config
-
-#From Docker desktop
-# Installing the environment required: xserver, xdm, flux box, roc-filer and ssh
-RUN apt-get install -y xpra rox-filer openssh-server pwgen xserver-xephyr x11-apps xterm xdm fluxbox xvfb net-tools dbus-x11 python-numpy
-# Configuring xdm to allow connections from any IP address and ssh to allow X11 Forwarding.
-RUN sed -i 's/DisplayManager.requestPort/!DisplayManager.requestPort/g' /etc/X11/xdm/xdm-config
-RUN sed -i '/#any host/c\*' /etc/X11/xdm/Xaccess
-
-# Fix PAM login issue with sshd
-RUN sed -i 's/session    required     pam_loginuid.so/#session    required     pam_loginuid.so/g' /etc/pam.d/sshd
-
-# Define mountable directories.
-VOLUME ["/etc/mysql", "/var/lib/mysql"]
-
-# Create USER and Path
 ARG USER_ID=1000
 ARG USER_GID=1000
+RUN (getent group "${USER_GID}" >/dev/null || groupadd --gid "${USER_GID}" "${USER}") && \
+    useradd --uid "${USER_ID}" --gid "${USER_GID}" --create-home --shell /bin/bash "${USER}" && \
+    usermod -aG sudo,xpra,mysql "${USER}" && \
+    echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    mkdir -p /run/xpra /run/user/${USER_ID}/xpra && \
+    chown -R ${USER}:xpra /run/xpra && chmod 775 /run/xpra && \
+    chown -R ${USER}:${USER_GID} /run/user/${USER_ID}
 
-# ADD USER
-RUN apt-get install -y sudo && \
-    echo "USER: ${USER}" && \
-    echo "USER_ID: ${USER_ID}" && \
-    echo "USER_GID: ${USER_GID}" && \
-    groupadd --gid "${USER_GID}" "${USER}" && \
-    useradd \
-      --uid ${USER_ID} \
-      --gid ${USER_GID} \
-      --create-home \
-      --shell /bin/bash \
-      ${USER} && \
-    usermod -aG sudo ${USER} && \
-    usermod -aG xpra ${USER} && \
-    usermod -aG mysql ${USER} && \
-    echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-#USER PATH and CHMOD
-RUN mkdir -p /run/xpra
-RUN mkdir -p /run/user/${USER_ID}/xpra
-RUN chown -R ${USER}:xpra /run/xpra
-RUN chmod 775 /run/xpra
-RUN chown -R ${USER}:${USER} /run/user/${USER_ID}
-
-#Now Laurux Stuff
+# Laurux et Laurux-Pos
 ARG LAURUX_REPO=Laurux
 ARG LAURUX_BRANCH=master
 ARG LAURUX_SHA1=HEAD
 ARG LAURUX_POS_BRANCH=master
 ARG LAURUX_POS_SHA1=HEAD
-#Fetch
-RUN echo Laurux build sha1: $LAURUX_SHA1 && cd /home/${USER}/ && TERM=xterm git clone https://github.com/${LAURUX_REPO}/Laurux.git
-RUN echo Laurux-Pos build sha1: $LAURUX_POS_SHA1 && cd /home/${USER}/ && TERM=xterm git clone https://github.com/${LAURUX_REPO}/Laurux-Pos.git
-#Checkout Version
-RUN cd /home/${USER}/Laurux && TERM=xterm git checkout -f -B ${LAURUX_BRANCH} ${LAURUX_SHA1}
-RUN cd /home/${USER}/Laurux-Pos && TERM=xterm git checkout -f -B ${LAURUX_POS_BRANCH} ${LAURUX_POS_SHA1}
-#Compile
-RUN cd /home/${USER}/Laurux && make clean && make && make package
-RUN cd /home/${USER}/Laurux-Pos && make clean && make && make package
-RUN mkdir -p /home/${USER}/.config/gambas3
-COPY Laurux.conf /home/${USER}/.config/gambas3/
-RUN sed -i -e 's/Login="laurux"/Login="'${USER}'"/' /home/${USER}/.config/gambas3/Laurux.conf
-COPY Laurux-Pos.conf /home/${USER}/.config/gambas3/
-RUN sed -i -e 's/Login="laurux"/Login="'${USER}'"/' /home/${USER}/.config/gambas3/Laurux-Pos.conf
-RUN echo "pcm.!default = null;" >> /home/${USER}/.asoundrc
+RUN cd /home/${USER} && \
+    git clone https://github.com/${LAURUX_REPO}/Laurux.git && \
+    git clone https://github.com/${LAURUX_REPO}/Laurux-Pos.git && \
+    cd /home/${USER}/Laurux && git checkout -f -B ${LAURUX_BRANCH} ${LAURUX_SHA1} && make clean && make && make package && \
+    cd /home/${USER}/Laurux-Pos && git checkout -f -B ${LAURUX_POS_BRANCH} ${LAURUX_POS_SHA1} && make clean && make && make package
 
-#SSH Access
-RUN mkdir -p /home/${USER}/.ssh
-RUN chmod 700 /home/${USER}/.ssh
-#Set Laurux user right
-RUN chown -R ${USER}:${USER} /home/${USER}/Laurux
-RUN chown -R ${USER}:${USER} /home/${USER}/Laurux-Pos
-RUN chown -R ${USER}:${USER} /home/${USER}/.config
-RUN chown -R ${USER}:${USER} /home/${USER}/.ssh
-RUN chown ${USER}:${USER} /home/${USER}/.asoundrc
-COPY user-mapping.sh /
-RUN chmod u+x /user-mapping.sh
-# Define default command.
-#CMD ["/bin/bash"]
-COPY entrypoint.sh /
-RUN chmod u+x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+RUN mkdir -p /home/${USER}/.config/gambas3 /home/${USER}/.ssh && chmod 700 /home/${USER}/.ssh
+COPY Laurux.conf Laurux-Pos.conf /home/${USER}/.config/gambas3/
+RUN sed -i -e 's/Login="laurux"/Login="'${USER}'"/' /home/${USER}/.config/gambas3/Laurux.conf \
+                                                       /home/${USER}/.config/gambas3/Laurux-Pos.conf && \
+    echo "pcm.!default = null;" >> /home/${USER}/.asoundrc && \
+    chown -R ${USER}:${USER_GID} /home/${USER}
 
-# Define working directory.
-WORKDIR /home/${USER}
-ENV USER=${USER}
-ENV HOME=/home/${USER}
-
-#SSH CONF
 COPY sshd_config /etc/ssh/sshd_config
+COPY user-mapping.sh entrypoint.sh /
+RUN chmod u+x /user-mapping.sh /entrypoint.sh
 
-# Expose ports.
-EXPOSE 3306
+WORKDIR /home/${USER}
+ENV USER=${USER} \
+    HOME=/home/${USER} \
+    LAURUX_USER=${USER}
+
 EXPOSE 22
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/bin/bash"]
 
-#BUILD Docker Image
-#docker build . -t laurux_master
-
-## USE Docker Container with bash shell and remote X
-# docker run --name laurux-master -p 13306:3306 -p 10022:22 --rm -it -e HOST_USER_ID=$(id -u) -e HOST_USER_GID=$(id -g) laurux_master /bin/bash
-# ssh-keygen -f /home/$USER/.ssh/known_hosts -R '[localhost]:10022'  ## when you have change the docker image
-# ssh-copy-id -p 10022 laurux@localhost
+## Utilisation de l'étape app (voir README) :
+# docker run --name laurux-app -p 13306:3306 -p 10022:22 --rm -it -e HOST_USER_ID=$(id -u) -e HOST_USER_GID=$(id -g) laurux-app /bin/bash
 # ssh -X -p 10022 laurux@localhost bash -c "/home/laurux/Laurux/Laurux"
-
-## OR RUN DIRECTLY XPRA 
-
-# docker run --name laurux-master -p 13306:3306 -p 10022:22 --rm -it -e HOST_USER_ID=$(id -u) -e HOST_USER_GID=$(id -g) laurux_master bash -c "xpra start :100 --start-child=/home/laurux/Laurux/Laurux --daemon=no --exit-with-children --exit-with-client=yes"
-# then
-# xpra attach ssh/laurux@localhost:10022/100
-
+# ou : docker run … laurux-app bash -c "xpra start :100 --start-child=/home/laurux/Laurux/Laurux --daemon=no --exit-with-children --exit-with-client=yes"

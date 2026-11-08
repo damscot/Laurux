@@ -7,6 +7,8 @@ Public Sub _new()
 
   Dim rParam As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.Center
   rParam = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & "")
   If rParam.Available Then

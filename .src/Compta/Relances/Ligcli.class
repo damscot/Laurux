@@ -23,6 +23,8 @@ Public Sub _new(numcli As Integer, numtag As Integer, devises As String, Scr As 
   Dim res As Result
   Dim i, j As Integer
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   $inumcli = numcli
   Me.tag = numtag
   $scr = Scr

@@ -2,6 +2,8 @@
 
 Public Sub _new()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.center
   If Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] Then CheckBox1.Visible = True
 

@@ -1,0 +1,55 @@
+' Gambas test file
+
+''Tests de LScript (ex-Internal_Test de LScript.class, converti en gb.test au début de la phase 2).
+''L'appel « scanbatch » de l'ancien test n'est pas repris : il dépend d'un outil de numérisation externe
+''et du paramétrage de la société (test manuel), ni le mode « debug2 » qui ouvre une fenêtre (test manuel).
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LScriptTest")
+
+End
+
+Private Sub Lance(Prog As String, Argu As String[], Optional RuSh As Boolean = True) As Variant
+  ''Caractérisation : une erreur levée par LScript(…).Run() est figée comme valeur attendue (« ERREUR: … »).
+  ''Constat : le premier appel LScript(…) d'un processus lève « Type mismatch » (auto-instance, Create Static).
+
+  Dim vRes As Variant
+
+  Try vRes = LScript(Prog, Argu, RuSh).Run()
+  If Error Then vRes = "ERREUR: " & Error.Text
+  Return vRes
+
+End
+
+Public Sub Simple()
+
+  TestKit.Check("bash/echo", Lance("/bin/bash", ["-c", "echo test"]))
+  TestKit.Check("bash/echo/2e", Lance("/bin/bash", ["-c", "echo test"]))
+
+End
+
+Public Sub Liste()
+
+  Dim x As LScript[] = New LScript[]
+  Dim vRes As Variant
+
+  Try x.Add(LScript("/bin/bash", ["-c", "\"echo test1\""]))
+  If Error Then TestKit.Check("RunA/ajout1", "ERREUR: " & Error.Text)
+  Try x.Add(LScript("/bin/bash", ["-c", "echo test2"], False))
+  If Error Then TestKit.Check("RunA/ajout2", "ERREUR: " & Error.Text)
+  Try vRes = LScript.RunA(x)
+  If Error Then vRes = "ERREUR: " & Error.Text
+  TestKit.Check("RunA", vRes)
+
+End
+
+Public Sub Codes()
+
+  Dim aVide As String[] = New String[]
+
+  TestKit.Check("faaalse", Lance("/bin/faaalse", aVide, False))
+  TestKit.Check("false", Lance("/bin/false", aVide, False))
+  TestKit.Check("true", Lance("/bin/true", aVide))
+
+End

@@ -67,6 +67,8 @@ End
 
 Public Sub Form_Open()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Tab = "Fiches_Banques"
   Tri = "banques_code"
   Tris()

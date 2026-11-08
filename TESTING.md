@@ -1,40 +1,51 @@
 # Tests
 
-## Tests : la convention `Internal_Test`
+## Tests unitaires : gb.test (`.src/Tests/<lot>/*.test`)
 
-Il **existe** un harnais de test, mais il est **opt-in par classe** : une classe s'inscrit en
-définissant `Public Sub Internal_Test(Test_List As String[]) As Boolean`.
+Depuis la phase 2 du rework (voir `.hidden/reference/PLAN.md` §4), les tests de logique sont des **modules gb.test**
+(fichiers `.test`) rangés par lot dans `.src/Tests/<lot>/`, avec leurs données dans
+`.src/Tests/<lot>/assets/<nom>/`. L'ancien harnais `Internal_Test` / `./Laurux -t` est **retiré** : les deux
+classes qui l'implémentaient (`LPrix`, `LScript`) ont été converties en `Utils/LPrixTest.test` et
+`Utils/LScriptTest.test`.
+
+```bash
+gbc3 -ag .                    # compile aussi les modules .test
+./Laurux -T list              # liste les modules de test (relais vers « gbx3 -T »)
+./Laurux -T all               # exécute tout ; code de sortie 0 = succès
+./Laurux -T LPrixTest         # un module ; « LPrixTest.Matrice » pour un seul test
+gbx3 -T "*"                   # équivalent direct, depuis le répertoire du projet
+```
+
+`-T` exige les sources (`.src/Tests`) à côté de l'exécutable. Les tests gb.test n'ont accès qu'aux membres
+`Public`.
+
+### Valeurs attendues (tests de caractérisation)
+
+Le module `TestKit` (`.src/Tests/Framework/TestKit.module`) compare chaque valeur à
+`assets/<Module>/expected.txt` (`TestKit.Check("clé", valeur)`). Les valeurs attendues sont **produites dans le
+clone de référence** (code d'origine) avec `LAURUX_TEST_RECORD=1`, jamais déduites de la lecture du code :
+anomalies comprises, elles figent le comportement actuel. `TestKit.Init()` prépare l'état global attendu
+hors de `Start.Main` (`Start.LocalSettings` depuis `Laurux-test.conf`, société, journaux).
 
 ```gambas
-Public Sub Internal_Test(Test_List As String[]) As Boolean
-  If Test_List.Find("list") <> -1 Then
-    Print "Internal Test for Class " & Object.Class(Me).Name & ": " & Object.Class(Me).Name
-    Return True
-  Endif
-  If ((Test_List.Find("all") = -1) And (Test_List.Find(Object.Class(Me).Name) = -1)) Then
-    Print "Internal Test for Class : " & Object.Class(Me).Name & " => SKIPPED"
-    Return True
-  Endif
-  ' ... assertions ; Return True/False
+Public Sub _Setup()
+  TestKit.Begin("Utils", "LPrixTest")
+End
+
+Public Sub Conversion()
+  TestKit.Check("Conversion/L", LPrix("-3,1500", 1, LPrix.Arr_01).L)
 End
 ```
 
-`Start.Start_Test()` (`.src/Start.module`) parcourt **toutes** les classes chargées, appelle
-`Internal_Test` sur celles qui l'ont, et sort avec `Utils.Exit(success)` → code de sortie 0/1.
+### Runner de non-régression
 
-```bash
-./Laurux -t list    # liste les classes testables
-./Laurux -t all     # exécute tout  (exit 0 = succès)
-```
+`.src/Tests/Framework/runner.py` (Python 3, voir `.src/Tests/Framework/README.md`) pilote la base MariaDB
+Docker de test, les tests gb.test et les scénarios GUI rejoués, et compare le clone retravaillé au clone de
+référence.
 
-**Aujourd'hui, 2 classes l'implémentent** : `Utils/LPrix.class` et `Utils/LScript.class`.
-La convention existe et fonctionne — **ajoute `Internal_Test` à toute classe de logique métier
-que tu écris ou modifies**, c'est le moyen de la tester ici.
-
-Autres fichiers de test : `.src/Tests/TriTest.class` (prototype manuel du widget `TriGen`),
-`.src/Utils/CTestTVA.class` (validation TVA), `.src/Caisse/TestCaisses.module` (`TestCai()`).
-Il n'y a **ni framework unitaire ni CI** : le harnais `Internal_Test` est le seul mécanisme,
-et le pilotage de l'IHP (login MySQL, caisse) reste manuel.
+Autres fichiers de test : `.src/Tests/TriTest.class` (banc d'essai manuel de `TriGen`, à enrichir : TRITEST-002),
+`.src/Utils/CTestTVA.class` (validation TVA), `.src/Caisse/TestCaisses.module` (`TestCai()`, contrôle des
+verrous de caisse, pas un test).
 
 ## Tests : utilisation du mode logging/replay
 
@@ -79,6 +90,7 @@ Les actions enregistrées sont : `Click`, `Keypress` (uniquement si le contrôle
 
 ```bash
 ./Laurux -r --logfile /chemin/scenario.log
+./Laurux -r --replay-exit --logfile /chemin/scenario.log   # quitte à la fin (code 0) ; 3 si un événement échoue
 ```
 
 - Seules les lignes contenant `;GUI;` sont retenues ; les autres (`Exec_SQL`, `Log`) sont ignorées.
@@ -86,7 +98,8 @@ Les actions enregistrées sont : `Click`, `Keypress` (uniquement si le contrôle
   (`ReplayTimer_Timer` dans `.src/Start.module`), ce qui évite de bloquer sur les `ShowModal`.
 - Le délai avant l'événement suivant est l'écart entre les horodatages du log, plafonné à 1 s si l'écart dépasse 20 s.
 - Avant chaque événement, `Replay_Event` (`.src/Utils/ReplayObserver.class`) vérifie que la fenêtre active
-  correspond à la fenêtre enregistrée. Si ce n'est pas le cas, le rejeu s'arrête (`Quit`). Les événements `Close`
+  correspond à la fenêtre enregistrée. Si ce n'est pas le cas, le rejeu s'arrête (`Quit 3`). Avec
+  `--replay-exit`, une fenêtre ou un contrôle introuvable arrête aussi le rejeu avec le code 3. Les événements `Close`
   ne sont pas soumis à cette condition.
 - Le contrôle est retrouvé par son nom en parcourant la hiérarchie enregistrée (`Children`, puis `Menus`).
 - Le fichier de sortie est le fichier d'entrée suffixé par `.out` : l'entrée n'est jamais écrasée.
@@ -97,6 +110,11 @@ Les actions enregistrées sont : `Click`, `Keypress` (uniquement si le contrôle
 - Les frappes (`Keypress`) passent par `Utils.De.SendKeys` et dépendent de l'environnement de bureau.
 - Les clics sur les labels utilisent `xdotool` (X11) ou `ydotool` (Wayland, selon `Utils.de.wayland`).
 - Sous `--devel`, les observateurs ne sont pas créés : rien n'est enregistré ni rejoué.
+- Les écrans qui n'appelaient pas `Utils.Observers(Me)` appellent `Utils.ReplayObservers(Me)` (harnais de la
+  phase 2) : observateurs de rejeu seuls, sans les couleurs du thème. Non rejoués : les touches `ImageButton`
+  de la caisse et les clics de grilles sans handler `<Grille>_Click` (REPLAYOBSERVER-A06, non retenue).
+- `Fmenu` lance `mysql -h <hôte>` sans port au démarrage (sql_mode global) ; le runner de test place des
+  enveloppes `mysql`/`mysqldump` en tête du `PATH` pour viser la base de test.
 - Pour un `Button`, le rejeu affecte `Value = True` (`Replay_Click`) ; cela ne déclenche pas forcément
   `_Click` comme un clic utilisateur. À vérifier sur un cas réel avant de s'appuyer dessus.
 - Les événements `MouseWheel` ne sont pas rejoués.

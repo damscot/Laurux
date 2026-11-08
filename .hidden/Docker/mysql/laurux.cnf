@@ -1,0 +1,14 @@
+# Configuration MariaDB commune à l'image de test (étape « db ») et à l'image applicative (étape « app »).
+[mysqld]
+character-set-server = utf8mb4
+collation-server     = utf8mb4_unicode_ci
+# Laurux nomme ses tables en casse mixte (Fiches_Art, Corsage…) : ne pas les replier en minuscules.
+lower_case_table_names = 0
+# Fuseau fixe : les dumps des deux clones restent comparables.
+default-time-zone    = '+00:00'
+# Le sql_mode n'est pas fixé ici : il est passé par --sql-mode (LAURUX_SQL_MODE, voir docker-compose.test.yml),
+# par défaut NO_ENGINE_SUBSTITUTION (non strict), valeur que Laurux impose lui-même au démarrage (Fmenu).
+skip-name-resolve
+
+[client]
+default-character-set = utf8mb4

@@ -55,6 +55,8 @@ End
 
 Public Sub form_Open()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Parametres()
   Ventilation()
 

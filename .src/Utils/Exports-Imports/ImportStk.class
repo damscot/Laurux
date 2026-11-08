@@ -6,6 +6,8 @@ Private son As Integer = Start.Son
 
 Public Sub _new()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Music.Load(Start.Musique)
 
 End
