@@ -2,6 +2,12 @@
 
 Static hfil As File
 
+Public Sub Form_Open()
+
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
+End
+
 Static Public Sub run()
 
   Dim rResult As Result

@@ -18,6 +18,8 @@ Private Client As String
 
 Public Sub _New(cclient As String)
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Titre()
   lg = Int(ColFac.height / ColFac.Rows.Height) - 1
   If Not IsNull(cclient) Then

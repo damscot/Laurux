@@ -38,6 +38,8 @@ Coulfond As New String[]
 
 Public Sub _New(Hitniv As StatFour, Soc As String, Sn As Integer, Dte1 As String, Dte2 As String)
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.center
   With Liste
     son = Sn

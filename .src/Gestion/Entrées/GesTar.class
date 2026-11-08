@@ -32,6 +32,8 @@ Public Sub _new(Optional lig As SaiLig)
   Dim t3 As Integer = Font["Italic,-1"].Size * 5
   Dim t4 As Integer = Font["Italic,-1"].Size * 12
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   $ligart = lig
   $resart = Utils.db.Exec("SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva LEFT JOIN Fiches_TarTemp ON art_code=art  LIMIT 1")
   If Not $resart.Available Then Return

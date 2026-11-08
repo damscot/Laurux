@@ -34,6 +34,8 @@ Public Sub _new(cod As String, Cv As String, Nm As String, Pnm As String, Num As
 
   Dim rSuivi As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.center
 
   Music.Load(Start.Musique)

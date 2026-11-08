@@ -4,6 +4,8 @@ Private $restar As Result
 
 Public Sub _new(Optional four As String)
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   date.Type = TextReg.EstDate
   date.dte.g = Now
   fournisseur.Text = four

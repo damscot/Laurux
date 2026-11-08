@@ -7,6 +7,8 @@ Event trouve(cle As String)
 
 Public Sub _new(choix As String)
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   $schoix = choix
   
   GridView1.Header = GridView.Horizontal

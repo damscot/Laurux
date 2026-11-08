@@ -17,6 +17,8 @@ Private lg As Integer
 
 Public Sub _New(cclient As String)
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   lg = Int(ColFac.height / ColFac.Rows.Height) - 1
   Titre()
   If Not IsNull(cclient) Then

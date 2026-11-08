@@ -5,6 +5,8 @@ Private $bmod As Boolean
 
 Public Sub _new()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
    ColumnView1.Columns[0].Text = "Vignettes non attribuées"
    ColumnView1.Columns[0].Alignment = Align.Center
 

@@ -30,6 +30,8 @@ Private Compb As Boolean
 
 Public Sub _New()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Try SauveB.Text = Start.LocalSettings["/Rep_Sauv"]
   Try Compb = Start.LocalSettings["/Compression"]
 

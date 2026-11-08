@@ -37,6 +37,8 @@ Private $lst As Listextcpt
 
 Public Sub _New()
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.Center
   dte.Type = TextReg.EstDate
   dte.Text = LDate(Now).L

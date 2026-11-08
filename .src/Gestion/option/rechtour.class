@@ -6,6 +6,8 @@ Event trouve(cle As String)
 
 Public Sub _new()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   GridView1.Header = GridView.Horizontal
   GridView1.Columns.Count = 2
   GridView1.Columns[0].Width = 150

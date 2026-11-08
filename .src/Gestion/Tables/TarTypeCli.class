@@ -17,6 +17,8 @@ Public Sub _new(choix As Integer, Optional cat As String, article As String)
 
   Dim ch As Chainage
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.center
   ch = New Chainage([Tart, Tcoeff, Tpvht, Tpvttc, remise, Button6])
   TypeC.MaxLength = 2
