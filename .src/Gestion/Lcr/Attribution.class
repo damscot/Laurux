@@ -83,6 +83,8 @@ End
 
 Public Sub Form_Open()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Tri = "date"
   Tris()
   Deb2()

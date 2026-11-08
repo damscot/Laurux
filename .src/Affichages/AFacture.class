@@ -4,6 +4,8 @@ Private numbl As String
 
 Public Sub _new($num As String, $code As String, $nom As String, $date As String)
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.Center
   numbl = $num
   Codecli.Text = $code

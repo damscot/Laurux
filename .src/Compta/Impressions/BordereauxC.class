@@ -24,6 +24,8 @@ Public Sub Form_Open()
   Dim rBanque As Result
   Dim Frmt As New String[]
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Frmt = Utils.FColr(Start.LocalSettings["/Coul/Focus"])
   CoulFoc = Val(Frmt[0])
   Frmt = Utils.FColr(Start.LocalSettings["/Coul/Znaff"])

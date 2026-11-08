@@ -37,6 +37,8 @@ Public Sub Form_Open()
 
   Dim rResult As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLibelAvoirs") & "")
   If rResult.Available Then TxtAvoirs.Text = rResult!libelav
 

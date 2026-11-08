@@ -24,6 +24,8 @@ Public Sub _new()
   Dim lg As Float
   Dim libel_var As LVar
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   res = Utils.db.Exec("SELECT four,fo_nom,0 AS montantht,0 AS montantttc FROM Fiches_Entrecpt JOIN Fiches_Four ON fo_code=four WHERE validee = '0' LIMIT 1")
   $colfour = New Collection
   

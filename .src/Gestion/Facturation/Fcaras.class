@@ -6,6 +6,8 @@ Public Sub _new(Photo As String, $crst As String)
 
   Dim himage As Image
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Photos.Visible = True
   Photos.Clear
   $photo = photo

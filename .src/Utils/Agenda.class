@@ -7,6 +7,8 @@ Nligne As String
 '*********************************
 Public Sub _New()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.Center
   Init()
   Maj_Zones()

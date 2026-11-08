@@ -6,6 +6,8 @@ Public Sub form_Open()
 
   Dim rResult As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Try rResult = Utils.db.Exec("SELECT * FROM Fiches_Typec")
   If Not Error Then
     If rResult.Available Then

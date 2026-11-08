@@ -1008,6 +1008,16 @@ Public Sub Recursive_Observers(hCont As Variant, Source As Variant[])
 End
 
 
+Public Sub ReplayObservers(hCont As Form)
+  ''Harnais de test (phase 2) : pose uniquement les observateurs de journalisation/rejeu (-l, -r) sur la
+  ''fenêtre, sans appliquer les couleurs du thème (contrairement à Observers) : aucun effet visible.
+
+  Dim Source As Variant[] = New Variant[]
+
+  If Start.Arg_Devel = False Then Recursive_Observers(hCont, Source)
+
+End
+
 Public Sub Observers(hCont As Form)
 
   Dim CoulFn As Integer ' Variable pour la couleur du background des fenetres

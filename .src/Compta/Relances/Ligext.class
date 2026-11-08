@@ -10,6 +10,8 @@ Public Sub _new(rescli As Result, resext As Result, ind As Integer)
 
   Dim res As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   $rescli = rescli
   $resext = resext
   $ind = ind

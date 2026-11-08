@@ -1,0 +1,164 @@
+' Gambas module file
+
+''Outils communs aux modules gb.test de Laurux (.src/Tests/<lot>/<Classe>Test.test).
+''
+''Valeurs attendues « golden » : .src/Tests/<lot>/assets/<Module>/expected.txt, une ligne
+''« clé<TAB>valeur » par vérification. Elles sont produites dans le clone de référence (code d'origine)
+''avec LAURUX_TEST_RECORD=1, jamais déduites de la lecture du code.
+''
+''Usage dans un module de test :
+''  Public Sub _Setup()
+''    TestKit.Begin("Utils", "LPrixTest")
+''  End
+''  Public Sub Conversion()
+''    TestKit.Check("Conversion/1", LPrix("-3,1500", 1, LPrix.Arr_01).L)
+''  End
+
+Private $sLot As String
+Private $sNom As String
+Private $sFile As String
+Private $cValeurs As Collection
+Private $aCles As String[]
+Private $bRecord As Boolean
+
+Public Sub Begin(Lot As String, Nom As String)
+
+  Init()
+  If Lot = $sLot And If Nom = $sNom Then Return
+  $sLot = Lot
+  $sNom = Nom
+  $sFile = Application.Path &/ ".src/Tests" &/ Lot &/ "assets" &/ Nom &/ "expected.txt"
+  $bRecord = Application.Env["LAURUX_TEST_RECORD"] = "1"
+  $cValeurs = New Collection
+  $aCles = New String[]
+  If Exist($sFile) Then Charge() ' en enregistrement : fusion (un test = un processus, chacun ajoute ses clés)
+
+End
+
+Public Sub Init()
+  ''Prépare l'état global attendu par l'application hors de Start.Main : configuration locale
+  ''(LAURUX_TEST_CONF, sinon le Laurux-test.conf du framework), société et collection des journaux (Utils.Log).
+''À appeler avant tout accès à Utils.
+
+  Dim sConf As String
+
+  If Not IsNull(Start.LocalSettings) Then Return
+  sConf = Application.Env["LAURUX_TEST_CONF"]
+  If Not sConf Then sConf = Application.Path &/ ".src/Tests/Framework/Laurux-test.conf"
+  Start.Arg_Config_File = sConf
+  Start.LocalSettings = New Settings(sConf, Application.Name & " local configuration")
+  Start.Societe = Start.LocalSettings["/Soc"]
+  If Not Start.Societe Then Start.Societe = "01"
+  Start.LLogColl = New Collection
+
+End
+
+Public Sub OuvreBase(Optional Dataset As String)
+  ''Restaure la base de test (Laurux01.sql puis .src/Tests/Framework/datasets/<Dataset>.sql) et ouvre
+  ''Utils.db comme le fait Fmenu (SET NAMES, sql_mode de session). Port : LAURUX_TEST_DB_PORT (défaut 13306).
+  ''À appeler dans _Setup : chaque test repart d'une base identique.
+
+  Dim sPort As String = Application.Env["LAURUX_TEST_DB_PORT"]
+  Dim sCnx, sBase As String
+
+  Init()
+  If Not sPort Then sPort = "13306"
+  sBase = Start.LocalSettings["/dbase/Name"]
+  sCnx = "/usr/bin/mariadb -h 127.0.0.1 -P " & sPort & " -u laurux -plaurux "
+  Shell sCnx & "-e " & Shell$("DROP DATABASE IF EXISTS " & sBase & "; CREATE DATABASE " & sBase & " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;") & " && " & sCnx & sBase & " < " & Shell$(Application.Path &/ "Laurux01.sql") Wait
+  If Process.LastValue <> 0 Then Error.Raise("Restauration de la base de test impossible (port " & sPort & ")")
+  If Dataset Then
+    Shell sCnx & sBase & " < " & Shell$(Application.Path &/ ".src/Tests/Framework/datasets" &/ Dataset & ".sql") Wait
+    If Process.LastValue <> 0 Then Error.Raise("Jeu de données " & Dataset & " non chargé")
+  Endif
+  If Utils.db.Opened Then Utils.db.Close
+  Utils.glb()
+  Utils.db.Port = sPort
+  Utils.db.Open
+  Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
+  Utils.db.Exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+
+End
+
+Public Sub Recording() As Boolean
+
+  Return $bRecord
+
+End
+
+Public Sub Check(Cle As String, Obtenu As Variant)
+  ''Compare la valeur obtenue à la valeur attendue de la clé, ou l'enregistre en mode LAURUX_TEST_RECORD=1.
+
+  Dim sObtenu As String = Canonique(Obtenu)
+
+  If $bRecord Then
+    If Not $cValeurs.Exist(Cle) Then $aCles.Add(Cle)
+    $cValeurs[Cle] = sObtenu
+    Sauve()
+    Assert.Pass(Cle & " (enregistré)")
+  Else If Not $cValeurs.Exist(Cle) Then
+    Assert.Fail(Cle & " : aucune valeur attendue dans " & $sFile & " (lancer l'enregistrement dans le clone de référence)")
+  Else
+    Assert.Equals(sObtenu, $cValeurs[Cle], Cle)
+  Endif
+
+End
+
+Public Sub CheckXFail(Cle As String, Obtenu As Variant, Attendu As Variant, Raison As String)
+  ''Échec attendu (« xfail ») : le comportement prévu par test.md (Attendu) n'est pas obtenu et l'agent n'a pu
+  ''ni l'expliquer ni corriger le test. La comparaison Obtenu / Attendu est rapportée en TODO (TAP) : elle ne
+  ''fait pas échouer la suite, et apparaît (valeurs comprises) dans output/tests/list.md et .hidden/reference/TODO.md
+  ''pour vérification par l'utilisateur. Si elle réussit un jour, gb.test la signale comme « bonus ».
+
+  Test.TODO(Raison)
+  Assert.Equals(Canonique(Obtenu), Canonique(Attendu), Cle)
+
+End
+
+Public Sub Canonique(Valeur As Variant) As String
+  ''Représentation stable et indépendante de la locale (CStr), Null et tableaux compris.
+
+  Dim aRes As String[]
+  Dim vElt As Variant
+
+  If IsNull(Valeur) Then Return "<Null>"
+  If TypeOf(Valeur) = gb.Object Then
+    If Valeur Is Array Then
+      aRes = New String[]
+      For Each vElt In Valeur
+        aRes.Add(Canonique(vElt))
+      Next
+      Return "[" & aRes.Join("|") & "]"
+    Endif
+    Return "<" & Object.Type(Valeur) & ">"
+  Endif
+  Return Replace(Replace(CStr(Valeur), "\t", "\\t"), "\n", "\\n")
+
+End
+
+Private Sub Charge()
+
+  Dim sLigne As String
+  Dim iTab As Integer
+
+  For Each sLigne In Split(File.Load($sFile), "\n", "", True)
+    iTab = InStr(sLigne, "\t")
+    If iTab = 0 Then Continue
+    $aCles.Add(Left(sLigne, iTab - 1))
+    $cValeurs[Left(sLigne, iTab - 1)] = Mid(sLigne, iTab + 1)
+  Next
+
+End
+
+Private Sub Sauve()
+
+  Dim aLignes As String[] = New String[]
+  Dim sCle As String
+
+  For Each sCle In $aCles
+    aLignes.Add(sCle & "\t" & $cValeurs[sCle])
+  Next
+  If Not Exist(File.Dir($sFile)) Then Shell "mkdir -p " & Shell$(File.Dir($sFile)) Wait
+  File.Save($sFile, aLignes.Join("\n") & "\n")
+
+End

@@ -23,6 +23,8 @@ Public Sub Form_Open()
   Dim Elem As XmlElement[]
   Dim i As Integer = 1
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Majtitle.Text = "Mise à Jour de " & Application.Name
 
   hClient = New HttpClient As "hClient"
