@@ -36,6 +36,8 @@ B As Integer
 '*********************************
 Public Sub _New()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.Center
   Factures = Start.LocalSettings["/Coul/Facts"]
   If IsNull(Factures) Then Factures = "&HF9F9BD&"

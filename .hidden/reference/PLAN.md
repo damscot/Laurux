@@ -21,10 +21,10 @@ seule la phase 4 autorise des commits par l'agent.
 | Harnais | Les `Internal_Test` existants (`LPrix`, `LScript`, `Start`) sont **convertis en gb.test**. `./Laurux -T <tests\|all>` et `./Laurux -T list` reproduisent le comportement de `gbx3 -T` et remplacent l'actuel `-t` |
 | Couverture | **Maximale**, y compris pour les modules complexes. Mesure avec `gbx3 -t` (trace des lignes exécutées) et `gbx3 -p` (profilage, performance) |
 | Modules complexes | Facture, Caisse, Moulinage, Clôture, Inventaire… : avant de générer leurs tests, l'agent **présente la liste des cas d'usage et scénarios prévus** et attend la validation ou l'ajustement du périmètre par l'utilisateur |
-| BDD de test | **MySQL/MariaDB en Docker**, instance jetable ; import de `Laurux01.sql` ou d'un jeu dérivé pour chaque test |
+| BDD de test | **MariaDB 10.11 LTS en Docker** (image `mariadb:10.11`), instance jetable ; import de `Laurux01.sql` ou d'un jeu dérivé pour chaque test. Fichiers Docker dans `.hidden/Docker/` : Dockerfile **multi-stage** dont l'étape `db` (serveur seul, cible des tests) sert de base à l'étape `app` (application complète) |
 | API | Une méthode `Public` peut être modifiée **si tous les appelants listés dans `dependencies.md` sont mis à jour dans le même commit**. Handlers d'événements `Objet_Evenement` (nom **et portée `Public`**, car `ReplayObserver` les appelle dynamiquement), noms de contrôles et `.form` : **intouchables** |
 | Schéma BDD | **Aucune modification.** Les optimisations qui demanderaient un changement de schéma sont seulement notées dans une section finale « Optimisations possibles (changement de schéma futur) » de `architecture.md` et de `TODO.md`. Elles ne deviennent **jamais** des cases à cocher dans `rework.md` |
-| Outillage | `.hidden/reference/tools/`, versionné : scripts Python, `docker-compose` MariaDB, calcul des KPI et de la couverture |
+| Outillage | Documentation : `.hidden/reference/tools/` (deps, gendoc, links, KPI). **Tests** : tout sous `.src/Tests/` — framework (`.src/Tests/Framework/` : runner Python, dump normalisé, couverture, module Gambas `TestKit`) et un répertoire par lot `.src/Tests/<lot>/{<Classe>.test, assets/…}`. `.hidden/reference/` ne contient que la documentation, le plan et les KPI |
 | Commits phase 4 | Branche dédiée `rework/phase4` ; **1 commit par rework_id** ; message `<src_path>/rework.md <REWORK_ID>`. C'est une exception explicite à la règle « ne commit rien » d'AGENTS.md, **valable uniquement en phase 4** |
 | Identifiant | `rework_id` = `<NOMFICHIER_MAJ>-NNN` (ex. `LPRIX-001`), unique dans tout le dépôt puisque les noms de classes Gambas sont uniques. Tests : `<NOMFICHIER_MAJ>-Tnn` |
 | Migrations `LauruxMaj` | **Aucune refactorisation** des étapes `MajXXX` ni de leur dispatch (`Verif_Version`). Le rework se limite à la documentation d'en-tête ; le seul test est un replay de mise à jour depuis la base de la version taguée précédente. Les défauts des migrations ne peuvent être corrigés que par une future migration : ils sont notés dans « Optimisations possibles (changement de schéma futur) » |
@@ -155,6 +155,29 @@ Liste des tests à implémenter. Pour chaque test :
 
 ## 4. Phase 2 : tests de non-régression
 
+### 4.0 Décisions de phase 2 (validées par l'utilisateur le 2026-11-08)
+
+| Sujet | Décision |
+|---|---|
+| Serveur | MariaDB 10.11 LTS (`mariadb:10.11`), port hôte `127.0.0.1:13306` |
+| Docker | `.hidden/Docker/Dockerfile` multi-stage : étape `db` (MariaDB + script d'initialisation commun `mysql/`) et étape `app` qui en hérite (Gambas, X, Laurux) ; `docker-compose.test.yml` pour la base de test |
+| Clone de référence | `/home/damscot/Laurux` reçoit **uniquement** les changements de harnais (non commités, comme le reste) ; son code métier reste celui de `6b6b9dfc` |
+| Fin de replay | Nouvelle option `--replay-exit` : quitter après le dernier événement avec un code de sortie (0 = rejeu complet, ≠ 0 = échec de rejeu) |
+| Affichage | Replays sous **Xvfb** (`xvfb-run`, taille d'écran fixe) ; `--display :0` pour observer un rejeu |
+| `-T` | `./Laurux -T <tests\|all\|list>` relaie vers `gbx3 -T` sur le répertoire source de l'application et renvoie son code ; `-t`/`Start_Test` retirés |
+| Harnais de rejeu | Instrumenter les écrans sans `Utils.Observers(Me)` (et corriger `TriArticles`) dans les deux clones. **Non retenus pour l'instant** : REPLAYOBSERVER-A06 (`Object.Raise`) et le rejeu des `ImageButton` (touches de caisse) : ces cas restent en test manuel |
+| Déterminisme | `faketime` (date fixe déclarée par scénario), `LANG=fr_FR.UTF-8`, `HOME` isolé avec un `Laurux.conf` de test ; colonnes techniques volatiles masquées dans le dump normalisé |
+| Emplacement des tests | `.src/Tests/<lot>/<Classe>.test` et `.src/Tests/<lot>/assets/<nom_du_test>/` (données, journaux de replay, valeurs attendues). La colonne « Répertoire » des `test.md` (`tests/<nom>/`) se lit `.src/Tests/<lot>/assets/<nom>/`. Jeux de données partagés : `.src/Tests/Framework/datasets/` |
+| Valeurs attendues | Produites dans le clone de référence (mode enregistrement du runner / de `TestKit`), jamais déduites de la lecture du code |
+| Production des tests | **Tous synthétisés par les sous-agents** (gb.test et `scenario.log` GUI), valeurs attendues produites par exécution dans le clone de référence ; un bac à sable par agent (`.src/Tests/Framework/sandbox.py` : copies des deux clones, base sur le port 13306+N) |
+| Isolation | **Un test = un processus** (`gbx3 -T Module.Méthode`), pour le runner comme pour `./Laurux -T` : aucun résultat ne dépend de l'ordre des tests ni de l'état statique (ex. LPRIX-A01, premier appel de `LScript`) |
+| Échec attendu (xfail) | Test dont le comportement obtenu dans la référence diffère du « Résultat attendu » de test.md, sans explication ni correction possible par l'agent : `TestKit.CheckXFail` (gb.test, directive TAP TODO) ou `"xfail"` dans `meta.json` (replay) ; à vérifier par l'utilisateur |
+| Suivi | `output/tests/list.md` : tests implémentés, triés par classe puis numéro (statut pass/fail/xfail, obtenu, attendu, durée, description), généré par `runner.py report` ; `.hidden/reference/TODO.md` (bloc « tests ») : tests à vérifier à la main (pointeur test.md + ID) et classes dont des tests restent à implémenter, par priorité (complexité × besoin de couverture) |
+
+Vérifié sur un projet jouet (Gambas 3.19) : les modules `.test` placés dans des sous-dossiers de `.src/Tests`
+sont compilés et listés par `gbx3 -T` ; `gbx3 -T "*"` les exécute tous (code 1 si échec) ; les fichiers
+d'assets sous `.src/` n'entrent pas dans l'exécutable `gba3`.
+
 1. **Infrastructure** : mettre en place `tools/db/` (MariaDB Docker) et `runner.py`. Le runner :
    - restaure la base ;
    - lance `./Laurux` du clone choisi avec `-c <conf de test>` ;
@@ -238,7 +261,7 @@ soit par une autre fonction `Public` testée, soit par un replay. En effet, gb.t
 | 1 | `.src/Statistiques` + `.src/Affichages` + `.src/Archivages` (lots regroupés à la demande de l'utilisateur ; 278 reworks, 171 anomalies, 285 tests) | 43 | fait | 2026-10-26 | `00b38694` |
 | 1 | `.src/Reports` + `.src/Tests` (TriTest = test de TriGen, étude allégée à la demande de l'utilisateur ; 124 reworks, 39 anomalies, 130 tests) | 25 | fait | 2026-10-26 | `6a223c11` |
 | 1 | `KPI.md` global (généré par `tools/kpi_report.py`, 2 673 reworks, 1 800 anomalies, 3 086 tests) | 457 | en revue | 2026-10-26 | |
-| 2 | Infra Docker + runner + migration gb.test | – | à faire | | |
+| 2 | Infra Docker (multi-stage, base de test MariaDB 10.11) + runner + harnais (-T, --replay-exit, 76 écrans instrumentés) + migration gb.test (LPrix, LScript) + scénario de fumée | – | en revue | 2026-11-08 | |
 | 2 | Tests par lot (même ordre que la phase 1) | 457 | à faire | | |
 | 2 | Couverture et performance de base | – | à faire | | |
 | 3 | Graphe + `TODO.md` | – | à faire | | |

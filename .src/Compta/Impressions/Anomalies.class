@@ -7,6 +7,8 @@ Private dte2 As String
 
 Public Sub Form_Open()
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   dteN1.Text = Format(Exercice_End(0), "dd.mm.yyyy")
   dteN0.Text = Format(Exercice_Begin(0), "dd.mm.yyyy")
   Tab = "Fiches_Mvt"

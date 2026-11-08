@@ -46,6 +46,8 @@ Public Sub Form_Open()
 
   Dim rResult As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Tab = "Fiches_ClientCaisse"
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & " ")
   If rResult.Available Then

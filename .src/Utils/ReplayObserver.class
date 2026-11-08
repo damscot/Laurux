@@ -276,7 +276,7 @@ Static Public Sub Replay_Event(hReplayTimer As Timer, Lastev As Date, Action As 
     If Application.ActiveWindow.Name <> win Then
       Print "Erreur window " & win & " n'est pas actuellement active (" & Application.ActiveWindow.Name & "), impossible de rejouer l'action " & eve & " = " & val & ":" & ctrl.Join(",")
       If Lower(eve) <> "close" Then 'Close may appear several time for the same object (ex Tabstrip)
-        Quit
+        Quit 3
       Else
         Return Null
       Endif
@@ -287,6 +287,7 @@ Static Public Sub Replay_Event(hReplayTimer As Timer, Lastev As Date, Action As 
   
   If IsNull(ctx) Then
     Print "Window " & win & " introuvable, impossible de rejouer l'action " & eve & " = " & val & ":" & ctrl.Join(",")
+    If Start.Arg_Replay_Exit Then Quit 3
   Else
     Print eve & " = " & val & ":" & ctx.Name & ":" & ctrl.Join(",")
   Endif
@@ -353,6 +354,8 @@ Static Public Sub Replay_Event(hReplayTimer As Timer, Lastev As Date, Action As 
     
     Return when
   Else
+    Print "Controle introuvable (" & found & "/" & ctrl.Length & "), impossible de rejouer l'action " & eve & " = " & val & ":" & ctrl.Join(",")
+    If Start.Arg_Replay_Exit Then Quit 3
     Return Null 'retourner null est probablement une mauvaise idee
   Endif
   

@@ -90,6 +90,8 @@ End
 
 Public Sub Form_Open()
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Filename.Text = DB_Con.Get_Localfile_Path()
   Remote.Text = DB_Con.Get_Remotefile_Path()
   Enable.Value = DB_Con.Get_Log()

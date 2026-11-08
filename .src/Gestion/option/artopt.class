@@ -25,6 +25,8 @@ Public Sub _new(TabStrip1 As TabStrip, choix As String, frais As Object, PaUA As
   Dim obs As Observer
   Dim chn As Chainage
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   TabStrip1.Current.Text = "Options"
   Try Frais.ReadOnly = True
   Try Frais.Background = &HD4D0C8&

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Enveloppe de test : Laurux appelle « mysqldump -h <hôte> » sans port (Fmenu, SauvesAuto, FSauve, Moulinage…).
+# Le runner place ce répertoire en tête du PATH pour viser la base Docker de test et jamais le port 3306 local.
+exec /usr/bin/mysqldump -P "${LAURUX_TEST_DB_PORT:-13306}" "$@"

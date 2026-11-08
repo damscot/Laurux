@@ -34,9 +34,10 @@ les `.pot` i18n dans `.lang/`.
 | `-p` | `--pos` | démarre en mode **caisse** (`Cmenu`) au lieu de `Fmenu` |
 | `-l` | `--log` | active le log fichier (`~/tmp/Debug/Laurux.log`) |
 | `-r` | `--replay` | rejoue un journal d'événements GUI enregistré |
+| — | `--replay-exit` | avec `-r` : quitte à la fin du rejeu (code 0), ou avec le code 3 si un événement ne peut pas être rejoué |
 | `-d` | `--debug` | niveaux de log `"console,fichier"`, ex. `-d 8,8` (avec `--logfile <chemin>`) |
 | — | `--devel` | mode dev : boucle `Wait 60` au lieu de `Wait Next` (breakpoints réactifs) |
 | `-s` | `--societe` | démarre sur une société donnée (ex. `01`) |
-| `-t` | `--test` | **lance le test interne** (`all` ou liste de classes) et renvoie le statut |
+| `-T` | `--test` | **lance les tests gb.test** (`all`, `list` ou `Module[.Test]`) via `gbx3 -T` et renvoie leur code (voir `TESTING.md`) |
 | — | `--restore` | restaure un dump `.sql` au démarrage (debug) |
 | — | `--version-full` | affiche version + branche + sha1 et quitte |

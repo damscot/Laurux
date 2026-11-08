@@ -4,6 +4,8 @@ Private global As Boolean
 
 Public Sub _new(Optional Glob As Boolean = False)
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   global = Glob
   Me.Center
 

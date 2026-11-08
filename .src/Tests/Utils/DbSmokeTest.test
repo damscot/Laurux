@@ -1,0 +1,20 @@
+' Gambas test file
+
+''Fumée du framework : base restaurée et ouverte par TestKit.OuvreBase (à supprimer quand des tests réels
+''de base de données existeront).
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "DbSmokeTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T01_Version()
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT version FROM " & Cbase.Table("TabParam"))
+  TestKit.Check("version", r!version)
+
+End

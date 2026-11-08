@@ -18,6 +18,8 @@ Public Sub _New(Message As String, Inp As Variant, Optional obj As Object = Null
   
   Dim i As Variant
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Question.Text = Message
   Question.Tooltip = Tooltip
   

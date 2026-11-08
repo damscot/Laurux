@@ -13,6 +13,8 @@ Public Sub _new()
 
   Dim rResult As Result
 
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   Me.Center
   rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabParam") & "")
   dte2 = Format$(Now, "dd.mm.yyyy")

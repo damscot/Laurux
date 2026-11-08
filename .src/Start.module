@@ -40,7 +40,8 @@ Public Arg_Config_File As String
 Public Arg_Log As Boolean
 Public Arg_Replay As Boolean
 Public Arg_Pos As Boolean
-Public Arg_Test As String
+Public Arg_Test As String ''Tests gb.test à lancer (-T) : all, list ou Module[.Test],…
+Public Arg_Replay_Exit As Boolean ''Quitter à la fin du rejeu (--replay-exit)
 Public Arg_Start_Societe As String
 Public Arg_Restore_DB As String
 Public Arg_LogFile As String
@@ -85,6 +86,7 @@ Public Sub Main()
     Start.Restart = False
   
     Parse_Args()
+    If Arg_Test Then Run_Tests()
     StartDate = Now
     
     'Debug Level on Console and File
@@ -360,10 +362,6 @@ Public Sub Lancement()
     Endif
   Endif
   
-  If Arg_Test Then
-    Start_Test()
-  Endif
-
   Signal[Signal.SIGINT].Catch
 
   While (Not Start.Exit)
@@ -401,6 +399,10 @@ Public Sub ReplayTimer_Timer()
     hReplayTimer.Delay = rReplayTimer.Delay
   Else
     hReplayTimer.Enabled = False
+    If Arg_Replay_Exit Then
+      Print "Rejeu terminé : " & Evc & " événement(s)"
+      Utils.Exit(True)
+    Endif
   Endif
 
 End
@@ -444,7 +446,8 @@ Public Sub Parse_Args()
   
   Arg_Start_Societe = Args.Get("s", "societe", "societe de demarrage", "01")
   Arg_Restore_DB = Args.Get("", "restore", "fichier de database à restaurer au démarrage", Application.Name & ".sql")
-  Arg_Test = Args.Get("t", "test", "Lance les tests interne (all, list) et retourne le status global", "all")
+  Arg_Test = Args.Get("T", "test", "Lance les tests gb.test via gbx3 -T (all, list ou Module[.Test],…) et retourne leur code", "tests")
+  Arg_Replay_Exit = Args.Has("", "replay-exit", "Quitte à la fin du rejeu (code 0 si complet, 3 si échec)")
   
   remaining_args = Args.End()
   
@@ -470,48 +473,65 @@ Public Sub Restore_Args()
 
 End
 
-Public Sub Start_Test()
+Public Sub Run_Tests()
+  ''Relaie l'option -T vers gb.test et quitte avec le code global (0 = aucun échec).
+  ''Chaque test (méthode publique d'un module .src/Tests/<lot>/*.test) est lancé dans son propre processus
+  ''« gbx3 -T Module.Méthode », comme le runner de non-régression : un résultat ne dépend ni de l'ordre des
+  ''tests ni de l'état statique laissé par un autre test. Les modules doivent être compilés (gbc3 -ag).
+  ''Arg_Test : all, list, Module, Module.Méthode, ou une liste séparée par des virgules.
 
-  Dim success As Boolean = True ' True is success, False is  fail
-  Dim List_Test As String[]
-  Dim lcla As String
-  Dim cla As Class
-  Dim obj As Object
-  Dim Load_Classes As String[] = New String[]
-  
-  'force class to be loaded
-  Load_Classes.Add("LPrix")
-  Load_Classes.Add("LScript")
-  
-  Print "*****************************"
-  Print "*    TEST INTERNE " & Application.Name & "    *"
-  Print "*****************************"
-  List_Test = Split(Arg_Test, ",")
-  
-  'force to load class
-  For Each lcla In Load_Classes
-    Class.Load(lcla)
-  Next
-  
-  'test loaded class
-  For Each cla In Classes
-    If cla.Exist("Internal_Test") Then
-      Try obj = cla.AutoCreate()
-      If Not Error Then
-        If Not IsNull(obj) Then
-          success = success And Object.Call(obj, "Internal_Test", [List_Test])
+  Dim sRacine As String = Application.Path &/ ".src/Tests"
+  Dim aTests As New String[]
+  Dim aSel As New String[]
+  Dim sLot, sFic, sLigne, sTest, sDemande, sModule As String
+  Dim iEchecs As Integer
+
+  If Not Exist(sRacine) Then
+    Print "Tests indisponibles : répertoire source " & sRacine & " introuvable"
+    Quit 2
+  Endif
+  For Each sLot In Dir(sRacine, "*", gb.Directory).Sort()
+    For Each sFic In Dir(sRacine &/ sLot, "*.test").Sort()
+      sModule = File.BaseName(sFic)
+      For Each sLigne In Split(File.Load(sRacine &/ sLot &/ sFic), "\n")
+        sLigne = Trim(sLigne)
+        If Left(sLigne, 11) = "Public Sub " And If InStr(sLigne, "(") > 12 Then
+          sTest = Trim(Mid(sLigne, 12, InStr(sLigne, "(") - 12))
+          If Left(sTest, 1) <> "_" Then aTests.Add(sModule & "." & sTest)
         Endif
-      Endif
+      Next
+    Next
+  Next
+  If Arg_Test = "list" Then
+    Print aTests.Join("\n")
+    Quit 0
+  Endif
+  For Each sTest In aTests
+    If Arg_Test = "all" Then
+      aSel.Add(sTest)
+    Else
+      For Each sDemande In Split(Arg_Test, ",")
+        If sTest = sDemande Or If Left(sTest, Len(sDemande) + 1) = sDemande & "." Then
+          aSel.Add(sTest)
+          Break
+        Endif
+      Next
     Endif
   Next
-  
-  If success Then
-    Print "*****************************"
-  Else
-    Print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  If aSel.Count = 0 Then
+    Print "Aucun test ne correspond à : " & Arg_Test
+    Quit 2
   Endif
-  
-  Utils.Exit(success)
-  
+  For Each sTest In aSel
+    Shell "cd " & Shell$(Application.Path) & " && gbx3 -T " & Shell$(sTest) Wait
+    If Process.LastValue <> 0 Then Inc iEchecs
+  Next
+  Print "# " & (aSel.Count - iEchecs) & "/" & aSel.Count & " test(s) sans échec"
+  If iEchecs Then
+    Quit 1
+  Else
+    Quit 0
+  Endif
+
 End
 

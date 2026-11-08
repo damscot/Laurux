@@ -362,15 +362,17 @@ L'utilisateur peut autoriser explicitement la recherche dans un autre répertoir
     applies-la aux 6. Idem pour `MvtM*` et `MvtA*` (structures distinctes entre elles).
 11. Commentaires et messages utilisateur **en français**, dans le style existant.
 12. **Chaînes affichées à l'utilisateur** → forme `("texte")` pour qu'elles soient extraites en i18n.
-13. **Si tu touches une classe de logique métier**, ajoute-lui une méthode
-    `Public Sub Internal_Test(Test_List As String[]) As Boolean` (convention `Build & Test & Run`) vérifiant des comportement attendus ou bornés de la classe.
+13. **Si tu touches une classe de logique métier**, ajoute ou complète son module gb.test
+    `.src/Tests/<lot>/<Classe>Test.test` (méthodes `T<nn>_<objet>`, valeurs attendues via `TestKit.Check`,
+    produites dans le clone de référence : voir `TESTING.md` et `.src/Tests/Framework/README.md`).
 
 ### Valider
 14. `gbc3 -agt` doit passer sans erreur — **lance-le à la main**, `make` masque les erreurs.
-15. `./Laurux -t all` doit sortir en code 0 (harnais `Internal_Test`).
+15. `./Laurux -T all` doit sortir en code 0 (tests gb.test, un processus par test). Pour un écran touché,
+    `python3 .src/Tests/Framework/runner.py compare <lot>/<scénario>` doit répondre IDENTIQUE.
 16. `gba3 -o Laurux` si tu as touché à des classes exportées / à `Start.module`.
-17. Ne prétends pas avoir testé l'IHP : le harnais `Internal_Test` ne couvre que la logique pure,
-    le login MySQL et le pilotage de la caisse restent manuels.
+17. Ne prétends pas avoir testé l'IHP au-delà des scénarios rejoués : gb.test ne couvre que l'API `Public`,
+    et les touches `ImageButton` de la caisse, le matériel (TPE, imprimantes) et le login MySQL restent manuels.
 
 ### Règles de communication
 18. **Rends compte fidèlement** : si le build passe mais que tu n'as pas lancé l'application,

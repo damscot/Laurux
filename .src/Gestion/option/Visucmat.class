@@ -83,6 +83,8 @@ Public Sub Form_Open()
 
   Dim req As String
   
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   req = "SELECT * FROM Fiches_ligregie" 
   $tr = New TriGen(Panel1, $col, $res, req, 20, Me) As "coltri"
   $tr.ExtraSel("(type='S' or type='E') AND " & dte(), "AND")

@@ -540,6 +540,8 @@ Public Sub form_Open()
   Dim tag As Variant
 
   'on affiche les valeurs dans le formulaire
+  Utils.ReplayObservers(Me) ' harnais de test (phase 2) : journalisation/rejeu
+
   findex.Text = $index
   ftype.Add("Clients", Clients)
   ftype.Add("Fournisseurs", Fournisseurs)
