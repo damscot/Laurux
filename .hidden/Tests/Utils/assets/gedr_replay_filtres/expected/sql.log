@@ -1,0 +1,36 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind limit 1
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind       order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0"   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%f%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fa%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%" or tag like "% %")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%" or tag like "% 2%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%" or tag like "% 20%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%" or tag like "% 202%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%" or tag like "% 2024%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind limit 1
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind       order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where type = "0" and (tag like "%fac%" or tag like "% 2024%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%fac%" or tag like "% 2024%")   group by doc_lind    order by t.doc_lind limit 0, 22

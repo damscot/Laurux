@@ -1,0 +1,613 @@
+' Gambas test file
+
+''Tests de DB_Connection (.hidden/reference/.src/Utils/DB_Connection.class/test.md, DB_CONNECTION-T01 à T16).
+''Valeurs attendues : assets/DB_ConnectionTest/expected.txt, produites dans le clone de référence.
+''MySQL : base de test restaurée par TestKit.OuvreBase. SQLite : copie de Laurux01.sqlite du dépôt dans le
+''répertoire temporaire du processus, ouverte sur Utils.db (OuvreSqlite).
+''Journal applicatif (Exec_SQL, GUI, Log) : relu dans ~/tmp/Debug/<Application>.log (HOME isolé par le
+''runner) ; date, utilisateur, hôte, machine, pid et pile d'appels sont remplacés par des marqueurs.
+''Non exercés (Message.Error bloquant sans interaction) : Show_Backtrace vrai, LockIncrement en échec
+''(table vide), Create9/Edit en erreur ; à reprendre après DB_CONNECTION-003/007.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SubstMysql", "Substitution `&N` via `Exec` (MySQL et SQLite) (SubstMysql)")
+  TestKit.Desc("T01SubstSqlite", "Substitution `&N` via `Exec` (MySQL et SQLite) (SubstSqlite)")
+  TestKit.Desc("T02FormatLog", "Format de ligne `Exec_SQL`, `Edit`, `Create`")
+  TestKit.Desc("T03Verrous", "Réécriture MySQL → SQLite (règles 0 à 14) (Verrous)")
+  TestKit.Desc("T03Corpus", "Réécriture MySQL → SQLite (règles 0 à 14) (Corpus)")
+  TestKit.Desc("T03Lpad", "Réécriture MySQL → SQLite (règles 0 à 14) (Lpad)")
+  TestKit.Desc("T04ResultatsSqlite", "Résultats SQLite des fonctions réécrites (ResultatsSqlite)")
+  TestKit.Desc("T04ResultatsMysql", "Résultats SQLite des fonctions réécrites (ResultatsMysql)")
+  TestKit.Desc("T05Filtres", "Filtres de log")
+  TestKit.Desc("T06GuiEvent", "`GUI_Event` / `Log_Event`")
+  TestKit.Desc("T07DialecteMysql", "`Engine`, `IsType`, `AutoIncrement` (DialecteMysql)")
+  TestKit.Desc("T07DialecteSqlite", "`Engine`, `IsType`, `AutoIncrement` (DialecteSqlite)")
+  TestKit.Desc("T08ErreurSql", "`Exec` connexion fermée et erreur SQL (ErreurSql)")
+  TestKit.Desc("T08ConnexionFermee", "`Exec` connexion fermée et erreur SQL (ConnexionFermee)")
+  TestKit.Desc("T09Lockstock", "`Lockstock`")
+  TestKit.Desc("T10LockIncrement", "`LockIncrement`")
+  TestKit.Desc("T11RecArt", "`RecArt`")
+  TestKit.Desc("T12Preparees", "`Prepare`/`Set`/`Execute` (MySQL)")
+  TestKit.Desc("T13CopieMysql", "`CopieTable` (CopieMysql)")
+  TestKit.Desc("T13CopieSqlite", "`CopieTable` (CopieSqlite)")
+  TestKit.Desc("T14EditCreate", "`Edit` / `Create9`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "DB_ConnectionTest")
+
+End
+
+'---------------------------------------------------------------------------------------------- outils
+
+Private Sub OuvreSqlite()
+  ''Ouvre Utils.db sur une copie de Laurux01.sqlite (répertoire temporaire du processus).
+
+  Dim sDir As String = Temp$()
+
+  TestKit.Init()
+  Mkdir sDir
+  Copy Application.Path &/ "Laurux01.sqlite" To sDir &/ "Laurux01.sqlite"
+  If Utils.db.Opened Then Utils.db.Close
+  Utils.db.Type = "sqlite3"
+  Utils.db.Host = sDir
+  Utils.db.Name = "Laurux01.sqlite"
+  Utils.db.Open
+
+End
+
+Private Sub Journal() As String[]
+  ''Lignes du journal applicatif depuis le dernier vidage, champs volatils normalisés.
+
+  Dim sFichier As String = User.Home &/ "tmp/Debug" &/ Application.Name & ".log"
+  Dim aRes As String[] = New String[]
+  Dim sLigne As String
+  Dim aChamps As String[]
+  Dim sTexte As String
+
+  Utils.db.Refresh() ' fermeture puis réouverture du logger : écrit les tampons
+  If Not Exist(sFichier) Then Return aRes
+  sTexte = File.Load(sFichier)
+  For Each sLigne In Split(sTexte, "\n", "", True)
+    aChamps = Split(sLigne, ";", "", False, True)
+    aChamps[0] = "<date>"
+    If aChamps.Count >= 7 Then
+      aChamps[3] = "<user>"
+      aChamps[4] = "<host>"
+      aChamps[5] = "<machine>"
+      aChamps[6] = "<pid>"
+      If aChamps[2] <> "Log" And If aChamps.Count >= 8 Then aChamps[7] = "<pile>"
+    Endif
+    aRes.Add(aChamps.Count & ":" & aChamps.Join(";"))
+  Next
+  Return aRes
+
+End
+
+Private Sub VideJournal()
+  ''Journal actif, fichier vidé.
+
+  Utils.db.Enable_Log()
+  Utils.db.Clear()
+
+End
+
+Private Sub Lignes(Requete As String, Optional Arg1 As Variant) As String
+  ''Exécute une requête et renvoie toutes ses lignes (« v1,v2|… »), « <Null> » ou le texte de l'erreur.
+
+  Dim r As Result
+  Dim aLignes As String[] = New String[]
+  Dim aVal As String[]
+  Dim hF As ResultField
+
+  If IsMissing(Arg1) Then
+    Try r = Utils.db.Exec(Requete)
+  Else
+    Try r = Utils.db.Exec(Requete, Arg1)
+  Endif
+  If Error Then Return "ERREUR: " & Error.Text
+  If IsNull(r) Then Return "<Null>"
+  If Not r.Available Then Return "<aucune ligne>"
+  Repeat
+    aVal = New String[]
+    For Each hF In r.Fields
+      aVal.Add(TestKit.Canonique(r[hF.Name]))
+    Next
+    aLignes.Add(aVal.Join(","))
+  Until r.MoveNext()
+  Return aLignes.Join("|")
+
+End
+
+Private Sub SansDate(Texte As String) As String
+  ''Remplace la date/heure (Now) qui suit chaque « => » de Get_Filter_Error par « <now> ».
+
+  Return RegExp.Replace(Texte, "=> [^A-Za-z]+(?=[A-Za-z])", "=> <now>")
+
+End
+
+'------------------------------------------------------------------------------------- T01 substitution
+
+Private Sub Substitution(Cle As String)
+
+  Dim aVal As Variant[] = ["l'apostrophe", "dit \"bonjour\"", "anti\\slash", "éèàçù", Date(2024, 3, 12, 10, 11, 12), 1.5, 42, True, False, Null]
+  Dim aNoms As String[] = ["apostrophe", "guillemets", "antislash", "accents", "date", "float", "integer", "true", "false", "null"]
+  Dim i As Integer
+
+  VideJournal()
+  For i = 0 To aVal.Max
+    TestKit.Check(Cle & "/" & aNoms[i], Lignes("SELECT &1 AS v", aVal[i]))
+  Next
+  TestKit.Check(Cle & "/dix_arguments", Lignes2())
+  TestKit.Check(Cle & "/journal", Journal())
+
+End
+
+Private Sub Lignes2() As String
+
+  Dim r As Result
+
+  Try r = Utils.db.Exec("SELECT &1 AS v1, &{10} AS v10, &10 AS v10b", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
+  If Error Then Return "ERREUR: " & Error.Text
+  Return r!v1 & "," & r!v10 & "," & r!v10b
+
+End
+
+Public Sub T01SubstMysql()
+
+  TestKit.OuvreBase()
+  Substitution("T01/mysql")
+
+End
+
+Public Sub T01SubstSqlite()
+
+  OuvreSqlite()
+  Substitution("T01/sqlite")
+
+End
+
+'------------------------------------------------------------------------------------- T02 format du log
+
+Public Sub T02FormatLog()
+
+  Dim r As Result
+
+  TestKit.OuvreBase()
+  VideJournal()
+  Utils.db.Exec("SELECT version FROM " & Cbase.Table("TabParam") & " WHERE ind = &1", 0)
+  r = Utils.db.Edit(Cbase.Table("TabParam"), "ind = &1", 0)
+  TestKit.Check("T02/edit/disponible", r.Available)
+  r = Utils.db.Create9("Fiches_Typec")
+  TestKit.Check("T02/create9/type", Object.Type(r))
+  TestKit.Check("T02/journal", Journal())
+
+End
+
+'------------------------------------------------------------------------- T03/T04 réécriture SQLite
+
+Public Sub T03Verrous()
+  ''LOCK/UNLOCK TABLES neutralisés sous SQLite (Null), exécutés sous MySQL.
+
+  OuvreSqlite()
+  TestKit.Check("T03/sqlite/lock", Lignes("LOCK TABLES Fiches_Art WRITE"))
+  TestKit.Check("T03/sqlite/unlock", Lignes("UNLOCK TABLES"))
+  TestKit.Check("T03/sqlite/lock_minuscules", Lignes("lock tables Fiches_Art write"))
+
+End
+
+Public Sub T03Corpus()
+  ''Réécriture observée par exécution sous SQLite (le SQL réécrit n'est pas journalisé : le journal est écrit
+  ''avant la réécriture). Chaque requête : lignes renvoyées ou texte de l'erreur.
+
+  Dim aReq As String[] = ["SELECT YEAR('2024-03-12') AS v",
+    "SELECT year('2024-03-12') AS v",
+    "SELECT Year ('2024-03-12') AS v",
+    "SELECT MONTH('2024-03-12') AS v",
+    "SELECT DAY('2024-03-12') AS v",
+    "SELECT YEAR(dteclec) AS a, MONTH(dteclec) AS m, DAY(dteclec) AS j FROM Fiches_Parametres",
+    "SELECT YEAR(MONTH('2024-03-12')) AS v",
+    "SELECT CONCAT('a', 'b') AS v",
+    "SELECT concat(art_code,art_four) AS v FROM Fiches_Art WHERE art_code = '001'",
+    "SELECT CONCAT('é', 'à') AS v",
+    "SELECT LEFT('abcdef', 3) AS v",
+    "SELECT left('abcdef',3) AS v",
+    "SELECT RIGHT('abcdef', 2) AS v",
+    "SELECT MID('abcdef', 2, 3) AS v",
+    "SELECT ISNULL(NULL) AS v",
+    "SELECT art_code FROM Fiches_Art WHERE ISNULL(art_cfour) ORDER BY art_code",
+    "SELECT abs(-3) AS v",
+    "SELECT ABS(-3)",
+    "SELECT art_code FROM Fiches_Art WHERE art_design LIKE 'PRODUIT%' ORDER BY art_code DESC",
+    "SELECT art_code FROM Fiches_Art WHERE art_design = 'produit 2.10'",
+    "SELECT art_code FROM Fiches_Art WHERE art_design <> 'BORDEREAU' ORDER BY art_code",
+    "SELECT COUNT(*) AS v FROM Fiches_Bordereaux WHERE 1 = 1",
+    "SELECT art_code FROM Fiches_Art WHERE art_code > '001' LIMIT 1",
+    "SELECT art_code FROM Fiches_Art ORDER BY art_code",
+    "SELECT LENGTH(NOW()) AS v"]
+  Dim i As Integer
+
+  OuvreSqlite()
+  For i = 0 To aReq.Max
+    TestKit.Check("T03/" & Format(i, "00") & "/" & aReq[i], Lignes(aReq[i]))
+  Next
+
+End
+
+Public Sub T03Lpad()
+  ''Règles 10 à 12 (lpad, left/right non convertis) : un nombre de sous-groupes inattendu ouvrirait un
+  ''Message.Error ; cas isolés dans ce test.
+
+  Dim aReq As String[] = ["SELECT lpad('7',6,'0') AS v",
+    "SELECT lpad(art_code,6,'0') AS v FROM Fiches_Art ORDER BY art_code",
+    "SELECT left(art_code || 'xy',3) AS v FROM Fiches_Art WHERE art_code = '001'",
+    "SELECT right(art_code || 'xy',3) AS v FROM Fiches_Art WHERE art_code = '001'"]
+  Dim i As Integer
+
+  OuvreSqlite()
+  For i = 0 To aReq.Max
+    TestKit.Check("T03/lpad/" & Format(i, "00") & "/" & aReq[i], Lignes(aReq[i]))
+  Next
+
+End
+
+Private Sub Fonctions(Cle As String)
+
+  Dim aReq As String[] = ["SELECT art_code, LEFT(art_design, 4) AS g, RIGHT(art_design, 3) AS d, MID(art_design, 2, 3) AS m, CONCAT(art_code, art_four) AS c FROM Fiches_Art ORDER BY art_code",
+    "SELECT ind, YEAR(dteclec) AS a, MONTH(dteclec1) AS m, DAY(dteclec2) AS j FROM Fiches_Parametres",
+    "SELECT art_code FROM Fiches_Art WHERE ISNULL(art_photo) ORDER BY art_code",
+    "SELECT art_code, abs(art_pvht) AS p FROM Fiches_Art ORDER BY art_code",
+    "SELECT art_code FROM Fiches_Art WHERE art_design LIKE 'produit 2%'"]
+  Dim i As Integer
+
+  For i = 0 To aReq.Max
+    TestKit.Check(Cle & "/" & Format(i, "00"), Lignes(aReq[i]))
+  Next
+
+End
+
+Public Sub T04ResultatsSqlite()
+
+  OuvreSqlite()
+  Fonctions("T04/sqlite")
+
+End
+
+Public Sub T04ResultatsMysql()
+  ''Mêmes requêtes sous MySQL (référence de comparaison des écarts SQLite).
+
+  TestKit.OuvreBase()
+  Fonctions("T04/mysql")
+
+End
+
+'------------------------------------------------------------------------------------- T05 filtres
+
+Private Sub CasFiltre(Cle As String, Filtre As String)
+
+  VideJournal()
+  Utils.db.Set_Filter(Filtre)
+  Utils.db.Exec("SELECT version FROM " & Cbase.Table("TabParam"))
+  Utils.db.Exec("UPdate " & Cbase.Table("TabParam") & " SET son = son")
+  Utils.db.Log_Event("message de test")
+  TestKit.Check(Cle & "/filtre_relu", Utils.db.Get_Filter())
+  TestKit.Check(Cle & "/journal", Journal())
+  TestKit.Check(Cle & "/erreurs", SansDate(Utils.db.Get_Filter_Error()))
+  TestKit.Check(Cle & "/is_filtered/Exec_SQL", Utils.db.Is_Filtered("Exec_SQL", "SELECT 1"))
+  TestKit.Check(Cle & "/is_filtered/GUI", Utils.db.Is_Filtered("GUI", "Click=True@B#F#B#"))
+
+End
+
+Public Sub T05Filtres()
+
+  TestKit.OuvreBase()
+  CasFiltre("T05/vide", "")
+  CasFiltre("T05/exec_select", "Exec_SQL:SELECT")
+  CasFiltre("T05/exec_absent", "Exec_SQL:^INTROUVABLE$")
+  CasFiltre("T05/gui", "GUI:.*")
+  CasFiltre("T05/sans_deux_points", "Exec_SQL")
+  CasFiltre("T05/regex_invalide", "Exec_SQL:[")
+  CasFiltre("T05/deux_lignes", "Exec_SQL:UPdate\nLog:.*")
+  Utils.db.Disable_Log()
+  TestKit.Check("T05/log_inactif/is_filtered", Utils.db.Is_Filtered("Exec_SQL", "SELECT 1"))
+
+End
+
+'------------------------------------------------------------------------------------- T06 GUI_Event
+
+Public Sub T06GuiEvent()
+
+  Dim hW As Window
+  Dim hP As Panel
+  Dim hB As Button
+  Dim aSrc As Variant[]
+
+  TestKit.Init()
+  hW = New Window
+  hW.Name = "FenTest"
+  hP = New Panel(hW)
+  hP.Name = "Panneau1"
+  hB = New Button(hP)
+  hB.Name = "Bouton1"
+  aSrc = [hW, hP, hB]
+  VideJournal()
+  Utils.db.GUI_Event(hB, aSrc, "Click", True)
+  Utils.db.GUI_Event(hB, aSrc, "Keypress", "a;b")
+  Utils.db.GUI_Event(hB, aSrc, "Keypress", "x#y")
+  Utils.db.GUI_Event(hB, aSrc, "Keypress", "u@v")
+  Utils.db.GUI_Event(hB, aSrc, "Keypress", "k=l")
+  Utils.db.GUI_Event(hB, aSrc, "Click", 3)
+  Utils.db.GUI_Event(hW, [hW], "Close", 0)
+  Utils.db.Log_Event("message;avec#des@car=spéciaux")
+  Utils.db.Log_Event("niveau erreur", Logger.Error)
+  Utils.db.Log_Event("niveau debug (sous le seuil)", Logger.Debug)
+  TestKit.Check("T06/journal", Journal())
+  hW.Delete
+
+End
+
+'------------------------------------------------------------------------------------- T07 dialecte
+
+Private Sub Dialecte(Cle As String)
+
+  TestKit.Check(Cle & "/Engine", Utils.db.Engine())
+  TestKit.Check(Cle & "/IsType", Utils.db.IsType())
+  TestKit.Check(Cle & "/IsType/mysql", Utils.db.IsType(DB_Connection.type_mysql))
+  TestKit.Check(Cle & "/IsType/sqlite3", Utils.db.IsType(DB_Connection.type_sqlite3))
+  TestKit.Check(Cle & "/IsType/autre", Utils.db.IsType(7))
+  TestKit.Check(Cle & "/AutoIncrement", Utils.db.AutoIncrement())
+  TestKit.Check(Cle & "/AutoIncrement/lind", Utils.db.AutoIncrement("lind"))
+  TestKit.Check(Cle & "/AutoIncrement/id_BIGINT_20", Utils.db.AutoIncrement("id", "BIGINT", 20))
+  TestKit.Check(Cle & "/AutoIncrement/id_BIGINT_0", Utils.db.AutoIncrement("id", "BIGINT", 0))
+
+End
+
+Public Sub T07DialecteMysql()
+
+  TestKit.OuvreBase()
+  Dialecte("T07/mysql")
+
+End
+
+Public Sub T07DialecteSqlite()
+
+  OuvreSqlite()
+  Dialecte("T07/sqlite")
+
+End
+
+'------------------------------------------------------------------------------- T08 erreurs d'Exec
+
+Public Sub T08ErreurSql()
+
+  Dim r As Result
+
+  TestKit.OuvreBase()
+  Try r = Utils.db.Exec("SELECT * FROM Fiches_Inexistante")
+  If Error Then
+    TestKit.Check("T08/erreur_sql/code", Error.Code)
+    TestKit.Check("T08/erreur_sql/texte", Error.Text)
+  Else
+    TestKit.Check("T08/erreur_sql/code", "pas d'erreur")
+  Endif
+  Try r = Utils.db.Exec("SELEC version FROM Fiches_Parametres")
+  If Error Then
+    TestKit.Check("T08/syntaxe/code", Error.Code)
+    TestKit.Check("T08/syntaxe/texte", Error.Text)
+  Else
+    TestKit.Check("T08/syntaxe/code", "pas d'erreur")
+  Endif
+  ' la connexion reste utilisable après l'erreur
+  TestKit.Check("T08/apres_erreur", Lignes("SELECT version FROM Fiches_Parametres"))
+
+End
+
+Public Sub T08ConnexionFermee()
+
+  TestKit.OuvreBase()
+  Utils.db.Close()
+  TestKit.Check("T08/fermee/opened", Utils.db.Opened)
+  TestKit.Check("T08/fermee/exec", Lignes("SELECT version FROM Fiches_Parametres"))
+
+End
+
+'------------------------------------------------------------------------------------- T09 Lockstock
+
+Private Sub EtatArt(Code As String) As String
+
+  Return Lignes("SELECT art_qte, art_pmp FROM Fiches_Art WHERE art_code = &1", Code)
+
+End
+
+Public Sub T09Lockstock()
+
+  Dim fQ As Float
+
+  TestKit.OuvreBase()
+  Utils.db.Exec("UPdate Fiches_Art SET art_stocke = 1, art_qte = 10, art_pmp = 5 WHERE art_code = '001'")
+  Utils.db.Exec("UPdate Fiches_Art SET art_stocke = 1, art_qte = 0, art_pmp = 3 WHERE art_code = '002'")
+  ' 001 : entrée avec pmp
+  Try fQ = Utils.db.Lockstock("001", 5, "+", True, 8)
+  If Error Then fQ = -999
+  TestKit.Check("T09/entree_pmp/retour", fQ)
+  TestKit.Check("T09/entree_pmp/base", EtatArt("001"))
+  ' 001 : sortie sans pmp
+  Try fQ = Utils.db.Lockstock("001", 3, "-")
+  If Error Then fQ = -999
+  TestKit.Check("T09/sortie/retour", fQ)
+  TestKit.Check("T09/sortie/base", EtatArt("001"))
+  ' 001 : sortie qui annule le stock, avec pmp
+  Try fQ = Utils.db.Lockstock("001", 12, "-", True, 4)
+  If Error Then fQ = -999
+  TestKit.Check("T09/sortie_totale_pmp/retour", fQ)
+  TestKit.Check("T09/sortie_totale_pmp/base", EtatArt("001"))
+  ' 002 : stock nul, entrée avec pmp
+  Try fQ = Utils.db.Lockstock("002", 4, "+", True, 7)
+  If Error Then fQ = -999
+  TestKit.Check("T09/stock_nul/retour", fQ)
+  TestKit.Check("T09/stock_nul/base", EtatArt("002"))
+  ' 003 : article non stocké
+  Try fQ = Utils.db.Lockstock("003", 4, "+", True, 7)
+  If Error Then fQ = -999
+  TestKit.Check("T09/non_stocke/retour", fQ)
+  TestKit.Check("T09/non_stocke/base", EtatArt("003"))
+  ' article inexistant
+  Try fQ = Utils.db.Lockstock("ZZZ", 1)
+  If Error Then fQ = -999
+  TestKit.Check("T09/inexistant/retour", fQ)
+
+End
+
+'---------------------------------------------------------------------------------- T10 LockIncrement
+
+Private Sub Incremente(Cle As String, Champ As String, Optional Forme As String = "0")
+
+  Dim r As Result
+
+  Try r = Utils.db.LockIncrement(Champ, "Fiches_Parametres", Forme)
+  If Error Then
+    TestKit.Check(Cle & "/retour", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(Cle & "/retour", r[Champ])
+  Endif
+  TestKit.Check(Cle & "/base", Lignes("SELECT " & Champ & " FROM Fiches_Parametres"))
+
+End
+
+Public Sub T10LockIncrement()
+
+  TestKit.OuvreBase()
+  Incremente("T10/int", "numecriture")
+  Incremente("T10/int/2e", "numecriture")
+  Incremente("T10/chaine_000000", "dnbon", "000000")
+  Incremente("T10/chaine_defaut", "dnfac")
+  Incremente("T10/chaine_null", "dncom")
+  ' Table vide : Message.Error bloquant, non exercé (à faire après DB_CONNECTION-007)
+
+End
+
+'----------------------------------------------------------------------------------------- T11 RecArt
+
+Private Sub Recherche(Cle As String, Art As String, Optional Four As String)
+
+  Dim r As Result
+
+  Try r = Utils.db.RecArt(Art, Four)
+  If Error Then
+    TestKit.Check(Cle, "ERREUR: " & Error.Text)
+  Else If r.Available Then
+    TestKit.Check(Cle, r!art_code & " (" & r.Count & ")")
+  Else
+    TestKit.Check(Cle, "<aucune ligne>")
+  Endif
+
+End
+
+Public Sub T11RecArt()
+
+  TestKit.OuvreBase()
+  Utils.db.Exec("UPdate Fiches_Art SET art_cfour = 'CF-002' WHERE art_code = '002'")
+  Utils.db.Exec("UPdate Fiches_Art SET art_refcentrale = 'RC-003' WHERE art_code = '003'")
+  Utils.db.Exec("INSERT INTO Fiches_CdBarre (codep, codeb) VALUES ('002', '3000000000017')")
+  Recherche("T11/code", "001")
+  Recherche("T11/code_fournisseur", "CF-002")
+  Recherche("T11/ref_centrale", "RC-003")
+  Recherche("T11/code_barre_table", "*3000000000017")
+  Recherche("T11/code_barre_art_code", "*001")
+  Recherche("T11/code_barre_inconnu", "*9999999999999")
+  Recherche("T11/inexistant", "ZZZ")
+  Recherche("T11/vide", "")
+  Recherche("T11/four_ok", "001", "401001")
+  Recherche("T11/four_autre", "001", "999999")
+  Start.LocalSettings["/Soc" & Start.Societe & "/bois"] = True
+  Recherche("T11/option_B", "001")
+
+End
+
+'---------------------------------------------------------------------------- T12 requêtes préparées
+
+Public Sub T12Preparees()
+
+  Dim r As Result
+
+  TestKit.OuvreBase()
+  Try Utils.db.Prepare("req_simple", "SELECT art_code, art_design FROM Fiches_Art WHERE art_code = @code")
+  If Error Then TestKit.Check("T12/simple/prepare", "ERREUR: " & Error.Text)
+  Try Utils.db.Set("@code", "002")
+  If Error Then TestKit.Check("T12/simple/set", "ERREUR: " & Error.Text)
+  Try r = Utils.db.Execute("req_simple")
+  If Error Then
+    TestKit.Check("T12/simple/execute", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T12/simple/execute", r!art_code & "," & r!art_design)
+  Endif
+  ' Comme VarMajTar (requ_cli/requ_typ) : argument &1 substitué dans le texte quoté du PREPARE
+  Try Utils.db.Prepare("req_param", "SELECT art_code FROM Fiches_Art WHERE art_code = @code AND art_four = &1", "401001")
+  If Error Then TestKit.Check("T12/param/prepare", "ERREUR: " & Error.Text)
+  Try r = Utils.db.Execute("req_param")
+  If Error Then
+    TestKit.Check("T12/param/execute", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T12/param/execute", r!art_code)
+  Endif
+  Try Utils.db.Set("@num", 12.5)
+  If Error Then TestKit.Check("T12/set_float", "ERREUR: " & Error.Text)
+  TestKit.Check("T12/set_float/relu", Lignes("SELECT @num AS v"))
+
+End
+
+'------------------------------------------------------------------------------------- T13 CopieTable
+
+Public Sub T13CopieMysql()
+
+  TestKit.OuvreBase()
+  Try Utils.db.CopieTable("Fiches_Mvt1", "Fiches_CopieTest")
+  If Error Then TestKit.Check("T13/mysql/erreur", Error.Text)
+  TestKit.Check("T13/mysql/colonnes", Lignes("SHOW COLUMNS FROM Fiches_CopieTest"))
+  TestKit.Check("T13/mysql/index", Lignes("SELECT index_name, column_name, seq_in_index FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'Fiches_CopieTest' ORDER BY index_name, seq_in_index"))
+
+End
+
+Public Sub T13CopieSqlite()
+
+  OuvreSqlite()
+  Try Utils.db.CopieTable("Fiches_Mvt1", "Fiches_CopieTest")
+  If Error Then TestKit.Check("T13/sqlite/erreur", Error.Text)
+  TestKit.Check("T13/sqlite/table", Lignes("SELECT name FROM sqlite_master WHERE name LIKE 'Fiches_CopieTest%' OR name LIKE 'idx_Fiches_CopieTest%'"))
+
+End
+
+'------------------------------------------------------------------------------------- T14 Edit/Create9
+
+Public Sub T14EditCreate()
+
+  Dim r As Result
+
+  TestKit.OuvreBase()
+  r = Utils.db.Edit(Cbase.Table("TabParam"), "ind = &1", 0)
+  r!devise = "Dollars"
+  r.Update
+  TestKit.Check("T14/edit/base", Lignes("SELECT ind, devise FROM Fiches_Parametres"))
+  r = Utils.db.Edit(Cbase.Table("TabParam"), "ind = &1", 99)
+  TestKit.Check("T14/edit/absent/disponible", r.Available)
+  r = Utils.db.Create9("Fiches_Reglements")
+  r!code = "ZZ"
+  r!libel = "Règlement test"
+  r!journal = "BQ"
+  r!cptint = "512000"
+  r!bordereaux = 0
+  r!lcr = 0
+  r!caisse = 1
+  r!decaissement = 0
+  r!regroup = 0
+  r.Update
+  TestKit.Check("T14/create9/base", Lignes("SELECT * FROM Fiches_Reglements ORDER BY code"))
+
+End
+
+'------------------------------------------------------------------------------- T15/T16 (non gbtest)
+' T15 (cycle log/replay) relève des scénarios rejoués ; T16 (performance, gbx3 -p) : à faire.

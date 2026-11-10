@@ -1,7 +1,9 @@
 # Framework de tests de non-régression (phase 2 du rework)
 
-Décisions : `.hidden/reference/PLAN.md` §4.0. Les tests et leurs données vivent dans `.src/Tests/<lot>/` ;
-`.hidden/reference/` ne contient que la documentation.
+Décisions : `.hidden/reference/PLAN.md` §4.0. Les modules gb.test vivent dans `.src/Tests/<lot>/`
+(compilés avec le projet), leurs données dans `.hidden/Tests/<lot>/assets/` (hors de `.src` : ni l'IDE ni l'archive
+`Laurux` ne les chargent) ; les fichiers générés (`list.md`, `results.json`, sorties des rejeux) vont dans
+`output/tests/` (non versionné) ; `.hidden/reference/` ne contient que la documentation.
 
 ## Arborescence
 
@@ -36,15 +38,23 @@ python3 $R db up                        # base MariaDB 10.11 de test (.hidden/Do
 python3 $R harness apply                # applique le harnais au clone ref et y copie .src/Tests
 python3 $R build                        # gbc3 + archives ~/.cache/laurux-tests/{rework,ref}/Laurux
 
-python3 $R unit --record                # gb.test dans ref, enregistre les valeurs attendues, les recopie ici
-python3 $R unit                         # gb.test dans rework (code 0 = succès)
+python3 $R gbtest --record              # gb.test dans ref, enregistre les valeurs attendues, les recopie ici
+python3 $R gbtest                       # gb.test dans rework (code 0 = succès)
 
 python3 $R record Gestion/facture_simple --dataset facturation_base --date "2026-01-15 10:00:00"
                                         # scénario joué à la main dans ref (écran réel), puis attendus par rejeu
 python3 $R replay Communs/demarrage_quitter --expected   # (ré)écrit les attendus depuis ref
 python3 $R compare Communs/demarrage_quitter              # rejeu rework comparé aux attendus (dump + SQL)
 python3 $R compare Communs/demarrage_quitter --live       # comparé à un rejeu ref fait à l'instant
+python3 $R report                       # rapport sans exécution : fusionne output/tests/runs/* en list.md, results.json, TODO.md
+
+python3 .src/Tests/Framework/sandbox.py create 1   # bac à sable n°1 (copies des clones, base 13307)
+python3 .src/Tests/Framework/sandbox.py collect 1  # recopie ici les tests et docs produits dans le bac
 ```
+
+Règles : un test = un processus ; méthodes gb.test `T<nn>_<objet>` (ID `<CLASSE>-T<nn>` du test.md) ;
+scénarios avec `meta.json` (`id`, `classe`, `dataset`, `date`) ; échec attendu par `TestKit.CheckXFail`
+(gb.test) ou `"xfail"` dans `meta.json` (replay).
 
 ## Déterminisme
 

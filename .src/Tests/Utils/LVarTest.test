@@ -1,0 +1,136 @@
+' Gambas test file
+
+''Tests de LVar (.hidden/reference/.src/Utils/LVar.class/test.md, LVAR-T01 à T05).
+''Valeurs attendues : assets/LVarTest/expected.txt, produites dans le clone de référence.
+''LVAR-T06 (libellé automatique dans Saisecrit) relève d'un scénario GUI : voir test.md.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Evaluate", "`Evaluate` simple")
+  TestKit.Desc("T02ParseResult", "`ParseResult`")
+  TestKit.Desc("T03AddDate", "`AddDate`")
+  TestKit.Desc("T04Priorite", "Priorité des sources")
+  TestKit.Desc("T05Infobulle", "Infobulle")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LVarTest")
+
+End
+
+Public Sub T01Evaluate()
+
+  Dim cCtx As New Collection
+  Dim hVar As LVar
+
+  cCtx["$numbl"] = "BL12"
+  hVar = New LVar(Null, cCtx, "defout")
+  TestKit.Check("T01/concat", hVar.Evaluate("$numbl & \"-x\""))
+  TestKit.Check("T01/vide", hVar.Evaluate(""))
+  TestKit.Check("T01/invalide", hVar.Evaluate("$numbl & & ("))
+  TestKit.Check("T01/inconnue", hVar.Evaluate("$inconnue & \"-x\""))
+  TestKit.Check("T01/litteral", hVar.Evaluate("\"abc\""))
+  ' Contexte Null : collection interne vide
+  hVar = New LVar(Null, Null, "def2")
+  TestKit.Check("T01/ctx_null/variable", hVar.Evaluate("$numbl"))
+  TestKit.Check("T01/ctx_null/calcul", hVar.Evaluate("1 + 2"))
+  ' Sans défaut
+  hVar = New LVar(Null, cCtx)
+  TestKit.Check("T01/sans_defaut/invalide", hVar.Evaluate("$numbl & & ("))
+
+End
+
+Public Sub T02ParseResult()
+
+  Dim cCtx As New Collection
+  Dim hVar As LVar
+  Dim rRes As Result
+
+  TestKit.OuvreBase()
+  hVar = New LVar(Null, cCtx, "defout")
+  rRes = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " ORDER BY compte_cc LIMIT 1")
+  hVar.ParseResult(rRes)
+  TestKit.Check("T02/compte_cc", hVar.Evaluate("$compte_cc"))
+  TestKit.Check("T02/intitule_cc", hVar.Evaluate("$intitule_cc"))
+  TestKit.Check("T02/compte", hVar.Evaluate("$compte"))
+  TestKit.Check("T02/expression", hVar.Evaluate("$compte_cc & \" \" & $intitule_cc"))
+  ' La collection de l'appelant est modifiée
+  TestKit.Check("T02/ctx_count", cCtx.Count)
+  TestKit.Check("T02/ctx_compte_cc", cCtx.Exist("$compte_cc"))
+  ' Résultat vide : rien n'est ajouté
+  rRes = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", -1)
+  cCtx = New Collection
+  hVar = New LVar(Null, cCtx, "defout")
+  hVar.ParseResult(rRes)
+  TestKit.Check("T02/vide/ctx_count", cCtx.Count)
+
+End
+
+Public Sub T03AddDate()
+
+  Dim aDates As String[] = ["05.01.2005", "15.06.2024", "31.12.2026"]
+  Dim aPrefixes As String[] = ["", "ech_"]
+  Dim aNoms As String[] = ["annee", "annee2", "mois", "moistr", "moistr3", "semaine", "jour", "jourstr", "jourstr3"]
+  Dim cCtx As Collection
+  Dim hVar As LVar
+  Dim hDte As LDate
+  Dim sDate, sPre, sNom As String
+
+  For Each sDate In aDates
+    For Each sPre In aPrefixes
+      cCtx = New Collection
+      hVar = New LVar(Null, cCtx, "defout")
+      hDte = LDate(sDate)
+      hVar.AddDate(hDte, sPre)
+      TestKit.Check("T03/" & sDate & "/" & sPre & "/count", cCtx.Count)
+      For Each sNom In aNoms
+        TestKit.Check("T03/" & sDate & "/" & sPre & "/" & sNom, hVar.Evaluate("$" & sPre & sNom))
+      Next
+    Next
+  Next
+
+End
+
+Public Sub T04Priorite()
+
+  Dim cCtx As New Collection
+  Dim hVar As LVar
+  Dim rRes As Result
+
+  TestKit.OuvreBase()
+  cCtx["$compte"] = "APPELANT"
+  hVar = New LVar(Null, cCtx, "defout")
+  TestKit.Check("T04/avant", hVar.Evaluate("$compte"))
+  rRes = Utils.db.Exec("SELECT compte_cc AS compte FROM " & Cbase.Table("TabComptes") & " ORDER BY compte_cc LIMIT 1")
+  hVar.ParseResult(rRes)
+  TestKit.Check("T04/apres", hVar.Evaluate("$compte"))
+  TestKit.Check("T04/ctx", cCtx["$compte"])
+
+End
+
+Public Sub T05Infobulle()
+
+  Dim hWin As New Window
+  Dim hTxt As TextBox
+  Dim cCtx As New Collection
+  Dim hVar, hVar2 As LVar
+
+  hTxt = New TextBox(hWin)
+  hTxt.Tooltip = "Aide"
+  cCtx["$numbl"] = "BL12"
+  cCtx["$client"] = "C1"
+  hVar = New LVar(hTxt, cCtx, "defout")
+  TestKit.Check("T05/apres_new", hTxt.Tooltip)
+  hVar.Evaluate("$numbl & & (")
+  TestKit.Check("T05/apres_erreur", hTxt.Tooltip)
+  hVar.AddDate(LDate("15.06.2024"))
+  TestKit.Check("T05/apres_adddate", hTxt.Tooltip)
+  ' Deuxième LVar sur le même contrôle
+  hVar2 = New LVar(hTxt, Null, "defout")
+  TestKit.Check("T05/second", hTxt.Tooltip)
+  hWin.Delete
+
+End

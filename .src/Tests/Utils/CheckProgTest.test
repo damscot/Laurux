@@ -1,0 +1,36 @@
+' Gambas test file
+
+''Tests de CheckProg (.hidden/reference/.src/Utils/CheckProg.module/test.md, CHECKPROG-T01).
+''Valeurs attendues : assets/CheckProgTest/expected.txt, produites dans le clone de référence.
+''HOME isolé par le runner : ~/temp_prog est le fichier temporaire du module.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Chk", "`Chk`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CheckProgTest")
+
+End
+
+Private Sub Appel(sProg As String) As String
+
+  Dim v As Variant
+
+  Try v = CheckProg.Chk(sProg)
+  If Error Then v = "ERREUR: " & Error.Text
+  Return TestKit.Canonique(v) & " temp_prog=" & TestKit.Canonique(Exist(User.Home &/ "temp_prog"))
+
+End
+
+Public Sub T01Chk()
+
+  TestKit.Check("T01/sh", Appel("sh"))
+  TestKit.Check("T01/programme_inexistant", Appel("programme_inexistant"))
+  TestKit.Check("T01/vide", Appel(""))
+
+End

@@ -1,0 +1,216 @@
+' Gambas test file
+
+''Tests de SaiTableau (SAITABLEAU-T01 à T06, .hidden/reference/.src/Utils/SaiTableau.class/test.md) : grille instanciée
+''dans une Window non affichée (Xvfb) ; les gestionnaires ligne_Haut / ligne_Bas / ligne_InsLig sont appelés
+''directement (API Public). Valeurs attendues : assets/SaiTableauTest/expected.txt (clone de référence).
+
+Private $hWin As Window
+Private $iAjou As Integer
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Construction", "Construction + `show`")
+  TestKit.Desc("T02Ajout", "`ajout` / énumération")
+  TestKit.Desc("T03Netoyage", "`Netoyage` / `Extract`")
+  TestKit.Desc("T04Deplacement", "`ligne_Haut` / `ligne_Bas`")
+  TestKit.Desc("T05InsertionLecture", "`ligne_InsLig` en lecture")
+  TestKit.Desc("T06Delete", "`Delete`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "SaiTableauTest")
+  TestKit.OuvreBase()
+  $hWin = New Window
+  $hWin.Resize(800, 400)
+  $iAjou = 0
+
+End
+
+Public Sub _Tab_ajou(Value As Sailig)
+
+  $iAjou += 1
+
+End
+
+Private Function Props(Optional TypeLibelle As Integer = ObjProp.TextReg) As ObjProp[]
+  ''Code (TextReg), Libelle (TextReg par défaut ; TextBox : chain.add de Sailig refuse un TextBox seul),
+  ''Total (Label).
+
+  Dim a As New ObjProp[]
+  Dim p As ObjProp
+
+  p = New ObjProp("code", "Code", ObjProp.TextReg)
+  p.Width = 100
+  a.Add(p)
+  p = New ObjProp("libelle", "Libelle", TypeLibelle)
+  p.Width = 200
+  a.Add(p)
+  p = New ObjProp("total", "Total", ObjProp.Label)
+  p.Width = 80
+  a.Add(p)
+  Return a
+
+End
+
+Private Function Nouveau() As SaiTableau
+
+  Dim st As SaiTableau
+
+  st = New SaiTableau(Props(), $hWin) As "_Tab"
+  st.show()
+  Return st
+
+End
+
+Private Function Lignes(st As SaiTableau) As String
+  ''Pour chaque ligne : Ind, texte de « Code », fond (hexadécimal).
+
+  Dim a As New String[]
+  Dim lg As Sailig
+
+  For Each lg In st.ligne
+    a.Add(lg.Ind & ":" & TestKit.Canonique(lg.MonControle["Code"].Text) & ":" & Hex(lg.Background, 6))
+  Next
+  Return "count=" & st.ligne.Count & " ind=" & st.ind & " [" & a.Join(" | ") & "]"
+
+End
+
+Private Function Present(o As Object) As String
+
+  If IsNull(o) Then Return "Null"
+  Return Object.Type(o)
+
+End
+
+Public Sub T01Construction()
+
+  Dim st As SaiTableau
+
+  st = New SaiTableau(Props(), $hWin)
+  st.show()
+  TestKit.Check("T01/visibles", "pchoix=" & Present(st.pchoix) & " mo=" & Present(st.mo) & " tuto=" & Present(st.tuto) & " Pentete=" & Present(st.Pentete) & " entete=" & Present(st.entete) & " Tableau=" & Present(st.Tableau) & " Ptot=" & Present(st.Ptot) & " total=" & Present(st.total) & " opt=" & st.opt)
+  TestKit.Check("T01/entete", st.entete.MonControle.Count & ":" & st.entete.MonControle["Code"].Text & "/" & st.entete.MonControle["Libelle"].Text & "/" & st.entete.MonControle["Total"].Text)
+  TestKit.Check("T01/totaltypes", Object.Type(st.total.MonControle["Code"]) & "/" & Object.Type(st.total.MonControle["Total"]))
+  st = New SaiTableau(Props(), $hWin)
+  st.VisibleChoi = False
+  st.VisibleTuto = False
+  st.VisibleEntete = False
+  st.VisibleTot = False
+  st.show()
+  TestKit.Check("T01/masques", "pchoix=" & Present(st.pchoix) & " tuto=" & Present(st.tuto) & " entete=" & Present(st.entete) & " Tableau=" & Present(st.Tableau) & " total=" & Present(st.total))
+  st = New SaiTableau(Props(), Null)
+  TestKit.Check("T01/parentnull", Present(st.$parent) & " " & st.$parent.W & "x" & st.$parent.H)
+
+End
+
+Public Sub T02Ajout()
+
+  Dim st As SaiTableau
+  Dim lg As Sailig
+  Dim a As New String[]
+  Dim i As Integer
+
+  st = Nouveau()
+  For i = 1 To 4
+    st.ajout()
+  Next
+  TestKit.Check("T02/lignes", Lignes(st))
+  TestKit.Check("T02/evenements", $iAjou)
+  For Each lg In st
+    a.Add(lg.Ind)
+  Next
+  TestKit.Check("T02/enumeration", a.Join(","))
+  ' Ligne avec une colonne TextBox en écriture : erreur figée (Sailig : chain.add(clas) sans tableau)
+  st = New SaiTableau(Props(ObjProp.TextBox), $hWin)
+  st.show()
+  Try st.ajout()
+  TestKit.Check("T02/textbox", "erreur=" & Error.Text & " count=" & st.ligne.Count)
+
+End
+
+Public Sub T03Netoyage()
+
+  Dim st As SaiTableau
+  Dim i As Integer
+  Dim aCodes As String[] = ["A", "", "C", "", "E"]
+
+  st = Nouveau()
+  For i = 0 To 4
+    st.ajout()
+    st.ligne[i].MonControle["Code"].Text = aCodes[i]
+  Next
+  TestKit.Check("T03/avant", Lignes(st))
+  st.Netoyage("Code")
+  TestKit.Check("T03/apres", Lignes(st))
+
+End
+
+Public Sub T04Deplacement()
+
+  Dim st As SaiTableau
+  Dim i As Integer
+
+  st = Nouveau()
+  For i = 0 To 2
+    st.ajout()
+    st.ligne[i].MonControle["Code"].Text = Chr(65 + i)
+  Next
+  st.ind = 1
+  st.ligne_Haut(SaiLig.ecriture)
+  TestKit.Check("T04/haut", Lignes(st))
+  st.ind = 1
+  st.ligne_Bas(SaiLig.ecriture)
+  TestKit.Check("T04/bas", Lignes(st))
+  st.ind = 0
+  st.ligne_Haut(SaiLig.ecriture)
+  TestKit.Check("T04/hautpremiere", Lignes(st))
+  st.ind = 2
+  st.ligne_Bas(SaiLig.ecriture)
+  TestKit.Check("T04/basderniere", Lignes(st))
+  st.ind = 1
+  st.ligne_Haut(SaiLig.lecture)
+  TestKit.Check("T04/hautlecture", Lignes(st))
+
+End
+
+Public Sub T05InsertionLecture()
+
+  Dim st As SaiTableau
+  Dim i, n As Integer
+
+  st = Nouveau()
+  For i = 0 To 1
+    st.ajout()
+    st.ligne[i].MonControle["Code"].Text = Chr(65 + i)
+  Next
+  n = st.Tableau.Children.Count
+  st.ind = 1
+  st.ligne_InsLig(SaiLig.lecture)
+  TestKit.Check("T05/lecture", Lignes(st) & " panneaux=" & n & "->" & st.Tableau.Children.Count)
+  n = st.Tableau.Children.Count
+  st.ind = 1
+  st.ligne_InsLig(SaiLig.ecriture)
+  TestKit.Check("T05/ecriture", Lignes(st) & " panneaux=" & n & "->" & st.Tableau.Children.Count)
+
+End
+
+Public Sub T06Delete()
+
+  Dim st As SaiTableau
+  Dim hAncien As ScrollView
+  Dim i As Integer
+
+  st = Nouveau()
+  For i = 0 To 2
+    st.ajout()
+  Next
+  hAncien = st.Tableau
+  st.Delete()
+  TestKit.Check("T06/lignes", Lignes(st))
+  TestKit.Check("T06/nouveautableau", Not (st.Tableau = hAncien))
+  TestKit.Check("T06/ancienvalide", Object.IsValid(hAncien))
+
+End

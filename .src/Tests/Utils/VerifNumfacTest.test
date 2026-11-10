@@ -1,0 +1,41 @@
+' Gambas test file
+
+''Tests de VerifNumfac (.hidden/reference/.src/Utils/VerifNumfac.module/test.md, VERIFNUMFAC-T02).
+''Valeurs attendues : assets/VerifNumfacTest/expected.txt, produites dans le clone de référence.
+''Jeu de données : datasets/verifnumfac.sql. /Soc01/Materiel absent de Laurux-test.conf, forcé en mémoire.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02Dnfac", "`Dnfac` (si le module est conservé)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "VerifNumfacTest")
+  TestKit.OuvreBase("verifnumfac")
+
+End
+
+Private Sub Serie(sCle As String)
+
+  Dim sNum As String
+  Dim v As Variant
+
+  For Each sNum In ["000000", "000001", "000002", "000004", "000005", "000007", "000008", "000020", "3"]
+    Try v = VerifNumfac.Dnfac(sNum)
+    If Error Then v = "ERREUR: " & Error.Text
+    TestKit.Check(sCle & "/" & sNum, v)
+  Next
+
+End
+
+Public Sub T02Dnfac()
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = 0
+  Serie("T02/Materiel0")
+  Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = 1
+  Serie("T02/Materiel1")
+
+End

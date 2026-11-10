@@ -1,0 +1,197 @@
+' Gambas test file
+
+''Tests de LTaxe (.hidden/reference/.src/Utils/LTaxe.class/test.md, LTAXE-T01 à T10).
+''Valeurs attendues : assets/LTaxeTest/expected.txt, produites dans le clone de référence.
+''Les chemins Message.Error (type hors bornes, compte TVA hors 445) ne sont pas exercés : ils bloquent
+''sans interaction (testables après LTAXE-004).
+
+Private $iChange As Integer ' nombre d'événements change reçus (T04)
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ConversionEntree", "`_New` : conversions d'entrée")
+  TestKit.Desc("T02SigneRemise", "Signe des remises")
+  TestKit.Desc("T03TypeTaxe", "`Ttx` aller-retour")
+  TestKit.Desc("T04CompteValide", "`Cpt` valide")
+  TestKit.Desc("T05MontantPctHT", "`Montant` en pourcentage HT")
+  TestKit.Desc("T06MontantPctTTC", "`Montant` en pourcentage TTC")
+  TestKit.Desc("T07MontantFixe", "`Montant` fixe")
+  TestKit.Desc("T08MontantQuantite", "Quantité ≠ 1 (anomalie A01 + LPRIX-A01)")
+  TestKit.Desc("T09MontantArrCpt", "Arrondi et compte propagés")
+  TestKit.Desc("T10ListesTypes", "Listes statiques")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LTaxeTest")
+
+End
+
+Public Sub T01ConversionEntree()
+
+  Dim aEntrees As Variant[] = ["20%", "5,5 %", "3", 3, 2.5, "", Null, 0]
+  Dim i As Integer
+  Dim hTx As LTaxe
+
+  For i = 0 To aEntrees.Max
+    Try hTx = New LTaxe(aEntrees[i])
+    If Error Then
+      TestKit.Check("T01/" & i & "/new", "ERREUR: " & Error.Text)
+      Continue
+    Endif
+    ' Pourcentage ou montant fixe : déduit de deux bases différentes (100 et 200)
+    TestKit.Check("T01/" & i & "/100", hTx.Montant(LPrix(100), True).G)
+    TestKit.Check("T01/" & i & "/200", hTx.Montant(LPrix(200), True).G)
+    TestKit.Check("T01/" & i & "/Ttx", hTx.Ttx)
+  Next
+
+End
+
+Public Sub T02SigneRemise()
+
+  Dim aTypes As Integer[] = [LTaxe.Remise, LTaxe.Deconsigne, LTaxe.TVA]
+  Dim i As Integer
+  Dim hTx As LTaxe
+
+  For i = 0 To aTypes.Max
+    hTx = New LTaxe("3", aTypes[i])
+    TestKit.Check("T02/" & aTypes[i] & "/fixe", hTx.Montant(LPrix(100), True).G)
+    hTx = New LTaxe("3%", aTypes[i])
+    TestKit.Check("T02/" & aTypes[i] & "/pct", hTx.Montant(LPrix(100), True).G)
+  Next
+
+End
+
+Public Sub T03TypeTaxe()
+
+  Dim iType As Integer
+  Dim hTx As LTaxe
+
+  For iType = LTaxe.Aucune To LTaxe.Marge
+    hTx = New LTaxe(10, iType)
+    TestKit.Check("T03/" & iType & "/Ttx", hTx.Ttx)
+    TestKit.Check("T03/" & iType & "/Montant", hTx.Montant(LPrix(1), True).G)
+    ' Réaffectation du même type (LTAXE-A02 : le signe des remises est inversé à chaque affectation)
+    hTx.Ttx = iType
+    TestKit.Check("T03/" & iType & "/Ttx2", hTx.Ttx)
+    TestKit.Check("T03/" & iType & "/Montant2", hTx.Montant(LPrix(1), True).G)
+  Next
+
+End
+
+Public Sub T04CompteValide()
+
+  Dim hTx As LTaxe
+
+  $iChange = 0
+  hTx = New LTaxe("20%", LTaxe.TVA, "44571") As "_Taxe"
+  TestKit.Check("T04/TVA_44571/Cpt", hTx.Cpt)
+  TestKit.Check("T04/TVA_44571/change_new", $iChange)
+  hTx.Cpt = "44566"
+  TestKit.Check("T04/TVA_44566/Cpt", hTx.Cpt)
+  TestKit.Check("T04/TVA_44566/change", $iChange)
+
+  $iChange = 0
+  hTx = New LTaxe("20%", LTaxe.TVA, "") As "_Taxe"
+  TestKit.Check("T04/TVA_vide/Cpt", hTx.Cpt)
+  TestKit.Check("T04/TVA_vide/change_new", $iChange)
+
+  $iChange = 0
+  hTx = New LTaxe("3", LTaxe.Remise, "709") As "_Taxe"
+  TestKit.Check("T04/Remise_709/Cpt", hTx.Cpt)
+  TestKit.Check("T04/Remise_709/change_new", $iChange)
+  hTx.Cpt = "7091"
+  TestKit.Check("T04/Remise_7091/Cpt", hTx.Cpt)
+  TestKit.Check("T04/Remise_7091/change", $iChange)
+
+End
+
+Public Sub T05MontantPctHT()
+
+  Dim hTx As LTaxe = New LTaxe("20%", LTaxe.TVA)
+  Dim aPrix As Float[] = [100, 12.34, -5]
+  Dim i As Integer
+
+  For i = 0 To aPrix.Max
+    TestKit.Check("T05/" & i & "/G", hTx.Montant(LPrix(aPrix[i])).G)
+    TestKit.Check("T05/" & i & "/Mnt", hTx.Montant(LPrix(aPrix[i])).Mnt)
+  Next
+
+End
+
+Public Sub T06MontantPctTTC()
+
+  Dim hTx20 As LTaxe = New LTaxe("20%", LTaxe.TVA)
+  Dim hTx0 As LTaxe = New LTaxe("0%", LTaxe.TVA)
+
+  TestKit.Check("T06/20pct_120/G", hTx20.Montant(LPrix(120), False, True).G)
+  TestKit.Check("T06/20pct_120/Mnt", hTx20.Montant(LPrix(120), False, True).Mnt)
+  TestKit.Check("T06/0pct_50/G", hTx0.Montant(LPrix(50), False, True).G)
+  TestKit.Check("T06/0pct_50/Mnt", hTx0.Montant(LPrix(50), False, True).Mnt)
+
+End
+
+Public Sub T07MontantFixe()
+
+  Dim hTx As LTaxe = New LTaxe(2.5, LTaxe.Fixe)
+  Dim hRes As LPrix
+  Dim hPrix1 As LPrix = New LPrix(10, 1)
+  Dim hPrix3 As LPrix = New LPrix(10, 3)
+
+  hRes = hTx.Montant(hPrix1)
+  TestKit.Check("T07/qte1/G", hRes.G)
+  TestKit.Check("T07/qte1/Mnt", hRes.Mnt)
+  TestKit.Check("T07/qte1/Qte", hRes.Qte)
+  hRes = hTx.Montant(hPrix3)
+  TestKit.Check("T07/qte3/G", hRes.G)
+  TestKit.Check("T07/qte3/Mnt", hRes.Mnt)
+  TestKit.Check("T07/qte3/Qte", hRes.Qte)
+
+End
+
+Public Sub T08MontantQuantite()
+
+  ' Couplage LTAXE-A01 / LPRIX-A01 figé : la quantité passée à LPrix(…) est ignorée par _call
+  Dim hTx As LTaxe = New LTaxe("20%", LTaxe.TVA)
+  Dim hPrix As LPrix = New LPrix(10, 3)
+  Dim hRes As LPrix
+
+  hRes = hTx.Montant(hPrix, False)
+  TestKit.Check("T08/quantite/Mnt", hRes.Mnt)
+  TestKit.Check("T08/quantite/Qte", hRes.Qte)
+  TestKit.Check("T08/quantite/G", hRes.G)
+  hRes = hTx.Montant(hPrix, True)
+  TestKit.Check("T08/ignore/Mnt", hRes.Mnt)
+  TestKit.Check("T08/ignore/Qte", hRes.Qte)
+  TestKit.Check("T08/ignore/G", hRes.G)
+
+End
+
+Public Sub T09MontantArrCpt()
+
+  Dim hTx As LTaxe = New LTaxe("20%", LTaxe.TVA, "44571")
+  Dim hRes As LPrix
+
+  hRes = hTx.Montant(LPrix(10.03, 1, LPrix.Arr_005))
+  TestKit.Check("T09/Arr", hRes.Arr)
+  TestKit.Check("T09/Cpt", hRes.Cpt)
+  TestKit.Check("T09/G", hRes.G)
+  TestKit.Check("T09/Mnt", hRes.Mnt)
+
+End
+
+Public Sub T10ListesTypes()
+
+  TestKit.Check("T10/All_Taxes", LTaxe.All_Taxes)
+  TestKit.Check("T10/All_Remises", LTaxe.All_Remises)
+  TestKit.Check("T10/TxLast", LTaxe.TxLast)
+
+End
+
+Public Sub _Taxe_change(Value As LTaxe)
+
+  If Value Then Inc $iChange
+
+End

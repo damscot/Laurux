@@ -1,0 +1,129 @@
+' Gambas test file
+
+''Tests de VerifDate (.hidden/reference/.src/Utils/VerifDate.class/test.md, VERIFDATE-T01 à T05 et T09).
+''Valeurs attendues : assets/VerifDateTest/expected.txt, produites dans le clone de référence.
+''Option standard : Laurux-test.conf (bois = pp = False). Option B : /Soc01/bois forcé à True en mémoire,
+''jeu de données verifdate_bt (tables de régie). Les cas refusés (Message.Warning, bloquant) relèvent des
+''replays T06-T08.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ConstructionStd", "Construction sans option B/T")
+  TestKit.Desc("T02ConstructionBT", "Construction option B/T")
+  TestKit.Desc("T03RepliArrete", "Repli sur `arrete`")
+  TestKit.Desc("T04ClotFacAccepte", "`ClotFac` accepté")
+  TestKit.Desc("T05ClotDroiAccepte", "`ClotDroi` accepté")
+  TestKit.Desc("T09ArreteVide", "`arrete` vide en B/T")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "VerifDateTest")
+
+End
+
+Private Sub OptionB()
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/bois"] = True
+  Start.LocalSettings["/Soc" & Start.Societe & "/pp"] = False
+
+End
+
+Private Sub Dt(hD As LDate) As String
+
+  If IsNull(hD) Then Return "<Null>"
+  Return hD.DT
+
+End
+
+Private Sub Construit(sCle As String, Optional dDate As Date)
+
+  Dim hV As VerifDate
+
+  Try hV = New VerifDate(dDate)
+  If Error Then
+    TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check(sCle & "/Option", Utils.Option())
+  TestKit.Check(sCle & "/DateCom", Dt(hV.DateCom))
+  TestKit.Check(sCle & "/DateGes", Dt(hV.DateGes))
+  TestKit.Check(sCle & "/DateSus", Dt(hV.DateSus))
+  TestKit.Check(sCle & "/DateAcq", Dt(hV.DateAcq))
+
+End
+
+Public Sub T01ConstructionStd()
+
+  TestKit.OuvreBase()
+  Construit("T01", Date(2018, 1, 15))
+
+End
+
+Public Sub T02ConstructionBT()
+
+  TestKit.OuvreBase("verifdate_bt")
+  OptionB()
+  Construit("T02", Date(2024, 6, 10))
+
+End
+
+Public Sub T03RepliArrete()
+
+  TestKit.OuvreBase("verifdate_bt")
+  OptionB()
+  Utils.db.Exec("DELETE FROM Fiches_ligregie")
+  Construit("T03", Date(2024, 6, 10))
+
+End
+
+Public Sub T04ClotFacAccepte()
+
+  Dim hV As VerifDate
+  Dim dDate As Date
+
+  TestKit.OuvreBase()
+  For Each dDate In [Date(2018, 1, 1), Date(2018, 1, 15), Date(2018, 2, 28, 23, 0, 0)]
+    hV = New VerifDate(dDate)
+    TestKit.Check("T04/ClotFac/" & Format(dDate, "yyyy-mm-dd hh:nn"), hV.ClotFac())
+    TestKit.Check("T04/ClotComptable/" & Format(dDate, "yyyy-mm-dd hh:nn"), hV.ClotComptable())
+    TestKit.Check("T04/ClotGestion/" & Format(dDate, "yyyy-mm-dd hh:nn"), hV.ClotGestion())
+  Next
+
+End
+
+Public Sub T05ClotDroiAccepte()
+
+  Dim hV As VerifDate
+
+  ' Option standard : aucun contrôle de droit
+  TestKit.OuvreBase()
+  hV = New VerifDate(Date(2000, 1, 1))
+  TestKit.Check("T05/std/ClotDroi", hV.ClotDroi("001"))
+  TestKit.Check("T05/std/ClotDroi_droit", hV.ClotDroi("", "DS"))
+  ' Option B : article sans droit, droit inconnu, droit acquitté et suspendu après les clôtures
+  TestKit.OuvreBase("verifdate_bt")
+  OptionB()
+  hV = New VerifDate(Date(2000, 1, 1))
+  TestKit.Check("T05/B/sans_droit", hV.ClotDroi("003"))
+  TestKit.Check("T05/B/droit_inconnu", hV.ClotDroi("", "ZZ"))
+  TestKit.Check("T05/B/article_inconnu", hV.ClotDroi("999"))
+  hV = New VerifDate(Date(2024, 6, 1))
+  TestKit.Check("T05/B/acquitte_apres", hV.ClotDroi("002"))
+  TestKit.Check("T05/B/suspendu_apres", hV.ClotDroi("001"))
+  TestKit.Check("T05/B/ClotSuspendu_droit_acquitte", hV.ClotSuspendu("", "DA"))
+  TestKit.Check("T05/B/ClotAcquite_droit_suspendu", hV.ClotAcquite("", "DS"))
+
+End
+
+Public Sub T09ArreteVide()
+
+  TestKit.OuvreBase("verifdate_bt")
+  OptionB()
+  Utils.db.Exec("DELETE FROM Fiches_ligregie")
+  Utils.db.Exec("UPDATE Fiches_Parametres SET arrete = NULL")
+  Construit("T09", Date(2024, 6, 10))
+
+End

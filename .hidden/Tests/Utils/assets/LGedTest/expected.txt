@@ -1,0 +1,113 @@
+T01/String2Array	[a|b| c]
+T01/String2Array/vide	[]
+T01/Array2String	xy,x
+T01/Array2String/vide	<Null>
+T01/Array2String/doublons	b,a, a
+T02/doc1/TTC	120,00
+T02/doc1/HT	100,00
+T02/doc1/DTE	2020-03-12 10:00:00
+T02/doc1/ORI	Facture
+T02/doc1/fiche	findex=1|ftype=Clients|fcode=FA000001|fcompte=411001|furl=file:///ged/clients/FA000001.pdf|forigin=Facture|fdte=12.03.2020 10:00|fMht=100,00|fMttc=120,00|fmime=application/pdf|ListTags=urgent,client
+T02/doc4/fiche	findex=4|ftype=Autres|fcode=NOTE|fcompte=|furl=/ged/autres/note.txt|forigin=Docs|fdte=30.06.2020 18:00|fMht=0,00|fMttc=0,00|fmime=text/plain|ListTags=
+T02/inexistant/TTC	0,00
+T02/inexistant/ORI	BR
+T02/inexistant/fiche	findex=999|ftype=Fournisseurs|fcode=X1|fcompte=401002|furl=|forigin=BR|fdte=<maintenant>|fMht=0,00|fMttc=0,00|fmime=|ListTags=
+T03/Exist/code	True
+T03/Exist/compte	True
+T03/Exist/compte_faux	False
+T03/Exist/origine	True
+T03/Exist/origine_fausse	False
+T03/Exist/compte_origine	True
+T03/Exist/type_faux	False
+T03/Search/trouve	Facture|2020-05-20 14:15:00|36,00
+T03/Search/absent	True
+T04/AddTag/nouveau	6
+T04/AddTag/nouveau/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin,6:nouveau Liens=1:1,1:2,1:6,2:1,2:3,3:4,99:4 Docs=1,2,3,4
+T04/AddTag/existant	3
+T04/AddTag/existant/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin,6:nouveau Liens=1:1,1:2,1:3,1:6,2:1,2:3,3:4,99:4 Docs=1,2,3,4
+T04/AddTag/deja_porte	1
+T04/AddTag/deja_porte/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin,6:nouveau Liens=1:1,1:2,1:3,1:6,2:1,2:3,3:4,99:4 Docs=1,2,3,4
+T04/DelTag/client	2
+T04/DelTag/client/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin,6:nouveau Liens=1:1,1:3,1:6,2:1,2:3,3:4,99:4 Docs=1,2,3,4
+T04/DelTag/inexistant	0
+T04/AddTags/non_enregistre/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin,6:nouveau,7:a,8:b Liens=1:1,1:3,1:6,2:1,2:3,3:4,99:4 Docs=1,2,3,4
+T04/DelAllTag/doc2/etat	Tags=1:urgent,3:fournisseur,6:nouveau Liens=1:1,1:3,1:6,3:4,99:4 Docs=1,2,3,4
+T05/initial	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin Liens=1:1,1:2,2:1,2:3,3:4,99:4 Docs=1,2,3,4
+T05/EpurationTags	2
+T05/EpurationTags/etat	Tags=1:urgent,2:client,3:fournisseur Liens=1:1,1:2,2:1,2:3,3:4,99:4 Docs=1,2,3,4
+T05/EpurationDocs	1
+T05/EpurationDocs/etat	Tags=1:urgent,2:client,3:fournisseur Liens=1:1,1:2,2:1,2:3,3:4,99:4 Docs=1,2,3
+T05/EpurationTags/2	0
+T06/nouveau/retour	0
+T06/nouveau/ligne	0|FA000009|411002|Facture|~/ged/clients/411002/<annee>/Facture/FA-FA000009.pdf|FA-FA000009.pdf|application/pdf|0.00|0.00
+T06/nouveau/fichier	True
+T06/nouveau/contenu	True
+T06/nouveau/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin Liens=1:1,1:2,2:1,2:3,3:4,99:4 Docs=1,2,3,4,5
+T06/existant/retour	0
+T06/existant/ligne	0|FA000001|411001|Facture|~/ged/clients/411001/2020/Facture/20200312-100000_FA000001.pdf|20200312-100000_FA000001.pdf|application/pdf|120.00|100.00
+T06/existant/fichier	True
+T06/existant/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin Liens=2:1,2:3,3:4,99:4 Docs=1,2,3,4,5
+T06/source_absente/retour	1
+T06/source_absente/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin Liens=2:1,2:3,3:4,99:4 Docs=1,2,3,4,5
+T07/sans_racine	file:///411001/<annee>/Facture/fic.pdf
+T07/type0/ori/nom	file://~/ged/clients/411001/<annee>/Docs/doc.odt
+T07/type0/ori/defaut	file://~/ged/clients/411001/<annee>/Docs/<FT>_C15.pdf
+T07/type0/ori/ORI	Docs
+T07/type0/oriFacture/nom	file://~/ged/clients/411001/<annee>/Facture/doc.odt
+T07/type0/oriFacture/defaut	file://~/ged/clients/411001/<annee>/Facture/<FT>_C15.pdf
+T07/type0/oriFacture/ORI	Facture
+T07/type1/ori/nom	file://~/ged/fournisseurs/411001/<annee>/Docs/doc.odt
+T07/type1/ori/defaut	file://~/ged/fournisseurs/411001/<annee>/Docs/<FT>_C15.pdf
+T07/type1/ori/ORI	Docs
+T07/type1/oriFacture/nom	file://~/ged/fournisseurs/411001/<annee>/Facture/doc.odt
+T07/type1/oriFacture/defaut	file://~/ged/fournisseurs/411001/<annee>/Facture/<FT>_C15.pdf
+T07/type1/oriFacture/ORI	Facture
+T07/type2/ori/nom	file://~/ged/compta/411001/<annee>/Docs/doc.odt
+T07/type2/ori/defaut	file://~/ged/compta/411001/<annee>/Docs/<FT>_C15.pdf
+T07/type2/ori/ORI	Docs
+T07/type2/oriFacture/nom	file://~/ged/compta/411001/<annee>/Facture/doc.odt
+T07/type2/oriFacture/defaut	file://~/ged/compta/411001/<annee>/Facture/<FT>_C15.pdf
+T07/type2/oriFacture/ORI	Facture
+T07/type3/ori/nom	file://~/ged/autres/411001/<annee>/Docs/doc.odt
+T07/type3/ori/defaut	file://~/ged/autres/411001/<annee>/Docs/<FT>_C15.pdf
+T07/type3/ori/ORI	Docs
+T07/type3/oriFacture/nom	file://~/ged/autres/411001/<annee>/Facture/doc.odt
+T07/type3/oriFacture/defaut	file://~/ged/autres/411001/<annee>/Facture/<FT>_C15.pdf
+T07/type3/oriFacture/ORI	Facture
+T07/type4/ori/nom	file://~/ged/articles/411001/<annee>/Docs/doc.odt
+T07/type4/ori/defaut	file://~/ged/articles/411001/<annee>/Docs/<FT>_C15.pdf
+T07/type4/ori/ORI	Docs
+T07/type4/oriFacture/nom	file://~/ged/articles/411001/<annee>/Facture/doc.odt
+T07/type4/oriFacture/defaut	file://~/ged/articles/411001/<annee>/Facture/<FT>_C15.pdf
+T07/type4/oriFacture/ORI	Facture
+T07/mime/application/pdf/extension	pdf
+T07/mime/application/pdf/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.pdf
+T07/mime/text/html/extension	html
+T07/mime/text/html/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.html
+T07/mime/text/plain/extension	txt
+T07/mime/text/plain/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.txt
+T07/mime/text/csv/extension	csv
+T07/mime/text/csv/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.csv
+T07/mime/application/msword/extension	doc
+T07/mime/application/msword/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.doc
+T07/mime/application/vnd.ms-excel/extension	xls
+T07/mime/application/vnd.ms-excel/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.xls
+T07/mime/application/zip/extension	zip
+T07/mime/application/zip/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.zip
+T07/mime/application/gzip/extension	gz
+T07/mime/application/gzip/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.gz
+T07/mime/image/png/extension	defaut
+T07/mime/image/png/url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.
+T07/mime//extension	pdf
+T07/mime//url	file://~/ged/fournisseurs/401001/2020/BR/20200401-093000_BR000002.pdf
+T07/tags_fiche	file://~/ged/clients/411001/2020/Facture/20200312-100000_FA000001_urgent_client_mon tag..pdf
+T08/pdf	application/pdf
+T08/pdf_file_url	application/pdf
+T08/texte	text/plain
+T08/espace	<Null>
+T08/absent	<Null>
+T08/relatif	<Null>
+T09/sans_epuration/etat	Tags=1:urgent,2:client,3:fournisseur,4:compta,5:orphelin Liens=2:1,2:3,3:4,99:4 Docs=2,3,4
+T09/sans_epuration/fichier	True
+T09/epuration/etat	Tags= Liens=3:4,99:4 Docs=3,4
+T09/non_enregistre/etat	Tags= Liens=3:4,99:4 Docs=3,4

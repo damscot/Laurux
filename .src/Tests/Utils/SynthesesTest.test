@@ -1,0 +1,77 @@
+' Gambas test file
+
+''Tests de Syntheses (SYNTHESES-T01 et T02, .hidden/reference/.src/Utils/Syntheses.module/test.md).
+''pico2wave et aplay sont remplacés par des scripts factices placés en tête du PATH (répertoire temporaire) :
+''ils journalisent leurs arguments. Valeurs attendues : assets/SynthesesTest/expected.txt (clone de référence).
+
+Private $sRep As String
+Private $sJournal As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Son2Off", "`Message`, `/son2` désactivé")
+  TestKit.Desc("T02Son2On", "`Message`, `/son2` activé")
+
+End
+
+Public Sub _Setup()
+
+  Dim sProg As String
+
+  TestKit.Begin("Utils", "SynthesesTest")
+  $sRep = Temp$()
+  Mkdir $sRep
+  $sJournal = $sRep &/ "appels.txt"
+  For Each sProg In ["pico2wave", "aplay"]
+    File.Save($sRep &/ sProg, "#!/bin/sh\necho \"" & sProg & " $*\" >> " & $sJournal & "\n")
+    Chmod $sRep &/ sProg To "rwxr-xr-x"
+  Next
+  Application.Env["PATH"] = $sRep & ":" & Application.Env["PATH"]
+
+End
+
+Private Function Appels() As String
+
+  Dim i As Integer
+
+  ' Le Shell final est asynchrone : attendre (au plus 5 s) l'appel à aplay
+  For i = 1 To 50
+    If Exist($sJournal) Then
+      If InStr(File.Load($sJournal), "aplay") Then Break
+    Endif
+    Wait 0.1
+  Next
+  If Not Exist($sJournal) Then Return "<aucun appel>"
+  Return Replace(Trim(File.Load($sJournal)), "\n", " / ")
+
+End
+
+Public Sub T01Son2Off()
+
+  Dim v As String
+
+  Start.LocalSettings["/son2"] = Null
+  Try Syntheses.Message("Message de test")
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T01/erreur", v)
+  Wait 1
+  If Exist($sJournal) Then
+    TestKit.Check("T01/appels", Replace(Trim(File.Load($sJournal)), "\n", " / "))
+  Else
+    TestKit.Check("T01/appels", "<aucun appel>")
+  Endif
+
+End
+
+Public Sub T02Son2On()
+
+  Dim v As String
+
+  Start.LocalSettings["/son2"] = True
+  Try Syntheses.Message("Société sélectionnée : Électricité")
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T02/erreur", v)
+  TestKit.Check("T02/appels", Appels())
+
+End
