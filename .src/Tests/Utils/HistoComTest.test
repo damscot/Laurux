@@ -1,0 +1,54 @@
+' Gambas test file
+
+''Tests de HistoCom (.hidden/reference/.src/Utils/HistoCom.class/test.md, HISTOCOM-T01 et T02).
+''Jeu de données : .src/Tests/Framework/datasets/histocom_lignes.sql.
+''Valeurs attendues : assets/HistoComTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Deplacement", "`run`")
+  TestKit.Desc("T02Idempotence", "Idempotence")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "HistoComTest")
+  TestKit.OuvreBase("histocom_lignes")
+
+End
+
+Private Sub LitLignes(Cle As String)
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisLigFac") & " ORDER BY num_ligfac, numlig_ligfac")
+  If Not r.Available Then
+    TestKit.Check(Cle & "/vide", True)
+    Return
+  Endif
+  Repeat
+    TestKit.Check(Cle & "/" & r!num_ligfac & "/" & r!numlig_ligfac & "/libel", r!libel_ligfac)
+    TestKit.Check(Cle & "/" & r!num_ligfac & "/" & r!numlig_ligfac & "/com", r!com_ligfac)
+    TestKit.Check(Cle & "/" & r!num_ligfac & "/" & r!numlig_ligfac & "/type", r!typel_ligfac)
+  Until r.MoveNext()
+
+End
+
+Public Sub T01Deplacement()
+
+  Try HistoCom.run()
+  If Error Then TestKit.Check("T01/erreur", "ERREUR: " & Error.Text)
+  LitLignes("T01")
+
+End
+
+Public Sub T02Idempotence()
+
+  HistoCom.run()
+  Try HistoCom.run()
+  If Error Then TestKit.Check("T02/erreur", "ERREUR: " & Error.Text)
+  LitLignes("T02")
+
+End

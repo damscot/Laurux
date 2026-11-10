@@ -9,13 +9,13 @@ backtrace. Valeurs attendues produites dans le clone **Laurux non modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LLOG-T01 | gbtest | Construction | `New LLog("TestMod", True)` avec un `TestMod.log` existant | fichier recréé vide ; niveaux des handlers = `Start.*LogLevel` | `tests/construction/` | à faire |
-| LLOG-T02 | gbtest | Écriture et format | messages aux niveaux 0 à 6, niveaux console/fichier 3 | lignes du fichier (format `[date] [niveau-n] [TestMod] [bt] message`) | `tests/format_niveaux/` | à faire |
-| LLOG-T03 | gbtest | Logger inactif | `Enabled = False` puis `Log` | aucun fichier écrit, aucune ligne `Log` dans le journal | `tests/inactif/` | à faire |
-| LLOG-T04 | gbtest | Relais vers `DB_Connection` | journal applicatif actif sans filtre | ligne `Log;…;[TestMod]message` | `tests/relais_dbconnection/` | à faire |
-| LLOG-T05 | gbtest | `Level_Id`, `Level_Name` | libellés valides, inconnu ; niveaux -1, 0, 8, 12 | indices et libellés (-1, bornage) | `tests/libelles_niveaux/` | à faire |
-| LLOG-T06 | gbtest | Rotation | 70 Ko de messages | présence du fichier tourné | `tests/rotation/` | à faire |
-| LLOG-T07 | gbtest | Via `Utils.Log` | `Utils.Log("TestMod", …)` deux fois, avec et sans `-d` | une seule instance dans `Start.LLogColl` ; activation par défaut | `tests/fabrique_utils/` | à faire |
+| LLOG-T01 | gbtest | Construction | `New LLog("TestMod", True)` avec un `TestMod.log` existant | fichier recréé vide ; niveaux des handlers = `Start.*LogLevel` | `tests/construction/` | implémenté |
+| LLOG-T02 | gbtest | Écriture et format | messages aux niveaux 0 à 6, niveaux console/fichier 3 | lignes du fichier (format `[date] [niveau-n] [TestMod] [bt] message`) | `tests/format_niveaux/` | implémenté |
+| LLOG-T03 | gbtest | Logger inactif | `Enabled = False` puis `Log` | aucun fichier écrit, aucune ligne `Log` dans le journal | `tests/inactif/` | implémenté |
+| LLOG-T04 | gbtest | Relais vers `DB_Connection` | journal applicatif actif sans filtre | ligne `Log;…;[TestMod]message` | `tests/relais_dbconnection/` | implémenté |
+| LLOG-T05 | gbtest | `Level_Id`, `Level_Name` | libellés valides, inconnu ; niveaux -1, 0, 8, 12 | indices et libellés (-1, bornage) | `tests/libelles_niveaux/` | implémenté |
+| LLOG-T06 | gbtest | Rotation | 70 Ko de messages | présence du fichier tourné | `tests/rotation/` | implémenté |
+| LLOG-T07 | gbtest | Via `Utils.Log` | `Utils.Log("TestMod", …)` deux fois, avec et sans `-d` | une seule instance dans `Start.LLogColl` ; activation par défaut | `tests/fabrique_utils/` | implémenté |
 
 ## Détail des tests
 
@@ -24,3 +24,4 @@ backtrace. Valeurs attendues produites dans le clone **Laurux non modifié**.
   LLOG-003 par le test de `DoitAfficher`, ou manuellement.
 - Les piles courtes (`bt.Length < 6`) sont testées en appelant `Log` directement depuis la méthode de
   test (pile minimale), pour figer le comportement actuel.
+- **Implémentation (phase 2)** : `.src/Tests/Utils/LLogTest.test` ; HOME isolé par le runner. T06 : le nombre de fichiers tournés varie d'une exécution à l'autre, seule leur présence est vérifiée.

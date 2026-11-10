@@ -1,0 +1,122 @@
+' Gambas test file
+
+''Tests de chainage (.hidden/reference/.src/Utils/chainage.class/test.md, CHAINAGE-T01 à T03).
+''Valeurs attendues : assets/ChainageTest/expected.txt, produites dans le clone de référence.
+''Les contrôles sont créés dans une fenêtre jamais affichée ; seuls les membres publics et `tableaux`
+''sont vérifiés (la navigation clavier relève des replays T04-T07).
+
+Private $hW As Window
+Private $a As TextBox
+Private $b As TextBox
+Private $c As TextBox
+Private $d As TextBox
+Private $e As TextBox
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01GestionListe", "gestion liste")
+  TestKit.Desc("T02Construction", "construction")
+  TestKit.Desc("T03Modif", "modif")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "ChainageTest")
+  $hW = New Window
+  $a = Champ("a")
+  $b = Champ("b")
+  $c = Champ("c")
+  $d = Champ("d")
+  $e = Champ("e")
+
+End
+
+Private Sub Champ(sNom As String) As TextBox
+
+  Dim hT As TextBox
+
+  hT = New TextBox($hW)
+  hT.Name = sNom
+  Return hT
+
+End
+
+Private Sub Liste(hC As Chainage) As String
+
+  Dim aNoms As New String[]
+  Dim hO As Object
+
+  If IsNull(hC.tableaux) Then Return "<Null>"
+  For Each hO In hC.tableaux
+    aNoms.Add(hO.Name)
+  Next
+  Return "[" & aNoms.Join(",") & "]"
+
+End
+
+Private Sub Tab(...) As Object[]
+
+  Dim aRes As New Object[]
+  Dim i As Integer
+
+  For i = 0 To Param.Max
+    aRes.Add(Param[i])
+  Next
+  Return aRes
+
+End
+
+Public Sub T01GestionListe()
+
+  Dim hC As Chainage
+
+  hC = New Chainage(Tab($a, $b, $c))
+  TestKit.Check("T01/new", Liste(hC))
+  hC.add(Tab($d))
+  TestKit.Check("T01/add_d", Liste(hC))
+  hC.sup($b)
+  TestKit.Check("T01/sup_b", Liste(hC))
+  hC.sup($a, 2)
+  TestKit.Check("T01/sup_a_2", Liste(hC))
+  hC.addintercale($c, $e)
+  TestKit.Check("T01/addintercale_c_e", Liste(hC))
+  hC.addintercale($d, $e)
+  TestKit.Check("T01/addintercale_d_e", Liste(hC))
+  hC.sup($b)
+  TestKit.Check("T01/sup_absent", Liste(hC))
+
+End
+
+Public Sub T02Construction()
+
+  Dim hC As Chainage
+  Dim aT As Object[]
+
+  hC = New Chainage(Null)
+  TestKit.Check("T02/null", Liste(hC))
+  aT = Tab($a)
+  hC = New Chainage(aT)
+  aT.Add($b)
+  TestKit.Check("T02/partage/liste", Liste(hC))
+  TestKit.Check("T02/partage/meme_reference", hC.tableaux = aT)
+
+End
+
+Public Sub T03Modif()
+
+  Dim hC As Chainage
+  Dim v As Variant
+
+  hC = New Chainage(Tab($a, $b))
+  Try hC.modif($a, $c)
+  If Error Then
+    v = "ERREUR: " & Error.Text
+  Else
+    v = "sans erreur"
+  Endif
+  TestKit.Check("T03/modif", v)
+  TestKit.Check("T03/modif/liste", Liste(hC))
+
+End

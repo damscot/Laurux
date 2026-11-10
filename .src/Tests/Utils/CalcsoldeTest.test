@@ -1,0 +1,81 @@
+' Gambas test file
+
+''Tests de Calcsolde.Calcul (.hidden/reference/.src/Utils/Calcsolde.class/test.md, CALCSOLDE-T01 à T05).
+''Valeurs attendues : assets/CalcsoldeTest/expected.txt, produites dans le clone de référence.
+''Jeu de données : datasets/calcsolde.sql. Calcul est appelé sur l'instance automatique du formulaire
+''(jamais affiché) ; journal de report à nouveau : jdr de Fiches_Parametres (« 90 »).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CompteGeneral", "`Calcul` compte général")
+  TestKit.Desc("T02Tresorerie", "`Calcul` trésorerie")
+  TestKit.Desc("T03SansEcriture", "Compte sans écriture validée")
+  TestKit.Desc("T04AppelPointage", "Appel style `Pointage`")
+  TestKit.Desc("T05Arrondi", "Arrondi")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CalcsoldeTest")
+  TestKit.OuvreBase("calcsolde")
+
+End
+
+Private Sub Compte(sCpt As String) As String
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT solde, soldep FROM Fiches_Comptes WHERE compte_cc = &1", sCpt)
+  If Not r.Available Then Return "<absent>"
+  Return "solde=" & TestKit.Canonique(r!solde) & " soldep=" & TestKit.Canonique(r!soldep)
+
+End
+
+Private Sub Calc(sCle As String, sCpt As String, bTreso As Boolean, Optional sJan As String)
+
+  Try Calcsolde.Calcul(sCpt, bTreso, sJan)
+  If Error Then TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+  TestKit.Check(sCle, Compte(sCpt))
+
+End
+
+Public Sub T01CompteGeneral()
+
+  TestKit.Check("T01/initial", Compte("607000"))
+  Calc("T01/treso_faux", "607000", False, "90")
+  Calc("T01/treso_vrai", "607000", True, "90")
+
+End
+
+Public Sub T02Tresorerie()
+
+  TestKit.Check("T02/initial", Compte("512000"))
+  Calc("T02/512000", "512000", True, "90")
+  Calc("T02/512000/autre_journal", "512000", True, "10")
+
+End
+
+Public Sub T03SansEcriture()
+
+  TestKit.Check("T03/initial", Compte("512001"))
+  Calc("T03/512001", "512001", True, "90")
+  Calc("T03/inexistant", "999999", True, "90")
+  Calc("T03/vide", "", True, "90")
+
+End
+
+Public Sub T04AppelPointage()
+
+  ' Appel de Pointage.class : Calcul(cpt, True) sans jan (CALCSOLDE-A01 : soldep non recalculé)
+  Calc("T04/512000", "512000", True)
+
+End
+
+Public Sub T05Arrondi()
+
+  Calc("T05/411001", "411001", True, "90")
+  TestKit.Check("T05/LPrix/D", LPrix(-0.005).D & " " & LPrix(2.675).D & " " & LPrix(-15.104).D)
+
+End

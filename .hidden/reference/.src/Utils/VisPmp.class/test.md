@@ -5,10 +5,12 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VISPMP-T01 | replay | PMP négatifs | jeu dérivé : 2 articles `art_pmp < 0` | `~/Pmp.txt` de référence | `tests/pmp_negatifs/` | à faire |
-| VISPMP-T02 | replay | Aucun PMP négatif | `Laurux01.sql` | message « aucun pmp », fichier vide | `tests/aucun/` | à faire |
+| VISPMP-T01 | replay | PMP négatifs | jeu dérivé : 2 articles `art_pmp < 0` | `~/Pmp.txt` de référence | `tests/pmp_negatifs/` | à faire : sortie non comparée (`~/Pmp.txt`) ; scénario `.hidden/Tests/Utils/assets/vispmp_pmp_negatifs/` rejoué (IDENTIQUE : requête et dump seulement), éditeur externe lancé non neutralisé |
+| VISPMP-T02 | replay | Aucun PMP négatif | `Laurux01.sql` | message « aucun pmp », fichier vide | `tests/aucun/` | implémenté (`.hidden/Tests/Utils/assets/vispmp_aucun/` : message d'erreur acquitté ; `~/Pmp.txt` vide non comparé) |
 
 ## Détail des tests
 
 - Capture dans le clone **Laurux non modifié** via « Appel programme » → `Pmp` ; `HOME` de test,
   éditeur neutralisé. Comparaison du fichier ; diff BDD vide.
+- **Scénarios synthétisés (phase 2)** : `.hidden/Tests/Utils/assets/<nom>/` (`scenario.log`, `meta.json`, fichiers d'entrée éventuels, chemins relatifs à la racine du clone) ; jeux dans `.src/Tests/Framework/datasets/`. Attendus à produire par `runner replay Utils/<nom> --expected` quand les rejeux seront rétablis.
+  Jeu : `vispmp_negatifs` (T01).

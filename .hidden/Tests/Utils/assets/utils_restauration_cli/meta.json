@@ -1,0 +1,20 @@
+{
+ "id": "UTILS-T25",
+ "objet": "`Clear_DataBase`, `Create_DataBase`, `Fill_DataBase`",
+ "classe": "Utils",
+ "description": "Restauration en ligne de commande (--restore Laurux01.sql : Clear_DataBase, Create_DataBase, Fill_DataBase) d'une base modifiée (jeu statut_p1_p2) puis Paramètres › Quitter : le dump doit redevenir celui de Laurux01.sql (Fiches_Statut vide).",
+ "dataset": "statut_p1_p2",
+ "date": "2026-01-15 10:00:00",
+ "args": [
+  "--restore",
+  "Laurux01.sql"
+ ],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

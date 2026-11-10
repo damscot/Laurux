@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| SYNTHESES-T01 | gbtest | `Message`, `/son2` désactivé | `Laurux.conf` sans `/son2` ; `pico2wave`/`aplay` factices journalisant leurs appels | aucun appel externe | `tests/son2_off/` | à faire |
-| SYNTHESES-T02 | gbtest | `Message`, `/son2` activé | `/son2 = True`, message accentué | séquence d'appels journalisée (`pico2wave -l fr-FR -w msg.wav <msg>`, puis `pico2wave`, `aplay msg.wav`) | `tests/son2_on/` | à faire |
+| SYNTHESES-T01 | gbtest | `Message`, `/son2` désactivé | `Laurux.conf` sans `/son2` ; `pico2wave`/`aplay` factices journalisant leurs appels | aucun appel externe | `tests/son2_off/` | implémenté |
+| SYNTHESES-T02 | gbtest | `Message`, `/son2` activé | `/son2 = True`, message accentué | séquence d'appels journalisée (`pico2wave -l fr-FR -w msg.wav <msg>`, puis `pico2wave`, `aplay msg.wav`) | `tests/son2_on/` | implémenté |
 
 ## Détail des tests
 
@@ -15,3 +15,4 @@
   d'attendre la fin du processus avant de lire le journal).
 - `Music.Play` n'est pas vérifiable (pas de sortie audio en test) ; le test exige seulement l'absence
   d'erreur.
+- Implémentation : `.src/Tests/Utils/SynthesesTest.test` (pico2wave / aplay factices dans un répertoire temporaire placé en tête du PATH).

@@ -5,10 +5,10 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EXPCONTACT-T01 | replay | Export clients + contacts | `Laurux01.sql`, `RadioButton1` coché, `Button1` | `~/Contacts.vcf` identique à `expected/Contacts.vcf` | `tests/export_clients/` | à faire |
-| EXPCONTACT-T02 | replay | Export fournisseurs | `RadioButton2` coché | `Contacts.vcf` de référence | `tests/export_fournisseurs/` | à faire |
-| EXPCONTACT-T03 | replay | Table vide | base dérivée avec `Fiches_Four` vide, fournisseurs | figer : `Message.Error` puis erreur d'exécution sur `Close` | `tests/table_vide/` | à faire |
-| EXPCONTACT-T04 | replay | Caractères spéciaux | client avec `;`, `,` et retour ligne dans `cli_obs` | fichier figé (pas d'échappement) | `tests/caracteres_speciaux/` | à faire |
+| EXPCONTACT-T01 | replay | Export clients + contacts | `Laurux01.sql`, `RadioButton1` coché, `Button1` | `~/Contacts.vcf` identique à `expected/Contacts.vcf` | `tests/export_clients/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) |
+| EXPCONTACT-T02 | replay | Export fournisseurs | `RadioButton2` coché | `Contacts.vcf` de référence | `tests/export_fournisseurs/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) |
+| EXPCONTACT-T03 | replay | Table vide | base dérivée avec `Fiches_Four` vide, fournisseurs | figer : `Message.Error` puis erreur d'exécution sur `Close` | `tests/table_vide/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) ; sortie en erreur non tolérée par compare |
+| EXPCONTACT-T04 | replay | Caractères spéciaux | client avec `;`, `,` et retour ligne dans `cli_obs` | fichier figé (pas d'échappement) | `tests/caracteres_speciaux/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) |
 
 ## Détail des tests
 

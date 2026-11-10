@@ -1,0 +1,131 @@
+' Gambas test file
+
+''Tests de TextReg (.hidden/reference/.src/Utils/TextReg.class/test.md, TEXTREG-T01 à T03).
+''Contrôle créé dans une fenêtre cachée (Xvfb via le runner), propriétés Public affectées puis relues.
+''Valeurs attendues : assets/TextRegTest/expected.txt, produites dans le clone de référence.
+
+Private $hW As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Numerique", "`EstNum` : `Text`/`Value`/`nbdec`")
+  TestKit.Desc("T02Dates", "`EstDate`/`EstDateTime`")
+  TestKit.Desc("T03ChangementType", "Changement de `Type`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "TextRegTest")
+  $hW = New Window
+
+End
+
+Private Sub Nouveau(Optional Type As Integer = TextReg.EstText) As TextReg
+
+  Dim hT As TextReg
+
+  hT = New TextReg($hW)
+  If Type <> TextReg.EstText Then hT.Type = Type
+  Return hT
+
+End
+
+Private Sub Fige(Cle As String, hT As TextReg)
+
+  TestKit.Check(Cle & "/Text", hT.Text)
+  TestKit.Check(Cle & "/Value", hT.Value)
+
+End
+
+Public Sub T01Numerique()
+
+  Dim aTextes As String[] = ["1.5", "1,5", "abc", "", "-2,345", "1 000"]
+  Dim aDec As String[] = ["", "0", "2", "3"]
+  Dim i, j As Integer
+  Dim hT As TextReg
+
+  For j = 0 To aDec.Max
+    For i = 0 To aTextes.Max
+      hT = Nouveau(TextReg.EstNum)
+      If aDec[j] Then hT.nbdec = aDec[j]
+      Try hT.Text = aTextes[i]
+      If Error Then
+        TestKit.Check("T01/dec" & aDec[j] & "/" & i, "ERREUR: " & Error.Text)
+      Else
+        Fige("T01/dec" & aDec[j] & "/" & i, hT)
+      Endif
+    Next
+    hT = Nouveau(TextReg.EstNum)
+    If aDec[j] Then hT.nbdec = aDec[j]
+    hT.Value = 3.14159
+    Fige("T01/dec" & aDec[j] & "/Value=3.14159", hT)
+  Next
+  ' nbdec affecté après le texte : reformatage
+  hT = Nouveau(TextReg.EstNum)
+  hT.Text = "2,5"
+  hT.nbdec = "3"
+  Fige("T01/nbdec_apres", hT)
+  TestKit.Check("T01/nbdec_apres/nbdec", hT.nbdec)
+  ' Value sur un champ texte : ignorée
+  hT = Nouveau()
+  hT.Value = 7
+  Fige("T01/texte/Value=7", hT)
+
+End
+
+Public Sub T02Dates()
+
+  ' Exclus : "01022024" (Message.Error de LDate, bloquant) et "" (date du jour, non déterministe sans --date)
+  Dim aTextes As String[] = ["1/2/24", "12.03.2024", "2024-03-12", "31/12/2024 23:59", "12.03.2024 10:30:15"]
+  Dim i As Integer
+  Dim hT As TextReg
+  Dim aTypes As Integer[] = [TextReg.EstDate, TextReg.EstDateTime]
+  Dim j As Integer
+
+  For j = 0 To aTypes.Max
+    For i = 0 To aTextes.Max
+      hT = Nouveau(aTypes[j])
+      Try hT.Text = aTextes[i]
+      If Error Then
+        TestKit.Check("T02/" & aTypes[j] & "/" & i, "ERREUR: " & Error.Text)
+        Continue
+      Endif
+      TestKit.Check("T02/" & aTypes[j] & "/" & i & "/Text", hT.Text)
+      TestKit.Check("T02/" & aTypes[j] & "/" & i & "/dte.L", hT.dte.L)
+      TestKit.Check("T02/" & aTypes[j] & "/" & i & "/dte.LT", hT.dte.LT)
+    Next
+  Next
+
+End
+
+Public Sub T03ChangementType()
+
+  Dim hT As TextReg
+  Dim aSuite As Integer[] = [TextReg.EstNum, TextReg.EstDate, TextReg.EstText, TextReg.EstDate]
+  Dim i As Integer
+
+  hT = Nouveau()
+  hT.Text = "12,5"
+  TestKit.Check("T03/texte/reg", hT.reg)
+  For i = 0 To aSuite.Max
+    Try hT.Type = aSuite[i]
+    If Error Then
+      TestKit.Check("T03/" & i & "/" & aSuite[i] & "/erreur", "ERREUR: " & Error.Text)
+    Endif
+    TestKit.Check("T03/" & i & "/" & aSuite[i] & "/Type", hT.Type)
+    TestKit.Check("T03/" & i & "/" & aSuite[i] & "/Text", hT.Text)
+    TestKit.Check("T03/" & i & "/" & aSuite[i] & "/reg", hT.reg)
+    TestKit.Check("T03/" & i & "/" & aSuite[i] & "/dte_nul", IsNull(hT.dte))
+  Next
+  ' reg forcé puis changement de type : le reg forcé est conservé
+  hT = Nouveau()
+  hT.reg = TextReg.code
+  hT.Type = TextReg.EstNum
+  TestKit.Check("T03/reg_force/Num", hT.reg)
+  Try hT.Type = TextReg.EstDate
+  If Error Then TestKit.Check("T03/reg_force/Date/erreur", "ERREUR: " & Error.Text)
+  TestKit.Check("T03/reg_force/Date", hT.reg)
+
+End

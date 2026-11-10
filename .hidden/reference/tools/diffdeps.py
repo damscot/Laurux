@@ -71,7 +71,7 @@ def analyse(rel, old, new, root):
         out.append(("dépendances sortantes modifiées",
                     sorted(f"+{x}" for x in n_uses - o_uses) + sorted(f"-{x}" for x in o_uses - n_uses)))
     # Handlers inactifs : à mentionner dans les textes rédigés (anomalie ou code mort)
-    d0 = root / "reference" / rel
+    d0 = root / ".hidden" / "reference" / rel
     docs = "".join((d0 / f).read_text(encoding="utf-8") for f in ("architecture.md", "rework.md")
                    if (d0 / f).exists())
     docs = re.sub(r"<!-- AUTO:(\w+) -->.*?<!-- /AUTO:\1 -->", "", docs, flags=re.S)
@@ -108,7 +108,7 @@ def analyse(rel, old, new, root):
     # replay_missing : affiché automatiquement par gendoc (bloc AUTO), pas de contrôle du texte
 
     # Cohérence des documents rédigés avec le nouveau graphe
-    d = root / "reference" / rel
+    d = root / ".hidden" / "reference" / rel
     used = ext_members(new)
     handlers = {h.lower() for h in new["handlers"]}
     arch = (d / "architecture.md").read_text(encoding="utf-8") if (d / "architecture.md").exists() else ""
@@ -144,7 +144,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("old")
     ap.add_argument("new", nargs="?", default=None)
-    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[3]))
     ap.add_argument("--md", default=None, help="écrit le rapport Markdown dans ce fichier")
     ap.add_argument("-p", "--prefix", dest="prefixes", action="append", default=None,
                     help="préfixe de source à analyser (répétable, défaut .src)")
@@ -152,12 +152,12 @@ def main():
     a.prefixes = a.prefixes or [".src"]
     root = Path(a.root).resolve()
     old = load(a.old)
-    new = load(a.new or root / "reference" / "data" / "deps.json")
+    new = load(a.new or root / ".hidden" / "reference" / "data" / "deps.json")
     lines, n_warn, n_chg = [], 0, 0
     for rel in sorted(new):
         if not any(rel == p or rel.startswith(p.rstrip("/") + "/") for p in a.prefixes):
             continue
-        if not (root / "reference" / rel).is_dir():
+        if not (root / ".hidden" / "reference" / rel).is_dir():
             continue
         res = analyse(rel, old.get(rel, {}), new[rel], root)
         if not res:

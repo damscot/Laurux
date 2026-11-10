@@ -1,0 +1,229 @@
+' Gambas test file
+
+''Tests de LLog (.hidden/reference/.src/Utils/LLog.class/test.md, LLOG-T01 à T07).
+''Fichiers ~/tmp/Debug/<Module>.log : HOME isolé par le runner (répertoire temporaire par test).
+''Date et pile d'appels normalisées (« [<date>] », « [<pile>] »). Valeurs attendues :
+''assets/LLogTest/expected.txt, produites dans le clone de référence.
+''Non exercé : le niveau MessageBox (Message.Error bloquant), à couvrir après LLOG-003.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Construction", "Construction")
+  TestKit.Desc("T02FormatNiveaux", "Écriture et format")
+  TestKit.Desc("T03Inactif", "Logger inactif")
+  TestKit.Desc("T04RelaisDbConnection", "Relais vers `DB_Connection`")
+  TestKit.Desc("T05LibellesNiveaux", "`Level_Id`, `Level_Name`")
+  TestKit.Desc("T06Rotation", "Rotation")
+  TestKit.Desc("T07FabriqueUtils", "Via `Utils.Log`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LLogTest")
+
+End
+
+Private Sub Fichier(Nom As String) As String
+
+  Return User.Home &/ "tmp/Debug" &/ Nom & ".log"
+
+End
+
+Private Sub LignesFichier(Nom As String) As Variant
+  ''Lignes d'un fichier de log normalisées, ou « <absent> ».
+
+  Dim aRes As String[] = New String[]
+  Dim sLigne As String
+
+  If Not Exist(Fichier(Nom)) Then Return "<absent>"
+  For Each sLigne In Split(File.Load(Fichier(Nom)), "\n", "", True)
+    sLigne = RegExp.Replace(sLigne, "^\\[[^]]+\\]", "[<date>]")
+    sLigne = RegExp.Replace(sLigne, "\\[" & Nom & "\\] \\[.*\\] ", "[" & Nom & "] [<pile>] ")
+    aRes.Add(sLigne)
+  Next
+  Return aRes
+
+End
+
+Private Sub JournalLog() As String[]
+  ''Lignes « Log » du journal applicatif de DB_Connection (champs volatils normalisés).
+
+  Dim sFichier As String = User.Home &/ "tmp/Debug" &/ Application.Name & ".log"
+  Dim aRes As String[] = New String[]
+  Dim sLigne As String
+  Dim aChamps As String[]
+
+  Utils.db.Refresh()
+  If Not Exist(sFichier) Then Return aRes
+  For Each sLigne In Split(File.Load(sFichier), "\n", "", True)
+    aChamps = Split(sLigne, ";", "", False, True)
+    If aChamps.Count < 8 Or If aChamps[2] <> "Log" Then Continue
+    aChamps[0] = "<date>"
+    aChamps[3] = "<user>"
+    aChamps[4] = "<host>"
+    aChamps[5] = "<machine>"
+    aChamps[6] = "<pid>"
+    aChamps[7] = "<pile>" ' pile d'appels LLog (bts), avant « ;[Module]message »
+    aRes.Add(aChamps.Join(";"))
+  Next
+  Return aRes
+
+End
+
+Private Sub Ecrit(hL As LLog)
+  ''Messages aux niveaux 0 à 6 (hors MessageBox).
+
+  Dim i As Integer
+
+  For i = 0 To 6
+    hL.Log("message niveau " & i, i)
+  Next
+  hL.Log("message niveau par défaut")
+
+End
+
+Public Sub T01Construction()
+
+  Dim hL As LLog
+
+  TestKit.Init()
+  Try Mkdir User.Home &/ "tmp/Debug"
+  File.Save(Fichier("TestMod"), "ancien contenu\n")
+  Start.ConsoleLogLevel = 2
+  Start.FileLogLevel = 5
+  hL = New LLog("TestMod", True)
+  TestKit.Check("T01/fichier_recree", LignesFichier("TestMod"))
+  TestKit.Check("T01/enabled", hL.Enabled)
+  TestKit.Check("T01/niveau_console", hL.Handlers[LLog.console].Level)
+  TestKit.Check("T01/niveau_fichier", hL.Handlers[LLog.file].Level)
+  TestKit.Check("T01/nb_handlers", hL.Handlers.Count)
+  TestKit.Check("T01/format", hL.Format)
+  hL.Close()
+
+End
+
+Public Sub T02FormatNiveaux()
+
+  Dim hL As LLog
+
+  TestKit.Init()
+  Start.ConsoleLogLevel = 3
+  Start.FileLogLevel = 3
+  hL = New LLog("TestMod", True)
+  Ecrit(hL)
+  hL.Close()
+  TestKit.Check("T02/lignes", LignesFichier("TestMod"))
+  ' niveau minimal du constructeur (MinLevel) utilisé par défaut
+  hL = New LLog("TestMod2", True, LLog.Warning)
+  hL.Log("message sans niveau")
+  hL.Close()
+  TestKit.Check("T02/minlevel_warning", LignesFichier("TestMod2"))
+
+End
+
+Public Sub T03Inactif()
+
+  Dim hL As LLog
+
+  TestKit.Init()
+  Start.ConsoleLogLevel = 3
+  Start.FileLogLevel = 3
+  Utils.db.Enable_Log()
+  Utils.db.Clear()
+  hL = New LLog("TestMod", False)
+  Ecrit(hL)
+  hL.Close()
+  TestKit.Check("T03/fichier", LignesFichier("TestMod"))
+  TestKit.Check("T03/journal", JournalLog())
+  hL = New LLog("TestMod3", True)
+  hL.Enabled = False
+  hL.Log("ignoré", LLog.Error)
+  hL.Close()
+  TestKit.Check("T03/desactive_apres/fichier", LignesFichier("TestMod3"))
+
+End
+
+Public Sub T04RelaisDbConnection()
+
+  Dim hL As LLog
+
+  TestKit.Init()
+  Start.ConsoleLogLevel = 3
+  Start.FileLogLevel = 3
+  Utils.db.Enable_Log()
+  Utils.db.Clear()
+  hL = New LLog("TestMod", True)
+  Ecrit(hL)
+  hL.Close()
+  TestKit.Check("T04/journal", JournalLog())
+
+End
+
+Public Sub T05LibellesNiveaux()
+
+  Dim hL As LLog
+  Dim sNom As String
+  Dim iNiv As Integer
+
+  TestKit.Init()
+  hL = New LLog("TestMod", False)
+  For Each sNom In ["Critical", "Error", "Warning", "Info", "Debug", "Notice", "Verbose", "MessageBox", "Max", "Inconnu", "info", ""]
+    TestKit.Check("T05/Level_Id/" & sNom, hL.Level_Id(sNom))
+  Next
+  For Each iNiv In [-1, 0, 3, 7, 8, 12]
+    TestKit.Check("T05/Level_Name/" & iNiv, hL.Level_Name(iNiv))
+  Next
+  hL.Close()
+
+End
+
+Public Sub T06Rotation()
+
+  Dim hL As LLog
+  Dim i As Integer
+  Dim aFichiers As String[]
+
+  TestKit.Init()
+  Start.ConsoleLogLevel = 0 ' console silencieuse (sortie TAP)
+  Start.FileLogLevel = 3
+  hL = New LLog("TestRot", True)
+  For i = 1 To 700
+    hL.Log("ligne " & Format(i, "0000") & " " & String$(80, "x"), LLog.Info)
+  Next
+  hL.Close()
+  ' le nombre de fichiers tournés varie d'une exécution à l'autre : seule leur présence est vérifiée
+  aFichiers = Dir(User.Home &/ "tmp/Debug", "TestRot.*.log")
+  TestKit.Check("T06/fichier_tourne_present", aFichiers.Count >= 1)
+  TestKit.Check("T06/fichier_courant_present", Exist(Fichier("TestRot")))
+  TestKit.Check("T06/taille_max_ko_64", Stat(Fichier("TestRot")).Size <= 64 * 1024)
+
+End
+
+Public Sub T07FabriqueUtils()
+
+  TestKit.Init()
+  Start.ConsoleLogLevel = 3
+  Start.FileLogLevel = 3
+  ' sans -d (Start.Arg_Debug vide) : logger créé inactif
+  Start.Arg_Debug = ""
+  Utils.Log("TestMod", "premier message")
+  Utils.Log("TestMod", "second message")
+  TestKit.Check("T07/sans_d/instances", Start.LLogColl.Count)
+  TestKit.Check("T07/sans_d/enabled", Start.LLogColl["TestMod"].Enabled)
+  Start.LLogColl["TestMod"].Close()
+  TestKit.Check("T07/sans_d/fichier", LignesFichier("TestMod"))
+  ' avec -d (valeur par défaut de l'application « 3,3 ») : logger actif
+  Start.Arg_Debug = "3,3"
+  Utils.Log("TestMod2", "premier message")
+  Utils.Log("TestMod2", "second message", LLog.Warning)
+  TestKit.Check("T07/avec_d/instances", Start.LLogColl.Count)
+  TestKit.Check("T07/avec_d/enabled", Start.LLogColl["TestMod2"].Enabled)
+  Start.LLogColl["TestMod2"].Close()
+  TestKit.Check("T07/avec_d/fichier", LignesFichier("TestMod2"))
+  ' objet : nom de sa classe
+  Utils.Log(Utils.db, "message objet")
+  TestKit.Check("T07/objet/cle", Start.LLogColl.Exist("DB_Connection"))
+
+End

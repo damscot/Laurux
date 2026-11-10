@@ -1,0 +1,22 @@
+T01/Art_DB_bgcolor	Case WHEN art_suspendu = 1 Then '&hc0c0c0&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hc0ffc0&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffc0c0&' WHEN art_stocke = 0 THEN '&hffffc0&' ELSE '&H00FFFF&' END as bgcolor
+T01/Fac_DB_bgcolor	Case WHEN acquitte = 1 Then '&HC0C0C0' WHEN type = "D" then '&HFFFFDC' WHEN type = "C" then '&HDFFFBF' WHEN type = "B" then '&HFFDFBF' ELSE '&HFFFFFF&' END as bgcolor
+T01/Ecr_DB_bgcolor/False	Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor
+T01/Ecr_DB_bgcolor/True	Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HC0C0C0' END as bgcolor
+T01/Art_Stk/Ft	sans,10
+T01/Art_Epuise/Fg	&hff0000&
+T01/Art_Suspendu/Ft	<Null>
+T02/Art_DB_bgcolor	Case WHEN art_suspendu = 1 Then '' WHEN art_qte > 0 and art_stocke = 1 THEN '' WHEN art_qte <= 0 and art_stocke = 1 THEN '' WHEN art_stocke = 0 THEN '' ELSE '&H00FFFF&' END as bgcolor
+T02/Fac_DB_bgcolor	Case WHEN acquitte = 1 Then '&HC0C0C0' WHEN type = "D" then '&HFFFFDC' WHEN type = "C" then '&HDFFFBF' WHEN type = "B" then '&HFFDFBF' ELSE '&HFFFFFF&' END as bgcolor
+T02/Ecr_DB_bgcolor/False	Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor
+T02/Ecr_DB_bgcolor/True	Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HC0C0C0' END as bgcolor
+T03/Art_DB_bgcolor	ERREUR: Type mismatch: wanted SColor, got String instead
+T03/Fac_DB_bgcolor	ERREUR: Null object
+T03/Ecr_DB_bgcolor/False	ERREUR: Null object
+T03/Ecr_DB_bgcolor/True	ERREUR: Null object
+T04/mysql/Art	001=&hffffc0&|002=&hffffc0&|003=&hffffc0&|004=&hc0c0c0&|005=&hffc0c0&|006=&hffffc0&|007=&H00FFFF&
+T04/mysql/Bl	B00001=&HFFDFBF|C00001=&HDFFFBF|D00001=&HFFFFDC|F00001=&HFFFFFF&|F00002=&HC0C0C0
+T04/mysql/Mvt	1=&HFFFFFF&|2=&HDFFFBF|3=&HFFDFBF|4=&H808080|5=&HFFFFDC|6=&HDFFFBF
+T04/mysql/Mvt_oldex	1=&HC0C0C0|2=&HDFFFBF|3=&HFFDFBF|4=&H808080|5=&HFFFFDC|6=&HDFFFBF
+T04/sqlite/Art	001=&hffffc0&|002=&hffffc0&|003=&hffffc0&
+T04/sqlite/Bl	<Null>
+T04/sqlite/Mvt	<Null>

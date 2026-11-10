@@ -1,0 +1,60 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Fam WHERE code_fam = '01'
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Fam WHERE code_fam = '02'
+SELECT * FROM Fiches_Fam WHERE code_fam = '02'
+LOCK TABLES Fiches_Art WRITE, Fiches_HistoLigfac WRITE, Fiches_HistoLigfacM WRITE, Fiches_Ligbl WRITE, Fiches_LigblM WRITE, Fiches_Materiels WRITE, Fiches_HisLigTickets WRITE, Fiches_LigTicketz WRITE , Docs_Ged Write , Fiches_ArtPromo Write , Fiches_CdBarre Write , Fiches_CdFour Write , Fiches_Cequ Write , Fiches_EtiGond Write , Fiches_EtiProd Write , Fiches_HisInvT Write , Fiches_Inv Write , Fiches_InvT Write , Fiches_Ligcom Write , Fiches_Ligrecpt Write , Fiches_Mvtexp Write , Fiches_Mvtexpdc Write , Fiches_PrdComp Write , Fiches_Rpl1 Write , Fiches_Rpl2 Write , Fiches_Tarcli Write , Fiches_TarTypcli Write , Rupture Write , RuptureC Write
+UPdate Fiches_Art  SET  art_fam = '02', art_code = 'N001' where art_code = '001'
+UPdate Fiches_HistoLigfac  SET  fam_ligfac = '02', code_ligfac = 'N001' where code_ligfac = '001'
+UPdate Fiches_Ligbl  SET  fam_ligbl = '02', code_ligbl = 'N001' where code_ligbl = '001'
+UPdate Fiches_LigblM SET  fam_ligbl = '02', code_ligbl = 'N001' where code_ligbl = '001'
+UPdate Fiches_HistoLigfacM  SET  fam_ligfac = '02', code_ligfac = 'N001' where code_ligfac = '001'
+UPdate Fiches_Materiels  SET  mat_fam = '02', mat_code= 'N001' where mat_code = '001'
+UPdate Fiches_HisLigTickets SET fam = '02', code='N001' WHERE code='001'
+UPdate Fiches_LigTicketz SET fam = '02', code='N001' WHERE code='001'
+UPdate Docs_Ged SET code='N001' WHERE code='001' and type = 4
+UPdate Fiches_ArtPromo SET code='N001' WHERE code='001'
+UPdate Fiches_CdBarre SET codep='N001' WHERE codep='001'
+UPdate Fiches_CdFour SET codep='N001' WHERE codep='001'
+UPdate Fiches_Cequ SET codep='N001' WHERE codep='001'
+UPdate Fiches_Cequ SET codequ='N001' WHERE codequ='001'
+UPdate Fiches_EtiGond SET code='N001' WHERE code='001'
+UPdate Fiches_EtiProd SET code='N001' WHERE code='001'
+UPdate Fiches_HisInvT SET inv_code='N001' WHERE inv_code='001'
+UPdate Fiches_Inv SET inv_code='N001' WHERE inv_code='001'
+UPdate Fiches_InvT  SET inv_code='N001' WHERE inv_code='001'
+UPdate Fiches_Ligcom SET code='N001' WHERE code='001'
+UPdate Fiches_Ligrecpt SET code='N001' WHERE code='001'
+UPdate Fiches_Mvtexp SET code='N001' WHERE code='001'
+UPdate Fiches_Mvtexpdc SET code='N001' WHERE code='001'
+UPdate Fiches_PrdComp SET codep='N001' WHERE codep='001'
+UPdate Fiches_PrdComp SET codec='N001' WHERE codec='001'
+UPdate Fiches_Rpl1 SET codep='N001' WHERE codep='001'
+UPdate Fiches_Rpl1 SET coderpl1='N001' WHERE coderpl1='001'
+UPdate Fiches_Rpl2 SET codep='N001' WHERE codep='001'
+UPdate Fiches_Rpl2 SET coderpl2='N001' WHERE coderpl2='001'
+UPdate Fiches_Tarcli SET cart='N001' WHERE cart='001'
+UPdate Fiches_TarTypcli SET cart='N001' WHERE cart='001'
+UPdate Rupture SET codea='N001' WHERE codea='001'
+UPdate RuptureC SET codea='N001' WHERE codea='001'
+UNLOCK TABLES
+SELECT * FROM Fiches_Art where art_code = '001'

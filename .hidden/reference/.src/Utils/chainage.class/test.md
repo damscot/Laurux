@@ -5,13 +5,13 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CHAINAGE-T01 | gbtest | Gestion de liste | `New Chainage([a, b, c])` (contrôles d'une fenêtre cachée) ; `add([d])` ; `sup(b)` ; `sup(a, 2)` ; `addintercale(c, e)` | contenu de `tableaux` après chaque appel | `tests/gestion_liste/` | à faire |
-| CHAINAGE-T02 | gbtest | `_new(Null)` et liste partagée | `New Chainage(Null)` ; modification du tableau passé à `_new` | `tableaux` vide ; même référence que le tableau passé | `tests/construction/` | à faire |
-| CHAINAGE-T03 | gbtest | `modif` (anomalie) | `modif(a, x)` | figer l'erreur de type | `tests/modif/` | à faire |
-| CHAINAGE-T04 | replay | Navigation avant | écran `Parametre` : Entrée, Tab, Bas successifs jusqu'au bouclage | séquence des contrôles ayant le focus (log GUI) | `tests/navigation_avant/` | à faire |
-| CHAINAGE-T05 | replay | Navigation arrière et Alt/Ctrl | `Parametre` : Haut, Maj+Tab depuis le 1er champ ; Ctrl+Bas | focus sur le dernier champ ; aucune navigation avec Ctrl | `tests/navigation_arriere/` | à faire |
-| CHAINAGE-T06 | replay | Couleur de focus | `Parametre` : entrée/sortie d'un champ | couleurs `/Coul/Focus` puis couleur d'origine | `tests/couleur_focus/` | à faire |
-| CHAINAGE-T07 | replay | Liste modifiée par `sup`/`add` | saisie d'une ligne d'achat (`Achat`) avec suppression de colonnes | ordre de focus de référence | `tests/achat_sup_add/` | à faire |
+| CHAINAGE-T01 | gbtest | Gestion de liste | `New Chainage([a, b, c])` (contrôles d'une fenêtre cachée) ; `add([d])` ; `sup(b)` ; `sup(a, 2)` ; `addintercale(c, e)` | contenu de `tableaux` après chaque appel | `tests/gestion_liste/` | implémenté |
+| CHAINAGE-T02 | gbtest | `_new(Null)` et liste partagée | `New Chainage(Null)` ; modification du tableau passé à `_new` | `tableaux` vide ; même référence que le tableau passé | `tests/construction/` | implémenté |
+| CHAINAGE-T03 | gbtest | `modif` (anomalie) | `modif(a, x)` | figer l'erreur de type | `tests/modif/` | implémenté |
+| CHAINAGE-T04 | replay | Navigation avant | écran `Parametre` : Entrée, Tab, Bas successifs jusqu'au bouclage | séquence des contrôles ayant le focus (log GUI) | `tests/navigation_avant/` | à faire : ordre des focus non comparé par le runner (dump + SQL seulement) |
+| CHAINAGE-T05 | replay | Navigation arrière et Alt/Ctrl | `Parametre` : Haut, Maj+Tab depuis le 1er champ ; Ctrl+Bas | focus sur le dernier champ ; aucune navigation avec Ctrl | `tests/navigation_arriere/` | à faire : ordre des focus non comparé par le runner (dump + SQL seulement) |
+| CHAINAGE-T06 | replay | Couleur de focus | `Parametre` : entrée/sortie d'un champ | couleurs `/Coul/Focus` puis couleur d'origine | `tests/couleur_focus/` | à faire : couleurs non comparées par le runner |
+| CHAINAGE-T07 | replay | Liste modifiée par `sup`/`add` | saisie d'une ligne d'achat (`Achat`) avec suppression de colonnes | ordre de focus de référence | `tests/achat_sup_add/` | à faire : ordre des focus non comparé par le runner ; scénario Achat non synthétisé |
 
 ## Détail des tests
 
@@ -21,3 +21,6 @@
   touches), rejoués sur les deux clones ; comparaison des lignes de log de focus. Aucune table
   modifiée par ces scénarios (sauf T07 si la ligne est validée : diff des tables d'achat).
 - Non testable en gb.test : les événements clavier (`Key.Code`) et `Stop Event`.
+- **Phase 2 (implémentation)** : `.src/Tests/Utils/ChainageTest.test` (T01-T03), contrôles créés dans une
+  `Window` jamais affichée. Les replays T04-T07 vérifient l'ordre des focus : le runner ne compare que le dump
+  et le SQL (besoin d'outillage : comparaison des événements GUI du journal).

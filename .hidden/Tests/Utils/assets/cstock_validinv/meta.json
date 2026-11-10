@@ -1,0 +1,17 @@
+{
+ "id": "CSTOCK-T09",
+ "objet": "Appel depuis `Validinv`",
+ "classe": "Cstock",
+ "description": "Validation de l'inventaire de fin d'année (Gestion › Stock › Inventaires › Validation) : Lancer, « Oui », « Traitement terminé ». Cstock.Calc_stock(\"\", \"\") lit Calcstock.Cbx (coché par défaut) : aucun article recalculé (A01 figée), art_qte = art_stkdep inventorié, BL du 10/01 non déduit.",
+ "dataset": "validinv",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

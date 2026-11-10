@@ -374,6 +374,14 @@ L'utilisateur peut autoriser explicitement la recherche dans un autre répertoir
 17. Ne prétends pas avoir testé l'IHP au-delà des scénarios rejoués : gb.test ne couvre que l'API `Public`,
     et les touches `ImageButton` de la caisse, le matériel (TPE, imprimantes) et le login MySQL restent manuels.
 
+17 bis. **Modification du framework de test** (`.src/Tests/Framework/` : `runner.py`, `sandbox.py`, `TestKit.module`,
+    `libhome/` ; harnais de `Start.module` : `Run_Tests`, `Run_Scenario`, `Home_Test`, `Env_Home`, `Fin_Home`) :
+    à présenter à l'utilisateur et à relire ligne à ligne avant validation. Ce code supprime des répertoires
+    (`rm -rf`, `shutil.rmtree`) : **ne jamais affaiblir, contourner ni déplacer les garde-fous de suppression du
+    HOME de test** (création par `mktemp -d` sous `/tmp/laurux-test/home-*`, marqueur `.laurux-test-home`, refus des
+    liens symboliques, de `/`, du HOME réel et de ses parents ; voir `TESTING.md`, « Garde-fous de suppression »).
+    Une altération peut effacer le HOME réel de l'utilisateur. Ne jamais tester ces garde-fous sur le HOME réel.
+
 ### Règles de communication
 18. **Rends compte fidèlement** : si le build passe mais que tu n'as pas lancé l'application,
     dis-le. Si un test n'existe pas, dis-le — ne le présente pas comme vérifié.

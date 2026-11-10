@@ -10,13 +10,13 @@ sont couverts par **replay** avec dump normalisé de `Fiches_Comptes` (`compte_c
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CALCSOLDE-T01 | gbtest | `Calcul` compte général | compte avec écritures validées et non validées | `solde` = Σ D − Σ C validées ; `soldep` inchangé si `Treso = False` | `tests/compte_general/` | à faire |
-| CALCSOLDE-T02 | gbtest | `Calcul` trésorerie | compte 512 : écritures pointées, non pointées, report à nouveau clôturé du journal `jdr` | `solde` et `soldep` de référence | `tests/tresorerie/` | à faire |
-| CALCSOLDE-T03 | gbtest | Compte sans écriture validée | `soldep` initial non nul | `solde = 0.00`, `soldep` inchangé (figé) | `tests/sans_ecriture/` | à faire |
-| CALCSOLDE-T04 | gbtest | Appel style `Pointage` | `Calcul(cpt, True)` sans `jan` | `soldep` non recalculé (A01 figée) | `tests/appel_pointage/` | à faire |
-| CALCSOLDE-T05 | gbtest | Arrondi | montants à 3 décimales, négatifs | format `LPrix(...).D` | `tests/arrondi/` | à faire |
-| CALCSOLDE-T06 | replay | Recalcul global | menu Compta → recalcul des soldes, « Lancer » | dump de `Fiches_Comptes` | `tests/replay_global/` | à faire |
-| CALCSOLDE-T07 | replay | Suppression d'un relevé | Pointage : supprimer un relevé | dump `Fiches_Mvt` (pointee, nrlv) + `Fiches_Comptes` | `tests/replay_pointage/` | à faire |
+| CALCSOLDE-T01 | gbtest | `Calcul` compte général | compte avec écritures validées et non validées | `solde` = Σ D − Σ C validées ; `soldep` inchangé si `Treso = False` | `tests/compte_general/` | implémenté |
+| CALCSOLDE-T02 | gbtest | `Calcul` trésorerie | compte 512 : écritures pointées, non pointées, report à nouveau clôturé du journal `jdr` | `solde` et `soldep` de référence | `tests/tresorerie/` | implémenté |
+| CALCSOLDE-T03 | gbtest | Compte sans écriture validée | `soldep` initial non nul | `solde = 0.00`, `soldep` inchangé (figé) | `tests/sans_ecriture/` | implémenté |
+| CALCSOLDE-T04 | gbtest | Appel style `Pointage` | `Calcul(cpt, True)` sans `jan` | `soldep` non recalculé (A01 figée) | `tests/appel_pointage/` | implémenté |
+| CALCSOLDE-T05 | gbtest | Arrondi | montants à 3 décimales, négatifs | format `LPrix(...).D` | `tests/arrondi/` | implémenté |
+| CALCSOLDE-T06 | replay | Recalcul global | menu Compta → recalcul des soldes, « Lancer » | dump de `Fiches_Comptes` | `tests/replay_global/` | implémenté (`.hidden/Tests/Utils/assets/calcsolde_replay_global/`) |
+| CALCSOLDE-T07 | replay | Suppression d'un relevé | Pointage : supprimer un relevé | dump `Fiches_Mvt` (pointee, nrlv) + `Fiches_Comptes` | `tests/replay_pointage/` | à faire : scénario Pointage (suppression d'un relevé) non synthétisé dans ce lot |
 
 ## Détail des tests
 
@@ -25,3 +25,7 @@ sont couverts par **replay** avec dump normalisé de `Fiches_Comptes` (`compte_c
   ~20 écritures `Fiches_Mvt` (validées ou non, pointées ou non, une écriture de report à nouveau
   clôturée dans le journal `jdr`), relevé `TabRappro` pour T07.
 - **Non testable automatiquement** : son et message final (T06 par replay).
+- **Phase 2 (implémentation)** : `.src/Tests/Utils/CalcsoldeTest.test` (T01-T05), jeu
+  `.src/Tests/Framework/datasets/calcsolde.sql` (écritures 607000/512000/411001, soldes initiaux non nuls) ;
+  `Calcul` appelé sur l'instance automatique du formulaire (jamais affiché). T06 = scénario
+  `.hidden/Tests/Utils/assets/calcsolde_replay_global/` (`Menu76`, bouton `Button2` du groupe `Btn`).

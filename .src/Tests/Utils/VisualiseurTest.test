@@ -1,0 +1,105 @@
+' Gambas test file
+
+''Tests de Visualiseur (.hidden/reference/.src/Utils/Visualiseur.module/test.md, VISUALISEUR-T01 et T02).
+''CmdVis est remplacé par un script factice en tête du PATH ; Desktop.Open lance le faux programme
+''laurux-ouvrir du runner (types MIME du HOME de test). Tous deux journalisent leurs arguments (Shell asynchrone : attente bornée de la trace). Valeurs attendues :
+''assets/VisualiseurTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CmdVis", "`Prog` avec `CmdVis`")
+  TestKit.Desc("T02DesktopOpen", "`Prog` sans `CmdVis`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "VisualiseurTest")
+
+End
+
+'--------------------------------------------------------------------------------- faux binaires
+
+Private $sDir As String ' répertoire du test : bin/ (faux binaires) et trace des appels
+
+Private Sub FauxBinaires(aNoms As String[])
+  ''Crée des scripts factices qui journalisent leur nom et leurs arguments (un « [arg] » par argument) dans
+  ''<tmp>/trace, et les place en tête du PATH du processus (hérité par Shell/Exec).
+
+  Dim sNom As String
+
+  $sDir = Temp$()
+  Mkdir $sDir
+  Mkdir $sDir &/ "bin"
+  For Each sNom In aNoms
+    File.Save($sDir &/ "bin" &/ sNom, "#!/bin/sh\n{ printf '%s' \"$(basename \"$0\")\"; for a in \"$@\"; do printf ' [%s]' \"$a\"; done; echo; } >> '" & $sDir &/ "trace'\n")
+    Chmod $sDir &/ "bin" &/ sNom To "rwxr-xr-x"
+  Next
+  Application.Env["PATH"] = $sDir &/ "bin" & ":" & Application.Env["PATH"]
+
+End
+
+Private Sub Trace(Optional Attendues As Integer = 0) As String[]
+  ''Lignes de la trace (chemins temporaires remplacés par « <tmp> ») ; attend au plus 2 s qu'il y en ait
+  ''« Attendues » (Shell asynchrone), puis vide la trace.
+
+  Dim aRes As String[] = New String[]
+  Dim sLigne As String
+  Dim fFin As Float = Timer + 2
+  Dim sTrace As String = $sDir &/ "trace"
+
+  Repeat
+    If Exist(sTrace) Then
+      If Split(File.Load(sTrace), "\n", "", True).Count >= Attendues Then Break
+    Endif
+    Wait 0.05
+  Until Timer > fFin
+  If Not Exist(sTrace) Then Return aRes
+  For Each sLigne In Split(File.Load(sTrace), "\n", "", True)
+    aRes.Add(Replace(sLigne, $sDir, "<tmp>"))
+  Next
+  Kill sTrace
+  Return aRes
+
+End
+
+'---------------------------------------------------------------------------------------------- tests
+
+Public Sub T01CmdVis()
+
+  TestKit.Init()
+  FauxBinaires(["vis"])
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "vis --plein-ecran"
+  Visualiseur.Prog($sDir &/ "doc.pdf")
+  TestKit.Check("T01/simple", Trace(1))
+  Visualiseur.Prog($sDir &/ "mon doc.pdf")
+  TestKit.Check("T01/espace", Trace(1))
+  Visualiseur.Prog($sDir &/ "image.png", "image/png")
+  TestKit.Check("T01/mime_ignore", Trace(1))
+
+End
+
+Public Sub T02DesktopOpen()
+
+  TestKit.Init()
+  FauxBinaires(["xdg-open"])
+  File.Save($sDir &/ "doc.pdf", "%PDF-1.4\n") ' Desktop.Open exige un fichier existant
+  ' Desktop.Open sans portail lance l'application associée au type MIME : TestKit.OuvertureFactice associe les PDF
+  ' au faux programme laurux-ouvrir, dont la trace est dirigée vers celle du test (poste ou conteneur)
+  TestKit.OuvertureFactice($sDir &/ "trace")
+  Try Visualiseur.Prog($sDir &/ "doc.pdf")
+  If Error Then
+    TestKit.Check("T02/ouverture", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/ouverture", Trace(1))
+  Endif
+  ' fichier absent
+  Try Visualiseur.Prog($sDir &/ "absent.pdf")
+  If Error Then
+    TestKit.Check("T02/absent", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/absent", Trace(1))
+  Endif
+
+End

@@ -1,0 +1,69 @@
+' Gambas test file
+
+''Tests de Mmysql (.hidden/reference/.src/Utils/Mmysql.module/test.md, MMYSQL-T01 à T03).
+''Valeurs attendues : assets/MmysqlTest/expected.txt, produites dans le clone de référence.
+''Les outils d'élévation (gksu, kdesu, sudo) sont remplacés par des scripts factices placés en tête du
+''PATH (~/bin du HOME de test) : ils journalisent leurs arguments dans ~/tmp/elevation.log ; gksu/kdesu
+''exécutent ensuite la commande reçue. Le ~/bin est celui de $HOME (HOME de test), pas User.Home.
+''T01/T02 (Process_List) ne sont pas implémentés : Process_List écrit User.Home/tmp/resultat, c'est-à-dire
+''dans le vrai HOME de l'utilisateur (User.Home ne suit pas le HOME isolé du runner).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03InitCmd", "`Init`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "MmysqlTest")
+
+End
+
+Private Sub Factices()
+
+  Dim sBin As String = Application.Env["HOME"] &/ "bin"
+  Dim sOutil As String
+
+  If Not Exist(sBin) Then Mkdir sBin
+  For Each sOutil In ["gksu", "kdesu"]
+    File.Save(sBin &/ sOutil, "#!/bin/sh\necho \"" & sOutil & " $*\" >> \"$HOME/tmp/elevation.log\"\nexec sh -c \"$*\"\n")
+    Chmod sBin &/ sOutil To "rwxr-xr-x"
+  Next
+  File.Save(sBin &/ "sudo", "#!/bin/sh\necho \"sudo $*\" >> \"$HOME/tmp/elevation.log\"\nexit 0\n")
+  Chmod sBin &/ "sudo" To "rwxr-xr-x"
+  Application.Env["PATH"] = sBin & ":" & Application.Env["PATH"]
+  Application.Env["MYSQL_TCP_PORT"] = Application.Env["LAURUX_TEST_DB_PORT"]
+  Application.Env["KDE_FULL_SESSION"] = ""
+  Application.Env["GNOME_DESKTOP_SESSION_ID"] = ""
+
+End
+
+Private Sub Journal() As String
+
+  Dim sLog As String = Application.Env["HOME"] &/ "tmp/elevation.log"
+  Dim s As String
+
+  If Not Exist(sLog) Then Return "<aucun appel>"
+  s = File.Load(sLog)
+  Kill sLog
+  s = Replace(s, Utils.db.Password, "<mdp>")
+  Return Replace(Trim(s), "\n", " | ")
+
+End
+
+Public Sub T03InitCmd()
+
+  Factices()
+  Mmysql.Init()
+  TestKit.Check("T03/sans_session", Journal())
+  Application.Env["KDE_FULL_SESSION"] = "true"
+  Mmysql.Init()
+  TestKit.Check("T03/kde", Journal())
+  Application.Env["KDE_FULL_SESSION"] = ""
+  Application.Env["GNOME_DESKTOP_SESSION_ID"] = "gnome"
+  Mmysql.Init()
+  TestKit.Check("T03/gnome_apres_kde", Journal())
+
+End

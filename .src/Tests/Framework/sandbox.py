@@ -26,7 +26,7 @@ FRAMEWORK = Path(__file__).resolve().parent
 REWORK = FRAMEWORK.parents[2]
 REF = Path(os.environ.get("LAURUX_REF", "/home/damscot/Laurux")).resolve()
 ROOT = Path(os.environ.get("LAURUX_SANDBOX_ROOT", Path.home() / ".cache" / "laurux-sandbox"))
-COLLECT = (".src/Tests", "reference")
+COLLECT = (".src/Tests", ".hidden/Tests", ".hidden/reference", "output/tests/runs")  # runs : résultats des exécutions
 
 
 def sb(n):
@@ -38,7 +38,7 @@ def port(n):
 
 
 def runner(n, *args):
-    env = dict(os.environ, LAURUX_REF=str(sb(n) / "ref"), LAURUX_TEST_DB_PORT=port(n))
+    env = dict(os.environ, LAURUX_REF=str(sb(n) / "ref"), LAURUX_TEST_DB_PORT=port(n), LAURUX_DOCKER="1")
     return subprocess.run([sys.executable, str(sb(n) / "rework/.src/Tests/Framework/runner.py"), *args],
                           env=env, check=True)
 
@@ -52,6 +52,7 @@ def create(n):
         subprocess.run(["cp", "-a", str(src), str(d / name)], check=True)
     (d / "stamp").touch()
     (d / "env.sh").write_text(f"export LAURUX_REF={d / 'ref'}\nexport LAURUX_TEST_DB_PORT={port(n)}\n"
+                              "export LAURUX_DOCKER=1\n"
                               f"alias runner='python3 {d / 'rework/.src/Tests/Framework/runner.py'}'\n",
                               encoding="utf-8")
     runner(n, "db", "up")
@@ -66,7 +67,7 @@ def collect(n):
     copied = []
     for sub in COLLECT:
         for f in (d / "rework" / sub).rglob("*"):
-            if f.is_file() and f.stat().st_mtime > stamp:
+            if f.is_file() and f.stat().st_mtime > stamp and "__pycache__" not in f.parts:
                 rel = f.relative_to(d / "rework")
                 dst = REWORK / rel
                 dst.parent.mkdir(parents=True, exist_ok=True)

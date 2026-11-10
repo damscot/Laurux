@@ -7,12 +7,12 @@ Dialogue modal : tests `replay` au travers des écrans GED.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LBOX-T01 | replay | Mode `TextReg` | `GedR` : sélection de 2 documents → Changer URL → valider la base proposée → saisir la nouvelle base → valider ; table `Docs_Ged` | colonne `url` modifiée | `tests/replay_textreg/` | à faire |
-| LBOX-T02 | replay | Mode `TextReg` annulé | même scénario, Annuler au 1er dialogue | `Docs_Ged` inchangée | `tests/replay_textreg_annule/` | à faire |
-| LBOX-T03 | replay | Mode `ListView` + filtre | `GedR` → Supprimer tags → filtre `^fac` → Sélectionner, Inverser, Désélectionner, valider ; tables `Docs_Tag`, `Fiches_Tag` | tags retirés conformes à la sélection | `tests/replay_listview/` | à faire |
-| LBOX-T04 | replay | Mode `ListEditor` | `GedR` → Ajouter tags → saisir 2 tags → valider ; `Docs_Tag`, `Fiches_Tag` | 2 tags ajoutés aux documents | `tests/replay_listeditor/` | à faire |
-| LBOX-T05 | replay | Mode `FileSelect` | `LGed` (édition d'un document) → Copier → choisir un fichier → Enregistrer ; `Docs_Ged` + fichier cible | `url`, `mime` et fichier copiés | `tests/replay_fileselect/` | à faire |
-| LBOX-T06 | replay | Filtre invalide | mode `ListView`, filtre `[` puis Sélectionner | message d'avertissement, sélection inchangée | `tests/replay_filtre_invalide/` | à faire |
+| LBOX-T01 | replay | Mode `TextReg` | `GedR` : sélection de 2 documents → Changer URL → valider la base proposée → saisir la nouvelle base → valider ; table `Docs_Ged` | colonne `url` modifiée | `tests/replay_textreg/` | à faire : jeu GED (documents + fichiers) et sélection de documents dans GedR non synthétisés ; rejeux suspendus |
+| LBOX-T02 | replay | Mode `TextReg` annulé | même scénario, Annuler au 1er dialogue | `Docs_Ged` inchangée | `tests/replay_textreg_annule/` | à faire : idem T01 |
+| LBOX-T03 | replay | Mode `ListView` + filtre | `GedR` → Supprimer tags → filtre `^fac` → Sélectionner, Inverser, Désélectionner, valider ; tables `Docs_Tag`, `Fiches_Tag` | tags retirés conformes à la sélection | `tests/replay_listview/` | à faire : clic ListView non rejoué (branche ListView vide dans ReplayObserver.Replay_Click) |
+| LBOX-T04 | replay | Mode `ListEditor` | `GedR` → Ajouter tags → saisir 2 tags → valider ; `Docs_Tag`, `Fiches_Tag` | 2 tags ajoutés aux documents | `tests/replay_listeditor/` | à faire : idem T01 (jeu GED, sélection de documents) |
+| LBOX-T05 | replay | Mode `FileSelect` | `LGed` (édition d'un document) → Copier → choisir un fichier → Enregistrer ; `Docs_Ged` + fichier cible | `url`, `mime` et fichier copiés | `tests/replay_fileselect/` | à faire : sélection de fichier par boîte de dialogue (FileSelect) non rejouable |
+| LBOX-T06 | replay | Filtre invalide | mode `ListView`, filtre `[` puis Sélectionner | message d'avertissement, sélection inchangée | `tests/replay_filtre_invalide/` | à faire : clic ListView non rejoué (comme T03) |
 
 ## Détail des tests
 

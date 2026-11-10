@@ -5,9 +5,9 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| COMPART-T01 | replay | Comparaison nominale | fichier de 5 lignes dont 2 codes absents de `Laurux01.sql` | `~/tmp/Diff.txt` = 2 lignes | `tests/comparaison/` | à faire |
-| COMPART-T02 | replay | Tous présents | fichier de codes existants | message seul, pas de visualiseur, `Diff.txt` vide | `tests/tous_presents/` | à faire |
-| COMPART-T03 | replay | Ligne sans `;` / fichier absent | ligne `ABC` ; chemin inexistant | figer les erreurs d'exécution | `tests/erreurs/` | à faire |
+| COMPART-T01 | replay | Comparaison nominale | fichier de 5 lignes dont 2 codes absents de `Laurux01.sql` | `~/tmp/Diff.txt` = 2 lignes | `tests/comparaison/` | à faire : choix du fichier par Dialog.OpenFile (dialogue natif non rejouable) ; ~/tmp/Diff.txt sous User.Home non isolé et non comparé |
+| COMPART-T02 | replay | Tous présents | fichier de codes existants | message seul, pas de visualiseur, `Diff.txt` vide | `tests/tous_presents/` | à faire : choix du fichier par Dialog.OpenFile (dialogue natif non rejouable) ; ~/tmp/Diff.txt sous User.Home non isolé et non comparé |
+| COMPART-T03 | replay | Ligne sans `;` / fichier absent | ligne `ABC` ; chemin inexistant | figer les erreurs d'exécution | `tests/erreurs/` | à faire : choix du fichier par Dialog.OpenFile (dialogue natif non rejouable) ; ~/tmp/Diff.txt sous User.Home non isolé et non comparé ; erreurs d'exécution (code ≠ 0) non tolérées par compare |
 
 ## Détail des tests
 

@@ -62,7 +62,7 @@ def git_sha(root: Path) -> str:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[3]))
     ap.add_argument("--label", default="")
     ap.add_argument("--json", help="fichier JSON de sortie")
     ap.add_argument("files", nargs="*")

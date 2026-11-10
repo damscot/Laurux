@@ -11,16 +11,16 @@ après la séparation traitement/GUI (GRIDVI-006).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| GRIDVI-T01 | replay | Type `A` (article) | Fiche article d'un article vendu sur plusieurs exercices (factures, BL, archives `M`) ; onglet Statistiques ; bouton « Calcul » | dump des 156 cellules et des en-têtes | `tests/stat_article/` | à faire |
-| GRIDVI-T02 | replay | Type `M` (main d'œuvre) | Fiche main d'œuvre (`Movr`) avec lignes `M` facturées | dump de la grille | `tests/stat_main_oeuvre/` | à faire |
-| GRIDVI-T03 | replay | Type `F`/`S` (famille) | Fiche famille (`Famille`) ; calcul en sous-familles (défaut) puis bouton « Familles » | deux dumps (S puis F) | `tests/stat_famille/` | à faire |
-| GRIDVI-T04 | replay | Type `C` (client) tableau | Fiche client (`FClient`) ; calcul | dump de la grille | `tests/stat_client/` | à faire |
-| GRIDVI-T05 | replay | Type `C` fenêtre de détail | même client ; sélection des lignes mars à juin puis de la ligne TOTAL seule | titre de la fenêtre + dump de la grille de détail (désignations, « INCONNU » compris) | `tests/stat_client_detail/` | à faire |
-| GRIDVI-T06 | replay | Type `T` (tournée) | Écran `Ttourne`, tournée avec factures | dump (quantités sans décimale, `dec` non fixé) | `tests/stat_tournee/` | à faire |
-| GRIDVI-T07 | replay | Bornes d'exercice | `Fiches_Parametres` : clôture au 31/12 puis au 30/06 ; période en cours dans/au-delà de l'année de clôture | en-têtes « AAAA C.A » / « AAAA/AAAA-1 C.A » et ordre des mois | `tests/stat_exercices/` | à faire |
-| GRIDVI-T08 | replay | SQLite, type `S` | base `Laurux01.sqlite`, fiche famille | figer le comportement actuel (erreur `LOCATE`, anomalie A01) | `tests/stat_famille_sqlite/` | à faire |
-| GRIDVI-T09 | gbtest | `BornesDetail` / `calcanne` (après GRIDVI-006) | matrice dteclec × dtepec × (ideb, ifin) | dates attendues | `tests/bornes_detail/` | à faire |
-| GRIDVI-T10 | replay | Performance détail client | client avec ≥ 200 articles distincts | durée de référence (`gbx3 -p`) de `grdv_MouseUp` | `tests/perf_detail_client/` | à faire |
+| GRIDVI-T01 | replay | Type `A` (article) | Fiche article d'un article vendu sur plusieurs exercices (factures, BL, archives `M`) ; onglet Statistiques ; bouton « Calcul » | dump des 156 cellules et des en-têtes | `tests/stat_article/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
+| GRIDVI-T02 | replay | Type `M` (main d'œuvre) | Fiche main d'œuvre (`Movr`) avec lignes `M` facturées | dump de la grille | `tests/stat_main_oeuvre/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
+| GRIDVI-T03 | replay | Type `F`/`S` (famille) | Fiche famille (`Famille`) ; calcul en sous-familles (défaut) puis bouton « Familles » | deux dumps (S puis F) | `tests/stat_famille/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
+| GRIDVI-T04 | replay | Type `C` (client) tableau | Fiche client (`FClient`) ; calcul | dump de la grille | `tests/stat_client/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
+| GRIDVI-T05 | replay | Type `C` fenêtre de détail | même client ; sélection des lignes mars à juin puis de la ligne TOTAL seule | titre de la fenêtre + dump de la grille de détail (désignations, « INCONNU » compris) | `tests/stat_client_detail/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
+| GRIDVI-T06 | replay | Type `T` (tournée) | Écran `Ttourne`, tournée avec factures | dump (quantités sans décimale, `dec` non fixé) | `tests/stat_tournee/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
+| GRIDVI-T07 | replay | Bornes d'exercice | `Fiches_Parametres` : clôture au 31/12 puis au 30/06 ; période en cours dans/au-delà de l'année de clôture | en-têtes « AAAA C.A » / « AAAA/AAAA-1 C.A » et ordre des mois | `tests/stat_exercices/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
+| GRIDVI-T08 | replay | SQLite, type `S` | base `Laurux01.sqlite`, fiche famille | figer le comportement actuel (erreur `LOCATE`, anomalie A01) | `tests/stat_famille_sqlite/` | à faire : rejeu sur base SQLite non géré par le runner |
+| GRIDVI-T09 | gbtest | `BornesDetail` / `calcanne` (après GRIDVI-006) | matrice dteclec × dtepec × (ideb, ifin) | dates attendues | `tests/bornes_detail/` | à faire : après extraction GRIDVI-006 |
+| GRIDVI-T10 | replay | Performance détail client | client avec ≥ 200 articles distincts | durée de référence (`gbx3 -p`) de `grdv_MouseUp` | `tests/perf_detail_client/` | à faire : contenu des cellules non capturé par le runner (aucune écriture en base) ; jeu multi-exercices à construire |
 
 ## Détail des tests
 

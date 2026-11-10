@@ -9,16 +9,16 @@ modifié** (sortie capturée dans `tests/<nom>/expected/`). Les anomalies sont f
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LTAXE-T01 | gbtest | `_New` : conversions d'entrée | `"20%"`, `"5,5 %"`, `"3"`, `3`, `2.5`, `""`, `Null`, `0` | `Montant(LPrix(100), True).G` par cas ; `Pct` déduit | `tests/conversion_entree/` | à faire |
-| LTAXE-T02 | gbtest | Signe des remises | `New LTaxe("3", LTaxe.Remise)`, `Deconsigne`, `TVA` | montant négatif pour Remise/Deconsigne | `tests/signe_remise/` | à faire |
-| LTAXE-T03 | gbtest | `Ttx` aller-retour | chaque type de `Aucune` à `Marge` | `Ttx` relu identique | `tests/type_taxe/` | à faire |
-| LTAXE-T04 | gbtest | `Cpt` valide | TVA + `"44571"`, TVA + `""`, Remise + `"709"` | `Cpt` relu ; `change` levé | `tests/compte_valide/` | à faire |
-| LTAXE-T05 | gbtest | `Montant` en pourcentage HT | 20 % sur `LPrix(100)`, `LPrix(12.34)`, `LPrix(-5)` | Float de référence | `tests/montant_pct_ht/` | à faire |
-| LTAXE-T06 | gbtest | `Montant` en pourcentage TTC | 20 % sur `LPrix(120)`, 0 % sur `LPrix(50)`, `TTC = True` | 20 ; 0 | `tests/montant_pct_ttc/` | à faire |
-| LTAXE-T07 | gbtest | `Montant` fixe | `New LTaxe(2.5, LTaxe.Fixe)` sur prix de qté 1 et 3 | Float de référence | `tests/montant_fixe/` | à faire |
-| LTAXE-T08 | gbtest | Quantité ≠ 1 (anomalie A01 + LPRIX-A01) | prix `New LPrix(10, 3)`, `ignore_quantite` False/True | `.Mnt`, `.Qte`, `.G` du résultat figés (Qte = 1, Mnt = total) | `tests/montant_quantite/` | à faire |
-| LTAXE-T09 | gbtest | Arrondi et compte propagés | prix `Arr_005`, taxe avec compte `"44571"` | `.Arr` et `.Cpt` du résultat | `tests/montant_arr_cpt/` | à faire |
-| LTAXE-T10 | gbtest | Listes statiques | `LTaxe.All_Taxes`, `LTaxe.All_Remises`, `LTaxe.TxLast` | contenus figés | `tests/listes_types/` | à faire |
+| LTAXE-T01 | gbtest | `_New` : conversions d'entrée | `"20%"`, `"5,5 %"`, `"3"`, `3`, `2.5`, `""`, `Null`, `0` | `Montant(LPrix(100), True).G` par cas ; `Pct` déduit | `tests/conversion_entree/` | implémenté |
+| LTAXE-T02 | gbtest | Signe des remises | `New LTaxe("3", LTaxe.Remise)`, `Deconsigne`, `TVA` | montant négatif pour Remise/Deconsigne | `tests/signe_remise/` | implémenté |
+| LTAXE-T03 | gbtest | `Ttx` aller-retour | chaque type de `Aucune` à `Marge` | `Ttx` relu identique | `tests/type_taxe/` | implémenté |
+| LTAXE-T04 | gbtest | `Cpt` valide | TVA + `"44571"`, TVA + `""`, Remise + `"709"` | `Cpt` relu ; `change` levé | `tests/compte_valide/` | implémenté |
+| LTAXE-T05 | gbtest | `Montant` en pourcentage HT | 20 % sur `LPrix(100)`, `LPrix(12.34)`, `LPrix(-5)` | Float de référence | `tests/montant_pct_ht/` | implémenté |
+| LTAXE-T06 | gbtest | `Montant` en pourcentage TTC | 20 % sur `LPrix(120)`, 0 % sur `LPrix(50)`, `TTC = True` | 20 ; 0 | `tests/montant_pct_ttc/` | implémenté |
+| LTAXE-T07 | gbtest | `Montant` fixe | `New LTaxe(2.5, LTaxe.Fixe)` sur prix de qté 1 et 3 | Float de référence | `tests/montant_fixe/` | implémenté |
+| LTAXE-T08 | gbtest | Quantité ≠ 1 (anomalie A01 + LPRIX-A01) | prix `New LPrix(10, 3)`, `ignore_quantite` False/True | `.Mnt`, `.Qte`, `.G` du résultat figés (Qte = 1, Mnt = total) | `tests/montant_quantite/` | implémenté |
+| LTAXE-T09 | gbtest | Arrondi et compte propagés | prix `Arr_005`, taxe avec compte `"44571"` | `.Arr` et `.Cpt` du résultat | `tests/montant_arr_cpt/` | implémenté |
+| LTAXE-T10 | gbtest | Listes statiques | `LTaxe.All_Taxes`, `LTaxe.All_Remises`, `LTaxe.TxLast` | contenus figés | `tests/listes_types/` | implémenté |
 
 ## Détail des tests
 
@@ -31,3 +31,6 @@ modifié** (sortie capturée dans `tests/<nom>/expected/`). Les anomalies sont f
   traitement/GUI (LTAXE-004) via les prédicats purs ; d'ici là, test manuel documenté.
 - **Couverture visée** : 100 % des lignes hors branches `Message.Error`.
 - T08 doit être repassé avec LPRIX-T12 : il fige le couplage décrit dans LTAXE-A01.
+- **Implémentation (phase 2)** : `.src/Tests/Utils/LTaxeTest.test` (méthodes `T01_…` à `T10_…`), valeurs
+  attendues dans `.hidden/Tests/Utils/assets/LTaxeTest/expected.txt`. T04 compte les événements `change` : ceux levés
+  pendant `_New` ne parviennent pas à l'observateur (0), ceux d'une affectation de `Cpt` ultérieure oui (1).

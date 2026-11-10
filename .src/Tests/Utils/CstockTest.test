@@ -1,0 +1,214 @@
+' Gambas test file
+
+''Tests de Cstock (.hidden/reference/.src/Utils/Cstock.module/test.md, CSTOCK-T01 à T08, T10).
+''Jeu de données : .src/Tests/Framework/datasets/cstock_mouvements.sql (une source de mouvement par article
+''S01 à S10, inventaires tournants YI01/ZF1/ZF2, valeurs limites V01 à V04, article non stocké N01).
+''Base restaurée au début de chaque test (sauf T11, SQLite). Le mode de sélection est lu dans les boutons radio de l'instance automatique de Calcstock (non affichée).
+''Chaque vérification porte sur art_qte de tous les articles (999 = non recalculé).
+''Non implémentés : T09 (scénario Validinv), T12 (performance), voir test.md.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01TousArticles", "Tous les articles")
+  TestKit.Desc("T02UnArticle", "Un article")
+  TestKit.Desc("T03Casiers", "Plage de casiers")
+  TestKit.Desc("T04Sources", "Chaque source isolée")
+  TestKit.Desc("T05InventaireTournant", "Inventaire tournant")
+  TestKit.Desc("T06FuiteDate", "Fuite de `dte2` entre articles")
+  TestKit.Desc("T07DateDepart", "Date de départ")
+  TestKit.Desc("T08ValeursLimites", "Valeurs nulles / texte")
+  TestKit.Desc("T10ArtSansMode", "`Art` non vide sans bouton")
+  TestKit.Desc("T11Sqlite", "SQLite")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CstockTest")
+
+End
+
+Public Sub _Teardown()
+  ''Contournement d'outillage : Music.Load (Calcstock._New) lance un bus D-Bus privé qui monte
+  ''$XDG_RUNTIME_DIR/doc et gvfs (FUSE) ; démontés ici, sinon le runner échoue en supprimant le HOME
+  ''temporaire (PermissionError sur run/doc).
+
+  Dim sRun As String = Application.Env["XDG_RUNTIME_DIR"]
+
+  If Not sRun Then Return
+  Shell "fusermount -u -z " & Shell$(sRun &/ "doc") & " 2>/dev/null; fusermount -u -z " & Shell$(sRun &/ "gvfs") & " 2>/dev/null" Wait
+
+End
+
+Private Sub Mode(Num As Integer)
+  ''1 = un produit (Cbx), 2 = casiers (Cbx2), 3 = tous (Cbx3), 4 = Cbx4 (aucun des modes lus par Cstock)
+
+  Select Case Num
+    Case 1
+      Calcstock.Cbx.Value = True
+    Case 2
+      Calcstock.Cbx2.Value = True
+    Case 3
+      Calcstock.Cbx3.Value = True
+    Case 4
+      Calcstock.Cbx4.Value = True
+  End Select
+
+End
+
+Private Sub Calcule(Prefixe As String, Art As String, Art2 As String)
+
+  Try Cstock.Calc_stock(Art, Art2)
+  If Error Then
+    TestKit.Check(Prefixe & "/erreur", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(Prefixe & "/erreur", "")
+  Endif
+
+End
+
+Private Sub Etat(Prefixe As String)
+  ''art_qte de chaque article, arrondi à 1e-6 (Null figé)
+
+  Dim rRes As Result
+
+  rRes = Utils.db.Exec("SELECT art_code, art_qte FROM " & Cbase.Table("TabArt") & " ORDER BY art_code")
+  If Not rRes.Available Then Return
+  Repeat
+    If IsNull(rRes!art_qte) Then
+      TestKit.Check(Prefixe & "/" & rRes!art_code, Null)
+    Else
+      TestKit.Check(Prefixe & "/" & rRes!art_code, Round(rRes!art_qte, -6))
+    Endif
+  Until rRes.MoveNext()
+
+End
+
+Public Sub T01TousArticles()
+  TestKit.OuvreBase("cstock_mouvements")
+
+  Mode(3)
+  Calcule("T01", "", "")
+  Etat("T01")
+
+End
+
+Public Sub T02UnArticle()
+  TestKit.OuvreBase("cstock_mouvements")
+
+  Mode(1)
+  Calcule("T02", "S01", "")
+  Etat("T02")
+
+End
+
+Public Sub T03Casiers()
+  TestKit.OuvreBase("cstock_mouvements")
+
+  Mode(2)
+  Calcule("T03", "A01", "B99")
+  Etat("T03")
+
+End
+
+Public Sub T04Sources()
+  ''Chaque article S01 à S10 recalculé seul (date_ex relue à chaque appel : pas de fuite de dte2)
+
+  Dim i As Integer
+  Dim sArt As String
+
+  TestKit.OuvreBase("cstock_mouvements")
+  Mode(1)
+  For i = 1 To 10
+    sArt = "S" & Format(i, "00")
+    Calcule("T04/" & sArt, sArt, "")
+  Next
+  Etat("T04")
+
+End
+
+Public Sub T05InventaireTournant()
+  TestKit.OuvreBase("cstock_mouvements")
+
+  Mode(1)
+  Calcule("T05", "YI01", "")
+  Etat("T05")
+
+End
+
+Public Sub T06FuiteDate()
+  ''CSTOCK-A02 figée : ZF1 (inventaire au 01/06) puis ZF2 (inventaire au 01/03) dans le même appel
+  TestKit.OuvreBase("cstock_mouvements")
+
+  Mode(2)
+  Calcule("T06", "Z01", "Z99")
+  Etat("T06")
+  ' Témoin : ZF2 recalculé seul
+  Mode(1)
+  Calcule("T06/seul", "ZF2", "")
+  Etat("T06/seul")
+
+End
+
+Public Sub T07DateDepart()
+  TestKit.OuvreBase("cstock_mouvements")
+
+  ' dteinv Null : repli sur dteclec1 (Laurux01.sql)
+  Mode(1)
+  Calcule("T07/dteclec1", "D01", "")
+  Etat("T07/dteclec1")
+  ' dteinv renseignée après le BL du 15/05/2018 : seul S01 n'a plus de mouvement
+  Utils.db.Exec("UPdate Fiches_Parametres SET dteinv = &1", "2018-05-16")
+  Calcule("T07/dteinv/D01", "D01", "")
+  Calcule("T07/dteinv/S01", "S01", "")
+  Calcule("T07/dteinv/S04", "S04", "")
+  Etat("T07/dteinv")
+
+End
+
+Public Sub T08ValeursLimites()
+
+  Dim aArts As String[] = ["V01", "V02", "V03", "V04"]
+  Dim sArt As String
+
+  TestKit.OuvreBase("cstock_mouvements")
+  Mode(1)
+  For Each sArt In aArts
+    Calcule("T08/" & sArt, sArt, "")
+  Next
+  Etat("T08")
+
+End
+
+Public Sub T10ArtSansMode()
+  ''CSTOCK-A03 figée : ni Cbx ni Cbx2, Art non vide → résultat nul
+  TestKit.OuvreBase("cstock_mouvements")
+
+  Mode(4)
+  Calcule("T10", "S01", "")
+  Etat("T10")
+
+End
+
+Public Sub T11Sqlite()
+  ''CSTOCK-A04 figée : copie temporaire de Laurux01.sqlite, un article stocké et un BL ajoutés, mode « tous »
+
+  Dim sRep As String = Temp$()
+
+  Mkdir sRep
+  Copy Application.Path &/ "Laurux01.sqlite" To sRep &/ "Laurux01.sqlite"
+  If Utils.db.Opened Then Utils.db.Close
+  Start.LocalSettings["/dbase/type"] = "sqlite3"
+  Start.LocalSettings["/dbase/Host"] = sRep
+  Start.LocalSettings["/dbase/Name"] = "Laurux01"
+  Utils.glb()
+  Utils.db.Open
+  Utils.db.Exec("INSERT INTO Fiches_Art (art_code, art_design, art_stocke, art_qte, art_stkdep, art_txconv) VALUES ('S01', 'BL type B', 1, 999, 100, 1)")
+  Utils.db.Exec("INSERT INTO Fiches_Bl (numbl, type, datebl) VALUES ('900001', 'B', '2018-05-15 10:00:00')")
+  Utils.db.Exec("INSERT INTO Fiches_Ligbl (num_ligbl, numlig_ligbl, code_ligbl, qte_ligbl, typel_ligbl, dte_ligbl) VALUES ('900001', '1', 'S01', '2', 'A', '2018-05-15 10:00:00')")
+  Mode(3)
+  Calcule("T11", "", "")
+  Etat("T11")
+
+End

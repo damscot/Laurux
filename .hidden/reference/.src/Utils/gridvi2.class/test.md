@@ -8,7 +8,7 @@ de régression à la suppression.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| GRIDVI2-T01 | gbtest | Absence de référence | `gbc3 -agt` après suppression ; `grep -rni gridvi2 .src` | compilation sans erreur, aucune occurrence | `tests/suppression/` | à faire |
+| GRIDVI2-T01 | gbtest | Absence de référence | `gbc3 -agt` après suppression ; `grep -rni gridvi2 .src` | compilation sans erreur, aucune occurrence | `tests/suppression/` | à faire : classe morte (contrôle de build à la suppression, phase 4) |
 
 ## Détail des tests
 

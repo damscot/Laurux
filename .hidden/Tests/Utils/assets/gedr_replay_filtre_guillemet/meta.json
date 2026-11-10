@@ -1,0 +1,20 @@
+{
+ "id": "GEDR-T08",
+ "objet": "Filtre avec guillemet (anomalie A02)",
+ "classe": "GedR",
+ "description": "GED Recherche : tag saisi a\"b (anomalie GEDR-A02) : requête de filtrage invalide, erreur SQL figée.",
+ "dataset": "ged",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "xfail": "erreur SQL non interceptée (guillemet non échappé, GEDR-A02) : Error.Propagate depuis DB_Connection.Exec remonte à TextBox1_Change, boîte d'erreur Gambas native ; Laurux arrêté par le runner (code 125), pas de message Laurux",
+ "xfail_attendu": "erreur SQL figée par un message (test.md GEDR-T08), rejeu terminé en code 0",
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

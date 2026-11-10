@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VISUALISEUR-T01 | gbtest | `Prog` avec `CmdVis` | `/Soc01/caisse/CmdVis` = script factice qui journalise ses arguments ; fichier simple puis fichier avec espace | ligne de commande journalisée de référence | `tests/cmdvis/` | à faire |
-| VISUALISEUR-T02 | gbtest | `Prog` sans `CmdVis` | `xdg-open` factice dans le `PATH` (utilisé par `Desktop.Open`) | appel journalisé | `tests/desktop_open/` | à faire |
+| VISUALISEUR-T01 | gbtest | `Prog` avec `CmdVis` | `/Soc01/caisse/CmdVis` = script factice qui journalise ses arguments ; fichier simple puis fichier avec espace | ligne de commande journalisée de référence | `tests/cmdvis/` | implémenté |
+| VISUALISEUR-T02 | gbtest | `Prog` sans `CmdVis` | `xdg-open` factice dans le `PATH` (utilisé par `Desktop.Open`) | appel journalisé | `tests/desktop_open/` | implémenté (partiel : Desktop.Open n'appelle pas le xdg-open du PATH, trace vide figée ; appel réel non observé) |
 
 ## Détail des tests
 
@@ -14,3 +14,4 @@
 - Références capturées dans le clone **Laurux non modifié**. Les éditions qui appellent `Prog` sont
   testées dans leurs propres fichiers (replays) avec la même commande factice, ce qui permet de
   récupérer le PDF produit.
+- **Implémentation (phase 2)** : `.src/Tests/Utils/VisualiseurTest.test`. T02 : `Desktop.Open` (gb.desktop) n'appelle pas le `xdg-open` du `PATH` ; la trace vide et l'erreur sur fichier absent sont figées.

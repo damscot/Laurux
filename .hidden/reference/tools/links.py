@@ -69,11 +69,11 @@ def fix_text(txt: str, md_dir: Path, idx: dict, problems: list, md: Path) -> str
 
 def run(root: Path, prefixes: list, check: bool) -> int:
     idx = index(root)
-    ref = root / "reference"
+    ref = root / ".hidden" / "reference"
     mds = []
     for pre in prefixes:
         pre = pre.rstrip("/")
-        base = root / pre if pre.startswith("reference") else ref / pre
+        base = root / pre if pre.startswith(".hidden/reference") else ref / pre
         if base.is_file():
             mds.append(base)
         elif base.exists():
@@ -97,7 +97,7 @@ def run(root: Path, prefixes: list, check: bool) -> int:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[3]))
     ap.add_argument("--check", action="store_true")
     ap.add_argument("prefixes", nargs="+")
     a = ap.parse_args()

@@ -1,0 +1,320 @@
+' Gambas test file
+
+''Tests de LDate (.hidden/reference/.src/Utils/LDate.class/test.md, LDATE-T01 à T14).
+''Valeurs attendues : assets/LDateTest/expected.txt, produites dans le clone de référence.
+''Les cas qui dépendent de Now sont vérifiés par différence avec la date courante (jour, mois, année),
+''jamais par une date absolue. Les chaînes qui déclenchent un Message.Error dans Parse/_New ne sont pas
+''exercées (bloquant sans interaction) : LDATE-T04 attend la séparation analyse/messages (LDATE-005).
+
+Private $iChange As Integer ' nombre d'événements change reçus (T06)
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Constructeur", "`_New`/`_call` par type")
+  TestKit.Desc("T02ParseComplet", "`Parse` formats complets")
+  TestKit.Desc("T03ParsePartiel", "`Parse` formats partiels")
+  TestKit.Desc("T05Formats", "Propriétés de format en lecture")
+  TestKit.Desc("T06EcritureEvenement", "Propriétés en écriture + événement")
+  TestKit.Desc("T07Composants", "Composants")
+  TestKit.Desc("T08FinPeriode", "`FinMois`, `FinJour`, `PDeb`, `PFin`")
+  TestKit.Desc("T09Comparaison", "`Apres`/`Avant` strict et non strict")
+  TestKit.Desc("T10FiltreDB", "`DateFilterDB`")
+  TestKit.Desc("T11ExerciceLaurux01", "`EFin`/`EDeb`/`EInd`")
+  TestKit.Desc("T12ExerciceDecale", "Exercice décalé (anomalies A02/A03 figées)")
+  TestKit.Desc("T13ExerciceCloture", "`Exercice_Cloture(i)`")
+  TestKit.Desc("T14Performance", "Performance")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LDateTest")
+
+End
+
+Public Sub T01Constructeur()
+
+  Dim hD As LDate
+  Dim vFloat As Variant = CFloat(45000.5)
+
+  TestKit.Check("T01/Date", LDate(Date(2024, 3, 12, 10, 11, 12)).DT)
+  hD = New LDate(Date(2024, 3, 12, 10, 11, 12))
+  TestKit.Check("T01/New_Date", hD.DT)
+  TestKit.Check("T01/Integer", LDate(2024).DT)
+  TestKit.Check("T01/Composants", LDate(2024, 2, 29, 10, 5, 3).DT)
+  TestKit.Check("T01/Composants_ms", Format(LDate(2024, 2, 29, 10, 5, 3, 250).G, "yyyy-mm-dd hh:nn:ss.u"))
+  TestKit.Check("T01/Long", LDate(CLong(2024), 7).DT)
+  TestKit.Check("T01/Null_maintenant", VraiFaux(Proche(LDate(Null).G)))
+  TestKit.Check("T01/Vide_maintenant", VraiFaux(Proche(LDate("").G)))
+  TestKit.Check("T01/Zero_maintenant", VraiFaux(Proche(LDate(0).G)))
+  TestKit.Check("T01/Rien_maintenant", VraiFaux(Proche(LDate().G)))
+  ' LDATE-A05 : chaîne + composants, la branche Date(chaîne, mois, jour) n'est pas prise
+  hD = LDate("2024", 3, 1)
+  TestKit.Check("T01/Chaine_composants/Year", hD.Year)
+  TestKit.Check("T01/Chaine_composants/dMonth", hD.Month - Month(Now))
+  TestKit.Check("T01/Chaine_composants/dDay", hD.Day - Day(Now))
+  ' Autre type (Float) : Date(DateOrYear)
+  Try hD = LDate(vFloat)
+  If Error Then
+    TestKit.Check("T01/Float", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T01/Float", hD.DT)
+  Endif
+
+End
+
+Public Sub T02ParseComplet()
+
+  Dim aEntrees As String[] = ["12.03.2024", "2024-03-12", "12/03/24", "20240312101112", "12.03.2024 10:30", "12.03.2024 10:30:45", "2024-03-12 10:30:45", "2024/03/12 08:05", "1.3.2024"]
+  Dim sEntree As String
+  Dim hD As LDate
+
+  For Each sEntree In aEntrees
+    TestKit.Check("T02/" & sEntree, LDate(sEntree).DT)
+  Next
+  ' Année sur 1 chiffre complétée par la décennie courante
+  hD = LDate("12.03.4")
+  TestKit.Check("T02/12.03.4/jour_mois", Format(hD.G, "dd.mm hh:nn:ss"))
+  TestKit.Check("T02/12.03.4/unite_annee", hD.Year Mod 10)
+  TestKit.Check("T02/12.03.4/decennie", hD.Year \ 10 - Year(Now) \ 10)
+
+End
+
+Public Sub T03ParsePartiel()
+
+  ' Composant saisi : vérifié en valeur ; composant manquant (pris dans Now) : vérifié par différence avec Now
+  Dim hD As LDate
+
+  hD = LDate("12.03")
+  TestKit.Check("T03/12.03", Format(hD.G, "dd.mm hh:nn:ss") & " dYear=" & (hD.Year - Year(Now)))
+  hD = LDate("03.2024")
+  TestKit.Check("T03/03.2024", Format(hD.G, "mm.yyyy hh:nn:ss") & " dDay=" & (hD.Day - Day(Now)))
+  hD = LDate("2024.03")
+  TestKit.Check("T03/2024.03", Format(hD.G, "mm.yyyy hh:nn:ss") & " dDay=" & (hD.Day - Day(Now)))
+  hD = LDate("12")
+  TestKit.Check("T03/12", Format(hD.G, "dd hh:nn:ss") & " dMonth=" & (hD.Month - Month(Now)) & " dYear=" & (hD.Year - Year(Now)))
+  hD = LDate("2024")
+  TestKit.Check("T03/2024", Format(hD.G, "yyyy hh:nn:ss") & " dMonth=" & (hD.Month - Month(Now)) & " dDay=" & (hD.Day - Day(Now)))
+  TestKit.Check("T03/../maintenant", VraiFaux(Proche(LDate("..").G)))
+  ' Sans heure (L) : date du jour à minuit
+  hD = LDate(Date(2000, 1, 1))
+  hD.L = ".."
+  TestKit.Check("T03/../L/jour", VraiFaux(hD.GnT = Date(Now)))
+  TestKit.Check("T03/../L/heure", Format(hD.G, "hh:nn:ss"))
+
+End
+
+Public Sub T05Formats()
+
+  Dim aDates As Date[] = [Date(2024, 2, 29, 10, 5, 3), Date(2023, 12, 31, 23, 59, 59), Date(2024, 3, 12)]
+  Dim i As Integer
+  Dim hD As LDate
+
+  For i = 0 To aDates.Max
+    hD = LDate(aDates[i])
+    TestKit.Check("T05/" & i & "/L", hD.L)
+    TestKit.Check("T05/" & i & "/LT", hD.LT)
+    TestKit.Check("T05/" & i & "/D", hD.D)
+    TestKit.Check("T05/" & i & "/DT", hD.DT)
+    TestKit.Check("T05/" & i & "/F", hD.F)
+    TestKit.Check("T05/" & i & "/FT", hD.FT)
+    ' G et GnT en heure locale (CStr d'une Date, utilisé par TestKit.Canonique, dépend du fuseau horaire)
+    TestKit.Check("T05/" & i & "/G", Format(hD.G, "yyyy-mm-dd hh:nn:ss.u"))
+    TestKit.Check("T05/" & i & "/GnT", Format(hD.GnT, "yyyy-mm-dd hh:nn:ss.u"))
+  Next
+
+End
+
+Public Sub T06EcritureEvenement()
+
+  Dim hD As LDate
+
+  hD = New LDate(Date(2000, 1, 1)) As "_Dte"
+  $iChange = 0
+  hD.L = "12.03.2024 10:30"
+  TestKit.Check("T06/L/DT", hD.DT)
+  TestKit.Check("T06/L/change", $iChange)
+  hD.LT = "13.03.2024 10:30"
+  TestKit.Check("T06/LT/DT", hD.DT)
+  TestKit.Check("T06/LT/change", $iChange)
+  hD.D = "2024-03-14 11:45:10"
+  TestKit.Check("T06/D/DT", hD.DT)
+  TestKit.Check("T06/D/change", $iChange)
+  hD.DT = "2024-03-15 11:45:10"
+  TestKit.Check("T06/DT/DT", hD.DT)
+  TestKit.Check("T06/DT/change", $iChange)
+  hD.G = Date(2024, 3, 16, 8, 9, 10)
+  TestKit.Check("T06/G/DT", hD.DT)
+  TestKit.Check("T06/G/change", $iChange)
+  hD.GnT = Date(2024, 3, 17, 8, 9, 10)
+  TestKit.Check("T06/GnT/DT", hD.DT)
+  TestKit.Check("T06/GnT/change", $iChange)
+  ' Écriture d'une date Null : pas d'événement
+  hD.G = Null
+  TestKit.Check("T06/G_Null/G", hD.G)
+  TestKit.Check("T06/G_Null/change", $iChange)
+
+End
+
+Public Sub T07Composants()
+
+  Dim iMois As Integer
+  Dim hD As LDate
+
+  For iMois = 1 To 12
+    hD = LDate(Date(2024, iMois, iMois + 10))
+    TestKit.Check("T07/" & iMois & "/Day", hD.Day)
+    TestKit.Check("T07/" & iMois & "/Week", hD.Week)
+    TestKit.Check("T07/" & iMois & "/Month", hD.Month)
+    TestKit.Check("T07/" & iMois & "/Year", hD.Year)
+    TestKit.Check("T07/" & iMois & "/Year2", hD.Year2)
+    TestKit.Check("T07/" & iMois & "/WeekDay", hD.WeekDay)
+    TestKit.Check("T07/" & iMois & "/WeekDay3", hD.WeekDay3)
+    TestKit.Check("T07/" & iMois & "/MonStr", hD.MonStr)
+    TestKit.Check("T07/" & iMois & "/MonStr3", hD.MonStr3)
+  Next
+  ' Year2 sans zéro de tête, semaines aux bornes d'année
+  TestKit.Check("T07/2005/Year2", LDate(Date(2005, 6, 1)).Year2)
+  TestKit.Check("T07/2000/Year2", LDate(Date(2000, 6, 1)).Year2)
+  TestKit.Check("T07/2021-01-01/Week", LDate(Date(2021, 1, 1)).Week)
+  TestKit.Check("T07/2024-12-30/Week", LDate(Date(2024, 12, 30)).Week)
+
+End
+
+Public Sub T08FinPeriode()
+
+  Dim aDates As Date[] = [Date(2024, 1, 31, 15, 0, 0), Date(2024, 2, 15, 9, 30, 0), Date(2023, 2, 15), Date(2024, 12, 31, 23, 59, 59)]
+  Dim i As Integer
+  Dim hD As LDate
+
+  For i = 0 To aDates.Max
+    hD = LDate(aDates[i])
+    TestKit.Check("T08/" & i & "/FinMois", Ms(hD.FinMois))
+    TestKit.Check("T08/" & i & "/FinJour", Ms(hD.FinJour))
+    TestKit.Check("T08/" & i & "/PDeb", Ms(hD.PDeb))
+    TestKit.Check("T08/" & i & "/PFin", Ms(hD.PFin))
+  Next
+
+End
+
+Public Sub T09Comparaison()
+
+  Dim aA As Date[] = [Date(2024, 3, 12, 10, 0, 0), Date(2024, 3, 12, 10, 0, 1), Date(2024, 3, 12, 9, 59, 59), Date(2024, 3, 12, 10, 0, 0, 1), Date(2024, 3, 12, 9, 59, 59, 999), Date(2023, 3, 12, 10, 0, 0), Date(2025, 3, 12, 10, 0, 0), Date(2023, 12, 31, 23, 59, 59), Date(2024, 1, 1)]
+  Dim aB As Date[] = [Date(2024, 3, 12, 10, 0, 0), Date(2024, 3, 12, 10, 0, 0), Date(2024, 3, 12, 10, 0, 0), Date(2024, 3, 12, 10, 0, 0), Date(2024, 3, 12, 10, 0, 0), Date(2024, 3, 12, 10, 0, 0), Date(2024, 3, 12, 10, 0, 0), Date(2024, 1, 1), Date(2023, 12, 31, 23, 59, 59)]
+  Dim i As Integer
+  Dim hA, hB As LDate
+
+  For i = 0 To aA.Max
+    hA = LDate(aA[i])
+    hB = LDate(aB[i])
+    TestKit.Check("T09/" & i & "/Apres", VraiFaux(hA.Apres(hB)))
+    TestKit.Check("T09/" & i & "/Apres_strict", VraiFaux(hA.Apres(hB, True)))
+    TestKit.Check("T09/" & i & "/Avant", VraiFaux(hA.Avant(hB)))
+    TestKit.Check("T09/" & i & "/Avant_strict", VraiFaux(hA.Avant(hB, True)))
+  Next
+
+End
+
+Public Sub T10FiltreDB()
+
+  Dim aEntrees As String[] = ["12.*.2024", "*.03", "2024", "12", "", "12.03.2024", "2024-03-*", "1*.0*", "*"]
+  Dim aHeures As String[] = ["12.03.2024 10:3*", "12.03.2024 10:30:4*", "12.03.2024 10", "12.03.2024", "*.03.2024 *:*"]
+  Dim sEntree As String
+
+  For Each sEntree In aEntrees
+    TestKit.Check("T10/" & sEntree, LDate.DateFilterDB(sEntree))
+  Next
+  For Each sEntree In aHeures
+    TestKit.Check("T10/heure/" & sEntree, LDate.DateFilterDB(sEntree, True))
+  Next
+
+End
+
+Public Sub T11ExerciceLaurux01()
+
+  TestKit.OuvreBase()
+  Exercices("T11", [Date(2010, 3, 1), Date(2013, 6, 15), Date(2014, 6, 15), Date(2015, 6, 15), Date(2016, 6, 15), Date(2017, 6, 15), Date(2018, 6, 15), Date(2018, 12, 31, 23, 59, 59), Date(2019, 1, 1), Date(2020, 6, 15)])
+
+End
+
+Public Sub T12ExerciceDecale()
+
+  ' Anomalies LDATE-A02 (EDeb = EFin - 1 an) et LDATE-A03 (EFin au-delà de dteclec) figées
+  TestKit.OuvreBase("ldate_exercice_decale")
+  Exercices("T12", [Date(2019, 6, 15), Date(2020, 3, 1), Date(2021, 1, 15), Date(2021, 6, 30, 12, 0, 0), Date(2021, 7, 1), Date(2024, 3, 1), Date(2025, 6, 30), Date(2025, 8, 1), Date(2026, 3, 1)])
+
+End
+
+Public Sub T13ExerciceCloture()
+
+  Dim i As Integer
+
+  TestKit.OuvreBase()
+  For i = 0 To 6
+    TestKit.Check("T13/" & i, Ms(LDate.Exercice_Cloture(i)))
+  Next
+
+End
+
+Public Sub T14Performance()
+
+  ' Durée relevée par le runner (colonne durée) et gbx3 -p ; seuls les résultats sont comparés.
+  Dim i As Integer
+  Dim sD As String
+  Dim hD As LDate
+  Dim hFin As LDate
+
+  For i = 1 To 100000
+    sD = LDate("12.03.2024").D
+  Next
+  TestKit.Check("T14/D", sD)
+  TestKit.OuvreBase()
+  hD = LDate(Date(2016, 6, 15))
+  For i = 1 To 1000
+    hFin = hD.EFin
+  Next
+  TestKit.Check("T14/EFin", hFin.DT)
+
+End
+
+Private Sub Exercices(Prefixe As String, Dates As Date[])
+
+  Dim i As Integer
+  Dim hD As LDate
+
+  For i = 0 To Dates.Max
+    hD = LDate(Dates[i])
+    TestKit.Check(Prefixe & "/" & hD.DT & "/EFin", Ms(hD.EFin))
+    TestKit.Check(Prefixe & "/" & hD.DT & "/EDeb", Ms(hD.EDeb))
+    TestKit.Check(Prefixe & "/" & hD.DT & "/EInd", hD.EInd)
+  Next
+
+End
+
+Private Function Ms(hD As LDate) As String
+  ''Date avec millisecondes (les bornes de période et d'exercice sont à .999 ou .000).
+
+  Return Format(hD.G, "yyyy-mm-dd hh:nn:ss.u")
+
+End
+
+Private Function VraiFaux(bValeur As Boolean) As String
+  ''Booléen en clair : TestKit.Canonique(False) donne "" et une valeur attendue vide n'est pas conservée.
+
+  Return IIf(bValeur, "Vrai", "Faux")
+
+End
+
+Private Function Proche(dDate As Date) As Boolean
+  ''Vrai si la date est « maintenant » (à 2 s près).
+
+  Return Abs(DateDiff(Now, dDate, gb.Second)) <= 2
+
+End
+
+Public Sub _Dte_change(Value As LDate)
+
+  If Value Then Inc $iChange
+
+End

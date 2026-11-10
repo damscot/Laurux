@@ -5,9 +5,9 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| COPIE-T01 | gbtest | `Dupli`, répertoire existant | `HOME` de test avec `Impressions/`, PDF source | fichier copié, `spiece`/`schemin` de référence | `tests/dupli_existant/` | à faire |
-| COPIE-T02 | gbtest | `Dupli`, répertoire absent | `HOME` sans `Impressions/` | répertoire créé, **pas** de copie, `spiece` inchangé (anomalie A01 figée) | `tests/dupli_absent/` | à faire |
-| COPIE-T03 | replay | Validation d'un bon de réception (`Edbr` via `ValidBR`) | `Laurux01.sql`, BR d'un fournisseur | PDF présent dans `~/Impressions/BonReception-<four>.pdf` | `tests/replay_br_copie/` | à faire |
+| COPIE-T01 | gbtest | `Dupli`, répertoire existant | `HOME` de test avec `Impressions/`, PDF source | fichier copié, `spiece`/`schemin` de référence | `tests/dupli_existant/` | implémenté |
+| COPIE-T02 | gbtest | `Dupli`, répertoire absent | `HOME` sans `Impressions/` | répertoire créé, **pas** de copie, `spiece` inchangé (anomalie A01 figée) | `tests/dupli_absent/` | implémenté |
+| COPIE-T03 | replay | Validation d'un bon de réception (`Edbr` via `ValidBR`) | `Laurux01.sql`, BR d'un fournisseur | PDF présent dans `~/Impressions/BonReception-<four>.pdf` | `tests/replay_br_copie/` | à faire : scénario ValidBR/Edbr ; le PDF produit dans le HOME n'est pas comparé par le runner |
 
 ## Détail des tests
 
@@ -15,3 +15,4 @@
 - `Message.Error` (échec de `Mkdir`) : non testé en gb.test ; couvert par un replay manuel avec un
   `HOME` en lecture seule.
 - Envoi FTP de `FacturefmA` : non testable sans serveur FTP de test (à documenter en phase 2).
+- **Phase 2** : `.src/Tests/Utils/CopieTest.test` (T01, T02) dans le HOME temporaire du runner ; chemins vérifiés avec HOME remplacé par « ~ ».

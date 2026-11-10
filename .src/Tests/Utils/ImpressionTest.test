@@ -1,0 +1,149 @@
+' Gambas test file
+
+''Tests d'Impression (.hidden/reference/.src/Utils/Impression.module/test.md, IMPRESSION-T01 à T03).
+''« lpr », la commande d'impression configurée et le visualiseur sont remplacés par des scripts factices
+''placés en tête du PATH, qui journalisent leurs arguments. Paramètres de Start.LocalSettings modifiés en
+''mémoire. Valeurs attendues : assets/ImpressionTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Ticket", "`Ticket`")
+  TestKit.Desc("T02Facture", "`Facture`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "ImpressionTest")
+
+End
+
+'--------------------------------------------------------------------------------- faux binaires
+
+Private $sDir As String ' répertoire du test : bin/ (faux binaires) et trace des appels
+
+Private Sub FauxBinaires(aNoms As String[])
+  ''Crée des scripts factices qui journalisent leur nom et leurs arguments (un « [arg] » par argument) dans
+  ''<tmp>/trace, et les place en tête du PATH du processus (hérité par Shell/Exec).
+
+  Dim sNom As String
+
+  $sDir = Temp$()
+  Mkdir $sDir
+  Mkdir $sDir &/ "bin"
+  For Each sNom In aNoms
+    File.Save($sDir &/ "bin" &/ sNom, "#!/bin/sh\n{ printf '%s' \"$(basename \"$0\")\"; for a in \"$@\"; do printf ' [%s]' \"$a\"; done; echo; } >> '" & $sDir &/ "trace'\n")
+    Chmod $sDir &/ "bin" &/ sNom To "rwxr-xr-x"
+  Next
+  Application.Env["PATH"] = $sDir &/ "bin" & ":" & Application.Env["PATH"]
+
+End
+
+Private Sub Trace(Optional Attendues As Integer = 0) As String[]
+  ''Lignes de la trace (chemins temporaires remplacés par « <tmp> ») ; attend au plus 2 s qu'il y en ait
+  ''« Attendues » (Shell asynchrone), puis vide la trace.
+
+  Dim aRes As String[] = New String[]
+  Dim sLigne As String
+  Dim fFin As Float = Timer + 2
+  Dim sTrace As String = $sDir &/ "trace"
+
+  Repeat
+    If Exist(sTrace) Then
+      If Split(File.Load(sTrace), "\n", "", True).Count >= Attendues Then Break
+    Endif
+    Wait 0.05
+  Until Timer > fFin
+  If Not Exist(sTrace) Then Return aRes
+  For Each sLigne In Split(File.Load(sTrace), "\n", "", True)
+    aRes.Add(Replace(sLigne, $sDir, "<tmp>"))
+  Next
+  Kill sTrace
+  Return aRes
+
+End
+
+'---------------------------------------------------------------------------------------------- tests
+
+Private Sub Cle(Nom As String) As String
+
+  Return "/Soc" & Start.Societe & "/caisse/" & Nom
+
+End
+
+Public Sub T01Ticket()
+
+  Dim sFic As String
+
+  TestKit.Init()
+  FauxBinaires(["lpr", "monimp", "vis"])
+  sFic = $sDir &/ "ticket.pdf"
+  ' paramètres absents
+  Impression.Ticket(sFic, 1)
+  TestKit.Check("T01/defaut", Trace(1))
+  ' imprimante renseignée, 2 exemplaires
+  Start.LocalSettings[Cle("Cimp")] = "CAISSE1"
+  Impression.Ticket(sFic, 2)
+  TestKit.Check("T01/cimp_nb2", Trace(1))
+  ' commande d'impression renseignée (avec option)
+  Start.LocalSettings[Cle("CmdImp")] = "monimp --brouillon"
+  Impression.Ticket(sFic, 1)
+  TestKit.Check("T01/cmdimp_cimp", Trace(1))
+  Start.LocalSettings[Cle("Cimp")] = ""
+  Impression.Ticket(sFic, 1)
+  TestKit.Check("T01/cmdimp_sans_cimp", Trace(1))
+  ' TKpdf = 1 : visualiseur (CmdVis factice) puis impression
+  Start.LocalSettings[Cle("CmdImp")] = ""
+  Start.LocalSettings[Cle("CmdVis")] = "vis"
+  Start.LocalSettings[Cle("TKpdf")] = 1
+  Impression.Ticket(sFic, 1)
+  TestKit.Check("T01/tkpdf", Trace(2).Sort())
+  Start.LocalSettings[Cle("TKpdf")] = 0
+  Impression.Ticket(sFic, 1)
+  TestKit.Check("T01/tkpdf0", Trace(1))
+  ' fichier avec espace (non quoté)
+  Impression.Ticket($sDir &/ "mon ticket.pdf", 1)
+  TestKit.Check("T01/espace", Trace(1))
+
+End
+
+Public Sub T02Facture()
+
+  Dim sFic As String
+
+  TestKit.Init()
+  FauxBinaires(["lpr", "monimp", "vis"])
+  sFic = $sDir &/ "facture.pdf"
+  Impression.Facture(sFic, 1)
+  TestKit.Check("T02/defaut", Trace(1))
+  Impression.Facture(sFic, 2)
+  TestKit.Check("T02/nb2", Trace(2))
+  Impression.Facture(sFic, 1, "BUREAU")
+  TestKit.Check("T02/imprimante_param", Trace(1))
+  Start.LocalSettings["/Cimp"] = "GLOBALE"
+  Impression.Facture(sFic, 1)
+  TestKit.Check("T02/cimp_global", Trace(1))
+  Impression.Facture(sFic, 1, "BUREAU")
+  TestKit.Check("T02/cimp_et_param", Trace(1))
+  Start.LocalSettings["/CmdImp"] = "monimp --brouillon"
+  Impression.Facture(sFic, 2)
+  TestKit.Check("T02/cmdimp_nb2", Trace(2))
+  ' choiximp2 : aucune commande lancée (figé)
+  Start.LocalSettings["/choiximp2"] = 1
+  Impression.Facture(sFic, 2)
+  TestKit.Check("T02/choiximp2", Trace())
+  Start.LocalSettings["/choiximp2"] = 0
+  ' FACpdf : visualiseur (CmdVis de la caisse, factice)
+  Start.LocalSettings["/CmdImp"] = ""
+  Start.LocalSettings["/Cimp"] = ""
+  Start.LocalSettings[Cle("CmdVis")] = "vis"
+  Start.LocalSettings["/FACpdf"] = 1
+  Impression.Facture(sFic, 1)
+  TestKit.Check("T02/facpdf", Trace(2).Sort())
+  ' nb = 0
+  Start.LocalSettings["/FACpdf"] = 0
+  Impression.Facture(sFic, 0)
+  TestKit.Check("T02/nb0", Trace())
+
+End

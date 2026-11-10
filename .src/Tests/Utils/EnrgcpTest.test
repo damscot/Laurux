@@ -1,0 +1,63 @@
+' Gambas test file
+
+''Tests d'Enrgcp (ENRGCP-T01 et T02, .hidden/reference/.src/Utils/Enrgcp.module/test.md), sur MariaDB uniquement
+''(le framework de test n'a pas de variante SQLite).
+''Valeurs attendues : assets/EnrgcpTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01EcpAjout", "`Ecp` nouveau couple")
+  TestKit.Desc("T02EcpCasLimites", "`Ecp` couple existant, casse différente, CP vide, ville vide")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "EnrgcpTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Contenu() As String
+  ''Contenu de Fiches_Cpostaux (lind, cp, burdist), une ligne par enregistrement.
+
+  Dim r As Result
+  Dim a As New String[]
+
+  r = Utils.db.Exec("SELECT lind, cp, burdist FROM " & Cbase.Table("TabCpostaux") & " ORDER BY lind")
+  If Not r.Available Then Return "<vide>"
+  Repeat
+    a.Add(r!lind & ":" & TestKit.Canonique(r!cp) & ":" & TestKit.Canonique(r!burdist))
+  Until r.MoveNext()
+  Return a.Join(" / ")
+
+End
+
+Private Sub Appel(Cle As String, Cp As String, Ville As String)
+
+  Dim v As String
+
+  Try Enrgcp.Ecp(Cp, Ville)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check(Cle & "/erreur", v)
+  TestKit.Check(Cle & "/table", Contenu())
+
+End
+
+Public Sub T01EcpAjout()
+
+  TestKit.Check("T01/avant", Contenu())
+  Appel("T01/ajout", "99999", "TESTVILLE")
+
+End
+
+Public Sub T02EcpCasLimites()
+
+  Appel("T02/premier", "99999", "TESTVILLE")
+  Appel("T02/existant", "99999", "TESTVILLE")
+  Appel("T02/casse", "99999", "testville")
+  Appel("T02/cpvide", "", "X")
+  Appel("T02/villevide", "99998", "")
+
+End

@@ -30,3 +30,32 @@ services:
       interval: 2s
       timeout: 5s
       retries: 30
+
+  # Environnement d'exécution des tests (gb.test, rejeux GUI sous Xvfb). Lancé à la demande par runner.py :
+  #   docker compose -p laurux-test-<port> -f docker-compose.test.yml --profile runner run --rm -v … runner …
+  # Aucun paquet installé : /usr et /etc de l'hôte montés en lecture seule (mêmes Gambas, Xvfb, faketime, xdotool,
+  # client MariaDB que le poste). Seul le HOME est isolé : /etc/passwd généré par le runner (User.Home de Gambas
+  # = /home/laurux) et /home/laurux, /tmp en tmpfs, propres à chaque conteneur jetable. Les dépôts sont montés
+  # par le runner à leur chemin réel. Réseau du projet compose : base « db » propre à chaque bac.
+  runner:
+    image: ubuntu:24.04
+    profiles: ["runner"]
+    depends_on:
+      db:
+        condition: service_healthy
+    user: "${LAURUX_UID:-1000}:${LAURUX_GID:-1000}"
+    environment:
+      HOME: /home/laurux
+      USER: laurux
+      LAURUX_IN_DOCKER: "1"
+      LAURUX_TEST_DB_HOST: db
+      LAURUX_TEST_DB_PORT: "3306"
+    volumes:
+      - /usr:/usr:ro
+      - /etc:/etc:ro
+      - ${LAURUX_PASSWD:-/dev/null}:/etc/passwd:ro
+      - ${LAURUX_GROUP:-/dev/null}:/etc/group:ro
+    tmpfs:
+      - /home/laurux:exec,uid=${LAURUX_UID:-1000},gid=${LAURUX_GID:-1000},mode=0700
+      - /tmp:exec,mode=1777
+    shm_size: 256m

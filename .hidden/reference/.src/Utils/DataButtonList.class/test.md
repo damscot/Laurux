@@ -7,7 +7,7 @@ Classe morte : aucun comportement observable à figer.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| DATABUTTONLIST-T01 | gbtest | Absence de référence | `gbc3 -agt` après suppression ; `grep -rni DataButtonList .src` | compilation sans erreur, aucune occurrence | `tests/suppression/` | à faire |
+| DATABUTTONLIST-T01 | gbtest | Absence de référence | `gbc3 -agt` après suppression ; `grep -rni DataButtonList .src` | compilation sans erreur, aucune occurrence | `tests/suppression/` | à faire : classe morte, contrôle de build (suppression + grep) à porter par la validation de phase 4 |
 
 ## Détail des tests
 

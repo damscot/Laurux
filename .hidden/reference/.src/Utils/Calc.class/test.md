@@ -8,7 +8,7 @@ test vérifie que la suppression ne casse pas la compilation ni l'exécution des
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CALC-T01 | gbtest | Non-régression de la suppression | `gbc3 -agt` puis `./Laurux -T all` après suppression | compilation sans erreur, suite verte | `tests/suppression/` | à faire |
+| CALC-T01 | gbtest | Non-régression de la suppression | `gbc3 -agt` puis `./Laurux -T all` après suppression | compilation sans erreur, suite verte | `tests/suppression/` | à faire : classe morte (contrôle de build à la suppression, phase 4) |
 
 ## Détail des tests
 

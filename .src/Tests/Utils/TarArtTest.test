@@ -1,0 +1,117 @@
+' Gambas test file
+
+''Tests de TarArt (TARART-T01 à T10, .hidden/reference/.src/Utils/TarArt.class/test.md) : instanciation du formulaire
+''(non affiché, Xvfb) et lecture des variables publiques et de la grille des candidats.
+''Jeu de données : .src/Tests/Framework/datasets/tarart_conditions.sql.
+''Valeurs attendues : assets/TarArtTest/expected.txt, produites dans le clone de référence.
+
+Private $hWin As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PrixBase", "Prix de base")
+  TestKit.Desc("T02RemiseTypec", "Remise type client × famille")
+  TestKit.Desc("T03CoeffTypec", "Coefficient type client × famille")
+  TestKit.Desc("T04TarTypcli", "Coefficient type client × article")
+  TestKit.Desc("T05RemCliFam", "Remise client × famille")
+  TestKit.Desc("T06TarcliPriorite", "Tarif client × article")
+  TestKit.Desc("T07Promo", "Promotion")
+  TestKit.Desc("T09Erreurs", "Cas d'erreur")
+  TestKit.Desc("T10TypeSeul", "Sans client, type fourni")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "TarArtTest")
+  TestKit.OuvreBase("tarart_conditions")
+  $hWin = New Window
+
+End
+
+Private Function Calcule(Art As String, Cli As String, Optional Typec As String, Optional Promo As String) As String
+  ''Résultat d'un New TarArt : variables publiques puis candidats (libellé=prix), ou l'erreur levée.
+
+  Dim h As TarArt
+  Dim hGrid As GridView
+  Dim aCand As New String[]
+  Dim i As Integer
+  Dim sRes As String
+
+  Try h = New TarArt(Art, Cli, $hWin, Typec, Promo) ' 3e argument : parent (comme Facture / Edart4)
+  If Error Then Return "ERREUR: " & Error.Text
+  sRes = "prixht=" & h.prixht & " prixrht=" & h.prixrht & " nego=" & TestKit.Canonique(h.nego) & " promo=" & TestKit.Canonique(h.promo) & " remise=" & h.remise & " detail=" & TestKit.Canonique(h.detail)
+  hGrid = h.Controls["GridView1"]
+  For i = 0 To hGrid.Rows.Count - 1
+    aCand.Add(hGrid[i, 0].Text & "=" & hGrid[i, 1].Text)
+  Next
+  sRes &= " candidats(" & hGrid.Rows.Count & ")=" & aCand.Join(" | ")
+  Try h.Delete
+  Return sRes
+
+End
+
+Public Sub T01PrixBase()
+
+  TestKit.Check("T01/003-411001", Calcule("003", "411001"))
+  TestKit.Check("T01/003-411002", Calcule("003", "411002"))
+
+End
+
+Public Sub T02RemiseTypec()
+
+  TestKit.Check("T02/001-411002", Calcule("001", "411002"))
+  TestKit.Check("T02/001-411003", Calcule("001", "411003"))
+
+End
+
+Public Sub T03CoeffTypec()
+
+  TestKit.Check("T03/002-411002", Calcule("002", "411002"))
+  TestKit.Check("T03/002-411003", Calcule("002", "411003"))
+
+End
+
+Public Sub T04TarTypcli()
+
+  TestKit.Check("T04/TA4-411003", Calcule("TA4", "411003"))
+  TestKit.Check("T04/TA4-411002", Calcule("TA4", "411002"))
+
+End
+
+Public Sub T05RemCliFam()
+
+  TestKit.Check("T05/TA5-411003", Calcule("TA5", "411003"))
+
+End
+
+Public Sub T06TarcliPriorite()
+
+  TestKit.Check("T06/TA6-411003", Calcule("TA6", "411003"))
+
+End
+
+Public Sub T07Promo()
+
+  TestKit.Check("T07/basse", Calcule("001", "411002", "", "PRO1"))
+  TestKit.Check("T07/haute", Calcule("001", "411002", "", "PRO2"))
+  TestKit.Check("T07/inconnue", Calcule("001", "411002", "", "PRO9"))
+
+End
+
+Public Sub T09Erreurs()
+
+  TestKit.Check("T09/articleinconnu", Calcule("ZZZ", "411002"))
+  TestKit.Check("T09/sansclientnitype", Calcule("002", ""))
+
+End
+
+Public Sub T10TypeSeul()
+
+  TestKit.Check("T10/002-type02", Calcule("002", "", "02"))
+  TestKit.Check("T10/001-type01", Calcule("001", "", "01"))
+  TestKit.Check("T10/002-type99", Calcule("002", "", "99"))
+  TestKit.Check("T10/002-cli+type", Calcule("002", "411002", "02"))
+
+End

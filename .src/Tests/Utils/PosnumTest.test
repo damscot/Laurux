@@ -1,0 +1,32 @@
+' Gambas test file
+
+''Test de Posnum (POSNUM-T01, .hidden/reference/.src/Utils/Posnum.module/test.md) : caractérisation avant suppression.
+''Valeurs attendues : assets/PosnumTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Pos", "`Pos` (avant suppression)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "PosnumTest")
+
+End
+
+Public Sub T01Pos()
+
+  Dim i As Integer
+  Dim v As String
+
+  For i = 0 To 21
+    TestKit.Check("T01/" & i, Posnum.Pos(CStr(i)))
+  Next
+  TestKit.Check("T01/vide", Posnum.Pos(""))
+  Try v = Posnum.Pos("abc")
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T01/abc", v)
+
+End

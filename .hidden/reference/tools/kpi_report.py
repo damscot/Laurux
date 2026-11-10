@@ -59,7 +59,7 @@ def lot_of(rel):
 
 def doc_counts(root, rel):
     """Avancement lu dans les documents : reworks, anomalies, tests par statut."""
-    d = root / "reference" / rel
+    d = root / ".hidden" / "reference" / rel
     c = {"rw_done": 0, "rw_tot": 0, "an_done": 0, "an_tot": 0, "t_tot": 0, "t_vert": 0, "t_impl": 0, "t_bloque": 0}
     if (d / "rework.md").exists():
         for done, ano in CASE_RE.findall((d / "rework.md").read_text(encoding="utf-8")):
@@ -159,8 +159,8 @@ def render(root, init, rows, gone, has_cov):
 
     w("## Avancement\n")
     w("| Élément | Fait | Total | % |\n|---|---|---|---|")
-    w(f"| Fichiers source documentés | {sum(1 for r in rows if (root / 'reference' / r['rel'] / 'summary.md').exists())} "
-      f"| {len(rows)} | {pct(sum(1 for r in rows if (root / 'reference' / r['rel'] / 'summary.md').exists()), len(rows))} |")
+    w(f"| Fichiers source documentés | {sum(1 for r in rows if (root / '.hidden' / 'reference' / r['rel'] / 'summary.md').exists())} "
+      f"| {len(rows)} | {pct(sum(1 for r in rows if (root / '.hidden' / 'reference' / r['rel'] / 'summary.md').exists()), len(rows))} |")
     w(f"| Étapes de rework (`<ID>-NNN`) | {td['rw_done']} | {td['rw_tot']} | {pct(td['rw_done'], td['rw_tot'])} |")
     w(f"| Anomalies traitées (`<ID>-Annn`, validation utilisateur) | {td['an_done']} | {td['an_tot']} | "
       f"{pct(td['an_done'], td['an_tot'])} |")
@@ -243,7 +243,7 @@ def render(root, init, rows, gone, has_cov):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[3]))
     ap.add_argument("--out", default=None, help="fichier de sortie (défaut : .hidden/reference/KPI.md)")
     ap.add_argument("--stdout", action="store_true", help="affiche le résultat sans écrire de fichier")
     a = ap.parse_args()
@@ -252,7 +252,7 @@ def main():
     if a.stdout:
         sys.stdout.write(txt)
         return
-    out = Path(a.out) if a.out else root / "reference" / "KPI.md"
+    out = Path(a.out) if a.out else root / ".hidden" / "reference" / "KPI.md"
     out.write_text(txt, encoding="utf-8")
     print(f"{out} écrit")
 

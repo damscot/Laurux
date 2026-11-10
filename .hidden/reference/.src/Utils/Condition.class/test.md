@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CONDITION-T01 | gbtest | Compilation après suppression | voir CONDITIONS-T01 | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire |
+| CONDITION-T01 | gbtest | Compilation après suppression | voir CONDITIONS-T01 | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : vérification par gbc3 -agt après suppression (phase 3) |
 
 ## Détail des tests
 
