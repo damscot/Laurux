@@ -1,0 +1,85 @@
+' Gambas test file
+
+''Tests de Conditions (.hidden/reference/.src/Utils/Conditions.class/test.md, CONDITIONS-T02 et T03).
+''Valeurs attendues : assets/ConditionsTest/expected.txt, produites dans le clone de référence.
+''Le Result vient de la base de test : SELECT 5 AS n, 'abc' AS s.
+
+Private $r As Result
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02Operateurs", "`Compute` : 7 opérateurs (si conservé)")
+  TestKit.Desc("T03Combinaisons", "Combinaison ET, liste vide, champ inconnu, opérateur inconnu")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "ConditionsTest")
+  TestKit.OuvreBase()
+  $r = Utils.db.Exec("SELECT 5 AS n, 'abc' AS s")
+
+End
+
+Private Sub Calcule(hC As Conditions) As String
+
+  Dim v As Variant
+
+  Try v = hC.Compute($r)
+  If Error Then v = "ERREUR: " & Error.Text
+  Return TestKit.Canonique(v) & " Value=" & TestKit.Canonique(hC.Value)
+
+End
+
+Public Sub T02Operateurs()
+
+  Dim iOp As Integer
+  Dim vVal As Variant
+  Dim hC As Conditions
+
+  For iOp = Conditions.IsEqual To Conditions.IsSuperiorOrEqual
+    For Each vVal In [3, 5, 7]
+      hC = New Conditions("n", iOp, vVal, "V", "F")
+      TestKit.Check("T02/n/op" & iOp & "/" & vVal, Calcule(hC))
+    Next
+  Next
+  For Each vVal In ["abc", "abd", "a*", "?b?", "x*"]
+    hC = New Conditions("s", Conditions.Like, vVal, "V", "F")
+    TestKit.Check("T02/s/like/" & vVal, Calcule(hC))
+  Next
+  hC = New Conditions("s", Conditions.EstEgale, "abc", 1, 0)
+  TestKit.Check("T02/s/egal", Calcule(hC))
+  hC = New Conditions("s", Conditions.EstInferieur, "abd")
+  TestKit.Check("T02/s/inferieur_sans_valeurs", Calcule(hC))
+
+End
+
+Public Sub T03Combinaisons()
+
+  Dim hC As Conditions
+
+  ' ET : deux vraies, puis une fausse
+  hC = New Conditions("n", Conditions.IsSuperior, 1, "V", "F")
+  hC.Add("s", Conditions.IsEqual, "abc")
+  TestKit.Check("T03/et_vrai", Calcule(hC))
+  hC.Add("n", Conditions.IsInferior, 2)
+  TestKit.Check("T03/et_faux", Calcule(hC))
+  ' Liste vide : False, Value inchangée
+  hC.Clear()
+  TestKit.Check("T03/vide", Calcule(hC))
+  ' Champ inconnu : Catch, Value inchangée
+  hC = New Conditions("n", Conditions.IsEqual, 5, "V", "F")
+  TestKit.Check("T03/avant_inconnu", Calcule(hC))
+  hC.Add("inconnu", Conditions.IsEqual, 5)
+  TestKit.Check("T03/champ_inconnu", Calcule(hC))
+  ' Opérateur inconnu
+  hC = New Conditions("n", 99, 5, "V", "F")
+  TestKit.Check("T03/operateur_inconnu", Calcule(hC))
+  ' IfTrue / IfFalse modifiés après construction
+  hC = New Conditions("n", Conditions.IsEqual, 5)
+  hC.IfTrue = "oui"
+  hC.IfFalse = "non"
+  TestKit.Check("T03/iftrue_ecrit", Calcule(hC) & " IfTrue=" & hC.IfTrue & " IfFalse=" & hC.IfFalse)
+
+End

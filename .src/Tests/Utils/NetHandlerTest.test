@@ -1,0 +1,180 @@
+' Gambas test file
+
+''Tests de NetHandler (.hidden/reference/.src/Utils/NetHandler.class/test.md, NETHANDLER-T01 à T06).
+''Valeurs attendues : assets/NetHandlerTest/expected.txt, produites dans le clone de référence.
+''Serveur TCP de test : assets/NetHandlerTest/serveur.py (port libre choisi par le système, octets reçus
+''enregistrés dans un fichier). Le port varie d'une exécution à l'autre : il est remplacé par « <port> ».
+
+Private $sRep As String
+Private $iPort As Integer
+Private $hServeur As Process
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ConnexionOk", "Connexion réussie")
+  TestKit.Desc("T02ConnexionRefusee", "Connexion refusée")
+  TestKit.Desc("T03EcritureNiveaux", "Écriture et niveaux")
+  TestKit.Desc("T04Fermeture", "Fermeture")
+  TestKit.Desc("T05DoubleOpen", "Double `Open`")
+  TestKit.Desc("T06IntegrationLog", "Intégration `DB_Connection`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "NetHandlerTest")
+
+End
+
+Public Sub _Teardown()
+
+  If $hServeur Then Try $hServeur.Kill
+
+End
+
+Private Sub LanceServeur()
+
+  Dim i As Integer
+
+  $sRep = Temp$()
+  Mkdir $sRep
+  $hServeur = Shell "exec python3 " & Shell$(Application.Path &/ ".hidden/Tests/Utils/assets/NetHandlerTest/serveur.py") & " " & Shell$($sRep)
+  For i = 1 To 100
+    If Exist($sRep &/ "port") Then Break
+    Wait 0.05
+  Next
+  $iPort = CInt(Trim(File.Load($sRep &/ "port")))
+
+End
+
+Private Sub Recu() As String
+  ''Octets reçus par le serveur (laisse le temps à la transmission).
+
+  Wait 0.5
+  Return File.Load($sRep &/ "recu")
+
+End
+
+Private Sub SansPort(s As String) As String
+
+  Return Replace(s, ":" & CStr($iPort), ":<port>")
+
+End
+
+Public Sub T01ConnexionOk()
+
+  Dim h As NetHandler
+
+  LanceServeur()
+  h = New NetHandler("127.0.0.1", $iPort)
+  TestKit.Check("T01/Step_avant", h.Step)
+  h.Open()
+  TestKit.Check("T01/Step", h.Step)
+  TestKit.Check("T01/GetOutput", SansPort(h.GetOutput()))
+  h.Close()
+
+End
+
+Public Sub T02ConnexionRefusee()
+
+  Dim h As NetHandler
+  Dim sErr As String
+
+  ' Port 1 : aucun service à l'écoute, connexion refusée immédiatement
+  h = New NetHandler("127.0.0.1", 1)
+  Try h.Open()
+  If Error Then sErr = "ERREUR: " & Error.Text
+  TestKit.Check("T02/Open/erreur", sErr)
+  TestKit.Check("T02/Step", h.Step)
+  TestKit.Check("T02/GetOutput", h.GetOutput())
+  sErr = ""
+  Try h.Write("message perdu", LogLevel.Error)
+  If Error Then sErr = "ERREUR: " & Error.Text
+  TestKit.Check("T02/Write/erreur", sErr)
+
+End
+
+Public Sub T03EcritureNiveaux()
+
+  Dim h As NetHandler
+
+  LanceServeur()
+  h = New NetHandler("127.0.0.1", $iPort, LogLevel.Info)
+  h.Open()
+  h.Write("niveau debug", LogLevel.Debug)
+  h.Write("niveau info é", LogLevel.Info)
+  h.Write("niveau erreur à", LogLevel.Error)
+  TestKit.Check("T03/recu", Recu())
+  h.Close()
+
+End
+
+Public Sub T04Fermeture()
+
+  Dim h As NetHandler
+
+  LanceServeur()
+  h = New NetHandler("127.0.0.1", $iPort)
+  h.Open()
+  h.Write("avant fermeture", LogLevel.Error)
+  h.Close()
+  TestKit.Check("T04/Step", h.Step)
+  h.Write("apres fermeture", LogLevel.Error)
+  TestKit.Check("T04/recu", Recu())
+  TestKit.Check("T04/GetOutput", SansPort(h.GetOutput()))
+  h.Close()
+  TestKit.Check("T04/Step_2e_close", h.Step)
+
+End
+
+Public Sub T05DoubleOpen()
+
+  Dim h As NetHandler
+  Dim sErr As String
+
+  LanceServeur()
+  h = New NetHandler("127.0.0.1", $iPort)
+  h.Open()
+  Try h.Open()
+  If Error Then sErr = "ERREUR: " & Error.Text
+  TestKit.Check("T05/erreur", sErr)
+  TestKit.Check("T05/Step", h.Step)
+  h.Close()
+
+End
+
+Public Sub T06IntegrationLog()
+
+  Dim aLocal, aRecu As String[]
+  Dim sLocal, sRecu As String
+
+  TestKit.OuvreBase()
+  LanceServeur()
+  Start.LocalSettings["/Soc" & Start.Societe & "/ServerLogIP"] = "127.0.0.1"
+  Start.LocalSettings["/Soc" & Start.Societe & "/ServerLogPort"] = $iPort
+  Utils.db.Refresh()
+  TestKit.Check("T06/Get_Remotefile_Path", SansPort(Utils.db.Get_Remotefile_Path()))
+  Utils.db.Set_Log(True)
+  Utils.db.Exec("SELECT version FROM " & Cbase.Table("TabParam") & " WHERE 1 = &1", 1)
+  Utils.db.Set_Log(False)
+  sRecu = Recu()
+  sLocal = File.Load(Utils.db.Get_Localfile_Path())
+  aRecu = Split(sRecu, "\n", "", True)
+  aLocal = Split(sLocal, "\n", "", True)
+  TestKit.Check("T06/nb_lignes_recues", aRecu.Count)
+  TestKit.Check("T06/nb_lignes_locales", aLocal.Count)
+  If aRecu.Count And If aLocal.Count Then
+    TestKit.Check("T06/derniere_identique_locale", aRecu[aRecu.Max] = aLocal[aLocal.Max])
+    If aRecu[aRecu.Max] <> aLocal[aLocal.Max] Then
+      TestKit.Check("T06/ecart", Left(aRecu[aRecu.Max], 30) & " <> " & Left(aLocal[aLocal.Max], 30))
+    Endif
+  Endif
+  If aRecu.Count Then
+    sRecu = aRecu[aRecu.Max]
+    TestKit.Check("T06/type", Split(sRecu, ";")[2])
+    TestKit.Check("T06/requete", Mid(sRecu, RInStr(sRecu, ";") + 1))
+  Endif
+  Utils.db.Close
+
+End

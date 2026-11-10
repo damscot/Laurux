@@ -1,0 +1,150 @@
+' Gambas test file
+
+''Tests de FCalc (.hidden/reference/.src/Utils/FCalc.class/test.md, FCALC-T01 à T05).
+''ManageKeys est privé : les touches sont simulées sur les boutons du formulaire (Button.Value = True lève
+''Click après ~0,1 s (clic animé Qt), donc buttons_Click avec Last = le bouton). Le résultat est lu par la propriété Value (Float de
+''$sResult), l'export par FCalc.Resultat. La formule en cours n'est pas lisible : elle est évaluée par « = ».
+''Le retour arrière (« B », touche BackSpace de form_keypress) n'a pas de bouton : non simulable ici.
+''Valeurs attendues : assets/FCalcTest/expected.txt, produites dans le clone de référence.
+
+Private $cBoutons As New Collection
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Evaluation", "Évaluation simple")
+  TestKit.Desc("T02Erreurs", "Formules refusées / erreurs")
+  TestKit.Desc("T03Edition", "Retour arrière et `C`")
+  TestKit.Desc("T04Export", "Export")
+  TestKit.Desc("T05ResultatPersistant", "`Resultat` non remis à zéro")
+
+End
+
+Public Sub _Setup()
+
+  Dim aT As String[] = ["%", "(", ")", "C", "1", "2", "3", "/", "4", "5", "6", "*", "7", "8", "9", "-", ".", "0", "=", "+"]
+  Dim aB As String[] = ["Button1", "Button2", "Button3", "Button17", "Button5", "Button6", "Button7", "Button18", "Button9", "Button10", "Button11", "Button19", "Button13", "Button14", "Button15", "Button20", "Button4", "Button8", "Button12", "Button16"]
+  Dim i As Integer
+
+  TestKit.Begin("Utils", "FCalcTest")
+  For i = 0 To aT.Max
+    $cBoutons[aT[i]] = aB[i]
+  Next
+
+End
+
+Private Sub Tape(hF As FCalc, Touches As String)
+
+  Dim i As Integer
+  Dim sT As String
+
+  For i = 1 To Len(Touches)
+    sT = Mid(Touches, i, 1)
+    If Not $cBoutons.Exist(sT) Then Error.Raise("Touche sans bouton : " & sT)
+    Object.SetProperty(hF[$cBoutons[sT]], "Value", True)
+    Wait 0.15 ' Qt : le clic programmé (animateClick) est asynchrone
+  Next
+
+End
+
+Private Sub Evalue(Cle As String, Touches As String)
+
+  Dim hF As FCalc
+  Dim fV As Float
+
+  hF = New FCalc
+  hF.Show
+  Try Tape(hF, Touches)
+  If Error Then
+    TestKit.Check(Cle, "ERREUR: " & Error.Text)
+  Else
+    Try fV = hF.Value
+    If Error Then
+      TestKit.Check(Cle, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check(Cle, fV)
+    Endif
+  Endif
+  hF.Close
+
+End
+
+Public Sub T01Evaluation()
+
+  Evalue("T01/12+3", "12+3=")
+  Evalue("T01/2*3.5", "2*3.5=")
+  Evalue("T01/10/4", "10/4=")
+  Evalue("T01/(1+2)*3", "(1+2)*3=")
+  Evalue("T01/50%", "50%=")
+  Evalue("T01/200*10%", "200*10%=")
+  Evalue("T01/enchaine", "12+3=*2=")
+  Evalue("T01/initial", "")
+
+End
+
+Public Sub T02Erreurs()
+
+  Evalue("T02/)", ")=")
+  Evalue("T02/((", "((=")
+  Evalue("T02/((1", "((1=")
+  Evalue("T02/1/0", "1/0=")
+  Evalue("T02/+1", "+1=")
+  Evalue("T02/*2", "*2=")
+  Evalue("T02/1++2", "1++2=")
+  Evalue("T02/2(3)", "2(3)=")
+  Evalue("T02/1..5+1", "1..5+1=")
+  Evalue("T02/erreur_puis_chiffre", "1/0=5=")
+
+End
+
+Public Sub T03Edition()
+
+  Evalue("T03/C", "12C")
+  Evalue("T03/C=", "12C=")
+  Evalue("T03/C3+4=", "12+C3+4=")
+
+End
+
+Private Sub Exporte(Cle As String, Touches As String)
+
+  Dim hF As FCalc
+
+  FCalc.Resultat = "<non exporté>"
+  hF = New FCalc
+  hF.Show
+  Tape(hF, Touches)
+  Try hF.Export_Click()
+  If Error Then TestKit.Check(Cle & "/erreur", "ERREUR: " & Error.Text)
+  TestKit.Check(Cle, FCalc.Resultat)
+  TestKit.Check(Cle & "/valide", Object.IsValid(hF))
+  Try hF.Close
+
+End
+
+Public Sub T04Export()
+
+  Exporte("T04/12.5", "12.5=")
+  Exporte("T04/0", "0=")
+  Exporte("T04/-3", "0-3=")
+  Exporte("T04/sans_egal", "7+1")
+  Exporte("T04/initial", "")
+
+End
+
+Public Sub T05ResultatPersistant()
+
+  Dim hF As FCalc
+
+  hF = New FCalc
+  hF.Show
+  Tape(hF, "5=")
+  hF.Export_Click()
+  TestKit.Check("T05/export", FCalc.Resultat)
+  ' Seconde ouverture, fermée sans export (A01 : Resultat n'est pas remis à zéro)
+  hF = New FCalc
+  hF.Show
+  Tape(hF, "8=")
+  hF.Close
+  TestKit.Check("T05/apres_fermeture", FCalc.Resultat)
+
+End

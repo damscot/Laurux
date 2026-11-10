@@ -1,0 +1,86 @@
+T01/000	0;0;;<racine>
+T01/001	1;0;;0
+T01/002	2;01;Produits 2.10;0
+T01/003	2;02;Produits 7.00;0
+T01/004	2;03;Produits 20.00;0
+T01/005	1;1;;0
+T01/006	2;10;Mo 20.00;1
+T01/007	2;11;MO 7.00;1
+T01/008	1;A;Alimentaire;0
+T01/009	2;A 1;Code avec espace;A
+T01/010	2;A01;Epicerie;A
+T01/011	2;A02;Boissons;A
+T01/012	2;Aé1;Code accentué;A
+T01/013	2;Az1;Code avec z;A
+T01/014	2;AZ2;Code avec Z;A
+T01/015	2;Azz;Code Azz;A
+T01/016	1;B;;0
+T01/017	2;B01;;B
+T01/018	1;C;Cadeaux;0
+T01/019	1;z;;0
+T01/020	2;z9;Code z en tête;z
+T01/nb	21
+T02/000	0;0;;<racine>
+T02/001	1;0;;0
+T02/002	2;01;Produits 2.10;0
+T02/003	2;02;Produits 7.00;0
+T02/004	2;03;Produits 20.00;0
+T02/005	1;1;;0
+T02/006	2;10;Mo 20.00;1
+T02/007	2;11;MO 7.00;1
+T02/008	1;A;Alimentaire;0
+T02/009	2;A 1;Code avec espace;A
+T02/010	2;A01;Epicerie;A
+T02/011	3;A0101;Conserves;A01
+T02/012	3;A0102;Pates;A01
+T02/013	2;A02;Boissons;A
+T02/014	2;Aé1;Code accentué;A
+T02/015	2;Az1;Code avec z;A
+T02/016	2;AZ2;Code avec Z;A
+T02/017	2;Azz;Code Azz;A
+T02/018	1;B;;0
+T02/019	2;B01;;B
+T02/020	3;B0101;Visserie;B01
+T02/021	1;C;Cadeaux;0
+T02/022	1;z;;0
+T02/023	2;z9;Code z en tête;z
+T02/nb	24
+T03/racine/cle	0
+T03/racine/enfant	z
+T03/racine/parent_nul	True
+T03/enum/nb	3
+T03/suivant/<racine>	[0>1|1>A|A>B|B>C|C>z|z><nul>]
+T03/suivant/0	[01>02|02>03|03><nul>]
+T03/suivant/1	[10>11|11><nul>]
+T03/suivant/A	[A 1>A01|A01>A02|A02>Aé1|Aé1>Az1|Az1>AZ2|AZ2>Azz|Azz><nul>]
+T03/suivant/B	[B01><nul>]
+T03/suivant/z	[z9><nul>]
+T04/erreur/pa/1.5	ERREUR: Type mismatch: wanted Number, got Null instead
+T04/A0101/pa	10,50
+T04/A0101/pmp	8,25
+T04/A01/pa	12,50
+T04/A/pa	12,50
+T04/A/pmp	8,25
+T04/racine/pa	12,50
+T04/racine/pmp	8,25
+T05/[1,3]/Az	False
+T05/[1,3]/AZ	False
+T05/[1,3]/Azz	True
+T05/[1,3]/A 1	True
+T05/[1,3]/Aé	False
+T05/[1,3]/Aé1	True
+T05/[1,3]/z	True
+T05/[1,3]/z9	True
+T05/[1,3]/Az1	True
+T05/[1,3]/AZ2	True
+T05/[1,2,3]/Az	True
+T05/[1,2,3]/AZ	False
+T05/[1,2,3]/Azz	True
+T05/[1,2,3]/A 1	False
+T05/[1,2,3]/Aé	True
+T05/[1,2,3]/Aé1	True
+T05/[1,2,3]/z	True
+T05/[1,2,3]/z9	True
+T05/[1,2,3]/Az1	True
+T05/[1,2,3]/AZ2	True
+T08/noeuds	2116

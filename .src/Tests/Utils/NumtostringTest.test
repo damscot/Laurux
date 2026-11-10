@@ -1,0 +1,115 @@
+' Gambas test file
+
+''Tests de Numtostring (.hidden/reference/.src/Utils/Numtostring.module/test.md, NUMTOSTRING-T01 à T06).
+''Valeurs attendues : assets/NumtostringTest/expected.txt, produites dans le clone de référence
+''(caractérisation, anomalies comprises : espaces finaux, troncatures, erreurs de Float).
+''NUMTOSTRING-T07 (total en lettres sur facture, ObjFac) relève d'un scénario GUI : non implémenté ici.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Num2Text0a100", "`Num2Text` 0-100")
+  TestKit.Desc("T02Num2TextGrands", "`Num2Text` grands nombres")
+  TestKit.Desc("T03ConvertirNominal", "`Convertir` cas nominaux")
+  TestKit.Desc("T04ConvertirBords", "`Convertir` centimes seuls et bords")
+  TestKit.Desc("T05ConvertirNegatifs", "`Convertir` négatifs")
+  TestKit.Desc("T06Pluriel", "`palabraPlural`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "NumtostringTest")
+
+End
+
+Private Sub Num(Cle As String, Valeur As Long)
+
+  Dim sRes As String
+
+  Try sRes = Numtostring.Num2Text(Valeur)
+  If Error Then
+    TestKit.Check(Cle, "ERREUR: " & Error.Text)
+  Else
+    ' Crochets : les espaces finaux sont significatifs
+    TestKit.Check(Cle, "[" & sRes & "]")
+  Endif
+
+End
+
+Private Sub EnLettres(Cle As String, Valeur As Float, Devise As String)
+
+  Dim sRes As String
+
+  Try sRes = Numtostring.Convertir(Valeur, Devise)
+  If Error Then
+    TestKit.Check(Cle, "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(Cle, "[" & sRes & "]")
+  Endif
+
+End
+
+Public Sub T01Num2Text0a100()
+
+  Dim i As Integer
+
+  For i = 0 To 100
+    Num("T01/" & i, i)
+  Next
+
+End
+
+Public Sub T02Num2TextGrands()
+
+  Dim aVal As String[] = ["101", "200", "500", "800", "999", "1000", "1001", "1999", "2000", "21000", "999999", "1000000", "1000001", "2500000", "1000000000", "1000000000000", "1500000000000", "3000000000000"]
+  Dim vVal As String
+
+  For Each vVal In aVal
+    Num("T02/" & vVal, CLong(vVal))
+  Next
+
+End
+
+Public Sub T03ConvertirNominal()
+
+  Dim aVal As String[] = ["1", "2", "1.01", "2.5", "1234.56"]
+  Dim aDevises As Variant[] = [Null, "euros", "dollar"]
+  Dim i, j As Integer
+
+  For i = 0 To aVal.Max
+    For j = 0 To aDevises.Max
+      EnLettres("T03/" & aVal[i] & "/" & TestKit.Canonique(aDevises[j]), CFloat(aVal[i]), aDevises[j])
+    Next
+  Next
+
+End
+
+Public Sub T04ConvertirBords()
+
+  Dim aVal As String[] = ["0", "0.01", "0.29", "0.999", "2.004", "2.456", "2.4999"]
+  Dim vVal As String
+
+  For Each vVal In aVal
+    EnLettres("T04/" & vVal, CFloat(vVal), "euros")
+  Next
+
+End
+
+Public Sub T05ConvertirNegatifs()
+
+  Dim aVal As String[] = ["-1", "-0.5", "-1234.56"]
+  Dim vVal As String
+
+  For Each vVal In aVal
+    EnLettres("T05/" & vVal, CFloat(vVal), "euros")
+  Next
+
+End
+
+Public Sub T06Pluriel()
+
+  TestKit.Check("T06/euro", Numtostring.palabraPlural("euro"))
+  TestKit.Check("T06/vide", Numtostring.palabraPlural(""))
+
+End

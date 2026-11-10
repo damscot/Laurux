@@ -2,7 +2,8 @@
 
 ''Outils communs aux modules gb.test de Laurux (.src/Tests/<lot>/<Classe>Test.test).
 ''
-''Valeurs attendues « golden » : .src/Tests/<lot>/assets/<Module>/expected.txt, une ligne
+''Méthodes de test : T<nn><Objet> sans « _ » (gb.test ignore les méthodes dont le nom contient « _ »
+''quand il exécute un module entier). Valeurs attendues « golden » : .hidden/Tests/<lot>/assets/<Module>/expected.txt, une ligne
 ''« clé<TAB>valeur » par vérification. Elles sont produites dans le clone de référence (code d'origine)
 ''avec LAURUX_TEST_RECORD=1, jamais déduites de la lecture du code.
 ''
@@ -10,7 +11,7 @@
 ''  Public Sub _Setup()
 ''    TestKit.Begin("Utils", "LPrixTest")
 ''  End
-''  Public Sub Conversion()
+''  Public Sub T01Conversion()
 ''    TestKit.Check("Conversion/1", LPrix("-3,1500", 1, LPrix.Arr_01).L)
 ''  End
 
@@ -21,13 +22,56 @@ Private $cValeurs As Collection
 Private $aCles As String[]
 Private $bRecord As Boolean
 
+Public Descriptions As New Collection ' {Méthode : description} remplie par le _Desc() d'un module de test
+
+Public Sub Desc(Methode As String, Description As String)
+  ''Déclare la description d'un test (affichée par « ./Laurux -T list »). À appeler dans le « Public Sub _Desc() »
+  ''du module de test, une fois par méthode Tnn… ; _Desc est ignoré par gb.test (nom commençant par « _ »).
+
+  Descriptions[Methode] = Description
+
+End
+
+Public Sub OuvertureFactice(Optional Trace As String) As String
+  ''Desktop.Open sans effet de bord, quel que soit l'environnement (poste ou conteneur) : portail D-Bus désactivé
+  ''(Desktop.UsePortal), types MIME usuels associés au faux programme .src/Tests/Framework/bin/laurux-ouvrir dans des
+  ''répertoires XDG temporaires, trace des appels dans Trace (défaut : fichier temporaire). Renvoie le chemin de la
+  ''trace (lignes « laurux-ouvrir [fichier] »).
+
+  Dim sDir As String = Temp$()
+  Dim sMime As String = "application/pdf;application/postscript;text/plain;text/csv;text/html;text/xml;application/xml;image/png;image/jpeg;image/gif;image/svg+xml;image/tiff;application/vnd.oasis.opendocument.text;application/vnd.oasis.opendocument.spreadsheet;application/msword;application/vnd.ms-excel;application/zip;application/octet-stream;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/mailto"
+  Dim aListe As New String[]
+  Dim sType As String
+
+  If Not Trace Then Trace = sDir &/ "trace"
+  Mkdir sDir
+  Mkdir sDir &/ "data"
+  Mkdir sDir &/ "data/applications"
+  Mkdir sDir &/ "config"
+  File.Save(sDir &/ "data/applications/laurux-ouvrir.desktop", "[Desktop Entry]\nType=Application\nName=Ouverture (tests Laurux)\nExec=laurux-ouvrir %f\nMimeType=" & sMime & ";\nNoDisplay=true\n")
+  aListe.Add("[Default Applications]")
+  For Each sType In Split(sMime, ";")
+    aListe.Add(sType & "=laurux-ouvrir.desktop")
+  Next
+  File.Save(sDir &/ "config/mimeapps.list", aListe.Join("\n") & "\n")
+  Application.Env["XDG_DATA_HOME"] = sDir &/ "data"
+  Application.Env["XDG_CONFIG_HOME"] = sDir &/ "config"
+  Application.Env["GB_DESKTOP_PORTAL_ENABLED"] = "0"
+  Application.Env["LAURUX_OUVRIR_TRACE"] = Trace
+  If InStr(Application.Env["PATH"], "Framework/bin") = 0 Then Application.Env["PATH"] = Application.Path &/ ".src/Tests/Framework/bin" & ":" & Application.Env["PATH"]
+  Desktop.UsePortal = False
+  Return Trace
+
+End
+
 Public Sub Begin(Lot As String, Nom As String)
 
   Init()
+  ChargeConf() ' réglages d'origine (type mysql, hôte, préfixe…) même si un test précédent les a modifiés
   If Lot = $sLot And If Nom = $sNom Then Return
   $sLot = Lot
   $sNom = Nom
-  $sFile = Application.Path &/ ".src/Tests" &/ Lot &/ "assets" &/ Nom &/ "expected.txt"
+  $sFile = Application.Path &/ ".hidden/Tests" &/ Lot &/ "assets" &/ Nom &/ "expected.txt"
   $bRecord = Application.Env["LAURUX_TEST_RECORD"] = "1"
   $cValeurs = New Collection
   $aCles = New String[]
@@ -40,39 +84,70 @@ Public Sub Init()
   ''(LAURUX_TEST_CONF, sinon le Laurux-test.conf du framework), société et collection des journaux (Utils.Log).
 ''À appeler avant tout accès à Utils.
 
-  Dim sConf As String
-
   If Not IsNull(Start.LocalSettings) Then Return
-  sConf = Application.Env["LAURUX_TEST_CONF"]
-  If Not sConf Then sConf = Application.Path &/ ".src/Tests/Framework/Laurux-test.conf"
-  Start.Arg_Config_File = sConf
-  Start.LocalSettings = New Settings(sConf, Application.Name & " local configuration")
+  ChargeConf()
+  Start.LLogColl = New Collection
+
+End
+
+Public Sub ChargeConf()
+  ''(Re)charge la configuration de test d'origine dans Start.LocalSettings, depuis une copie temporaire : les
+  ''tests modifient Start.LocalSettings en mémoire, sans jamais toucher Laurux-test.conf, et un test ne voit pas
+  ''les réglages laissés par un autre quand plusieurs tests partagent un processus (gbx3 -T "*").
+
+  Dim sSource, sCopie As String
+
+  sSource = Application.Env["LAURUX_TEST_CONF"]
+  If Not sSource Then sSource = Application.Path &/ ".src/Tests/Framework/Laurux-test.conf"
+  sCopie = Temp$() & ".conf"
+  Copy sSource To sCopie
+  Start.Arg_Config_File = sCopie
+  Start.LocalSettings = New Settings(sCopie, Application.Name & " local configuration")
   Start.Societe = Start.LocalSettings["/Soc"]
   If Not Start.Societe Then Start.Societe = "01"
-  Start.LLogColl = New Collection
+
+End
+
+Public Function ServeurTest() As String
+  ''Vérifie que le serveur MariaDB de test répond ($LAURUX_TEST_DB_HOST:$LAURUX_TEST_DB_PORT, défaut 127.0.0.1:13306,
+  ''utilisateur laurux) : renvoie "" s'il répond, sinon le message à afficher (avec la commande qui le démarre).
+
+  Dim sPort As String = Application.Env["LAURUX_TEST_DB_PORT"]
+  Dim sHost As String = Application.Env["LAURUX_TEST_DB_HOST"]
+
+  If Not sPort Then sPort = "13306"
+  If Not sHost Then sHost = "127.0.0.1"
+  Shell "/usr/bin/mariadb -h " & Shell$(sHost) & " -P " & Shell$(sPort) & " -u laurux -plaurux --connect-timeout=3 -e " & Shell$("SELECT 1") & " > /dev/null 2>&1" Wait
+  If Process.LastValue = 0 Then Return ""
+  Return "Serveur MariaDB de test injoignable sur " & sHost & ":" & sPort & " (LAURUX_TEST_DB_HOST:LAURUX_TEST_DB_PORT) : le démarrer avec « python3 .src/Tests/Framework/runner.py db up »"
 
 End
 
 Public Sub OuvreBase(Optional Dataset As String)
   ''Restaure la base de test (Laurux01.sql puis .src/Tests/Framework/datasets/<Dataset>.sql) et ouvre
-  ''Utils.db comme le fait Fmenu (SET NAMES, sql_mode de session). Port : LAURUX_TEST_DB_PORT (défaut 13306).
+  ''Utils.db comme le fait Fmenu (SET NAMES, sql_mode de session). Hôte et port : LAURUX_TEST_DB_HOST
+  ''(défaut 127.0.0.1 ; « db » dans le conteneur runner) et LAURUX_TEST_DB_PORT (défaut 13306).
   ''À appeler dans _Setup : chaque test repart d'une base identique.
 
   Dim sPort As String = Application.Env["LAURUX_TEST_DB_PORT"]
+  Dim sHost As String = Application.Env["LAURUX_TEST_DB_HOST"]
   Dim sCnx, sBase As String
 
   Init()
   If Not sPort Then sPort = "13306"
+  If Not sHost Then sHost = "127.0.0.1"
   sBase = Start.LocalSettings["/dbase/Name"]
-  sCnx = "/usr/bin/mariadb -h 127.0.0.1 -P " & sPort & " -u laurux -plaurux "
+  If ServeurTest() Then Error.Raise(ServeurTest())
+  sCnx = "/usr/bin/mariadb -h " & sHost & " -P " & sPort & " -u laurux -plaurux "
   Shell sCnx & "-e " & Shell$("DROP DATABASE IF EXISTS " & sBase & "; CREATE DATABASE " & sBase & " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;") & " && " & sCnx & sBase & " < " & Shell$(Application.Path &/ "Laurux01.sql") Wait
-  If Process.LastValue <> 0 Then Error.Raise("Restauration de la base de test impossible (port " & sPort & ")")
+  If Process.LastValue <> 0 Then Error.Raise("Restauration de la base de test impossible (" & sHost & ":" & sPort & ")")
   If Dataset Then
     Shell sCnx & sBase & " < " & Shell$(Application.Path &/ ".src/Tests/Framework/datasets" &/ Dataset & ".sql") Wait
     If Process.LastValue <> 0 Then Error.Raise("Jeu de données " & Dataset & " non chargé")
   Endif
   If Utils.db.Opened Then Utils.db.Close
   Utils.glb()
+  Utils.db.Host = sHost
   Utils.db.Port = sPort
   Utils.db.Open
   Utils.db.Exec("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci")
@@ -122,6 +197,18 @@ Public Sub Canonique(Valeur As Variant) As String
   Dim vElt As Variant
 
   If IsNull(Valeur) Then Return "<Null>"
+  Select Case TypeOf(Valeur)
+    Case gb.Boolean ' CStr(False) vaut "" : écrire les booléens en clair
+      If Valeur Then
+        Return "True"
+      Else
+        Return "False"
+      Endif
+    Case gb.Date ' heure locale (TZ fixé par le runner), indépendante de CStr (UTC)
+      Return Format(Valeur, "yyyy-mm-dd hh:nn:ss.u")
+    Case gb.String
+      If Valeur = "" Then Return "<vide>" ' une valeur vide supprimerait la clé de la Collection
+  End Select
   If TypeOf(Valeur) = gb.Object Then
     If Valeur Is Array Then
       aRes = New String[]

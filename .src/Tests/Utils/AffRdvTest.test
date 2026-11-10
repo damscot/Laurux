@@ -1,0 +1,48 @@
+' Gambas test file
+
+''Tests de AffRdv (.hidden/reference/.src/Utils/AffRdv.module/test.md, AFFRDV-T02).
+''Valeurs attendues : assets/AffRdvTest/expected.txt, produites dans le clone de référence.
+''AFFRDV-T02 (prévu en replay) est vérifié en gb.test : dans tous ses cas Aff_Rdv ne doit afficher aucun
+''message (un Message.Warning bloquerait le test jusqu'au délai du runner). Les lignes d'agenda sont
+''créées à la minute courante (Now) pour l'utilisateur du processus (User.Name).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02AucunMessage", "Pas de rendez-vous / autre utilisateur / `iaction` nul")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "AffRdvTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Rdv(sUser As Variant, vTexte As Variant)
+
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAgenda") & " (daction, haction, iaction, nuser) VALUES (&1, &2, &3, &4)", Format$(Now, "yyyy-mm-dd"), Format(Hour(Now), "00") & "h" & Format(Minute(Now), "00"), vTexte, sUser)
+
+End
+
+Private Sub Appel(sCle As String)
+
+  Dim v As Variant = "sans message"
+
+  Try AffRdv.Aff_Rdv()
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check(sCle, v)
+
+End
+
+Public Sub T02AucunMessage()
+
+  Appel("T02/aucun_rdv")
+  Rdv("utilisateur_autre", "Rendez-vous d'un autre")
+  Appel("T02/autre_utilisateur")
+  Utils.db.Exec("DELETE FROM " & Cbase.Table("TabAgenda"))
+  Rdv(User.Name, Null)
+  Appel("T02/iaction_nul")
+
+End

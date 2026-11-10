@@ -1,0 +1,19 @@
+{
+ "id": "CALCSTOCK-T05",
+ "objet": "Caisse connectée",
+ "classe": "Calcstock",
+ "description": "Tous les produits avec une caisse connectée (Fiches_Caisses.connecte = 1) : le test.md attend un avertissement et aucune écriture ; le recalcul est fait puis « Traitement terminé ».",
+ "dataset": "calcstock_caisse_connectee",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "xfail": "contrôle de caisse connectée inopérant sur MySQL : connecte est un tinyint(1) lu comme Booléen par gb.db, rResult!connecte = \"1\" est toujours faux ; le recalcul de tous les produits est exécuté (UPdate art_qte de 001 et 002) et « Traitement terminé » s'affiche",
+ "xfail_attendu": "avertissement « Traitement impossible, la caisse numéro 01est connectée ! », aucune écriture dans Fiches_Art",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

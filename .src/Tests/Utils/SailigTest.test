@@ -1,0 +1,139 @@
+' Gambas test file
+
+''Tests de Sailig (.hidden/reference/.src/Utils/Sailig.class/test.md, SAILIG-T01 à T04).
+''Valeurs attendues : assets/SailigTest/expected.txt, produites dans le clone de référence.
+''La ligne de saisie est créée dans un Panel d'une fenêtre jamais affichée (Xvfb du runner).
+
+Private $hW As Window
+Private $hP As Panel
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Construction", "Construction par type")
+  TestKit.Desc("T02TextBox", "Cas `ObjProp.TextBox`")
+  TestKit.Desc("T03Proprietes", "Propriétés")
+  TestKit.Desc("T04Delete", "`Delete`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "SailigTest")
+  $hW = New Window
+  $hW.Resize(800, 300)
+  $hP = New Panel($hW)
+  $hP.Resize(780, 200)
+
+End
+
+Private Sub Props(Optional bTextBox As Boolean) As ObjProp[]
+
+  Dim aP As New ObjProp[]
+  Dim hO As ObjProp
+  Dim aTypes As Integer[] = [ObjProp.TextReg, ObjProp.Label, ObjProp.Button, ObjProp.TextLabel, ObjProp.CheckBox, ObjProp.ComboBox]
+  Dim i As Integer
+
+  If bTextBox Then aTypes = [ObjProp.TextReg, ObjProp.TextBox, ObjProp.Label]
+  For i = 0 To aTypes.Max
+    hO = New ObjProp("champ" & i, "c" & i, aTypes[i])
+    hO.AddChamp("W", 60)
+    aP.Add(hO)
+  Next
+  Return aP
+
+End
+
+Private Sub Decrit(hS As Sailig) As String
+
+  Dim aD As New String[]
+  Dim hO As Object
+  Dim aCh As New String[]
+
+  For Each hO In hS.MonControle
+    aD.Add(hS.MonControle.Key & ":" & Object.Type(hO) & ":" & hO.Name & ":" & TestKit.Canonique(hO.Enabled))
+  Next
+  For Each hO In hS.chain.tableaux
+    aCh.Add(hO.Name)
+  Next
+  Return "Controles=" & aD.Join(",") & " Dernier=" & hS.Dernier & " Chain=" & aCh.Join(",") & " Panel=" & hS.Panel1.Children.Count
+
+End
+
+Public Sub T01Construction()
+
+  Dim hS As Sailig
+  Dim iEtat As Integer
+
+  For Each iEtat In [Sailig.lecture, Sailig.ecriture, Sailig.reception]
+    hS = New Sailig(Props(), $hP, iEtat)
+    TestKit.Check("T01/etat" & iEtat, Decrit(hS))
+    TestKit.Check("T01/etat" & iEtat & "/valide", hS.valide)
+  Next
+
+End
+
+Public Sub T02TextBox()
+
+  Dim hS As Sailig
+
+  ' SAILIG-A01 : chain.add(clas) reçoit un contrôle au lieu d'un tableau
+  Try hS = New Sailig(Props(True), $hP, Sailig.ecriture)
+  If Error Then
+    TestKit.Check("T02/textbox", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/textbox", Decrit(hS))
+  Endif
+
+End
+
+Public Sub T03Proprietes()
+
+  Dim hS As Sailig
+  Dim hO As Object
+  Dim aB As New String[]
+
+  hS = New Sailig(Props(), $hP, Sailig.ecriture)
+  TestKit.Check("T03/Background/initial", hS.Background)
+  hS.Background = Color.Red
+  TestKit.Check("T03/Background", hS.Background)
+  For Each hO In hS.MonControle
+    aB.Add(hS.MonControle.Key & "=" & TestKit.Canonique(hO.Background = Color.Red))
+  Next
+  TestKit.Check("T03/Background/controles", aB.Join(","))
+  TestKit.Check("T03/Background/panel", hS.Panel1.Background = Color.Red)
+  hS.X = 10
+  hS.Y = 20
+  TestKit.Check("T03/X", hS.X)
+  TestKit.Check("T03/Y", hS.Y)
+  hS.Dernier = "c2"
+  TestKit.Check("T03/Dernier", hS.Dernier)
+  hS.Tag = "ligne 3"
+  TestKit.Check("T03/Tag", hS.Tag)
+
+End
+
+Public Sub T04Delete()
+
+  Dim hS As Sailig
+  Dim hC1 As New Collection
+  Dim hC2 As New Collection
+  Dim aAutres As New Variant[]
+
+  hS = New Sailig(Props(), $hP, Sailig.ecriture)
+  hC1.Add("x", "a")
+  hC2.Add("y", "b")
+  aAutres.Add(hC1)
+  aAutres.Add(hC2)
+  hS.AutresObj = aAutres
+  TestKit.Check("T04/avant/panel_parent", $hP.Children.Count)
+  hS.Delete()
+  TestKit.Check("T04/MonControle", hS.MonControle.Count)
+  TestKit.Check("T04/prx", IsNull(hS.prx))
+  TestKit.Check("T04/txl", IsNull(hS.txl))
+  TestKit.Check("T04/chain", hS.chain.tableaux.Count)
+  TestKit.Check("T04/AutresObj", hS.AutresObj.Count)
+  TestKit.Check("T04/autres/collections", hC1.Count & "," & hC2.Count)
+  TestKit.Check("T04/apres/panel_parent", $hP.Children.Count)
+
+End

@@ -1,0 +1,36 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Cli WHERE cli_code = '411028'
+INSERT INTO Fiches_Cli (cli_code,cli_rs_soc, cli_nom, cli_pnm, cli_adr1, cli_adr2,cli_cd_ptl, cli_ville, cli_tel_bur, cli_tel_dom, cli_pble, cli_fx1, cli_email, cli_collectif, cli_exo, cli_cdech, cli_actif, cli_div, cli_id_tva, cli_comm, cli_typec, cli_reg, cli_cd_bq, cli_cd_gch,cli_dmln,cli_cle_rib,cli_num_cpt,cli_cd_ent, cli_cd_acc, cli_ref_tir, cli_iban, cli_bic, cli_rum) VALUES ( '411028', 'SARL Dupont', 'Dupont', 'Jean', '1 rue des Lilas', 'Bat A', '49000', 'Angers', '0241000001', '0241000002', '0611000001', '0241000003', 'jean@dupont.fr', '411000', 0, '00', 0, '0', 'FR12345678901', 'Note 1', '01', 'CB', '30', 'BNP', 'Angers', '0', '12', '12345678901', '30004', '01234', 'Dupont', 'FR7612345', 'BNPAFRPP')
+insert into Fiches_Comptes (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( '411028','Dupont','C',0,'411000',0,0,0,0,0,0,'1')
+INSERT INTO Mails_Cli (code, mail) VALUES ('411028', 'jean@dupont.fr')
+Update Fiches_Parametres set dnc = '411028'
+SELECT * FROM Fiches_Cli WHERE cli_code = '411029'
+INSERT INTO Fiches_Cli (cli_code,cli_rs_soc, cli_nom, cli_pnm, cli_adr1, cli_adr2,cli_cd_ptl, cli_ville, cli_tel_bur, cli_tel_dom, cli_pble, cli_fx1, cli_email, cli_collectif, cli_exo, cli_cdech, cli_actif, cli_div, cli_id_tva, cli_comm, cli_typec, cli_reg, cli_cd_bq, cli_cd_gch,cli_dmln,cli_cle_rib,cli_num_cpt,cli_cd_ent, cli_cd_acc, cli_ref_tir, cli_iban, cli_bic, cli_rum) VALUES ( '411029', 'Martin SA', 'Martin', 'Paul', '2 place Ronde', NULL, '44000', 'Nantes', '0240000001', NULL, NULL, NULL, NULL, '411000', 0, '00', 0, '0', NULL, NULL, '02', 'CHQ', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+insert into Fiches_Comptes (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( '411029','Martin','C',0,'411000',0,0,0,0,0,0,'1')
+INSERT INTO Mails_Cli (code, mail) VALUES ('411029', NULL)
+Update Fiches_Parametres set dnc = '411029'
+SELECT * FROM Fiches_Cli WHERE cli_code = '411030'
+INSERT INTO Fiches_Cli (cli_code,cli_rs_soc, cli_nom, cli_pnm, cli_adr1, cli_adr2,cli_cd_ptl, cli_ville, cli_tel_bur, cli_tel_dom, cli_pble, cli_fx1, cli_email, cli_collectif, cli_exo, cli_cdech, cli_actif, cli_div, cli_id_tva, cli_comm, cli_typec, cli_reg, cli_cd_bq, cli_cd_gch,cli_dmln,cli_cle_rib,cli_num_cpt,cli_cd_ent, cli_cd_acc, cli_ref_tir, cli_iban, cli_bic, cli_rum) VALUES ( '411030', 'EURL Durand', 'Durand', 'Marie', '3 allée Verte', NULL, '75001', 'Paris', '0140000001', NULL, '0640000001', NULL, 'marie@durand.fr', '411000', 0, '00', 0, '0', NULL, NULL, '01', 'VIR', '45', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+insert into Fiches_Comptes (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep, lettrable) values ( '411030','Durand','C',0,'411000',0,0,0,0,0,0,'1')
+INSERT INTO Mails_Cli (code, mail) VALUES ('411030', 'marie@durand.fr')
+Update Fiches_Parametres set dnc = '411030'

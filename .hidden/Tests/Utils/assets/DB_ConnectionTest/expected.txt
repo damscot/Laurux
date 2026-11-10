@@ -1,0 +1,175 @@
+T01/mysql/apostrophe	l'apostrophe
+T01/mysql/guillemets	dit "bonjour"
+T01/mysql/antislash	anti\slash
+T01/mysql/accents	éèàçù
+T01/mysql/date	2024-03-12 10:11:12
+T01/mysql/float	1.5
+T01/mysql/integer	42
+T01/mysql/true	1
+T01/mysql/false	0
+T01/mysql/null	<Null>
+T01/mysql/dix_arguments	ERREUR: Query failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '0 AS v10b' at line 1
+T01/mysql/journal	[9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'l''apostrophe' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'dit "bonjour"' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'anti\\slash' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'éèàçù' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT '2024-03-12 10:11:12' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 1.5 AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 42 AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT '1' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT '0' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT NULL AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'a' AS v1, 'j' AS v10, 'a'0 AS v10b]
+T01/sqlite/apostrophe	l'apostrophe
+T01/sqlite/guillemets	dit "bonjour"
+T01/sqlite/antislash	anti\slash
+T01/sqlite/accents	éèàçù
+T01/sqlite/date	2024-03-12 10:11:12
+T01/sqlite/float	1.5
+T01/sqlite/integer	42
+T01/sqlite/true	1
+T01/sqlite/false	0
+T01/sqlite/null	<Null>
+T01/sqlite/dix_arguments	ERREUR: Query failed: near "0": syntax error
+T01/sqlite/journal	[9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'l''apostrophe' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'dit "bonjour"' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'anti\slash' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'éèàçù' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT '2024-03-12 10:11:12' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 1.5 AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 42 AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT '1' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT '0' AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT NULL AS v|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT 'a' AS v1, 'j' AS v10, 'a'0 AS v10b]
+T02/edit/disponible	True
+T02/create9/type	Result
+T02/journal	[9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT version FROM Fiches_Parametres WHERE ind = 0|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;Edit Fiches_Parametres : ind = 0|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;Create Fiches_Typec]
+T03/sqlite/lock	<Null>
+T03/sqlite/unlock	<Null>
+T03/sqlite/lock_minuscules	<Null>
+T03/00/SELECT YEAR('2024-03-12') AS v	2024
+T03/01/SELECT year('2024-03-12') AS v	2024
+T03/02/SELECT Year ('2024-03-12') AS v	2024
+T03/03/SELECT MONTH('2024-03-12') AS v	03
+T03/04/SELECT DAY('2024-03-12') AS v	12
+T03/05/SELECT YEAR(dteclec) AS a, MONTH(dteclec) AS m, DAY(dteclec) AS j FROM Fiches_Parametres	2018,12,31
+T03/06/SELECT YEAR(MONTH('2024-03-12')) AS v	-4713
+T03/07/SELECT CONCAT('a', 'b') AS v	ab
+T03/08/SELECT concat(art_code,art_four) AS v FROM Fiches_Art WHERE art_code = '001'	001401001
+T03/09/SELECT CONCAT('é', 'à') AS v	éà
+T03/10/SELECT LEFT('abcdef', 3) AS v	ab
+T03/11/SELECT left('abcdef',3) AS v	ab
+T03/12/SELECT RIGHT('abcdef', 2) AS v	ef
+T03/13/SELECT MID('abcdef', 2, 3) AS v	bcd
+T03/14/SELECT ISNULL(NULL) AS v	1
+T03/15/SELECT art_code FROM Fiches_Art WHERE ISNULL(art_cfour) ORDER BY art_code	<aucune ligne>
+T03/16/SELECT abs(-3) AS v	ERREUR: Query failed: near ")": syntax error
+T03/17/SELECT ABS(-3)	3
+T03/18/SELECT art_code FROM Fiches_Art WHERE art_design LIKE 'PRODUIT%' ORDER BY art_code DESC	003|002|001
+T03/19/SELECT art_code FROM Fiches_Art WHERE art_design = 'produit 2.10'	001
+T03/20/SELECT art_code FROM Fiches_Art WHERE art_design <> 'BORDEREAU' ORDER BY art_code	001|002|003
+T03/21/SELECT COUNT(*) AS v FROM Fiches_Bordereaux WHERE 1 = 1	ERREUR: Query failed: near "COLLATE": syntax error
+T03/22/SELECT art_code FROM Fiches_Art WHERE art_code > '001' LIMIT 1	002
+T03/23/SELECT art_code FROM Fiches_Art ORDER BY art_code	001|002|003
+T03/24/SELECT LENGTH(NOW()) AS v	10
+T03/lpad/00/SELECT lpad('7',6,'0') AS v	000007
+T03/lpad/01/SELECT lpad(art_code,6,'0') AS v FROM Fiches_Art ORDER BY art_code	000001|000002|000003
+T03/lpad/02/SELECT left(art_code || 'xy',3) AS v FROM Fiches_Art WHERE art_code = '001'	001
+T03/lpad/03/SELECT right(art_code || 'xy',3) AS v FROM Fiches_Art WHERE art_code = '001'	1xy
+T04/sqlite/00	001,Pro,.10,rod,001401001|002,Pro,.00,rod,002401001|003,pro,.00,rod,003401001
+T04/sqlite/01	0,2018,12,31
+T04/sqlite/02	<aucune ligne>
+T04/sqlite/03	ERREUR: Query failed: near ")": syntax error
+T04/sqlite/04	001|003
+T04/mysql/00	001,Prod,.10,rod,001401001|002,Prod,.00,rod,002401001|003,prod,.00,rod,003401001
+T04/mysql/01	0,2018,12,31
+T04/mysql/02	<aucune ligne>
+T04/mysql/03	001,22|002,20|003,0
+T04/mysql/04	001|003
+T05/vide/filtre_relu	<Null>
+T05/vide/journal	[9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT version FROM Fiches_Parametres|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;UPdate Fiches_Parametres SET son = son|8:<date>;INFO;Log;<user>;<host>;<machine>;<pid>;message de test]
+T05/vide/erreurs	\n=> <now>Nombre de Filtres Analysé :0
+T05/vide/is_filtered/Exec_SQL	True
+T05/vide/is_filtered/GUI	True
+T05/exec_select/filtre_relu	Exec_SQL:SELECT
+T05/exec_select/journal	[9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT version FROM Fiches_Parametres]
+T05/exec_select/erreurs	\n=> <now>Nombre de Filtres Analysé :1
+T05/exec_select/is_filtered/Exec_SQL	True
+T05/exec_select/is_filtered/GUI	False
+T05/exec_absent/filtre_relu	Exec_SQL:^INTROUVABLE$
+T05/exec_absent/journal	[]
+T05/exec_absent/erreurs	\n=> <now>Nombre de Filtres Analysé :1
+T05/exec_absent/is_filtered/Exec_SQL	False
+T05/exec_absent/is_filtered/GUI	False
+T05/gui/filtre_relu	GUI:.*
+T05/gui/journal	[]
+T05/gui/erreurs	\n=> <now>Nombre de Filtres Analysé :1
+T05/gui/is_filtered/Exec_SQL	False
+T05/gui/is_filtered/GUI	True
+T05/sans_deux_points/filtre_relu	Exec_SQL
+T05/sans_deux_points/journal	[]
+T05/sans_deux_points/erreurs	\n=> <now>Echec: le Filtre Exec_SQL ne respecte pas le format!\n=> <now>Nombre de Filtres Analysé :1
+T05/sans_deux_points/is_filtered/Exec_SQL	False
+T05/sans_deux_points/is_filtered/GUI	False
+T05/regex_invalide/filtre_relu	Exec_SQL:[
+T05/regex_invalide/journal	[9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;SELECT version FROM Fiches_Parametres|9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;UPdate Fiches_Parametres SET son = son|8:<date>;INFO;Log;<user>;<host>;<machine>;<pid>;message de test]
+T05/regex_invalide/erreurs	\n=> <now>Echec: Impossible de compiler le Filtre Exec_SQL : missing terminating ] for character class\n=> <now>Nombre de Filtres Analysé :0
+T05/regex_invalide/is_filtered/Exec_SQL	True
+T05/regex_invalide/is_filtered/GUI	True
+T05/deux_lignes/filtre_relu	Exec_SQL:UPdate\nLog:.*
+T05/deux_lignes/journal	[9:<date>;INFO;Exec_SQL;<user>;<host>;<machine>;<pid>;<pile>;UPdate Fiches_Parametres SET son = son|8:<date>;INFO;Log;<user>;<host>;<machine>;<pid>;message de test]
+T05/deux_lignes/erreurs	\n=> <now>Nombre de Filtres Analysé :2
+T05/deux_lignes/is_filtered/Exec_SQL	False
+T05/deux_lignes/is_filtered/GUI	False
+T05/log_inactif/is_filtered	False
+T06/journal	[9:<date>;INFO;GUI;<user>;<host>;<machine>;<pid>;<pile>;Click=T@Bouton1#FenTest#Panneau1#Bouton1#|10:<date>;INFO;GUI;<user>;<host>;<machine>;<pid>;<pile>;Keypress=a;b@Bouton1#FenTest#Panneau1#Bouton1#|9:<date>;INFO;GUI;<user>;<host>;<machine>;<pid>;<pile>;Keypress=x#y@Bouton1#FenTest#Panneau1#Bouton1#|9:<date>;INFO;GUI;<user>;<host>;<machine>;<pid>;<pile>;Keypress=u@v@Bouton1#FenTest#Panneau1#Bouton1#|9:<date>;INFO;GUI;<user>;<host>;<machine>;<pid>;<pile>;Keypress=k=l@Bouton1#FenTest#Panneau1#Bouton1#|9:<date>;INFO;GUI;<user>;<host>;<machine>;<pid>;<pile>;Click=3@Bouton1#FenTest#Panneau1#Bouton1#|9:<date>;INFO;GUI;<user>;<host>;<machine>;<pid>;<pile>;Close=0@FenTest#FenTest#|9:<date>;INFO;Log;<user>;<host>;<machine>;<pid>;message;avec#des@car=spéciaux|8:<date>;ERROR;Log;<user>;<host>;<machine>;<pid>;niveau erreur]
+T07/mysql/Engine	 ENGINE = InnoDB
+T07/mysql/IsType	True
+T07/mysql/IsType/mysql	True
+T07/mysql/IsType/sqlite3	False
+T07/mysql/IsType/autre	False
+T07/mysql/AutoIncrement	lind INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (lind)
+T07/mysql/AutoIncrement/lind	lind INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (lind)
+T07/mysql/AutoIncrement/id_BIGINT_20	id BIGINT(20) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id)
+T07/mysql/AutoIncrement/id_BIGINT_0	id BIGINT NOT NULL AUTO_INCREMENT, PRIMARY KEY (id)
+T07/sqlite/Engine	<Null>
+T07/sqlite/IsType	False
+T07/sqlite/IsType/mysql	False
+T07/sqlite/IsType/sqlite3	True
+T07/sqlite/IsType/autre	False
+T07/sqlite/AutoIncrement	lind INTEGER PRIMARY KEY AUTOINCREMENT
+T07/sqlite/AutoIncrement/lind	lind INTEGER PRIMARY KEY AUTOINCREMENT
+T07/sqlite/AutoIncrement/id_BIGINT_20	id INTEGER PRIMARY KEY AUTOINCREMENT
+T07/sqlite/AutoIncrement/id_BIGINT_0	id INTEGER PRIMARY KEY AUTOINCREMENT
+T08/erreur_sql/code	-1
+T08/erreur_sql/texte	Query failed: Table 'Laurux01.Fiches_Inexistante' doesn't exist
+T08/syntaxe/code	-1
+T08/syntaxe/texte	Query failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'SELEC version FROM Fiches_Parametres' at line 1
+T08/apres_erreur	3.69
+T08/fermee/opened	False
+T08/fermee/exec	<Null>
+T09/entree_pmp/retour	15
+T09/entree_pmp/base	15,6
+T09/sortie/retour	12
+T09/sortie/base	12,6
+T09/sortie_totale_pmp/retour	0
+T09/sortie_totale_pmp/base	0,4
+T09/stock_nul/retour	4
+T09/stock_nul/base	4,7
+T09/non_stocke/retour	0
+T09/non_stocke/base	0,0
+T09/inexistant/retour	0
+T10/int/retour	1
+T10/int/base	1
+T10/int/2e/retour	2
+T10/int/2e/base	2
+T10/chaine_000000/retour	000001
+T10/chaine_000000/base	000001
+T10/chaine_defaut/retour	1
+T10/chaine_defaut/base	1
+T10/chaine_null/retour	1
+T10/chaine_null/base	1
+T11/code	001 (1)
+T11/code_fournisseur	002 (1)
+T11/ref_centrale	003 (1)
+T11/code_barre_table	002 (1)
+T11/code_barre_art_code	001 (1)
+T11/code_barre_inconnu	001 (2)
+T11/inexistant	<aucune ligne>
+T11/vide	001 (2)
+T11/four_ok	001 (1)
+T11/four_autre	<aucune ligne>
+T11/option_B	ERREUR: Query failed: Table 'Laurux01.Fiches_regie' doesn't exist
+T12/simple/execute	002,Produit 7.00
+T12/param/prepare	ERREUR: Query failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '401001''' at line 1
+T12/param/execute	ERREUR: Query failed: Unknown prepared statement handler (req_param) given to EXECUTE
+T12/set_float	ERREUR: Query failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '5' at line 1
+T12/set_float/relu	<Blob>
+T13/mysql/colonnes	jour,varchar(2),YES,MUL,<Null>,<Null>|numero,int(11),NO,MUL,<Null>,<Null>|compte,varchar(8),NO,MUL,<Null>,<Null>|collectif,tinyint(1),YES,<Null>,<Null>,<Null>|intitule,varchar(40),YES,<Null>,<Null>,<Null>|dte,datetime,NO,<Null>,<Null>,<Null>|datee,datetime,YES,<Null>,<Null>,<Null>|numdoc,char(10),YES,<Null>,<Null>,<Null>|numlot,char(10),YES,MUL,<Null>,<Null>|libelle,varchar(50),YES,<Null>,<Null>,<Null>|montantd,decimal(12,2),YES,<Null>,<Null>,<Null>|montantc,decimal(12,2),YES,<Null>,<Null>,<Null>|validee,tinyint(1),YES,<Null>,<Null>,<Null>|provisoire,tinyint(1),YES,<Null>,<Null>,<Null>|tresorerie,tinyint(1),YES,<Null>,<Null>,<Null>|pointee,tinyint(1),YES,<Null>,<Null>,<Null>|nrlv,int(11),YES,<Null>,<Null>,<Null>|lettree,tinyint(1),YES,<Null>,<Null>,<Null>|cloturee,tinyint(1),YES,<Null>,<Null>,<Null>|relance,int(11),YES,<Null>,<Null>,<Null>|control,varchar(40),YES,<Null>,<Null>,<Null>|numerodef,int(11),YES,<Null>,<Null>,<Null>|dateech,datetime,YES,<Null>,<Null>,<Null>|numcol,varchar(3),YES,<Null>,<Null>,<Null>|dteval,datetime,YES,<Null>,<Null>,<Null>|export,char(1),YES,<Null>,<Null>,<Null>|lind,int(11),NO,PRI,<Null>,auto_increment
+T13/mysql/index	idx_compte,compte,1|idx_compte,dte,2|idx_jour,jour,1|idx_jour,dte,2|idx_numero,numero,1|idx_numero,compte,2|idx_numlot,numlot,1|PRIMARY,lind,1
+T13/sqlite/erreur	Query failed: near "COLLATE": syntax error
+T13/sqlite/table	<aucune ligne>
+T14/edit/base	0,Dollars
+T14/edit/absent/disponible	False
+T14/create9/base	01,Espèces,53,<Null>,False,0,0,False,True|05,Chèque,50,580002,False,0,0,False,True|10,Carte,50,580001,False,0,0,False,True|15,Paypal,50,<Null>,False,0,0,False,True|20,Virement,50,<Null>,False,0,0,False,True|25,Prélèvement,50,<Null>,False,0,0,False,True|30,Traite,50,<Null>,False,2,0,False,True|35,Lcr,50,<Null>,False,1,0,False,True|40,Autre,50,580003,False,0,0,False,True|ZZ,Règlement test,BQ,512000,False,0,1,False,False

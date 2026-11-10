@@ -1,10 +1,37 @@
 ' Gambas test file
 
-''Tests de LPrix (ex-Internal_Test de LPrix.class, converti en gb.test au début de la phase 2).
+''Tests de LPrix (.hidden/reference/.src/Utils/LPrix.class/test.md, LPRIX-T01 à T14).
+''Reprend l'ex-Internal_Test de LPrix.class (clés Conversion/*, Somme/*, Matrice/*, Compo/*, Pu/*, Tot/*,
+''Arrondi/*), réparti selon les IDs du test.md.
 ''Valeurs attendues : assets/LPrixTest/expected.txt, produites dans le clone de référence.
+''Les chemins Message.Error d'Arrondi_Conv (arrondi invalide, Arr = "") ne sont pas exercés : ils bloquent
+''sans interaction (testables après LPRIX-006) ; de même une entrée non numérique (« abc » : Message.Error de
+''Utils.FloatParse).
+''LPRIX-A01 : l'auto-instance de LPrix (_call) transmet sa propre Qte ; chaque test tourne dans son processus.
 
 Private x As LPrix[]
 Private tot As LPrix
+Private $iChange As Integer ' nombre d'événements change reçus
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ConversionEntree", "`_New`/`_call` : conversions d'entrée")
+  TestKit.Desc("T02FormatsSortie", "Formats `.L`/`.D`/`.G`")
+  TestKit.Desc("T03Arrondi5", "`Arrondi_Calc` via `.G`, arrondis « au 5 »")
+  TestKit.Desc("T04ArrondiLibelle", "Propriété `Arr` aller-retour")
+  TestKit.Desc("T05Quantite", "`.Q`/`.QD` lecture/écriture")
+  TestKit.Desc("T06ConversionMatrice", "Matrice `Conv_Brut_Net_HT_TTC`")
+  TestKit.Desc("T07IgnoreTaxe", "`ignore_taxe`")
+  TestKit.Desc("T08PuTotLecture", "Propriétés `Pu*`/`Tot*` lecture")
+  TestKit.Desc("T09PuTotEcriture", "Propriétés `Pu*`/`Tot*` écriture")
+  TestKit.Desc("T10Cumuls", "Cumuls `Add`/`AddA`/`Sub`/`SubA`/`Sum`/`SumA`/`Abs`")
+  TestKit.Desc("T11Taxes", "Taxes `Add_Taxe`/`Del_Taxe`/`Lit_Taxe`")
+  TestKit.Desc("T12CallQuantite", "`_call` avec quantité (anomalie)")
+  TestKit.Desc("T13EvenementChange", "Événement `change`")
+  TestKit.Desc("T14Performance", "Performance")
+
+End
 
 Public Sub _Setup()
 
@@ -21,23 +48,162 @@ Public Sub _Setup()
   tx = New LTaxe("20%", LTaxe.Tva)
   tot.Add_Taxe(tx)
   tot.Sum(x)
+  $iChange = 0
 
 End
 
-Public Sub Conversion()
+Public Sub _Prix_change(Value As LPrix)
 
+  Inc $iChange
+
+End
+
+Private Sub Fige(Cle As String, Montant As Variant, Optional Quantite As Variant = 1, Optional Arr As Variant = LPrix.Arr_001)
+  ''Construit un LPrix par New (pas d'auto-instance) et fige Mnt / Qte, ou l'erreur levée.
+
+  Dim hP As LPrix
+
+  Try hP = New LPrix(Montant, Quantite, Arr)
+  If Error Then
+    TestKit.Check(Cle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check(Cle & "/Mnt", hP.Mnt)
+  TestKit.Check(Cle & "/Qte", hP.Qte)
+
+End
+
+Public Sub T01ConversionEntree()
+
+  Dim aEntrees As Variant[] = ["-3,1500", "1 234.5", 3, 2.5, "", Null, "1.234,5", "+ 7"]
+  Dim i As Integer
+  Dim hP As LPrix
+
+  ' ex-Internal_Test
   TestKit.Check("Conversion/L", LPrix("-3,1500", 1, LPrix.Arr_01).L)
+  For i = 0 To aEntrees.Max
+    Fige("T01/new/" & i, aEntrees[i])
+    Try hP = LPrix(aEntrees[i])
+    If Error Then
+      TestKit.Check("T01/call/" & i, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T01/call/" & i, hP.Mnt)
+    Endif
+  Next
+  ' Quantités en entrée (New)
+  Fige("T01/qte/chaine", 10, "2,5")
+  Fige("T01/qte/entier", 10, 3)
+  Fige("T01/qte/float", 10, 1.5)
+  Fige("T01/qte/vide", 10, "")
+  Fige("T01/qte/zero", 10, 0)
+
+End
+
+Public Sub T02FormatsSortie()
+
+  Dim aMnt As Float[] = [1234.5678, -1234.5678, 0.125, -0.125, 0]
+  Dim aQte As Float[] = [1, 3]
+  Dim i, j, k As Integer
+  Dim hP As LPrix
+  Dim sCle As String
+
+  For i = 0 To aMnt.Max
+    For j = 0 To aQte.Max
+      For k = LPrix.Arr_1 To LPrix.Arr_00001
+        hP = New LPrix(aMnt[i], aQte[j], k)
+        sCle = "T02/" & i & "/" & j & "/" & k
+        TestKit.Check(sCle & "/L", hP.L)
+        TestKit.Check(sCle & "/D", hP.D)
+        TestKit.Check(sCle & "/G", hP.G)
+      Next
+    Next
+  Next
+
+End
+
+Public Sub T03Arrondi5()
+
+  Dim aMnt As Float[] = [0.03, 2.47, 2.42, 2.49, -2.47, -2.49, 2.5, 12]
+  Dim aArr As Integer[] = [LPrix.Arr_005, LPrix.Arr_05, LPrix.Arr_0005, LPrix.Arr_00005]
+  Dim i, j As Integer
+  Dim hP As LPrix
+
+  For i = 0 To aMnt.Max
+    For j = 0 To aArr.Max
+      hP = New LPrix(aMnt[i], 1, aArr[j])
+      TestKit.Check("T03/" & i & "/" & aArr[j], hP.G)
+    Next
+  Next
+  hP = New LPrix(-3.15, 1, LPrix.Arr_01)
+  TestKit.Check("T03/-3.15/Arr_01", hP.G)
+  TestKit.Check("T03/-3.15/Arr_01/L", hP.L)
+  ' Valeurs inférieures à 1e-4
+  hP = New LPrix(0.00004, 1, LPrix.Arr_00005)
+  TestKit.Check("T03/0.00004/Arr_00005", hP.G)
+  hP = New LPrix(0.00003, 1, LPrix.Arr_00001)
+  TestKit.Check("T03/0.00003/Arr_00001", hP.G)
+  hP = New LPrix(0.00007, 1, LPrix.Arr_00005)
+  TestKit.Check("T03/0.00007/Arr_00005", hP.G)
+  hP = New LPrix(1e-7, 1, LPrix.Arr_005)
+  TestKit.Check("T03/1e-7/Arr_005", hP.G)
+
+End
+
+Public Sub T04ArrondiLibelle()
+
+  Dim i As Integer
+  Dim hP As LPrix
+
+  hP = New LPrix(1)
+  ' LPRIX-A03 figée : Arr_00005 / Arr_00001 rendent ""
+  For i = LPrix.Arr_1 To LPrix.Arr_00001
+    hP.Arr = i
+    TestKit.Check("T04/enum/" & i, hP.Arr)
+  Next
+  hP.Arr = "0,05"
+  TestKit.Check("T04/chaine/0,05", hP.Arr)
+  hP.Arr = "0.001"
+  TestKit.Check("T04/chaine/0.001", hP.Arr)
+  hP.Arr = 0.5
+  TestKit.Check("T04/float/0.5", hP.Arr)
+  hP.Arr = 1.0
+  TestKit.Check("T04/float/1", hP.Arr)
+  hP = New LPrix(1, 1, "0,1")
+  TestKit.Check("T04/new/0,1", hP.Arr)
+  hP = New LPrix(1, 1, 0.0001)
+  TestKit.Check("T04/new/0.0001", hP.Arr)
+  TestKit.Check("T04/new/0.0001/L", hP.L)
+
+End
+
+Public Sub T05Quantite()
+
+  Dim aQte As Float[] = [1.23456, 0, -2, 2.5]
+  Dim i As Integer
+  Dim hP As LPrix
+
+  ' ex-Internal_Test (LPRIX-A01 : la quantité 1.23456 est ignorée par _call)
   TestKit.Check("Conversion/QD", LPrix("-3,15", 1.23456, LPrix.Arr_01).QD)
+  For i = 0 To aQte.Max
+    hP = New LPrix(10, aQte[i])
+    TestKit.Check("T05/" & i & "/Q", hP.Q)
+    TestKit.Check("T05/" & i & "/QD", hP.QD)
+    hP = New LPrix(10, aQte[i], LPrix.Arr_1)
+    TestKit.Check("T05/" & i & "/QD/Arr_1", hP.QD)
+  Next
+  hP = New LPrix(10, 1)
+  hP.Q = "2,5"
+  TestKit.Check("T05/Q=2,5/Qte", hP.Qte)
+  TestKit.Check("T05/Q=2,5/Mnt", hP.Mnt)
+  ' LPRIX-A02 figée : QD_Write modifie Mnt et non Qte
+  hP = New LPrix(10, 1)
+  hP.QD = "5"
+  TestKit.Check("T05/QD=5/Qte", hP.Qte)
+  TestKit.Check("T05/QD=5/Mnt", hP.Mnt)
 
 End
 
-Public Sub Somme()
-
-  TestKit.Check("Somme/Mnt", tot.Mnt)
-
-End
-
-Public Sub Matrice()
+Public Sub T06ConversionMatrice()
 
   Dim aBN As Integer[] = [LPrix.Brut_to_Brut, LPrix.Net_to_Net, LPrix.Brut_to_Net, LPrix.Net_to_Brut]
   Dim aHT As Integer[] = [LPrix.HT_to_HT, LPrix.HT_to_TTC, LPrix.TTC_to_HT, LPrix.TTC_to_TTC]
@@ -48,41 +214,279 @@ Public Sub Matrice()
       TestKit.Check("Matrice/" & i & "x" & j, tot.Conv_Brut_Net_HT_TTC(tot, 1, aBN[i], aHT[j]).Mnt)
     Next
   Next
-
-End
-
-Public Sub Compositions()
-
   TestKit.Check("Compo/1", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt)
   TestKit.Check("Compo/2", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC), 1, LPrix.Net_to_Brut, LPrix.TTC_to_HT).Mnt)
   TestKit.Check("Compo/3", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.HT_to_TTC), 1, LPrix.Brut_to_Net, LPrix.TTC_to_HT).Mnt)
   TestKit.Check("Compo/4", tot.Conv_Brut_Net_HT_TTC(tot.Conv_Brut_Net_HT_TTC(tot, 1, LPrix.Brut_to_Brut, LPrix.TTC_to_HT), 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt)
+  ' Prix sans taxe : conversion identité
+  TestKit.Check("T06/sans_taxe", x[1].Conv_Brut_Net_HT_TTC(x[1], 1, LPrix.Brut_to_Net, LPrix.HT_to_TTC).Mnt)
 
 End
 
-Public Sub Accesseurs()
+Public Sub T07IgnoreTaxe()
 
-  TestKit.Check("Pu/BHT", tot.PuBHT.L)
-  TestKit.Check("Pu/BTC", tot.PuBTC.L)
-  TestKit.Check("Pu/NHT", tot.PuNHT.L)
-  TestKit.Check("Pu/NTC", tot.PuNTC.L)
-  TestKit.Check("Tot/BHT", tot.totBHT.L)
-  TestKit.Check("Tot/BTC", tot.totBTC.L)
-  TestKit.Check("Tot/NHT", tot.totNHT.L)
-  TestKit.Check("Tot/NTC", tot.TotNTC.L)
+  Dim aBN As Integer[] = [LPrix.Brut_to_Net, LPrix.Net_to_Brut]
+  Dim aHT As Integer[] = [LPrix.HT_to_TTC, LPrix.TTC_to_HT]
+  Dim aIgn As New Variant[]
+  Dim i, j, k As Integer
+  Dim aI As Integer[]
+
+  aIgn.Add([LTaxe.TVA])
+  aIgn.Add([LTaxe.Remise])
+  aIgn.Add([LTaxe.TVA, LTaxe.Remise])
+  For k = 0 To aIgn.Max
+    aI = aIgn[k]
+    For i = 0 To aBN.Max
+      For j = 0 To aHT.Max
+        TestKit.Check("T07/" & k & "/" & i & "x" & j, tot.Conv_Brut_Net_HT_TTC(tot, 1, aBN[i], aHT[j], aI).Mnt)
+      Next
+    Next
+  Next
 
 End
 
-Public Sub Arrondi()
+Private Sub LitPuTot(Prefixe As String)
 
+  TestKit.Check(Prefixe & "Pu/BHT", tot.PuBHT.L)
+  TestKit.Check(Prefixe & "Pu/BTC", tot.PuBTC.L)
+  TestKit.Check(Prefixe & "Pu/NHT", tot.PuNHT.L)
+  TestKit.Check(Prefixe & "Pu/NTC", tot.PuNTC.L)
+  TestKit.Check(Prefixe & "Tot/BHT", tot.totBHT.L)
+  TestKit.Check(Prefixe & "Tot/BTC", tot.totBTC.L)
+  TestKit.Check(Prefixe & "Tot/NHT", tot.totNHT.L)
+  TestKit.Check(Prefixe & "Tot/NTC", tot.TotNTC.L)
+
+End
+
+Public Sub T08PuTotLecture()
+
+  ' ex-Internal_Test (Qte = 2) : clés Pu/* et Tot/* sans préfixe
+  LitPuTot("")
+  tot.Qte = 1
+  LitPuTot("T08/Qte1/")
+  tot.Qte = 0
+  LitPuTot("T08/Qte0/")
+
+End
+
+Private Sub Ecrit(Propriete As String, Quantite As Float)
+
+  Dim hP As LPrix
+  Dim hV As LPrix
+  Dim hTx As LTaxe
+
+  hP = New LPrix(0, Quantite, LPrix.Arr_001)
+  hTx = New LTaxe("3", LTaxe.Remise)
+  hP.Add_Taxe(hTx)
+  hTx = New LTaxe("20%", LTaxe.Tva)
+  hP.Add_Taxe(hTx)
+  hV = New LPrix(12, 1, LPrix.Arr_001)
+  Try Object.SetProperty(hP, Propriete, hV)
+  If Error Then
+    TestKit.Check("T09/" & Propriete & "/" & Quantite, "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T09/" & Propriete & "/" & Quantite, hP.Mnt)
+  Endif
+
+End
+
+Public Sub T09PuTotEcriture()
+
+  Dim aProp As String[] = ["PuBHT", "PuBTC", "PuNHT", "PuNTC", "TotBHT", "TotBTC", "TotNHT", "TotNTC"]
+  Dim i As Integer
+  Dim hN As LPrix
+
+  For i = 0 To aProp.Max
+    Ecrit(aProp[i], 1)
+    Ecrit(aProp[i], 2)
+  Next
+  ' LPRIX-A04 : TotBHT avec Qte = 0 (division par zéro)
+  Ecrit("TotBHT", 0)
+  ' ex-Internal_Test (Arrondi_New + écriture de TotNTC / PuNTC)
   tot.TotNTC = tot.Arrondi_New(tot.TotNTC, LPrix.Arr_05)
   TestKit.Check("Arrondi/TotNTC", tot.TotNTC.L)
-  tot.PuNTC = New LPrix(tot.TotNTC.G, 1, LPrix.Arr_05)
+  hN = New LPrix(tot.TotNTC.G, 1, LPrix.Arr_05)
+  tot.PuNTC = hN
   tot.Qte = 1
   TestKit.Check("Arrondi/PuNTC", tot.TotNTC.L)
   TestKit.Check("Arrondi/Tot/BHT", tot.totBHT.L)
   TestKit.Check("Arrondi/Tot/BTC", tot.totBTC.L)
   TestKit.Check("Arrondi/Tot/NHT", tot.totNHT.L)
   TestKit.Check("Arrondi/Tot/NTC", tot.TotNTC.L)
+
+End
+
+Public Sub T10Cumuls()
+
+  Dim hP As LPrix
+  Dim hA As LPrix
+  Dim aL As LPrix[]
+
+  ' ex-Internal_Test
+  TestKit.Check("Somme/Mnt", tot.Mnt)
+
+  hA = New LPrix(2.474, 2, LPrix.Arr_005)
+  aL = New LPrix[]
+  hP = New LPrix(1.234, 1, LPrix.Arr_01)
+  aL.Add(hP)
+  hP = New LPrix(2.474, 2, LPrix.Arr_005)
+  aL.Add(hP)
+  hP = New LPrix(-0.333, 3, LPrix.Arr_1)
+  aL.Add(hP)
+
+  hP = New LPrix(10, 1) As "_Prix"
+  hP.Add(hA)
+  TestKit.Check("T10/Add", hP.Mnt)
+  hP.AddA(hA)
+  TestKit.Check("T10/AddA", hP.Mnt)
+  hP.Sub(hA)
+  TestKit.Check("T10/Sub", hP.Mnt)
+  hP.SubA(hA)
+  TestKit.Check("T10/SubA", hP.Mnt)
+  hP.Sum(aL)
+  TestKit.Check("T10/Sum", hP.Mnt)
+  hP.SumA(aL)
+  TestKit.Check("T10/SumA", hP.Mnt)
+  hP.Mnt = - hP.Mnt
+  hP.Abs()
+  TestKit.Check("T10/Abs", hP.Mnt)
+  TestKit.Check("T10/change", $iChange)
+
+End
+
+Public Sub T11Taxes()
+
+  Dim hP As LPrix
+  Dim hTx As LTaxe
+  Dim hLu As LTaxe
+
+  hP = New LPrix(100, 1)
+  TestKit.Check("T11/Lit_Taxe/sans_liste", IsNull(hP.Lit_Taxe(LTaxe.TVA)))
+  TestKit.Check("T11/Del_Taxe/sans_liste", hP.Del_Taxe(LTaxe.TVA))
+  hTx = New LTaxe("20%", LTaxe.TVA)
+  TestKit.Check("T11/Add_Taxe/TVA", hP.Add_Taxe(hTx))
+  hLu = hP.Lit_Taxe(LTaxe.TVA)
+  TestKit.Check("T11/Lit_Taxe/TVA/meme_objet", hLu = hTx)
+  TestKit.Check("T11/Lit_Taxe/absente", IsNull(hP.Lit_Taxe(LTaxe.Remise)))
+  TestKit.Check("T11/TTC/20", hP.PuNTC.G)
+  ' Remplacement de la TVA
+  hTx = New LTaxe("5,5%", LTaxe.TVA)
+  TestKit.Check("T11/Add_Taxe/remplace", hP.Add_Taxe(hTx))
+  hLu = hP.Lit_Taxe(LTaxe.TVA)
+  TestKit.Check("T11/Lit_Taxe/remplacee", hLu = hTx)
+  TestKit.Check("T11/TTC/5,5", hP.PuNTC.G)
+  TestKit.Check("T11/Del_Taxe/absente", hP.Del_Taxe(LTaxe.Remise))
+  TestKit.Check("T11/Del_Taxe/TVA", hP.Del_Taxe(LTaxe.TVA))
+  TestKit.Check("T11/Lit_Taxe/apres_del", IsNull(hP.Lit_Taxe(LTaxe.TVA)))
+  TestKit.Check("T11/Del_Taxe/deux_fois", hP.Del_Taxe(LTaxe.TVA))
+  TestKit.Check("T11/TTC/sans", hP.PuNTC.G)
+
+End
+
+Public Sub T12CallQuantite()
+
+  Dim hP As LPrix
+  Dim hTx As LTaxe
+
+  ' LPRIX-A01 figée : _call transmet la Qte de l'auto-instance
+  hP = LPrix("10", 3)
+  TestKit.Check("T12/call/Qte", hP.Qte)
+  TestKit.Check("T12/call/L", hP.L)
+  hP = New LPrix("10", 3)
+  TestKit.Check("T12/new/Qte", hP.Qte)
+  TestKit.Check("T12/new/L", hP.L)
+  ' LTaxe.Montant renvoie LPrix(val, qte…) par _call
+  hTx = New LTaxe("2", LTaxe.TEE)
+  TestKit.Check("T12/Montant/Qte", hTx.Montant(hP).Qte)
+  TestKit.Check("T12/Montant/Mnt", hTx.Montant(hP).Mnt)
+  TestKit.Check("T12/Montant/G", hTx.Montant(hP).G)
+  hTx = New LTaxe("20%", LTaxe.TVA)
+  TestKit.Check("T12/Montant%/Qte", hTx.Montant(hP).Qte)
+  TestKit.Check("T12/Montant%/G", hTx.Montant(hP).G)
+
+End
+
+Public Sub T13EvenementChange()
+
+  Dim hP As LPrix
+  Dim hV As LPrix
+  Dim hTx As LTaxe
+  Dim aL As New LPrix[]
+  Dim aProp As String[] = ["L", "D", "Cpt", "Q", "QD", "Arr"]
+  Dim aVal As Variant[] = ["12,5", "12.5", "707000", "2", "3", "0,05"]
+  Dim aPrix As String[] = ["PuBHT", "PuBTC", "PuNHT", "PuNTC", "TotBHT", "TotBTC", "TotNHT", "TotNTC"]
+  Dim i, iAvant As Integer
+
+  hP = New LPrix(10, 1) As "_Prix"
+  hV = New LPrix(5, 1)
+  aL.Add(hV)
+  hTx = New LTaxe("20%", LTaxe.TVA)
+  For i = 0 To aProp.Max
+    iAvant = $iChange
+    Object.SetProperty(hP, aProp[i], aVal[i])
+    TestKit.Check("T13/prop/" & aProp[i], $iChange - iAvant)
+  Next
+  iAvant = $iChange
+  hP.G = 7.5
+  TestKit.Check("T13/prop/G", $iChange - iAvant)
+  For i = 0 To aPrix.Max
+    iAvant = $iChange
+    Object.SetProperty(hP, aPrix[i], hV)
+    TestKit.Check("T13/prop/" & aPrix[i], $iChange - iAvant)
+  Next
+  iAvant = $iChange
+  hP.Add(hV)
+  TestKit.Check("T13/Add", $iChange - iAvant)
+  iAvant = $iChange
+  hP.AddA(hV)
+  TestKit.Check("T13/AddA", $iChange - iAvant)
+  iAvant = $iChange
+  hP.Sub(hV)
+  TestKit.Check("T13/Sub", $iChange - iAvant)
+  iAvant = $iChange
+  hP.SubA(hV)
+  TestKit.Check("T13/SubA", $iChange - iAvant)
+  iAvant = $iChange
+  hP.Sum(aL)
+  TestKit.Check("T13/Sum", $iChange - iAvant)
+  iAvant = $iChange
+  hP.SumA(aL)
+  TestKit.Check("T13/SumA", $iChange - iAvant)
+  iAvant = $iChange
+  hP.Add_Taxe(hTx)
+  TestKit.Check("T13/Add_Taxe", $iChange - iAvant)
+  iAvant = $iChange
+  hP.Del_Taxe(LTaxe.TVA)
+  TestKit.Check("T13/Del_Taxe", $iChange - iAvant)
+  iAvant = $iChange
+  hP.Del_Taxe(LTaxe.TVA)
+  TestKit.Check("T13/Del_Taxe/absente", $iChange - iAvant)
+  ' LPRIX-A04 figée : Abs ne lève pas change
+  iAvant = $iChange
+  hP.Abs()
+  TestKit.Check("T13/Abs", $iChange - iAvant)
+  iAvant = $iChange
+  hP.Mnt = 3
+  TestKit.Check("T13/Mnt", $iChange - iAvant)
+
+End
+
+Public Sub T14Performance()
+  ''Durée relevée par le runner (non comparée) ; seule la valeur finale est vérifiée.
+
+  Dim i As Integer
+  Dim hP As LPrix
+  Dim hTx As LTaxe
+  Dim sL As String
+
+  For i = 1 To 100000
+    hP = LPrix(i / 100)
+    hTx = New LTaxe("3", LTaxe.Remise)
+    hP.Add_Taxe(hTx)
+    hTx = New LTaxe("20%", LTaxe.TVA)
+    hP.Add_Taxe(hTx)
+    sL = hP.TotNTC.L
+  Next
+  TestKit.Check("T14/dernier", sL)
 
 End

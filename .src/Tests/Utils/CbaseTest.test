@@ -1,0 +1,82 @@
+' Gambas test file
+
+''Tests de Cbase (CBASE-T01 à T04, .hidden/reference/.src/Utils/Cbase.module/test.md).
+''Valeurs attendues : assets/CbaseTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01TableComplete", "Table de correspondance complète")
+  TestKit.Desc("T02ClesInconnues", "Clés inconnues et casse")
+  TestKit.Desc("T03CoherenceCsv", "Cohérence avec `db_control.csv`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CbaseTest")
+
+End
+
+Private Function Cles() As String[]
+  ''Les 119 clés distinctes du Select Case de Cbase.Table (extraites du source de référence,
+  ''regex Case "(…)", doublons TabParam/TabTypec retirés).
+
+  Return ["TabParam", "TabFam", "TabArt", "TabCdBarre", "TabRpl1", "TabRpl2", "TabCequ", "TabCdFour", "TabTxmo",
+    "TabMo", "TabComptes", "TabTvav", "TabTvac", "TabHisFac", "TabHisFacm", "TabCom", "TabHisLigFac",
+    "TabHisLigFacm", "TabHisEntm", "TabSoc", "TabLibelFac", "Totalisation", "TabMvtA", "TabMvtA1", "TabMvtA2",
+    "TabMvtA3", "TabMvtA4", "TabMvtA5", "TabMvt", "TabMvt1", "TabMvt2", "TabMvt3", "TabMvt4", "TabMvt5",
+    "TabMvtM", "TabMvtM1", "TabMvtM2", "TabMvtM3", "TabMvtM4", "TabMvtM5", "TabArtSaisis", "TabJour",
+    "TabCli", "TabClid", "TabAdrC", "TabContact", "TabCarte", "TabCliVtl", "TabFour", "TabFourVtl", "TabContactF",
+    "TabLibel", "TabEntcom", "TabLigcom", "TabMat", "TabMarq", "TabBl", "TabLigbl", "TabBlM", "TabLigblM",
+    "TabEntrecpt", "TabLigrecpt", "TabMvtexp", "TabMvtexpdc", "TabInv", "TabInvT", "TabStat", "Ecrs",
+    "TabNumabon", "TabLigabon", "TabTleg", "TabTmail", "TabAgenda", "TabTypec", "TabEch", "TabEntTck",
+    "TabLigTck", "TabHEntTck", "TabHLigTck", "TabVendeurs", "TabCommerciaux", "TabCaisses", "TabCliCaisse",
+    "TabLibelTicket", "TabLibelAvoirs", "TabAvoirs", "TabHisEntTck", "TabHisLigTck", "TabRemTypec", "RemCliFam",
+    "TabStatut", "TabCpostaux", "TabPromo", "TabArtPromo", "TabAcomptes", "TabTouches", "TabEtiq", "TabEtiqp",
+    "TabEtiqg", "TabPrdComp", "TabIdentite", "TabCentrales", "TabSuivis", "TabDocGed", "TabDocTag", "TabTag",
+    "TabDepots", "TabStkDepots", "TabSdepots", "TabTarcli", "TabTcli", "TabCtcli", "TabAna", "TabPostes",
+    "TabMailFour", "TabMailCli", "TabSms", "TabActif", "TabRappro"]
+
+End
+
+Public Sub T01TableComplete()
+
+  Dim sCle As String
+
+  For Each sCle In Cles()
+    TestKit.Check("T01/" & sCle, Cbase.Table(sCle))
+  Next
+
+End
+
+Public Sub T02ClesInconnues()
+
+  Dim aCles As String[] = ["", "tabart", "TABART", "TabBanques", "TabCdocs", "TabFdocs", "Inconnue"]
+  Dim sCle As String
+
+  For Each sCle In aCles
+    TestKit.Check("T02/[" & sCle & "]", Cbase.Table(sCle))
+  Next
+  TestKit.Check("T02/Null", Cbase.Table(Null))
+
+End
+
+Public Sub T03CoherenceCsv()
+
+  Dim cCsv As New Collection
+  Dim aAbsentes As New String[]
+  Dim sLigne, sCle, sTab As String
+
+  For Each sLigne In Split(File.Load(Application.Path &/ "db_control.csv"), "\n", "", True)
+    sTab = Split(sLigne, ";")[0]
+    If sTab Then cCsv[sTab] = True
+  Next
+  For Each sCle In Cles()
+    sTab = Cbase.Table(sCle)
+    If Not cCsv.Exist(sTab) And If Not aAbsentes.Exist(sTab) Then aAbsentes.Add(sTab)
+  Next
+  aAbsentes.Sort()
+  TestKit.Check("T03/absentes", aAbsentes)
+
+End

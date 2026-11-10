@@ -1,8 +1,27 @@
 ' Gambas test file
 
-''Tests de LScript (ex-Internal_Test de LScript.class, converti en gb.test au début de la phase 2).
-''L'appel « scanbatch » de l'ancien test n'est pas repris : il dépend d'un outil de numérisation externe
-''et du paramétrage de la société (test manuel), ni le mode « debug2 » qui ouvre une fenêtre (test manuel).
+''Tests de LScript (.hidden/reference/.src/Utils/LScript.class/test.md, LSCRIPT-T01 à T08).
+''Issu de la conversion de l'ancien Internal_Test (vérifications « bash/echo », « RunA », « faaalse »,
+''« false », « true » conservées dans T01, T03 et T05). Valeurs attendues : assets/LScriptTest/expected.txt,
+''produites dans le clone de référence.
+''Non repris : l'appel « scanbatch » (outil de numérisation externe, test manuel de LGed) et le mode « debug »
+''(boîte Message.Info, bloquant sans interaction).
+''Constat figé : le premier appel LScript(…) d'un processus lève « Type mismatch » (auto-instance, Create
+''Static) ; chaque test tourne dans son propre processus et commence donc par un premier appel figé.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01RunShell", "`Run` mode shell")
+  TestKit.Desc("T02RunExec", "`Run` mode exec")
+  TestKit.Desc("T03CodesRetour", "Codes de retour")
+  TestKit.Desc("T04Quotage", "Arguments avec espaces et métacaractères")
+  TestKit.Desc("T05RunListe", "`RunA`")
+  TestKit.Desc("T06Debug2", "Mode `debug2`")
+  TestKit.Desc("T07DoubleRun", "Double `Run` (effet de bord)")
+  TestKit.Desc("T08Journalisation", "Journalisation")
+
+End
 
 Public Sub _Setup()
 
@@ -12,28 +31,100 @@ End
 
 Private Sub Lance(Prog As String, Argu As String[], Optional RuSh As Boolean = True) As Variant
   ''Caractérisation : une erreur levée par LScript(…).Run() est figée comme valeur attendue (« ERREUR: … »).
-  ''Constat : le premier appel LScript(…) d'un processus lève « Type mismatch » (auto-instance, Create Static).
+  ''Les chemins temporaires du test sont remplacés par « <tmp> » dans les valeurs vérifiées.
 
   Dim vRes As Variant
 
-  Try vRes = LScript(Prog, Argu, RuSh).Run()
+  Try vRes = LScript(Prog, Argu.Copy(), RuSh).Run() ' copie : Run modifie le tableau reçu (figé dans T07)
   If Error Then vRes = "ERREUR: " & Error.Text
   Return vRes
 
 End
 
-Public Sub Simple()
+Private Sub Contenu(sFichier As String) As String
+  ''Contenu d'un fichier produit par une commande (« <absent> » s'il n'a pas été créé).
 
-  TestKit.Check("bash/echo", Lance("/bin/bash", ["-c", "echo test"]))
-  TestKit.Check("bash/echo/2e", Lance("/bin/bash", ["-c", "echo test"]))
+  If Not Exist(sFichier) Then Return "<absent>"
+  Return File.Load(sFichier)
 
 End
 
-Public Sub Liste()
+Private Sub PremierAppel(Cle As String)
+  ''Premier appel LScript(…) du processus (constat « Type mismatch », figé).
+
+  Dim aVide As String[] = New String[]
+
+  TestKit.Check(Cle & "/premier_appel", Lance("/bin/true", aVide))
+
+End
+
+Public Sub T01RunShell()
+
+  Dim sDir As String = Temp$()
+  Dim sF As String = sDir &/ "f"
+
+  Mkdir sDir
+  ' Ancien Internal_Test : le premier appel du processus échoue, le second réussit
+  TestKit.Check("bash/echo", Lance("/bin/bash", ["-c", "echo test"]))
+  TestKit.Check("bash/echo/2e", Lance("/bin/bash", ["-c", "echo test"]))
+  TestKit.Check("T01/code", Lance("/bin/bash", ["-c", "echo test > " & sF]))
+  TestKit.Check("T01/fichier", Contenu(sF))
+
+End
+
+Public Sub T02RunExec()
+
+  Dim sDir As String = Temp$()
+  Dim sF As String = sDir &/ "f"
+
+  Mkdir sDir
+  PremierAppel("T02")
+  TestKit.Check("T02/code", Lance("/bin/bash", ["-c", "echo test2 > " & sF], False))
+  TestKit.Check("T02/fichier", Contenu(sF))
+
+End
+
+Public Sub T03CodesRetour()
+
+  Dim aVide As String[] = New String[]
+
+  ' Ancien Internal_Test : « faaalse » est le premier appel du processus
+  TestKit.Check("faaalse", Lance("/bin/faaalse", aVide, False))
+  TestKit.Check("T03/faaalse/2e", Lance("/bin/faaalse", aVide, False))
+  TestKit.Check("false", Lance("/bin/false", aVide, False))
+  TestKit.Check("true", Lance("/bin/true", aVide))
+  TestKit.Check("T03/vide/shell", Lance("", aVide))
+  TestKit.Check("T03/vide/exec", Lance("", aVide, False))
+
+End
+
+Public Sub T04Quotage()
+
+  Dim sDir As String = Temp$()
+  Dim sFs As String = sDir &/ "shell"
+  Dim sFe As String = sDir &/ "exec"
+
+  Mkdir sDir
+  PremierAppel("T04")
+  TestKit.Check("T04/shell/code", Lance("/bin/bash", ["-c", "printf '%s|' \"$@\" > " & sFs, "x", "a b", "c;d"]))
+  TestKit.Check("T04/shell/sortie", Contenu(sFs))
+  TestKit.Check("T04/exec/code", Lance("/bin/bash", ["-c", "printf '%s|' \"$@\" > " & sFe, "x", "a b", "c;d"], False))
+  TestKit.Check("T04/exec/sortie", Contenu(sFe))
+
+End
+
+Public Sub T05RunListe()
 
   Dim x As LScript[] = New LScript[]
   Dim vRes As Variant
+  Dim sDir As String = Temp$()
+  Dim sF1 As String = sDir &/ "f1"
+  Dim sF3 As String = sDir &/ "f3"
+  Dim aVide As String[] = New String[]
+  Dim xVide As LScript[] = New LScript[]
 
+  Mkdir sDir
+  ' Ancien Internal_Test (premier appel du processus dans « ajout1 »)
   Try x.Add(LScript("/bin/bash", ["-c", "\"echo test1\""]))
   If Error Then TestKit.Check("RunA/ajout1", "ERREUR: " & Error.Text)
   Try x.Add(LScript("/bin/bash", ["-c", "echo test2"], False))
@@ -41,15 +132,84 @@ Public Sub Liste()
   Try vRes = LScript.RunA(x)
   If Error Then vRes = "ERREUR: " & Error.Text
   TestKit.Check("RunA", vRes)
+  ' [ok, échec, ok] : le 3e ne doit pas être lancé
+  x = New LScript[]
+  x.Add(LScript("/bin/bash", ["-c", "echo un > " & sF1], False))
+  x.Add(LScript("/bin/faaalse", aVide, False))
+  x.Add(LScript("/bin/bash", ["-c", "echo trois > " & sF3], False))
+  Try vRes = LScript.RunA(x)
+  If Error Then vRes = "ERREUR: " & Error.Text
+  TestKit.Check("T05/echec/code", vRes)
+  TestKit.Check("T05/echec/f1", Contenu(sF1))
+  TestKit.Check("T05/echec/f3", Contenu(sF3))
+  ' Liste vide
+  Try vRes = LScript.RunA(xVide)
+  If Error Then vRes = "ERREUR: " & Error.Text
+  TestKit.Check("T05/vide", vRes)
 
 End
 
-Public Sub Codes()
+Public Sub T06Debug2()
+  ''Sortie console capturée par « Output To » (la sortie standard du test est le flux TAP).
 
+  Dim sF As String = Temp$()
+  Dim hF As File
+  Dim vRes As Variant
+
+  PremierAppel("T06")
+  hF = Open sF For Create
+  Output To #hF
+  vRes = Lance("debug2", ["a", "b"])
+  Output To Default
+  Close #hF
+  TestKit.Check("T06/code", vRes)
+  TestKit.Check("T06/console", File.Load(sF))
+
+End
+
+Public Sub T07DoubleRun()
+
+  Dim sDir As String = Temp$()
+  Dim sF As String = sDir &/ "f"
+  Dim aArgs As String[]
+  Dim hS As LScript
+  Dim vRes As Variant
+
+  Mkdir sDir
+  PremierAppel("T07")
+  aArgs = ["-c", "echo passage >> " & sF]
+  hS = LScript("/bin/bash", aArgs)
+  Try vRes = hS.Run()
+  If Error Then vRes = "ERREUR: " & Error.Text
+  TestKit.Check("T07/run1/code", vRes)
+  TestKit.Check("T07/run1/arguments_appelant", Replace(aArgs.Join("|"), sDir, "<tmp>"))
+  Try vRes = hS.Run()
+  If Error Then vRes = "ERREUR: " & Error.Text
+  TestKit.Check("T07/run2/code", vRes)
+  TestKit.Check("T07/run2/arguments_appelant", Replace(aArgs.Join("|"), sDir, "<tmp>"))
+  TestKit.Check("T07/fichier", Contenu(sF))
+
+End
+
+Public Sub T08Journalisation()
+  ''Journal ~/tmp/Debug/LScript.log (HOME isolé par le runner), activé comme par « -d » (Start.Arg_Debug).
+  ''Date et pile d'appels normalisées.
+
+  Dim sJournal As String = User.Home &/ "tmp/Debug/LScript.log"
+  Dim aLignes As String[] = New String[]
+  Dim sLigne As String
   Dim aVide As String[] = New String[]
 
-  TestKit.Check("faaalse", Lance("/bin/faaalse", aVide, False))
-  TestKit.Check("false", Lance("/bin/false", aVide, False))
-  TestKit.Check("true", Lance("/bin/true", aVide))
+  Start.Arg_Debug = "3,3"
+  PremierAppel("T08")
+  Lance("/bin/true", aVide)
+  Lance("/bin/faaalse", aVide, False)
+  Try Start.LLogColl["LScript"].Close()
+  For Each sLigne In Split(Contenu(sJournal), "\n", "", True)
+    sLigne = RegExp.Replace(sLigne, "^\\[[^]]*\\]", "[<date>]")
+    sLigne = RegExp.Replace(sLigne, "\\[LScript\\] \\[.*\\] ", "[LScript] [<pile>] ")
+    aLignes.Add(sLigne)
+  Next
+  TestKit.Check("T08/lignes", aLignes)
 
 End

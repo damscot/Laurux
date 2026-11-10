@@ -1,0 +1,411 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT jdr FROM Fiches_Parametres
+SELECT * FROM Fiches_Comptes order by cast(compte_cc AS char)
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '101000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '101000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '106800'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '106800'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '108000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '108000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '110000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '110000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '119000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '119000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '120000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '120000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '129000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '129000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '168800'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '168800'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '211000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '211000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '213000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '213000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '213500'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '213500'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '218200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '218200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '218300'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '218300'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '218400'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '218400'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '218820'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '218820'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '231000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '231000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '231500'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '231500'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '261000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '261000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '266000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '266000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '275000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '275000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '281300'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '281300'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '281400'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '281400'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '281500'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '281500'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '281600'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '281600'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '281700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '281700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '335000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '335000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '370000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '370000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '397000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '397000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401001'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401001'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401002'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401002'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401003'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401003'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401004'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401004'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401005'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401005'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401006'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401006'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401007'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401007'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401008'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401008'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401009'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401009'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401010'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401010'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401011'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401011'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401012'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401012'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401013'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401013'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401014'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401014'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401015'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401015'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401016'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401016'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401017'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401017'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401018'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401018'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401019'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401019'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401020'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401020'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401021'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401021'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401022'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401022'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401023'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401023'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401024'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401024'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401025'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401025'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '401026'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '401026'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '408000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '408000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '408100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '408100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '409600'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '409600'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '409700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '409700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411001'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '4.97' where compte_cc = '411001'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411002'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411002'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411003'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411003'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411004'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411004'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411005'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411005'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411006'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411006'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411007'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411007'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411008'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411008'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411009'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411009'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411010'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411010'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411011'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411011'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411012'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411012'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411013'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411013'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411014'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411014'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411015'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411015'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411016'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411016'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411017'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411017'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411018'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411018'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411019'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411019'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411020'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411020'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411021'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411021'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411022'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411022'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411023'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411023'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411024'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411024'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411025'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411025'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411026'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411026'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '411027'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '411027'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '416000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '416000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '419100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '419100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '419700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '419700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '421000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '421000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '428200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '428200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '437100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '437100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '437200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '437200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '444000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '444000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445510'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445510'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445620'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445620'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445660'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445660'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445670'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445670'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445680'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445680'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445710'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445710'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445720'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445720'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '445730'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '445730'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '468700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '468700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '471000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '471000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '491000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '491000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '512000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '1027.00' where compte_cc = '512000'
+SELECT (sum(montantd)-sum(montantc)) as soldepointee FROM  Fiches_Mvt WHERE compte = '512000' and ((cloturee = 1 and jour = '90' and libelle = 'Report a nouveau') or (pointee = 1))
+UPdate Fiches_Comptes  SET soldep = '1670.00' where compte_cc = '512000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '512001'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '512001'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '518600'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '518600'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '530000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '530000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '580000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '580000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '580001'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '580001'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '580002'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '580002'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '580003'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '580003'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '602100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '602100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '603700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '603700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '604000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '604000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '605000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '605000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606110'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606110'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606120'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606120'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606130'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606130'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606150'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606150'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606170'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606170'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606300'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606300'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606306'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606306'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606400'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606400'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606410'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606410'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606800'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606800'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '606810'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '606810'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '607000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '129.75' where compte_cc = '607000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '607010'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '607010'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '607020'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '607020'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '609700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '609700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '612200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '612200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '613200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '613200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '622603'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '622603'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '622604'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '622604'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '622605'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '622605'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '622700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '622700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '623100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '623100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '623400'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '623400'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '623700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '623700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '623705'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '623705'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '623800'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '623800'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '625100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '625100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '625500'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '625500'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '625600'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '625600'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '626100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '626100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '627000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '627000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '627200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '627200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '627800'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '627800'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '631200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '631200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '633300'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '633300'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '635110'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '635110'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '635120'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '635120'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '635150'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '635150'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '637100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '637100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '637810'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '637810'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '637820'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '637820'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '641100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '641100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '641110'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '641110'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '641200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '641200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '641400'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '641400'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '644000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '644000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '645000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '645000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '645320'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '645320'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '645500'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '645500'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '645800'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '645800'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '646200'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '646200'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '646210'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '646210'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '646300'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '646300'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '647500'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '647500'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '654100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '654100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '658000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '658000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '661100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '661100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '671000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '671000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '671800'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '671800'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '678000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '678000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '681120'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '681120'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '681730'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '681730'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '695100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '695100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '705000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '705000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '706100'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '706100'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '706105'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '706105'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '706110'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '706110'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '707000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '707000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '707010'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '707010'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '707020'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '707020'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '709000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '709000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '709700'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '709700'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '722000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '722000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '758000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '758000'
+SELECT (sum(montantd)-sum(montantc)) as solde FROM Fiches_Mvt WHERE compte = '791000'  and validee = 1
+UPdate Fiches_Comptes  SET solde = '0.00' where compte_cc = '791000'

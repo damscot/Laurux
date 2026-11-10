@@ -1,0 +1,208 @@
+' Gambas test file
+
+''Tests de Trifam (.hidden/reference/.src/Utils/Trifam.class/test.md, TRIFAM-T01 à T05 et T08).
+''Jeux de données : .src/Tests/Framework/datasets/trifam_familles.sql, trifam_perf.sql.
+''ipr est fixé en mémoire (Start.LocalSettings["/Soc01/ipr"]) avant New Trifam("1").
+''Parcours : un nœud puis ses fils ; les fils sont retrouvés depuis « enfant » (dernier fils) en remontant
+''« precedant », puis remis dans l'ordre. Une ligne « niveau;cle;Text;cle du parent » par nœud.
+''Valeurs attendues : assets/TrifamTest/expected.txt, produites dans le clone de référence.
+
+Private $iNoeuds As Integer
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DeuxNiveaux", "Arbre à 2 niveaux")
+  TestKit.Desc("T02TroisNiveaux", "Arbre à 3 niveaux")
+  TestKit.Desc("T03Liens", "Liens")
+  TestKit.Desc("T04SousTotaux", "Sous-totaux")
+  TestKit.Desc("T05CodesLimites", "Codes limites")
+  TestKit.Desc("T08Performance", "Performance")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "TrifamTest")
+
+End
+
+Private Sub Arbre(Ipr As Integer[], Optional Dataset As String = "trifam_familles") As Trifam
+
+  Dim hRacine As Trifam
+
+  TestKit.OuvreBase(Dataset)
+  Start.LocalSettings["/Soc" & Start.Societe & "/ipr"] = Ipr
+  hRacine = New Trifam("1")
+  Return hRacine
+
+End
+
+Private Sub Fils(Noeud As Trifam) As Trifam[]
+
+  Dim aF As New Trifam[]
+  Dim h As Trifam
+
+  h = Noeud.enfant
+  While Not IsNull(h)
+    aF.Add(h, 0)
+    h = h.precedant
+  Wend
+  Return aF
+
+End
+
+Private Sub Parcours(Noeud As Trifam, Niveau As Integer, Lignes As String[])
+
+  Dim h As Trifam
+  Dim sParent As String = "<racine>"
+
+  Inc $iNoeuds
+  If Not IsNull(Noeud.parent) Then sParent = Noeud.parent.cle
+  If Lignes Then Lignes.Add(Niveau & ";" & Noeud.cle & ";" & Noeud.Text & ";" & sParent)
+  For Each h In Fils(Noeud)
+    Parcours(h, Niveau + 1, Lignes)
+  Next
+
+End
+
+Private Sub FigeArbre(Cle As String, Racine As Trifam)
+
+  Dim aL As New String[]
+  Dim i As Integer
+
+  Parcours(Racine, 0, aL)
+  For i = 0 To aL.Max
+    TestKit.Check(Cle & "/" & Format(i, "000"), aL[i])
+  Next
+  TestKit.Check(Cle & "/nb", aL.Count)
+
+End
+
+Public Sub T01DeuxNiveaux()
+
+  FigeArbre("T01", Arbre([1, 3]))
+
+End
+
+Public Sub T02TroisNiveaux()
+
+  FigeArbre("T02", Arbre([1, 3, 5]))
+
+End
+
+Public Sub T03Liens()
+
+  Dim hRacine As Trifam
+  Dim aF As Trifam[]
+  Dim h, hP As Trifam
+  Dim i As Integer
+  Dim aL As String[]
+
+  hRacine = Arbre([1, 3])
+  TestKit.Check("T03/racine/cle", hRacine.cle)
+  TestKit.Check("T03/racine/enfant", hRacine.enfant.cle)
+  TestKit.Check("T03/racine/parent_nul", IsNull(hRacine.parent))
+  For Each h In hRacine
+    Inc i
+    If i > 50 Then Break
+  Next
+  TestKit.Check("T03/enum/nb", i)
+  ' Chaîne suivant / precedant de chaque fratrie
+  aF = Fils(hRacine)
+  aF.Add(hRacine, 0)
+  For Each hP In aF
+    If IsNull(hP.enfant) Then Continue
+    aL = New String[]
+    For Each h In Fils(hP)
+      If IsNull(h.suivant) Then
+        aL.Add(h.cle & ">" & "<nul>")
+      Else
+        aL.Add(h.cle & ">" & h.suivant.cle)
+      Endif
+      If Not IsNull(h.precedant) Then
+        If h.precedant.suivant <> h Then aL.Add("incohérent:" & h.cle)
+      Endif
+      If h.parent <> hP Then aL.Add("parent incohérent:" & h.cle)
+    Next
+    TestKit.Check("T03/suivant/" & IIf(hP = hRacine, "<racine>", hP.cle), aL)
+  Next
+
+End
+
+Public Sub T04SousTotaux()
+
+  Dim hRacine As Trifam
+  Dim hA, hA01, hA0101 As Trifam
+  Dim h As Trifam
+
+  hRacine = Arbre([1, 3, 5])
+  For Each h In Fils(hRacine)
+    If h.cle = "A" Then hA = h
+  Next
+  For Each h In Fils(hA)
+    If h.cle = "A01" Then hA01 = h
+  Next
+  For Each h In Fils(hA01)
+    If h.cle = "A0101" Then hA0101 = h
+  Next
+  Try hA0101.soustotpa = "10,5"
+  If Error Then TestKit.Check("T04/erreur/pa/10,5", "ERREUR: " & Error.Text)
+  Try hA0101.soustotpmp = "8,25"
+  If Error Then TestKit.Check("T04/erreur/pmp/8,25", "ERREUR: " & Error.Text)
+  ' Point décimal : Val() dépend de la locale
+  Try hA0101.soustotpa = "1.5"
+  If Error Then TestKit.Check("T04/erreur/pa/1.5", "ERREUR: " & Error.Text)
+  For Each h In Fils(hA01)
+    If h.cle = "A0102" Then
+      Try h.soustotpa = "2"
+      If Error Then TestKit.Check("T04/erreur/pa/2", "ERREUR: " & Error.Text)
+    Endif
+  Next
+  TestKit.Check("T04/A0101/pa", hA0101.soustotpa)
+  TestKit.Check("T04/A0101/pmp", hA0101.soustotpmp)
+  TestKit.Check("T04/A01/pa", hA01.soustotpa)
+  TestKit.Check("T04/A/pa", hA.soustotpa)
+  TestKit.Check("T04/A/pmp", hA.soustotpmp)
+  TestKit.Check("T04/racine/pa", hRacine.soustotpa)
+  TestKit.Check("T04/racine/pmp", hRacine.soustotpmp)
+
+End
+
+Public Sub T05CodesLimites()
+  ''Codes contenant z, Z, espace, accent (jeu trifam_familles) : figer leur présence ou leur exclusion (A01).
+
+  Dim aL As New String[]
+  Dim sL As String
+  Dim aCodes As String[] = ["Az", "AZ", "Azz", "A 1", "Aé", "Aé1", "z", "z9", "Az1", "AZ2"]
+  Dim sCode As String
+  Dim bVu As Boolean
+
+  Parcours(Arbre([1, 3]), 0, aL)
+  For Each sCode In aCodes
+    bVu = False
+    For Each sL In aL
+      If Split(sL, ";")[1] = sCode Then bVu = True
+    Next
+    TestKit.Check("T05/[1,3]/" & sCode, bVu)
+  Next
+  aL = New String[]
+  Parcours(Arbre([1, 2, 3]), 0, aL)
+  For Each sCode In aCodes
+    bVu = False
+    For Each sL In aL
+      If Split(sL, ";")[1] = sCode Then bVu = True
+    Next
+    TestKit.Check("T05/[1,2,3]/" & sCode, bVu)
+  Next
+
+End
+
+Public Sub T08Performance()
+  ''Durée relevée par le runner (non comparée) ; nombre de nœuds vérifié.
+
+  $iNoeuds = 0
+  Parcours(Arbre([2, 4, 6], "trifam_perf"), 0, Null)
+  TestKit.Check("T08/noeuds", $iNoeuds)
+
+End

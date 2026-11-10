@@ -1,0 +1,34 @@
+' Gambas test file
+
+''Tests de Epurfour (.hidden/reference/.src/Utils/Epurfour.class/test.md, EPURFOUR-T02).
+''Valeurs attendues : assets/EpurfourTest/expected.txt, produites dans le clone de référence.
+''EPURFOUR-T02 (prévu en replay) : table Fiches_Art vidée, run() ne doit afficher aucun message (il
+''bloquerait le test) ni lever d'erreur. T01 (message final) est un scénario rejoué (epurfour_effacement).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02TableVide", "Table vide")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "EpurfourTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T02TableVide()
+
+  Dim v As Variant = "sans message"
+  Dim r As Result
+
+  Utils.db.Exec("DELETE FROM " & Cbase.Table("TabArt"))
+  Try Epurfour.run()
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T02/run", v)
+  r = Utils.db.Exec("SELECT COUNT(*) AS n FROM " & Cbase.Table("TabArt"))
+  TestKit.Check("T02/articles", r!n)
+
+End

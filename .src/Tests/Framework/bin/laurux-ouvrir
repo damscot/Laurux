@@ -1,0 +1,8 @@
+#!/bin/sh
+# Faux programme d'ouverture de documents (tests Laurux, phase 2). Desktop.Open (gb.desktop), sans portail
+# (GB_DESKTOP_PORTAL_ENABLED=0), lance l'application associée au type MIME : le runner associe tous les types
+# usuels à ce script (~/.config/mimeapps.list du HOME de test). Rien n'est ouvert ; l'appel est tracé, au format
+# des faux binaires des tests : « nom [arg1] [arg2] ».
+trace="${LAURUX_OUVRIR_TRACE:-$HOME/tmp/ouvrir.trace}"
+mkdir -p "$(dirname "$trace")"
+{ printf '%s' "$(basename "$0")"; for a in "$@"; do printf ' [%s]' "$a"; done; echo; } >> "$trace"

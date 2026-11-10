@@ -1,0 +1,30 @@
+' Gambas test file
+
+''Test de Cdoc (CDOC-T01, .hidden/reference/.src/Utils/Cdoc.class/test.md) : contrôle statique de l'absence d'appelant
+''(classe morte). grep -rliw cdoc .src (hors .src/Tests) ne doit trouver que Cdoc.class et Cdoc.form.
+''Valeurs attendues : assets/CdocTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01AbsenceAppelant", "Écran inaccessible")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CdocTest")
+
+End
+
+Public Sub T01AbsenceAppelant()
+
+  Dim sRes As String
+  Dim aFic As String[]
+
+  Shell "cd " & Shell$(Application.Path) & " && grep -rliw cdoc .src --exclude-dir=Tests" To sRes
+  aFic = Split(Trim(sRes), "\n", "", True)
+  aFic.Sort()
+  TestKit.Check("T01/fichiers", aFic)
+
+End

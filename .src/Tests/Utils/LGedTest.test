@@ -1,0 +1,335 @@
+' Gambas test file
+
+''Tests de LGed (.hidden/reference/.src/Utils/LGed.class/test.md, LGED-T01 à T09).
+''Valeurs attendues : assets/LGedTest/expected.txt, produites dans le clone de référence.
+''Jeu de données : .src/Tests/Framework/datasets/ged.sql (4 documents, 5 tags, une liaison pendante).
+''Les champs privés sont relus par l'API publique : form_Open() (remplit la fiche sans l'afficher) puis
+''Controls[<nom>]. Les fichiers sont créés sous $HOME (HOME de test isolé par le runner ; User.Home,
+''lui, désigne le vrai répertoire de l'utilisateur et n'est pas utilisé) ; les chemins et
+''l'année courante sont normalisés (« ~ », « <annee> ») dans les valeurs vérifiées.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01TagsConversion", "`String2Array` / `Array2String`")
+  TestKit.Desc("T02Chargement", "`_New` chargement")
+  TestKit.Desc("T03Recherche", "`Search`/`Exist`")
+  TestKit.Desc("T04TagsBdd", "`AddTag`/`AddTags`/`DelTag`/`DelAllTag`")
+  TestKit.Desc("T05Epuration", "`EpurationTags`/`EpurationDocs`")
+  TestKit.Desc("T06PDFDupli", "`PDFDupli`")
+  TestKit.Desc("T07DefaultURL", "`Default_URL` / `Get_Default_Extension`")
+  TestKit.Desc("T08Mime", "`Get_Mime`")
+  TestKit.Desc("T09Supprime", "`Supprime`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LGedTest")
+
+End
+
+Private Sub OuvreGed()
+
+  TestKit.OuvreBase("ged")
+
+End
+
+Private Sub Norm(Valeur As Variant) As String
+  ''Normalise HOME de test et année courante (dates de création = Now).
+
+  Dim s As String
+
+  If IsNull(Valeur) Then Return "<Null>"
+  s = CStr(Valeur)
+  s = Replace(s, Application.Env["HOME"], "~")
+  s = Replace(s, CStr(Year(Now)), "<annee>")
+  Return s
+
+End
+
+Private Sub Racines()
+  ''Racines GED (/Soc01/Factchemin*) dans un répertoire du HOME de test.
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Factchemin"] = Application.Env["HOME"] &/ "ged/clients"
+  Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminF"] = Application.Env["HOME"] &/ "ged/fournisseurs"
+  Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminC"] = Application.Env["HOME"] &/ "ged/compta"
+  Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminP"] = Application.Env["HOME"] &/ "ged/articles"
+  Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminA"] = Application.Env["HOME"] &/ "ged/autres"
+
+End
+
+Private Sub Etat() As String
+  ''Contenu des tables GED : tags (lind:tag), liaisons (doc:tag), documents (lind).
+
+  Dim r As Result
+  Dim aTags, aLiens, aDocs As New String[]
+
+  r = Utils.db.Exec("SELECT lind, tag FROM Fiches_Tag ORDER BY lind")
+  If r.Available Then
+    Repeat
+      aTags.Add(r!lind & ":" & r!tag)
+    Until r.MoveNext()
+  Endif
+  r = Utils.db.Exec("SELECT doc_lind, tag_lind FROM Docs_Tag ORDER BY doc_lind, tag_lind")
+  If r.Available Then
+    Repeat
+      aLiens.Add(r!doc_lind & ":" & r!tag_lind)
+    Until r.MoveNext()
+  Endif
+  r = Utils.db.Exec("SELECT lind FROM Docs_Ged ORDER BY lind")
+  If r.Available Then
+    Repeat
+      aDocs.Add(r!lind)
+    Until r.MoveNext()
+  Endif
+  Return "Tags=" & aTags.Join(",") & " Liens=" & aLiens.Join(",") & " Docs=" & aDocs.Join(",")
+
+End
+
+Private Sub Ligne(Lind As Integer) As String
+  ''Ligne Docs_Ged (hors lind et date de création, volatiles).
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT * FROM Docs_Ged WHERE lind = &1", Lind)
+  If Not r.Available Then Return "<absente>"
+  Return Norm(r!type & "|" & r!code & "|" & r!compte & "|" & r!origin & "|" & r!url & "|" & r!filename & "|" & r!mime & "|" & r!ttc & "|" & r!ht)
+
+End
+
+Private Sub Fiche(hG As LGed) As String
+  ''Champs d'un document relus dans la fiche (form_Open sans affichage).
+
+  Dim hC As Object
+  Dim aVal As New String[]
+  Dim sNom As String
+
+  hG.form_Open()
+  For Each sNom In ["findex", "ftype", "fcode", "fcompte", "furl", "forigin", "fdte", "fMht", "fMttc", "fmime"]
+    hC = hG.Controls[sNom]
+    aVal.Add(sNom & "=" & hC.Text)
+  Next
+  hC = hG.Controls["ListTags"]
+  aVal.Add("ListTags=" & hC.List.Join(","))
+  Return aVal.Join("|")
+
+End
+
+Public Sub T01TagsConversion()
+
+  Dim aVide As New String[]
+
+  TestKit.Check("T01/String2Array", LGed.String2Array("a,b,,a, c"))
+  TestKit.Check("T01/String2Array/vide", LGed.String2Array(""))
+  TestKit.Check("T01/Array2String", LGed.Array2String(["x,y", "", "x"]))
+  TestKit.Check("T01/Array2String/vide", LGed.Array2String(aVide))
+  TestKit.Check("T01/Array2String/doublons", LGed.Array2String(["b", "a", "b", " a"]))
+
+End
+
+Public Sub T02Chargement()
+
+  Dim hG As LGed
+
+  OuvreGed()
+  hG = New LGed(Null, 1)
+  TestKit.Check("T02/doc1/TTC", hG.TTC.L)
+  TestKit.Check("T02/doc1/HT", hG.HT.L)
+  TestKit.Check("T02/doc1/DTE", hG.DTE.DT)
+  TestKit.Check("T02/doc1/ORI", hG.ORI)
+  TestKit.Check("T02/doc1/fiche", Fiche(hG))
+  hG = New LGed(Null, 4)
+  TestKit.Check("T02/doc4/fiche", Fiche(hG))
+  ' Document inexistant : valeurs du constructeur conservées
+  hG = New LGed(Null, 999, LGed.Fournisseurs, "BR", "X1", "401002")
+  TestKit.Check("T02/inexistant/TTC", hG.TTC.L)
+  TestKit.Check("T02/inexistant/ORI", hG.ORI)
+  TestKit.Check("T02/inexistant/fiche", Norm(Replace(Fiche(hG), hG.DTE.LT, "<maintenant>")))
+
+End
+
+Public Sub T03Recherche()
+
+  Dim hG As LGed
+
+  OuvreGed()
+  ' compte et origine vides
+  TestKit.Check("T03/Exist/code", LGed.Exist(LGed.Clients, "FA000001"))
+  ' compte seul
+  TestKit.Check("T03/Exist/compte", LGed.Exist(LGed.Clients, "FA000001", "411001"))
+  TestKit.Check("T03/Exist/compte_faux", LGed.Exist(LGed.Clients, "FA000001", "411002"))
+  ' origine seule
+  TestKit.Check("T03/Exist/origine", LGed.Exist(LGed.Fournisseurs, "BR000002", "", "BR"))
+  TestKit.Check("T03/Exist/origine_fausse", LGed.Exist(LGed.Fournisseurs, "BR000002", "", "Facture"))
+  ' compte et origine
+  TestKit.Check("T03/Exist/compte_origine", LGed.Exist(LGed.Comptabilite, "125", "607000", "Facture"))
+  TestKit.Check("T03/Exist/type_faux", LGed.Exist(LGed.Autres, "125", "607000", "Facture"))
+  hG = LGed.Search(LGed.Comptabilite, "125", "607000", "Facture")
+  If IsNull(hG) Then
+    TestKit.Check("T03/Search/trouve", "<Null>")
+  Else
+    TestKit.Check("T03/Search/trouve", hG.ORI & "|" & hG.DTE.DT & "|" & hG.TTC.L)
+  Endif
+  hG = LGed.Search(LGed.Clients, "INCONNU")
+  TestKit.Check("T03/Search/absent", IsNull(hG))
+
+End
+
+Public Sub T04TagsBdd()
+
+  Dim hG As LGed
+  Dim v As Variant
+
+  OuvreGed()
+  hG = New LGed(Null, 1)
+  TestKit.Check("T04/AddTag/nouveau", hG.AddTag("nouveau"))
+  TestKit.Check("T04/AddTag/nouveau/etat", Etat())
+  TestKit.Check("T04/AddTag/existant", hG.AddTag("fournisseur"))
+  TestKit.Check("T04/AddTag/existant/etat", Etat())
+  ' Tag déjà porté par le document (LGED-A02) : erreur de collection figée si elle se produit
+  Try v = hG.AddTag("urgent")
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T04/AddTag/deja_porte", v)
+  TestKit.Check("T04/AddTag/deja_porte/etat", Etat())
+  TestKit.Check("T04/DelTag/client", hG.DelTag("client", False))
+  TestKit.Check("T04/DelTag/client/etat", Etat())
+  TestKit.Check("T04/DelTag/inexistant", hG.DelTag("inexistant"))
+  ' Document non enregistré (lind = 0) : tags créés sans liaison
+  hG = New LGed(Null, 0, LGed.Autres, "", "N1", "")
+  hG.AddTags(["a", "", "b"])
+  TestKit.Check("T04/AddTags/non_enregistre/etat", Etat())
+  ' DelAllTag avec épuration sur le document 2
+  hG = New LGed(Null, 2)
+  hG.DelAllTag()
+  TestKit.Check("T04/DelAllTag/doc2/etat", Etat())
+
+End
+
+Public Sub T05Epuration()
+
+  OuvreGed()
+  TestKit.Check("T05/initial", Etat())
+  ' LGED-A03 : la liaison pendante (99, compta) fait supprimer « compta » encore utilisé par le document 3
+  TestKit.Check("T05/EpurationTags", LGed.EpurationTags())
+  TestKit.Check("T05/EpurationTags/etat", Etat())
+  TestKit.Check("T05/EpurationDocs", LGed.EpurationDocs())
+  TestKit.Check("T05/EpurationDocs/etat", Etat())
+  TestKit.Check("T05/EpurationTags/2", LGed.EpurationTags())
+
+End
+
+Public Sub T06PDFDupli()
+
+  Dim hG As LGed
+  Dim sSrc As String = Application.Env["HOME"] &/ "tmp/source.pdf"
+  Dim r As Result
+  Dim sUrl As String
+
+  OuvreGed()
+  Racines()
+  File.Save(sSrc, "%PDF-1.4\n% document factice LGED-T06\n%%EOF\n")
+  ' Nouveau document Clients avec nom de fichier fourni
+  hG = New LGed(Null, 0, LGed.Clients, "Facture", "FA000009", "411002")
+  TestKit.Check("T06/nouveau/retour", hG.PDFDupli(sSrc, "FA-FA000009.pdf"))
+  r = Utils.db.Exec("SELECT MAX(lind) AS m FROM Docs_Ged")
+  TestKit.Check("T06/nouveau/ligne", Ligne(r!m))
+  r = Utils.db.Exec("SELECT url FROM Docs_Ged WHERE lind = &1", r!m)
+  sUrl = r!url
+  TestKit.Check("T06/nouveau/fichier", Exist(sUrl))
+  If Exist(sUrl) Then TestKit.Check("T06/nouveau/contenu", File.Load(sUrl) = File.Load(sSrc))
+  TestKit.Check("T06/nouveau/etat", Etat())
+  ' Document existant (doc 1) sans nom de fichier : URL par défaut, tags vidés (Commit)
+  hG = New LGed(Null, 1)
+  TestKit.Check("T06/existant/retour", hG.PDFDupli(sSrc))
+  TestKit.Check("T06/existant/ligne", Ligne(1))
+  r = Utils.db.Exec("SELECT url FROM Docs_Ged WHERE lind = 1")
+  sUrl = r!url
+  TestKit.Check("T06/existant/fichier", Exist(sUrl))
+  TestKit.Check("T06/existant/etat", Etat())
+  ' Source absente : code d'erreur, aucune ligne
+  hG = New LGed(Null, 0, LGed.Fournisseurs, "BR", "BR9", "401003")
+  TestKit.Check("T06/source_absente/retour", hG.PDFDupli(Application.Env["HOME"] &/ "tmp/absent.pdf", "BR9.pdf"))
+  TestKit.Check("T06/source_absente/etat", Etat())
+
+End
+
+Public Sub T07DefaultURL()
+
+  Dim hG As LGed
+  Dim iType As Integer
+  Dim sOri As String
+  Dim sMime As String
+  Dim hL As Object
+
+  ' Sans racine configurée (Laurux-test.conf)
+  hG = New LGed(Null, 0, LGed.Clients, "Facture", "FA 1.2", "411001")
+  TestKit.Check("T07/sans_racine", Norm(Replace(hG.Default_URL("fic.pdf"), hG.DTE.FT, "<FT>")))
+  Racines()
+  For iType = LGed.Clients To LGed.Articles
+    For Each sOri In ["", "Facture"]
+      hG = New LGed(Null, 0, iType, sOri, "C 1.5", "411001")
+      TestKit.Check("T07/type" & iType & "/ori" & sOri & "/nom", Norm(hG.Default_URL("doc.odt")))
+      hG = New LGed(Null, 0, iType, sOri, "C 1.5", "411001")
+      TestKit.Check("T07/type" & iType & "/ori" & sOri & "/defaut", Norm(Replace(hG.Default_URL(), hG.DTE.FT, "<FT>")))
+      TestKit.Check("T07/type" & iType & "/ori" & sOri & "/ORI", hG.ORI)
+    Next
+  Next
+  ' Document en base : date fixe, extension selon le MIME
+  OuvreGed()
+  For Each sMime In ["application/pdf", "text/html", "text/plain", "text/csv", "application/msword", "application/vnd.ms-excel", "application/zip", "application/gzip", "image/png", ""]
+    Utils.db.Exec("UPDATE Docs_Ged SET mime = &1 WHERE lind = 2", sMime)
+    hG = New LGed(Null, 2)
+    TestKit.Check("T07/mime/" & sMime & "/extension", hG.Get_Default_Extension("defaut"))
+    TestKit.Check("T07/mime/" & sMime & "/url", Norm(hG.Default_URL()))
+  Next
+  ' Tags de la fiche avec espace et point (LGED-A04 : Replace sans affectation, figé)
+  hG = New LGed(Null, 1)
+  hG.form_Open()
+  hL = hG.Controls["ListTags"]
+  hL.Add("mon tag.x")
+  TestKit.Check("T07/tags_fiche", Norm(hG.Default_URL()))
+
+End
+
+Public Sub T08Mime()
+
+  Dim hG As LGed
+  Dim sDir As String = Application.Env["HOME"] &/ "tmp/mime"
+
+  Mkdir sDir
+  File.Save(sDir &/ "doc.pdf", "%PDF-1.4\n%%EOF\n")
+  File.Save(sDir &/ "note.txt", "texte simple\n")
+  File.Save(sDir &/ "avec espace.txt", "texte simple\n")
+  hG = New LGed(Null, 0)
+  TestKit.Check("T08/pdf", hG.Get_Mime(sDir &/ "doc.pdf"))
+  TestKit.Check("T08/pdf_file_url", hG.Get_Mime("file://" & sDir &/ "doc.pdf"))
+  TestKit.Check("T08/texte", hG.Get_Mime(sDir &/ "note.txt"))
+  ' LGED-A06 : chemin non échappé dans Shell (espace)
+  TestKit.Check("T08/espace", hG.Get_Mime(sDir &/ "avec espace.txt"))
+  TestKit.Check("T08/absent", hG.Get_Mime(sDir &/ "absent.bin"))
+  TestKit.Check("T08/relatif", hG.Get_Mime("relatif/doc.pdf"))
+
+End
+
+Public Sub T09Supprime()
+
+  Dim hG As LGed
+  Dim sFic As String = Application.Env["HOME"] &/ "tmp/doc1.pdf"
+
+  OuvreGed()
+  File.Save(sFic, "%PDF-1.4\n%%EOF\n")
+  Utils.db.Exec("UPDATE Docs_Ged SET url = &1 WHERE lind = 1", "file://" & sFic)
+  hG = New LGed(Null, 1)
+  hG.Supprime(False)
+  TestKit.Check("T09/sans_epuration/etat", Etat())
+  TestKit.Check("T09/sans_epuration/fichier", Exist(sFic))
+  hG = New LGed(Null, 2)
+  hG.Supprime()
+  TestKit.Check("T09/epuration/etat", Etat())
+  ' Objet non enregistré : seule l'épuration est faite
+  hG = New LGed(Null, 0)
+  hG.Supprime()
+  TestKit.Check("T09/non_enregistre/etat", Etat())
+
+End

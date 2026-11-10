@@ -1,0 +1,88 @@
+' Gambas test file
+
+''Tests de CTestTVA (CTESTTVA-T01 à T04, .hidden/reference/.src/Utils/CTestTVA.class/test.md).
+''Valeurs attendues : assets/CTestTVATest/expected.txt, produites dans le clone de référence.
+''Le cas « moins de 3 caractères » (Message.Warning) est exclu : il bloquerait gb.test.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Cle", "`CleTVAIntra`")
+  TestKit.Desc("T02CleErreurs", "`CleTVAIntra` erreurs")
+  TestKit.Desc("T03ValidationFr", "`isIntraComValide` FR")
+  TestKit.Desc("T04ValidationAutres", "`isIntraComValide` hors FR")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CTestTVATest")
+
+End
+
+Private Function Cle(Siren As String) As String
+
+  Dim v As String
+
+  Try v = CStr(CTestTVA.CleTVAIntra(Siren))
+  If Error Then v = "ERREUR: " & Error.Text
+  Return v
+
+End
+
+Private Function Valide(Num As String, Optional Siren As String) As String
+
+  Dim v As String
+
+  Try v = TestKit.Canonique(CTestTVA.isIntraComValide(Num, Siren))
+  If Error Then v = "ERREUR: " & Error.Text
+  Return v
+
+End
+
+Public Sub T01Cle()
+
+  Dim sSiren As String
+
+  For Each sSiren In ["552100554", "542065479", "443061841", "552081317", "632012100", "000000000", "999999999"]
+    TestKit.Check("T01/" & sSiren, Cle(sSiren))
+  Next
+
+End
+
+Public Sub T02CleErreurs()
+
+  TestKit.Check("T02/ABC", Cle("ABC"))
+  TestKit.Check("T02/vide", Cle(""))
+  TestKit.Check("T02/12345678901234", Cle("12345678901234"))
+
+End
+
+Public Sub T03ValidationFr()
+
+  TestKit.Check("T03/FR96552100554", Valide("FR96552100554"))
+  TestKit.Check("T03/espaces2", Valide("FR 96 552 100 554"))
+  TestKit.Check("T03/minuscules2", Valide("fr96552100554"))
+  TestKit.Check("T03/siren2", Valide("FR96552100554", "552100554"))
+  TestKit.Check("T03/FR10632012100", Valide("FR10632012100"))
+  TestKit.Check("T03/FR03552081317", Valide("FR03552081317")) ' clé < 10 : "03" comparé à 3
+  TestKit.Check("T03/espaces", Valide("FR 03 552 081 317"))
+  TestKit.Check("T03/minuscules", Valide("fr03552081317"))
+  TestKit.Check("T03/cle1chiffre", Valide("FR3552081317"))
+  TestKit.Check("T03/clefausse", Valide("FR04552081317"))
+  TestKit.Check("T03/troplong", Valide("FR035520813170"))
+  TestKit.Check("T03/tropcourt", Valide("FR0355208131"))
+  TestKit.Check("T03/nonnumerique", Valide("FRAB552081317"))
+  TestKit.Check("T03/siren=", Valide("FR03552081317", "552081317"))
+  TestKit.Check("T03/sirenespaces", Valide("FR03552081317", "552 081 317"))
+  TestKit.Check("T03/sirendifferent", Valide("FR03552081317", "542065479"))
+  TestKit.Check("T03/sirenseul", Valide("FR03", "552081317"))
+
+End
+
+Public Sub T04ValidationAutres()
+
+  TestKit.Check("T04/DE123456789", Valide("DE123456789"))
+  TestKit.Check("T04/BE0123456789", Valide("BE0123456789"))
+
+End

@@ -1,0 +1,620 @@
+' Gambas test file
+
+''Tests de Utils.module (.hidden/reference/.src/Utils/Utils.module/test.md, UTILS-T01 à T21).
+''Valeurs attendues : assets/UtilsTest/expected.txt, produites dans le clone de référence.
+''Les entrées qui déclenchent un Message.* (FloatParse("abc"), Cdate_calc invalide, troncature de
+''Next_Code) ne sont pas exercées : bloquant sans interaction (attendre la séparation traitement/GUI).
+''Les cas qui dépendent de Now sont vérifiés par différence avec la date courante.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ConversionsNumeriques", "`cpoint`, `PointBase`, `CSlash`, `CDec`, `Find_nbdec`")
+  TestKit.Desc("T02FloatParse", "`FloatParse`")
+  TestKit.Desc("T03Arrondi", "`arrondi`")
+  TestKit.Desc("T04TotobsBool", "`totobs`, `convBool`, `convStr`")
+  TestKit.Desc("T05DatesFormats", "`Cdate_Dbase`, `Cdate2_Dbase`, `Cdate_Aff`, `Cdate_Carte`, `Cdate_Com`, `Cdate_Comp2`, `Cdate_Ciel`, `Cdate_Cador`, `Cdate_Sage`")
+  TestKit.Desc("T06CdateComp", "`Cdate_Comp`")
+  TestKit.Desc("T07CdateCalc", "`Cdate_calc` (hors cas d'erreur)")
+  TestKit.Desc("T08Mois", "`Calc_mois`, `mois`, `lastday`")
+  TestKit.Desc("T09CalcechMatrice", "`Calcech` (matrice)")
+  TestKit.Desc("T10Chaines", "`Remplace`, `ReplaceLb`, `Replace` (CP850), `Accent`")
+  TestKit.Desc("T11NextCode", "`Next_Code`")
+  TestKit.Desc("T12Calcode", "`Calcode`")
+  TestKit.Desc("T13ParseDivers", "`Fcolr`, `Fcoulfond`, `Nsoc`, `PageFormat*`")
+  TestKit.Desc("T14Option", "`Option`")
+  TestKit.Desc("T15FindCbarre", "`Find_cbarre`")
+  TestKit.Desc("T16Commande", "`Commande` (`\"Four\"`)")
+  TestKit.Desc("T17Orientation", "`orientation`")
+  TestKit.Desc("T18Glb", "`glb`")
+  TestKit.Desc("T19Ciel", "`Ciel`")
+  TestKit.Desc("T20MkdirRmdir", "`Mkdir_p`, `Rmdir_rf`")
+  TestKit.Desc("T21Log", "`Log`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "UtilsTest")
+
+End
+
+Private Sub Hexa(s As String) As String
+  ''Octets d'une chaîne en hexadécimal (chaînes non UTF-8 : CP850 de Utils.Replace).
+
+  Dim i As Integer
+  Dim sRes As String
+
+  For i = 1 To Len(s)
+    sRes &= Hex$(Asc(Mid$(s, i, 1)), 2)
+  Next
+  If sRes = "" Then Return "<vide>"
+  Return sRes
+
+End
+
+Public Sub T01ConversionsNumeriques()
+
+  Dim aEntrees As String[] = [Null, "", " 1.5", "1,5", "-3.155", "abc"]
+  Dim aNbdec As String[] = ["0", "2", "3", "4"]
+  Dim i As Integer
+  Dim sDec As String
+
+  For i = 0 To aEntrees.Max
+    TestKit.Check("T01/cpoint/" & i, Utils.cpoint(aEntrees[i]))
+    TestKit.Check("T01/PointBase/" & i, Utils.PointBase(aEntrees[i]))
+    TestKit.Check("T01/CSlash/" & i, Utils.CSlash(aEntrees[i]))
+    For Each sDec In aNbdec
+      TestKit.Check("T01/CDec/" & sDec & "/" & i, Utils.CDec(sDec, aEntrees[i]))
+    Next
+  Next
+  For Each sDec In ["0", "2", "3", "4", ""]
+    TestKit.Check("T01/Find_nbdec/" & sDec, Utils.Find_nbdec(sDec))
+  Next
+
+End
+
+Public Sub T02FloatParse()
+
+  ' "abc" : Message.Error (bloquant) non exercé
+  Dim aEntrees As String[] = ["1 234,56", "-3.15", "+ 2", "12", "", Null]
+  Dim i As Integer
+  Dim fRes As Float
+
+  For i = 0 To aEntrees.Max
+    Try fRes = Utils.FloatParse(aEntrees[i])
+    If Error Then
+      TestKit.Check("T02/" & i, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T02/" & i, fRes)
+    Endif
+  Next
+
+End
+
+Public Sub T03Arrondi()
+
+  Dim aChaines As String[] = ["1.005", "2,675", "-1.005", "0.125", "-0.125", "10", "0", "1.23456", "-2.5", "0.0049", "", "abc"]
+  Dim aFloats As Float[] = [1.005, 2.675, -1.005, 0.125, -0.125, 1.23456, -2.5, 0.0049, 1234.5675]
+  Dim i, n As Integer
+  Dim fRes As Float
+
+  For i = 0 To aChaines.Max
+    For n = 0 To 4
+      Try fRes = Utils.arrondi(aChaines[i], n)
+      If Error Then
+        TestKit.Check("T03/S/" & i & "/" & n, "ERREUR: " & Error.Text)
+      Else
+        TestKit.Check("T03/S/" & i & "/" & n, fRes)
+      Endif
+    Next
+  Next
+  For i = 0 To aFloats.Max
+    For n = 0 To 4
+      Try fRes = Utils.arrondi(aFloats[i], n)
+      If Error Then
+        TestKit.Check("T03/F/" & i & "/" & n, "ERREUR: " & Error.Text)
+      Else
+        TestKit.Check("T03/F/" & i & "/" & n, fRes)
+      Endif
+    Next
+  Next
+  TestKit.Check("T03/Null/2", Utils.arrondi(Null, 2))
+
+End
+
+Public Sub T04TotobsBool()
+
+  Dim aTab As String[]
+  Dim sVal As String
+
+  aTab = ["1.5", "2,5", "", "x"]
+  TestKit.Check("T04/totobs/mixte", Utils.totobs(aTab))
+  aTab = New String[]
+  TestKit.Check("T04/totobs/vide", Utils.totobs(aTab))
+  aTab = ["-1.25", "3", Null, "1e2", " 4"]
+  TestKit.Check("T04/totobs/divers", Utils.totobs(aTab))
+  For Each sVal In ["0", "", "1", "2", "x"]
+    TestKit.Check("T04/convBool/" & sVal, Utils.convBool(sVal))
+    TestKit.Check("T04/convStr/" & sVal, Utils.convStr(sVal))
+  Next
+
+End
+
+Public Sub T05DatesFormats()
+
+  Dim dD As Date = Date(2024, 3, 5, 14, 7, 9)
+  Dim aChaines As String[] = ["05.03.2024", "03/05/2024", "2024-03-05", "20240305", "03-05-2024 14:07:09"]
+  Dim i As Integer
+
+  TestKit.Check("T05/Date/Cdate_Dbase", Utils.Cdate_Dbase(dD))
+  TestKit.Check("T05/Date/Cdate2_Dbase", Utils.Cdate2_Dbase(dD))
+  TestKit.Check("T05/Date/Cdate_Aff", Utils.Cdate_Aff(dD))
+  TestKit.Check("T05/Date/Cdate_Carte", Utils.Cdate_Carte(dD))
+  TestKit.Check("T05/Date/Cdate_Com", Utils.Cdate_Com(dD))
+  TestKit.Check("T05/Date/Cdate_Comp2", Utils.Cdate_Comp2(dD))
+  TestKit.Check("T05/Date/Cdate_Ciel", Utils.Cdate_Ciel(dD))
+  ' UTILS-A05 : masque YY non interprété par Format$ (figé)
+  TestKit.Check("T05/Date/Cdate_Cador", Utils.Cdate_Cador(dD))
+  TestKit.Check("T05/Date/Cdate_Sage", Utils.Cdate_Sage(dD))
+  For i = 0 To aChaines.Max
+    TestKit.Check("T05/" & i & "/Cdate_Dbase", Utils.Cdate_Dbase(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate2_Dbase", Utils.Cdate2_Dbase(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate_Aff", Utils.Cdate_Aff(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate_Carte", Utils.Cdate_Carte(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate_Com", Utils.Cdate_Com(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate_Comp2", Utils.Cdate_Comp2(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate_Ciel", Utils.Cdate_Ciel(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate_Cador", Utils.Cdate_Cador(aChaines[i]))
+    TestKit.Check("T05/" & i & "/Cdate_Sage", Utils.Cdate_Sage(aChaines[i]))
+  Next
+
+End
+
+Public Sub T06CdateComp()
+
+  Dim aChaines As String[] = ["2024-01-31", "01-31-2024", "2024.01.31", "01.31.2024", "2024/01/31", "01/31/2024", "20240131", "2024-01-31 10:20:30"]
+  ' 999905 et 99990105 (branches LSL) : non exercés, ils bloquent (délai dépassé, Message probable dans LDate)
+  Dim aEntiers As Integer[] = [2024, 202401, 20240131]
+  Dim i As Integer
+  Dim sRes As String
+  Dim vVal As Variant
+
+  TestKit.Check("T06/Date", Utils.Cdate_Comp(Date(2024, 1, 31, 10, 20, 30)))
+  For i = 0 To aChaines.Max
+    TestKit.Check("T06/S/" & aChaines[i], Utils.Cdate_Comp(aChaines[i]))
+  Next
+  For i = 0 To aEntiers.Max
+    vVal = aEntiers[i]
+    Try sRes = Utils.Cdate_Comp(vVal)
+    If Error Then
+      TestKit.Check("T06/I/" & aEntiers[i], "ERREUR: " & Error.Text)
+    Else If sRes = Format(Now, "yyyymmdd") Then
+      TestKit.Check("T06/I/" & aEntiers[i], "<date du jour>")
+    Else
+      TestKit.Check("T06/I/" & aEntiers[i], sRes)
+    Endif
+  Next
+  vVal = CLong(2023)
+  Try sRes = Utils.Cdate_Comp(vVal)
+  If Error Then
+    TestKit.Check("T06/L/2023", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T06/L/2023", sRes)
+  Endif
+
+End
+
+Public Sub T07CdateCalc()
+
+  ' Mois et année courants injectés quand ils manquent dans la saisie : vérifiés par différence avec Now
+  ' (dMois, dAnnee) ; les composants saisis sont vérifiés en valeur. Entrées invalides (Message.Error) non exercées.
+  Dim aEntrees As String[] = ["05", "0503", "050324", "05.03.2024", "05/03/2024", "29022024"]
+  Dim aMoisSaisi As Boolean[] = [False, True, True, True, True, True]
+  Dim aAnneeSaisie As Boolean[] = [False, False, True, True, True, True]
+  Dim i As Integer
+  Dim sEntree As String
+  Dim dRes As Date
+
+  For i = 0 To aEntrees.Max
+    sEntree = aEntrees[i]
+    Try dRes = Utils.Cdate_calc(sEntree)
+    If Error Then
+      TestKit.Check("T07/" & sEntree, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T07/" & sEntree & "/jour", Day(dRes))
+      TestKit.Check("T07/" & sEntree & "/heure", Format(dRes, "hh:nn:ss"))
+      If aMoisSaisi[i] Then
+        TestKit.Check("T07/" & sEntree & "/mois", Month(dRes))
+      Else
+        TestKit.Check("T07/" & sEntree & "/dMois", Month(dRes) - Month(Now))
+      Endif
+      If aAnneeSaisie[i] Then
+        TestKit.Check("T07/" & sEntree & "/annee", Year(dRes))
+      Else
+        TestKit.Check("T07/" & sEntree & "/dAnnee", Year(dRes) - Year(Now))
+      Endif
+    Endif
+  Next
+  Try dRes = Utils.Cdate_calc(Null)
+  If Error Then
+    TestKit.Check("T07/Null", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T07/Null", dRes)
+  Endif
+
+End
+
+Public Sub T08Mois()
+
+  Dim i As Integer
+  Dim sRes As String
+
+  For i = 1 To 12
+    TestKit.Check("T08/Calc_mois/D/" & i, Utils.Calc_mois(Date(2023, i, 31 - IIf(i = 2, 3, 0) - IIf(i = 4 Or i = 6 Or i = 9 Or i = 11, 1, 0))))
+    TestKit.Check("T08/Calc_mois/S/" & i, Utils.Calc_mois(Format(i, "00") & ".15.2023"))
+    TestKit.Check("T08/lastday/2023/" & i, Utils.lastday(Date(2023, i, 1)))
+  Next
+  TestKit.Check("T08/Calc_mois/D/2024-01-31", Utils.Calc_mois(Date(2024, 1, 31)))
+  TestKit.Check("T08/lastday/2024/2", Utils.lastday(Date(2024, 2, 10)))
+  TestKit.Check("T08/lastday/2100/2", Utils.lastday(Date(2100, 2, 10)))
+  TestKit.Check("T08/lastday/2000/2", Utils.lastday(Date(2000, 2, 10)))
+  For i = 0 To 13
+    TestKit.Check("T08/mois/" & i, Utils.mois(i))
+  Next
+  Try sRes = Utils.Calc_mois("")
+  If Error Then
+    TestKit.Check("T08/Calc_mois/vide", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T08/Calc_mois/vide", sRes)
+  Endif
+
+End
+
+Public Sub T09CalcechMatrice()
+
+  ' Une clé par (durée, jours, fin de mois) : les résultats des 61 dates de facture séparés par « | ».
+  Dim aDurees As String[] = ["00", "30", "45", "60", "90"]
+  Dim aJours As String[] = ["00", "05", "10", "15", "25", "30"]
+  Dim aFinMois As Boolean[] = [True, False]
+  Dim aDates As String[]
+  Dim aRes As String[]
+  Dim sDuree, sJours, sDate, sRes As String
+  Dim bFin As Boolean
+  Dim m, j As Integer
+  Dim iErreurs As Integer
+
+  aDates = New String[]
+  For m = 1 To 12
+    For Each j In [1, 15, 28, 30, 31]
+      aDates.Add(Format(j, "00") & "." & Format(m, "00") & ".2023")
+    Next
+  Next
+  aDates.Add("29.02.2024")
+  For Each sDuree In aDurees
+    For Each sJours In aJours
+      For Each bFin In aFinMois
+        aRes = New String[]
+        For Each sDate In aDates
+          Try sRes = Utils.Calcech(sDuree, sJours, bFin, sDate)
+          If Error Then
+            aRes.Add(sDate & "=ERREUR: " & Error.Text)
+            Inc iErreurs
+          Else
+            aRes.Add(sDate & "=" & sRes)
+          Endif
+        Next
+        TestKit.Check("T09/" & sDuree & "/" & sJours & "/" & IIf(bFin, "FM", "NFM"), aRes.Join("|"))
+      Next
+    Next
+  Next
+  TestKit.Check("T09/nb_erreurs", iErreurs)
+
+End
+
+Public Sub T10Chaines()
+
+  Dim aEntrees As String[] = ["Dupont \"et\" fils", "A & B", "ligne1\nligne2", "l'été", "çüéâäàêëèôö°", "", "à côté\n\"&'"]
+  Dim i As Integer
+
+  For i = 0 To aEntrees.Max
+    TestKit.Check("T10/Remplace/" & i, Utils.Remplace(aEntrees[i]))
+    TestKit.Check("T10/ReplaceLb/" & i, Utils.ReplaceLb(aEntrees[i]))
+    TestKit.Check("T10/Replace_hexa/" & i, Hexa(Utils.Replace(aEntrees[i])))
+    ' UTILS-A12 : Accent remplace ô par e (figé)
+    TestKit.Check("T10/Accent/" & i, Utils.Accent(aEntrees[i]))
+  Next
+
+End
+
+Public Sub T11NextCode()
+
+  ' Codes dont la sortie dépasse max_length : Message.Warning (bloquant) non exercé.
+  Dim aEntrees As String[] = ["", "9", "99", "A009", "A099", "AZ", "Zz", "z", "A-", "A00000000000099", "abc", "B12C", "-5", "007"]
+  Dim sEntree As String
+  Dim sRes As String
+
+  For Each sEntree In aEntrees
+    Try sRes = Utils.Next_Code(sEntree)
+    If Error Then
+      TestKit.Check("T11/" & sEntree, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T11/" & sEntree, sRes)
+    Endif
+  Next
+  TestKit.Check("T11/A1/max4", Utils.Next_Code("A1", 4))
+
+End
+
+Public Sub T12Calcode()
+
+  Dim aEntrees As String[] = ["400638133393", "4006381333931", "9638507", "96385074", "214841320000", "", "123", "12A4"]
+  Dim sEntree As String
+
+  Dim sRes As String
+
+  For Each sEntree In aEntrees
+    Try sRes = Utils.Calcode(sEntree)
+    If Error Then sRes = "ERREUR: " & Error.Text
+    TestKit.Check("T12/" & sEntree, sRes)
+  Next
+
+End
+
+Public Sub T13ParseDivers()
+
+  Dim sPage As String
+  Dim aRes As String[]
+
+  TestKit.Check("T13/Fcolr/complet", Utils.Fcolr("background: 123; font: x; foreground: 456;"))
+  TestKit.Check("T13/Fcolr/sans_espace", Utils.Fcolr("background:123;font:x;foreground:456"))
+  TestKit.Check("T13/Fcolr/vide", Utils.Fcolr(""))
+  TestKit.Check("T13/Fcolr/majuscules", Utils.Fcolr("Background: &HFF00FF&; Foreground: &H000000&"))
+  ' Fcoulfond met la chaîne en minuscules puis compare à "R"/"G"/"B" : jamais trouvé (candidat anomalie)
+  TestKit.Check("T13/Fcoulfond/RGB", Utils.Fcoulfond("R: 1,G: 2,B: 3"))
+  TestKit.Check("T13/Fcoulfond/vide", Utils.Fcoulfond(""))
+  ' Nsoc renvoie une String déclarée String[] : erreur de type à chaque appel (candidat anomalie)
+  Try aRes = Utils.Nsoc("01:Soc")
+  If Error Then
+    TestKit.Check("T13/Nsoc/01:Soc", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T13/Nsoc/01:Soc", aRes)
+  Endif
+  Try aRes = Utils.Nsoc("01")
+  If Error Then
+    TestKit.Check("T13/Nsoc/sans", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T13/Nsoc/sans", aRes)
+  Endif
+  TestKit.Check("T13/PageFormatSupported", Utils.PageFormatSupported())
+  For Each sPage In ["A4 Portrait", "A4 Paysage", "A5 Portrait", "A5 Paysage", "Lettre"]
+    TestKit.Check("T13/PageFormat/" & sPage, Utils.PageFormatGetX(sPage) & "x" & Utils.PageFormatGetY(sPage))
+  Next
+  TestKit.Check("T13/Coulfd", Utils.Coulfd())
+
+End
+
+Public Sub T14Option()
+
+  Dim aValeurs As Variant[] = [Null, "0", "1", False, True]
+  Dim vBois, vPp As Variant
+  Dim i, j As Integer
+
+  For i = 0 To aValeurs.Max
+    For j = 0 To aValeurs.Max
+      vBois = aValeurs[i]
+      vPp = aValeurs[j]
+      Start.LocalSettings["/Soc01/bois"] = vBois
+      Start.LocalSettings["/Soc01/pp"] = vPp
+      TestKit.Check("T14/bois=" & TestKit.Canonique(vBois) & "/pp=" & TestKit.Canonique(vPp), Utils.Option())
+    Next
+  Next
+
+End
+
+Public Sub T15FindCbarre()
+
+  Dim aEntrees As String[] = ["2148413200001", "2640636100002", "001", "003", "3000000000017", "999", "", Null]
+  Dim i As Integer
+  Dim sRes As String
+
+  TestKit.OuvreBase("utils_cbarre_commande")
+  For i = 0 To aEntrees.Max
+    Try sRes = Utils.Find_cbarre(aEntrees[i])
+    If Error Then
+      TestKit.Check("T15/" & i, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T15/" & i, sRes)
+    Endif
+  Next
+
+End
+
+Public Sub T16Commande()
+
+  Dim aArt As String[] = ["001", "002", "003", "999"]
+  Dim aUv As String[] = ["1", "6"]
+  Dim aDec As String[] = ["", "0", "2", "3"]
+  Dim sArt, sUv, sDec, sRes As String
+
+  TestKit.OuvreBase("utils_cbarre_commande")
+  For Each sArt In aArt
+    For Each sUv In aUv
+      For Each sDec In aDec
+        Try sRes = Utils.Commande(sArt, sDec, sUv, "Four")
+        If Error Then sRes = "ERREUR: " & Error.Text
+        TestKit.Check("T16/Four/" & sArt & "/uv" & sUv & "/dec" & sDec, sRes)
+      Next
+    Next
+    ' UTILS-A10 : branche org <> "Four", colonne code inexistante dans Fiches_Ligbl (erreur figée)
+    Try sRes = Utils.Commande(sArt, "2", "1", "Cli")
+    If Error Then sRes = "ERREUR: " & Error.Text
+    TestKit.Check("T16/Cli/" & sArt, sRes)
+  Next
+
+End
+
+Public Sub T17Orientation()
+
+  Dim aChoix As String[] = ["F", "B", "FM"]
+  Dim sChoix As String
+  Dim bRes As Boolean
+  Dim sRes As String
+  Dim aNum As String[] = ["000001", "000002", "000003", "999999"]
+  Dim sNum As String
+
+  TestKit.OuvreBase()
+  ' Sans option bois : aucune lecture de la base
+  For Each sChoix In aChoix
+    Start.LocalSettings["/Soc01/bois"] = False
+    TestKit.Check("T17/sans_option/" & sChoix, Utils.orientation("000001", sChoix))
+  Next
+  ' UTILS-A09 : la branche FM interroge la table Bl (erreur figée)
+  ' Option bois sur Laurux01.sql (tables de l'option absentes) : erreurs figées
+  Start.LocalSettings["/Soc01/bois"] = True
+  For Each sChoix In aChoix
+    Try bRes = Utils.orientation("000001", sChoix)
+    If Error Then
+      sRes = "ERREUR: " & Error.Text
+    Else
+      sRes = TestKit.Canonique(bRes)
+    Endif
+    TestKit.Check("T17/bois_laurux01/" & sChoix, sRes)
+  Next
+  ' Option bois avec le jeu dérivé (tables minimales de l'option)
+  TestKit.OuvreBase("utils_orientation")
+  For Each sNum In aNum
+    For Each sChoix In aChoix
+      Try bRes = Utils.orientation(sNum, sChoix)
+      If Error Then
+        sRes = "ERREUR: " & Error.Text
+      Else
+        sRes = TestKit.Canonique(bRes)
+      Endif
+      TestKit.Check("T17/bois/" & sNum & "/" & sChoix, sRes)
+    Next
+  Next
+  Try bRes = Utils.orientation("C001", "FM", "Client")
+  If Error Then
+    sRes = "ERREUR: " & Error.Text
+  Else
+    sRes = TestKit.Canonique(bRes)
+  Endif
+  TestKit.Check("T17/bois/FM_nom", sRes)
+
+End
+
+Public Sub T18Glb()
+
+  ' MySQL direct (configuration de test)
+  Utils.glb()
+  TestKit.Check("T18/mysql/type", Utils.db.Type)
+  ' Hôte de la base de test : 127.0.0.1 sur l'hôte, « db » dans le conteneur runner, vérifié par égalité
+  TestKit.Check("T18/mysql/Host_conf", Utils.db.Host = Start.LocalSettings["/dbase/Host"])
+  ' Port de la base de test : propre à chaque bac à sable (LAURUX_TEST_DB_PORT), vérifié par égalité
+  TestKit.Check("T18/mysql/Port_conf", Utils.db.Port = Start.LocalSettings["/dbase/Port"])
+  TestKit.Check("T18/mysql/Name", Utils.db.Name)
+  TestKit.Check("T18/mysql/Login", Utils.db.Login)
+  TestKit.Check("T18/mysql/Password", Utils.db.Password)
+  ' MySQL + tunnel SSH
+  Start.LocalSettings["/dbase/Prefixe"] = "pre_"
+  Start.LocalSettings["/dbase/Con-ssh"] = True
+  Start.LocalSettings["/dbase/Host"] = "serveur.mysql"
+  Start.LocalSettings["/dbase/Port"] = "3307"
+  Start.LocalSettings["/dbase/ssh/Portlocal"] = "13999"
+  Start.LocalSettings["/dbase/ssh/Portssh"] = "2222"
+  Start.LocalSettings["/dbase/ssh/Passwssh"] = "2D0D0D0D0D0D"
+  Start.LocalSettings["/dbase/ssh/Passphrase"] = "phrase"
+  Start.LocalSettings["/dbase/ssh/Hostssh"] = "passerelle.ssh"
+  Start.LocalSettings["/dbase/ssh/Login"] = "util"
+  Utils.glb()
+  TestKit.Check("T18/ssh/Host", Utils.db.Host)
+  TestKit.Check("T18/ssh/Port", Utils.db.Port)
+  TestKit.Check("T18/ssh/Name", Utils.db.Name)
+  TestKit.Check("T18/ssh/MysqlPort", Utils.mysqlPort)
+  TestKit.Check("T18/ssh/MysqlServeur", Utils.MysqlServeur)
+  TestKit.Check("T18/ssh/RemotePort", Utils.RemotePort)
+  TestKit.Check("T18/ssh/SshPort", Utils.SshPort)
+  TestKit.Check("T18/ssh/SshPassw", Utils.SshPassw)
+  TestKit.Check("T18/ssh/SshPassphrase", Utils.SshPassphrase)
+  TestKit.Check("T18/ssh/SshHost", Utils.SshHost)
+  TestKit.Check("T18/ssh/SshUser", Utils.SshUser)
+  ' SQLite
+  Start.LocalSettings["/dbase/type"] = "sqlite3"
+  Start.LocalSettings["/dbase/Host"] = "/tmp/bases"
+  Utils.glb()
+  TestKit.Check("T18/sqlite/type", Utils.db.Type)
+  TestKit.Check("T18/sqlite/Host", Utils.db.Host)
+  TestKit.Check("T18/sqlite/Name", Utils.db.Name)
+
+End
+
+Public Sub T19Ciel()
+
+  Dim r As Result
+  Dim sErr As String
+
+  TestKit.OuvreBase()
+  r = Utils.db.Exec("SHOW TABLES LIKE 'Ciel_Lrx%'")
+  TestKit.Check("T19/avant/tables", r.Count)
+  Try Utils.Ciel()
+  If Error Then sErr = "ERREUR: " & Error.Text
+  TestKit.Check("T19/appel1/erreur", sErr)
+  r = Utils.db.Exec("SHOW TABLES LIKE 'Ciel_Lrx%'")
+  TestKit.Check("T19/apres/tables", r.Count)
+  r = Utils.db.Exec("SHOW COLUMNS FROM Fiches_Parametres LIKE 'imp_ciel'")
+  TestKit.Check("T19/apres/imp_ciel", r.Count)
+  If r.Available Then TestKit.Check("T19/apres/imp_ciel/type", r!Type)
+  r = Utils.db.Exec("SHOW COLUMNS FROM Ciel_Lrx")
+  TestKit.Check("T19/Ciel_Lrx/colonnes", r.Count)
+  r = Utils.db.Exec("SHOW COLUMNS FROM Ciel_Lrx_Jo")
+  TestKit.Check("T19/Ciel_Lrx_Jo/colonnes", r.Count)
+  sErr = ""
+  Try Utils.Ciel()
+  If Error Then sErr = "ERREUR: " & Error.Text
+  TestKit.Check("T19/appel2/erreur", sErr)
+
+End
+
+Public Sub T20MkdirRmdir()
+
+  Dim sBase As String = User.Home &/ "t20"
+
+  TestKit.Check("T20/Mkdir_p/simple", Utils.Mkdir_p(sBase &/ "simple"))
+  TestKit.Check("T20/Mkdir_p/simple/existe", Exist(sBase &/ "simple"))
+  TestKit.Check("T20/Mkdir_p/simple/droits", Stat(sBase &/ "simple").Auth)
+  TestKit.Check("T20/Mkdir_p/imbrique", Utils.Mkdir_p(sBase &/ "a/b/c", "rwx------"))
+  TestKit.Check("T20/Mkdir_p/imbrique/existe", Exist(sBase &/ "a/b/c"))
+  TestKit.Check("T20/Mkdir_p/imbrique/droits", Stat(sBase &/ "a/b/c").Auth)
+  TestKit.Check("T20/Mkdir_p/existant", Utils.Mkdir_p(sBase &/ "simple"))
+  TestKit.Check("T20/Rmdir_rf/imbrique", Utils.Rmdir_rf(sBase &/ "a"))
+  TestKit.Check("T20/Rmdir_rf/imbrique/existe", Exist(sBase &/ "a"))
+  TestKit.Check("T20/Rmdir_rf/absent", Utils.Rmdir_rf(sBase &/ "absent"))
+  TestKit.Check("T20/Rmdir_rf/racine", Utils.Rmdir_rf("/"))
+  TestKit.Check("T20/Rmdir_rf/home", Utils.Rmdir_rf(User.Home))
+  TestKit.Check("T20/Rmdir_rf/home/existe", Exist(User.Home))
+  TestKit.Check("T20/Rmdir_rf/Null", Utils.Rmdir_rf(Null))
+  TestKit.Check("T20/Rmdir_rf/simple", Utils.Rmdir_rf(sBase &/ "simple"))
+  TestKit.Check("T20/Rmdir_rf/simple/existe", Exist(sBase &/ "simple"))
+
+End
+
+Public Sub T21Log()
+
+  Dim hObj As New Collection
+
+  Start.Arg_Debug = ""
+  Utils.Log("TestNom", "message 1")
+  Utils.Log("TestNom", "message 2", LLog.Error)
+  TestKit.Check("T21/nom/nb_loggers", Start.LLogColl.Count)
+  TestKit.Check("T21/nom/existe", Start.LLogColl.Exist("TestNom"))
+  TestKit.Check("T21/nom/fichier", Exist(User.Home &/ "tmp/Debug/TestNom.log"))
+  TestKit.Check("T21/nom/active", Start.LLogColl["TestNom"].Enabled)
+  Start.Arg_Debug = "3,3"
+  Utils.Log(hObj, "message objet")
+  Utils.Log(hObj, "message objet 2")
+  TestKit.Check("T21/objet/nb_loggers", Start.LLogColl.Count)
+  TestKit.Check("T21/objet/existe", Start.LLogColl.Exist("Collection"))
+  TestKit.Check("T21/objet/active", Start.LLogColl["Collection"].Enabled)
+
+End

@@ -1,0 +1,35 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_CdBarre where codeb = '2148413200001'
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Fam WHERE code_fam = '01'
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Fam WHERE code_fam = '02'
+SELECT * FROM Fiches_Fam WHERE code_fam = '02'
+LOCK TABLES Fiches_Art WRITE, Fiches_HistoLigfac WRITE, Fiches_HistoLigfacM WRITE, Fiches_Ligbl WRITE, Fiches_LigblM WRITE, Fiches_Materiels WRITE, Fiches_HisLigTickets WRITE, Fiches_LigTicketz WRITE , Docs_Ged Write , Fiches_ArtPromo Write , Fiches_CdBarre Write , Fiches_CdFour Write , Fiches_Cequ Write , Fiches_EtiGond Write , Fiches_EtiProd Write , Fiches_HisInvT Write , Fiches_Inv Write , Fiches_InvT Write , Fiches_Ligcom Write , Fiches_Ligrecpt Write , Fiches_Mvtexp Write , Fiches_Mvtexpdc Write , Fiches_PrdComp Write , Fiches_Rpl1 Write , Fiches_Rpl2 Write , Fiches_Tarcli Write , Fiches_TarTypcli Write , Rupture Write , RuptureC Write
+UPdate Fiches_Art  SET  art_fam = '02' where art_code = '001'
+UPdate Fiches_HistoLigfac  SET  fam_ligfac = '02' where code_ligfac = '001'
+UPdate Fiches_Ligbl  SET  fam_ligbl = '02' where code_ligbl = '001'
+UPdate Fiches_LigblM SET  fam_ligbl = '02' where code_ligbl = '001'
+UPdate Fiches_HistoLigfacM  SET  fam_ligfac = '02' where code_ligfac = '001'
+UPdate Fiches_Materiels  SET  mat_fam = '02' where mat_code = '001'
+UPdate Fiches_HisLigTickets SET fam = '02' WHERE code='001'
+UPdate Fiches_LigTicketz SET fam = '02' WHERE code='001'
+UNLOCK TABLES

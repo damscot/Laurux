@@ -1,0 +1,48 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind limit 1
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind       order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%u%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%ur%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%urg%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%urge%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%urgen%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%urgent%")   group by doc_lind    order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%urgent%")   group by doc_lind    order by t.doc_lind
+Select * From Docs_Ged where lind = 1
+Select * From Docs_Tag inner join Fiches_Tag on tag_lind = lind where doc_lind = 1
+delete FROM Docs_Ged where lind = 1
+delete FROM Docs_Tag where doc_lind = 1
+Select * From Docs_Ged where lind = 2
+Select * From Docs_Tag inner join Fiches_Tag on tag_lind = lind where doc_lind = 2
+delete FROM Docs_Ged where lind = 2
+delete FROM Docs_Tag where doc_lind = 2
+select t.lind as tagidx, doc_lind, tag_lind, d.lind as docidx FROM Fiches_Tag as t left join Docs_Tag on t.lind = tag_lind left join Docs_Ged as d on d.lind = doc_lind where d.lind is null or doc_lind is null or tag_lind is null
+delete FROM Fiches_Tag where lind = 1
+delete FROM Fiches_Tag where lind = 2
+delete FROM Fiches_Tag where lind = 3
+delete FROM Fiches_Tag where lind = 4
+delete FROM Fiches_Tag where lind = 5
+Select lind From Docs_Ged left join Docs_Tag On lind = doc_lind where doc_lind Is Null 
+delete FROM Docs_Ged where lind = 4
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind limit 1
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind       order by t.doc_lind limit 0, 22
+select *, GROUP_CONCAT(tag SEPARATOR ',') as parse_having_tags from Fiches_Tag inner join Docs_Tag as t on lind=t.tag_lind inner join Docs_Ged as d on d.lind=t.doc_lind where (tag like "%urgent%")   group by doc_lind    order by t.doc_lind limit 0, 22
