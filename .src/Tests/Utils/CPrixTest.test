@@ -1,0 +1,60 @@
+' Gambas test file
+
+''Tests de CPrix (.hidden/reference/.src/Utils/CPrix.module/test.md, CPRIX-T01 et T02).
+''Valeurs attendues : assets/CPrixTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Cascade", "`Cascade`")
+  TestKit.Desc("T02CTva", "`CTva`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CPrixTest")
+
+End
+
+Private Sub Cascades(Prefixe As String)
+
+  Dim aPa As String[] = ["100", "100,50", "0", "", "abc", "100", "1 000,5", "12.5"]
+  Dim aRem As String[] = ["10", "2.5", "50", "", "10", "-10", "3,333", "100"]
+  Dim i As Integer
+  Dim sRes As String
+
+  For i = 0 To aPa.Max
+    Try sRes = CPrix.Cascade(aPa[i], aRem[i])
+    If Error Then sRes = "ERREUR: " & Error.Text
+    TestKit.Check(Prefixe & i, sRes)
+  Next
+
+End
+
+Public Sub T01Cascade()
+
+  Dim sLangue As String = System.Language
+
+  Cascades("T01/" & sLangue & "/")
+  ' Seconde locale : C (dépendance de Val à la locale)
+  System.Language = "C"
+  Cascades("T01/C/")
+  System.Language = sLangue
+
+End
+
+Public Sub T02CTva()
+
+  Dim aCodes As String[] = ["1", "2", "3", "9", "", "abc"]
+  Dim i As Integer
+  Dim sRes As String
+
+  TestKit.OuvreBase()
+  For i = 0 To aCodes.Max
+    Try sRes = CPrix.CTva(aCodes[i])
+    If Error Then sRes = "ERREUR: " & Error.Text
+    TestKit.Check("T02/" & aCodes[i], sRes)
+  Next
+
+End

@@ -3,6 +3,13 @@
 ''Fumée du framework : base restaurée et ouverte par TestKit.OuvreBase (à supprimer quand des tests réels
 ''de base de données existeront).
 
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Version", "version")
+
+End
+
 Public Sub _Setup()
 
   TestKit.Begin("Utils", "DbSmokeTest")
@@ -10,7 +17,7 @@ Public Sub _Setup()
 
 End
 
-Public Sub T01_Version()
+Public Sub T01Version()
 
   Dim r As Result
 

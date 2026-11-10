@@ -9,14 +9,14 @@ commandes lancées écrivent dans un répertoire temporaire du test, dont le con
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LSCRIPT-T01 | gbtest | `Run` mode shell | `LScript("/bin/bash", ["-c", "echo test > f"])` | code 0 ; contenu de `f` | `tests/run_shell/` | à faire |
-| LSCRIPT-T02 | gbtest | `Run` mode exec | `LScript("/bin/bash", ["-c", "echo test2 > f"], False)` | code 0 ; contenu de `f` | `tests/run_exec/` | à faire |
-| LSCRIPT-T03 | gbtest | Codes de retour | `/bin/faaalse` (exec), `/bin/false` (exec), `/bin/true` (shell), programme vide | 1, 0 (anomalie figée), 0, valeur figée | `tests/codes_retour/` | à faire |
-| LSCRIPT-T04 | gbtest | Arguments avec espaces et métacaractères | shell et exec : `["-c", "printf '%s|' \"$@\"", "x", "a b", "c;d"]` | sortie de référence (figer le découpage du mode shell) | `tests/quotage/` | à faire |
-| LSCRIPT-T05 | gbtest | `RunA` | liste [ok, échec, ok] ; liste vide | 1 et arrêt après l'échec (3e non lancé) ; 0 | `tests/run_liste/` | à faire |
-| LSCRIPT-T06 | gbtest | Mode `debug2` | `LScript("debug2", ["a", "b"])` | 0 ; sortie console capturée | `tests/debug2/` | à faire |
-| LSCRIPT-T07 | gbtest | Double `Run` (effet de bord) | même instance lancée deux fois ; tableau d'arguments de l'appelant | figer : programme inséré deux fois, tableau appelant modifié | `tests/double_run/` | à faire |
-| LSCRIPT-T08 | gbtest | Journalisation | `Utils.Log` actif (`-d`) | lignes `[LScript]` dans `~/tmp/Debug/LScript.log` | `tests/journalisation/` | à faire |
+| LSCRIPT-T01 | gbtest | `Run` mode shell | `LScript("/bin/bash", ["-c", "echo test > f"])` | code 0 ; contenu de `f` | `tests/run_shell/` | implémenté |
+| LSCRIPT-T02 | gbtest | `Run` mode exec | `LScript("/bin/bash", ["-c", "echo test2 > f"], False)` | code 0 ; contenu de `f` | `tests/run_exec/` | implémenté |
+| LSCRIPT-T03 | gbtest | Codes de retour | `/bin/faaalse` (exec), `/bin/false` (exec), `/bin/true` (shell), programme vide | 1, 0 (anomalie figée), 0, valeur figée | `tests/codes_retour/` | implémenté |
+| LSCRIPT-T04 | gbtest | Arguments avec espaces et métacaractères | shell et exec : `["-c", "printf '%s|' \"$@\"", "x", "a b", "c;d"]` | sortie de référence (figer le découpage du mode shell) | `tests/quotage/` | implémenté |
+| LSCRIPT-T05 | gbtest | `RunA` | liste [ok, échec, ok] ; liste vide | 1 et arrêt après l'échec (3e non lancé) ; 0 | `tests/run_liste/` | implémenté |
+| LSCRIPT-T06 | gbtest | Mode `debug2` | `LScript("debug2", ["a", "b"])` | 0 ; sortie console capturée | `tests/debug2/` | implémenté |
+| LSCRIPT-T07 | gbtest | Double `Run` (effet de bord) | même instance lancée deux fois ; tableau d'arguments de l'appelant | figer : programme inséré deux fois, tableau appelant modifié | `tests/double_run/` | implémenté |
+| LSCRIPT-T08 | gbtest | Journalisation | `Utils.Log` actif (`-d`) | lignes `[LScript]` dans `~/tmp/Debug/LScript.log` | `tests/journalisation/` | implémenté |
 
 ## Détail des tests
 
@@ -25,3 +25,4 @@ commandes lancées écrivent dans un répertoire temporaire du test, dont le con
   documenté comme test manuel de `LGed`.
 - **Non testable automatiquement** : le mode `debug` (boîte `Message.Info`).
 - `HOME` est redirigé vers le répertoire du test.
+- **Implémentation (phase 2)** : `.src/Tests/Utils/LScriptTest.test` (`T01…T08`), vérifications de l'ancien `Internal_Test` conservées (clés `bash/echo`, `RunA`, `faaalse`, `false`, `true`). Chaque test commence par un premier appel `LScript(…)` figé (« Type mismatch »).

@@ -7,7 +7,7 @@ Module mort : aucun comportement observable à figer.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| GRIDV-T01 | gbtest | Absence de référence | `gbc3 -agt` après suppression ; `grep -rniE 'gridv\.|ajoustat' .src` | compilation sans erreur, aucune occurrence de code | `tests/suppression/` | à faire |
+| GRIDV-T01 | gbtest | Absence de référence | `gbc3 -agt` après suppression ; `grep -rniE 'gridv\.|ajoustat' .src` | compilation sans erreur, aucune occurrence de code | `tests/suppression/` | à faire : module mort, contrôle de build (suppression + grep) à porter par la validation de phase 4 |
 
 ## Détail des tests
 

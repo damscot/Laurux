@@ -1,0 +1,52 @@
+' Gambas test file
+
+''Tests de Recup (.hidden/reference/.src/Utils/Recup.module/test.md, RECUP-T01 et T02).
+''Le nom d'utilisateur et le groupe dépendent de la machine : on vérifie l'égalité avec le système
+''(id -un / id -gn) et non une valeur figée. HOME isolé du runner, avec ~/tmp.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Utilisateur", "`Utilisateur`")
+  TestKit.Desc("T02Group", "`Group` (avant suppression)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "RecupTest")
+
+End
+
+Private Function Systeme(Commande As String) As String
+
+  Dim sRes As String
+
+  Shell Commande To sRes
+  Return Trim$(sRes)
+
+End
+
+Public Sub T01Utilisateur()
+
+  Dim sNom As String = Recup.Utilisateur()
+
+  TestKit.Check("T01/non_vide", sNom <> "")
+  TestKit.Check("T01/egal_id_un", sNom = Systeme("id -un"))
+
+End
+
+Public Sub T02Group()
+
+  Dim sGroupe As String
+
+  Try sGroupe = Recup.Group()
+  If Error Then
+    TestKit.Check("T02/groupe", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T02/non_vide", sGroupe <> "")
+  TestKit.Check("T02/egal_id_gn", sGroupe = Systeme("id -gn"))
+  TestKit.Check("T02/fichier_tmp_group", Exist(User.Home &/ "tmp/group"))
+
+End

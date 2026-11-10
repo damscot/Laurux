@@ -8,15 +8,16 @@ Contrôle graphique : tests **gbtest sous affichage virtuel** (Xvfb, à confirme
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TEXTFAMILLE-T01 | gbtest | Construction | `ipr = [1, 3, 5]` | 3 zones, `MaxLength` 1/2/2 | `tests/construction/` | à faire |
-| TEXTFAMILLE-T02 | gbtest | `text` écriture/lecture | `"A0102"`, `"A01"`, `"A"`, `""`, `"A0102XYZ"` | zones et relecture de référence | `tests/text/` | à faire |
-| TEXTFAMILLE-T03 | gbtest | Niveau vide intermédiaire | zone 1 vide, zone 2 `"01"` | figer le résultat de `Trim$` | `tests/niveau_vide/` | à faire |
-| TEXTFAMILLE-T04 | gbtest | `Clear` | zones remplies | `text = ""` | `tests/clear/` | à faire |
-| TEXTFAMILLE-T05 | replay | Saisie dans Articles | fiche article : saisie famille niveau par niveau (Tab), validation | `art_fam` enregistré (dump `Fiches_Art`) | `tests/replay_articles/` | à faire |
-| TEXTFAMILLE-T06 | replay | `ipr` absent | ouverture de la fiche article sans `ipr` | figer `Message.Error` + arrêt | `tests/ipr_absent/` | à faire |
+| TEXTFAMILLE-T01 | gbtest | Construction | `ipr = [1, 3, 5]` | 3 zones, `MaxLength` 1/2/2 | `tests/construction/` | implémenté |
+| TEXTFAMILLE-T02 | gbtest | `text` écriture/lecture | `"A0102"`, `"A01"`, `"A"`, `""`, `"A0102XYZ"` | zones et relecture de référence | `tests/text/` | implémenté |
+| TEXTFAMILLE-T03 | gbtest | Niveau vide intermédiaire | zone 1 vide, zone 2 `"01"` | figer le résultat de `Trim$` | `tests/niveau_vide/` | implémenté |
+| TEXTFAMILLE-T04 | gbtest | `Clear` | zones remplies | `text = ""` | `tests/clear/` | implémenté |
+| TEXTFAMILLE-T05 | replay | Saisie dans Articles | fiche article : saisie famille niveau par niveau (Tab), validation | `art_fam` enregistré (dump `Fiches_Art`) | `tests/replay_articles/` | à faire : zones créées par code (noms absents du .form), chemin de rejeu à établir ; rejeu suspendu |
+| TEXTFAMILLE-T06 | replay | `ipr` absent | ouverture de la fiche article sans `ipr` | figer `Message.Error` + arrêt | `tests/ipr_absent/` | à faire : nécessite un Laurux.conf de test sans ipr (configuration par scénario non gérée) |
 
 ## Détail des tests
 
 - **Valeurs attendues** : produites dans le clone **Laurux non modifié**.
 - **Données** : aucune base pour T01-T04 ; `Laurux01.sql` pour T05-T06.
 - **Non testable en gb.test** : `Quit` (T06 en replay), couleurs de focus.
+- **Phase 2** : `.src/Tests/Utils/textfamilleTest.test` (T01 à T04), contrôle créé dans une `Window` non affichée, `ipr = [1, 3, 5]` écrit dans la copie temporaire de la configuration. Observé (T03) : zone 1 vide + zone 2 « 01 » → `text` = « 01 » (le `Trim$` décale le niveau, candidat anomalie).

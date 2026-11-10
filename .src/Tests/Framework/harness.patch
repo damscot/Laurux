@@ -1,12 +1,13 @@
 diff --git a/.project b/.project
-index 0200aeba..ea7c52de 100644
+index 0200aeba..a50dca8e 100644
 --- a/.project
 +++ b/.project
-@@ -27,6 +27,7 @@ Component=gb.xml.html
+@@ -27,6 +27,8 @@ Component=gb.xml.html
  Component=gb.db.mysql
  Component=gb.db.sqlite3
  Component=gb.form.print
 +Component=gb.test
++Component=gb.util.web
  Description="Laurux. Programme de Comptabilité, de gestion et de point de vente pour PME."
  Authors="Jacky Tripoteau"
  Arguments=[["-r"],["-l"],["-p"],["-t","all"],["-d","8,8","-l"],["--devel"]]
@@ -772,20 +773,21 @@ index 9d09130a..368e87de 100644
    GridView1.Columns.Count = 2
    GridView1.Columns[0].Width = 150
 diff --git a/.src/Start.module b/.src/Start.module
-index 7cfaf9e5..9d7d3b1f 100644
+index 7cfaf9e5..3f5e7c56 100644
 --- a/.src/Start.module
 +++ b/.src/Start.module
-@@ -40,7 +40,8 @@ Public Arg_Config_File As String
+@@ -40,7 +40,9 @@ Public Arg_Config_File As String
  Public Arg_Log As Boolean
  Public Arg_Replay As Boolean
  Public Arg_Pos As Boolean
 -Public Arg_Test As String
 +Public Arg_Test As String ''Tests gb.test à lancer (-T) : all, list ou Module[.Test],…
 +Public Arg_Replay_Exit As Boolean ''Quitter à la fin du rejeu (--replay-exit)
++Public Test_Interrompu As Boolean ''-T : Ctrl+C (SIGINT) ou SIGTERM reçu, la série de tests s'arrête
  Public Arg_Start_Societe As String
  Public Arg_Restore_DB As String
  Public Arg_LogFile As String
-@@ -85,6 +86,7 @@ Public Sub Main()
+@@ -85,6 +87,7 @@ Public Sub Main()
      Start.Restart = False
    
      Parse_Args()
@@ -793,7 +795,7 @@ index 7cfaf9e5..9d7d3b1f 100644
      StartDate = Now
      
      'Debug Level on Console and File
-@@ -360,10 +362,6 @@ Public Sub Lancement()
+@@ -360,10 +363,6 @@ Public Sub Lancement()
      Endif
    Endif
    
@@ -804,7 +806,19 @@ index 7cfaf9e5..9d7d3b1f 100644
    Signal[Signal.SIGINT].Catch
  
    While (Not Start.Exit)
-@@ -401,6 +399,10 @@ Public Sub ReplayTimer_Timer()
+@@ -378,6 +377,11 @@ End
+ 
+ Public Sub Application_Signal(Sig As Integer)
+ 
++  ' -T (harnais de test) : Ctrl+C / SIGTERM arrêtent la série après le test en cours (voir Run_Tests)
++  If Arg_Test Then
++    Test_Interrompu = True
++    Return
++  Endif
+   If Sig = Signal.SIGINT And Start.Exit And Not Start.Restart Then
+     Quit (Not Start.Success)
+   Endif
+@@ -401,6 +405,10 @@ Public Sub ReplayTimer_Timer()
      hReplayTimer.Delay = rReplayTimer.Delay
    Else
      hReplayTimer.Enabled = False
@@ -815,22 +829,169 @@ index 7cfaf9e5..9d7d3b1f 100644
    Endif
  
  End
-@@ -444,7 +446,8 @@ Public Sub Parse_Args()
+@@ -444,7 +452,8 @@ Public Sub Parse_Args()
    
    Arg_Start_Societe = Args.Get("s", "societe", "societe de demarrage", "01")
    Arg_Restore_DB = Args.Get("", "restore", "fichier de database à restaurer au démarrage", Application.Name & ".sql")
 -  Arg_Test = Args.Get("t", "test", "Lance les tests interne (all, list) et retourne le status global", "all")
-+  Arg_Test = Args.Get("T", "test", "Lance les tests gb.test via gbx3 -T (all, list ou Module[.Test],…) et retourne leur code", "tests")
++  Arg_Test = Args.Get("T", "test", "Lance les tests : gb.test via gbx3 -T (all, Module[.Test]) ou scénario GUI <lot>/<nom> (rejeu, base de test restaurée) ; list : liste les tests", "tests")
 +  Arg_Replay_Exit = Args.Has("", "replay-exit", "Quitte à la fin du rejeu (code 0 si complet, 3 si échec)")
    
    remaining_args = Args.End()
    
-@@ -470,48 +473,65 @@ Public Sub Restore_Args()
+@@ -470,48 +479,494 @@ Public Sub Restore_Args()
  
  End
  
 -Public Sub Start_Test()
--
++Public Sub Run_Tests()
++  ''Option -T (tests de non-régression, phase 2) ; quitte avec le code global (0 = aucun échec).
++  ''Chaque test est décrit par : type (gbtest | replay), lot, classe testée, nom (identifiant de test.md, ex.
++  ''CHANGEFOUR-T05), chemin (<lot>/<Module>.test:<Méthode> ou <lot>/assets/<nom>), description (gb.test :
++  ''TestKit.Desc appelé par le _Desc() du module de test ; scénario : « objet » de meta.json).
++  ''- gb.test : chaque méthode publique d'un module .src/Tests/<lot>/*.test est lancée dans son propre processus
++  ''  « gbx3 -T Module.Méthode » (un résultat ne dépend ni de l'ordre des tests ni de l'état statique laissé par un
++  ''  autre test). Les modules doivent être compilés (gbc3 -ag).
++  ''- scénario GUI <lot>/<nom> (.hidden/Tests/<lot>/assets/<nom>/scenario.log) : voir Run_Scenario.
++  ''Arg_Test : liste séparée par des virgules ; chaque élément est « all » (tous les gb.test et les scénarios
++  ''validés, c.-à-d. ayant des attendus expected/) ou une valeur, éventuellement avec les jokers * ? [ ] (opérateur
++  ''Like, sans distinction de casse), comparée au type, au lot, à la classe, au nom, au chemin, à « Module.Méthode »
++  ''ou « lot/nom », et au module gb.test. Un scénario non validé n'est lancé que s'il est désigné exactement (nom,
++  ''chemin ou lot/nom). « list » liste tous les tests ; « list:<sélection> » liste la sélection.
++  ''Sources des tests : $LAURUX_TEST_ROOT (racine d'un clone), sinon le répertoire de l'application.
++
++  Dim sRoot As String = Application.Env["LAURUX_TEST_ROOT"]
++  Dim sRacine, sAssets, sLot, sFic, sLigne, sTest, sModule, sClasse, sId, sDemande, sChoix As String
++  Dim aTests As New Variant[]
++  Dim aSel As New Variant[]
++  Dim aTest As String[]
++  Dim hModule As Class
++  Dim sHome As String
++  Dim cMeta As Collection
++  Dim bListe As Boolean
++  Dim iEchecs, iGb, iRejeux, iCode As Integer
++
++  If Not sRoot Then sRoot = Application.Path
++  sRacine = sRoot &/ ".src/Tests"
++  sAssets = sRoot &/ ".hidden/Tests"
++  ' Ctrl+C : le test en cours est interrompu (même groupe de processus) ; la série s'arrête ensuite proprement
++  Signal[Signal.SIGINT].Catch
++  Signal[Signal.SIGTERM].Catch
++  If Not Exist(sRacine) Then
++    Print "Tests indisponibles : répertoire source " & sRacine & " introuvable"
++    Quit 2
++  Endif
++  ' Champs d'un test : 0 type, 1 lot, 2 classe, 3 nom, 4 chemin, 5 Module.Méthode | lot/nom, 6 description,
++  ' 7 module gb.test, 8 validé ("1" | "0")
++  For Each sLot In Dir(sRacine, "*", gb.Directory).Sort()
++    For Each sFic In Dir(sRacine &/ sLot, "*.test").Sort()
++      sModule = File.BaseName(sFic)
++      sClasse = sModule
++      If sClasse Ends "Test" Then sClasse = Left(sClasse, -4)
++      ' descriptions déclarées par le module (Public Sub _Desc → TestKit.Desc), sans lecture du source
++      TestKit.Descriptions.Clear
++      hModule = Null
++      Try hModule = Class.Load(sModule)
++      If hModule Then
++        If hModule.Exist("_Desc") Then Try Object.Call(hModule, "_Desc")
++      Endif
++      For Each sLigne In Split(File.Load(sRacine &/ sLot &/ sFic), "\n")
++        sLigne = Trim(sLigne)
++        If Left(sLigne, 11) = "Public Sub " And If InStr(sLigne, "(") > 12 Then
++          sTest = Trim(Mid(sLigne, 12, InStr(sLigne, "(") - 12))
++          If Left(sTest, 1) = "_" Then Continue
++          sId = Test_Id(sClasse, sTest)
++          aTests.Add(["gbtest", sLot, sClasse, sId, ".src/Tests" &/ sLot &/ sFic & ":" & sTest, sModule & "." & sTest, IIf(TestKit.Descriptions.Exist(sTest), TestKit.Descriptions[sTest], ""), sModule, "1"])
++        Endif
++      Next
++    Next
++  Next
++  ' scénarios GUI : données hors de .src (hors archive) dans .hidden/Tests/<lot>/assets/<nom>/
++  If Exist(sAssets) Then
++  For Each sLot In Dir(sAssets, "*", gb.Directory).Sort()
++    If Not Exist(sAssets &/ sLot &/ "assets") Then Continue
++    For Each sFic In Dir(sAssets &/ sLot &/ "assets", "*", gb.Directory).Sort()
++      If Not Exist(sAssets &/ sLot &/ "assets" &/ sFic &/ "scenario.log") Then Continue
++      cMeta = New Collection
++      Try cMeta = JSON.Decode(File.Load(sAssets &/ sLot &/ "assets" &/ sFic &/ "meta.json"))
++      sClasse = Meta_Texte(cMeta, "classe")
++      sId = Meta_Texte(cMeta, "id")
++      aTests.Add(["replay", sLot, sClasse, sId, ".hidden/Tests" &/ sLot &/ "assets" &/ sFic, sLot & "/" & sFic, IIf(Meta_Texte(cMeta, "objet"), Meta_Texte(cMeta, "objet"), Meta_Texte(cMeta, "description")), "", IIf(Exist(sAssets &/ sLot &/ "assets" &/ sFic &/ "expected"), "1", "0")])
++    Next
++  Next
++  Endif
++  ' sélection
++  sChoix = Arg_Test
++  If sChoix = "list" Then
++    bListe = True
++    sChoix = "*"
++  Else If sChoix Begins "list:" Then
++    bListe = True
++    sChoix = Mid(sChoix, 6)
++  Endif
++  For Each aTest In aTests
++    For Each sDemande In Split(sChoix, ",")
++      If Test_Choisi(aTest, Trim(sDemande), bListe) Then
++        aSel.Add(aTest)
++        Break
++      Endif
++    Next
++  Next
++  If bListe Then
++    Print "# type\tlot\tclasse\ttest\tchemin\tdescription"
++    For Each aTest In aSel
++      Print aTest[0] & "\t" & aTest[1] & "\t" & aTest[2] & "\t" & aTest[3] & "\t" & aTest[4] & "\t" & Replace(Replace(aTest[6], "\t", " "), "\n", " ")
++    Next
++    Quit 0
++  Endif
++  If aSel.Count = 0 Then
++    Print "Aucun test ne correspond à : " & Arg_Test
++    Quit 2
++  Endif
++  ' serveur de test : indispensable aux scénarios ; pour gb.test, seuls les tests qui ouvrent la base en dépendent
++  sDemande = TestKit.ServeurTest()
++  If sDemande Then
++    For Each aTest In aSel
++      If aTest[0] = "replay" Then
++        Print "# " & sDemande
++        Quit 2
++      Endif
++    Next
++    Print "# Avertissement : " & sDemande & " ; les tests qui ouvrent la base échoueront"
++  Endif
++  ' gb.test d'abord, puis scénarios
++  For Each aTest In aSel
++    If aTest[0] <> "gbtest" Then Continue
++    Inc iGb
++    sHome = Home_Test()
++    ' délai de 20 s ; « Bail out! » (erreur dans _Setup…, suivie d'une boîte d'erreur modale) : test arrêté
++    iCode = Lance_Surveille("cd " & Shell$(sRoot) & " && " & Env_Home(sRoot, sHome) & " " & Bus_Prive() & "timeout -k 2 20 gbx3 -T " & Shell$(aTest[5]), sHome, "gbtest", "-F 'Bail out!'", 1, "Bail out! : test arrêté (boîte d'erreur Gambas)")
++    If iCode <> 0 Then Inc iEchecs
++    If iCode = 130 Then Test_Interrompu = True
++    Fin_Home(sHome)
++    Wait ' traite un signal en attente (Application_Signal)
++    If Test_Interrompu Then Break
++  Next
++  For Each aTest In aSel
++    If Test_Interrompu Then Break
++    If aTest[0] <> "replay" Then Continue
++    Inc iRejeux
++    If Not Run_Scenario(sRoot, aTest[5], aTest[3]) Then Inc iEchecs
++    Wait ' traite un signal en attente (Application_Signal)
++  Next
++  If Test_Interrompu Then
++    Print "# Interrompu (Ctrl+C) après " & (iGb + iRejeux) & " test(s) sur " & aSel.Count & " ; " & iEchecs & " échec(s)"
++    Quit 130
++  Endif
++  Print "# " & (aSel.Count - iEchecs) & "/" & aSel.Count & " test(s) sans échec (" & iGb & " gb.test, " & iRejeux & " scénario(s))"
++  If iEchecs Then
++    Quit 1
++  Else
++    Quit 0
++  Endif
++
++End
+ 
 -  Dim success As Boolean = True ' True is success, False is  fail
 -  Dim List_Test As String[]
 -  Dim lcla As String
@@ -850,34 +1011,27 @@ index 7cfaf9e5..9d7d3b1f 100644
 -  'force to load class
 -  For Each lcla In Load_Classes
 -    Class.Load(lcla)
-+Public Sub Run_Tests()
-+  ''Relaie l'option -T vers gb.test et quitte avec le code global (0 = aucun échec).
-+  ''Chaque test (méthode publique d'un module .src/Tests/<lot>/*.test) est lancé dans son propre processus
-+  ''« gbx3 -T Module.Méthode », comme le runner de non-régression : un résultat ne dépend ni de l'ordre des
-+  ''tests ni de l'état statique laissé par un autre test. Les modules doivent être compilés (gbc3 -ag).
-+  ''Arg_Test : all, list, Module, Module.Méthode, ou une liste séparée par des virgules.
++Private Function Test_Choisi(aTest As String[], sDemande As String, bListe As Boolean) As Boolean
++  ''True si le test correspond à l'élément de sélection sDemande (voir Run_Tests).
 +
-+  Dim sRacine As String = Application.Path &/ ".src/Tests"
-+  Dim aTests As New String[]
-+  Dim aSel As New String[]
-+  Dim sLot, sFic, sLigne, sTest, sDemande, sModule As String
-+  Dim iEchecs As Integer
++  Dim iChamp As Integer
++  Dim bMotif As Boolean
++  Dim sValeur As String
 +
-+  If Not Exist(sRacine) Then
-+    Print "Tests indisponibles : répertoire source " & sRacine & " introuvable"
-+    Quit 2
-+  Endif
-+  For Each sLot In Dir(sRacine, "*", gb.Directory).Sort()
-+    For Each sFic In Dir(sRacine &/ sLot, "*.test").Sort()
-+      sModule = File.BaseName(sFic)
-+      For Each sLigne In Split(File.Load(sRacine &/ sLot &/ sFic), "\n")
-+        sLigne = Trim(sLigne)
-+        If Left(sLigne, 11) = "Public Sub " And If InStr(sLigne, "(") > 12 Then
-+          sTest = Trim(Mid(sLigne, 12, InStr(sLigne, "(") - 12))
-+          If Left(sTest, 1) <> "_" Then aTests.Add(sModule & "." & sTest)
-+        Endif
-+      Next
-+    Next
++  If Not sDemande Then Return False
++  If sDemande = "all" Then Return aTest[8] = "1" Or bListe
++  bMotif = InStr(sDemande, "*") Or InStr(sDemande, "?") Or InStr(sDemande, "[")
++  For Each iChamp In [0, 1, 2, 3, 4, 5, 7]
++    sValeur = aTest[iChamp]
++    If Not sValeur Then Continue
++    If bMotif Then
++      If Not (LCase(sValeur) Like LCase(sDemande)) Then Continue
++    Else
++      If LCase(sValeur) <> LCase(sDemande) Then Continue
++    Endif
++    ' scénario non validé : seulement s'il est listé, ou désigné exactement par son nom, son chemin ou lot/nom
++    If aTest[8] = "1" Or bListe Then Return True
++    If Not bMotif And If iChamp >= 3 And If iChamp <= 5 Then Return True
    Next
 -  
 -  'test loaded class
@@ -887,44 +1041,332 @@ index 7cfaf9e5..9d7d3b1f 100644
 -      If Not Error Then
 -        If Not IsNull(obj) Then
 -          success = success And Object.Call(obj, "Internal_Test", [List_Test])
-+  If Arg_Test = "list" Then
-+    Print aTests.Join("\n")
-+    Quit 0
-+  Endif
-+  For Each sTest In aTests
-+    If Arg_Test = "all" Then
-+      aSel.Add(sTest)
-+    Else
-+      For Each sDemande In Split(Arg_Test, ",")
-+        If sTest = sDemande Or If Left(sTest, Len(sDemande) + 1) = sDemande & "." Then
-+          aSel.Add(sTest)
-+          Break
-         Endif
--      Endif
-+      Next
+-        Endif
++  Return False
++
++End
++
++Private Function Test_Id(sClasse As String, sMethode As String) As String
++  ''Identifiant test.md d'une méthode gb.test « Tnn<Objet> » : <CLASSE>-Tnn (ex. LPrix, T03Somme → LPRIX-T03).
++
++  Dim i As Integer = 2
++  Dim sCar As String
++
++  If Left(sMethode) <> "T" Then Return ""
++  While i <= Len(sMethode)
++    sCar = Mid(sMethode, i, 1)
++    If sCar < "0" Or If sCar > "9" Then Break
++    Inc i
++  Wend
++  If i = 2 Or If i > Len(sMethode) Then Return ""
++  sCar = Mid(sMethode, i, 1)
++  If sCar <> "_" And If (sCar < "A" Or sCar > "Z") Then Return ""
++  Return UCase(sClasse) & "-T" & Format(CInt(Mid(sMethode, 2, i - 2)), "00")
++
++End
++
++Private Function Meta_Texte(cMeta As Collection, sCle As String) As String
++  ''Valeur texte d'une clé de meta.json ("" si absente ou nulle).
++
++  If Not cMeta.Exist(sCle) Then Return ""
++  If IsNull(cMeta[sCle]) Then Return ""
++  Return CStr(cMeta[sCle])
++
++End
++
++Private Function Home_Test() As String
++  ''Crée un HOME de test neuf et vide, toujours sous /tmp/laurux-test/ (mktemp -d : nom unique, jamais un chemin
++  ''fourni de l'extérieur), avec ~/tmp, ~/.config/gambas3 (présents chez tout utilisateur de Laurux) et le marqueur
++  ''.laurux-test-home ; renvoie son chemin. User.Home y est redirigé par Env_Home (libhome, LD_PRELOAD) : le verrou
++  ''Laurux.lock, ~/tmp, ~/.config, la GED ou les journaux d'un test ne touchent jamais le HOME réel.
++
++  Dim sDir As String
++
++  Shell "mkdir -p /tmp/laurux-test && mktemp -d /tmp/laurux-test/home-XXXXXXXX" To sDir
++  sDir = Trim(sDir)
++  If Not (sDir Begins "/tmp/laurux-test/home-") Or If Not IsDir(sDir) Then Error.Raise("HOME de test non créé : " & sDir)
++  Mkdir sDir &/ "tmp"
++  Mkdir sDir &/ ".config"
++  Mkdir sDir &/ ".config/gambas3"
++  Mkdir sDir &/ "run"
++  Chmod sDir &/ "run" To "rwx------"
++  File.Save(sDir &/ ".laurux-test-home", "HOME de test créé par Laurux -T ; supprimé à la fin du test\n")
++  Return sDir
++
++End
++
++Private Function Env_Home(sRoot As String, sHome As String) As String
++  ''Préfixe « env … » qui fait de sHome le HOME du processus lancé, et de « laurux » son utilisateur (comme dans le
++  ''conteneur runner) : HOME et User.Home/User.Name de Gambas, lus dans la base des
++  ''comptes : bibliothèque .src/Tests/Framework/libhome/libhome.c chargée par LD_PRELOAD, compilée au besoin dans
++  ''/tmp/laurux-test/). Sans gcc ni bibliothèque : HOME seul, avec un avertissement.
++
++  Static sLib As String
++  Dim sSource As String = sRoot &/ ".src/Tests/Framework/libhome/libhome.c"
++  Dim sCible As String = "/tmp/laurux-test/libhome-" & User.Id & ".so"
++  Dim sPrecharge As String
++
++  If Not sLib Then
++    If Exist(sSource) Then
++      If Not Exist(sCible) Or If Stat(sSource).LastModified > Stat(sCible).LastModified Then
++        Shell "mkdir -p /tmp/laurux-test && gcc -shared -fPIC -O2 -o " & Shell$(sCible) & " " & Shell$(sSource) & " -ldl" Wait
+       Endif
      Endif
++    If Exist(sCible) Then
++      sLib = sCible
++    Else
++      Print "Avertissement : bibliothèque libhome indisponible (gcc ?) : User.Home reste le HOME réel"
++      sLib = "-"
++    Endif
++  Endif
++  sPrecharge = Application.Env["LD_PRELOAD"]
++  If sLib = "-" Then Return "env HOME=" & Shell$(sHome) & " XDG_RUNTIME_DIR=" & Shell$(sHome &/ "run") & " GIO_USE_VFS=local GVFS_DISABLE_FUSE=1 GTK_USE_PORTAL=0 QT_NO_XDG_DESKTOP_PORTAL=1"
++  Return "env HOME=" & Shell$(sHome) & " XDG_RUNTIME_DIR=" & Shell$(sHome &/ "run") & " GIO_USE_VFS=local GVFS_DISABLE_FUSE=1 GTK_USE_PORTAL=0 QT_NO_XDG_DESKTOP_PORTAL=1 LAURUX_TEST_HOME=" & Shell$(sHome) & " LAURUX_TEST_USER=laurux USER=laurux LD_PRELOAD=" & Shell$(sLib & IIf(sPrecharge, ":" & sPrecharge, ""))
++
++End
++
++Private Function Lance_Surveille(sCmd As String, sDir As String, sNom As String, sMotif As String, iCodeMotif As Integer, sMessage As String) As Integer
++  ''Lance sCmd (commande shell) dans sa propre session (setsid) par le script sDir/<sNom>.sh et renvoie son code :
++  ''- la console est écrite dans sDir/console.txt et suivie par tail (affichée au fil de l'eau ; aucun tube que des
++  ''  processus restants garderaient ouvert) ;
++  ''- si la console contient le motif grep sMotif (boîte d'erreur Gambas modale qui bloquerait), tout le groupe est
++  ''  tué 2 s après et le code est iCodeMotif (message sMessage) ;
++  ''- à la fin, toute la session est tuée (pkill -s : y compris le groupe propre créé par « timeout » ; Laurux
++  ''  intercepte SIGTERM, « timeout » seul le laisserait vivant) ;
++  ''- Ctrl+C / SIGTERM reçu par le script : le groupe est tué, code 130.
++
++  Dim aScript As New String[]
++
++  aScript.Add("#!/bin/bash")
++  aScript.Add("# Généré par Laurux -T (Start.Lance_Surveille)")
++  aScript.Add("OUT=" & Shell$(sDir))
++  aScript.Add(": > \"$OUT/console.txt\"; rm -f \"$OUT/.motif\"")
++  aScript.Add("setsid bash -c " & Shell$(sCmd) & " > \"$OUT/console.txt\" 2>&1 < /dev/null &")
++  aScript.Add("pid=$!")
++  aScript.Add("trap 'pkill -KILL -s $pid 2>/dev/null; exit 130' INT TERM")
++  aScript.Add("( tail -n +1 -f --pid=$pid \"$OUT/console.txt\" | grep -m1 -q " & sMotif & " && sleep 2 && touch \"$OUT/.motif\" && pkill -KILL -s $pid ) 2>/dev/null &")
++  aScript.Add("veille=$!")
++  aScript.Add("tail -n +1 -f --pid=$pid \"$OUT/console.txt\"")
++  aScript.Add("wait $pid; rc=$?")
++  aScript.Add("pkill -KILL -s $pid 2>/dev/null  # toute la session : timeout crée son propre groupe de processus")
++  aScript.Add("kill $veille 2>/dev/null")
++  aScript.Add("if [ -e \"$OUT/.motif\" ]; then rc=" & iCodeMotif & "; rm -f \"$OUT/.motif\"; echo " & Shell$("[" & sMessage & "]") & " | tee -a \"$OUT/console.txt\"; fi")
++  aScript.Add("exit $rc")
++  File.Save(sDir &/ sNom & ".sh", aScript.Join("\n") & "\n")
++  Shell "bash " & Shell$(sDir &/ sNom & ".sh") Wait
++  Return Process.LastValue
++
++End
++
++Private Function Bus_Prive() As String
++  ''« dbus-run-session -- » (s'il est installé) : bus de session D-Bus privé, arrêté à la fin du processus lancé. Sans
++  ''lui, Qt/gb.desktop démarrent un bus (dbus-launch --autolaunch) qui survit au test et écrit dans son HOME.
++
++  If System.Find("dbus-run-session") Then Return "dbus-run-session -- "
++  Return ""
++
++End
++
++Private Sub Fin_Home(sHome As String)
++  ''Suppression du HOME de test créé par Home_Test, après chaque test gb.test (Run_Tests) et après chaque rejeu de
++  ''scénario (Run_Scenario), réussi ou non ; LAURUX_TEST_GARDER=1 le conserve (débogage : chemin affiché).
++  ''Garde-fous, tous requis, sinon rien n'est supprimé (message « garde-fou ») :
++  ''1. chemin de la forme /tmp/laurux-test/home-<nom> (un seul niveau, sans « .. ») ;
++  ''2. répertoire réel, pas un lien symbolique ; chemin résolu (realpath) de la même forme ;
++  ''3. ni « / », ni le HOME réel de l'utilisateur (lu sans libhome), ni un parent de celui-ci ;
++  ''4. marqueur .laurux-test-home (fichier) présent.
++  ''Puis démontage paresseux des points de montage FUSE situés dessous (lus dans /proc/mounts) et rm -rf limité
++  ''au système de fichiers du HOME de test (--one-file-system).
++
++  Dim sResolu, sReel, sMontages, sLigne, sPoint, sNom As String
++  Dim aChamps As String[]
++
++  If Application.Env["LAURUX_TEST_GARDER"] = "1" Then
++    Print "# HOME de test conservé : " & sHome
++    Return
++  Endif
++  ' 1. forme du chemin
++  sNom = Mid(sHome, Len("/tmp/laurux-test/home-") + 1)
++  If Not (sHome Begins "/tmp/laurux-test/home-") Or If Not sNom Or If InStr(sNom, "/") Or If InStr(sHome, "..") Then
++    Print "# HOME de test non supprimé (garde-fou : chemin) : " & sHome
++    Return
++  Endif
++  ' 2. répertoire réel, chemin résolu de la même forme
++  If Not Exist(sHome) Then Return
++  If Stat(sHome).Type <> gb.Directory Then
++    Print "# HOME de test non supprimé (garde-fou : pas un répertoire ou lien symbolique) : " & sHome
++    Return
++  Endif
++  Shell "realpath -e -- " & Shell$(sHome) To sResolu
++  sResolu = Trim(sResolu)
++  If sResolu <> sHome Then
++    Print "# HOME de test non supprimé (garde-fou : chemin résolu " & sResolu & ") : " & sHome
++    Return
++  Endif
++  ' 3. ni « / » ni le HOME réel (base des comptes lue sans la bibliothèque libhome) ni un de ses parents
++  Shell "env -u LD_PRELOAD getent passwd " & CStr(User.Id) & " | cut -d: -f6 | xargs -r realpath -e --" To sReel
++  sReel = Trim(sReel)
++  If sResolu = "/" Or If Not sReel Or If sResolu = sReel Or If sReel Begins sResolu & "/" Then
++    Print "# HOME de test non supprimé (garde-fou : HOME réel « " & sReel & " ») : " & sHome
++    Return
++  Endif
++  ' 4. marqueur posé par Home_Test
++  If Not Exist(sResolu &/ ".laurux-test-home") Or If Stat(sResolu &/ ".laurux-test-home").Type <> gb.File Then
++    Print "# HOME de test non supprimé (garde-fou : marqueur absent) : " & sHome
++    Return
++  Endif
++  ' points de montage FUSE éventuels sous le HOME de test (portail de documents, gvfs) : démontage paresseux
++  Shell "cat /proc/mounts" To sMontages
++  For Each sLigne In Split(sMontages, "\n")
++    aChamps = Split(sLigne, " ")
++    If aChamps.Count < 2 Then Continue
++    sPoint = Replace(aChamps[1], "\\040", " ")
++    If sPoint Begins sResolu & "/" Then Shell "fusermount3 -u -z " & Shell$(sPoint) & " 2>/dev/null" Wait
    Next
 -  
 -  If success Then
 -    Print "*****************************"
-+  If aSel.Count = 0 Then
-+    Print "Aucun test ne correspond à : " & Arg_Test
-+    Quit 2
++  Shell "rm -rf --one-file-system -- " & Shell$(sResolu) Wait
++
++End
++
++Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As String) As Boolean
++  ''Rejoue le scénario GUI <lot>/<nom> (.hidden/Tests/<lot>/assets/<nom>/ : scenario.log, meta.json) et renvoie
++  ''True si le code de sortie du rejeu est celui attendu (« code_sortie » de meta.json, défaut 0).
++  ''1. restaure Laurux01.sql puis le jeu « dataset » (.src/Tests/Framework/datasets/) sur la base de test
++  ''   $LAURUX_TEST_DB_HOST:$LAURUX_TEST_DB_PORT (défaut 127.0.0.1:13306), utilisateur laurux ;
++  ''2. prépare la configuration (Laurux-test.conf, hôte et port réécrits), copie les fichiers d'entrée du
++  ''   scénario dans /tmp/laurux-test/ (même chemin sur le poste et dans le conteneur), place les enveloppes
++  ''   mysql/mysqldump de Framework/bin en tête du PATH, dirige Desktop.Open vers laurux-ouvrir
++  ''   (TestKit.OuvertureFactice, trace dans ouvrir.trace) ;
++  ''3. lance un processus Laurux fils « -r --replay-exit » avec la société et les « args » du scénario, sous
++  ''   « faketime » à la « date » du scénario si faketime est installé (Gambas ne peut pas décaler sa propre
++  ''   horloge), limité par « timeout » (20 s, davantage seulement avec « timeout_accord ») ;
++  ''4. écrit dans $LAURUX_TEST_OUT, sinon output/tests/<lot>_<nom>_<date>/ : rejeu.sh (lancement), console.txt,
++  ''   replay.log(.out), sql.log (requêtes Exec_SQL), dump.sql (mariadb-dump brut), exit_code.
++  ''   Erreur non interceptée (boîte d'erreur Gambas) : rejeu arrêté, code 125 ; délai dépassé : code 124.
++  ''Le processus -T ne pose pas le verrou ~/Laurux.lock : seul le fils le pose.
++
++  Dim sLot As String = Split(sSpec, "/")[0]
++  Dim sNom As String = Split(sSpec, "/")[1]
++  Dim sDir As String = sRoot &/ ".hidden/Tests" &/ sLot &/ "assets" &/ sNom
++  Dim cMeta As Collection
++  Dim sOut, sHost, sPort, sCnx, sConf, sCmd, sFic, sLigne, sExe, sDataset, sJournal, sHome As String
++  Dim aConf As New String[]
++  Dim aSql As New String[]
++  Dim vArg As Variant
++  Dim iTimeout, iCode, iAttendu, iPos, iChamp As Integer
++
++  cMeta = JSON.Decode(File.Load(sDir &/ "meta.json"))
++  sOut = Application.Env["LAURUX_TEST_OUT"]
++  If Not sOut Then sOut = sRoot &/ "output/tests" &/ sLot & "_" & sNom & "_" & Format(Now, "yyyymmdd-hhnnss")
++  Shell "mkdir -p " & Shell$(sOut) Wait
++  sHost = Application.Env["LAURUX_TEST_DB_HOST"]
++  If Not sHost Then sHost = "127.0.0.1"
++  sPort = Application.Env["LAURUX_TEST_DB_PORT"]
++  If Not sPort Then sPort = "13306"
++  ' 1. base de test
++  If TestKit.ServeurTest() Then
++    Print "Rejeu " & sSpec & " : " & TestKit.ServeurTest()
++    Return False
 +  Endif
-+  For Each sTest In aSel
-+    Shell "cd " & Shell$(Application.Path) & " && gbx3 -T " & Shell$(sTest) Wait
-+    If Process.LastValue <> 0 Then Inc iEchecs
++  sCnx = "/usr/bin/mariadb -h " & Shell$(sHost) & " -P " & Shell$(sPort) & " -u laurux -plaurux "
++  Shell sCnx & "-e " & Shell$("DROP DATABASE IF EXISTS Laurux01; CREATE DATABASE Laurux01 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;") & " && " & sCnx & "Laurux01 < " & Shell$(sRoot &/ "Laurux01.sql") Wait
++  If Process.LastValue <> 0 Then
++    Print "Rejeu " & sSpec & " : restauration de la base de test impossible (" & sHost & ":" & sPort & ")"
++    Return False
++  Endif
++  If cMeta.Exist("dataset") And If cMeta["dataset"] Then
++    sDataset = sRoot &/ ".src/Tests/Framework/datasets" &/ cMeta["dataset"] & ".sql"
++    Shell sCnx & "Laurux01 < " & Shell$(sDataset) Wait
++    If Process.LastValue <> 0 Then
++      Print "Rejeu " & sSpec & " : jeu de données non chargé (" & sDataset & ")"
++      Return False
++    Endif
++  Endif
++  ' 2. configuration, fichiers d'entrée, journal à rejouer
++  sConf = sOut &/ "Laurux.conf"
++  For Each sLigne In Split(File.Load(sRoot &/ ".src/Tests/Framework/Laurux-test.conf"), "\n")
++    If sLigne Begins "Host=" Then
++      sLigne = "Host=\"" & sHost & "\""
++    Else If sLigne Begins "Port=" Then
++      sLigne = "Port=\"" & sPort & "\""
++    Endif
++    aConf.Add(sLigne)
 +  Next
-+  Print "# " & (aSel.Count - iEchecs) & "/" & aSel.Count & " test(s) sans échec"
-+  If iEchecs Then
-+    Quit 1
++  File.Save(sConf, aConf.Join("\n"))
++  Shell "mkdir -p /tmp/laurux-test" Wait
++  For Each sFic In Dir(sDir, "*", gb.File)
++    If sFic = "scenario.log" Or If sFic = "meta.json" Then Continue
++    Try Kill "/tmp/laurux-test" &/ sFic
++    Copy sDir &/ sFic To "/tmp/laurux-test" &/ sFic
++  Next
++  Try Kill sOut &/ "replay.log"
++  Try Kill sOut &/ "replay.log.out"
++  Copy sDir &/ "scenario.log" To sOut &/ "replay.log"
++  ' 3. processus Laurux fils
++  sExe = Application.Path &/ Application.Name
++  If Not Exist(sExe) Or If IsDir(sExe) Then
++    Print "Rejeu " & sSpec & " : exécutable " & sExe & " introuvable (lancer l'archive Laurux : ./Laurux -T …)"
++    Return False
++  Endif
++  iTimeout = 20
++  If cMeta.Exist("timeout") Then
++    If cMeta["timeout"] > 20 And If Not cMeta["timeout_accord"] Then
++      Print "Rejeu " & sSpec & " : timeout " & cMeta["timeout"] & " s sans « timeout_accord », ramené à 20 s"
++    Else
++      iTimeout = cMeta["timeout"]
++    Endif
++  Endif
++  ' Desktop.Open du fils : faux programme laurux-ouvrir (XDG temporaires, portail désactivé), trace dans sOut
++  TestKit.OuvertureFactice(sOut &/ "ouvrir.trace")
++  sHome = Home_Test()
++  File.Save(sOut &/ "home.txt", sHome & "\n") ' HOME de test du fils (conservé avec LAURUX_TEST_GARDER=1)
++  sCmd = Env_Home(sRoot, sHome) & " PATH=" & Shell$(sRoot &/ ".src/Tests/Framework/bin" & ":" & Application.Env["PATH"])
++  sCmd &= " LAURUX_TEST_DB_HOST=" & Shell$(sHost) & " LAURUX_TEST_DB_PORT=" & Shell$(sPort)
++  sCmd &= " GB_DESKTOP_PORTAL_ENABLED=0 SDL_AUDIODRIVER=dummy " & Bus_Prive() & "timeout -k 2 " & iTimeout & " "
++  If cMeta.Exist("date") And If cMeta["date"] And If System.Find("faketime") Then
++    sCmd &= "faketime -f " & Shell$("@" & cMeta["date"]) & " "
++  Endif
++  sCmd &= Shell$(sExe) & " -c " & Shell$(sConf) & " -l --logfile " & Shell$(sOut &/ "replay.log") & " -r --replay-exit"
++  If cMeta.Exist("societe") And If cMeta["societe"] Then
++    sCmd &= " -s " & Shell$(cMeta["societe"])
    Else
 -    Print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-+    Quit 0
++    sCmd &= " -s 01"
    Endif
 -  
 -  Utils.Exit(success)
 -  
++  If cMeta.Exist("args") And If cMeta["args"] Then
++    For Each vArg In cMeta["args"]
++      sCmd &= " " & Shell$(CStr(vArg))
++    Next
++  Endif
++  Print "Rejeu " & sSpec & " : " & sCmd
++  ' erreur non interceptée (« Classe.Méthode.ligne: … » puis boîte d'erreur Gambas modale) : arrêt, code 125
++  iCode = Lance_Surveille(sCmd, sOut, "rejeu", "-E '\\.[A-Za-z_][A-Za-z0-9_:]*\\.[0-9]+: '", 125, "erreur fatale : boîte d'erreur Gambas, rejeu arrêté")
++  If iCode = 130 Then Test_Interrompu = True ' Ctrl+C pendant le rejeu (trap du script)
++  File.Save(sOut &/ "exit_code", CStr(iCode) & "\n")
++  ' 4. sorties : requêtes Exec_SQL du journal rejoué, dump brut de la base
++  sJournal = sOut &/ "replay.log.out"
++  If Not Exist(sJournal) Then sJournal = sOut &/ "replay.log"
++  For Each sLigne In Split(File.Load(sJournal), "\n")
++    iPos = 0
++    For iChamp = 1 To 8
++      iPos = InStr(sLigne, ";", iPos + 1)
++      If iPos = 0 Then Break
++    Next
++    If iPos = 0 Then Continue
++    If Split(sLigne, ";")[2] = "Exec_SQL" Then aSql.Add(Mid(sLigne, iPos + 1))
++  Next
++  File.Save(sOut &/ "sql.log", aSql.Join("\n") & "\n")
++  Shell "/usr/bin/mariadb-dump -h " & Shell$(sHost) & " -P " & Shell$(sPort) & " -u laurux -plaurux --skip-dump-date --skip-comments Laurux01 > " & Shell$(sOut &/ "dump.sql") Wait
++  Fin_Home(sHome)
++  iAttendu = 0
++  If cMeta.Exist("code_sortie") Then iAttendu = cMeta["code_sortie"]
++  Print "Rejeu " & IIf(sId, sId & " ", "") & sSpec & " : code " & iCode & " (attendu " & iAttendu & ") ; sorties dans " & sOut
++  Return iCode = iAttendu
 +
  End
  

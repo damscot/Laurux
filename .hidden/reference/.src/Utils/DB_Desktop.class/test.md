@@ -10,10 +10,10 @@ produites dans le clone **Laurux non modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| DB_DESKTOP-T01 | gbtest | Détection de session | `XDG_SESSION_TYPE` = `x11`, `wayland`, vide | valeur de `wayland` | `tests/detection_session/` | à faire |
-| DB_DESKTOP-T02 | gbtest | Routage Wayland | `wayland` forcé ; faux `ydotool` ; `SendKey("[Return]")`, `"[Tab]"`, `"abc def"`, `"a;b"` | arguments reçus par le faux `ydotool` (figer l'absence de quotes) | `tests/routage_wayland/` | à faire |
-| DB_DESKTOP-T03 | gbtest | Message d'installation | `wayland` + `PATH` sans `apt` / avec faux `apt` sans ydotool | `Message.Info` levé ou non (après DB_DESKTOP-003) | `tests/message_ydotool/` | à faire |
-| DB_DESKTOP-T04 | replay | Validation par Entrée dans `TextReg` | écran utilisant un `TextReg` avec grille (ex. recherche client), sélection d'une ligne | la saisie est validée (X11) ; tables inchangées | `tests/textreg_entree/` | à faire |
+| DB_DESKTOP-T01 | gbtest | Détection de session | `XDG_SESSION_TYPE` = `x11`, `wayland`, vide | valeur de `wayland` | `tests/detection_session/` | implémenté |
+| DB_DESKTOP-T02 | gbtest | Routage Wayland | `wayland` forcé ; faux `ydotool` ; `SendKey("[Return]")`, `"[Tab]"`, `"abc def"`, `"a;b"` | arguments reçus par le faux `ydotool` (figer l'absence de quotes) | `tests/routage_wayland/` | implémenté |
+| DB_DESKTOP-T03 | gbtest | Message d'installation | `wayland` + `PATH` sans `apt` / avec faux `apt` sans ydotool | `Message.Info` levé ou non (après DB_DESKTOP-003) | `tests/message_ydotool/` | à faire : Message.Info bloquant en gb.test (après DB_DESKTOP-003) |
+| DB_DESKTOP-T04 | replay | Validation par Entrée dans `TextReg` | écran utilisant un `TextReg` avec grille (ex. recherche client), sélection d'une ligne | la saisie est validée (X11) ; tables inchangées | `tests/textreg_entree/` | à faire : sélection d'une ligne de grille dans TextReg et effet de SendKeys non synthétisés ; rejeux suspendus |
 
 ## Détail des tests
 
@@ -22,3 +22,4 @@ produites dans le clone **Laurux non modifié**.
 - **Non testable** : l'effet réel de `ydotool` sous Wayland (nécessite `/dev/uinput` et le démon
   `ydotoold`) ; à valider manuellement.
 - `Shell` étant asynchrone, T02 attend la création du fichier de trace (timeout 2 s).
+- **Implémentation (phase 2)** : `.src/Tests/Utils/DB_DesktopTest.test` ; faux `ydotool` et `apt` (ce dernier répond « installed » pour éviter le `Message.Info`) en tête du `PATH`.

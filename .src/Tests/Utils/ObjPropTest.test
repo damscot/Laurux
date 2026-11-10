@@ -1,0 +1,167 @@
+' Gambas test file
+
+''Tests d'ObjProp (OBJPROP-T01 à T06, .hidden/reference/.src/Utils/ObjProp.class/test.md).
+''Exécuté sous Xvfb par le runner (TextBox / TextReg dans une Window non affichée). Le fichier de paramètres
+''(Laurux-AutoParams-01.conf) est lu dans le HOME temporaire du runner.
+''Valeurs attendues : assets/ObjPropTest/expected.txt, produites dans le clone de référence.
+
+Private $hWin As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Constructeur", "Constructeur")
+  TestKit.Desc("T02Champs", "`AddChamp`/`ModChamp`/`AppProp`")
+  TestKit.Desc("T03Formats", "`frmt` via `AppProp`")
+  TestKit.Desc("T04ParamLecture", "`Param` lecture")
+  TestKit.Desc("T05ParamHistorique", "`EcriParam` historique")
+  TestKit.Desc("T06Filter", "Propriété `filter`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "ObjPropTest")
+  TestKit.OuvreBase()
+  $hWin = New Window
+
+End
+
+Private Function FichierParam() As String
+
+  Return User.Home & "/.config/gambas3/" & Application.Name & "-AutoParams-" & Start.Societe & ".conf"
+
+End
+
+Private Function Etat(h As Object) As String
+
+  Return "Text=" & TestKit.Canonique(h.Text) & " Tag=" & TestKit.Canonique(h.Tag) & " Al=" & h.Alignment & " Tip=" & TestKit.Canonique(h.ToolTip)
+
+End
+
+Public Sub T01Constructeur()
+
+  Dim p As ObjProp
+  Dim r As Result
+
+  p = New ObjProp("art_code", "Code")
+  TestKit.Check("T01/chaine", p.name & "|" & p.NomControl & "|" & p.TypeClass)
+  p = New ObjProp("art_design", "Désignation", ObjProp.Label)
+  TestKit.Check("T01/label", p.name & "|" & p.NomControl & "|" & p.TypeClass)
+  r = Utils.db.Exec("SELECT art_code, art_design FROM " & Cbase.Table("TabArt") & " LIMIT 1")
+  p = New ObjProp(r.Fields[1], "Champ", ObjProp.TextBox)
+  TestKit.Check("T01/resultfield", p.name & "|" & p.NomControl & "|" & p.TypeClass)
+  p = New ObjProp(Null, "SansClef")
+  TestKit.Check("T01/null", TestKit.Canonique(p.name) & "|" & p.NomControl & "|" & p.TypeClass)
+  ' Clef entière : Message.Error modal, non testable en gb.test (exclu)
+
+End
+
+Public Sub T02Champs()
+
+  Dim p As ObjProp
+  Dim hTxt As TextBox
+  Dim v As String
+
+  hTxt = New TextBox($hWin)
+  p = New ObjProp("c", "Champ")
+  p.AddChamp("Text", "abc")
+  p.AddChamp("Tag", ["Fiches_Art", "art_code"])
+  p.AddChamp("Alignment", Align.Right)
+  p.AppProp(hTxt)
+  TestKit.Check("T02/ajout", Etat(hTxt))
+  p.ModChamp("Text", "def")
+  p.ModChamp("ToolTip", "info")
+  p.ModChamp("Tag", ["x", "y", "z"])
+  p.AppProp(hTxt)
+  TestKit.Check("T02/modif", Etat(hTxt))
+  p.Height = 25
+  p.Width = 80
+  TestKit.Check("T02/HW", p.Height & "x" & p.Width)
+  Try p.AppProp(hTxt)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T02/HWapp", v)
+
+End
+
+Public Sub T03Formats()
+
+  Dim aFmt As String[] = ["0.00", "0.000", "0.00%", "dd.mm.yyyy"]
+  Dim aTxt As String[] = ["1.5", "3,14159", "01/02/2024", "abc"]
+  Dim sFmt, sTxt As String
+  Dim p As ObjProp
+  Dim hTxt As TextBox
+
+  hTxt = New TextBox($hWin)
+  For Each sFmt In aFmt
+    For Each sTxt In aTxt
+      ' Format date sur un texte non interprétable : Message.Error de LDate (modal), exclu de gb.test
+      If sFmt = "dd.mm.yyyy" And If sTxt <> "01/02/2024" Then Continue
+      p = New ObjProp("c", "Champ")
+      p.AddChamp("Text", sTxt, sFmt)
+      hTxt.Text = ""
+      p.AppProp(hTxt)
+      TestKit.Check("T03/" & sFmt & "/" & sTxt, hTxt.Text)
+    Next
+  Next
+
+End
+
+Public Sub T04ParamLecture()
+
+  Dim p As ObjProp
+  Dim hReg As TextReg
+
+  If Not Exist(File.Dir(FichierParam())) Then Shell "mkdir -p " & Shell$(File.Dir(FichierParam())) Wait
+  File.Save(FichierParam(), "[Fen/Ctrl]\nChoirech=2\nHistorique=[\"alpha\",\"beta\",\"gamma\"]\n")
+  p = New ObjProp(Null, "Fen/Ctrl", ObjProp.Param)
+  TestKit.Check("T04/historique", p.historique)
+  TestKit.Check("T04/type", p.TypeClass)
+  hReg = New TextReg($hWin)
+  p.AppProp(hReg)
+  TestKit.Check("T04/Choirech", hReg.Choirech)
+  p = New ObjProp(Null, "Fen/Absent", ObjProp.Param)
+  TestKit.Check("T04/absent/historique", p.historique)
+  hReg = New TextReg($hWin)
+  p.AppProp(hReg)
+  TestKit.Check("T04/absent/Choirech", hReg.Choirech)
+
+End
+
+Public Sub T05ParamHistorique()
+
+  Dim p As ObjProp
+  Dim hReg As TextReg
+  Dim sSaisie As String
+
+  If Exist(FichierParam()) Then Kill FichierParam()
+  p = New ObjProp(Null, "Fen/Hist", ObjProp.Param)
+  TestKit.Check("T05/initial", p.historique)
+  hReg = New TextReg($hWin)
+  For Each sSaisie In ["s1", "s2", "s3", "s2", "", "s4", "s5", "s6", "s1", "s7", "s8", "s9"]
+    hReg.Text = sSaisie
+    p.EcriParam("Fen/Hist", hReg)
+  Next
+  TestKit.Check("T05/historique", p.historique)
+  TestKit.Check("T05/nbelements", p.historique.Count)
+  If Exist(FichierParam()) Then
+    TestKit.Check("T05/fichier", Replace(Trim(File.Load(FichierParam())), "\n", " / "))
+  Else
+    TestKit.Check("T05/fichier", "<absent>")
+  Endif
+
+End
+
+Public Sub T06Filter()
+
+  Dim p As ObjProp
+  Dim hReg As TextReg
+
+  hReg = New TextReg($hWin)
+  hReg.ToolTip = "Aide"
+  p = New ObjProp("art_code", "Code article")
+  p.filter = hReg
+  TestKit.Check("T06/textreg", Etat(hReg))
+  TestKit.Check("T06/filter", p.filter = hReg)
+
+End

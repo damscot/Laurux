@@ -1,0 +1,61 @@
+' Gambas test file
+
+''Test de Variables (VARIABLES-T01, .hidden/reference/.src/Utils/Variables.module/test.md) : initialisation depuis
+''les réglages (copie de Laurux-test.conf dans le HOME temporaire du runner) et valeur figée au premier accès.
+''Valeurs attendues : assets/VariablesTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01InitReglages", "Initialisation depuis les réglages")
+  TestKit.Desc("T01bSansReglage", "Réglages absents (complément de VARIABLES-T01)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "VariablesTest")
+
+End
+
+Private Sub Lecture(Cle As String)
+
+  TestKit.Check(Cle & "/son", Variables.son)
+  TestKit.Check(Cle & "/Sprix", Variables.Sprix)
+  TestKit.Check(Cle & "/Sexport", Variables.Sexport)
+  TestKit.Check(Cle & "/Simport", Variables.Simport)
+  TestKit.Check(Cle & "/Schmprix", Variables.Schmprix)
+  TestKit.Check(Cle & "/SMajArt", Variables.SMajArt)
+  TestKit.Check(Cle & "/SMajFour", Variables.SMajFour)
+  TestKit.Check(Cle & "/SMajCli", Variables.SMajCli)
+
+End
+
+Public Sub T01InitReglages()
+
+  Dim sSoc As String = "/Soc" & Start.Societe
+
+  TestKit.Check("T01/societe", Start.Societe)
+  Start.LocalSettings["/son"] = "1"
+  Start.LocalSettings[sSoc & "/Sprix"] = True
+  Start.LocalSettings[sSoc & "/Sexport"] = "1"
+  Start.LocalSettings[sSoc & "/Simport"] = False
+  Start.LocalSettings[sSoc & "/Schmprix"] = "/tmp/prix.csv"
+  Start.LocalSettings[sSoc & "/SMajArt"] = True
+  Start.LocalSettings[sSoc & "/SMajFour"] = "0"
+  Start.LocalSettings[sSoc & "/SMajCli"] = 1
+  Lecture("T01/initial")
+  ' Changement de réglage après le premier accès : valeurs figées
+  Start.LocalSettings["/son"] = "0"
+  Start.LocalSettings[sSoc & "/Sprix"] = False
+  Start.LocalSettings[sSoc & "/Schmprix"] = "/autre.csv"
+  Lecture("T01/apreschangement")
+
+End
+
+Public Sub T01bSansReglage()
+  ''Complément de T01 : réglages absents (valeurs par défaut des conversions).
+
+  Lecture("T01b/absent")
+
+End

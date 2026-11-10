@@ -1,0 +1,121 @@
+' Gambas test file
+
+''Tests de Crupt (.hidden/reference/.src/Utils/Crupt.module/test.md, CRUPT-T01 à T07).
+''Valeurs attendues : assets/CruptTest/expected.txt, produites dans le clone de référence.
+''Jeu de données : datasets/crupt.sql (commandes fournisseurs et clients ; Laurux01.sql n'en contient
+''aucune). Bornes basses « 0 » / « . » : une borne vide est passée en NULL par Subst (aucune ligne, figé
+''en T04/bornes_vides). Chaque appel de Rupture recrée les tables Rupture et RuptureC, vérifiées par un dump trié.
+
+Private Const F1 As String = "0"
+Private Const F2 As String = "zzzzzzzz"
+Private Const A1 As String = "."
+Private Const A2 As String = "zzzzzzzzzzzzzzz"
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Nominal", "Cas nominal")
+  TestKit.Desc("T02NonStockes", "Produits non stockés")
+  TestKit.Desc("T03ParClient", "Regroupement par client")
+  TestKit.Desc("T04Bornes", "Bornes")
+  TestKit.Desc("T05ArticlesDivers", "Articles divers `.DEP` et désignations `\"~ \"`")
+  TestKit.Desc("T06MultiFournisseurs", "Cumuls multi-fournisseurs")
+  TestKit.Desc("T07CasLimites", "Cas limites")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CruptTest")
+  TestKit.OuvreBase("crupt")
+
+End
+
+Private Sub Table(sTab As String) As String
+
+  Dim r As Result
+  Dim aLig As New String[]
+  Dim aVal As String[]
+  Dim hF As ResultField
+
+  Try r = Utils.db.Exec("SELECT * FROM " & sTab & " ORDER BY codea, four, codec, intitulea, numcom")
+  If Error Then Return "ERREUR: " & Error.Text
+  If Not r.Available Then Return "<vide>"
+  Repeat
+    aVal = New String[]
+    For Each hF In r.Fields
+      aVal.Add(TestKit.Canonique(r[hF.Name]))
+    Next
+    aLig.Add(aVal.Join("|"))
+  Until r.MoveNext()
+  Return aLig.Join(" ; ")
+
+End
+
+Private Sub Rupt(sCle As String, Chk1 As Boolean, Chk2 As Boolean, Four1 As String, Four2 As String, Art1 As String, Art2 As String, Optional Org As String = "EdRup")
+
+  Try Crupt.Rupture(Chk1, Chk2, Four1, Four2, Art1, Art2, Org)
+  If Error Then TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+  TestKit.Check(sCle & "/Rupture", Table("Rupture"))
+  TestKit.Check(sCle & "/RuptureC", Table("RuptureC"))
+
+End
+
+Public Sub T01Nominal()
+
+  Rupt("T01", False, False, F1, F2, A1, A2)
+
+End
+
+Public Sub T02NonStockes()
+
+  Rupt("T02", True, False, F1, F2, A1, A2)
+
+End
+
+Public Sub T03ParClient()
+
+  Rupt("T03/chk1F", False, True, F1, F2, A1, A2)
+  Rupt("T03/chk1T", True, True, F1, F2, A1, A2)
+
+End
+
+Public Sub T04Bornes()
+
+  Rupt("T04/un_fournisseur", True, False, "401001", "401001", A1, A2)
+  Rupt("T04/un_fournisseur_client", True, True, "401002", "401002", A1, A2)
+  Rupt("T04/articles_A10_A11", True, False, F1, F2, "A10", "A11")
+  Rupt("T04/plage_vide", True, True, F1, F2, "B", "A")
+  Rupt("T04/bornes_vides", True, True, "", F2, "", A2)
+
+End
+
+Public Sub T05ArticlesDivers()
+
+  ' Lignes .DEP de même code et d'intitulés différents (dont « ~ ») chez 401001 seul
+  Rupt("T05/chk2F", True, False, "401001", "401001", ".DEP", ".DEP")
+  Rupt("T05/chk2T", True, True, "401001", "401001", ".DEP", ".DEP")
+
+End
+
+Public Sub T06MultiFournisseurs()
+
+  ' A10 commandé chez 401001 et 401002, plusieurs commandes clients (mise à jour sans « four », l. 117)
+  Rupt("T06/chk2F", False, False, F1, F2, "A10", "A10")
+  Rupt("T06/chk2T", False, True, F1, F2, "A10", "A10")
+
+End
+
+Public Sub T07CasLimites()
+
+  ' Appel hors EdRup (code mort, CRUPT-002) : bornes ignorées sauf four1
+  Rupt("T07/org_autre", False, False, "401001", F2, A1, A2, "Autre")
+  ' art_stkmin NULL et stkmini = 0
+  Utils.db.Exec("UPDATE Fiches_Art SET art_stkmin = NULL WHERE art_code = 'A11'")
+  Utils.db.Exec("UPDATE Fiches_Art SET art_stkmin = 0 WHERE art_code = 'A10'")
+  Rupt("T07/stkmin_null_zero", False, False, F1, F2, A1, A2)
+  ' art_txconv = 0 : division par zéro
+  Utils.db.Exec("UPDATE Fiches_Art SET art_stkmin = 5, art_txconv = 0 WHERE art_code = 'A10'")
+  Rupt("T07/txconv_zero", False, False, F1, F2, A1, A2)
+
+End

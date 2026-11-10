@@ -1,0 +1,71 @@
+' Gambas test file
+
+''Tests de Copie (.hidden/reference/.src/Utils/Copie.module/test.md, COPIE-T01 et T02).
+''HOME isolé (temporaire) fourni par le runner : les chemins sont vérifiés avec HOME remplacé par « ~ ».
+''COPIE-T03 (validation d'un bon de réception, Edbr) relève d'un scénario GUI.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DupliExistant", "`Dupli`, répertoire existant")
+  TestKit.Desc("T02DupliAbsent", "`Dupli`, répertoire absent")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CopieTest")
+
+End
+
+Private Function Rel(Chemin As String) As String
+
+  Return Replace(Chemin, User.Home, "~")
+
+End
+
+Private Function Source() As String
+
+  Dim sSrc As String = Temp$() & ".pdf"
+
+  File.Save(sSrc, "%PDF-1.4 test Copie\n")
+  Return sSrc
+
+End
+
+Public Sub T01DupliExistant()
+
+  Dim sSrc As String = Source()
+  Dim sCible As String
+
+  Try Mkdir User.Home &/ "Impressions"
+  Copie.spiece = "avant"
+  Copie.schemin = "avant"
+  Copie.Dupli(sSrc, "/Impressions", "BonReception-F001", "01/02/2026")
+  sCible = User.Home &/ "Impressions/BonReception-F001.pdf"
+  TestKit.Check("T01/spiece", Rel(Copie.spiece))
+  TestKit.Check("T01/schemin", Rel(Copie.schemin))
+  TestKit.Check("T01/copie_existe", Exist(sCible))
+  If Exist(sCible) Then TestKit.Check("T01/contenu_identique", File.Load(sCible) = File.Load(sSrc))
+  ' Seconde copie du même type : écrasement
+  File.Save(sSrc, "%PDF-1.4 version 2\n")
+  Copie.Dupli(sSrc, "/Impressions", "BonReception-F001", "01/02/2026")
+  TestKit.Check("T01/ecrase", File.Load(sCible) = File.Load(sSrc))
+
+End
+
+Public Sub T02DupliAbsent()
+
+  Dim sSrc As String = Source()
+
+  If Exist(User.Home &/ "Impressions") Then Shell "rm -rf " & Shell$(User.Home &/ "Impressions") Wait
+  Copie.spiece = "avant"
+  Copie.schemin = "avant"
+  Copie.Dupli(sSrc, "/Impressions", "BonReception-F001", "01/02/2026")
+  ' COPIE-A01 figée : le répertoire est créé mais le fichier n'est pas copié, spiece inchangé
+  TestKit.Check("T02/repertoire_cree", Exist(User.Home &/ "Impressions"))
+  TestKit.Check("T02/copie_existe", Exist(User.Home &/ "Impressions/BonReception-F001.pdf"))
+  TestKit.Check("T02/spiece", Rel(Copie.spiece))
+  TestKit.Check("T02/schemin", Rel(Copie.schemin))
+
+End

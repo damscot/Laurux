@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CMOPROD-T01 | gbtest | Compilation après suppression | suppression de `Cmoprod.class` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire |
+| CMOPROD-T01 | gbtest | Compilation après suppression | suppression de `Cmoprod.class` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : test de compilation après suppression (phase 4, pas un gb.test) |
 
 ## Détail des tests
 

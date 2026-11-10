@@ -1,0 +1,126 @@
+' Gambas test file
+
+''Tests de LCoul (.hidden/reference/.src/Utils/LCoul.class/test.md, LCOUL-T01 à T04).
+''Valeurs attendues : assets/LCoulTest/expected.txt, produites dans le clone de référence.
+''LCoul est une classe statique (Create Static) : son _New lit /Coul/* au premier accès ; chaque test tourne
+''dans son propre processus, la configuration est donc posée avant le premier accès.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01FragmentsConf", "Fragments SQL avec configuration complète")
+  TestKit.Desc("T02FragmentsSansConf", "Configuration absente")
+  TestKit.Desc("T03ConfMalformee", "Configuration mal formée (anomalie A01)")
+  TestKit.Desc("T04ExecutionSql", "Exécution des fragments")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LCoulTest")
+
+End
+
+Private Sub Fragments(Prefixe As String)
+  ''Les quatre fragments SQL, ou l'erreur levée au premier accès à LCoul.
+
+  Dim sRes As String
+
+  Try sRes = LCoul.Art_DB_bgcolor()
+  If Error Then sRes = "ERREUR: " & Error.Text
+  TestKit.Check(Prefixe & "/Art_DB_bgcolor", sRes)
+  Try sRes = LCoul.Fac_DB_bgcolor()
+  If Error Then sRes = "ERREUR: " & Error.Text
+  TestKit.Check(Prefixe & "/Fac_DB_bgcolor", sRes)
+  Try sRes = LCoul.Ecr_DB_bgcolor(False)
+  If Error Then sRes = "ERREUR: " & Error.Text
+  TestKit.Check(Prefixe & "/Ecr_DB_bgcolor/False", sRes)
+  Try sRes = LCoul.Ecr_DB_bgcolor(True)
+  If Error Then sRes = "ERREUR: " & Error.Text
+  TestKit.Check(Prefixe & "/Ecr_DB_bgcolor/True", sRes)
+
+End
+
+Private Sub ConfComplete()
+
+  Start.LocalSettings["/Coul/Stk"] = "background: &HC0FFC0&; font: Sans,10; foreground: &H000000&;"
+  Start.LocalSettings["/Coul/Nstk"] = "background: &HFFFFC0&; font: Sans,10; foreground: &H0000FF&;"
+  Start.LocalSettings["/Coul/Eps"] = "background: &HFFC0C0&; font: Sans,+1; foreground: &HFF0000&;"
+  Start.LocalSettings["/Coul/Spd"] = "background: &HC0C0C0&; font: ; foreground: &H808080&;"
+
+End
+
+Public Sub T01FragmentsConf()
+
+  ConfComplete()
+  Fragments("T01")
+  TestKit.Check("T01/Art_Stk/Ft", LCoul.Art_Stk.Ft)
+  TestKit.Check("T01/Art_Epuise/Fg", LCoul.Art_Epuise.Fg)
+  TestKit.Check("T01/Art_Suspendu/Ft", LCoul.Art_Suspendu.Ft)
+
+End
+
+Public Sub T02FragmentsSansConf()
+
+  ' Laurux-test.conf n'a pas de section /Coul
+  Fragments("T02")
+
+End
+
+Public Sub T03ConfMalformee()
+
+  ConfComplete()
+  Start.LocalSettings["/Coul/Eps"] = "fond rouge"
+  Fragments("T03")
+
+End
+
+Private Sub Couleurs(Cle As String, Requete As String)
+
+  Dim r As Result
+  Dim aRes As String[] = New String[]
+
+  Try r = Utils.db.Exec(Requete)
+  If Error Then
+    TestKit.Check(Cle, "ERREUR: " & Error.Text)
+    Return
+  Endif
+  If r.Available Then
+    Repeat
+      aRes.Add(r[0] & "=" & r!bgcolor)
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(Cle, aRes.Join("|"))
+
+End
+
+Public Sub T04ExecutionSql()
+
+  Dim sBase As String
+
+  ConfComplete()
+  ' MySQL : Laurux01.sql + jeu lcoul_couleurs
+  TestKit.OuvreBase("lcoul_couleurs")
+  Couleurs("T04/mysql/Art", "SELECT art_code, " & LCoul.Art_DB_bgcolor() & " FROM " & Cbase.Table("TabArt") & " ORDER BY art_code")
+  Couleurs("T04/mysql/Bl", "SELECT numbl, " & LCoul.Fac_DB_bgcolor() & " FROM " & Cbase.Table("TabBl") & " ORDER BY numbl")
+  Couleurs("T04/mysql/Mvt", "SELECT numero, " & LCoul.Ecr_DB_bgcolor(False) & " FROM Fiches_Mvt ORDER BY numero")
+  Couleurs("T04/mysql/Mvt_oldex", "SELECT numero, " & LCoul.Ecr_DB_bgcolor(True) & " FROM Fiches_Mvt ORDER BY numero")
+  ' SQLite : copie de Laurux01.sqlite (sans le jeu dérivé), littéraux entre guillemets doubles
+  sBase = Temp$()
+  Mkdir sBase
+  Copy Application.Path &/ "Laurux01.sqlite" To sBase &/ "Laurux01.sqlite"
+  Utils.db.Close
+  Utils.db.Type = "sqlite3"
+  Utils.db.Host = sBase
+  Utils.db.Name = "Laurux01.sqlite"
+  Try Utils.db.Open
+  If Error Then
+    TestKit.Check("T04/sqlite/ouverture", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Couleurs("T04/sqlite/Art", "SELECT art_code, " & LCoul.Art_DB_bgcolor() & " FROM " & Cbase.Table("TabArt") & " ORDER BY art_code")
+  Couleurs("T04/sqlite/Bl", "SELECT numbl, " & LCoul.Fac_DB_bgcolor() & " FROM " & Cbase.Table("TabBl") & " ORDER BY numbl")
+  Couleurs("T04/sqlite/Mvt", "SELECT numero, " & LCoul.Ecr_DB_bgcolor(False) & " FROM Fiches_Mvt ORDER BY numero")
+  Utils.db.Close
+
+End

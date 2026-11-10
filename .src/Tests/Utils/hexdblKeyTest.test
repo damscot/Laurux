@@ -1,0 +1,111 @@
+' Gambas test file
+
+''Tests de hexdblKey (.hidden/reference/.src/Utils/hexdblKey.module/test.md, HEXDBLKEY-T01 à T04).
+''Valeurs attendues : assets/hexdblKeyTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Chiffrement", "Chiffrement")
+  TestKit.Desc("T02Dechiffrement", "Déchiffrement et aller-retour")
+  TestKit.Desc("T03Erreurs", "Cas d'erreur")
+  TestKit.Desc("T04CompatConf", "Compatibilité `Laurux.conf`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "hexdblKeyTest")
+
+End
+
+Private Function Chaines() As String[]
+
+  Dim aRes As String[] = ["", "motdepasse", "éàç"]
+  Dim sLong As String
+  Dim i As Integer
+
+  ' 300 caractères : alphabet répété (plusieurs tours de clé)
+  For i = 0 To 299
+    sLong &= Chr$(32 + (i Mod 95))
+  Next
+  aRes.Add(sLong)
+  Return aRes
+
+End
+
+Private Function Hexa(Valeur As String) As String
+
+  Dim i As Integer
+  Dim sRes As String
+
+  For i = 1 To Len(Valeur)
+    sRes &= Hex$(Asc(Valeur, i), 2)
+  Next
+  Return sRes
+
+End
+
+Public Sub T01Chiffrement()
+
+  Dim aActions As String[] = ["en", "EN", "encrypt"]
+  Dim aCles As String[] = ["Laurux", "LauruX2012", "a"]
+  Dim aChaines As String[] = Chaines()
+  Dim i, j, k As Integer
+
+  For i = 0 To aActions.Max
+    For j = 0 To aChaines.Max
+      For k = 0 To aCles.Max
+        TestKit.Check("T01/" & aActions[i] & "/" & j & "/" & aCles[k], hexdblKey.Crypt(aActions[i], aChaines[j], aCles[k]))
+      Next
+    Next
+  Next
+
+End
+
+Public Sub T02Dechiffrement()
+
+  Dim aActions As String[] = ["de", "decrypt", "DE"]
+  Dim aCles As String[] = ["Laurux", "LauruX2012", "a"]
+  Dim aChaines As String[] = Chaines()
+  Dim i, j, k As Integer
+  Dim sHex, sClair As String
+
+  For j = 0 To aChaines.Max
+    For k = 0 To aCles.Max
+      sHex = hexdblKey.Crypt("en", aChaines[j], aCles[k])
+      For i = 0 To aActions.Max
+        sClair = hexdblKey.Crypt(aActions[i], sHex, aCles[k])
+        TestKit.Check("T02/" & aActions[i] & "/" & j & "/" & aCles[k], sClair)
+        TestKit.Check("T02/" & aActions[i] & "/" & j & "/" & aCles[k] & "/aller_retour", sClair = aChaines[j])
+      Next
+    Next
+  Next
+  ' Valeur connue : mot de passe « laurux » du Laurux.conf de test
+  TestKit.Check("T02/laurux/en", hexdblKey.Crypt("en", "laurux", "Laurux"))
+  TestKit.Check("T02/laurux/de", hexdblKey.Crypt("de", "2D0D0D0D0D0D", "Laurux"))
+
+End
+
+Public Sub T03Erreurs()
+
+  TestKit.Check("T03/hex_impair", hexdblKey.Crypt("de", "2D0D0", "Laurux"))
+  TestKit.Check("T03/non_hex", hexdblKey.Crypt("de", "ZZ0G", "Laurux"))
+  TestKit.Check("T03/action_xx", hexdblKey.Crypt("xx", "laurux", "Laurux"))
+  TestKit.Check("T03/action_vide", hexdblKey.Crypt("", "laurux", "Laurux"))
+  TestKit.Check("T03/cle_vide/en", hexdblKey.Crypt("en", "laurux", ""))
+  ' Résultat en octets de contrôle : vérifié en hexadécimal
+  TestKit.Check("T03/cle_vide/de/hex", Hexa(hexdblKey.Crypt("de", "2D0D0D0D0D0D", "")))
+  TestKit.Check("T03/cle_vide/chaine_vide", hexdblKey.Crypt("en", "", ""))
+
+End
+
+Public Sub T04CompatConf()
+
+  Dim sChiffre As String = Start.LocalSettings["/dbase/Password"]
+
+  TestKit.Check("T04/Password/chiffre", sChiffre)
+  TestKit.Check("T04/Password/clair", hexdblKey.Crypt("de", sChiffre, "Laurux"))
+  TestKit.Check("T04/Password/rechiffre", hexdblKey.Crypt("en", hexdblKey.Crypt("de", sChiffre, "Laurux"), "Laurux") = sChiffre)
+
+End

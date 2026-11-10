@@ -1,7 +1,35 @@
 bash/echo	ERREUR: Type mismatch: wanted Integer, got String instead
 bash/echo/2e	0
-RunA/ajout1	ERREUR: Type mismatch: wanted Integer, got String instead
-RunA	0
+T01/code	0
+T01/fichier	\n
+T02/premier_appel	ERREUR: Type mismatch: wanted Integer, got String instead
+T02/code	0
+T02/fichier	test2\n
 faaalse	ERREUR: Type mismatch: wanted Integer, got String instead
+T03/faaalse/2e	1
 false	0
 true	0
+T03/vide/shell	0
+T03/vide/exec	1
+T04/premier_appel	ERREUR: Type mismatch: wanted Integer, got String instead
+T04/shell/code	0
+T04/shell/sortie	<Null>
+T04/exec/code	0
+T04/exec/sortie	a b|c;d|
+RunA/ajout1	ERREUR: Type mismatch: wanted Integer, got String instead
+RunA	0
+T05/echec/code	1
+T05/echec/f1	un\n
+T05/echec/f3	<absent>
+T05/vide	0
+T06/premier_appel	ERREUR: Type mismatch: wanted Integer, got String instead
+T06/code	0
+T06/console	Le script sera executé avec les arguments suivant :\na\nb\n
+T07/premier_appel	ERREUR: Type mismatch: wanted Integer, got String instead
+T07/run1/code	0
+T07/run1/arguments_appelant	/bin/bash|-c|echo passage >> <tmp>/f
+T07/run2/code	0
+T07/run2/arguments_appelant	/bin/bash|/bin/bash|-c|echo passage >> <tmp>/f
+T07/fichier	\n
+T08/premier_appel	ERREUR: Type mismatch: wanted Integer, got String instead
+T08/lignes	[[<date>] [INFO-3] [LScript] [<pile>] Run script /bin/true |[<date>] [INFO-3] [LScript] [<pile>] Run script /bin/faaalse |[<date>] [ERROR-1] [LScript] [<pile>] Fail to run script (exec): File or directory does not exist]

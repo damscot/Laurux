@@ -1,0 +1,78 @@
+' Gambas test file
+
+''Tests de RenumBl (.hidden/reference/.src/Utils/RenumBl.class/test.md, RENUMBL-T01 à T03).
+''Jeu de données : .src/Tests/Framework/datasets/renumbl_factures.sql (Laurux01.sql ne contient ni BL ni
+''facture). Comportement destructeur figé. Valeurs attendues : assets/RenumBlTest/expected.txt, produites
+''dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Renumerotation", "`run` sur base de référence")
+  TestKit.Desc("T02Locale", "Locale")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "RenumBlTest")
+
+End
+
+Private Sub Lignes(Requete As String) As String
+
+  Dim r As Result
+  Dim aLignes As String[] = New String[]
+  Dim aVal As String[]
+  Dim hF As ResultField
+
+  r = Utils.db.Exec(Requete)
+  If Not r.Available Then Return "<aucune ligne>"
+  Repeat
+    aVal = New String[]
+    For Each hF In r.Fields
+      aVal.Add(TestKit.Canonique(r[hF.Name]))
+    Next
+    aLignes.Add(aVal.Join(";"))
+  Until r.MoveNext()
+  Return aLignes.Join("|")
+
+End
+
+Private Sub Dump(Cle As String)
+
+  TestKit.Check(Cle & "/Fiches_HistoLigfac", Lignes("SELECT num_ligfac, numlig_ligfac, typel_ligfac FROM Fiches_HistoLigfac ORDER BY num_ligfac, numlig_ligfac"))
+  TestKit.Check(Cle & "/Fiches_Bl", Lignes("SELECT numbl, numfac, dtefac, datebl FROM Fiches_Bl ORDER BY numbl"))
+  TestKit.Check(Cle & "/Fiches_Ligbl", Lignes("SELECT num_ligbl, numlig_ligbl, tx_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, nettc_ligbl FROM Fiches_Ligbl ORDER BY num_ligbl, numlig_ligbl"))
+
+End
+
+Public Sub T01Renumerotation()
+
+  TestKit.OuvreBase("renumbl_factures")
+  Dump("T01/avant")
+  RenumBl.run()
+  Dump("T01/apres")
+
+End
+
+Public Sub T02Locale()
+  ''Valeurs séparées par « ; » (les montants contiennent des virgules).
+  ''Locale du processus : fr_FR.UTF-8 (runner), puis C (System.Language).
+
+  TestKit.OuvreBase("renumbl_factures")
+  TestKit.Check("T02/fr/langue", System.Language)
+  RenumBl.run()
+  TestKit.Check("T02/fr/Fiches_Ligbl", Lignes("SELECT num_ligbl, pu_ligbl, qte_ligbl, rem_ligbl, netht_ligbl, nettc_ligbl FROM Fiches_Ligbl ORDER BY num_ligbl"))
+  TestKit.OuvreBase("renumbl_factures")
+  System.Language = "C"
+  TestKit.Check("T02/C/langue", System.Language)
+  Try RenumBl.run()
+  If Error Then
+    TestKit.Check("T02/C/run", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/C/run", "ok")
+  Endif
+  TestKit.Check("T02/C/Fiches_Ligbl", Lignes("SELECT num_ligbl, pu_ligbl, qte_ligbl, rem_ligbl, netht_ligbl, nettc_ligbl FROM Fiches_Ligbl ORDER BY num_ligbl"))
+
+End

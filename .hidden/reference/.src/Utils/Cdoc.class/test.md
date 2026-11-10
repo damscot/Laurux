@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CDOC-T01 | — | Écran inaccessible | aucun chemin d'IHM ne l'ouvre | aucun test automatisable ; vérification `grep` de l'absence d'appelant avant toute suppression | `tests/absence_appelant/` | à faire |
+| CDOC-T01 | — | Écran inaccessible | aucun chemin d'IHM ne l'ouvre | aucun test automatisable ; vérification `grep` de l'absence d'appelant avant toute suppression | `tests/absence_appelant/` | implémenté |
 
 ## Détail des tests
 
@@ -14,3 +14,4 @@
 - Le « test » CDOC-T01 est un contrôle statique (script `check_output.py` qui exécute
   `grep -rni cdoc .src` et attend uniquement les fichiers `Cdoc.class`/`Cdoc.form`), à repasser
   avant la suppression éventuelle (CDOC-A01).
+- Implémentation : `.src/Tests/Utils/CdocTest.test` (`grep -rliw cdoc .src` hors `.src/Tests`, liste figée).

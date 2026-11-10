@@ -621,7 +621,7 @@ def select(data: dict, queries: list, fields: list) -> dict:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[3]))
     ap.add_argument("--json", default=None, help="écrit le graphe complet dans ce fichier")
     ap.add_argument("-q", "--query", action="append", default=[],
                     help="filtre : chemin (.src/Utils/LPrix.class), répertoire (.src/Utils) ou nom (LPrix) ; répétable")
@@ -633,7 +633,7 @@ def main():
                          "(défaut avec --query : .hidden/reference/data/deps.json s'il existe)")
     a = ap.parse_args()
     root = Path(a.root).resolve()
-    src = a.src or (str(root / "reference" / "data" / "deps.json") if a.query else None)
+    src = a.src or (str(root / ".hidden" / "reference" / "data" / "deps.json") if a.query else None)
     if src and Path(src).exists():
         data = json.loads(Path(src).read_text(encoding="utf-8"))
     else:

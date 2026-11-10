@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CARCH-T01 | gbtest | Compilation sans la classe | suppression de `Carch.class` + `Carch.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire |
-| CARCH-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Facts`, `/Coul/Avs` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire |
+| CARCH-T01 | gbtest | Compilation sans la classe | suppression de `Carch.class` + `Carch.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : vérification par gbc3 -agt après suppression (phase 3, CARCH-A02 à valider) |
+| CARCH-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Facts`, `/Coul/Avs` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire : Laurux.conf non comparé par le runner ; double-clic de SetColors non rejoué |
 
 ## Détail des tests
 

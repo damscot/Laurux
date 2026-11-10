@@ -10,13 +10,13 @@ produites dans le clone **Laurux non modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| REPLAYOBSERVER-T01 | gbtest | Analyse d'une ligne de log (après REPLAYOBSERVER-003) | lignes réelles `Click`, `Keypress`, `Focus`, `Close`, `MouseWheel` ; date sans millisecondes ; valeur avec `;`/`#`/`=` | champs extraits ou erreur figée | `tests/analyse_ligne/` | à faire |
-| REPLAYOBSERVER-T02 | replay | Capture et rejeu de boutons et menus | menu principal → fiche client → bouton **Fermer** ; menus imbriqués | `.out` : mêmes lignes `GUI` ; diff BDD vide | `tests/boutons_menus/` | à faire |
-| REPLAYOBSERVER-T03 | replay | Saisie clavier | création d'un client : `TextBox` (texte, Tab, Return, BackSpace, Delete, accents) | `Fiches_Cli` identique au log capturé ; figer la perte des accents | `tests/saisie_clavier/` | à faire |
-| REPLAYOBSERVER-T04 | replay | Listes et grilles | sélection dans `GridView` (liste articles), `ColumnView`, `ListBox`, `ComboBox`, `TabStrip` | même ligne sélectionnée (requêtes `Exec_SQL` identiques) | `tests/listes_grilles/` | à faire |
-| REPLAYOBSERVER-T05 | replay | Cases à cocher, radios, `ToolButton`, `Label` cliquable | écran des préférences (sans enregistrer) | lignes `GUI` identiques | `tests/cases_labels/` | à faire |
-| REPLAYOBSERVER-T06 | replay | Fenêtre inattendue | log modifié : fenêtre active différente | sortie de l'application (code et message console figés) | `tests/fenetre_inattendue/` | à faire |
-| REPLAYOBSERVER-T07 | replay | Délais | log avec écarts de 0 ms, 500 ms, 30 s | délais programmés (traces console `Next event in …`) | `tests/delais/` | à faire |
+| REPLAYOBSERVER-T01 | gbtest | Analyse d'une ligne de log (après REPLAYOBSERVER-003) | lignes réelles `Click`, `Keypress`, `Focus`, `Close`, `MouseWheel` ; date sans millisecondes ; valeur avec `;`/`#`/`=` | champs extraits ou erreur figée | `tests/analyse_ligne/` | à faire : après extraction de l'analyse de ligne (REPLAYOBSERVER-003) |
+| REPLAYOBSERVER-T02 | replay | Capture et rejeu de boutons et menus | menu principal → fiche client → bouton **Fermer** ; menus imbriqués | `.out` : mêmes lignes `GUI` ; diff BDD vide | `tests/boutons_menus/` | implémenté (lignes GUI du .out non comparées) |
+| REPLAYOBSERVER-T03 | replay | Saisie clavier | création d'un client : `TextBox` (texte, Tab, Return, BackSpace, Delete, accents) | `Fiches_Cli` identique au log capturé ; figer la perte des accents | `tests/saisie_clavier/` | implémenté (sans accents : un caractère accentué fait échouer Replay_Keypress ; flèche gauche non rejouée, figée) |
+| REPLAYOBSERVER-T04 | replay | Listes et grilles | sélection dans `GridView` (liste articles), `ColumnView`, `ListBox`, `ComboBox`, `TabStrip` | même ligne sélectionnée (requêtes `Exec_SQL` identiques) | `tests/listes_grilles/` | implémenté |
+| REPLAYOBSERVER-T05 | replay | Cases à cocher, radios, `ToolButton`, `Label` cliquable | écran des préférences (sans enregistrer) | lignes `GUI` identiques | `tests/cases_labels/` | à faire : écran des préférences sans effet en base (résultat dans Laurux.conf) ; le runner ne compare ni les lignes GUI du .out ni la configuration |
+| REPLAYOBSERVER-T06 | replay | Fenêtre inattendue | log modifié : fenêtre active différente | sortie de l'application (code et message console figés) | `tests/fenetre_inattendue/` | à faire : sortie attendue en code 3, or compare exige un rejeu en code 0 (outillage : code de sortie attendu) |
+| REPLAYOBSERVER-T07 | replay | Délais | log avec écarts de 0 ms, 500 ms, 30 s | délais programmés (traces console `Next event in …`) | `tests/delais/` | à faire : traces console « Next event in … » non comparées par le runner (outillage) |
 
 ## Détail des tests
 
@@ -28,3 +28,11 @@ produites dans le clone **Laurux non modifié**.
 - **Environnement** : session X11 (Xvfb) requise ; Wayland non couvert (ydotool, test manuel).
 - **Non testable** : `MouseWheel` (non rejoué par conception) ; événements de contrôles non observés
   par `Utils.Recursive_Observers`.
+- **Scénarios (phase 2)**, synthétisés (pas de capture) : `.hidden/Tests/Utils/assets/replayobserver_boutons_menus/` (T02 : menus
+  imbriqués, bouton d'un groupe `Btn` de FClient), `.hidden/Tests/Utils/assets/replayobserver_saisie_clavier/` (T03 : écran
+  Statuts clients au lieu de FClient, plus simple ; BackSpace, flèche gauche, Delete, accents) et
+  `.hidden/Tests/Utils/assets/replayobserver_listes_grilles/` (T04 : TabStrip, CheckBox, GridView, ComboBox). La fidélité des
+  lignes GUI du `.out` n'est pas comparée par le runner (dump et SQL seulement).
+- **Rejeu (2026-11-08)** : T03 sans accents : un caractère accentué fait 2 octets (`Len("é") = 2`), `Replay_Keypress`
+  le passe à `CInt` et échoue (« Type mismatch », rejeu bloqué jusqu'au délai). La flèche gauche (16777234) est
+  ignorée (« Replay Key unsupported ») : le Delete qui suit ne supprime rien, libellé figé « Prospecte ».

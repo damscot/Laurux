@@ -1,0 +1,63 @@
+' Gambas test file
+
+''Tests de LTrans (LTRANS-T01 à T03, .hidden/reference/.src/Utils/LTrans.class/test.md).
+''Valeurs attendues : assets/LTransTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01EtatInitial", "État initial")
+  TestKit.Desc("T02CopieListe", "Copie à l'écriture")
+  TestKit.Desc("T03AutoInstance", "Auto-instance")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LTransTest")
+
+End
+
+Public Sub T01EtatInitial()
+
+  Dim t As LTrans
+
+  t = New LTrans
+  TestKit.Check("T01/List", t.List)
+  TestKit.Check("T01/Text", t.Text)
+
+End
+
+Public Sub T02CopieListe()
+
+  Dim t As LTrans
+  Dim a As Variant[] = ["a", "b"]
+  Dim s As String[] = ["x", "y", "z"]
+  Dim v As String
+
+  t = New LTrans
+  t.List = a
+  a[0] = "modifié"
+  a.Add("c")
+  TestKit.Check("T02/apresmodif", t.List)
+  TestKit.Check("T02/memeobjet", t.List = a)
+  Try t.List = s
+  If Error Then
+    v = "ERREUR: " & Error.Text
+  Else
+    v = TestKit.Canonique(t.List)
+  Endif
+  TestKit.Check("T02/stringtab", v)
+  t.Text = "texte"
+  TestKit.Check("T02/Text", t.Text)
+
+End
+
+Public Sub T03AutoInstance()
+
+  LTrans.List = ["1", "2"]
+  LTrans.Text = "auto"
+  TestKit.Check("T03/List", LTrans.List)
+  TestKit.Check("T03/Text", LTrans.Text)
+
+End

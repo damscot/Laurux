@@ -9,12 +9,12 @@ avec un affichage (`xvfb-run` en Docker, à confirmer).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| PROGBAR-T01 | gbtest | Constructeur | `New ProgBar("T", 10)`, `New ProgBar("T", 10, Null, True, "", True)` | `Title.Text`, visibilité de `Stop` et `DetailLog` | `tests/constructeur/` | à faire |
-| PROGBAR-T02 | gbtest | `Avancement` cadence | 10 éléments, `refresh_increment` = 1, 3, puis 3 → 1 | valeurs successives de `ProgressionBar.Value`, `elemdone.Text`, `DetailLog.Text` | `tests/avancement/` | à faire |
-| PROGBAR-T03 | gbtest | Arrêt et pause | `Stop_Click` puis `Avancement` ; `Pause_Click` ×2 | `Avancement` renvoie `True` ; libellé `Pause`/`Reprendre` | `tests/arret_pause/` | à faire |
-| PROGBAR-T04 | gbtest | Fermeture | `Close` avant fin (non stoppable), après `Finalize`, et avec Stop visible | fenêtre fermée ou non ; `$stopped` lu par `Avancement` | `tests/fermeture/` | à faire |
-| PROGBAR-T05 | gbtest | Cas limites | `nbelem = 0` puis `Avancement` ; `unit = "lignes"` | figer l'erreur actuelle et l'absence d'unité (A01, A02) | `tests/cas_limites/` | à faire |
-| PROGBAR-T06 | replay | Intégration | Purge `RazDevis` sur `Laurux01.sql` | même diff de tables que sans ProgBar modifiée ; journal de progression | `tests/integration_raz/` | à faire |
+| PROGBAR-T01 | gbtest | Constructeur | `New ProgBar("T", 10)`, `New ProgBar("T", 10, Null, True, "", True)` | `Title.Text`, visibilité de `Stop` et `DetailLog` | `tests/constructeur/` | implémenté |
+| PROGBAR-T02 | gbtest | `Avancement` cadence | 10 éléments, `refresh_increment` = 1, 3, puis 3 → 1 | valeurs successives de `ProgressionBar.Value`, `elemdone.Text`, `DetailLog.Text` | `tests/avancement/` | implémenté |
+| PROGBAR-T03 | gbtest | Arrêt et pause | `Stop_Click` puis `Avancement` ; `Pause_Click` ×2 | `Avancement` renvoie `True` ; libellé `Pause`/`Reprendre` | `tests/arret_pause/` | implémenté |
+| PROGBAR-T04 | gbtest | Fermeture | `Close` avant fin (non stoppable), après `Finalize`, et avec Stop visible | fenêtre fermée ou non ; `$stopped` lu par `Avancement` | `tests/fermeture/` | implémenté |
+| PROGBAR-T05 | gbtest | Cas limites | `nbelem = 0` puis `Avancement` ; `unit = "lignes"` | figer l'erreur actuelle et l'absence d'unité (A01, A02) | `tests/cas_limites/` | implémenté |
+| PROGBAR-T06 | replay | Intégration | Purge `RazDevis` sur `Laurux01.sql` | même diff de tables que sans ProgBar modifiée ; journal de progression | `tests/integration_raz/` | à faire : RazDevis hors du lot, rejeu suspendu (collision de lock entre bacs), attendus non produits |
 
 ## Détail des tests
 
@@ -23,3 +23,4 @@ avec un affichage (`xvfb-run` en Docker, à confirmer).
 - **Temps** : `Avancement` contient des `Wait` (0,05 s par rafraîchissement) ; T02 limite le
   nombre d'éléments pour rester rapide. La performance des traitements appelants est mesurée dans
   leurs propres tests.
+- **Implémentation (phase 2)** : `.src/Tests/Utils/ProgBarTest.test` (formulaire sous Xvfb, contrôles lus par `hForm["Nom"]`). Appel réel : `New ProgBar(Titre, nbelem, Null, Stopable, unit, detail)` (le 3e argument est le parent du formulaire). Constat : passer `refresh_increment` de 3 à 1 en cours de route bloque l'affichage (le compteur interne dépasse 1 et n'est plus jamais égal).

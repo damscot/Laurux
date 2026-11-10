@@ -10,20 +10,20 @@ Les anomalies connues sont donc figées telles quelles (tests de caractérisatio
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LPRIX-T01 | gbtest | `_New`/`_call` : conversions d'entrée | `"-3,1500"`, `"1 234.5"`, `3`, `2.5`, `""`, `Null` | `.Mnt` attendu par cas | `tests/conversion_entree/` | à faire |
-| LPRIX-T02 | gbtest | Formats `.L`/`.D`/`.G` | montants ± et quantités × 9 arrondis `Arr_*` | chaînes et Float de référence | `tests/formats_sortie/` | à faire |
-| LPRIX-T03 | gbtest | `Arrondi_Calc` via `.G`, arrondis « au 5 » | 0,03 → Arr_005 ; 2,47 / 2,42 / 2,49 → Arr_005 ; -3,15 → Arr_01 ; valeurs < 1e-4 | valeurs de référence | `tests/arrondi_5/` | à faire |
-| LPRIX-T04 | gbtest | Propriété `Arr` aller-retour | toutes les énumérations, String `"0,05"`, Float `0.5` | libellé ; cas `Arr_00005`/`Arr_00001` → `""` (anomalie figée) | `tests/arrondi_libelle/` | à faire |
-| LPRIX-T05 | gbtest | `.Q`/`.QD` lecture/écriture | qtés 1,23456 / 0 / -2 ; `QD = "5"` | figer l'anomalie `QD_Write` → `Mnt` | `tests/quantite/` | à faire |
-| LPRIX-T06 | gbtest | Matrice `Conv_Brut_Net_HT_TTC` | jeu de l'`Internal_Test` actuel : remise 3 + TVA 20 %, 4 × 4 conversions, + 4 compositions | 20 Float de référence | `tests/conversion_matrice/` | à faire |
-| LPRIX-T07 | gbtest | `ignore_taxe` | mêmes taxes, `ignore_taxe = [LTaxe.TVA]` puis `[LTaxe.Remise]` | Float de référence | `tests/ignore_taxe/` | à faire |
-| LPRIX-T08 | gbtest | Propriétés `Pu*`/`Tot*` lecture | `tot` de T06 avec `Qte` = 1, 2, 0 | `.L` des 8 propriétés | `tests/pu_tot_lecture/` | à faire |
-| LPRIX-T09 | gbtest | Propriétés `Pu*`/`Tot*` écriture | affectation d'un `LPrix` sur chaque propriété | `Mnt` résultant ; `TotBHT` avec `Qte = 0` | `tests/pu_tot_ecriture/` | à faire |
-| LPRIX-T10 | gbtest | Cumuls `Add`/`AddA`/`Sub`/`SubA`/`Sum`/`SumA`/`Abs` | liste de prix d'arrondis différents | `Mnt` attendu ; nombre d'événements `change` levés | `tests/cumuls/` | à faire |
-| LPRIX-T11 | gbtest | Taxes `Add_Taxe`/`Del_Taxe`/`Lit_Taxe` | ajout, remplacement, suppression, lecture d'un type absent | booléens et objets attendus | `tests/taxes/` | à faire |
-| LPRIX-T12 | gbtest | `_call` avec quantité (anomalie) | `LPrix("10", 3).Qte` ; `LTaxe.Montant` sur qté 3 | figer la valeur actuelle (qté ignorée) | `tests/call_quantite/` | à faire |
-| LPRIX-T13 | gbtest | Événement `change` | chaque mutateur Public et chaque propriété en écriture | levé / non levé (`Abs`) | `tests/evenement_change/` | à faire |
-| LPRIX-T14 | gbtest | Performance | 100 000 `LPrix(…).TotNTC.L` avec 2 taxes | durée de référence (`gbx3 -p`) | `tests/perf_conversion/` | à faire |
+| LPRIX-T01 | gbtest | `_New`/`_call` : conversions d'entrée | `"-3,1500"`, `"1 234.5"`, `3`, `2.5`, `""`, `Null` | `.Mnt` attendu par cas | `tests/conversion_entree/` | implémenté |
+| LPRIX-T02 | gbtest | Formats `.L`/`.D`/`.G` | montants ± et quantités × 9 arrondis `Arr_*` | chaînes et Float de référence | `tests/formats_sortie/` | implémenté |
+| LPRIX-T03 | gbtest | `Arrondi_Calc` via `.G`, arrondis « au 5 » | 0,03 → Arr_005 ; 2,47 / 2,42 / 2,49 → Arr_005 ; -3,15 → Arr_01 ; valeurs < 1e-4 | valeurs de référence | `tests/arrondi_5/` | implémenté |
+| LPRIX-T04 | gbtest | Propriété `Arr` aller-retour | toutes les énumérations, String `"0,05"`, Float `0.5` | libellé ; cas `Arr_00005`/`Arr_00001` → `""` (anomalie figée) | `tests/arrondi_libelle/` | implémenté |
+| LPRIX-T05 | gbtest | `.Q`/`.QD` lecture/écriture | qtés 1,23456 / 0 / -2 ; `QD = "5"` | figer l'anomalie `QD_Write` → `Mnt` | `tests/quantite/` | implémenté |
+| LPRIX-T06 | gbtest | Matrice `Conv_Brut_Net_HT_TTC` | jeu de l'`Internal_Test` actuel : remise 3 + TVA 20 %, 4 × 4 conversions, + 4 compositions | 20 Float de référence | `tests/conversion_matrice/` | implémenté |
+| LPRIX-T07 | gbtest | `ignore_taxe` | mêmes taxes, `ignore_taxe = [LTaxe.TVA]` puis `[LTaxe.Remise]` | Float de référence | `tests/ignore_taxe/` | implémenté |
+| LPRIX-T08 | gbtest | Propriétés `Pu*`/`Tot*` lecture | `tot` de T06 avec `Qte` = 1, 2, 0 | `.L` des 8 propriétés | `tests/pu_tot_lecture/` | implémenté |
+| LPRIX-T09 | gbtest | Propriétés `Pu*`/`Tot*` écriture | affectation d'un `LPrix` sur chaque propriété | `Mnt` résultant ; `TotBHT` avec `Qte = 0` | `tests/pu_tot_ecriture/` | implémenté |
+| LPRIX-T10 | gbtest | Cumuls `Add`/`AddA`/`Sub`/`SubA`/`Sum`/`SumA`/`Abs` | liste de prix d'arrondis différents | `Mnt` attendu ; nombre d'événements `change` levés | `tests/cumuls/` | implémenté |
+| LPRIX-T11 | gbtest | Taxes `Add_Taxe`/`Del_Taxe`/`Lit_Taxe` | ajout, remplacement, suppression, lecture d'un type absent | booléens et objets attendus | `tests/taxes/` | implémenté |
+| LPRIX-T12 | gbtest | `_call` avec quantité (anomalie) | `LPrix("10", 3).Qte` ; `LTaxe.Montant` sur qté 3 | figer la valeur actuelle (qté ignorée) | `tests/call_quantite/` | implémenté |
+| LPRIX-T13 | gbtest | Événement `change` | chaque mutateur Public et chaque propriété en écriture | levé / non levé (`Abs`) | `tests/evenement_change/` | implémenté |
+| LPRIX-T14 | gbtest | Performance | 100 000 `LPrix(…).TotNTC.L` avec 2 taxes | durée de référence (`gbx3 -p`) | `tests/perf_conversion/` | implémenté (durée relevée par le runner, non comparée) |
 
 ## Détail des tests
 
@@ -35,3 +35,8 @@ Les anomalies connues sont donc figées telles quelles (tests de caractérisatio
   avec une tolérance de 1e-9 sur les Float.
 - **Couverture visée** : 100 % des lignes hors `_get`/`_put`, dont la suppression comme code mort
   est prévue (LPRIX-002).
+- **Implémentation (phase 2)** : module `.src/Tests/Utils/LPrixTest.test` (méthodes `T01ConversionEntree` …
+  `T14Performance`), valeurs attendues `.hidden/Tests/Utils/assets/LPrixTest/expected.txt` (une seule matrice
+  de valeurs, pas de `gen_input.py`). Les clés de l'ancien `Internal_Test` sont conservées (`Conversion/*` dans
+  T01/T05, `Matrice/*`/`Compo/*` dans T06, `Pu/*`/`Tot/*` dans T08, `Arrondi/*` dans T09, `Somme/*` dans T10).
+  Entrée non numérique (`"abc"`) exclue de T01 : `Utils.FloatParse` affiche un `Message.Error` bloquant.

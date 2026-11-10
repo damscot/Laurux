@@ -38,6 +38,6 @@ les `.pot` i18n dans `.lang/`.
 | `-d` | `--debug` | niveaux de log `"console,fichier"`, ex. `-d 8,8` (avec `--logfile <chemin>`) |
 | — | `--devel` | mode dev : boucle `Wait 60` au lieu de `Wait Next` (breakpoints réactifs) |
 | `-s` | `--societe` | démarre sur une société donnée (ex. `01`) |
-| `-T` | `--test` | **lance les tests gb.test** (`all`, `list` ou `Module[.Test]`) via `gbx3 -T` et renvoie leur code (voir `TESTING.md`) |
+| `-T` | `--test` | **lance les tests gb.test** (`all` ou `Module[.Test]`) via `gbx3 -T`, un processus par test, et renvoie leur code ; `-T <lot>/<nom>` rejoue un scénario GUI (base de test restaurée, sorties dans `output/tests/`) ; `-T list` liste les tests gb.test et les scénarios rejoués, avec leur type (voir `TESTING.md`) |
 | — | `--restore` | restaure un dump `.sql` au démarrage (debug) |
 | — | `--version-full` | affiche version + branche + sha1 et quitte |

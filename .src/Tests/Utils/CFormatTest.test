@@ -1,0 +1,158 @@
+' Gambas test file
+
+''Tests de CFormat (CFORMAT-T01 à T07, .hidden/reference/.src/Utils/CFormat.class/test.md).
+''Valeurs attendues : assets/CFormatTest/expected.txt, produites dans le clone de référence.
+''Exécuté sous Xvfb par le runner (Font exige gb.gui).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01GetCouleurs", "`_Get` couleurs")
+  TestKit.Desc("T02GetAlignFont", "`_Get` alignement et police")
+  TestKit.Desc("T03GetFormat", "`_Get` dimensions et format")
+  TestKit.Desc("T04GetErreurs", "`_Get` erreurs")
+  TestKit.Desc("T05ToString", "`ToString`")
+  TestKit.Desc("T06AllerRetour", "Aller-retour")
+  TestKit.Desc("T07Copy", "`Copy`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CFormatTest")
+
+End
+
+Private Function Etat(h As CFormat) As String
+  ''Toutes les propriétés d'un CFormat sur une ligne.
+
+  Dim sFont As String = "<Null>"
+
+  If Not h Then Return "<Null>"
+  If h.Font Then sFont = h.Font.ToString()
+  Return "Bg=" & h.Background & " Fg=" & h.Foreground & " Al=" & h.Alignment & " Font=" & sFont & " Pad=" & h.Padding & " W=" & h.Width & " H=" & h.Height & " Fmt=" & TestKit.Canonique(h.Format)
+
+End
+
+Private Function Lit(s As String) As String
+  ''CFormat[s] avec capture de la sortie standard (messages « Error: Bad Format String »).
+
+  Dim sFic As String = Temp$()
+  Dim h As CFormat
+  Dim sRes, sSortie As String
+  Dim hFic As File
+
+  hFic = Open sFic For Create
+  Output To #hFic
+  Try h = CFormat[s]
+  If Error Then sRes = "ERREUR: " & Error.Text
+  Output To Default
+  Close #hFic
+  If Not sRes Then sRes = Etat(h)
+  sSortie = Trim(File.Load(sFic))
+  If sSortie Then sRes &= " | sortie=" & Replace(sSortie, "\n", " / ")
+  Return sRes
+
+End
+
+Public Sub T01GetCouleurs()
+
+  TestKit.Check("T01/hexa", Lit("Background: &HDDDDDD&; "))
+  TestKit.Check("T01/decimal", Lit("Background: 16772737"))
+  TestKit.Check("T01/foreground", Lit("Foreground: &H0000FF&"))
+
+End
+
+Public Sub T02GetAlignFont()
+
+  TestKit.Check("T02/Left", Lit("Alignment: Left"))
+  TestKit.Check("T02/right", Lit("alignment: right"))
+  TestKit.Check("T02/font", Lit("Font: Serif,9"))
+  TestKit.Check("T02/inconnu", Lit("Alignment: Inconnu"))
+
+End
+
+Public Sub T03GetFormat()
+
+  TestKit.Check("T03/remisec1", Lit("Width: 1; Alignment: left"))
+  TestKit.Check("T03/remisec2", Lit("Width: 120; Alignment: left"))
+  TestKit.Check("T03/remisec4", Lit("Width: 80; Format: 0.000; Alignment: left")) ' Format figé (CFORMAT-A01)
+  TestKit.Check("T03/hauteur", Lit("Height: 25; Padding: 3"))
+
+End
+
+Public Sub T04GetErreurs()
+
+  TestKit.Check("T04/vide", Lit(""))
+  TestKit.Check("T04/Null", Lit(Null))
+  TestKit.Check("T04/Toto", Lit("Toto: 3"))
+  TestKit.Check("T04/sansseparateur", Lit("Background"))
+  TestKit.Check("T04/pointsvirgules", Lit(";;"))
+
+End
+
+Public Sub T05ToString()
+
+  Dim h As CFormat
+
+  h = New CFormat
+  TestKit.Check("T05/vide", h.ToString())
+  h.Background = &HFF0000&
+  TestKit.Check("T05/bg", h.ToString())
+  h.Foreground = &H00FF00&
+  h.Font = Font["Serif,9"]
+  h.Padding = 2
+  h.Alignment = Align.Right
+  h.Width = 50
+  h.Height = 20
+  h.Format = "0.00"
+  TestKit.Check("T05/complet", h.ToString())
+  h.Alignment = 12345
+  TestKit.Check("T05/alignhors", h.ToString())
+  h.Background = -1
+  h.Foreground = -1
+  h.Padding = -1
+  h.Alignment = -1
+  h.Width = -1
+  h.Height = -1
+  TestKit.Check("T05/moins1", h.ToString())
+
+End
+
+Public Sub T06AllerRetour()
+
+  Dim aS As String[] = ["Background: &HDDDDDD&; ", "Background: &HBDBDBD&; ", "Background: &HFAFAFA&; ",
+    "Background: &HF9FFC7&", "Background: &FFEE81&; ", "Background: &HCFF58E&; Font: serif,9; ",
+    "Background: &HFFFFFF&; Font: Serif,9; ", "255;252;216;",
+    "Background: &H00FF00&; Foreground: &HFFFFFF&; Font: Sans,12; Alignment: Center; "]
+  Dim i As Integer
+  Dim h As CFormat
+  Dim hFic As File
+
+  For i = 0 To aS.Max
+    hFic = Open Temp$() For Create
+    Output To #hFic
+    h = CFormat[aS[i]]
+    Output To Default
+    Close #hFic
+    TestKit.Check("T06/" & i, h.ToString())
+  Next
+
+End
+
+Public Sub T07Copy()
+
+  Dim h, hCopie As CFormat
+  Dim hFic As File
+
+  h = CFormat["Background: &HCFF58E&; Font: Serif,9; Width: 80; Alignment: Left"]
+  h.Format = "0.000"
+  hFic = Open Temp$() For Create
+  Output To #hFic
+  Try hCopie = h.Copy()
+  Output To Default
+  Close #hFic
+  TestKit.Check("T07/original", Etat(h))
+  TestKit.Check("T07/copie", Etat(hCopie))
+
+End

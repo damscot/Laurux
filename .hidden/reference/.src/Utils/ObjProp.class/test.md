@@ -9,13 +9,13 @@ fichier de paramètres est redirigé en fixant `HOME` vers un répertoire de tes
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| OBJPROP-T01 | gbtest | Constructeur | clé `String`, `ResultField`, `Integer` | `name`, `NomControl`, `TypeClass` ; message d'erreur pour l'entier (capturé) | `tests/constructeur/` | à faire |
-| OBJPROP-T02 | gbtest | `AddChamp`/`ModChamp`/`AppProp` | valeurs simples et tableaux (`["Fiches_Art", "art_code"]`) ; modification et ajout | propriétés de l'objet cible | `tests/champs/` | à faire |
-| OBJPROP-T03 | gbtest | `frmt` via `AppProp` | `"0.00"`, `"0.000"`, `"0.00%"`, `"dd.mm.yyyy"` sur textes `"1.5"`, `"3,14159"`, `"01/02/2024"`, `"abc"` | textes formatés ; `"#Error"` | `tests/formats/` | à faire |
-| OBJPROP-T04 | gbtest | `Param` lecture | fichier `Laurux-AutoParams-01.conf` de référence ; `New ObjProp(Null, "Fen/Ctrl", ObjProp.Param)` | `Choirech`, `historique` | `tests/param_lecture/` | à faire |
-| OBJPROP-T05 | gbtest | `EcriParam` historique | 12 saisies dont doublons, saisie vide | contenu du fichier `.conf` et de `historique` (10 éléments) | `tests/param_historique/` | à faire |
-| OBJPROP-T06 | gbtest | Propriété `filter` | `filter = <TextReg>` (avec GUI) | `Text`, `Tag`, `Alignment`, `Tooltip` de la `TextReg` | `tests/filter/` | à faire |
-| OBJPROP-T07 | replay | Écrans génériques | `TriArticles` (tri, filtres), `Achat` (lignes `SaiTableau`) | dump des colonnes et contrôles créés | `tests/ecrans_generiques/` | à faire |
+| OBJPROP-T01 | gbtest | Constructeur | clé `String`, `ResultField`, `Integer` | `name`, `NomControl`, `TypeClass` ; message d'erreur pour l'entier (capturé) | `tests/constructeur/` | implémenté |
+| OBJPROP-T02 | gbtest | `AddChamp`/`ModChamp`/`AppProp` | valeurs simples et tableaux (`["Fiches_Art", "art_code"]`) ; modification et ajout | propriétés de l'objet cible | `tests/champs/` | implémenté |
+| OBJPROP-T03 | gbtest | `frmt` via `AppProp` | `"0.00"`, `"0.000"`, `"0.00%"`, `"dd.mm.yyyy"` sur textes `"1.5"`, `"3,14159"`, `"01/02/2024"`, `"abc"` | textes formatés ; `"#Error"` | `tests/formats/` | implémenté |
+| OBJPROP-T04 | gbtest | `Param` lecture | fichier `Laurux-AutoParams-01.conf` de référence ; `New ObjProp(Null, "Fen/Ctrl", ObjProp.Param)` | `Choirech`, `historique` | `tests/param_lecture/` | implémenté |
+| OBJPROP-T05 | gbtest | `EcriParam` historique | 12 saisies dont doublons, saisie vide | contenu du fichier `.conf` et de `historique` (10 éléments) | `tests/param_historique/` | implémenté |
+| OBJPROP-T06 | gbtest | Propriété `filter` | `filter = <TextReg>` (avec GUI) | `Text`, `Tag`, `Alignment`, `Tooltip` de la `TextReg` | `tests/filter/` | implémenté |
+| OBJPROP-T07 | replay | Écrans génériques | `TriArticles` (tri, filtres), `Achat` (lignes `SaiTableau`) | dump des colonnes et contrôles créés | `tests/ecrans_generiques/` | à faire : écrans TriArticles / Achat non synthétisés dans ce lot |
 
 ## Détail des tests
 
@@ -25,3 +25,4 @@ fichier de paramètres est redirigé en fixant `HOME` vers un répertoire de tes
 - **GUI** : T06 instancie une `TextReg` (nécessite `gb.gui`, `xvfb-run` à confirmer).
 - **Cas non testable** : `Message.Error` du constructeur s'affiche en boîte modale ; T01 ne le
   couvre qu'avec un harnais qui intercepte les messages, sinon le cas est exclu et documenté.
+- Implémentation : `.src/Tests/Utils/ObjPropTest.test` (Xvfb). Exclus (boîte modale bloquante en gb.test) : clé entière du constructeur (T01, `Message.Error`) et format date sur un texte non interprétable (T03, `Message.Error` de `LDate`).

@@ -1,0 +1,18 @@
+{
+ "id": "IMPORTSTK-T03",
+ "objet": "Ligne mal formée",
+ "classe": "ImportStk",
+ "description": "Ligne sans « ; » : erreur d'exécution figée, état partiel de Fiches_Art ; erreur non interceptée « #21: Out of bounds » (ImportStk.Button2_Click.56, Lig2[1] sur la ligne « 002 ») après la mise à jour de 001. Code de sortie figé à 124 (provisoire) : la pile « Classe.Méthode.ligne: » est bien affichée mais collée à un fragment de la trace du rejeu (stdout de gbr3 vidé par blocs de 4 Ko, stderr non tamponné), FATAL_RE ancré en début de ligne ne la reconnaît pas ; passer à 125 quand le runner la détectera.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,135 @@
+' Gambas test file
+
+''Tests de Csolde (.hidden/reference/.src/Utils/Csolde.module/test.md, CSOLDE-T01 à T04).
+''Jeu de données : .src/Tests/Framework/datasets/csolde_mvt.sql (écritures Fiches_Mvt dérivées).
+''Valeurs attendues : assets/CsoldeTest/expected.txt, produites dans le clone de référence.
+''Constat (candidat anomalie) : une écriture validée à montantd NULL lève « Type mismatch » dans Solde_caisse ;
+''les cumuls du module (TotDeb/TotCred) ne sont alors pas remis à zéro et faussent le compte suivant, et
+''Recalc_solde s'arrête. T01/T02 figent ce comportement ; T02 (2e partie), T03 et T04 retirent la ligne NULL.
+
+Private $aComptes As String[] = ["411001", "411002", "411003", "401001", "512000", "530000", "999999"]
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SoldeCompte", "`Solde_caisse`")
+  TestKit.Desc("T02RecalcTous", "`Recalc_solde`")
+  TestKit.Desc("T03EquivalenceCalcsolde", "Équivalence avec `Calcsolde.Calcul`")
+  TestKit.Desc("T04Performance", "Performance")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "CsoldeTest")
+  TestKit.OuvreBase("csolde_mvt")
+
+End
+
+Private Sub LitSolde(Cle As String, Compte As String)
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT solde, soldep FROM Fiches_Comptes WHERE compte_cc = &1", Compte)
+  If Not r.Available Then
+    TestKit.Check(Cle, "<absent>")
+    Return
+  Endif
+  TestKit.Check(Cle & "/solde", r!solde)
+  TestKit.Check(Cle & "/soldep", r!soldep)
+
+End
+
+Private Sub LitSoldesNonNuls(Cle As String)
+
+  Dim r As Result
+  Dim aL As New String[]
+
+  r = Utils.db.Exec("SELECT compte_cc, solde FROM Fiches_Comptes WHERE solde <> 0 ORDER BY compte_cc")
+  If r.Available Then
+    Repeat
+      aL.Add(r!compte_cc & "=" & r!solde)
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(Cle & "/non_nuls", aL)
+  r = Utils.db.Exec("SELECT count(*) AS n, sum(solde) AS s FROM Fiches_Comptes")
+  TestKit.Check(Cle & "/nb_comptes", r!n)
+  TestKit.Check(Cle & "/somme", r!s)
+
+End
+
+Private Sub SansNull()
+
+  Utils.db.Exec("DELETE FROM Fiches_Mvt WHERE montantd IS NULL OR montantc IS NULL")
+
+End
+
+Public Sub T01SoldeCompte()
+
+  Dim i As Integer
+
+  For i = 0 To $aComptes.Max
+    Try Csolde.Solde_caisse($aComptes[i])
+    If Error Then TestKit.Check("T01/" & $aComptes[i] & "/erreur", "ERREUR: " & Error.Text)
+    LitSolde("T01/" & $aComptes[i], $aComptes[i])
+  Next
+  ' Second appel sur le même compte : pas de cumul résiduel entre deux appels
+  Csolde.Solde_caisse("411001")
+  LitSolde("T01/411001/bis", "411001")
+
+End
+
+Public Sub T02RecalcTous()
+
+  Try Csolde.Recalc_solde()
+  If Error Then TestKit.Check("T02/erreur", "ERREUR: " & Error.Text)
+  LitSoldesNonNuls("T02")
+  ' Sans l'écriture à montant NULL
+  SansNull()
+  Try Csolde.Recalc_solde()
+  If Error Then TestKit.Check("T02/sans_null/erreur", "ERREUR: " & Error.Text)
+  LitSoldesNonNuls("T02/sans_null")
+
+End
+
+Public Sub T03EquivalenceCalcsolde()
+  ''Test d'information : solde de chaque compte calculé par Csolde puis par Calcsolde.Calcul (même base).
+
+  Dim hCalc As Calcsolde
+  Dim i As Integer
+  Dim r As Result
+  Dim aC, aS As New String[]
+  Dim sCompte As String
+
+  SansNull()
+  Csolde.Recalc_solde()
+  r = Utils.db.Exec("SELECT compte_cc, solde FROM Fiches_Comptes ORDER BY compte_cc")
+  Repeat
+    aC.Add(r!compte_cc)
+    aS.Add(Format(r!solde, "0.00"))
+  Until r.MoveNext()
+  Utils.db.Exec("UPdate Fiches_Comptes SET solde = 0")
+  hCalc = New Calcsolde
+  For i = 0 To aC.Max
+    hCalc.Calcul(aC[i], False, "")
+  Next
+  r = Utils.db.Exec("SELECT compte_cc, solde FROM Fiches_Comptes ORDER BY compte_cc")
+  i = 0
+  Repeat
+    sCompte = r!compte_cc
+    If Format(r!solde, "0.00") <> aS[i] Then TestKit.Check("T03/ecart/" & sCompte, aS[i] & " <> " & Format(r!solde, "0.00"))
+    Inc i
+  Until r.MoveNext()
+  TestKit.Check("T03/nb_comptes", i)
+  LitSoldesNonNuls("T03/Calcsolde")
+
+End
+
+Public Sub T04Performance()
+  ''Durée relevée par le runner (non comparée) : Recalc_solde sur Laurux01.sql + jeu dérivé.
+
+  SansNull()
+  Csolde.Recalc_solde()
+  LitSoldesNonNuls("T04")
+
+End

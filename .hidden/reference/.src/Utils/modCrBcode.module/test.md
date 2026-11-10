@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| MODCRBCODE-T01 | gbtest | Compilation sans le module | suppression du fichier dans le clone de travail | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire |
+| MODCRBCODE-T01 | gbtest | Compilation sans le module | suppression du fichier dans le clone de travail | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : classe morte (contrôle de compilation au moment de la suppression, phase 3) |
 
 ## Détail des tests
 

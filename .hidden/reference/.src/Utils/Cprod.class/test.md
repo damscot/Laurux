@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CPROD-T01 | gbtest | Compilation sans la classe | suppression de `Cprod.class` + `Cprod.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire |
-| CPROD-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Stk`, `/Coul/Nstk`, `/Coul/Eps`, `/Coul/Spd` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire |
+| CPROD-T01 | gbtest | Compilation sans la classe | suppression de `Cprod.class` + `Cprod.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : classe morte (contrôle de build à la suppression, phase 4) |
+| CPROD-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Stk`, `/Coul/Nstk`, `/Coul/Eps`, `/Coul/Spd` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire : classe morte ; SetColors relève de ses propres tests |
 
 ## Détail des tests
 

@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| AFFRDV-T01 | replay | Annonce d'un rendez-vous | `Laurux01.sql` + ligne `Fiches_Agenda` à l'heure figée (`faketime`) pour l'utilisateur de test ; `Fmenu` ouvert 1 min | `Message.Warning` capturé avec le texte de référence ; appel `pico2wave` factice si `/son2` | `tests/replay_rdv/` | à faire |
-| AFFRDV-T02 | replay | Pas de rendez-vous / autre utilisateur / `iaction` nul | mêmes données, variantes | aucun message | `tests/replay_rdv_aucun/` | à faire |
+| AFFRDV-T01 | replay | Annonce d'un rendez-vous | `Laurux01.sql` + ligne `Fiches_Agenda` à l'heure figée (`faketime`) pour l'utilisateur de test ; `Fmenu` ouvert 1 min | `Message.Warning` capturé avec le texte de référence ; appel `pico2wave` factice si `/son2` | `tests/replay_rdv/` | à faire : nuser = User.Name (utilisateur système non fixé par le runner) ; annonce par le Timer de Fmenu |
+| AFFRDV-T02 | replay | Pas de rendez-vous / autre utilisateur / `iaction` nul | mêmes données, variantes | aucun message | `tests/replay_rdv_aucun/` | implémenté |
 
 ## Détail des tests
 
@@ -15,3 +15,6 @@
 - Après la séparation traitement/GUI (AFFRDV-003), la fonction pure devient testable en `gbtest`.
 - Non testable automatiquement : double annonce dans la même minute (dépend du temps de réaction de
   l'utilisateur).
+- **Phase 2 (implémentation)** : T02 vérifié en gb.test (`.src/Tests/Utils/AffRdvTest.test`) : aucun cas
+  ne doit afficher de message (un `Message.Warning` bloquerait le test). T01 non synthétisé : `nuser` doit
+  valoir `User.Name` (utilisateur système, non fixé par le runner) et l'annonce dépend du `Timer1` de `Fmenu`.

@@ -1,0 +1,40 @@
+' Gambas test file
+
+''Tests de Expbase (.hidden/reference/.src/Utils/Exports-Imports/Expbase.class/test.md, EXPBASE-T01).
+''Valeurs attendues : assets/ExpbaseTest/expected.txt, produites dans le clone de référence.
+''EXPBASE-T01 (prévu en replay) : la configuration de test n'a pas de /Soc01/Adr-base et un scénario ne
+''peut pas la surcharger ; la clé est donc écrite en mémoire avant la construction du formulaire (jamais
+''affiché), puis Adrbase est relu par Controls.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Preremplissage", "Préremplissage")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "ExpbaseTest")
+
+End
+
+Private Sub Adresse() As String
+
+  Dim hF As Expbase
+  Dim hC As Object
+
+  Try hF = New Expbase
+  If Error Then Return "ERREUR: " & Error.Text
+  hC = hF.Controls["Adrbase"]
+  Return hC.Text
+
+End
+
+Public Sub T01Preremplissage()
+
+  TestKit.Check("T01/sans_cle", Adresse())
+  Start.LocalSettings["/Soc" & Start.Societe & "/Adr-base"] = "comptable@exemple.invalid"
+  TestKit.Check("T01/avec_cle", Adresse())
+
+End

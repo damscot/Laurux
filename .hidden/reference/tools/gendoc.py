@@ -290,7 +290,7 @@ def git_sha(root):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--root", default=str(Path(__file__).resolve().parents[3]))
     ap.add_argument("--history", default="")
     ap.add_argument("--commit", default="")
     ap.add_argument("prefixes", nargs="+")
@@ -307,7 +307,7 @@ def main():
         src = parse(p, root)
         dep = deps[rel]
         k = kpi_of(src)
-        d = root / "reference" / rel
+        d = root / ".hidden" / "reference" / rel
         d.mkdir(parents=True, exist_ok=True)
         tpl = templates(src.name, rel)
         put_blocks(d / "summary.md", tpl["summary.md"], {"kpi": kpi_block(k)})
