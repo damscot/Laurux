@@ -53,7 +53,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] SAUVESAUTO-A01 — [anomalie] `hftp.Put` sans `Try` : une erreur FTP lève une exception non
+- [ ] SAUVESAUTO-A01 — [anomalie] (constat phase 2 : un échec FTP — refus 530 ou serveur absent — ne lève pas d'exception, une seule boîte s'affiche et annonce le succès ; figé par T05) `hftp.Put` sans `Try` : une erreur FTP lève une exception non
   interceptée pendant la fermeture ; le `If Error` qui suit teste l'erreur du `Try cp.File` et
   annonce toujours « Sauvegarde terminée ! » · tests : T04, T05 · sources : [SauvesAuto.module:29](../../../../../.src/Communs/SauvesAuto.module#L29), [SauvesAuto.module:34-38](../../../../../.src/Communs/SauvesAuto.module#L34-L38)
 - [ ] SAUVESAUTO-A02 — [anomalie] Échec de `mysqldump` non détecté (code retour et `stderr`
@@ -70,3 +70,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] SAUVESAUTO-A06 — [anomalie] Mode synchrone de `FtpClient.Put` à confirmer : si l'envoi est
   asynchrone, l'objet local `hftp` est libéré en fin de fonction et le transfert peut être
   interrompu (application en cours de fermeture) · tests : T04 · sources : [SauvesAuto.module:10](../../../../../.src/Communs/SauvesAuto.module#L10), [SauvesAuto.module:29](../../../../../.src/Communs/SauvesAuto.module#L29)
+- [ ] SAUVESAUTO-A07 — [anomalie] `/Rep_Sauv` commençant par `~` : le `.sql` est créé (le shell développe `~`) mais `Compress.File` ne développe pas `~` : l'archive `.gz` n'est pas créée et une `Message.Error` s'affiche (phase 2, vague 2 bis, 2026-11-12) · tests : aucun (constat) · sources : [SauvesAuto.module:9](../../../../../.src/Communs/SauvesAuto.module#L9), [SauvesAuto.module:22](../../../../../.src/Communs/SauvesAuto.module#L22)

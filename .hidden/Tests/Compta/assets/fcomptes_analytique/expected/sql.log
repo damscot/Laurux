@@ -1,0 +1,35 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where compte_cc = '606100'
+SELECT * FROM Fiches_SousComptes WHERE  code = '606100' ORDER BY code_vtl
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '606100'
+SELECT * FROM Fiches_Analytiques WHERE code = '01' and compte = '606100'
+INSERT INTO Fiches_Analytiques(code, compte, pourcent) VALUES ('01', '606100', '60')
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '606100'
+SELECT * FROM Fiches_Analytiques WHERE code = '02' and compte = '606100'
+INSERT INTO Fiches_Analytiques(code, compte, pourcent) VALUES ('02', '606100', '40')
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '606100'
+SELECT * FROM Fiches_Analytiques WHERE code = '02' and compte = '606100'
+UPdate  Fiches_Analytiques  SET  pourcent = '0'  WHERE code = '02' and compte = '606100'
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '606100'
+SELECT * FROM Fiches_Analytiques WHERE code = '01' and compte = '606100'
+UPdate  Fiches_Analytiques  SET  pourcent = '0'  WHERE code = '01' and compte = '606100'
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '606100'

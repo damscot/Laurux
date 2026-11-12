@@ -1,0 +1,35 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "6%" order by cast(compte_cc AS char)
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "60%" order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where compte_cc = '603700'
+SELECT * FROM Fiches_SousComptes WHERE  code = '603700' ORDER BY code_vtl
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '603700'
+select * from Fiches_Comptes where intitule_cc like  "%" order by intitule_cc
+select * from Fiches_Comptes where intitule_cc like  "%" order by intitule_cc
+select * from Fiches_Comptes where intitule_cc like  "%" order by intitule_cc
+select * from Fiches_Comptes where intitule_cc like  "B%" order by intitule_cc
+select * from Fiches_Comptes where intitule_cc like  "Ba%" order by intitule_cc
+select * from Fiches_Comptes where intitule_cc like  "Ban%" order by intitule_cc
+SELECT * FROM Fiches_Comptes where compte_cc = '512000'
+SELECT * FROM Fiches_SousComptes WHERE  code = '512000' ORDER BY code_vtl
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '512000'

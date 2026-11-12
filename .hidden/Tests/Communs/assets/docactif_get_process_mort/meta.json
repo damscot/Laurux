@@ -1,0 +1,17 @@
+{
+ "id": "DOCACTIF-T05",
+ "classe": "DocActif",
+ "objet": "Get_Lock d'un process mort du même poste (Supprimer)",
+ "description": "Paramètres ouverts (verrou pris) puis Quitter : le déclencheur du jeu docactif_pid_mort met process_id à 999999 ; Free_Lock (même poste, autre process) : bouton 2 « Annuler » (DocActif.class:157). Réouverture : Get_Lock « process inexistant », bouton 1 « Supprimer » (DocActif.class:116) : process_id repris ; Quitter : verrou libéré, table vide.",
+ "dataset": "docactif_shared/docactif_pid_mort",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

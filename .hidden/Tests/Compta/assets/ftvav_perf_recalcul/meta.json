@@ -1,0 +1,17 @@
+{
+ "id": "FTVAV-T07",
+ "objet": "Performance du recalcul (5 000 lignes de BL)",
+ "classe": "FTvav",
+ "description": "Jeu ftvav_perf_recalcul : 500 BL non facturés de 10 lignes au code TVA 3 (5 000 lignes : articles TP05 arrondi 0,05 et TP50 arrondi 0,50, main-d'oeuvre 04). TVA ventes, code 3, taux 20 → 21 (5 × BackSpace puis 21), Enregistrer ; question de recalcul bouton 1 « Oui » (Entrée) : Recalcul de toutes les lignes puis enregistrement ; Quitter. Mesure de la durée du rejeu (runner) ; la mesure gbx3 -p reste hors runner.",
+ "dataset": "ftvav_perf_recalcul",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

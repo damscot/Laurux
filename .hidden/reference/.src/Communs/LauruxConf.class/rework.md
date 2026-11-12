@@ -104,3 +104,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LAURUXCONF-A10 — [anomalie] Le `Catch` de `Button1_Click` reconnaît les erreurs par leur texte
   anglais (`Cannot open database: …`) : un pilote ou un serveur aux messages différents (MariaDB
   récent, autre langue) tombe dans `Message.Error` brut · tests : T03, T08 · sources : [LauruxConf.class:304-317](../../../../../.src/Communs/LauruxConf.class#L304-L317)
+- [ ] LAURUXCONF-A11 — [anomalie] `_new` passe par son `Catch` même avec une configuration valide (cause probable : clé `/dbase/backtrace` absente, à confirmer) : la case Maj est alors forcée à vrai alors que la configuration contient `Maj=0` (phase 2, vague 2, 2026-11-11) · tests : T01 · sources : [LauruxConf.class:136](../../../../../.src/Communs/LauruxConf.class#L136), [LauruxConf.class:171](../../../../../.src/Communs/LauruxConf.class#L171)

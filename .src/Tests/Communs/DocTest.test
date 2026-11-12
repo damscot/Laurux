@@ -1,0 +1,134 @@
+' Gambas test file
+
+''Tests de Doc (.hidden/reference/.src/Communs/Doc.module/test.md, DOC-T01 à T03).
+''xdg-open est remplacé par un script factice en tête du PATH qui journalise ses arguments (Exec asynchrone :
+''attente bornée de la trace) ; le chemin de l'application est remplacé par « <app> » (diffère entre clones).
+''T02/T03 créent une page HTML sous Application.Path (rubrique et répertoire propres au test), supprimée dans
+''_Teardown. Valeurs attendues : assets/DocTest/expected.txt, produites dans le clone de référence.
+
+Private Const RUBRIQUE As String = "LauruxTestDoc"
+Private Const MODULE_TEST As String = "LauruxTestDocModule"
+
+Private $sDir As String ' répertoire du test : bin/ (faux binaires) et trace des appels
+Private $aFichiers As New String[] ' fichiers créés sous Application.Path (supprimés dans _Teardown)
+Private $aRep As New String[] ' répertoires créés sous Application.Path (supprimés s'ils sont vides)
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SansPage", "Rubrique sans page locale")
+  TestKit.Desc("T02PageLocale", "Rubrique avec page locale")
+  TestKit.Desc("T03Module", "Paramètre `Module`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "DocTest")
+
+End
+
+Public Sub _Teardown()
+
+  Dim sFic As String
+  Dim i As Integer
+
+  For Each sFic In $aFichiers
+    Try Kill sFic
+  Next
+  For i = $aRep.Max DownTo 0
+    Try Rmdir $aRep[i]
+  Next
+  $aFichiers.Clear
+  $aRep.Clear
+
+End
+
+'--------------------------------------------------------------------------------- outils
+
+Private Sub FauxXdgOpen()
+  ''Crée un xdg-open factice qui journalise ses arguments (un « [arg] » par argument) dans <tmp>/trace et le
+  ''place en tête du PATH du processus (hérité par Exec).
+
+  $sDir = Temp$()
+  Mkdir $sDir
+  Mkdir $sDir &/ "bin"
+  File.Save($sDir &/ "bin/xdg-open", "#!/bin/sh\n{ printf '%s' \"$(basename \"$0\")\"; for a in \"$@\"; do printf ' [%s]' \"$a\"; done; echo; } >> '" & $sDir &/ "trace'\n")
+  Chmod $sDir &/ "bin/xdg-open" To "rwxr-xr-x"
+  Application.Env["PATH"] = $sDir &/ "bin" & ":" & Application.Env["PATH"]
+
+End
+
+Private Sub Trace() As String[]
+  ''Lignes de la trace (chemin de l'application remplacé par « <app> ») ; attend au plus 2 s une ligne
+  ''(Exec asynchrone), puis vide la trace.
+
+  Dim aRes As String[] = New String[]
+  Dim sLigne As String
+  Dim fFin As Float = Timer + 2
+  Dim sTrace As String = $sDir &/ "trace"
+
+  Repeat
+    If Exist(sTrace) Then
+      If Split(File.Load(sTrace), "\n", "", True).Count >= 1 Then Break
+    Endif
+    Wait 0.05
+  Until Timer > fFin
+  If Not Exist(sTrace) Then Return aRes
+  For Each sLigne In Split(File.Load(sTrace), "\n", "", True)
+    aRes.Add(Replace(sLigne, Application.Path, "<app>"))
+  Next
+  Kill sTrace
+  Return aRes
+
+End
+
+Private Sub Page(sModule As String, sRubrique As String)
+  ''Crée <Application.Path>/<sModule>/<sRubrique>.html (et le répertoire s'il n'existe pas).
+
+  Dim sRep As String = Application.Path & "/" & sModule
+
+  If Not Exist(sRep) Then
+    Mkdir sRep
+    $aRep.Add(sRep)
+  Endif
+  File.Save(sRep & "/" & sRubrique & ".html", "<html><body>test</body></html>\n")
+  $aFichiers.Add(sRep & "/" & sRubrique & ".html")
+
+End
+
+'---------------------------------------------------------------------------------------------- tests
+
+Public Sub T01SansPage()
+
+  FauxXdgOpen()
+  Doc.Open("Edtar")
+  TestKit.Check("T01/edtar", Trace())
+  Doc.Open("LauruxIndexParCategories")
+  TestKit.Check("T01/menu_aide", Trace())
+
+End
+
+Public Sub T02PageLocale()
+
+  FauxXdgOpen()
+  Page("Ecrans", RUBRIQUE)
+  Doc.Open(RUBRIQUE)
+  TestKit.Check("T02/page_ecrans", Trace())
+  ' même rubrique, page absente du module demandé : URL générale
+  Doc.Open(RUBRIQUE, MODULE_TEST)
+  TestKit.Check("T02/autre_module_sans_page", Trace())
+
+End
+
+Public Sub T03Module()
+
+  FauxXdgOpen()
+  Page(MODULE_TEST, RUBRIQUE)
+  Doc.Open(RUBRIQUE, MODULE_TEST)
+  TestKit.Check("T03/page_module", Trace())
+  ' page présente dans le module, absente de Ecrans : module par défaut → URL générale
+  Doc.Open(RUBRIQUE)
+  TestKit.Check("T03/ecrans_sans_page", Trace())
+
+End

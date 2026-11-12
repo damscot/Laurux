@@ -1,0 +1,11 @@
+#!/bin/sh
+# Faux outil externe générique (tests Laurux, phase 2). Politique : un outil lancé par Laurux (Shell/Exec) dont le
+# résultat n'influe pas sur le comportement de Laurux (client mail, synthèse vocale, lecture audio, visionneuse,
+# envoi SMS, ouverture de navigateur…) est remplacé, entre le processus « -T » et le Laurux testé, par un lien
+# symbolique de ce répertoire (en tête du PATH) vers ce script. Rien n'est lancé ; l'appel est tracé dans
+# $LAURUX_FACTICE_TRACE (défaut ~/tmp/outils.trace) au format des faux binaires : « nom [arg1] [arg2] ».
+# Les outils dont Laurux exploite la sortie (mysql, curl, wget, ps, lpstat, ssh…) ne sont PAS remplacés ici.
+trace="${LAURUX_FACTICE_TRACE:-$HOME/tmp/outils.trace}"
+mkdir -p "$(dirname "$trace")"
+{ printf '%s' "$(basename "$0")"; for a in "$@"; do printf ' [%s]' "$a"; done; echo; } >> "$trace"
+exit 0

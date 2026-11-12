@@ -26,4 +26,4 @@ recalculées à la main.
 - **`CalcSha1_all`** ouvre une `ProgBar` : test exécuté avec un affichage virtuel (Xvfb) ou après la
   séparation SHA1CALC-004 en appelant la boucle pure.
 - **Comparaison** : `check_output.py` compare les dumps triés par `(numero, lind)`.
-- **Implémentation (phase 2)** : `.src/Tests/Utils/Sha1CalcTest.test` ; jeu `.src/Tests/Framework/datasets/sha1calc_ecritures.sql` (remplace `derive.sql`) ; T09 : scénario `.hidden/Tests/Utils/assets/sha1calc_anomalies_cles/` sur le jeu `sha1calc_anomalies.sql` (clés de référence issues de T01, libellé altéré).
+- **Implémentation (phase 2)** : `.src/Tests/Utils/Sha1CalcTest.test` ; jeu `.hidden/Tests/Utils/assets/sha1calc_shared/sha1calc_ecritures.sql` (remplace `derive.sql`) ; T09 : scénario `.hidden/Tests/Utils/assets/sha1calc_anomalies_cles/` sur le jeu `sha1calc_anomalies.sql` (clés de référence issues de T01, libellé altéré).

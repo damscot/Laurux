@@ -16,4 +16,4 @@
   `FilePath`, `Button1`). Comparaison du dump trié de `Fiches_Cpostaux`.
 - Fichiers d'entrée générés par `gen_input.py` à partir de `Laurux01.sql`.
 - Le `FileChooser` intégré n'est pas piloté (chemin saisi directement).
-- **Phase 2** : jeu `datasets/impcpostaux.sql` (75001 PARIS 01 existant) ; T04 : `.hidden/Tests/Utils/assets/impcpostaux_fichier_absent/`. Fichiers d'entrée prêts pour T01/T03 : `assets/impcpostaux_import_nominal/Cpostaux.csv`, `assets/impcpostaux_ligne_invalide/Cpostaux.csv` ; il faut que le runner les copie dans le HOME du rejeu (`FilePath` vaut `~/Cpostaux.csv` par défaut).
+- **Phase 2** : jeu `.hidden/Tests/Utils/assets/impcpostaux_fichier_absent/impcpostaux.sql` (75001 PARIS 01 existant) ; T04 : `.hidden/Tests/Utils/assets/impcpostaux_fichier_absent/`. Fichiers d'entrée prêts pour T01/T03 : `assets/impcpostaux_import_nominal/Cpostaux.csv`, `assets/impcpostaux_ligne_invalide/Cpostaux.csv` ; il faut que le runner les copie dans le HOME du rejeu (`FilePath` vaut `~/Cpostaux.csv` par défaut).

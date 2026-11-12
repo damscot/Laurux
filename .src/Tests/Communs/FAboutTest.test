@@ -1,0 +1,65 @@
+' Gambas test file
+
+''Tests de FAbout (.hidden/reference/.src/Communs/FAbout.class/test.md, FABOUT-T01 et T02).
+''Prévus en replay : la fenêtre est construite sans être affichée ; Start.version_sha1/version_branch (lus de
+''sha1.txt/branch.txt par Start.Main) sont fixés par le test ; Application.Name (nom du répertoire du clone sous
+''gbx3 -T) est masqué ; textes et visibilités relus par Controls.
+''Valeurs attendues : assets/FAboutTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Ouverture", "Ouverture : version et sha1")
+  TestKit.Desc("T02Remerciements", "Remerciements : bascule de visibilité")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "FAboutTest")
+
+End
+
+Private Sub Visibles(hF As FAbout) As String
+
+  Dim hC As Object
+  Dim sRes As String
+
+  hC = hF.Controls["Lic"]
+  sRes = "Lic=" & IIf(hC.Visible, "visible", "masqué")
+  hC = hF.Controls["Grad1"]
+  sRes &= " Grad1=" & IIf(hC.Visible, "visible", "masqué")
+  hC = hF.Controls["Grad2"]
+  sRes &= " Grad2=" & IIf(hC.Visible, "visible", "masqué")
+  Return sRes
+
+End
+
+Public Sub T01Ouverture()
+
+  Dim hF As FAbout
+
+  Start.version_sha1 = "0123456789abcdef0123456789abcdef01234567"
+  Start.version_branch = "test"
+  hF = New FAbout
+  TestKit.Check("T01/version", Replace(hF.Version.Text, Application.Name & " v", "<Application.Name> v"))
+  TestKit.Check("T01/versionsha1", hF.Versionsha1.Text)
+  Start.version_sha1 = ""
+  Start.version_branch = ""
+  hF = New FAbout
+  TestKit.Check("T01/versionsha1_vide", hF.Versionsha1.Text)
+
+End
+
+Public Sub T02Remerciements()
+
+  Dim hF As FAbout
+
+  hF = New FAbout
+  TestKit.Check("T02/initial", Visibles(hF))
+  hF.Button2_Click()
+  TestKit.Check("T02/premier_clic", Visibles(hF))
+  hF.Button2_Click()
+  TestKit.Check("T02/second_clic", Visibles(hF))
+
+End

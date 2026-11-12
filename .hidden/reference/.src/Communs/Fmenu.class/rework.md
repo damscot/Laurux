@@ -132,9 +132,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `Fmenu.` et non sur la fenêtre créée par `Start` (`Start.MainWindow`) : menus et titre de la
   fenêtre visible non mis à jour, fenêtre cachée créée (à confirmer à l'exécution) · appelants :
   `Prefs`, `Fsoc`, `LauruxConf`, `Cmenu` · tests : T17 · sources : [Prefs.class:729](../../../../../.src/Communs/Prefs.class#L729), [Fsoc.class:496](../../../../../.src/Communs/Fsoc.class#L496), [LauruxConf.class:297](../../../../../.src/Communs/LauruxConf.class#L297), [Cmenu.class:64](../../../../../.src/Caisse/Cmenu.class#L64)
-- [ ] FMENU-A14 — [anomalie] `ToolButton1` vide tout `~/tmp` par `Shell "rm " & User.home &
+- [ ] FMENU-A14 — [anomalie] (confirmée phase 2 : `~/tmp/resultat` supprimé par ToolButton1, conservé par Menu118, T15) `ToolButton1` vide tout `~/tmp` par `Shell "rm " & User.home &
   "/tmp/*"` (chemin non protégé) ; `Menu118` (« Quitter ») ne le fait pas · tests : T15 · sources : [Fmenu.class:753](../../../../../.src/Communs/Fmenu.class#L753)
-- [ ] FMENU-A15 — [anomalie] (relevée par le lot Gestion, CONVENDEURS-A01) `Menu193_Click` fait
+- [ ] FMENU-A15 — [anomalie] (relevée par le lot Gestion, CONVENDEURS-A01 ; confirmée phase 2 : « Type mismatch: wanted Control, got Boolean », code 125) `Menu193_Click` fait
   `New ConVendeurs(True)` alors que `ConVendeurs._new()` n'a aucun paramètre : l'argument devient le
   `Parent` de `Form` → « Type mismatch: wanted Control, got Boolean » (vérifié gbc3/gbx3 sur un projet
   minimal) ; l'écran de connexion vendeur ne s'ouvre pas depuis ce menu · tests : à ajouter (replay
@@ -142,3 +142,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FMENU-A16 — [anomalie] (relevée par le lot Gestion, CLOTUREF-A04) `lblClm_MouseDown` ouvre
   `ClotureF` sans le contrôle du tunnel de réplication fait par `Menu147_Click` · tests : à ajouter
   (replay clôture mensuelle) · sources : [Fmenu.class:lblClm_MouseDown](../../../../../.src/Communs/Fmenu.class#L1552-L1557), [Fmenu.class:Menu147_Click](../../../../../.src/Communs/Fmenu.class#L1380-L1392)
+- [ ] FMENU-A17 — [anomalie] `ColTaches_KeyPress` sans ligne sélectionnée : après la réponse « Oui » à la suppression, erreur fatale « Bad row index » (complète FMENU-A04) (phase 2, vague 2, 2026-11-11) · tests : T06 (code 125) · sources : [Fmenu.class:323](../../../../../.src/Communs/Fmenu.class#L323)
+- [ ] FMENU-A18 — [anomalie, à confirmer] Dans un rejeu long (FMENU-T12), chaque tick de `Timer1` exécute deux fois la requête d'`AffRdv.Aff_Rdv` (« 10h01 » ×2 puis « 10h02 » ×2 dans `sql.log`) ; T19 n'en montre qu'une par tick (minuteur armé deux fois ? cause non analysée) (phase 2, vague 2 bis, 2026-11-12) · tests : T12, T19 · sources : [Fmenu.class:336](../../../../../.src/Communs/Fmenu.class#L336), [AffRdv.module:Calc_Timer](../../../../../.src/Utils/AffRdv.module#L20)

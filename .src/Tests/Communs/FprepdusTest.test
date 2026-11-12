@@ -1,0 +1,79 @@
+' Gambas test file
+
+''Tests de Fprepdus (.hidden/reference/.src/Communs/Fprepdus.class/test.md, FPREPDUS-T01 à T04).
+''Prévus en replay (textes affichés) : la fenêtre est construite sans être affichée (_new fait tout le calcul)
+''et les textes sont relus par Controls. La date du titre est comparée à Format(Now, "dd.mm.yyyy").
+''Valeurs attendues : assets/FprepdusTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SyntheseReference", "Synthèse sur la base de référence")
+  TestKit.Desc("T02SyntheseJeu", "Jeu dérivé contrôlé")
+  TestKit.Desc("T03AucunDu", "Aucun dû")
+  TestKit.Desc("T04Devise", "Devise")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "FprepdusTest")
+
+End
+
+Private Sub Textes(sCle As String)
+  ''Construit la fenêtre (jamais affichée) et relève ses trois textes.
+
+  Dim hF As Fprepdus
+  Dim hC As Object
+
+  Try hF = New Fprepdus
+  If Error Then
+    TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hC = hF.Controls["TextLabel1"]
+  TestKit.Check(sCle & "/clients", hC.Text)
+  hC = hF.Controls["TextLabel2"]
+  TestKit.Check(sCle & "/fournisseurs", hC.Text)
+  hC = hF.Controls["TextLabel5"]
+  TestKit.Check(sCle & "/titre_date_du_jour", hC.Text = "Synthèse au " & Format$(Now, "dd.mm.yyyy"))
+  hF.Delete
+
+End
+
+Public Sub T01SyntheseReference()
+
+  TestKit.OuvreBase()
+  Textes("T01")
+
+End
+
+Public Sub T02SyntheseJeu()
+
+  TestKit.OuvreBase("fprepdus_jeu")
+  Textes("T02")
+
+End
+
+Public Sub T03AucunDu()
+
+  TestKit.OuvreBase()
+  Utils.db.Exec("UPdate " & Cbase.Table("TabComptes") & " SET solde = &1", 0)
+  Textes("T03")
+
+End
+
+Public Sub T04Devise()
+
+  TestKit.OuvreBase("fprepdus_jeu")
+  Utils.db.Exec("UPdate " & Cbase.Table("TabParam") & " SET devise = NULL")
+  Textes("T04/null")
+  Utils.db.Exec("UPdate " & Cbase.Table("TabParam") & " SET devise = &1", "EUR")
+  Textes("T04/eur")
+  Utils.db.Exec("UPdate " & Cbase.Table("TabParam") & " SET devise = &1", "Euros")
+  Textes("T04/euros")
+  Utils.db.Exec("DELETE FROM " & Cbase.Table("TabParam"))
+  Textes("T04/table_vide")
+
+End

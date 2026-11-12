@@ -14,4 +14,4 @@
 - Capture dans le clone **Laurux non modifié** via « Appel programme » → `Dcfour` ; `HOME` de test ;
   éditeur neutralisé (le runner remplace la commande d'édition par un script qui copie le fichier).
 - Comparaison du fichier `Doublon.txt` ; diff BDD vide (lecture seule).
-- Jeux de données : `datasets/dcfour_doublons.sql`, `datasets/articles_vides.sql`. Accès par Gestion › Appel programme (`Prgm`, « Dcfour »). Le contenu de `~/Doublon.txt` n'est pas comparé par le runner (besoin d'outillage).
+- Jeux de données : `.hidden/Tests/Utils/assets/dcfour_doublons/dcfour_doublons.sql`, `.hidden/Tests/Utils/assets/dcfour_table_vide/articles_vides.sql`. Accès par Gestion › Appel programme (`Prgm`, « Dcfour »). Le contenu de `~/Doublon.txt` n'est pas comparé par le runner (besoin d'outillage).

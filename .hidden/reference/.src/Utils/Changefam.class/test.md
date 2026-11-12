@@ -41,7 +41,7 @@ Tables comparées dans tous les replays : `Fiches_Art`, `Fiches_HistoLigfac`, `F
 - **Non testable automatiquement** : sons (`Music.Play`), `Balloon`, apparence du formulaire
   dynamique ; sous SQLite, les `LOCK TABLES` sont neutralisés (comportement différent de MariaDB :
   T03/T08/T09 à jouer sur MariaDB uniquement).
-- Jeu de données : `.src/Tests/Framework/datasets/changefam_base.sql` (Rupture, RuptureC et Fiches_Inv, Fiches_InvT créées : ces 4 tables sont absentes de Laurux01.sql et verrouillées par `verrou()` ; historique des articles 001/002). T03/T09 : nombre de boîtes de message à confirmer au premier rejeu. T11 ne couvre pas TriArticles (Button1) ; Échap remplacé par un second clic sur Button4 (Échap non rejouable).
+- Jeu de données : `.hidden/Tests/Utils/assets/changefam_shared/changefam_base.sql` (Rupture, RuptureC et Fiches_Inv, Fiches_InvT créées : ces 4 tables sont absentes de Laurux01.sql et verrouillées par `verrou()` ; historique des articles 001/002). T03/T09 : nombre de boîtes de message à confirmer au premier rejeu. T11 ne couvre pas TriArticles (Button1) ; Échap remplacé par un second clic sur Button4 (Échap non rejouable).
 - **Rejeu phase 2** : T03 et T09 aboutissent à une erreur SQL propagée (`Error.Propagate` dans `DB_Connection.Exec`,
   backtrace désactivée) : aucune boîte `FMessage`, gbx3 ouvre sa boîte d'erreur fatale et le rejeu dépasse le délai.
   En mode Liste, `Nfam` n'est pas vidé après « Ajouter » : il n'est saisi que pour le premier article.

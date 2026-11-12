@@ -1,0 +1,20 @@
+{
+ "id": "FSOC-T12",
+ "classe": "Fsoc",
+ "objet": "Duplication (tag 6)",
+ "description": "Dupliquer (Button6, tag 6, /Soc01/Admin absent : Dup.showModal sans mot de passe), base cible Laurux02 (ComboBox Nbase index 1, base existante : pas de Createbase qui fermerait le journal SQL), Dupliquer (Dup.Button1) : bouton 1 « Oui » de Message.Question, bouton 2 « Oui » (Tab, Espace) de Message.Warning « existe … écraser » (Dup.class), copie des tables vers Laurux02 (sql.log ; base Laurux02 dumpée par « bases »), « Transfert terminé ! » ; Fermer (Dup.Button3) puis Refresh de Fsoc (Init_base relu, sql.log). Variante du test.md : cible existante au lieu de Laurux04 (création non observable).",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "bases": [
+  "Laurux02"
+ ]
+}

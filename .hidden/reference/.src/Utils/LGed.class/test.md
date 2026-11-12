@@ -37,7 +37,7 @@ temporaire dans le `Laurux.conf` du test).
 - **SQLite** : non couvert (le SQL de la classe n'y fonctionne pas, voir LGED-A05).
 - T04 fige l'erreur de collection si elle se produit dans le clone non modifié.
 - **Phase 2 (implémentation)** : module `.src/Tests/Utils/LGedTest.test` (T01-T09), valeurs attendues
-  `.hidden/Tests/Utils/assets/LGedTest/expected.txt`, jeu `.src/Tests/Framework/datasets/ged.sql` (4 documents :
+  `.hidden/Tests/Utils/assets/LGedTest/expected.txt`, jeu `.hidden/Tests/Utils/assets/gedr_shared/ged.sql` (4 documents :
   le 4ᵉ, sans tag, sert à `EpurationDocs` ; dates en 2020). Champs privés relus par `form_Open()` puis
   `Controls[...]`. Fichiers créés sous `$HOME` (HOME de test) : `User.Home` désigne le vrai répertoire de
   l'utilisateur et n'est pas isolé par le runner. Constats : A02 non reproduite (AddTag d'un tag déjà porté

@@ -1,0 +1,138 @@
+' Gambas test file
+
+''Tests de Serveur (.hidden/reference/.src/Serveur.module/test.md, SERVEUR-T01 à T07).
+''Valeurs attendues : assets/ServeurTest/expected.txt, produites dans le clone de référence.
+''Le répertoire d'échange Variables.Schmprix est un répertoire temporaire propre à chaque test ; le contenu
+''complet des fichiers *_Serveur.txt est vérifié (retours à la ligne écrits « \n » par TestKit).
+''Jeu de données : .hidden/Tests/Communs/assets/ServeurTest/serveur_tiers.sql (article accentué, client sans compte, contacts).
+
+Private $sDir As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PassArticle", "Pass(\"Art\") : création, modification, suppression")
+  TestKit.Desc("T02PassFamille", "Pass(\"Fam\") : modification puis suppression")
+  TestKit.Desc("T03PassTiers", "Pass(\"Four\"/\"Cli\") avec et sans compte")
+  TestKit.Desc("T04PassContacts", "Pass(\"ContactF\"/\"ContactC\")")
+  TestKit.Desc("T05PassSimples", "Origines sans SQL (EQ, CB, Rpl1, Rpl2, Etiq, Stock)")
+  TestKit.Desc("T06PassAjout", "Ajout en fin de fichier existant")
+  TestKit.Desc("T07PassErreurs", "Cas d'erreur (article inexistant, répertoire absent, « ; » et retour à la ligne)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "ServeurTest")
+  TestKit.OuvreBase("serveur_tiers")
+  $sDir = Temp$("serveur")
+  Mkdir $sDir
+  Variables.Schmprix = $sDir
+
+End
+
+Private Function Contenu(sFic As String) As String
+
+  If Not Exist($sDir &/ sFic) Then Return "<absent>"
+  Return File.Load($sDir &/ sFic)
+
+End
+
+Private Function Appel(Origine As String, sType As String, sCode As String, sCode2 As String, Optional sCode3 As String) As String
+
+  Try Serveur.Pass(Origine, sType, sCode, sCode2, sCode3)
+  If Error Then Return "ERREUR: " & Error.Text
+  Return "ok"
+
+End
+
+Public Sub T01PassArticle()
+
+  TestKit.Check("T01/appel_C", Appel("Art", "C", "SRV1", ""))
+  TestKit.Check("T01/appel_M", Appel("Art", "M", "001", ""))
+  TestKit.Check("T01/appel_S", Appel("Art", "S", "SRV1", "CODE2", "CODE3"))
+  TestKit.Check("T01/Art_Serveur", Contenu("Art_Serveur.txt"))
+  TestKit.Check("T01/nb_champs_ligne1", Split(Split(Contenu("Art_Serveur.txt"), "\n")[0], ";").Count)
+
+End
+
+Public Sub T02PassFamille()
+
+  TestKit.Check("T02/appel_M", Appel("Fam", "M", "01", ""))
+  TestKit.Check("T02/appel_S", Appel("Fam", "S", "02", ""))
+  TestKit.Check("T02/Fam_Serveur", Contenu("Fam_Serveur.txt"))
+
+End
+
+Public Sub T03PassTiers()
+
+  TestKit.Check("T03/four_M", Appel("Four", "M", "401001", ""))
+  TestKit.Check("T03/four_S", Appel("Four", "S", "401002", ""))
+  TestKit.Check("T03/Four_Serveur", Contenu("Four_Serveur.txt"))
+  TestKit.Check("T03/cli_avec_compte", Appel("Cli", "M", "411001", ""))
+  TestKit.Check("T03/cli_sans_compte", Appel("Cli", "C", "411900", ""))
+  TestKit.Check("T03/Cli_Serveur", Contenu("Cli_Serveur.txt"))
+
+End
+
+Public Sub T04PassContacts()
+
+  TestKit.Check("T04/contactf_M", Appel("ContactF", "M", "401001", "1"))
+  TestKit.Check("T04/contactf_S", Appel("ContactF", "S", "401001", "1"))
+  TestKit.Check("T04/ContactF_Serveur", Contenu("ContactF_Serveur.txt"))
+  TestKit.Check("T04/contactc_M", Appel("ContactC", "M", "411001", "1"))
+  TestKit.Check("T04/contactc_S", Appel("ContactC", "S", "411001", "1"))
+  TestKit.Check("T04/ContactC_Serveur", Contenu("ContactC_Serveur.txt"))
+
+End
+
+Public Sub T05PassSimples()
+
+  TestKit.Check("T05/EQ", Appel("EQ", "C", "001", "002"))
+  TestKit.Check("T05/CB", Appel("CB", "S", "001", "2148413200001"))
+  TestKit.Check("T05/Rpl1", Appel("Rpl1", "C", "001", "002"))
+  TestKit.Check("T05/Rpl2", Appel("Rpl2", "S", "001", "003"))
+  TestKit.Check("T05/Etiq_P", Appel("Etiq", "P", "001", "3"))
+  TestKit.Check("T05/Etiq_G", Appel("Etiq", "G", "002", "1"))
+  TestKit.Check("T05/Stock", Appel("Stock", "M", "001", ""))
+  TestKit.Check("T05/inconnue", Appel("Inconnue", "M", "001", ""))
+  TestKit.Check("T05/EQ_Serveur", Contenu("EQ_Serveur.txt"))
+  TestKit.Check("T05/CB_Serveur", Contenu("CB_Serveur.txt"))
+  TestKit.Check("T05/Rpl1_Serveur", Contenu("Rpl1_Serveur.txt"))
+  TestKit.Check("T05/Rpl2_Serveur", Contenu("Rpl2_Serveur.txt"))
+  TestKit.Check("T05/Etiq_Serveur", Contenu("Etiq_Serveur.txt"))
+  TestKit.Check("T05/Stock_Serveur", Contenu("Stock_Serveur.txt"))
+  TestKit.Check("T05/fichiers", Dir($sDir).Sort().Join(","))
+
+End
+
+Public Sub T06PassAjout()
+
+  ' fichier préexistant de 3 lignes (saut de ligne final)
+  File.Save($sDir &/ "Rpl1_Serveur.txt", "C;a;b;\nC;c;d;\nS;e;f;\n")
+  TestKit.Check("T06/existant_appel", Appel("Rpl1", "M", "001", "002"))
+  TestKit.Check("T06/existant", Contenu("Rpl1_Serveur.txt"))
+  ' fichier sans saut de ligne final
+  File.Save($sDir &/ "Rpl2_Serveur.txt", "C;a;b;\nC;c;d;")
+  TestKit.Check("T06/sans_saut_appel", Appel("Rpl2", "M", "001", "002"))
+  TestKit.Check("T06/sans_saut", Contenu("Rpl2_Serveur.txt"))
+  ' fichier absent : créé
+  TestKit.Check("T06/absent_avant", Contenu("Stock_Serveur.txt"))
+  TestKit.Check("T06/absent_appel1", Appel("Stock", "M", "001", ""))
+  TestKit.Check("T06/absent_appel2", Appel("Stock", "M", "002", ""))
+  TestKit.Check("T06/absent", Contenu("Stock_Serveur.txt"))
+
+End
+
+Public Sub T07PassErreurs()
+
+  TestKit.Check("T07/article_inexistant", Appel("Art", "M", "ZZZ999", ""))
+  TestKit.Check("T07/article_inexistant_fichier", Contenu("Art_Serveur.txt"))
+  TestKit.Check("T07/champ_separateur", Appel("Art", "M", "SRV2", ""))
+  TestKit.Check("T07/champ_separateur_fichier", Contenu("Art_Serveur.txt"))
+  TestKit.Check("T07/champ_separateur_lignes", Split(Contenu("Art_Serveur.txt"), "\n").Count)
+  Variables.Schmprix = $sDir &/ "absent"
+  TestKit.Check("T07/repertoire_absent", Appel("EQ", "C", "001", "002"))
+  TestKit.Check("T07/repertoire_absent_existe", Exist($sDir &/ "absent"))
+
+End

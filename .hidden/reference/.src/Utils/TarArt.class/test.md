@@ -30,4 +30,4 @@ publiques ; après, ils appellent `CalculTarif` directement. Base MariaDB restau
   2 types clients, 2 clients, une ligne dans chacune des 5 tables de conditions, une promotion.
   L'option de licence (`Utils.Option()`) est fixée par la configuration de test (`Laurux.conf`).
 - **Non testable automatiquement** : couleur des lignes de la grille.
-- Implémentation : `.src/Tests/Utils/TarArtTest.test` (formulaire instancié sous Xvfb avec une `Window` parente, candidats lus dans `GridView1` via `Controls`). Jeu de données : `.src/Tests/Framework/datasets/tarart_conditions.sql`.
+- Implémentation : `.src/Tests/Utils/TarArtTest.test` (formulaire instancié sous Xvfb avec une `Window` parente, candidats lus dans `GridView1` via `Controls`). Jeu de données : `.hidden/Tests/Utils/assets/TarArtTest/tarart_conditions.sql`.

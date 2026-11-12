@@ -21,6 +21,6 @@ produites dans le clone **Laurux non modifié**.
 - **Implémentation (phase 2)** : scénarios synthétisés `.hidden/Tests/Gestion/assets/statut_creation/`,
   `statut_modification/` et `statut_suppression_selection/` (préfixe `statut_` : les noms `tests/creation/`…
   sont partagés par d'autres classes du lot Gestion ; menu `Menu66 › Menu69 › Menu219` de `Fmenu`). T02/T03 utilisent le
-  jeu `.src/Tests/Framework/datasets/statut_p1_p2.sql` (`P1 Prospect`, `P2 Partenaire`). T03 confirme la
+  jeu `.hidden/Tests/Gestion/assets/statut_shared/statut_p1_p2.sql` (`P1 Prospect`, `P2 Partenaire`). T03 confirme la
   question « Oui » par `Keypress=16777220@FMessage#FMessage#` (fenêtre `FMessage` de gb.gui.base) ; le `DELETE`
   porte sur `P1` (ligne sélectionnée, A02 figée).

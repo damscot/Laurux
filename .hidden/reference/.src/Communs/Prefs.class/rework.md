@@ -86,7 +86,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   6556) à l'ouverture, puis elle est **enregistrée** à la fermeture (y compris dans le global) :
   `DB_Connection` crée alors un `NetHandler` vers un serveur de log inexistant, ce qui peut bloquer
   ou ralentir le démarrage (voir DB_CONNECTION-A06). Correction proposée : défaut vide · tests : T01, T15 · sources : [Prefs.class:437](../../../../../.src/Communs/Prefs.class#L437), [Prefs.class:439](../../../../../.src/Communs/Prefs.class#L439), [Prefs.class:593](../../../../../.src/Communs/Prefs.class#L593), [DB_Connection.class:84](../../../../../.src/Utils/DB_Connection.class#L84)
-- [ ] PREFS-A02 — [anomalie] `CodeMO` : `Left$(Codemo.Text, iPos - 1)` avec `iPos = 0` (texte relu
+- [ ] PREFS-A02 — [anomalie] (confirmée phase 2 : « 3 » relu « 3 » suivi d'une espace) `CodeMO` : `Left$(Codemo.Text, iPos - 1)` avec `iPos = 0` (texte relu
   sans « - ») retire le dernier caractère ; chaque ouverture/fermeture tronque le code (« 12 » →
   « 1 » → « ») · tests : T10 · sources : [Prefs.class:591](../../../../../.src/Communs/Prefs.class#L591), [Prefs.class:592](../../../../../.src/Communs/Prefs.class#L592), [Prefs.class:360](../../../../../.src/Communs/Prefs.class#L360)
 - [ ] PREFS-A03 — [anomalie] `Kgl` est lu (l.277) mais jamais écrit : la case n'a aucun effet, alors
@@ -116,3 +116,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] PREFS-A11 — [anomalie] `Supprime_Click` vide le global sans restaurer les fichiers locaux
   (les valeurs recopiées restent actives sur tous les postes) ; `Button1_Click` lance
   `pico2wave` sans argument avant `aplay` et écrit `msg.wav` dans le répertoire courant · tests : T08 · sources : [Prefs.class:Supprime_Click](../../../../../.src/Communs/Prefs.class#L1439-L1453), [Prefs.class:1090](../../../../../.src/Communs/Prefs.class#L1090)
+- [ ] PREFS-A12 — [anomalie] `MdpStmp` (mot de passe SMTP) est écrit dans la section `[General]` (`/MdpStmp`) et non dans la section de la société comme les autres réglages de messagerie (phase 2, vague 2, 2026-11-11) · tests : T01 · sources : [Prefs.class:634](../../../../../.src/Communs/Prefs.class#L634)
+- [ ] PREFS-A13 — [anomalie] `Textfam = 25` provoque « Type mismatch » dans `afffam` (cas non couvert par PREFS-A10) (phase 2, vague 2, 2026-11-11) · tests : T09 · sources : [Prefs.class:1381](../../../../../.src/Communs/Prefs.class#L1381)
+- [ ] PREFS-A14 — [anomalie, à confirmer] Après avoir coché « pp » puis « bois » et quitté, `Laurux.conf` contient `pp=-1` mais `bois=False`, alors que `bois_Click` a créé les tables boissons (défaut de l'écran ou artefact du rejeu, à analyser) (phase 2, vague 2 bis, 2026-11-12) · tests : T14 · sources : [Prefs.class:1351](../../../../../.src/Communs/Prefs.class#L1351)

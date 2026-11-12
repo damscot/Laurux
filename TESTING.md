@@ -34,7 +34,7 @@ toutefois la configuration de test d'origine (copie temporaire de `Laurux-test.c
 ### Valeurs attendues (tests de caractérisation)
 
 Le module `TestKit` (`.src/Tests/Framework/TestKit.module`) compare chaque valeur à
-`assets/<Module>/expected.txt` (`TestKit.Check("clé", valeur)`). Les valeurs attendues sont **produites dans le
+`.hidden/Tests/<lot>/assets/<Module>/expected.txt` (`TestKit.Check("clé", valeur)`). Les valeurs attendues sont **produites dans le
 clone de référence** (code d'origine) avec `LAURUX_TEST_RECORD=1`, jamais déduites de la lecture du code :
 anomalies comprises, elles figent le comportement actuel. `TestKit.Init()` prépare l'état global attendu
 hors de `Start.Main` (`Start.LocalSettings` depuis `Laurux-test.conf`, société, journaux).
@@ -92,18 +92,50 @@ vont dans `output/tests/`, non versionné.
                                        "timeout_accord" (accord de l'utilisateur), sinon ramené à 20
                                        code_sortie : code attendu du rejeu (défaut 0 ; 3 = événement non
                                        rejouable ; 125 = erreur fatale figée, voir « Modes d'exécution »)
+                                       tolerance_horodatage : écart toléré (s) entre horodatages attendu et
+                                       obtenu (défaut 5 ; voir « Limites à connaître »)
+                                       conf : surcharge de Laurux-test.conf propre au scénario,
+                                       {"/section/clé": valeur} (ex. {"/Soc01/Admin": "1"})
+                                       bases : bases supplémentaires créées ou modifiées par le scénario
+                                       (ex. ["Laurux02"]), ajoutées à dump.sql (« -- base Laurux02 »)
+                                       fichiers : fichiers produits comparés (fichiers/<chemin> des sorties) :
+                                       chemin relatif au HOME de test, ou « @<nom> » pour un fichier des
+                                       sorties de -T (@Laurux.conf : configuration finale ; @ouvrir.trace :
+                                       appels Desktop.Open ; @outils.trace : outils externes factices ;
+                                       @ftp.trace : commandes FTP reçues) ; « <fichier absent> » s'il
+                                       n'existe pas
+                                       ftp : faux serveur FTP lancé pour le rejeu, "ok" | "refus" | "absent"
+                                       (voir « Outils externes factices ») ; « {ftp} » dans une valeur de
+                                       conf est remplacé par son URL (ex. {"/Soc01/Adrbase": "{ftp}/sauve"})
+                                       « {home} » (HOME de test du Laurux testé) et « {out} » (répertoire de
+                                       sortie de -T, comparable par « @… ») : chemins portables entre poste
+                                       et conteneur (normalisés en <home> à la comparaison)
     expected/                          produit par le rejeu dans ref : dump.sql (base normalisée), sql.log
                                        (requêtes Exec_SQL), console.txt, exit_code
     …                                  fichiers d'entrée du scénario (CSV à importer…) : copiés par -T dans
                                        /tmp/laurux-test/, saisis « /tmp/laurux-test/<fichier> »
 .src/Tests/Framework/
     Laurux-test.conf                   configuration Laurux de test ([dbase] → base de test, Maj=0, son=0…)
-    datasets/<nom>.sql                 jeux de données : INSERT appliqués après Laurux01.sql
-    bin/                               enveloppes mysql, mysqldump, mariadb, mariadb-dump (port de test) et faux
-                                       programme laurux-ouvrir (Desktop.Open)
+    bin/                               enveloppes mysql, mysqldump, mariadb, mariadb-dump (port de test), faux
+                                       programmes laurux-ouvrir (Desktop.Open), laurux-factice (+ liens),
+                                       gammu, wput, et faux serveur FTP laurux-ftp
     dump_mask.json                     colonnes volatiles masquées dans dump.sql
     TestKit.module, runner.py, sandbox.py, harness.patch, harness_files.txt
 ```
+
+**Jeux de données.** Un jeu de données (`<jeu>.sql` : `INSERT`/`UPDATE` appliqués après `Laurux01.sql`) est rangé
+dans les assets du dépôt, jamais sous `.src` (il n'alourdit pas l'archive de l'application) et il est lu depuis la
+racine du clone, pas depuis le système de fichiers de l'archive (`TestKit.JeuDeDonnees`) :
+
+| Valeur (`"dataset"` de `meta.json`, `TestKit.OuvreBase("…")`) | Fichier |
+|---|---|
+| `<jeu>` | `.hidden/Tests/<lot>/assets/<test>/<jeu>.sql` : jeu propre au scénario ou au module gb.test |
+| `<classe>_shared/<jeu>` | `.hidden/Tests/<lot>/assets/<classe>_shared/<jeu>.sql` : jeu partagé par plusieurs tests d'une classe |
+| `<Lot>/<classe>_shared/<jeu>` | jeu partagé rangé dans un autre lot |
+
+Un jeu utilisé par un seul test reste dans le répertoire de ce test ; dès qu'un second test l'utilise, il passe dans
+`<classe>_shared/` (classe testée qui l'a créé). Ces répertoires ne contiennent ni `scenario.log` ni `expected.txt` :
+ils ne sont pas des tests. `runner db reset --dataset <Lot>/<répertoire>/<jeu>` charge un jeu à la main.
 
 Les deux clones lisent les **mêmes** tests et données : `runner.py harness apply` recopie `.src/Tests` et
 `.hidden/Tests` dans le clone de référence. Un module de test retrouve ses fichiers par `Application.Path &/ ".hidden/Tests/<lot>/assets/…"`.
@@ -116,13 +148,26 @@ Aucun test ne touche la configuration ni la base de l'utilisateur (`~/.config/ga
 |---|---|---|
 | Configuration | `TestKit.Init()` charge `$LAURUX_TEST_CONF`, sinon `Framework/Laurux-test.conf`, dans `Start.LocalSettings` | Laurux lancé avec `-c <copie de Laurux-test.conf>` |
 | Hôte et port | `LAURUX_TEST_DB_HOST` (défaut `127.0.0.1`), `LAURUX_TEST_DB_PORT` (défaut `13306`) | le runner réécrit `Host`/`Port` de la copie de `Laurux-test.conf` |
-| État initial | `TestKit.OuvreBase([jeu])` dans `_Setup` : `DROP`/`CREATE` de `Laurux01`, import de `Laurux01.sql`, puis de `datasets/<jeu>.sql` | `runner` recrée la base de la même façon avant chaque rejeu (`"dataset"` de `meta.json`) |
+| État initial | `TestKit.OuvreBase([jeu])` dans `_Setup` : suppression des autres bases (voir ci-dessous), `DROP`/`CREATE` de `Laurux01`, import de `Laurux01.sql`, puis du jeu de données des assets du test (voir « Jeux de données ») | `-T` (`Run_Scenario`) recrée la base de la même façon avant chaque rejeu (`"dataset"` de `meta.json`) |
 | Connexion | `Utils.db` ouvert comme le fait `Fmenu` (`SET NAMES utf8mb4`, `sql_mode` de session) | celle de Laurux, d'après la configuration |
 | Outils SQL lancés par Laurux | — | `Fmenu` lance `mysql -h <hôte>` sans port : les enveloppes de `Framework/bin`, en tête du `PATH`, ajoutent `-P $LAURUX_TEST_DB_PORT` |
 
 Chaque test et chaque rejeu repart donc d'une base identique. La base de test est le conteneur MariaDB 10.11
 du service `db` (`python3 .src/Tests/Framework/runner.py db up`, données en `tmpfs`) : `127.0.0.1:13306` vu du
 poste, `db:3306` vu du conteneur runner ; un bac à sable N utilise le port `13306+N`.
+
+**Bases laissées par un autre test.** Plusieurs écrans énumèrent toutes les bases du serveur (`Init_base`,
+`LauruxConf`, `Dup`) : une base `Laurux02` ou `pre_Laurux01` créée par un test précédent changerait leur
+`sql.log`. Avant chaque test (gb.test et rejeu), `TestKit.NettoieBases` (et `nettoie_bases` du runner pour
+`db reset` / `record`) supprime donc **toutes les bases du serveur sauf `Laurux01` et les bases système**, mais
+**seulement sur un serveur marqué comme serveur de test** : compte MariaDB verrouillé `laurux_serveur_test`
+(aucune connexion possible, invisible pour Laurux), créé à chaque initialisation du conteneur de test par
+`.hidden/Docker/mysql/test/90-marqueur-serveur-test.sql` (monté par `docker-compose.test.yml` seulement, donc aussi
+quand compose recrée le conteneur ; jamais dans l'image applicative) et, pour un conteneur déjà lancé, par
+`runner.py db up`. Un serveur non marqué (par
+exemple un serveur réel désigné par `LAURUX_TEST_DB_PORT=3306`) n'est jamais nettoyé : avertissement « non marqué
+comme serveur de test », bases conservées (seule `Laurux01` est recréée, comme avant). Ne crée jamais ce compte
+sur un serveur qui contient des données réelles.
 
 ### Modes d'exécution
 
@@ -409,6 +454,35 @@ répertoires XDG temporaires (`XDG_DATA_HOME`, `XDG_CONFIG_HOME`). Ce programme 
 (`VisualiseurTest.T02DesktopOpen`) ; `-T <lot>/<nom>` l'applique au Laurux fils du rejeu (trace dans
 `ouvrir.trace` du répertoire de sortie). Le runner prépare en plus la même association dans le HOME de test.
 
+**Outils externes factices (politique du PATH).** Entre le processus `-T` et le Laurux testé, le PATH commence par
+`.src/Tests/Framework/bin` : un outil externe lancé par Laurux (`Shell`/`Exec`) y est remplacé par un faux programme
+**lorsque son comportement n'a pas d'effet sur celui de Laurux**. Le faux programme ne lance rien et trace l'appel
+(`nom [arg1] [arg2]`) dans `$LAURUX_FACTICE_TRACE` (`outils.trace` du répertoire de sortie du rejeu ;
+`~/tmp/outils.trace` en gb.test) : le test valide **l'usage** de l'outil par Laurux (commande, arguments), pas
+l'outil lui-même.
+
+| Outil | Faux programme | Utilisé par | Comportement |
+|---|---|---|---|
+| `thunderbird`, `icedove`, `evolution`, `kmail`, `xdg-email`, `xdg-open`, `pico2wave`, `aplay`, `evince` | lien vers `laurux-factice` | EnvMail, Fmenu, LGed, FClientcarte, Prefs, Syntheses | trace, code 0 |
+| `gammu` | `gammu` | Gsm (SMS) | trace, affiche la réponse d'un envoi réussi (« …OK… », lue par Gsm) ; `LAURUX_GAMMU_ECHEC=1` : réponse d'échec |
+| `wput` | `wput` | Btqart (catalogue FTP) | trace dans `ftp.trace`, copie du fichier sous `ftp/wput/` |
+| `FtpClient` (gb.net.curl) | serveur `laurux-ftp` | SauvesAuto, FacturefmA | voir ci-dessous |
+
+Ne sont **pas** remplacés les outils dont Laurux exploite la sortie ou l'effet (`mysql`, `mysqldump` : enveloppes
+vers la base de test ; `curl`, `wget`, `ps`, `lpstat`, `lpc`, `ssh`, `gksu`, `hostname`…) : un faux programme y
+changerait le comportement testé. Pour en ajouter un : lien symbolique `bin/<outil> -> laurux-factice` si la sortie
+n'est pas lue, sinon un faux programme dédié qui reproduit la réponse attendue (modèle : `gammu`).
+
+**FTP.** `FtpClient` (libcurl, dans le processus Gambas) ne passe par aucun programme externe : le PATH ne peut pas
+le remplacer. `TestKit.FtpFactice(Mode, Dossier)` lance donc `bin/laurux-ftp`, petit serveur FTP en Python
+(bibliothèque standard) sur `127.0.0.1` (port libre), qui accepte les envois (`USER`/`PASS`, `CWD`, `MKD`,
+`EPSV`/`PASV`, `STOR`), range les fichiers reçus sous `Dossier` et trace les commandes (mot de passe compris :
+données de test) ; il renvoie l'URL `ftp://127.0.0.1:<port>`. Modes : `ok`, `refus` (identifiants refusés, 530),
+`absent` (aucun serveur, URL vers le port 1). `TestKit.FinFtp()` l'arrête (sinon arrêt automatique après 120 s).
+Rejeu : `"ftp": "ok"` dans `meta.json`, URL injectée par `{ftp}` dans `"conf"`, trace comparée par
+`"fichiers": ["@ftp.trace"]` (le port est masqué à la comparaison). gb.test : `FtpFactice` dans `_Setup`, URL posée
+dans `Start.LocalSettings`, `FinFtp` dans `_Teardown`.
+
 Autres fichiers de test : `.src/Tests/TriTest.class` (banc d'essai manuel de `TriGen`, à enrichir : TRITEST-002),
 `.src/Utils/CTestTVA.class` (validation TVA), `.src/Caisse/TestCaisses.module` (`TestCai()`, contrôle des
 verrous de caisse, pas un test).
@@ -511,9 +585,14 @@ Les actions enregistrées sont : `Click`, `Keypress` (uniquement si le contrôle
   python3 $R compare Utils/<nom>                          # → IDENTIQUE
   ```
 - `faketime` fixe l'heure de départ du rejeu, mais l'horloge avance ensuite : un horodatage issu de `Now` dépend de
-  la durée du rejeu. À la comparaison (`compare`, `report`), l'heure des horodatages avec fraction de seconde
-  (seul `Now` en produit, ex. `dteinv = '2026-01-15 10:00:02.970'`) est remplacée par `<heure>` ; la date est
-  conservée.
+  la durée du rejeu (et de la vitesse de ref et de rework). Les horodatages ne sont **pas masqués** (un masquage
+  cacherait une régression, ex. 9:59:59.99 contre 10:00:00.00, ou un changement de jour à minuit) : `compare`
+  vérifie d'abord le contenu et l'**ordre** des lignes (`sql.log`, `dump.sql`, fichiers comparés), horodatages
+  mis de côté, puis compare chaque horodatage obtenu à celui de la même position dans l'attendu avec un **écart
+  toléré** : `"tolerance_horodatage"` de `meta.json`, en secondes (défaut 5). Il signale aussi l'inversion de deux
+  horodatages successifs que l'attendu sépare d'au moins 1 s. Formes reconnues : `AAAA-MM-JJ hh:mm:ss[.f]` et heure
+  seule `hh:mm:ss.f` (comparée modulo 24 h). Une date métier fixe garde un écart nul ; un jour de décalage est
+  toujours signalé.
 - Un document ouvert par `Desktop.Open` pendant un rejeu n'est pas affiché : il est tracé par `laurux-ouvrir`
   (voir « Exécution en conteneur »).
 - Pour un `Button`, le rejeu affecte `Value = True` (`Replay_Click`) ; cela ne déclenche pas forcément

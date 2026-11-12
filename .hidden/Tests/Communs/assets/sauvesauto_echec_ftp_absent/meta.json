@@ -1,0 +1,31 @@
+{
+ "id": "SAUVESAUTO-T05",
+ "classe": "SauvesAuto",
+ "objet": "Échec FTP à la sauvegarde (serveur absent)",
+ "description": "Conf de SAUVESAUTO-T04, faux serveur FTP en mode « absent » (URL vers le port 1, connexion refusée). Paramètres › Quitter (Menu118) → form_close → Sauvegarde : aucune commande reçue (ftp.trace absent), aucune exception (code 0), une seule boîte Message.Warning (bouton 1, Entrée) : succès annoncé malgré l'échec (SAUVESAUTO-A01 figée). Comparés : @ftp.trace (<fichier absent>), @Laurux.conf.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "ftp": "absent",
+ "conf": {
+  "/Rep_Sauv": "/tmp/laurux-test/sauve",
+  "/dbase/Maj": -1,
+  "/Soc01/Sauvauto": -1,
+  "/Soc01/Envoiftp": -1,
+  "/Soc01/Adrbase": "{ftp}/sauve",
+  "/Soc01/Idftp": "laurux",
+  "/Soc01/MdpFTP": "2C030C1B1D05201F0B1A"
+ },
+ "fichiers": [
+  "@ftp.trace",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

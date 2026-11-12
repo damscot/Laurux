@@ -1,0 +1,17 @@
+{
+ "id": "PARAMETRE-T03",
+ "classe": "Parametre",
+ "objet": "Champs obligatoires vides",
+ "description": "Paramètres généraux : texte de Datefedec effacé puis Enregistrer : accepté, la date d'origine reste écrite (le contrôle porte sur dte.G, inchangé quand le texte est vidé ; A02) ; Jrnal5 (journal d'achats) effacé sans quitter le champ (pas de LostFocus) puis Enregistrer → Message.Error (Entrée), aucune écriture ; Quitter → même Message.Error, fenêtre non fermée ; fermeture (Form_Close) → Message.Error affiché deux fois (deux Entrée), fermeture bloquée (Stop Event). Enfin Jrnal5 ressaisi (60) puis Quitter : enregistrement, fermeture et verrou relâché.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -13,4 +13,4 @@
 
 - `run` est statique et sans GUI : appel direct depuis gb.test avec connexion à la base Docker ;
   valeurs attendues générées dans le clone **Laurux non modifié**.
-- **Implémentation (phase 2)** : `.src/Tests/Utils/RenumBlTest.test` ; jeu `.src/Tests/Framework/datasets/renumbl_factures.sql`. T02 : en locale C, `run` lève « Type mismatch » sur un montant à virgule (figé).
+- **Implémentation (phase 2)** : `.src/Tests/Utils/RenumBlTest.test` ; jeu `.hidden/Tests/Utils/assets/renumbl_shared/renumbl_factures.sql`. T02 : en locale C, `run` lève « Type mismatch » sur un montant à virgule (figé).

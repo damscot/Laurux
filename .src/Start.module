@@ -482,7 +482,7 @@ End
 Public Sub Run_Tests()
   ''Option -T (tests de non-régression, phase 2) ; quitte avec le code global (0 = aucun échec).
   ''Chaque test est décrit par : type (gbtest | replay), lot, classe testée, nom (identifiant de test.md, ex.
-  ''CHANGEFOUR-T05), chemin (<lot>/<Module>.test:<Méthode> ou <lot>/assets/<nom>), description (gb.test :
+  ''CHANGEFOUR-T05), chemin (.src/Tests/<lot>/<Module>.test:<Méthode> ou .hidden/Tests/<lot>/assets/<nom>), description (gb.test :
   ''TestKit.Desc appelé par le _Desc() du module de test ; scénario : « objet » de meta.json).
   ''- gb.test : chaque méthode publique d'un module .src/Tests/<lot>/*.test est lancée dans son propre processus
   ''  « gbx3 -T Module.Méthode » (un résultat ne dépend ni de l'ordre des tests ni de l'état statique laissé par un
@@ -837,17 +837,26 @@ End
 Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As String) As Boolean
   ''Rejoue le scénario GUI <lot>/<nom> (.hidden/Tests/<lot>/assets/<nom>/ : scenario.log, meta.json) et renvoie
   ''True si le code de sortie du rejeu est celui attendu (« code_sortie » de meta.json, défaut 0).
-  ''1. restaure Laurux01.sql puis le jeu « dataset » (.src/Tests/Framework/datasets/) sur la base de test
+  ''1. supprime les bases autres que Laurux01 (serveur marqué comme serveur de test seulement, TestKit.NettoieBases),
+  ''   restaure Laurux01.sql puis le jeu « dataset » (assets du scénario, voir TestKit.JeuDeDonnees) sur la base de test
   ''   $LAURUX_TEST_DB_HOST:$LAURUX_TEST_DB_PORT (défaut 127.0.0.1:13306), utilisateur laurux ;
-  ''2. prépare la configuration (Laurux-test.conf, hôte et port réécrits), copie les fichiers d'entrée du
+  ''2. prépare la configuration (Laurux-test.conf, hôte et port réécrits, clés « conf » de meta.json
+  ''   {"/section/clé": valeur} appliquées par-dessus, « {ftp} » y étant remplacé par l'URL du faux serveur FTP
+  ''   lancé si meta.json porte « ftp » : "ok" | "refus" | "absent", voir TestKit.FtpFactice ; « {home} » et
+  ''   « {out} » y sont remplacés par le HOME de test du fils et le répertoire de sortie ; fichiers reçus dans
+  ''   ftp/, commandes dans ftp.trace), copie les fichiers d'entrée du
   ''   scénario dans /tmp/laurux-test/ (même chemin sur le poste et dans le conteneur), place les enveloppes
   ''   mysql/mysqldump de Framework/bin en tête du PATH, dirige Desktop.Open vers laurux-ouvrir
-  ''   (TestKit.OuvertureFactice, trace dans ouvrir.trace) ;
+  ''   (TestKit.OuvertureFactice, trace dans ouvrir.trace), remplace les outils externes sans effet sur Laurux
+  ''   (clients mail, synthèse vocale, gammu, wput… : faux programmes de Framework/bin, trace dans outils.trace) ;
   ''3. lance un processus Laurux fils « -r --replay-exit » avec la société et les « args » du scénario, sous
   ''   « faketime » à la « date » du scénario si faketime est installé (Gambas ne peut pas décaler sa propre
   ''   horloge), limité par « timeout » (20 s, davantage seulement avec « timeout_accord ») ;
   ''4. écrit dans $LAURUX_TEST_OUT, sinon output/tests/<lot>_<nom>_<date>/ : rejeu.sh (lancement), console.txt,
-  ''   replay.log(.out), sql.log (requêtes Exec_SQL), dump.sql (mariadb-dump brut), exit_code.
+  ''   replay.log(.out), sql.log (requêtes Exec_SQL), dump.sql (mariadb-dump brut), dump_<base>.sql pour chaque base
+  ''   de « bases » (meta.json), fichiers/<chemin> pour chaque fichier de « fichiers » (meta.json : chemin relatif
+  ''   au HOME de test du fils, ou « @<nom> » pour un fichier de la sortie, ex. @Laurux.conf, @ouvrir.trace ;
+  ''   « <fichier absent> » s'il n'existe pas), exit_code.
   ''   Erreur non interceptée (boîte d'erreur Gambas) : rejeu arrêté, code 125 ; délai dépassé : code 124.
   ''Le processus -T ne pose pas le verrou ~/Laurux.lock : seul le fils le pose.
 
@@ -860,6 +869,8 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   Dim aSql As New String[]
   Dim vArg As Variant
   Dim iTimeout, iCode, iAttendu, iPos, iChamp As Integer
+  Dim hConf As Settings
+  Dim sSrc, sDst, sFtp As String
 
   cMeta = JSON.Decode(File.Load(sDir &/ "meta.json"))
   sOut = Application.Env["LAURUX_TEST_OUT"]
@@ -874,6 +885,7 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
     Print "Rejeu " & sSpec & " : " & TestKit.ServeurTest()
     Return False
   Endif
+  TestKit.NettoieBases(sHost, sPort, "Laurux01")
   sCnx = "/usr/bin/mariadb -h " & Shell$(sHost) & " -P " & Shell$(sPort) & " -u laurux -plaurux "
   Shell sCnx & "-e " & Shell$("DROP DATABASE IF EXISTS Laurux01; CREATE DATABASE Laurux01 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;") & " && " & sCnx & "Laurux01 < " & Shell$(sRoot &/ "Laurux01.sql") Wait
   If Process.LastValue <> 0 Then
@@ -881,13 +893,21 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
     Return False
   Endif
   If cMeta.Exist("dataset") And If cMeta["dataset"] Then
-    sDataset = sRoot &/ ".src/Tests/Framework/datasets" &/ cMeta["dataset"] & ".sql"
+    sDataset = TestKit.JeuDeDonnees(sRoot, cMeta["dataset"], sLot, sNom)
     Shell sCnx & "Laurux01 < " & Shell$(sDataset) Wait
     If Process.LastValue <> 0 Then
       Print "Rejeu " & sSpec & " : jeu de données non chargé (" & sDataset & ")"
       Return False
     Endif
   Endif
+  sExe = Application.Path &/ Application.Name
+  If Not Exist(sExe) Or If IsDir(sExe) Then
+    Print "Rejeu " & sSpec & " : exécutable " & sExe & " introuvable (lancer l'archive Laurux : ./Laurux -T …)"
+    Return False
+  Endif
+  ' HOME de test du fils, créé avant la configuration (marqueur {home} des valeurs de « conf »)
+  sHome = Home_Test()
+  File.Save(sOut &/ "home.txt", sHome & "\n") ' HOME de test du fils (conservé avec LAURUX_TEST_GARDER=1)
   ' 2. configuration, fichiers d'entrée, journal à rejouer
   sConf = sOut &/ "Laurux.conf"
   For Each sLigne In Split(File.Load(sRoot &/ ".src/Tests/Framework/Laurux-test.conf"), "\n")
@@ -899,6 +919,21 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
     aConf.Add(sLigne)
   Next
   File.Save(sConf, aConf.Join("\n"))
+  If cMeta.Exist("ftp") And If cMeta["ftp"] Then ' faux serveur FTP (FtpClient, wput)
+    Try Shell "rm -rf " & Shell$(sOut &/ "ftp") & " " & Shell$(sOut &/ "ftp.trace") Wait
+    sFtp = TestKit.FtpFactice(CStr(cMeta["ftp"]), sOut &/ "ftp")
+  Endif
+  If cMeta.Exist("conf") And If cMeta["conf"] Then ' surcharge propre au scénario : {"/section/clé": valeur}
+    hConf = New Settings(sConf)
+    For Each vArg In cMeta["conf"]
+      If TypeOf(vArg) = gb.String Then ' marqueurs : {ftp} URL du faux serveur, {home} HOME de test, {out} sorties
+        If sFtp Then vArg = Replace(vArg, "{ftp}", sFtp)
+        vArg = Replace(Replace(vArg, "{home}", sHome), "{out}", sOut)
+      Endif
+      hConf[cMeta["conf"].Key] = vArg
+    Next
+    hConf.Save()
+  Endif
   Shell "mkdir -p /tmp/laurux-test" Wait
   For Each sFic In Dir(sDir, "*", gb.File)
     If sFic = "scenario.log" Or If sFic = "meta.json" Then Continue
@@ -909,11 +944,6 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   Try Kill sOut &/ "replay.log.out"
   Copy sDir &/ "scenario.log" To sOut &/ "replay.log"
   ' 3. processus Laurux fils
-  sExe = Application.Path &/ Application.Name
-  If Not Exist(sExe) Or If IsDir(sExe) Then
-    Print "Rejeu " & sSpec & " : exécutable " & sExe & " introuvable (lancer l'archive Laurux : ./Laurux -T …)"
-    Return False
-  Endif
   iTimeout = 20
   If cMeta.Exist("timeout") Then
     If cMeta["timeout"] > 20 And If Not cMeta["timeout_accord"] Then
@@ -924,10 +954,9 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   Endif
   ' Desktop.Open du fils : faux programme laurux-ouvrir (XDG temporaires, portail désactivé), trace dans sOut
   TestKit.OuvertureFactice(sOut &/ "ouvrir.trace")
-  sHome = Home_Test()
-  File.Save(sOut &/ "home.txt", sHome & "\n") ' HOME de test du fils (conservé avec LAURUX_TEST_GARDER=1)
   sCmd = Env_Home(sRoot, sHome) & " PATH=" & Shell$(sRoot &/ ".src/Tests/Framework/bin" & ":" & Application.Env["PATH"])
   sCmd &= " LAURUX_TEST_DB_HOST=" & Shell$(sHost) & " LAURUX_TEST_DB_PORT=" & Shell$(sPort)
+  sCmd &= " LAURUX_FACTICE_TRACE=" & Shell$(sOut &/ "outils.trace") ' outils externes factices de Framework/bin
   sCmd &= " GB_DESKTOP_PORTAL_ENABLED=0 SDL_AUDIODRIVER=dummy " & Bus_Prive() & "timeout -k 2 " & iTimeout & " "
   If cMeta.Exist("date") And If cMeta["date"] And If System.Find("faketime") Then
     sCmd &= "faketime -f " & Shell$("@" & cMeta["date"]) & " "
@@ -947,6 +976,7 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   ' erreur non interceptée (« Classe.Méthode.ligne: … » puis boîte d'erreur Gambas modale) : arrêt, code 125
   iCode = Lance_Surveille(sCmd, sOut, "rejeu", "-E '\\.[A-Za-z_][A-Za-z0-9_:]*\\.[0-9]+: '", 125, "erreur fatale : boîte d'erreur Gambas, rejeu arrêté")
   If iCode = 130 Then Test_Interrompu = True ' Ctrl+C pendant le rejeu (trap du script)
+  TestKit.FinFtp()
   File.Save(sOut &/ "exit_code", CStr(iCode) & "\n")
   ' 4. sorties : requêtes Exec_SQL du journal rejoué, dump brut de la base
   sJournal = sOut &/ "replay.log.out"
@@ -962,6 +992,34 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   Next
   File.Save(sOut &/ "sql.log", aSql.Join("\n") & "\n")
   Shell "/usr/bin/mariadb-dump -h " & Shell$(sHost) & " -P " & Shell$(sPort) & " -u laurux -plaurux --skip-dump-date --skip-comments Laurux01 > " & Shell$(sOut &/ "dump.sql") Wait
+  If cMeta.Exist("bases") And If cMeta["bases"] Then ' bases supplémentaires créées ou modifiées par le scénario
+    For Each vArg In cMeta["bases"]
+      Shell "/usr/bin/mariadb-dump -h " & Shell$(sHost) & " -P " & Shell$(sPort) & " -u laurux -plaurux --skip-dump-date --skip-comments " & Shell$(CStr(vArg)) & " > " & Shell$(sOut &/ "dump_" & CStr(vArg) & ".sql") & " 2>/dev/null" Wait
+    Next
+  Endif
+  If cMeta.Exist("fichiers") And If cMeta["fichiers"] Then ' fichiers produits à comparer (avant Fin_Home)
+    Try Shell "rm -rf " & Shell$(sOut &/ "fichiers") Wait
+    For Each vArg In cMeta["fichiers"]
+      sFic = CStr(vArg)
+      If sFic Begins "/" Or If InStr(sFic, "..") Then
+        Print "Rejeu " & sSpec & " : fichier « " & sFic & " » ignoré (chemin relatif sans « .. » attendu)"
+        Continue
+      Endif
+      If sFic Begins "@" Then
+        sFic = Mid(sFic, 2)
+        sSrc = sOut &/ sFic
+      Else
+        sSrc = sHome &/ sFic
+      Endif
+      sDst = sOut &/ "fichiers" &/ sFic
+      Shell "mkdir -p " & Shell$(File.Dir(sDst)) Wait
+      If Exist(sSrc) And If Not IsDir(sSrc) Then
+        Copy sSrc To sDst
+      Else
+        File.Save(sDst, "<fichier absent>\n")
+      Endif
+    Next
+  Endif
   Fin_Home(sHome)
   iAttendu = 0
   If cMeta.Exist("code_sortie") Then iAttendu = cMeta["code_sortie"]

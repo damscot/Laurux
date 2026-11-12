@@ -1,0 +1,47 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where compte_cc = '606900'
+SELECT * FROM Fiches_SousComptes WHERE  code = '606900' ORDER BY code_vtl
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '606900'
+SELECT * FROM Fiches_Fam WHERE compt_fam = '606900' or cptrem_fam = '606900' or compt2_fam = '606900' or compt3_fam = '606900'
+SELECT compte FROM Fiches_Mvt  WHERE compte = '606900' union select compte FROM Fiches_Mvt1  WHERE compte = '606900' union select compte FROM Fiches_Mvt2  WHERE compte = '606900' union select compte FROM Fiches_Mvt3  WHERE compte = '606900' union select compte FROM Fiches_Mvt4  WHERE compte = '606900' union select compte FROM Fiches_Mvt5  WHERE compte = '606900'
+SELECT compte FROM Fiches_MvtM  WHERE compte = '606900' union select compte FROM Fiches_MvtM1  WHERE compte = '606900' union select compte FROM Fiches_MvtM2  WHERE compte = '606900' union select compte FROM Fiches_MvtM3  WHERE compte = '606900' union select compte FROM Fiches_MvtM4  WHERE compte = '606900' union select compte FROM Fiches_MvtM5  WHERE compte = '606900'
+DELETE FROM Fiches_Comptes WHERE compte_cc = '606900'
+DELETE FROM Fiches_SousComptes WHERE code = '606900'
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where compte_cc = '604000'
+SELECT * FROM Fiches_SousComptes WHERE  code = '604000' ORDER BY code_vtl
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '604000'
+SELECT * FROM Fiches_Fam WHERE compt_fam = '604000' or cptrem_fam = '604000' or compt2_fam = '604000' or compt3_fam = '604000'
+SELECT compte FROM Fiches_Mvt  WHERE compte = '604000' union select compte FROM Fiches_Mvt1  WHERE compte = '604000' union select compte FROM Fiches_Mvt2  WHERE compte = '604000' union select compte FROM Fiches_Mvt3  WHERE compte = '604000' union select compte FROM Fiches_Mvt4  WHERE compte = '604000' union select compte FROM Fiches_Mvt5  WHERE compte = '604000'
+SELECT * FROM Fiches_Comptes where compte_cc = '707000'
+SELECT * FROM Fiches_SousComptes WHERE  code = '707000' ORDER BY code_vtl
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '707000'
+SELECT * FROM Fiches_Fam WHERE compt_fam = '707000' or cptrem_fam = '707000' or compt2_fam = '707000' or compt3_fam = '707000'
+SELECT * FROM Fiches_Comptes where compte_cc = '606950'
+SELECT * FROM Fiches_SousComptes WHERE  code = '606950' ORDER BY code_vtl
+SELECT * FROM Fiches_Analytiques a inner join  Fiches_Postes p on p.code = a.code where a.compte = '606950'
+SELECT * FROM Fiches_Fam WHERE compt_fam = '606950' or cptrem_fam = '606950' or compt2_fam = '606950' or compt3_fam = '606950'
+SELECT compte FROM Fiches_Mvt  WHERE compte = '606950' union select compte FROM Fiches_Mvt1  WHERE compte = '606950' union select compte FROM Fiches_Mvt2  WHERE compte = '606950' union select compte FROM Fiches_Mvt3  WHERE compte = '606950' union select compte FROM Fiches_Mvt4  WHERE compte = '606950' union select compte FROM Fiches_Mvt5  WHERE compte = '606950'
+SELECT compte FROM Fiches_MvtM  WHERE compte = '606950' union select compte FROM Fiches_MvtM1  WHERE compte = '606950' union select compte FROM Fiches_MvtM2  WHERE compte = '606950' union select compte FROM Fiches_MvtM3  WHERE compte = '606950' union select compte FROM Fiches_MvtM4  WHERE compte = '606950' union select compte FROM Fiches_MvtM5  WHERE compte = '606950'
+DELETE FROM Fiches_Comptes WHERE compte_cc = '606950'
+DELETE FROM Fiches_SousComptes WHERE code = '606950'
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)

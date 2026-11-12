@@ -1,0 +1,29 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Tvaav 
+select * from Fiches_Comptes where code_tvente = '2'
+select * from Fiches_Comptes where code_tvente = '5'
+DELETE FROM Fiches_Tvaav WHERE code_tva = '5'
+SELECT * FROM Fiches_Tvaav 
+SELECT * FROM Fiches_Tvaav WHERE cc_tva = '445710'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '1'
+UPdate  Fiches_Tvaav  SET  code_tva = '1' , taux_tva = '2.10'  , cc_tva = '445710'WHERE code_tva = '1'
+UPdate  Fiches_Comptes  SET  taux_tvente = '2.10' WHERE code_tvente = '1'
+SELECT * FROM Fiches_Tvaav 

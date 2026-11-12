@@ -1,0 +1,20 @@
+{
+ "id": "PREFS-T05",
+ "classe": "Prefs",
+ "objet": "Création du global (Menu329)",
+ "description": "Laurux01.sql (conf NULL). Préférences globales (Menu329) : avertissement « créer des préférences globales ? » (Message.Warning de Prefs._new, bouton 2 « Continuer » : Tab + Espace) ; onglet Environnement : cocher AdminG (Mdp2G affiché et focalisé), saisir le mot de passe global « Glob1 », cocher Lcr et Prefixe (clés G+L) ; Quitter : UPDATE de Fiches_Parametres.conf avec le fichier global (mot de passe chiffré hexdblKey, clés G+L et locales) ; Menu329 réapplique le global au local : Laurux.conf comparé (AdminG, MdpPrefsG chiffré, Lcr, Prefixe et clés G+L écrites dans [Soc01]).",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ]
+}

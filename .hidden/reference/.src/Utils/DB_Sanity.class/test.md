@@ -31,7 +31,7 @@ séparation traitement/GUI (DB_SANITY-003/004), les fonctions pures deviennent t
   boîtes `Message.Warning` de confirmation (le replay rejoue le clic sur le bouton de la boîte, à
   confirmer avec le harnais) ; l'anomalie A01 (`ENGINE` sans espace) n'est atteignable qu'avec un
   moteur différent dans le jeu dégradé (MyISAM), à inclure dans T02.
-- **Phase 2** : jeux `datasets/db_sanity_degrade.sql`, `db_sanity_cles.sql`, `db_sanity_nettoyage.sql` ; scénarios `.hidden/Tests/Utils/assets/db_sanity_{controle_conforme,controle_ecarts,filtres_affichage,correction,correction_cles,nettoyage}/`. Le CSV exporté (HOME temporaire) n'est pas comparé par le runner : seuls le SQL et le dump le sont. Confirmation du 2ᵉ bouton de `Message.Warning` : Tab puis Espace sur `FMessage` (à valider au rejeu).
+- **Phase 2** : jeux `.hidden/Tests/Utils/assets/db_sanity_shared/db_sanity_degrade.sql`, `db_sanity_cles.sql`, `db_sanity_nettoyage.sql` ; scénarios `.hidden/Tests/Utils/assets/db_sanity_{controle_conforme,controle_ecarts,filtres_affichage,correction,correction_cles,nettoyage}/`. Le CSV exporté (HOME temporaire) n'est pas comparé par le runner : seuls le SQL et le dump le sont. Confirmation du 2ᵉ bouton de `Message.Warning` : Tab puis Espace sur `FMessage` (à valider au rejeu).
 - **Rejeu (phase 2, 2026-11-08)** : `db_control.csv` est bien trouvé au rejeu (chemin relatif Gambas résolu dans
   l'archive du projet, indépendant du répertoire courant). Tab + Espace (ou Tab + Entrée) sur `FMessage` confirme
   bien le 2ᵉ bouton (la ProgBar s'ouvre). En revanche, pour T04 à T06, le traitement ne démarre jamais sous rejeu :

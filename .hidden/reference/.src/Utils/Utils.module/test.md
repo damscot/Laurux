@@ -61,8 +61,8 @@ locale de `arrondi`, `totobs`, `Calcode` et des `Val()`.
   les fonctions GUI sont couvertes par T22-T24.
 - **Implémentation (phase 2)** : module `.src/Tests/Utils/UtilsTest.test` (une méthode `Tnn…` par test),
   valeurs attendues dans `.hidden/Tests/Utils/assets/UtilsTest/expected.txt`. Jeux de données :
-  `datasets/utils_cbarre_commande.sql` (T15, T16 : code-barres secondaire, lignes `Fiches_Ligcom`) et
-  `datasets/utils_orientation.sql` (T17 : tables minimales `Fiches_ligcons`/`Fiches_ligregie` et colonne
+  `.hidden/Tests/Utils/assets/UtilsTest/utils_cbarre_commande.sql` (T15, T16 : code-barres secondaire, lignes `Fiches_Ligcom`) et
+  `.hidden/Tests/Utils/assets/UtilsTest/utils_orientation.sql` (T17 : tables minimales `Fiches_ligcons`/`Fiches_ligregie` et colonne
   `art_dra`, faute de DDL de l'option bois dans le dépôt). Le runner n'exécute qu'en `fr_FR.UTF-8` :
   la seconde locale (`LANG=C`) reste à outiller. T09 : une clé par (durée, jours, fin de mois), 61 dates
   chacune. T07 : les composants issus de `Now` sont vérifiés par différence (`dMois`, `dAnnee`).

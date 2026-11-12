@@ -1,0 +1,20 @@
+{
+ "id": "LAURUXCONF-T03",
+ "classe": "LauruxConf",
+ "objet": "Mauvais mot de passe",
+ "description": "Mot de passe effacé puis « faux », Valider : ouverture refusée (Access denied), Message.Warning « l' utilisateur ou le mot de passe est erroné » validé par Entrée (le rejeu échoue en code 3 s'il n'apparaît pas). Configuration finale comparée (@Laurux.conf : mot de passe faux enregistré chiffré). Journal SQL fermé par Utils.db.Close (voir lauruxconf_valider_ok).",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ]
+}

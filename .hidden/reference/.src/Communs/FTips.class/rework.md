@@ -50,4 +50,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FTIPS-A01 — [anomalie] `_init` sans gestion d'erreur : `tips/tips.fr` absent ou illisible →
   erreur au chargement de la classe, au démarrage de l'application · tests : manuel · sources : [FTips.class:29](../../../../../.src/Communs/FTips.class#L29)
 - [ ] FTIPS-A02 — [anomalie] `/LastTip` supérieur au nombre d'astuces : « Précédent » sort du tableau
-  (message d'erreur au lieu de revenir dans les bornes) · tests : T04 · sources : [FTips.class:73-75](../../../../../.src/Communs/FTips.class#L73-L75), [FTips.class:87](../../../../../.src/Communs/FTips.class#L87)
+  (message d'erreur au lieu de revenir dans les bornes) — constat phase 2 (2026-11-11) : non reproduit, `_new` ramène l'indice dans 1…24 avant tout « Précédent » (`/LastTip = 30` sans erreur) ; anomalie probablement sans objet, à confirmer par l'utilisateur · tests : T04 · sources : [FTips.class:73-75](../../../../../.src/Communs/FTips.class#L73-L75), [FTips.class:87](../../../../../.src/Communs/FTips.class#L87)

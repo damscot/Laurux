@@ -1,0 +1,34 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where compte_cc = '606950'
+SELECT * FROM Fiches_Comptes where compte_cc = '606110'
+SELECT * FROM Fiches_SousComptes WHERE code_vtl = '606110'
+INSERT INTO Fiches_SousComptes (code,code_vtl, intitule_vtl) Values ('606950','606110','Electricite')
+SELECT * FROM Fiches_SousComptes WHERE  code = '606950' ORDER BY code_vtl
+SELECT * FROM Fiches_Comptes where compte_cc = '606120'
+SELECT * FROM Fiches_SousComptes WHERE code_vtl = '606120'
+INSERT INTO Fiches_SousComptes (code,code_vtl, intitule_vtl) Values ('606950','606120','Gaz')
+SELECT * FROM Fiches_SousComptes WHERE  code = '606950' ORDER BY code_vtl
+SELECT * FROM Fiches_SousComptes WHERE  code = '606950' ORDER BY code_vtl
+SELECT * FROM Fiches_SousComptes WHERE  code = '606950' ORDER BY code_vtl
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '606950'
+UPdate  Fiches_Comptes  SET  compte_cc = '606950' , intitule_cc = 'Compte libre 2', type_cc = 'G', cent_cc = 0  , comptr_cc = '0' ,coll = 0 , code_tvente = NULL , taux_tvente = NULL, gen_tv = '0', code_tachat =  NULL , taux_tachat = NULL, gen_ta = '0', cprincipal = -1, lettrable = '0', coll_cc = NULL WHERE compte_cc = '606950'
+select * from Fiches_Comptes where cast(compte_cc AS char) like  "%" order by cast(compte_cc AS char)

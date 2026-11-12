@@ -74,3 +74,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] SERVEUR-A03 — [anomalie] Échec d'ouverture du fichier ignoré par `Try`, puis erreur sur
   `Eof(hFile)` (répertoire `Schmprix` absent ou non accessible) : remplacer par un `Message.Error`
   explicite ou un abandon silencieux · tests : T07 · sources : [Serveur.module:14-21](../../../../.src/Serveur.module#L14-L21)
+- [ ] SERVEUR-A04 — [anomalie] Fichiers `*_Serveur.txt` : si le fichier existant ne se termine pas par un saut de ligne, la nouvelle ligne est collée à la dernière ; un code absent crée un fichier vide avant l'erreur « Result is not available » (SERVEUR-A01) ; répertoire absent : erreur « Stream is closed » due à la réutilisation du handle de fichier du module (complète SERVEUR-A03) (phase 2, vague 2, 2026-11-11) · tests : T01-T07 · sources : [Serveur.module:15-30](../../../../.src/Serveur.module#L15-L30)

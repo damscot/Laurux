@@ -80,7 +80,8 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   journalières `<base><jour>.sql.gz` de `SauvesAuto` ne sont pas proposées (seule la dernière,
   restée en `<base>.sql`, l'est) ; la décompression écrase
   sans avertir un `<base>.sql` existant · tests : T02 · sources : [FRestore.class:74-76](../../../../../.src/Communs/FRestore.class#L74-L76), [SauvesAuto.module:20](../../../../../.src/Communs/SauvesAuto.module#L20)
-- [ ] FRESTORE-A07 — [anomalie] La base est supprimée **avant** l'import, sans copie de sécurité ni
+- [ ] FRESTORE-A07 — [anomalie] (confirmée phase 2 : import en échec → 58 tables sur 134) La base est supprimée **avant** l'import, sans copie de sécurité ni
   transaction : un import en échec laisse une base vide ou partielle · tests : T07 · sources : [FRestore.class:129-131](../../../../../.src/Communs/FRestore.class#L129-L131)
 - [ ] FRESTORE-A08 — [anomalie] En cas d'échec, le son est joué deux fois (l. 133-137) · tests : T07 ·
   sources : [FRestore.class:133-137](../../../../../.src/Communs/FRestore.class#L133-L137)
+- [ ] FRESTORE-A09 — [anomalie] Après restauration (préférences ou version différente) : `Utils.db.Close` puis `Utils.Exit(False)`, mais l'exécution continue et la fermeture de l'écran journalise un événement GUI dans un journal déjà fermé (« [gb.logging].FileHandler.Write.46: Uninitialized or already closed handler! ») : erreur fatale en mode `-l` (cf. DB_CONNECTION-A12, FRESTORE-A04) (phase 2, vague 2, 2026-11-11) · tests : T04 (code 125) · sources : [FRestore.class:195-196](../../../../../.src/Communs/FRestore.class#L195-L196), [FRestore.class:208-210](../../../../../.src/Communs/FRestore.class#L208-L210)

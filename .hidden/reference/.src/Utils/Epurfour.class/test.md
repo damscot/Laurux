@@ -13,5 +13,5 @@
 - Capture dans le clone **Laurux non modifié** ; comparaison par dump (le nombre de requêtes changera
   avec EPURFOUR-002).
 - **Phase 2 (implémentation)** : T01 = scénario `.hidden/Tests/Utils/assets/epurfour_effacement/` (Appel
-  programme `Menu282`, saisie « Epurfour », Lancer, message validé ; jeu `datasets/epurfour.sql` qui renseigne
+  programme `Menu282`, saisie « Epurfour », Lancer, message validé ; jeu `.hidden/Tests/Utils/assets/epurfour_effacement/epurfour.sql` qui renseigne
   `art_cfour`) ; T02 vérifié en gb.test (`.src/Tests/Utils/EpurfourTest.test` : table vidée, aucun message).

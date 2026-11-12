@@ -1,0 +1,141 @@
+' Gambas test file
+
+''Tests de LauruxConf (.hidden/reference/.src/Communs/LauruxConf.class/test.md, LAURUXCONF-T01, T06, T07, T10).
+''Valeurs attendues : assets/LauruxConfTest/expected.txt, produites dans le clone de référence.
+''Prévus en replay, ils sont écrits en gb.test : le formulaire est construit sans être affiché (_new lit la
+''configuration et la liste des bases), ses contrôles sont relus par Controls, et Form_Close (fermeture non
+''modale) est appelé directement (le formulaire n'étant pas affiché, Close ne lève pas l'événement) ; la configuration est vérifiée en mémoire (Start.LocalSettings), le
+''Laurux.conf écrit sur disque par un rejeu n'étant pas comparé par le runner. Les validations (Button1_Click)
+''affichent des boîtes Message.* : elles sont couvertes par les scénarios lauruxconf_*.
+''Jeux de données : .hidden/Tests/Communs/assets/fsoc_shared/fsoc_deux_bases.sql (Laurux01, Laurux02), .hidden/Tests/Communs/assets/LauruxConfTest/lauruxconf_prefixe.sql.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Ouverture", "Ouverture avec configuration existante")
+  TestKit.Desc("T06FermetureNonModale", "Fermeture non modale : configuration réécrite, redémarrage demandé")
+  TestKit.Desc("T07PremierDemarrage", "Premier démarrage : valeurs par défaut sans configuration")
+  TestKit.Desc("T10Prefixe", "Mode préfixe : nom de base affiché et écrit à la fermeture")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "LauruxConfTest")
+
+End
+
+Private Function Ctrl(hF As LauruxConf, sNom As String) As Object
+
+  Return hF.Controls[sNom]
+
+End
+
+Private Sub Ecran(sCle As String, hF As LauruxConf)
+
+  Dim hC As Object
+  Dim aListe As New String[]
+  Dim i As Integer
+
+  hC = Ctrl(hF, "Nbase")
+  For i = 0 To hC.Count - 1
+    aListe.Add(hC[i].Text)
+  Next
+  TestKit.Check(sCle & "/Nbase_liste", aListe)
+  TestKit.Check(sCle & "/Nbase", hC.Text)
+  TestKit.Check(sCle & "/Nbase_actif", hC.Enabled)
+  TestKit.Check(sCle & "/type", Ctrl(hF, "ComboBox1").Text)
+  TestKit.Check(sCle & "/Login", Ctrl(hF, "Login").Text)
+  TestKit.Check(sCle & "/Password", Ctrl(hF, "Password").Text)
+  TestKit.Check(sCle & "/Host", Ctrl(hF, "Host").Text)
+  TestKit.Check(sCle & "/Port", Ctrl(hF, "Port").Text)
+  TestKit.Check(sCle & "/Maj", Ctrl(hF, "Maj").Value)
+  TestKit.Check(sCle & "/Maj_actif", Ctrl(hF, "Maj").Enabled)
+  TestKit.Check(sCle & "/Backtrace", Ctrl(hF, "Backtrace").Value)
+  TestKit.Check(sCle & "/Bssh", Ctrl(hF, "Bssh").Value)
+  TestKit.Check(sCle & "/Prefixe_visible", Ctrl(hF, "Prefixe").Visible)
+  TestKit.Check(sCle & "/Prefixe", Ctrl(hF, "Prefixe").Text)
+
+End
+
+Private Sub Conf(sCle As String)
+
+  Dim sK As String
+
+  For Each sK In ["/Soc", "/dbase/type", "/dbase/Name", "/dbase/Prefixe", "/dbase/Login", "/dbase/Password", "/dbase/Port", "/dbase/Host", "/dbase/Maj", "/dbase/backtrace", "/dbase/Con-ssh", "/dbase/ssh/Login", "/dbase/ssh/Passphrase", "/dbase/ssh/Passp"]
+    TestKit.Check(sCle & sK, Start.LocalSettings[sK])
+  Next
+
+End
+
+Private Sub Fermeture(sCle As String, hF As LauruxConf)
+
+  Start.Restart = False
+  ' formulaire jamais affiché : Close ne lève pas l'événement Close, le gestionnaire est appelé directement
+  Try hF.Form_Close()
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  Conf(sCle)
+  TestKit.Check(sCle & "/Restart", Start.Restart)
+  TestKit.Check(sCle & "/db_ouverte", Utils.db.Opened)
+
+End
+
+Public Sub T01Ouverture()
+
+  Dim hF As LauruxConf
+
+  TestKit.OuvreBase("fsoc_shared/fsoc_deux_bases")
+  Try hF = New LauruxConf
+  If Error Then
+    TestKit.Check("T01/erreur", Error.Text)
+    Return
+  Endif
+  Ecran("T01", hF)
+
+End
+
+Public Sub T06FermetureNonModale()
+
+  Dim hF As LauruxConf
+
+  TestKit.OuvreBase("fsoc_shared/fsoc_deux_bases")
+  hF = New LauruxConf
+  Ctrl(hF, "Password").Text = "autre"
+  Fermeture("T06", hF)
+
+End
+
+Public Sub T07PremierDemarrage()
+
+  Dim hF As LauruxConf
+
+  TestKit.OuvreBase("fsoc_shared/fsoc_deux_bases")
+  ' configuration vide (premier démarrage) : la connexion reste celle ouverte par OuvreBase
+  Start.LocalSettings = New Settings(Temp$() & ".conf", Application.Name & " local configuration")
+  Try hF = New LauruxConf
+  If Error Then
+    TestKit.Check("T07/erreur", Error.Text)
+    Return
+  Endif
+  Ecran("T07", hF)
+  Fermeture("T07", hF)
+
+End
+
+Public Sub T10Prefixe()
+
+  Dim hF As LauruxConf
+
+  TestKit.OuvreBase("lauruxconf_prefixe")
+  Start.LocalSettings["/Soc01/Prefixe"] = True
+  Start.LocalSettings["/dbase/Prefixe"] = "pre_"
+  Start.LocalSettings["/dbase/Name"] = "pre_Laurux01"
+  Try hF = New LauruxConf
+  If Error Then
+    TestKit.Check("T10/erreur", Error.Text)
+    Return
+  Endif
+  Ecran("T10", hF)
+  Fermeture("T10", hF)
+
+End
