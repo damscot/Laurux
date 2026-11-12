@@ -1,0 +1,10 @@
+#!/bin/sh
+# Faux gammu (tests Laurux, phase 2) : Gsm lance « gammu sendsms TEXT <n°> -text <message> > ~/tmp/sms.txt » puis
+# cherche « OK » dans la sortie. Rien n'est envoyé ; l'appel est tracé dans $LAURUX_FACTICE_TRACE (comme
+# laurux-factice) et la réponse d'un envoi réussi est affichée. LAURUX_GAMMU_ECHEC=1 : réponse d'échec.
+trace="${LAURUX_FACTICE_TRACE:-$HOME/tmp/outils.trace}"
+mkdir -p "$(dirname "$trace")"
+{ printf 'gammu'; for a in "$@"; do printf ' [%s]' "$a"; done; echo; } >> "$trace"
+if [ -n "$LAURUX_GAMMU_ECHEC" ]; then echo "Error opening device, it doesn't exist."; exit 1; fi
+echo "Sending SMS 1/1....waiting for network answer..OK, message reference=1"
+exit 0

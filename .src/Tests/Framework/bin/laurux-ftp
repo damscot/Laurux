@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+"""Faux serveur FTP des tests Laurux (phase 2) : valide l'usage du FTP par Laurux (URL, identifiants, fichiers
+envoyés, répertoires créés), sans tester ni client ni serveur FTP réels. FtpClient (gb.net.curl, libcurl dans le
+processus Gambas) ne peut pas être remplacé par un faux programme du PATH comme laurux-ouvrir : ce script écoute
+donc sur 127.0.0.1 (port libre) et répond juste ce qu'il faut à libcurl.
+
+Usage : laurux-ftp --dir DIR --trace FICHIER --port-file FICHIER [--mode ok|refus] [--duree S]
+  --dir        fichiers reçus (STOR), rangés sous DIR/<chemin FTP>
+  --trace      commandes reçues, une par ligne (« USER laurux », « STOR /sauve/x.sql.gz », …) ; PASS en clair
+               (données de test) pour vérifier le mot de passe déchiffré par Laurux
+  --port-file  port d'écoute, écrit une fois le serveur prêt
+  --mode       ok (défaut) ; refus : identifiants refusés (530)
+  --duree      arrêt automatique après S secondes (défaut 120 ; garde-fou si l'appelant ne l'arrête pas)
+Commandes non gérées : 502 (tracées).
+"""
+import argparse
+import os
+import posixpath
+import socket
+import socketserver
+import threading
+
+p = argparse.ArgumentParser()
+p.add_argument("--dir", required=True)
+p.add_argument("--trace", required=True)
+p.add_argument("--port-file", required=True)
+p.add_argument("--mode", default="ok", choices=("ok", "refus"))
+p.add_argument("--duree", type=float, default=120)
+A = p.parse_args()
+VERROU = threading.Lock()
+
+
+def trace(ligne):
+    with VERROU, open(A.trace, "a", encoding="utf-8") as f:
+        f.write(ligne + "\n")
+
+
+class Session(socketserver.StreamRequestHandler):
+    def repond(self, texte):
+        self.wfile.write((texte + "\r\n").encode("utf-8"))
+
+    def chemin(self, arg):
+        return posixpath.normpath(posixpath.join(self.cwd, arg)) if arg else self.cwd
+
+    def handle(self):
+        self.cwd, self.passif = "/", None
+        self.repond("220 laurux-ftp pret")
+        for brut in self.rfile:
+            ligne = brut.decode("utf-8", "replace").rstrip("\r\n")
+            cmd, _, arg = ligne.partition(" ")
+            cmd = cmd.upper()
+            trace(f"{cmd} {arg}".rstrip())
+            if cmd == "USER":
+                self.repond("331 mot de passe ?")
+            elif cmd == "PASS":
+                self.repond("530 identifiants refuses" if A.mode == "refus" else "230 connecte")
+            elif cmd in ("SYST",):
+                self.repond("215 UNIX Type: L8")
+            elif cmd == "PWD":
+                self.repond(f'257 "{self.cwd}"')
+            elif cmd == "CWD":
+                self.cwd = self.chemin(arg)
+                self.repond("250 ok")
+            elif cmd == "CDUP":
+                self.cwd = posixpath.dirname(self.cwd) or "/"
+                self.repond("250 ok")
+            elif cmd == "MKD":
+                self.repond(f'257 "{self.chemin(arg)}" cree')
+            elif cmd in ("TYPE", "MODE", "STRU", "OPTS", "NOOP", "ALLO"):
+                self.repond("200 ok")
+            elif cmd == "FEAT":
+                self.repond("211 fin")
+            elif cmd in ("EPSV", "PASV"):
+                if self.passif:
+                    self.passif.close()
+                self.passif = socket.socket()
+                self.passif.bind(("127.0.0.1", 0))
+                self.passif.listen(1)
+                self.passif.settimeout(15)
+                port = self.passif.getsockname()[1]
+                if cmd == "EPSV":
+                    self.repond(f"229 mode passif etendu (|||{port}|)")
+                else:
+                    self.repond(f"227 mode passif (127,0,0,1,{port // 256},{port % 256})")
+            elif cmd == "STOR":
+                if not self.passif:
+                    self.repond("425 pas de connexion de donnees")
+                    continue
+                cible = self.chemin(arg)
+                self.repond("150 envoi")
+                try:
+                    data, _ = self.passif.accept()
+                except OSError:
+                    self.repond("425 connexion de donnees impossible")
+                    continue
+                dest = os.path.join(A.dir, cible.lstrip("/"))
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
+                with data, open(dest, "wb") as f:
+                    while True:
+                        bloc = data.recv(65536)
+                        if not bloc:
+                            break
+                        f.write(bloc)
+                self.passif.close()
+                self.passif = None
+                trace(f"recu {cible} ({'vide' if os.path.getsize(dest) == 0 else 'non vide'})")
+                self.repond("226 transfert termine")
+            elif cmd in ("SIZE", "MDTM", "RETR", "DELE", "RMD"):
+                self.repond("550 indisponible")
+            elif cmd in ("LIST", "NLST"):
+                self.repond("450 liste indisponible")
+            elif cmd == "QUIT":
+                self.repond("221 au revoir")
+                break
+            else:
+                self.repond("502 commande non geree")
+
+
+class Serveur(socketserver.ThreadingTCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+os.makedirs(A.dir, exist_ok=True)
+srv = Serveur(("127.0.0.1", 0), Session)
+threading.Timer(A.duree, srv.shutdown).start()
+with open(A.port_file + ".tmp", "w") as f:
+    f.write(str(srv.server_address[1]))
+os.replace(A.port_file + ".tmp", A.port_file)
+srv.serve_forever()

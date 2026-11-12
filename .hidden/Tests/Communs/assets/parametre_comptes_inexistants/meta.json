@@ -1,0 +1,17 @@
+{
+ "id": "PARAMETRE-T04",
+ "classe": "Parametre",
+ "objet": "Comptes et TVA inexistants",
+ "description": "Onglet métiers : compte de frais de gestion 999999 (inexistant) puis Enregistrer → question « Ce compte n'existe pas, créer ? » de meserrc (Message.Question Parametre.class, bouton 2 « Non » : Tab + Espace). Comportement figé : l'ouverture de la boîte fait perdre le focus à cptfrais, cpts_LostFocus remet b à 0 et l'UPDATE est émis malgré la réponse (compte inexistant enregistré). Enregistrer à nouveau → même question, bouton 1 « Oui » (Entrée) → Fcomptes ouvert, fermé sans saisie, puis Message.Error « compléter les zones » (Entrée), aucune écriture. Fin du scénario fenêtre ouverte (verrou Parametres/0 encore présent dans le dump) : après Fcomptes, la correction du champ n'est plus prise en compte au rejeu.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

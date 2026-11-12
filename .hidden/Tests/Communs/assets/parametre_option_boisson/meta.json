@@ -1,0 +1,17 @@
+{
+ "id": "PARAMETRE-T08",
+ "classe": "Parametre",
+ "objet": "Option boisson (B)",
+ "description": "Jeu parametre_option_boisson (colonnes de modfichier.fichierboisson, /Soc01/bois = True par les préférences globales). Paramètres généraux (Menu25) en option B, onglet métiers : le changement d'onglet donne le focus à cptfrais, qui est d'abord renseigné (606100, compte existant : sinon sa perte de focus ouvre une question non rejouable) ; cadre Boissons : consignes client 411001 / fournisseur 401001, vignette « 123 » (complétée à 25 chiffres par Par_lostfocus), compte sécurité sociale 411002, TVA 1, n° d'identification, caution, arrêté ; Enregistrer puis Quitter : UPDATE de Fiches_Parametres (colonnes boisson) et de Fiches_Societes (ident, caution) ; verrou relâché.",
+ "dataset": "parametre_option_boisson",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

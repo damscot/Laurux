@@ -1,0 +1,31 @@
+{
+ "id": "SAUVESAUTO-T05",
+ "classe": "SauvesAuto",
+ "objet": "Échec FTP à la sauvegarde (identifiants refusés)",
+ "description": "Conf de SAUVESAUTO-T04 (Rep_Sauv = /tmp/laurux-test/sauve, Envoiftp, Adrbase = {ftp}/sauve, Idftp, MdpFTP chiffré), faux serveur FTP en mode « refus » (530 après PASS). Paramètres › Quitter (Menu118) → form_close → Sauvegarde : l'envoi échoue (ftp.trace s'arrête après PASS, aucun STOR) mais aucune exception n'est levée (code 0) et une seule boîte Message.Warning est affichée (bouton 1, Entrée) : le If Error suivant hftp.Put teste le Try cp.File précédent, le succès est annoncé (SAUVESAUTO-A01 figée : « Sauvegarde terminée ! » malgré l'échec). Comparés : @ftp.trace, @Laurux.conf.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "ftp": "refus",
+ "conf": {
+  "/Rep_Sauv": "/tmp/laurux-test/sauve",
+  "/dbase/Maj": -1,
+  "/Soc01/Sauvauto": -1,
+  "/Soc01/Envoiftp": -1,
+  "/Soc01/Adrbase": "{ftp}/sauve",
+  "/Soc01/Idftp": "laurux",
+  "/Soc01/MdpFTP": "2C030C1B1D05201F0B1A"
+ },
+ "fichiers": [
+  "@ftp.trace",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

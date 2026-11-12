@@ -1,0 +1,28 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Numabon
+SELECT * FROM Fiches_Numabon Where numero = '1'
+SELECT * FROM Fiches_Ligabon Where numero = '1' order by lig asc
+SELECT * FROM Fiches_Numabon Where numero = '1'
+DELETE FROM Fiches_Numabon WHERE numero = '1'
+SELECT * FROM Fiches_Ligabon Where numero = '1'
+DELETE FROM Fiches_Ligabon WHERE numero = '1'
+SELECT * FROM Fiches_Numabon
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = '999999' and coll <> 1 and type_cc = 'A'

@@ -1,0 +1,54 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+Select * From  Laurux01.Fiches_Societes where cd_sc = '01'
+Select * From  Laurux02.Fiches_Societes where cd_sc = '02'
+SELECT * FROM Fiches_Identite
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+set sql_mode = 'no_auto_value_on_zero'
+drop table Laurux02.Fiches_Parametres
+Create table Laurux02.Fiches_Parametres SELECT * FROM Laurux01.Fiches_Parametres
+UPdate  Laurux02.Fiches_Parametres SET  dnbon = '000000', dnfac = '000000', dncom = '00000'
+UPdate  Laurux02.Fiches_Parametres SET  numecriture = 0,numecriture2 = 0
+UPdate  Laurux02.Fiches_Parametres SET  dnc = '411000'
+UPdate  Laurux02.Fiches_Parametres  SET  dnf = '401000'
+drop table Laurux02.Fiches_Tvaav
+create table Laurux02.Fiches_Tvaav SELECT * FROM Laurux01.Fiches_Tvaav
+drop table Laurux02.Fiches_Tvaac
+create table Laurux02.Fiches_Tvaac SELECT * FROM Laurux01.Fiches_Tvaac
+drop table Laurux02.Fiches_Journaux
+Create table Laurux02.Fiches_Journaux SELECT * FROM Laurux01.Fiches_Journaux
+drop table Laurux02.Fiches_Echeances
+create table Laurux02.Fiches_Echeances SELECT * FROM Laurux01.Fiches_Echeances
+Delete From Laurux02.Fiches_Comptes where ( Left(compte_cc, 3) <> '411' And Left(compte_cc, 3) <> '401' ) Or coll = '1'
+Insert Into Laurux02.Fiches_Comptes SELECT * FROM Laurux01.Fiches_Comptes where ( Left(compte_cc, 3) <> '411' And Left(compte_cc, 3) <> '401' ) Or coll = '1'
+UPdate  Laurux02.Fiches_Comptes  SET  solde = 0, soldep = 0
+drop table Laurux02.Fiches_Txt_Relances
+create table Laurux02.Fiches_Txt_Relances SELECT * FROM Laurux01.Fiches_Txt_Relances
+drop table Laurux02.Fiches_Etiquettes
+Create table Laurux02.Fiches_Etiquettes SELECT * FROM Laurux01.Fiches_Etiquettes
+drop table Laurux02.Fiches_Cpostaux
+Create table Laurux02.Fiches_Cpostaux SELECT * FROM Laurux01.Fiches_Cpostaux
+drop table Laurux02.Fiches_Societes
+Create table Laurux02.Fiches_Societes SELECT * FROM Laurux01.Fiches_Societes
+UPdate  Laurux02.Fiches_Societes  SET  cd_sc = '02'
+Select * From  Laurux01.Fiches_Societes where cd_sc = '01'
+Select * From  Laurux02.Fiches_Societes where cd_sc = '02'
+SELECT * FROM Fiches_Identite
+SELECT * FROM Fiches_Societes where cd_sc = '01'

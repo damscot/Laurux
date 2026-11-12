@@ -1,0 +1,32 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Tvaav 
+SELECT * FROM Fiches_Reglements
+SELECT * FROM Fiches_Commentaires order by numcom
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Txtmo order by code_txtmo
+SELECT * FROM Fiches_LibelFac
+SELECT * FROM Fiches_Tleg
+SELECT * FROM Fiches_Identite
+SELECT * FROM Fiches_Typec
+select * from Fiches_Cpostaux where cp like  "%" order by cp
+select * from Fiches_Marques where code like  "%" order by code, intitule
+SELECT * FROM Fiches_Users

@@ -1,0 +1,55 @@
+' Gambas test file
+
+''Tests de Parametre (.hidden/reference/.src/Communs/Parametre.class/test.md, PARAMETRE-T12).
+''Valeurs attendues : assets/ParametreTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est instanciée sans être affichée (Form_Open n'est pas exécuté : aucun verrou DocActif).
+''Veriftva est privée : non testée ici. Une période invalide (« 13.2024 ») affiche un message
+''(bloquant sous gb.test) ; une période vide prend le mois courant (Now) : couvertes par le scénario
+''parametre_periodes (PARAMETRE-T06), à date figée.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T12Verifications", "`Verif_Compte` et `mcdt` : comptes existants/inexistants, périodes")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "ParametreTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Periode(hF As Parametre, sSaisie As String) As String
+  ''Période après mcdt (texte du champ Mc).
+
+  Dim hMc As Object
+
+  hMc = hF.Controls["Mc"]
+  hMc.Text = sSaisie
+  Try hF.mcdt(hMc)
+  If Error Then Return "ERREUR: " & Error.Text
+  Return hMc.Text
+
+End
+
+Public Sub T12Verifications()
+
+  Dim hF As Parametre
+
+  Try hF = New Parametre
+  If Error Then
+    TestKit.Check("T12/creation", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T12/compte/411000", hF.Verif_Compte("411000"))
+  TestKit.Check("T12/compte/606100", hF.Verif_Compte("606100"))
+  TestKit.Check("T12/compte/999999", hF.Verif_Compte("999999"))
+  TestKit.Check("T12/compte/vide", hF.Verif_Compte(""))
+  TestKit.Check("T12/mcdt/02.2024", Periode(hF, "02.2024"))
+  TestKit.Check("T12/mcdt/12.2019", Periode(hF, "12.2019"))
+  Object.Lock(hF) ' sinon Form_Close (Button2_Click → Message.Error) est levé à la destruction et bloque
+
+End
+

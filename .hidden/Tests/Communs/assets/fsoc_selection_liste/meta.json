@@ -1,0 +1,20 @@
+{
+ "id": "FSOC-T06",
+ "classe": "Fsoc",
+ "objet": "Changement de société par clic dans la liste",
+ "description": "Clic sur la ligne 02 de Soclist (ColumnView, Soclist_Click) : connexion rouverte sur Laurux02, ALTER DATABASE Laurux02 … utf8mb4_unicode_ci, Maj_Zones (sql.log), Message.Warning validé par Entrée, fermeture de Fsoc et de Fmenu puis Start.Main (redémarrage). Comportement actuel figé (code_sortie 125) : Utils.db.Close ferme aussi le journal de DB_Connection (log.Close) ; le SET NAMES qui suit la réouverture (Fsoc.class:606) écrit dans ce journal fermé en mode -l → erreur fatale « Uninitialized or already closed handler! » (candidat anomalie) : ni ALTER DATABASE ni redémarrage observés.",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "xfail": "Soclist_Click : SET NAMES après Utils.db.Close/Open écrit dans le journal fermé : erreur fatale en mode -l, ni ALTER DATABASE ni redémarrage (candidat anomalie)",
+ "xfail_attendu": "/Soc=02, collation de Laurux02 modifiée, redémarrage par Start.Main"
+}

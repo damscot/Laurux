@@ -1,0 +1,24 @@
+{
+ "id": "START-T02",
+ "classe": "Start",
+ "objet": "-c fichier absent : arrêt avant connexion",
+ "description": "Laurux lancé avec « -c /inexistant.conf extra1 » en plus du « -c <conf de test> » imposé par Run_Scenario (la dernière occurrence de -c l'emporte) : Parse_Args affiche « Impossible de Trouver le fichier de conf fourni » (console, non comparée) et quitte (code 0) avant toute connexion : sql.log vide, configuration de test inchangée (@Laurux.conf sans section [Coul], que Start.Main écrit sinon). Cas « --version-full extra1 » (ligne « Arg: extra1 ») non couvert : sortie console non comparée.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [
+  "-c",
+  "/inexistant.conf",
+  "extra1"
+ ],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

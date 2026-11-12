@@ -1,7 +1,7 @@
 ' Gambas test file
 
 ''Tests de HistoCom (.hidden/reference/.src/Utils/HistoCom.class/test.md, HISTOCOM-T01 et T02).
-''Jeu de données : .src/Tests/Framework/datasets/histocom_lignes.sql.
+''Jeu de données : .hidden/Tests/Utils/assets/histocom_shared/histocom_lignes.sql.
 ''Valeurs attendues : assets/HistoComTest/expected.txt, produites dans le clone de référence.
 
 Public Sub _Desc()
@@ -15,7 +15,7 @@ End
 Public Sub _Setup()
 
   TestKit.Begin("Utils", "HistoComTest")
-  TestKit.OuvreBase("histocom_lignes")
+  TestKit.OuvreBase("histocom_shared/histocom_lignes")
 
 End
 

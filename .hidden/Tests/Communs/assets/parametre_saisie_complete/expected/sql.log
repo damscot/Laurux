@@ -1,0 +1,45 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Parametres' and doc_num = '0'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Parametres', '0', 'laurux', 91, '734e3c61922441158719b21e28cd8250', 'aeb1f0216ca3(15ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '606100'
+SELECT * FROM Fiches_Journaux WHERE code_jo = '50'
+SELECT * FROM Fiches_Journaux WHERE code_jo = '53'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '606100'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='1'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '606100'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='1'
+UPdate  Fiches_Parametres  SET  dteclec = '2019-12-31 00:00:00', dteclec1 = '2018-12-31 00:00:00', dteclec2 ='2016-12-31 00:00:00',  dteclec3 ='2015-12-31 00:00:00', dteclec4 ='2014-12-31 00:00:00', dteclec5 ='2013-12-31 00:00:00',  dtepc ='2019-11-30 00:00:00', dtetdec ='2017-12-31 00:00:00', dtefedec ='2017-12-31 00:00:00', cptrplus ='606100', cptrmoins ='658000', jdr ='90', cptrsplus ='120000', cptrsmoins ='129000',dnc = '411027', dnf = '401026', dnbon = '000000', dnfac = '000000', coretro = '1,50', jrnal = '70', jrnal2 = '50', jrnal3 = '53', devise = 'EUR', dtepp = '11.2019', dtepec = '12.2019', jrnal4 = '70', jrnal5 = '60', nfac = -1, version = '3.69', dnart = 'ABCDEFGHIJ12345'
+UPdate  Fiches_Parametres  SET  frais = 2.5, cptfrais = '606100', tvafrais = '1', cutk = '0000009', dntk = '0000008', jrnod = '10', ecart = 0.05
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '606100'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='1'
+UPdate  Fiches_Parametres  SET  dteclec = '2019-12-31 00:00:00', dteclec1 = '2018-12-31 00:00:00', dteclec2 ='2016-12-31 00:00:00',  dteclec3 ='2015-12-31 00:00:00', dteclec4 ='2014-12-31 00:00:00', dteclec5 ='2013-12-31 00:00:00',  dtepc ='2019-11-30 00:00:00', dtetdec ='2017-12-31 00:00:00', dtefedec ='2017-12-31 00:00:00', cptrplus ='606100', cptrmoins ='658000', jdr ='90', cptrsplus ='120000', cptrsmoins ='129000',dnc = '411027', dnf = '401026', dnbon = '000000', dnfac = '000000', coretro = '1,50', jrnal = '70', jrnal2 = '50', jrnal3 = '53', devise = 'EUR', dtepp = '11.2019', dtepec = '12.2019', jrnal4 = '70', jrnal5 = '60', nfac = -1, version = '3.69', dnart = 'ABCDEFGHIJ12345'
+UPdate  Fiches_Parametres  SET  frais = 2.5, cptfrais = '606100', tvafrais = '1', cutk = '0000009', dntk = '0000008', jrnod = '10', ecart = 0.05
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '606100'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='1'
+UPdate  Fiches_Parametres  SET  dteclec = '2019-12-31 00:00:00', dteclec1 = '2018-12-31 00:00:00', dteclec2 ='2016-12-31 00:00:00',  dteclec3 ='2015-12-31 00:00:00', dteclec4 ='2014-12-31 00:00:00', dteclec5 ='2013-12-31 00:00:00',  dtepc ='2019-11-30 00:00:00', dtetdec ='2017-12-31 00:00:00', dtefedec ='2017-12-31 00:00:00', cptrplus ='606100', cptrmoins ='658000', jdr ='90', cptrsplus ='120000', cptrsmoins ='129000',dnc = '411027', dnf = '401026', dnbon = '000000', dnfac = '000000', coretro = '1,50', jrnal = '70', jrnal2 = '50', jrnal3 = '53', devise = 'EUR', dtepp = '11.2019', dtepec = '12.2019', jrnal4 = '70', jrnal5 = '60', nfac = -1, version = '3.69', dnart = 'ABCDEFGHIJ12345'
+UPdate  Fiches_Parametres  SET  frais = 2.5, cptfrais = '606100', tvafrais = '1', cutk = '0000009', dntk = '0000008', jrnod = '10', ecart = 0.05
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Parametres' and doc_num = '0'
+DELETE FROM Fiches_Docactif where doc_type = 'Parametres' and doc_num = '0'
+UNLOCK TABLES

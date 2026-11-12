@@ -1,0 +1,20 @@
+{
+ "id": "PREFS-T06",
+ "classe": "Prefs",
+ "objet": "Surcharge au démarrage",
+ "description": "Jeu prefs_global_surcharge (global : Exp, Tva550, Taxe, Faca, Taches différents du local + clé Nouvelle absente). Démarrage puis Paramètres › Quitter. Observable comparé : requêtes du démarrage exécutées parce que le global a surchargé le local avant les rappels (Abonnement pour /Faca, Fiches_Taches pour /Taches). Laurux.conf local comparé : les 6 clés prennent la valeur globale (Tva550, Taxe, Exp, Faca, Taches, Nouvelle) ; Ecran réécrit par Fmenu.form_close.",
+ "dataset": "prefs_global_surcharge",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ]
+}

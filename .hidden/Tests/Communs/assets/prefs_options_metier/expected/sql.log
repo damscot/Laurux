@@ -1,0 +1,89 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Echeances order by num
+SELECT * FROM Fiches_Typec order by code
+SELECT * FROM Fiches_Tvaav 
+SELECT * FROM Fiches_Txtmo 
+ALTER TABLE Fiches_Art ADD art_trsp decimal(7,3) DEFAULT 0.000
+Edit Fiches_Art : art_frais <> 0 
+CREATE TABLE Fiches_region (code char(2) ,cart char(15) ,libelle varchar(30) ,taux decimal(6,2) ,PRIMARY KEY (code,cart))
+CREATE TABLE Fiches_tarpp (code char(15) ,margez decimal(7,2) ,supqs decimal(6,2) ,PRIMARY KEY (code))
+CREATE TABLE Fiches_ligtarpp (code char(15) ,ligne integer ,binf decimal(6,3) ,bsup decimal(6,3) ,marht decimal(7,2) ,normht decimal(7,2) ,supht decimal(7,2) ,PRIMARY KEY (code,ligne))
+CREATE TABLE Art_Tipp (code char(15) ,ticpe integer ,PRIMARY KEY(code))  ENGINE = InnoDB
+ALTER TABLE Fiches_Art ADD art_ecof decimal(7,3) DEFAULT 0.000
+ALTER TABLE Fiches_Cli ADD (cli_tipp char(2))
+ALTER TABLE Fiches_Cli ADD (cli_dfin char(1))
+ALTER TABLE Fiches_AdrlivC ADD (tipp char(2))
+ALTER TABLE Fiches_Ligbl MODIFY qte_ligbl char(8)
+ALTER TABLE Fiches_Ligbl ADD tipp_ligbl char(2)
+ALTER TABLE Fiches_LigblM ADD tipp_ligbl char(2)
+ALTER TABLE Fiches_HistoLigfac ADD tipp_ligfac char(2)
+ALTER TABLE Fiches_HistoLigfacM ADD tipp_ligfac char(2)
+ALTER TABLE Fiches_HistoLigfac MODIFY qte_ligfac char(10)
+ALTER TABLE Fiches_Ligrecpt MODIFY qte char(9)
+ALTER TABLE Fiches_Ligcom MODIFY qte char(9)
+ALTER TABLE Fiches_Societes ADD tipp char(2)
+ALTER TABLE Fiches_AdrlivC ADD numtipp char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_AdrlivC ADD numagri char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_AdrlivC ADD dtagri DATE
+ALTER TABLE Fiches_Cli ADD numtipp char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_Cli ADD numagri char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_Cli ADD dtagri DATE
+ALTER TABLE Fiches_HistoLigfac ADD numagri_ligfac char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_HistoLigfacM ADD numagri_ligfac char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_Ligbl ADD numagri_ligbl char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_LigblM ADD numagri_ligbl char(14) COLLATE utf8mb4_general_ci
+ALTER TABLE Fiches_HistoLigfac ADD numadr_ligfac integer COLLATE utf8mb4_general_ci DEFAULT -1
+ALTER TABLE Fiches_HistoLigfacM ADD numadr_ligfac integer COLLATE utf8mb4_general_ci DEFAULT -1
+ALTER TABLE Fiches_Ligbl ADD numadr_ligbl integer COLLATE utf8mb4_general_ci DEFAULT -1
+ALTER TABLE Fiches_LigblM ADD numadr_ligbl integer COLLATE utf8mb4_general_ci DEFAULT -1
+ALTER TABLE Fiches_Art ADD art_trsp decimal(7,3) DEFAULT 0.000
+CREATE TABLE Fiches_regie (code char(2) ,nom varchar(30) ,tauxa decimal(9,4) ,degres integer , tauxss decimal(9,4) , type char(1),suspendu boolean, ap boolean, drfac boolean, cdcompt integer, ttva char(2), PRIMARY KEY (code))
+CREATE TABLE Fiches_consigne (code char(2) ,libelle varchar(30) ,prix decimal(6,2) ,type char(1),PRIMARY KEY (code))
+CREATE TABLE Fiches_ligcons (num char(15) ,numlig char(12) ,type char(1) ,codecons char(2) ,nb int ,montant decimal(8,2), envaleur boolean, bloc varchar(33), code INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (code))
+CREATE TABLE Fiches_ligregie (dtmouv date, num char(15) ,numlig char(12) ,type char(1) ,codeart char(15) ,coderegie char(2) ,qte decimal(8,3), volume decimal(7,2), degres decimal(5,2), volumeap decimal(6,2), montdr decimal(8,2), txtvadr char(5), montss decimal(7,2), txtvass char(5), vignette char(25), cloture boolean, code INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (code))
+ALTER TABLE Fiches_Art ADD art_trspa decimal(7,3) DEFAULT 0.000
+ALTER TABLE Fiches_Art ADD art_trspr decimal(7,3) DEFAULT 0.000
+ALTER TABLE Fiches_Art ADD art_tsuc decimal(7,3) DEFAULT 0.000
+ALTER TABLE Fiches_Art ADD art_remv decimal(7,3) DEFAULT 0.000
+ALTER TABLE Fiches_Art ADD (art_dra char(2))
+ALTER TABLE Fiches_Art ADD art_volm decimal(7,2) DEFAULT 0.00
+ALTER TABLE Fiches_Art ADD art_deg decimal(5,2) DEFAULT 0.00
+ALTER TABLE Fiches_Art ADD art_montdr decimal(6, 3) DEFAULT 0.000
+ALTER TABLE Fiches_Art ADD art_montss decimal(6,3) DEFAULT 0.000
+ALTER TABLE Fiches_Art ADD (art_consp char(2))
+ALTER TABLE Fiches_Art ADD (art_nbcol integer)
+ALTER TABLE Fiches_Art ADD (art_consc char(2))
+ALTER TABLE Fiches_Art ADD (art_nbbou integer)
+ALTER TABLE Fiches_Art ADD (art_consb char(2))
+ALTER TABLE Fiches_Cli ADD cli_cons boolean DEFAULT TRUE
+ALTER TABLE Fiches_Parametres ADD conscli char(8)
+ALTER TABLE Fiches_Parametres ADD consfou char(8)
+ALTER TABLE Fiches_Parametres ADD nvign char(25)
+ALTER TABLE Fiches_Parametres ADD css char(8)
+ALTER TABLE Fiches_Parametres ADD tvass char(2)
+ALTER TABLE Fiches_Parametres ADD arrete char(7)
+ALTER TABLE Fiches_Ligcom ADD palet integer DEFAULT 0
+ALTER TABLE Fiches_Ligcom ADD coli integer DEFAULT 0
+ALTER TABLE Fiches_Societes ADD ident varchar(20)
+ALTER TABLE Fiches_Societes ADD caution varchar(25)
+ALTER TABLE Fiches_ligregie ADD volumess decimal(7,2)
+SELECT * FROM Fiches_Parametres

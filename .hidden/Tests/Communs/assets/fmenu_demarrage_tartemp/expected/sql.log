@@ -1,0 +1,27 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT art,dtmaj,date,art_design FROM Fiches_TarTemp JOIN Fiches_Art ON art_code=art WHERE temp_sup = False GROUP BY art,dtmaj,date,art_design
+Edit Fiches_Art : art_code = '001'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '1'
+Edit Fiches_Art : art_code = '001'
+Edit Fiches_Art : art_code = '002'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '2'
+Edit Fiches_Tarcli : ccli = '411001' AND cart = '002'
+Create Fiches_Tarcli

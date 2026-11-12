@@ -16,7 +16,6 @@ Décisions : `.hidden/reference/PLAN.md` §4.0. Les modules gb.test vivent dans 
     harness_files.txt    fichiers du harnais (diff vs 6b6b9dfc → harness.patch, appliqué au clone ref)
     harness.patch        généré par « runner.py harness make »
     dump_mask.json       colonnes volatiles masquées dans le dump normalisé
-    datasets/<nom>.sql   jeux de données partagés, appliqués après Laurux01.sql
     bin/                 enveloppes mysql/mysqldump (port de la base de test), en tête du PATH de test
   <lot>/
     <Classe>Test.test    module gb.test
@@ -58,7 +57,7 @@ scénarios avec `meta.json` (`id`, `classe`, `dataset`, `date`) ; échec attendu
 
 ## Déterminisme
 
-- Base restaurée avant chaque rejeu (`Laurux01.sql` + `datasets/<dataset>.sql`, 0,2 s).
+- Base restaurée avant chaque rejeu (`Laurux01.sql` + jeu de données des assets du test, 0,2 s ; voir TESTING.md « Jeux de données »).
 - `faketime -f "@<date>"` : la date part de la valeur du scénario et avance normalement.
 - `HOME` temporaire, `LANG=fr_FR.UTF-8`, `SDL_AUDIODRIVER=dummy` (pas de carte son sous Xvfb).
 - Archive exécutable nommée `Laurux` pour les deux clones (`Application.Name` identique).

@@ -1,0 +1,95 @@
+' Gambas test file
+
+''Tests de Fmenu (.hidden/reference/.src/Communs/Fmenu.class/test.md, FMENU-T01).
+''Valeurs attendues : assets/FmenuTest/expected.txt, produites dans le clone de référence.
+''La fenêtre principale est instanciée sans être affichée et Form_Open (public) est appelé directement, après
+''avoir positionné les options société en mémoire (la configuration de test ne peut pas être surchargée par un
+''scénario). /Faca n'est pas activée ici : Abonnement afficherait un Message.Info bloquant selon la date réelle
+''(couvert par le scénario fmenu_abonnement à date figée, à faire). En fin de test, les événements de la fenêtre
+''sont verrouillés : form_close appellerait Utils.Exit.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DemarrageOptions", "Démarrage : visibilité des menus selon les options société (actives puis inactives)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "FmenuTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function ChercheSous(hMenu As Menu, sNom As String) As Menu
+  ''Menu de nom sNom parmi les descendants de hMenu (récursif).
+
+  Dim hM, hR As Menu
+
+  If hMenu.Name = sNom Then Return hMenu
+  For Each hM In hMenu.Children
+    hR = ChercheSous(hM, sNom)
+    If hR Then Return hR
+  Next
+  Return Null
+
+End
+
+Private Function Cherche(hF As Fmenu, sNom As String) As Menu
+  ''Menu de nom sNom dans la barre de menus de la fenêtre.
+
+  Dim hM, hR As Menu
+
+  For Each hM In hF.Menus
+    hR = ChercheSous(hM, sNom)
+    If hR Then Return hR
+  Next
+  Return Null
+
+End
+
+Private Sub Releve(sPrefixe As String, bActif As Boolean)
+  ''Ouvre Fmenu avec toutes les options à bActif et relève la visibilité des menus pilotés.
+
+  Dim hF As Fmenu
+  Dim hM As Menu
+  Dim sNom, sOpt As String
+  Dim hC As Object
+
+  For Each sOpt In ["Exp", "Btq", "Materiel", "Caisse", "Taches", "Blocsoc", "Lcr", "Vendeurs", "Sms"]
+    Start.LocalSettings["/Soc" & Start.Societe & "/" & sOpt] = bActif
+  Next
+  Start.LocalSettings["/Soc" & Start.Societe & "/Faca"] = 0
+  hF = New Fmenu
+  Try hF.Form_Open()
+  If Error Then TestKit.Check(sPrefixe & "/Form_Open", "ERREUR: " & Error.Text)
+  TestKit.Check(sPrefixe & "/titre", hF.Text)
+  For Each sNom In ["Menu133", "Menu134", "Menu184", "Menu183", "Menu190", "Menu193", "Menu203", "Menu296", "Menu50", "Menu26", "MenuLcr", "MenuTbq", "Menu287", "Menu299", "Menu315", "Menu316", "Menu306", "Menu173"]
+    hM = Cherche(hF, sNom)
+    If hM Then
+      TestKit.Check(sPrefixe & "/" & sNom, hM.Visible)
+    Else
+      TestKit.Check(sPrefixe & "/" & sNom, "<absent>")
+    Endif
+  Next
+  For Each sNom In ["Panel2"]
+    hC = hF.Controls[sNom]
+    If hC Then
+      TestKit.Check(sPrefixe & "/" & sNom, hC.Visible)
+    Else
+      TestKit.Check(sPrefixe & "/" & sNom, "<absent>")
+    Endif
+  Next
+  hC = hF.Controls["Coltaches"]
+  If hC Then TestKit.Check(sPrefixe & "/Coltaches/lignes", hC.Rows.Count)
+  Object.Lock(hF)
+
+End
+
+Public Sub T01DemarrageOptions()
+
+  Releve("T01/actives", True)
+  Releve("T01/inactives", False)
+
+End

@@ -1,0 +1,391 @@
+' Gambas test file
+
+''Tests de Prefs (.hidden/reference/.src/Communs/Prefs.class/test.md).
+''Valeurs attendues : assets/PrefsTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est instanciée sans être affichée sur un fichier de configuration temporaire (mode local) ;
+''Form_Open et form_close (publics) sont appelés directement, ce qui remplace les scénarios prévus pour les tests
+''dont le seul résultat est le Laurux.conf (non comparé par les rejeux). En fin de test, les événements de la
+''fenêtre sont verrouillés (Object.Lock) : sinon form_close serait de nouveau levé à sa destruction.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01OuvertureMinimale", "Ouverture/fermeture sur configuration minimale : clés écrites")
+  TestKit.Desc("T02AllerRetour", "Aller-retour sans modification : différences entre deux passages")
+  TestKit.Desc("T03SaisieOnglets", "Saisie d'un contrôle de chaque type : clés modifiées")
+  TestKit.Desc("T04MotsDePasse", "Mots de passe chiffrés puis relus déchiffrés")
+  TestKit.Desc("T07GlobalEcraseLocal", "Saisie locale d'une clé couverte par le global : valeur globale rétablie")
+  TestKit.Desc("T09Familles", "Familles d'articles : nbfam, ipr, valeur refusée")
+  TestKit.Desc("T10CodesMoTva", "`CodeMO` et `Codetva` : écriture puis réouverture")
+  TestKit.Desc("T11Visibilites", "Visibilités conditionnelles des contrôles")
+  TestKit.Desc("T16FusionGlobale", "`ReadGlobal` / `ApplyGlobal` : conf NULL, vide, rempli")
+  TestKit.Desc("T17Listes", "Listes SQL : échéances, types client, codes TVA, taux MO")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "PrefsTest")
+  TestKit.OuvreBase()
+
+End
+
+'' Configuration minimale de T01 ([dbase] + [Soc]), comme dans le test.md.
+Private Function ConfMinimale() As String
+
+  Return "[dbase]\ntype=\"mysql\"\nName=\"Laurux01\"\n\n[Soc]\nExp=1\n"
+
+End
+
+Private Function Ouvre(sTexte As String, Optional sNom As String = "local.conf") As Prefs
+  ''Écrit sTexte dans un fichier temporaire et ouvre Prefs dessus (Form_Open exécuté, fenêtre non affichée).
+
+  Dim hPr As Prefs
+  Dim sFic As String = Temp$(sNom)
+
+  File.Save(sFic, sTexte)
+  hPr = New Prefs(New Settings(sFic))
+  hPr.Form_Open()
+  Return hPr
+
+End
+
+Private Function Ferme(hPr As Prefs, Optional sNom As String = "local.conf") As String
+  ''Fermeture (form_close) puis contenu du fichier de configuration.
+
+  Try hPr.form_close()
+  If Error Then TestKit.Check("form_close", "ERREUR: " & Error.Text)
+  Object.Lock(hPr)
+  Return File.Load(Temp$(sNom))
+
+End
+
+Private Function Cles(sTexte As String) As Collection
+  ''Clés « section/clé » → valeur brute d'un fichier de configuration.
+
+  Dim cRes As New Collection
+  Dim sLigne, sSec As String
+  Dim iPos As Integer
+
+  For Each sLigne In Split(sTexte, "\n")
+    If sLigne Begins "[" Then
+      sSec = Mid(sLigne, 2, Len(sLigne) - 2)
+    Else
+      iPos = InStr(sLigne, "=")
+      If iPos > 0 Then cRes[sSec & "/" & Left(sLigne, iPos - 1)] = Mid(sLigne, iPos + 1)
+    Endif
+  Next
+  Return cRes
+
+End
+
+Private Sub CheckTout(sPrefixe As String, sTexte As String)
+  ''Une valeur attendue par clé, triées.
+
+  Dim cC As Collection = Cles(sTexte)
+  Dim aK As New String[]
+  Dim sK As String
+  Dim vV As Variant
+
+  For Each vV In cC
+    aK.Add(cC.Key)
+  Next
+  aK.Sort
+  TestKit.Check(sPrefixe & "/nombre", aK.Count)
+  For Each sK In aK
+    TestKit.Check(sPrefixe & "/" & sK, cC[sK])
+  Next
+
+End
+
+Private Sub CheckDiff(sPrefixe As String, sAvant As String, sApres As String)
+  ''Clés ajoutées, supprimées ou modifiées entre deux fichiers (triées).
+
+  Dim cA As Collection = Cles(sAvant)
+  Dim cB As Collection = Cles(sApres)
+  Dim aD As New String[]
+  Dim vV As Variant
+
+  For Each vV In cB
+    If Not cA.Exist(cB.Key) Then
+      aD.Add(cB.Key & " ajoutée = " & vV)
+    Else If cA[cB.Key] <> vV Then
+      aD.Add(cB.Key & " : " & cA[cB.Key] & " → " & vV)
+    Endif
+  Next
+  For Each vV In cA
+    If Not cB.Exist(cA.Key) Then aD.Add(cA.Key & " supprimée")
+  Next
+  aD.Sort
+  TestKit.Check(sPrefixe & "/nombre", aD.Count)
+  TestKit.Check(sPrefixe, aD.Join(" ; "))
+
+End
+
+Private Sub Valeur(hPr As Prefs, sCtrl As String, vVal As Variant, Optional bEvenement As Boolean = True)
+  ''Modifie la propriété principale d'un contrôle (Value ou Text), avec ou sans ses événements.
+
+  Dim hC As Object = hPr.Controls[sCtrl]
+
+  If Not bEvenement Then Object.Lock(hC)
+  If hC Is TextBox Or If hC Is ComboBox Or If hC Is TextArea Then
+    hC.Text = vVal
+  Else
+    hC.Value = vVal
+  Endif
+  If Not bEvenement Then Object.Unlock(hC)
+
+End
+
+Private Function Prop(hPr As Prefs, sCtrl As String, sProp As String) As Variant
+  ''Propriété d'un contrôle de la fenêtre (« <absent> » si le contrôle n'existe pas) ; listes jointes par « | ».
+
+  Dim hC As Object = hPr.Controls[sCtrl]
+  Dim vV As Variant
+
+  If IsNull(hC) Then Return "<absent>"
+  vV = Object.GetProperty(hC, sProp)
+  If TypeOf(vV) = gb.Object Then Return vV.Join(" | ")
+  Return vV
+
+End
+
+Public Sub T01OuvertureMinimale()
+
+  Dim hPr As Prefs
+
+  hPr = Ouvre(ConfMinimale())
+  CheckTout("T01", Ferme(hPr))
+
+End
+
+Public Sub T02AllerRetour()
+
+  Dim hPr As Prefs
+  Dim sPasse1, sPasse2 As String
+
+  hPr = Ouvre(ConfMinimale())
+  sPasse1 = Ferme(hPr)
+  hPr = Ouvre(sPasse1)
+  sPasse2 = Ferme(hPr)
+  CheckDiff("T02/diff", sPasse1, sPasse2)
+
+End
+
+Public Sub T03SaisieOnglets()
+
+  Dim hPr As Prefs
+  Dim sAvant As String
+
+  hPr = Ouvre(ConfMinimale())
+  sAvant = Ferme(hPr)
+  hPr = Ouvre(sAvant)
+  Valeur(hPr, "Lcr", True)               ' CheckBox (Environnement)
+  Valeur(hPr, "Tq", True)                ' RadioButton (Gestion 1)
+  Valeur(hPr, "Valdevis", "Devis valable 30 jours") ' TextBox (Gestion 3)
+  Valeur(hPr, "Expfact", "2")            ' ComboBox (Gestion 3)
+  Valeur(hPr, "Smtp", "smtp.exemple.invalid") ' TextBox (Réseaux)
+  Valeur(hPr, "ServerLogPort", 7000)     ' ValueBox (Réseaux)
+  Valeur(hPr, "Caisse", True)            ' CheckBox (Caisse)
+  CheckDiff("T03/diff", sAvant, Ferme(hPr))
+
+End
+
+Public Sub T04MotsDePasse()
+
+  Dim hPr As Prefs
+  Dim cC As Collection
+  Dim sConf As String
+
+  hPr = Ouvre(ConfMinimale())
+  Valeur(hPr, "Admin", True, False)
+  Valeur(hPr, "Mdp2", "Secret1")
+  Valeur(hPr, "MdpStmp", "Smtp2")
+  Valeur(hPr, "MdpFTP", "Ftp3")
+  Valeur(hPr, "MdpFTP3", "Ftp4")
+  sConf = Ferme(hPr)
+  cC = Cles(sConf)
+  TestKit.Check("T04/Admin", cC["Soc01/Admin"])
+  TestKit.Check("T04/MdpPrefs", cC["Soc01/MdpPrefs"])
+  TestKit.Check("T04/MdpStmp", cC["General/MdpStmp"])
+  TestKit.Check("T04/MdpFTP", cC["Soc01/MdpFTP"])
+  TestKit.Check("T04/MdpFTP3", cC["Soc01/MdpFTP3"])
+  hPr = Ouvre(sConf)
+  TestKit.Check("T04/relu/Mdp2", Prop(hPr, "Mdp2", "Text"))
+  TestKit.Check("T04/relu/MdpStmp", Prop(hPr, "MdpStmp", "Text"))
+  TestKit.Check("T04/relu/MdpFTP", Prop(hPr, "MdpFTP", "Text"))
+  TestKit.Check("T04/relu/MdpFTP3", Prop(hPr, "MdpFTP3", "Text"))
+  Object.Lock(hPr)
+
+End
+
+Public Sub T07GlobalEcraseLocal()
+
+  Dim hPr As Prefs
+  Dim cC As Collection
+
+  Utils.db.Exec("UPDATE " & Cbase.Table("TabParam") & " SET conf = &1", "[Soc01]\nEntete=False\nTaxe=\"TGC\"\n")
+  hPr = Ouvre(ConfMinimale())
+  TestKit.Check("T07/ouverture/Entete", Prop(hPr, "Entete", "Value"))
+  Valeur(hPr, "Entete", True)
+  Valeur(hPr, "Taxe", "TVA")
+  cC = Cles(Ferme(hPr))
+  TestKit.Check("T07/Entete", cC["Soc01/Entete"])
+  TestKit.Check("T07/Taxe", cC["Soc01/Taxe"])
+
+End
+
+Public Sub T09Familles()
+
+  Dim hPr As Prefs
+  Dim cC As Collection
+  Dim hT As Object
+
+  hPr = Ouvre(ConfMinimale() & "\n[Soc01]\nnbfam=\"8\"\nipr=[2,5,8]\n")
+  cC = Cles(Ferme(hPr))
+  TestKit.Check("T09/8/nbfam", cC["Soc01/nbfam"])
+  TestKit.Check("T09/8/ipr", cC["Soc01/ipr"])
+  hPr = Ouvre(ConfMinimale() & "\n[Soc01]\nnbfam=\"8\"\nipr=[2,5,8]\n")
+  hT = hPr.Controls["Textfam"]
+  hT.Text = "3"
+  hPr.Textfam_LostFocus()
+  TestKit.Check("T09/3/Textfam", hT.Text)
+  cC = Cles(Ferme(hPr))
+  TestKit.Check("T09/3/nbfam", cC["Soc01/nbfam"])
+  TestKit.Check("T09/3/ipr", cC["Soc01/ipr"])
+  hPr = Ouvre(ConfMinimale() & "\n[Soc01]\nnbfam=\"8\"\nipr=[2,5,8]\n")
+  hT = hPr.Controls["Textfam"]
+  hT.Text = "25"
+  Try hPr.Textfam_LostFocus()
+  If Error Then TestKit.Check("T09/25/erreur", Error.Text)
+  TestKit.Check("T09/25/Textfam", hT.Text)
+  cC = Cles(Ferme(hPr))
+  TestKit.Check("T09/25/nbfam", cC["Soc01/nbfam"])
+  TestKit.Check("T09/25/ipr", cC["Soc01/ipr"])
+
+End
+
+Public Sub T10CodesMoTva()
+
+  Dim hPr As Prefs
+  Dim cC As Collection
+  Dim sConf As String
+  Dim hC As Object
+
+  hPr = Ouvre(ConfMinimale())
+  Valeur(hPr, "MO", True)
+  Valeur(hPr, "Tva550", True)
+  hC = hPr.Controls["CodeMO"]
+  TestKit.Check("T10/CodeMO/liste", Prop(hPr, "CodeMO", "List"))
+  hC.Index = hC.Count - 1
+  hC = hPr.Controls["Codetva"]
+  hC.Index = 1
+  sConf = Ferme(hPr)
+  cC = Cles(sConf)
+  TestKit.Check("T10/1/CodeMO", cC["Soc01/CodeMO"])
+  TestKit.Check("T10/1/Codetva", cC["Soc01/Codetva"])
+  hPr = Ouvre(sConf)
+  TestKit.Check("T10/relu/CodeMO", Prop(hPr, "CodeMO", "Text"))
+  TestKit.Check("T10/relu/Codetva", Prop(hPr, "Codetva", "Text"))
+  cC = Cles(Ferme(hPr))
+  TestKit.Check("T10/2/CodeMO", cC["Soc01/CodeMO"])
+  TestKit.Check("T10/2/Codetva", cC["Soc01/Codetva"])
+
+End
+
+Public Sub T11Visibilites()
+
+  Dim hPr As Prefs
+  Dim sC As String
+
+  hPr = Ouvre(ConfMinimale() & "\n[Soc01]\nImpetiq=\"2- Zebra\"\n")
+  For Each sC In ["Codetva", "CodeMO", "Panexp", "Panimp", "Sage", "Valdevis2", "LTxtF", "Panel1", "Panel4", "Label27", "Ipzebra", "Mdp2", "Mdp2G", "Frame1"]
+    TestKit.Check("T11/ouverture/" & sC, Prop(hPr, sC, "Visible"))
+  Next
+  Valeur(hPr, "Tva550", True)
+  TestKit.Check("T11/Tva550/Codetva", Prop(hPr, "Codetva", "Visible"))
+  Valeur(hPr, "MO", True)
+  TestKit.Check("T11/MO/CodeMO", Prop(hPr, "CodeMO", "Visible"))
+  Valeur(hPr, "Imp", True)
+  TestKit.Check("T11/Imp/Panexp", Prop(hPr, "Panexp", "Visible"))
+  TestKit.Check("T11/Imp/Panimp", Prop(hPr, "Panimp", "Visible"))
+  Valeur(hPr, "Exp", True)
+  TestKit.Check("T11/Exp/Panexp", Prop(hPr, "Panexp", "Visible"))
+  TestKit.Check("T11/Exp/Sage", Prop(hPr, "Sage", "Visible"))
+  Valeur(hPr, "Libdevis", True)
+  TestKit.Check("T11/Libdevis/Valdevis2", Prop(hPr, "Valdevis2", "Visible"))
+  Valeur(hPr, "TxtF", True)
+  TestKit.Check("T11/TxtF/LTxtF", Prop(hPr, "LTxtF", "Visible"))
+  Valeur(hPr, "CheckBox2", True)
+  TestKit.Check("T11/CheckBox2/Panel4", Prop(hPr, "Panel4", "Visible"))
+  Valeur(hPr, "Admin", True)
+  TestKit.Check("T11/Admin/Mdp2", Prop(hPr, "Mdp2", "Visible"))
+  Valeur(hPr, "AdminG", True)
+  TestKit.Check("T11/AdminG/Mdp2G", Prop(hPr, "Mdp2G", "Visible"))
+  Object.Lock(hPr)
+
+End
+
+Private Function Lecture(hPr As Prefs) As String
+  ''Résultat de ReadGlobal décrit en texte (« Null » ou clés lues).
+
+  Dim hS As Settings
+  Dim sSec, sCle As String
+  Dim aTxt As New String[]
+
+  Try hS = hPr.ReadGlobal()
+  If Error Then Return "ERREUR: " & Error.Text
+  If IsNull(hS) Then Return "Null"
+  For Each sSec In hS.Keys
+    For Each sCle In hS.Keys[sSec]
+      aTxt.Add(sSec & "/" & sCle & "=" & CStr(hS["/" & sSec & "/" & sCle]))
+    Next
+  Next
+  Return aTxt.Join(" ; ")
+
+End
+
+Public Sub T16FusionGlobale()
+
+  Dim hLoc As Settings
+  Dim hPr As Prefs
+  Dim sFic As String = Temp$("local.conf")
+
+  File.Save(sFic, "[Soc01]\nExp=1\nTaxe=\"TVA\"\nGarde=\"local\"\n")
+  hLoc = New Settings(sFic)
+  hPr = New Prefs(hLoc)
+  ' conf NULL (Laurux01.sql)
+  TestKit.Check("T16/null", Lecture(hPr))
+  ' conf vide
+  Utils.db.Exec("UPDATE " & Cbase.Table("TabParam") & " SET conf = &1", "")
+  TestKit.Check("T16/vide", Lecture(hPr))
+  ' conf rempli
+  Utils.db.Exec("UPDATE " & Cbase.Table("TabParam") & " SET conf = &1", "[Soc01]\nExp=0\nTaxe=\"TVA\"\nNouvelle=\"G\"\n\n[dbase]\nCon-ssh=0\n")
+  TestKit.Check("T16/rempli", Lecture(hPr))
+  ' ApplyGlobal : recopie et sauvegarde du local
+  Try hPr.ApplyGlobal(hPr.ReadGlobal())
+  If Error Then TestKit.Check("T16/apply_erreur", Error.Text)
+  TestKit.Check("T16/apply/Exp", hLoc["/Soc01/Exp"])
+  TestKit.Check("T16/apply/Nouvelle", hLoc["/Soc01/Nouvelle"])
+  TestKit.Check("T16/apply/Garde", hLoc["/Soc01/Garde"])
+  TestKit.Check("T16/apply/dbase", hLoc["/dbase/Con-ssh"])
+  TestKit.Check("T16/fichier", Replace(File.Load(sFic), "\n", "|"))
+  ' ApplyGlobal(Null) : aucun effet
+  Try hPr.ApplyGlobal(Null)
+  TestKit.Check("T16/apply_null", IIf(Error, "ERREUR: " & Error.Text, "sans erreur"))
+  Object.Lock(hPr)
+
+End
+
+Public Sub T17Listes()
+
+  Dim hPr As Prefs
+  Dim sC As String
+
+  hPr = Ouvre(ConfMinimale())
+  For Each sC In ["Ech", "Typec", "Codetva", "CodeMO", "Pays"]
+    TestKit.Check("T17/" & sC, Prop(hPr, sC, "List"))
+  Next
+  Object.Lock(hPr)
+
+End

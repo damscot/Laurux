@@ -1,0 +1,139 @@
+' Gambas test file
+
+''Tests de Start (.hidden/reference/.src/Start.module/test.md, START-T08 et T09).
+''Valeurs attendues : assets/StartTest/expected.txt, produites dans le clone de référence.
+''Le harnais de test de Start (Run_Tests, Run_Scenario, Home_Test, Env_Home, Fin_Home) n'est pas testé ici
+''(AGENTS.md, règle 17 bis).
+''T08 : le verrou ~/<Application.Name>.lock est sauvegardé dans _Setup et restauré dans _Teardown ; le PID du
+''processus de test (Application.Id) varie d'une exécution à l'autre : il est remplacé par « <id> » dans les
+''valeurs vérifiées.
+''T09 : Start.LocalSettings est la copie temporaire de Laurux-test.conf chargée par TestKit.Begin.
+
+Private $sVerrou As String
+Private $sSauve As String
+Private $bSauve As Boolean
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T08VerrouUnlock", "Lock/UnLock : contenu du fichier verrou")
+  TestKit.Desc("T09CouleursCoul", "Coul : couleurs de fond lues dans /Coul")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "StartTest")
+  $sVerrou = User.Home &/ Application.Name & ".lock"
+  $bSauve = Exist($sVerrou)
+  If $bSauve Then $sSauve = File.Load($sVerrou)
+  Try Kill $sVerrou
+
+End
+
+Public Sub _Teardown()
+
+  Try Kill $sVerrou
+  If $bSauve Then File.Save($sVerrou, $sSauve)
+
+End
+
+Private Function Verrou() As String
+
+  If Not Exist($sVerrou) Then Return "<absent>"
+  Return Replace(File.Load($sVerrou), CStr(Application.Id), "<id>")
+
+End
+
+Private Sub Prepare(sContenu As String)
+
+  File.Save($sVerrou, Replace(sContenu, "<id>", CStr(Application.Id)))
+
+End
+
+Public Sub T08VerrouUnlock()
+
+  ' verrou absent
+  Start.Lock()
+  TestKit.Check("T08/absent_lock", Verrou())
+  Start.UnLock()
+  TestKit.Check("T08/absent_unlock", Verrou())
+  ' verrou vide
+  Prepare("")
+  Start.Lock()
+  TestKit.Check("T08/vide_lock", Verrou())
+  Start.UnLock()
+  TestKit.Check("T08/vide_unlock", Verrou())
+  ' autre PID présent
+  Prepare("111")
+  Start.Lock()
+  TestKit.Check("T08/autre_lock", Verrou())
+  Start.UnLock()
+  TestKit.Check("T08/autre_unlock", Verrou())
+  ' UnLock seul
+  Prepare("<id>")
+  Start.UnLock()
+  TestKit.Check("T08/seul_unlock", Verrou())
+  Prepare("111 <id>")
+  Start.UnLock()
+  TestKit.Check("T08/fin_unlock", Verrou())
+  Prepare("<id> 222")
+  Start.UnLock()
+  TestKit.Check("T08/debut_unlock", Verrou())
+  Prepare("111 <id> 222")
+  Start.UnLock()
+  TestKit.Check("T08/milieu_unlock", Verrou())
+  ' PID contenant le PID courant (sous-chaîne, START-A04) : figé
+  Prepare("5<id> 7")
+  Start.UnLock()
+  TestKit.Check("T08/souschaine_unlock", Verrou())
+  ' UnLock sans verrou : rien n'est créé
+  Try Kill $sVerrou
+  Start.UnLock()
+  TestKit.Check("T08/sans_verrou_unlock", Verrou())
+
+End
+
+Private Sub Couleurs(sCle As String)
+
+  TestKit.Check(sCle, [CStr(Start.R), CStr(Start.G), CStr(Start.B), CStr(Start.R2), CStr(Start.G2), CStr(Start.B2)])
+
+End
+
+Public Sub T09CouleursCoul()
+
+  TestKit.Check("T09/conf_Others", Start.LocalSettings["/Coul/Others"])
+  Couleurs("T09/initial")
+  ' clés absentes de la configuration de test : valeurs conservées
+  Start.Coul()
+  Couleurs("T09/cles_absentes_initial")
+  ' valeurs nominales
+  Start.LocalSettings["/Coul/Others"] = "255;232;199;"
+  Start.LocalSettings["/Coul/Coulfonds"] = "255;252;216;"
+  Start.Coul()
+  Couleurs("T09/nominal")
+  ' valeurs à virgules (format écrit par LauruxConf.Createbase) : repli figé (START-A03)
+  Start.LocalSettings["/Coul/Others"] = "255,232,199,"
+  Start.LocalSettings["/Coul/Coulfonds"] = "255,252,216,"
+  Start.Coul()
+  Couleurs("T09/virgules")
+  ' autres valeurs nominales, puis /Coul/Others seule à virgules
+  Start.LocalSettings["/Coul/Others"] = "10;20;30;"
+  Start.LocalSettings["/Coul/Coulfonds"] = "40;50;60;"
+  Start.Coul()
+  Couleurs("T09/autres_valeurs")
+  Start.LocalSettings["/Coul/Others"] = "1,2,3,"
+  Start.Coul()
+  Couleurs("T09/others_virgules")
+  ' trois composantes incomplètes
+  Start.LocalSettings["/Coul/Others"] = "7;8"
+  Start.LocalSettings["/Coul/Coulfonds"] = "9"
+  Start.Coul()
+  Couleurs("T09/incompletes")
+  ' clés supprimées : valeurs précédentes conservées
+  Start.LocalSettings["/Coul/Others"] = Null
+  Start.LocalSettings["/Coul/Coulfonds"] = Null
+  Start.Coul()
+  Couleurs("T09/cles_supprimees")
+
+End

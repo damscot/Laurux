@@ -1,0 +1,27 @@
+{
+ "id": "SAUVESAUTO-T03",
+ "classe": "SauvesAuto",
+ "objet": "Sauvegarde déclenchée à la fermeture",
+ "description": "Conf : /Soc01/Sauvauto et /dbase/Maj actifs, Envoiftp absent, Rep_Sauv = {out}/sauve (répertoire de sortie de -T, portable poste/conteneur ; « ~ » n'est pas développé par Compress.File, SAUVESAUTO-A07). La sauvegarde n'est faite que par Fmenu.form_close : --replay-exit quitte sans fermer Fmenu (vérifié : aucun fichier sans fermeture explicite), d'où Paramètres › Quitter (Menu118). Sans FTP, aucune boîte. Comparés : @sauve/Laurux01.sql (mysqldump --add-drop-table, déterministe : mysqldump démarre à la date figée), @sauve/Laurux014.sql.gz (zlib de ce fichier, WeekDay du 15/01/2026 = 4) et Laurux.conf final (/Soc01/Ecran réécrit).",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Rep_Sauv": "{out}/sauve",
+  "/dbase/Maj": -1,
+  "/Soc01/Sauvauto": -1
+ },
+ "fichiers": [
+  "@sauve/Laurux01.sql",
+  "@sauve/Laurux014.sql.gz",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

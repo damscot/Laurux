@@ -1,0 +1,17 @@
+{
+ "id": "TRESOR-T05",
+ "objet": "Rappel d'une écriture non validée",
+ "classe": "Tresor",
+ "description": "Jeu tresor_t04_en_cours (état laissé par TRESOR-T04 : écriture n° 1 du journal 50 en cours, lignes provisoires 606100, 707000 et banque 512000, copiées du dump attendu de tresor_abandon_saisie). Saisies › Trésorerie, journal 50 + Entrée, ToggleButton6, Choix1 « 2- Liste des écritures non validées » (index 1) : le rejeu d'un clic de ListBox appelle Choix1_Click deux fois (Index modifié puis appel explicite), TriEcritures s'ouvre deux fois ; 1re ligne de la grille Ecrit dans la première (ecrit2 copie l'écriture dans Fiches_MvtM et la réaffiche sans la ligne 512), fermeture (Close) de la seconde sans choix ; validation (Button2) : écriture définitive (banque 140 au crédit, soldes).",
+ "dataset": "tresor_t04_en_cours",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 700,
+  "fenetre": 1000
+ }
+}

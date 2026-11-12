@@ -1,0 +1,17 @@
+{
+ "id": "FSOC-T10",
+ "classe": "Fsoc",
+ "objet": "Navigation clavier (Entrée)",
+ "description": "Depuis Code, Entrée successives (Soc_KeyPress, tags 1 à 20) en saisissant une lettre distincte dans chaque champ atteint (le texte sélectionné par .Select est remplacé ; Email, Siret et Tvaintra laissés vides pour éviter les contrôles), puis Enregistrer : le dump de Fiches_Societes montre quel champ a reçu chaque lettre, donc l'ordre des focus (Intitulé, tag 3 → Adr1 ; Libre jamais atteint ; Entrée sur Tvaintra vide ne déplace pas le focus, d'où un Focus explicite sur Capital).",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 300,
+  "fenetre": 1000
+ }
+}

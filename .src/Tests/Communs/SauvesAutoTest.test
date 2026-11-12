@@ -1,0 +1,55 @@
+' Gambas test file
+
+''Tests de SauvesAuto (.hidden/reference/.src/Communs/SauvesAuto.module/test.md, SAUVESAUTO-T01).
+''Sauvegarde appelée avec une fenêtre factice (jamais affichée) ; mysqldump passe par l'enveloppe de
+''Framework/bin (port de la base de test). Le texte du dump varie (date, version du serveur) : on vérifie sa
+''structure (tables présentes, fin de dump), l'archive (gzip lisible, identique au .sql) et le nom suffixé par
+''WeekDay(Now) (calculé à l'exécution). Valeurs attendues : assets/SauvesAutoTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SauvegardeLocale", "Sauvegarde sans FTP")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "SauvesAutoTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T01SauvegardeLocale()
+
+  Dim hF As Form
+  Dim sRep, sSql, sGz, sTexte As String
+
+  sRep = Temp$()
+  Mkdir sRep ' parent existant : Mkdir n'est pas récursif
+  sRep &/= "sauve"
+  Start.LocalSettings["/Rep_Sauv"] = sRep
+  TestKit.Check("T01/rep_avant", Exist(sRep))
+  hF = New Form
+  Try SauvesAuto.Sauvegarde(hF)
+  If Error Then
+    TestKit.Check("T01/erreur", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  sSql = sRep &/ Utils.db.Name & ".sql"
+  sGz = sRep &/ Utils.db.Name & WeekDay(Now) & ".sql.gz"
+  TestKit.Check("T01/rep_cree", IsDir(sRep))
+  TestKit.Check("T01/fichiers", Dir(sRep).Sort().Join(" ") = Utils.db.Name & ".sql " & Utils.db.Name & WeekDay(Now) & ".sql.gz")
+  TestKit.Check("T01/sql_existe", Exist(sSql))
+  TestKit.Check("T01/gz_existe", Exist(sGz))
+  If Not Exist(sSql) Then Return
+  sTexte = File.Load(sSql)
+  TestKit.Check("T01/sql_fiches_art", InStr(sTexte, "CREATE TABLE `Fiches_Art`") > 0)
+  TestKit.Check("T01/sql_drop_table", InStr(sTexte, "DROP TABLE IF EXISTS `Fiches_Parametres`") > 0)
+  TestKit.Check("T01/sql_donnees_parametres", InStr(sTexte, "INSERT INTO `Fiches_Parametres`") > 0)
+  TestKit.Check("T01/sql_fin", InStr(sTexte, "-- Dump completed") > 0)
+  If Not Exist(sGz) Then Return
+  Shell "gzip -dc " & Shell$(sGz) & " | cmp -s - " & Shell$(sSql) Wait
+  TestKit.Check("T01/gz_identique_sql", Process.LastValue = 0)
+
+End

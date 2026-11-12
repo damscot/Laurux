@@ -1,0 +1,23 @@
+{
+ "id": "FSOC-T03",
+ "classe": "Fsoc",
+ "objet": "Création d'une société",
+ "description": "Créer (Button4, tag 2 : champs vidés, focus Code), code 03, intitulé TROISIEME, Enregistrer : base Laurux03 absente → LauruxConf.Createbase : bouton 1 « Oui » de Message.Question (LauruxConf.class:332), Utils.db.Close (qui ferme aussi le journal SQL, DB_CONNECTION-A12), création de Laurux03 et import de Laurux01.sql (mysql), configuration réécrite (/Soc = 03, [Soc03], [Coul] à virgules) ; la requête suivante écrit dans le journal fermé : l'erreur remonte au Catch de Fsoc.Button1_Click, boîte Message.Error validée par Entrée (2e boîte ; ni Message.Info, ni UPdate cd_sc, ni insert de la saisie). Comportement figé (DB_CONNECTION-A12) : base Laurux03 dumpée (« bases » : Fiches_Societes = ligne 01 de Laurux01.sql), configuration finale comparée (@Laurux.conf : /Soc = 03, /dbase/Name resté Laurux01), dump de Laurux01 et sql.log inchangés. Le Quitter final est omis (fermeture de Fsoc : écriture dans le journal fermé, erreur fatale). La suppression (ancien nettoyage de fin de scénario, devenu inutile : le framework supprime les autres bases avant chaque test) est couverte par FSOC-T04.",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "bases": [
+  "Laurux03"
+ ],
+ "fichiers": [
+  "@Laurux.conf"
+ ]
+}

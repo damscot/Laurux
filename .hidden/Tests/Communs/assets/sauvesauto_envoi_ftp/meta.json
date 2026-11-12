@@ -1,0 +1,32 @@
+{
+ "id": "SAUVESAUTO-T04",
+ "classe": "SauvesAuto",
+ "objet": "Sauvegarde à la fermeture avec envoi FTP",
+ "description": "Conf : Sauvauto et Maj actifs, Rep_Sauv = /tmp/laurux-test/sauve (chemin fixe du conteneur : « ~ » n'est pas développé par Compress.File), Envoiftp actif, Adrbase = {ftp}/sauve, Idftp = laurux, MdpFTP = chiffrement hexdblKey de « motdepasse » (comme Prefs). Paramètres › Quitter (Menu118) → Fmenu.form_close → SauvesAuto.Sauvegarde : mysqldump, compression en Laurux014.sql.gz (WeekDay du 15/01/2026 = 4), envoi FTP (faux serveur « ok ») puis Message.Warning « Sauvegarde terminée ! » (bouton 1, Entrée). Comparés : commandes FTP reçues (@ftp.trace : USER, PASS déchiffré, CWD sauve, STOR), archive reçue par le serveur (@ftp/sauve/Laurux014.sql.gz, déterministe : mysqldump démarre à la date figée) et Laurux.conf final (/Soc01/Ecran réécrit).",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "ftp": "ok",
+ "conf": {
+  "/Rep_Sauv": "/tmp/laurux-test/sauve",
+  "/dbase/Maj": -1,
+  "/Soc01/Sauvauto": -1,
+  "/Soc01/Envoiftp": -1,
+  "/Soc01/Adrbase": "{ftp}/sauve",
+  "/Soc01/Idftp": "laurux",
+  "/Soc01/MdpFTP": "2C030C1B1D05201F0B1A"
+ },
+ "fichiers": [
+  "@ftp.trace",
+  "@ftp/sauve/Laurux014.sql.gz",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

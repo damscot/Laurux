@@ -1,0 +1,83 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Journaux  WHERE code_jo = '50'
+SELECT * FROM Fiches_Journaux  WHERE code_jo = '50'
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = '512000'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT numecriture FROM Fiches_Parametres 
+UPDATE Fiches_Parametres set numecriture = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Comptes  WHERE compte_cc like '606100%' and coll <> 1 and type_cc = 'G'  order by compte_cc
+SELECT * FROM Fiches_Mvt WHERE numero = '1' and compte = '606100' and numdoc = '1' and numlot = '1' 
+INSERT INTO Fiches_Mvt(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES ('50', '1', '606100', 'Fournitures non stockables', '2018-06-15 00:00:00', '1', '1', 'M', 100, 0, 0, 1, 1, 0, 0, '2018-06-15 00:00:00')
+SELECT * FROM Fiches_Mvt Where numero = '1' and compte = '512000'
+INSERT INTO Fiches_Mvt(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee, Pointee) VALUES ('50', '1', '512000', 'Banque', '2018-06-15 00:00:00', '1', '1', 'M', 100, 0, 0, 1, 1, 0, 0, '2018-06-15 00:00:00', 0)
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt set  control = 'wYDRpgNOVcZTI4QGKKBNqPzFRJU=' where lind = 1
+update Fiches_Mvt set  control = 'tWeM0Y+ta/s8AIzC2w2Owps3X6g=' where lind = 2
+SELECT * FROM Fiches_Docactif where doc_type = 'Reglement' and doc_num = '1'
+SELECT * FROM Fiches_Comptes  WHERE compte_cc like '707000%' and coll <> 1 and type_cc = 'G'  order by compte_cc
+SELECT * FROM Fiches_Mvt WHERE numero = '1' and compte = '707000' and numdoc = '1' and numlot = '1' 
+INSERT INTO Fiches_Mvt(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES ('50', '1', '707000', 'Ventes marchandises 2.10', '2018-06-15 00:00:00', '1', '1', 'M', 0, 40, 0, 1, 1, 0, 0, '2018-06-15 00:00:00')
+SELECT * FROM Fiches_Mvt Where numero = '1' and compte = '512000'
+UPDATE  Fiches_Mvt  SET  jour = '50', numero = '1', compte = '512000', intitule = 'Banque', dte = '2018-06-15 00:00:00', numdoc = '1', numlot = '1', libelle = 'M', montantd = 0, montantc = 40, validee = 0, provisoire = 1, tresorerie = 1, lettree = 0, cloturee = 0, datee = '2018-06-15 00:00:00' where numero = '1' and compte = '512000' and numdoc = '1' and numlot = '1'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt set  control = 'aVi2PiXVBwTc2tcUjgBMZ8X6aIw=' where lind = 2
+update Fiches_Mvt set  control = 'cIkqo8FA5kueqybLIVQ+FVsPtUA=' where lind = 3
+SELECT * FROM Fiches_Docactif where doc_type = 'Reglement' and doc_num = '1'
+SELECT * FROM Fiches_Mvt WHERE numero = '1' 
+DELETE FROM Fiches_Mvt WHERE numero = '1' 
+INSERT INTO Fiches_Mvt(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES ('50', '1', '606100', 'Fournitures non stockables', '2018-06-15 00:00:00', '1', '1', 'M', 100, 0, 1, 0, 1, 0, 0, '2018-06-15 00:00:00')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '606100'
+Update Fiches_Comptes set solde = 100 Where compte_cc = '606100'
+update Fiches_Mvt set  validee = 1, provisoire = 0 , libelle = 'M', cloturee = 0, tresorerie = 1, datee = '20180615' Where compte = NULL and numero = '1' and numdoc = '1' and jour = '50'
+SELECT montantd,montantc,dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM Fiches_Mvt WHERE compte = '606100' AND numlot = '1' AND provisoire=False AND dte BETWEEN '2018-01-01' AND '9999-12-31'
+INSERT INTO Fiches_Mvt(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee, datee) VALUES ('50', '1', '707000', 'Ventes marchandises 2.10', '2018-06-15 00:00:00', '1', '1', 'M', 0, 40, 1, 0, 1, 0, 0, '2018-06-15 00:00:00')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+Update Fiches_Comptes set solde = -40 Where compte_cc = '707000'
+update Fiches_Mvt set  validee = 1, provisoire = 0 , libelle = 'M', cloturee = 0, tresorerie = 1, datee = '20180615' Where compte = NULL and numero = '1' and numdoc = '1' and jour = '50'
+SELECT montantd,montantc,dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM Fiches_Mvt WHERE compte = '707000' AND numlot = '1' AND provisoire=False AND dte BETWEEN '2018-01-01' AND '9999-12-31'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '512000'
+Update Fiches_Comptes set solde = -60 Where compte_cc = '512000'
+SELECT * FROM Fiches_Mvt Where numero = '1' and compte = '512000'
+INSERT INTO Fiches_Mvt (jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,datee) VALUES ('50', '1', '512000', 'Banque', '2018-06-15 00:00:00', '1', '1', 'M', 0, 60, 1, 0, 1, 0, 0, '2018-06-15 00:00:00')
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt set  control = '837AOyAYaRUcO6vzYB0VPOncLN0=' where lind = 4
+update Fiches_Mvt set  control = 'FVtW66wrP3SjaqWdaHeMWaBJZCY=' where lind = 5
+update Fiches_Mvt set  control = 'D9oflsUHjp4qWXWZlF/wz4SvwQw=' where lind = 6
+SELECT * FROM Fiches_Docactif where doc_type = 'Reglement' and doc_num = '1'

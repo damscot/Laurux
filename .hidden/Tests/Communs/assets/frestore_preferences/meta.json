@@ -1,0 +1,18 @@
+{
+ "id": "FRESTORE-T04",
+ "classe": "FRestore",
+ "objet": "Restauration des préférences",
+ "description": "Restauration depuis /tmp/laurux-test (Laurux01.sql, Laurux.conf différent) : Oui, Entrée, préférences bouton 1 « Oui » (FRestore.class:204) : copie sur le fichier -c, Utils.Exit, puis Me.Close (l. 147) : la journalisation GUI de la fermeture écrit dans un journal déjà fermé (« [gb.logging].FileHandler.Write.46: Uninitialized or already closed handler! », DB_Connection.GUI_Event) : erreur fatale figée (code 125, candidat anomalie). Le Laurux.conf final n'est pas comparé.",
+ "dataset": "fusers_shared/fusers_base",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

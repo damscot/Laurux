@@ -1,0 +1,17 @@
+{
+ "id": "PARAMETRE-T09",
+ "classe": "Parametre",
+ "objet": "Option carburant (P)",
+ "description": "Jeu parametre_option_carburant (Art_Tipp avec 2 articles, /Soc01/pp = True par les préférences globales). Paramètres généraux (Menu25) en option P : onglet métiers (compte de frais 606100 saisi d'abord, voir T02), région « 12 », Valider (Valtip : Edit des 2 lignes Art_Tipp après utils.db.Begin sans Commit, A01), Quitter. Comportement figé : le dump (pris après la fin de Laurux) contient les UPDATE émis après le Begin (cptfrais, tipp = 12) : le LOCK TABLES de DocActif.Free_Lock à la fermeture valide implicitement la transaction (MariaDB). L'ajout d'une ligne d'article dans le SaiTableau et l'état vu par une seconde connexion ne sont pas rejoués.",
+ "dataset": "parametre_option_carburant",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

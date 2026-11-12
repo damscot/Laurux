@@ -21,6 +21,7 @@ Private $sFile As String
 Private $cValeurs As Collection
 Private $aCles As String[]
 Private $bRecord As Boolean
+Private $hFtp As Process ' faux serveur FTP (FtpFactice), arrêté par FinFtp
 
 Public Descriptions As New Collection ' {Méthode : description} remplie par le _Desc() d'un module de test
 
@@ -123,27 +124,135 @@ Public Function ServeurTest() As String
 
 End
 
+Private Function Racine() As String
+  ''Racine du clone testé : $LAURUX_TEST_ROOT sous « ./Laurux -T » lancé depuis une archive (Application.Path est
+  ''alors le répertoire de l'archive), sinon Application.Path (gbx3 -T sur le répertoire source).
+
+  If Application.Env["LAURUX_TEST_ROOT"] Then Return Application.Env["LAURUX_TEST_ROOT"]
+  Return Application.Path
+
+End
+
+Public Function FtpFactice(Optional Mode As String = "ok", Optional Dossier As String) As String
+  ''Faux serveur FTP pour valider l'usage du FTP par Laurux (URL, identifiants, fichiers envoyés), sans client ni
+  ''serveur FTP réels : FtpClient (libcurl dans le processus) ne peut pas être remplacé par un faux programme du
+  ''PATH, d'où .src/Tests/Framework/bin/laurux-ftp, lancé sur 127.0.0.1 (port libre) ; wput (Btqart) est remplacé
+  ''par le faux bin/wput. Mode : « ok » (envoi accepté), « refus » (identifiants refusés, 530), « absent » (aucun
+  ''serveur : port 1, connexion refusée). Fichiers reçus sous Dossier (défaut : répertoire temporaire), commandes
+  ''tracées dans Dossier/../ftp.trace (variables LAURUX_FTP_DIR, LAURUX_FTP_TRACE, LAURUX_FTP_URL transmises aux
+  ''processus fils). Renvoie l'URL de base « ftp://127.0.0.1:<port> » à placer dans la configuration
+  ''(/Soc<XX>/Adrbase, Adrbase3…). Arrêt par FinFtp (sinon arrêt automatique après 120 s).
+
+  Dim sPortFic, sUrl As String
+  Dim i As Integer
+  Dim sBin As String = Racine() &/ ".src/Tests/Framework/bin"
+
+  FinFtp()
+  If Not Dossier Then Dossier = Temp$("ftp")
+  Shell "mkdir -p " & Shell$(Dossier) Wait
+  Application.Env["LAURUX_FTP_DIR"] = Dossier
+  Application.Env["LAURUX_FTP_TRACE"] = File.Dir(Dossier) &/ "ftp.trace"
+  If InStr(Application.Env["PATH"], "Framework/bin") = 0 Then Application.Env["PATH"] = sBin & ":" & Application.Env["PATH"]
+  If Mode = "absent" Then
+    sUrl = "ftp://127.0.0.1:1"
+  Else
+    sPortFic = File.Dir(Dossier) &/ "ftp.port"
+    Try Kill sPortFic
+    ' exec : le processus suivi est le serveur lui-même (Kill l'atteint) ; sorties détachées pour ne pas retenir la
+    ' console capturée par le runner
+    $hFtp = Shell "exec " & Shell$(sBin &/ "laurux-ftp") & " --dir " & Shell$(Dossier) & " --trace " & Shell$(Application.Env["LAURUX_FTP_TRACE"]) & " --port-file " & Shell$(sPortFic) & " --mode " & Shell$(Mode) & " < /dev/null > /dev/null 2>&1"
+    For i = 1 To 100
+      If Exist(sPortFic) Then Break
+      Sleep 0.05
+    Next
+    If Not Exist(sPortFic) Then Error.Raise("Faux serveur FTP (laurux-ftp) non démarré")
+    sUrl = "ftp://127.0.0.1:" & Trim(File.Load(sPortFic))
+  Endif
+  Application.Env["LAURUX_FTP_URL"] = sUrl
+  Return sUrl
+
+End
+
+Public Sub FinFtp()
+  ''Arrête le faux serveur FTP lancé par FtpFactice (à appeler dans _Teardown d'un gb.test).
+
+  If $hFtp Then
+    Try $hFtp.Kill()
+    $hFtp = Null
+  Endif
+
+End
+
+Public Sub NettoieBases(sHost As String, sPort As String, sGarde As String)
+  ''Supprime du serveur de test toutes les bases sauf sGarde (Laurux01) et les bases système, pour que chaque test
+  ''parte d'un serveur identique (bases Laurux02…, pre_… créées par un test précédent et énumérées par Init_base,
+  ''LauruxConf, Dup…). Seulement sur un serveur marqué comme serveur de test : compte verrouillé
+  ''« laurux_serveur_test » créé par « runner.py db up ». Un serveur non marqué (ex. LAURUX_TEST_DB_PORT=3306 désignant
+  ''un serveur réel) n'est jamais nettoyé : avertissement sur la sortie d'erreur, bases conservées.
+
+  Dim sCnx, sRep, sBase As String
+
+  sCnx = "/usr/bin/mariadb -h " & Shell$(sHost) & " -P " & Shell$(sPort) & " -u laurux -plaurux -N -B -e "
+  Shell sCnx & Shell$("SELECT COUNT(*) FROM mysql.user WHERE User = 'laurux_serveur_test'") & " 2>/dev/null" To sRep
+  If Trim(sRep) <> "1" Then
+    Error "Serveur " & sHost & ":" & sPort & " non marqué comme serveur de test (runner.py db up) : bases autres que " & sGarde & " conservées"
+    Return
+  Endif
+  Shell sCnx & Shell$("SHOW DATABASES") To sRep
+  For Each sBase In Split(Trim(sRep), "\n", "", True)
+    If ["information_schema", "mysql", "performance_schema", "sys", sGarde].Exist(sBase) Then Continue
+    Shell sCnx & Shell$("DROP DATABASE `" & sBase & "`") Wait
+  Next
+
+End
+
+Public Function JeuDeDonnees(Racine As String, Dataset As String, Lot As String, Nom As String) As String
+  ''Chemin du jeu de données SQL d'un test, rangé dans les assets du dépôt (hors archive de l'application, résolu
+  ''depuis la racine du clone, jamais depuis le système de fichiers de l'archive) :
+  ''« <jeu> »                        .hidden/Tests/<Lot>/assets/<Nom>/<jeu>.sql (assets du test : scénario ou module) ;
+  ''« <classe>_shared/<jeu> »        .hidden/Tests/<Lot>/assets/<classe>_shared/<jeu>.sql (jeu partagé de la classe) ;
+  ''« <Lot2>/<classe>_shared/<jeu> » .hidden/Tests/<Lot2>/assets/<classe>_shared/<jeu>.sql (partagé, autre lot).
+  ''Extension .sql facultative.
+
+  Dim aPart As String[]
+
+  If Not (Dataset Ends ".sql") Then Dataset &= ".sql"
+  aPart = Split(Dataset, "/")
+  Select Case aPart.Count
+    Case 1
+      Return Racine &/ ".hidden/Tests" &/ Lot &/ "assets" &/ Nom &/ Dataset
+    Case 2
+      Return Racine &/ ".hidden/Tests" &/ Lot &/ "assets" &/ Dataset
+    Default
+      Return Racine &/ ".hidden/Tests" &/ aPart[0] &/ "assets" &/ aPart.Copy(1, aPart.Count - 1).Join("/")
+  End Select
+
+End
+
 Public Sub OuvreBase(Optional Dataset As String)
-  ''Restaure la base de test (Laurux01.sql puis .src/Tests/Framework/datasets/<Dataset>.sql) et ouvre
+  ''Restaure la base de test (Laurux01.sql puis le jeu de données Dataset des assets du test, voir JeuDeDonnees) et ouvre
   ''Utils.db comme le fait Fmenu (SET NAMES, sql_mode de session). Hôte et port : LAURUX_TEST_DB_HOST
   ''(défaut 127.0.0.1 ; « db » dans le conteneur runner) et LAURUX_TEST_DB_PORT (défaut 13306).
   ''À appeler dans _Setup : chaque test repart d'une base identique.
 
   Dim sPort As String = Application.Env["LAURUX_TEST_DB_PORT"]
   Dim sHost As String = Application.Env["LAURUX_TEST_DB_HOST"]
-  Dim sCnx, sBase As String
+  Dim sCnx, sBase, sJeu As String
 
   Init()
   If Not sPort Then sPort = "13306"
   If Not sHost Then sHost = "127.0.0.1"
   sBase = Start.LocalSettings["/dbase/Name"]
   If ServeurTest() Then Error.Raise(ServeurTest())
+  NettoieBases(sHost, sPort, sBase)
   sCnx = "/usr/bin/mariadb -h " & sHost & " -P " & sPort & " -u laurux -plaurux "
   Shell sCnx & "-e " & Shell$("DROP DATABASE IF EXISTS " & sBase & "; CREATE DATABASE " & sBase & " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;") & " && " & sCnx & sBase & " < " & Shell$(Application.Path &/ "Laurux01.sql") Wait
   If Process.LastValue <> 0 Then Error.Raise("Restauration de la base de test impossible (" & sHost & ":" & sPort & ")")
   If Dataset Then
-    Shell sCnx & sBase & " < " & Shell$(Application.Path &/ ".src/Tests/Framework/datasets" &/ Dataset & ".sql") Wait
-    If Process.LastValue <> 0 Then Error.Raise("Jeu de données " & Dataset & " non chargé")
+    sJeu = JeuDeDonnees(Racine(), Dataset, $sLot, $sNom)
+    If Not Exist(sJeu) Then Error.Raise("Jeu de données " & Dataset & " introuvable (" & sJeu & ")")
+    Shell sCnx & sBase & " < " & Shell$(sJeu) Wait
+    If Process.LastValue <> 0 Then Error.Raise("Jeu de données " & Dataset & " non chargé (" & sJeu & ")")
   Endif
   If Utils.db.Opened Then Utils.db.Close
   Utils.glb()

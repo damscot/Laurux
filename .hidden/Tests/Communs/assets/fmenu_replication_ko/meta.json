@@ -1,0 +1,17 @@
+{
+ "id": "FMENU-T13",
+ "classe": "Fmenu",
+ "objet": "Réplication en échec",
+ "description": "Jeu fmenu_replication (Con-ssh, Replique, Breplique activés par le global). Saisie des écritures (Menu21), de la trésorerie (Menu22), des documents (Menu42), commande fournisseur (Menu88) : Utils.ControlTunnel renvoie Faux (pas de « Yes ») → Message.Error « Problème de réplication ! » (Entrée), aucun écran ouvert (sinon le clic suivant sur Fmenu échoue, code 3). Les autres menus contrôlés et les libellés (A10) ne tiennent pas dans le délai.",
+ "dataset": "fmenu_replication",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

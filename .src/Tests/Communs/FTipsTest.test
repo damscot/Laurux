@@ -1,0 +1,114 @@
+' Gambas test file
+
+''Tests de FTips (.hidden/reference/.src/Communs/FTips.class/test.md, FTIPS-T01 à T04).
+''Prévus en replay : /LastTip et /Tips sont posés en mémoire avant la construction de la fenêtre (jamais
+''affichée), les boutons sont actionnés par leurs gestionnaires publics et les textes relus par Controls.
+''tips/tips.fr est lu dans le répertoire du projet. Valeurs attendues : assets/FTipsTest/expected.txt (clone de
+''référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Demarrage", "Astuce au démarrage")
+  TestKit.Desc("T02Parcours", "Parcours circulaire")
+  TestKit.Desc("T03CaseTips", "Case « afficher au démarrage »")
+  TestKit.Desc("T04HorsBornes", "`/LastTip` hors bornes")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "FTipsTest")
+
+End
+
+Private Sub Titre(hF As FTips) As String
+
+  Dim hC As Object = hF.Controls["lblTitle"]
+
+  Return hC.Text
+
+End
+
+Private Sub Texte(hF As FTips) As String
+
+  Dim hC As Object = hF.Controls["txtTip"]
+
+  Return hC.Text
+
+End
+
+Public Sub T01Demarrage()
+
+  Dim hF As FTips
+  Dim hC As Object
+
+  Start.LocalSettings["/Tips"] = 1
+  Start.LocalSettings["/LastTip"] = 3
+  hF = New FTips
+  TestKit.Check("T01/titre", Titre(hF))
+  TestKit.Check("T01/texte", Texte(hF))
+  hC = hF.Controls["chkShowTip"]
+  TestKit.Check("T01/case", hC.Value)
+
+End
+
+Public Sub T02Parcours()
+
+  Dim hF As FTips
+
+  ' depuis #24 : Suivant → #1
+  Start.LocalSettings["/LastTip"] = 23
+  hF = New FTips
+  TestKit.Check("T02/depart_24", Titre(hF))
+  hF.btnNext_Click()
+  TestKit.Check("T02/suivant_1", Titre(hF))
+  TestKit.Check("T02/suivant_1_texte", Texte(hF))
+  ' depuis #1 : Précédent → #24
+  hF.btnPrev_Click()
+  TestKit.Check("T02/precedent_24", Titre(hF))
+  TestKit.Check("T02/precedent_24_texte", Texte(hF))
+  hF.btnPrev_Click()
+  TestKit.Check("T02/precedent_23", Titre(hF))
+  ' fermeture : /LastTip mémorisé
+  hF.Form_Close()
+  TestKit.Check("T02/lasttip_ferme", Start.LocalSettings["/LastTip"])
+  ' /LastTip absent : départ à #1
+  Start.LocalSettings["/LastTip"] = Null
+  hF = New FTips
+  TestKit.Check("T02/sans_lasttip", Titre(hF))
+
+End
+
+Public Sub T03CaseTips()
+
+  Dim hF As FTips
+  Dim hC As Object
+
+  Start.LocalSettings["/Tips"] = 1
+  hF = New FTips
+  hC = hF.Controls["chkShowTip"]
+  hC.Value = False
+  hF.chkShowTip_Click()
+  TestKit.Check("T03/tips_decoche", Start.LocalSettings["/Tips"])
+  hF.btnClose_Click()
+  TestKit.Check("T03/tips_apres_fermeture", Start.LocalSettings["/Tips"])
+  ' relancement : la case reprend la valeur enregistrée
+  hF = New FTips
+  hC = hF.Controls["chkShowTip"]
+  TestKit.Check("T03/case_relance", hC.Value)
+
+End
+
+Public Sub T04HorsBornes()
+
+  Dim hF As FTips
+
+  Start.LocalSettings["/LastTip"] = 30
+  hF = New FTips
+  TestKit.Check("T04/depart", Titre(hF))
+  hF.btnPrev_Click()
+  TestKit.Check("T04/precedent", Titre(hF))
+  TestKit.Check("T04/precedent_texte_vide", Texte(hF) = "")
+
+End
