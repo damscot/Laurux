@@ -1,0 +1,67 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT numero FROM Fiches_Mvt GROUP BY numero ORDER BY numero asc
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt set  control = 'dc7BRwUdNgKlHQl4d9AZCCQ83KA=' where lind = 1
+update Fiches_Mvt set  control = 'ZKgUo3Hf4IYlBbQoVbC7zfReWf4=' where lind = 2
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '2' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '2' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 1 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '2' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '2' order by lind desc limit 2
+update Fiches_Mvt set  control = 'l2fJqgqa5zM29WttBqaWz5ylZcs=' where lind = 3
+update Fiches_Mvt set  control = 'I33PYlYh1lyFVLzUeREqUTzdKuw=' where lind = 4
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '3' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '3' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 2 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '3' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '3' order by lind desc limit 2
+update Fiches_Mvt set  control = 'gSjRTvDHkojL+6Ume6HG4upuNGE=' where lind = 5
+update Fiches_Mvt set  control = 'xK8GfX8H2F2ImmXbQtviRYcNE1A=' where lind = 6
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '5' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '5' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 3 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '5' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '5' order by lind desc limit 2
+update Fiches_Mvt set  control = 'uHshmwAbl/cOEV1qOnVeRRnDHLY=' where lind = 9
+update Fiches_Mvt set  control = 'o+gih/161b0ZhaEa9wd61iPYhRw=' where lind = 10
+SELECT numero FROM Fiches_Mvt3 GROUP BY numero ORDER BY numero asc
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt3 WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt3 WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt3 set  control = '3lyFbwClAjRGkwAyiniy55Ksh7w=' where lind = 1
+update Fiches_Mvt3 set  control = 'gFVCjwuQfmk1ISAz5JyfOtMrKz0=' where lind = 2
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt3 WHERE numero = '2' order by lind asc
+SELECT numero,control FROM Fiches_Mvt3 WHERE numero < '2' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero = 1 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero < '2' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero = '2' order by lind desc limit 2
+update Fiches_Mvt3 set  control = 'qVrdZH3+DNVyAvh+0Y6lBISzV8g=' where lind = 3
+update Fiches_Mvt3 set  control = 'kYwfcTUk55WpAU03kPI90SXx08g=' where lind = 4
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt3 WHERE numero = '3' order by lind asc
+SELECT numero,control FROM Fiches_Mvt3 WHERE numero < '3' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero = 2 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero < '3' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM3 WHERE numero = '3' order by lind desc limit 2
+update Fiches_Mvt3 set  control = 'sQVh/6nb7ZEJpU9r+57pE/ouo8E=' where lind = 5

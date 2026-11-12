@@ -1,0 +1,73 @@
+' Gambas test file
+
+''Tests de Fblocsoc (.hidden/reference/.src/Communs/Fblocsoc.class/test.md, FBLOCSOC-T01 et T04).
+''Fenêtre construite sans être affichée : Form_Open et Form_Close (publics) sont appelés directement, la case et
+''le mot de passe posés par Controls ; on relit /Soc01/Blocsoc et /Soc01/BlocsocMdp (configuration de test en
+''mémoire). T04 : effet sur LauruxConf (Nbase désactivé) ; Fmenu.Menu26 n'est pas vérifié (Fmenu non construit).
+''Valeurs attendues : assets/FblocsocTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Blocage", "Blocage avec mot de passe")
+  TestKit.Desc("T04EffetConf", "Effet sur LauruxConf (`Nbase`)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "FblocsocTest")
+
+End
+
+Public Sub T01Blocage()
+
+  Dim hF As Fblocsoc
+  Dim hC As Object
+
+  TestKit.Check("T01/blocsoc_avant", Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"])
+  hF = New Fblocsoc
+  hF.Form_Open()
+  hC = hF.Controls["CheckBox1"]
+  TestKit.Check("T01/case_initiale", hC.Value)
+  hC.Value = True
+  hC = hF.Controls["TextBox1"]
+  hC.Text = "secret"
+  hF.Form_Close()
+  TestKit.Check("T01/blocsoc", Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"])
+  TestKit.Check("T01/blocsocmdp", Start.LocalSettings["/Soc" & Start.Societe & "/BlocsocMdp"])
+  TestKit.Check("T01/blocsocmdp_dechiffre", hexdblKey.Crypt("de", Start.LocalSettings["/Soc" & Start.Societe & "/BlocsocMdp"], "Laurux"))
+  ' enregistré dans le fichier de configuration (Save) : relecture
+  Start.LocalSettings.Reload()
+  TestKit.Check("T01/blocsoc_relu", Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"])
+  ' réouverture : la case reprend la valeur enregistrée
+  hF = New Fblocsoc
+  hF.Form_Open()
+  hC = hF.Controls["CheckBox1"]
+  TestKit.Check("T01/case_reouverture", hC.Value)
+
+End
+
+Public Sub T04EffetConf()
+
+  Dim hF As LauruxConf
+  Dim hC As Object
+
+  Try hF = New LauruxConf
+  If Error Then
+    TestKit.Check("T04/sans_blocage", "ERREUR: " & Error.Text)
+  Else
+    hC = hF.Controls["Nbase"]
+    TestKit.Check("T04/sans_blocage", hC.Enabled)
+    hF.Delete
+  Endif
+  Start.LocalSettings["/Soc" & Start.Societe & "/Blocsoc"] = True
+  Try hF = New LauruxConf
+  If Error Then
+    TestKit.Check("T04/avec_blocage", "ERREUR: " & Error.Text)
+  Else
+    hC = hF.Controls["Nbase"]
+    TestKit.Check("T04/avec_blocage", hC.Enabled)
+  Endif
+
+End

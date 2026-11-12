@@ -1,0 +1,58 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Centrales 
+SELECT art_code FROM Fiches_Art
+SELECT * FROM Fiches_Parametres
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7
+SELECT * FROM Fiches_Promo where datedeb <= '2026-01-15' and datefin >= '2026-01-15'
+SELECT dnart FROM Fiches_Parametres
+SELECT * FROM Fiches_Art where art_code = 'SRV9'
+SELECT * FROM Fiches_Art where art_cfour = 'X1' and art_four = NULL or art_code = 'X1'  and art_four = NULL 
+SELECT * FROM Fiches_Art where art_cfour = 'X1' and art_four = NULL or art_code = 'X1'  and art_four = NULL 
+SELECT * FROM Fiches_Art where art_code = 'SRV9' 
+INSERT INTO Fiches_Art (art_code,art_design,art_fam,art_four,art_cequ,art_cbarre,art_cfour,art_pbht,art_tr,art_pauaht,art_coef,art_pvht,art_tva,art_pvttc,art_cdarr, art_dec, art_stocke, art_qte, art_pmp, art_dpa, art_stkdep, art_nbd, art_design2, art_ect, art_eco, art_paht, art_txconv, art_stkmin, art_stkmax, art_suspendu, art_cpp, art_copp, art_frais, art_prvt, qte1, qte2, rem1, qte3, qte4, rem2, qte5, qte6, rem3, qte7, qte8, rem4, qte9, qte10, rem5, qte11, qte12, rem6, art_etiq, art_poids, art_mincom, art_poids2, art_mat, art_marque, art_photo, art_crst, art_impcar) VALUES ('SRV9', 'TEST', NULL, NULL, NULL, NULL, 'X1', 0, 0, 0, 1, 0, NULL, 0, '0,01', '0', '0', 0, 0, 0, 0, '2', NULL, '0', NULL, 0, 1, 0, 0, '0', '0', NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0', 0, '0', 0, '0', NULL, NULL, NULL, '0')
+Update  Fiches_Art  SET  art_pvcons = 0, art_stocke = '0', art_prdcomp = '0', art_impdetail = '0', art_remcas1 = 0, art_remcas2 = 0, art_remcas3 = 0, art_vol = NULL, art_bonus = 0, art_centrale = NULL, art_refcentrale = NULL, art_colvte = NULL, art_pvht2 = NULL, art_cn8 = NULL, art_casier = NULL, art_ect2 = '0', art_eco2 = NULL, art_depg = '0', art_cnsg = '0', art_ua = NULL, art_uv = NULL, art_refliee = NULL, art_cdate = '2026-01-15 10:00:12' where art_code = 'SRV9'
+UPdate Fiches_Parametres SET dnart = 'SRV9'
+SELECT dnart FROM Fiches_Parametres
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7
+SELECT * FROM Fiches_Art WHERE  art_code = 'SRV9'
+SELECT * FROM Fiches_Ligbl,Fiches_Bl WHERE numbl = num_ligbl and code_ligbl = 'SRV9'  and typel_ligbl = 'A'
+SELECT * FROM Fiches_Ligcom as l inner join Fiches_Entcom as e on l.numcom=e.numcom and l.code = 'SRV9'
+SELECT * FROM  Fiches_Ligrecpt as l inner join Fiches_Entrecpt as e on l.numrecpt = e.numrecpt where e.validee != 1 and l.code = 'SRV9'
+SELECT * FROM Fiches_Materiels WHERE  mat_code = 'SRV9'
+SELECT * FROM Fiches_LigTicketz WHERE code = 'SRV9'
+SELECT lind FROM Docs_Ged where code = 'SRV9' and type = 4
+DELETE FROM Fiches_Art WHERE art_code = 'SRV9'
+DELETE IGNORE FROM Fiches_Mvtexp WHERE  code = 'SRV9'
+SHOW TABLES Like 'Fiches_Inv'
+SHOW TABLES Like 'Fiches_InvT'
+DELETE IGNORE FROM Fiches_Ligrecpt WHERE code = 'SRV9'
+DELETE IGNORE FROM Fiches_CdBarre WHERE codep = 'SRV9'
+DELETE IGNORE FROM Fiches_Rpl1 WHERE codep = 'SRV9'
+DELETE IGNORE FROM Fiches_Rpl2 WHERE codep = 'SRV9'
+DELETE IGNORE FROM Fiches_Cequ WHERE codequ = 'SRV9' or codep = 'SRV9'
+SELECT dnart FROM Fiches_Parametres
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7

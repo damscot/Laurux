@@ -10,7 +10,7 @@ Base de test : MariaDB 10.11 Docker (.hidden/Docker/docker-compose.test.yml), 12
 
 Commandes :
   db up|down|status                 démarrer / arrêter la base de test
-  db reset [--dataset NOM]          recréer Laurux01 depuis Laurux01.sql (+ datasets/NOM.sql)
+  db reset [--dataset LOT/DIR/JEU]  recréer Laurux01 depuis Laurux01.sql (+ jeu des assets d'un test ou <classe>_shared)
   dump [--out FICHIER]              dump normalisé de Laurux01 (sortie standard par défaut)
   harness make                      régénère harness.patch (fichiers de harness_files.txt, rework vs 6b6b9dfc)
   harness apply                     applique harness.patch au clone ref (si absent) et y synchronise .src/Tests
@@ -48,6 +48,7 @@ import contextlib
 import fcntl
 import pwd
 import time
+import datetime
 import difflib
 import json
 import os
@@ -222,6 +223,7 @@ def serveur_test():
 def cmd_db(a):
     if a.action == "up":
         run(COMPOSE + ["up", "-d", "--build", "--wait"])
+        marque_serveur()
     elif a.action == "down":
         run(COMPOSE + ["down"])
     elif a.action == "status":
@@ -232,13 +234,52 @@ def cmd_db(a):
         print(f"Laurux01 restaurée{' + ' + a.dataset if a.dataset else ''}")
 
 
+# Marqueur du serveur de test : compte verrouillé (sans connexion possible), invisible pour Laurux, posé par
+# « db up ». Seul un serveur marqué est nettoyé de ses bases autres que Laurux01 (nettoie_bases,
+# TestKit.NettoieBases) : un serveur réel désigné par erreur (LAURUX_TEST_DB_PORT=3306) n'est jamais nettoyé.
+MARQUEUR = "laurux_serveur_test"
+BASES_SYSTEME = ("information_schema", "mysql", "performance_schema", "sys")
+
+
+def marque_serveur():
+    mariadb(["-e", f"CREATE USER IF NOT EXISTS '{MARQUEUR}'@'localhost' ACCOUNT LOCK;"])
+    print(f"serveur {DB['host']}:{DB['port']} marqué comme serveur de test ({MARQUEUR})")
+
+
+def nettoie_bases(garde):
+    """Supprime toutes les bases sauf `garde` et les bases système, sur un serveur marqué seulement."""
+    rep = mariadb(["-N", "-B", "-e", f"SELECT COUNT(*) FROM mysql.user WHERE User = '{MARQUEUR}'"],
+                  capture_output=True, text=True, check=False).stdout.strip()
+    if rep != "1":
+        print(f"serveur {DB['host']}:{DB['port']} non marqué comme serveur de test (runner.py db up) : bases autres "
+              f"que {garde} conservées", file=sys.stderr)
+        return
+    for base in mariadb(["-N", "-B", "-e", "SHOW DATABASES"], capture_output=True, text=True).stdout.split():
+        if base not in BASES_SYSTEME and base != garde:
+            mariadb(["-e", f"DROP DATABASE `{base}`"])
+
+
+def jeu_de_donnees(dataset):
+    """Jeu de données d'un test (voir TestKit.JeuDeDonnees) : « <Lot>/<classe>_shared/<jeu>[.sql] » ou
+    « <Lot>/<test>/<jeu> » (relatif à .hidden/Tests/<Lot>/assets/), ou chemin d'un fichier."""
+    p = Path(dataset)
+    if p.is_file():
+        return p
+    nom = dataset if dataset.endswith(".sql") else dataset + ".sql"
+    parts = nom.split("/")
+    if len(parts) < 3:
+        die(f"jeu de données « {dataset} » : attendu <Lot>/<classe>_shared/<jeu>, <Lot>/<test>/<jeu> ou un chemin")
+    return ASSETS / parts[0] / "assets" / "/".join(parts[1:])
+
+
 def db_reset(dataset=None):
+    nettoie_bases(DB["name"])
     mariadb(["-e", f"DROP DATABASE IF EXISTS {DB['name']}; CREATE DATABASE {DB['name']} "
                    "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"])
     with open(REWORK / "Laurux01.sql", "rb") as f:
         mariadb([DB["name"]], stdin=f)
     if dataset:
-        ds = FRAMEWORK / "datasets" / f"{dataset}.sql"
+        ds = jeu_de_donnees(dataset)
         if not ds.exists():
             die(f"jeu de données introuvable : {ds}")
         with open(ds, "rb") as f:
@@ -252,18 +293,22 @@ def load_mask():
         if p.exists() else {}
 
 
-def dump_normalized():
-    """Schéma + données, une ligne par enregistrement, tables et lignes triées, colonnes volatiles masquées."""
+def dump_normalized(base=None):
+    """Schéma + données de `base` (défaut : base de test), une ligne par enregistrement, tables et lignes triées,
+    colonnes volatiles masquées."""
+    base = base or DB["name"]
+    if base not in mariadb(["-N", "-B", "-e", "SHOW DATABASES"], capture_output=True, text=True).stdout.split():
+        return f"-- base {base} absente\n"
     schema = run(["mariadb-dump", "-h", DB["host"], "-P", DB["port"], "-u", DB["user"], f"-p{DB['password']}",
-                  "--no-data", "--skip-comments", "--skip-dump-date", "--compact", DB["name"]],
-                 capture_output=True, text=True).stdout
+                  "--no-data", "--skip-comments", "--skip-dump-date", "--compact", base],
+                 capture_output=True, text=True, check=False).stdout
     schema = re.sub(r" AUTO_INCREMENT=\d+", "", schema)
     out = ["-- schéma", schema.strip(), "-- données"]
     mask = load_mask()
-    tables = mariadb(["-N", "-B", "-e", f"SHOW TABLES FROM {DB['name']}"], capture_output=True,
-                     text=True).stdout.split()
+    tables = mariadb(["-N", "-B", "-e", f"SHOW TABLES FROM `{base}`"], capture_output=True, text=True,
+                     check=False).stdout.split()
     for t in sorted(tables):
-        res = mariadb(["-B", "--raw", DB["name"], "-e", f"SELECT * FROM `{t}`"], capture_output=True, text=True).stdout
+        res = mariadb(["-B", "--raw", base, "-e", f"SELECT * FROM `{t}`"], capture_output=True, text=True).stdout
         lines = res.splitlines()
         if not lines:
             continue
@@ -657,7 +702,7 @@ def cmd_unit(a):
         journal.fin()
     if a.record:
         n = 0
-        for f in (REF / ".src" / "Tests").glob("*/assets/*/expected.txt"):
+        for f in (REF / ".hidden" / "Tests").glob("*/assets/*/expected.txt"):
             dst = REWORK / f.relative_to(REF)
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(f, dst)
@@ -751,7 +796,13 @@ def do_replay(spec, clone, outdir, display=None, journal=True, affiche=True):
         (outdir / "sql.log").write_text("\n".join(sql_lines(log)) + "\n", encoding="utf-8")
         if journal and Path(str(log) + ".out").exists():  # journal brut (noms de machine, pid) : jamais dans les attendus
             shutil.copy2(Path(str(log) + ".out"), outdir / "journal.out")
-    (outdir / "dump.sql").write_text(dump_normalized(), encoding="utf-8")
+        # « fichiers » de meta.json : copiés par Run_Scenario (avant suppression du HOME de test)
+        shutil.rmtree(outdir / "fichiers", ignore_errors=True)
+        if (brut / "fichiers").is_dir():
+            shutil.copytree(brut / "fichiers", outdir / "fichiers")
+    # base de test puis « bases » supplémentaires de meta.json, à la suite dans dump.sql
+    dump = dump_normalized() + "".join(f"-- base {b}\n" + dump_normalized(b) for b in meta.get("bases", []))
+    (outdir / "dump.sql").write_text(dump, encoding="utf-8")
     (outdir / "exit_code").write_text(f"{rc}\n", encoding="utf-8")
     return rc
 
@@ -792,21 +843,108 @@ def cmd_replay(a):
         journal.fin()
     sys.exit(1 if echecs else 0)
 
-# Horodatages issus de Now : faketime fixe le départ du rejeu, mais l'horloge avance (durée du rejeu variable). Seul
-# Now produit des heures avec fraction de seconde (ex. « dteinv = '2026-01-15 10:00:02.970' » dans sql.log) :
-# leur heure est ignorée à la comparaison, la date est conservée.
-NOW_RE = re.compile(r"\b\d{2}:\d{2}:\d{2}[.,]\d{1,6}")
+# Horodatages : faketime fixe le départ du rejeu, mais l'horloge avance (durée variable du rejeu, ref et rework
+# n'ont pas la même vitesse). Ils ne sont pas masqués (un masquage cacherait une régression, ex. 9:59:59.99 contre
+# 10:00:00.00, ou un changement de jour à minuit) : chaque horodatage obtenu est comparé à celui de la même position
+# dans l'attendu, avec un écart toléré (« tolerance_horodatage » de meta.json, en secondes, défaut 5), et l'ordre des
+# événements est vérifié (même ordre des lignes, et pas d'inversion entre deux horodatages successifs que l'attendu
+# sépare d'au moins une seconde). Formes reconnues : « AAAA-MM-JJ hh:mm:ss[.f] » et heure seule « hh:mm:ss.f »
+# (Now formaté, ex. « dteinv = '2026-01-15 10:00:02.970' »).
+TOLERANCE_HORODATAGE = 5.0
+HORODATAGE_RE = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:[.,](\d{1,6}))?\b")
+HEURE_RE = re.compile(r"(?<![\d:.-])(\d{2}):(\d{2}):(\d{2})[.,](\d{1,6})\b")
+
+
+# Verrou DocActif (Fiches_Docactif) : process_id (pid) et host_id (nom d'hôte, aléatoire en conteneur) changent à
+# chaque exécution ; masqués dans sql.log (le dump les masque via dump_mask.json). machine_id et user_name restent
+# comparés.
+DOCACTIF_INSERT_RE = re.compile(r"(INSERT INTO Fiches_Docactif\s*\([^)]*\)\s*VALUES\s*\('(?:[^']|'')*',\s*"
+                                r"'(?:[^']|'')*',\s*'(?:[^']|'')*',\s*)\d+(,\s*'(?:[^']|'')*',\s*)'(?:[^']|'')*'",
+                                re.I)
+DOCACTIF_PID_RE = re.compile(r"(UPDATE\s+Fiches_Docactif\s+SET\s+process_id\s*=\s*)\d+", re.I)
+
+
+# HOME de test dans les fichiers comparés (Laurux.conf…, chemins issus de {home}/{out}) : HOME du fils hors conteneur
+# (mktemp, nom aléatoire), HOME du runner hors conteneur (/tmp/laurux-replay-…, qui contient les sorties de -T) et
+# HOME fixe du conteneur (/home/laurux) : même texte « <home> » dans les deux modes d'exécution
+HOME_TEST_RE = re.compile(r"/tmp/laurux-test/home-[A-Za-z0-9]+|/tmp/laurux-replay-[A-Za-z0-9_]+|/home/laurux(?=/|\b)")
+# faux serveur FTP (TestKit.FtpFactice) : port libre, différent à chaque rejeu
+FTP_PORT_RE = re.compile(r"ftp://127\.0\.0\.1:\d+")
 
 
 def normalise(txt):
-    return NOW_RE.sub("<heure>", txt)
+    txt = HOME_TEST_RE.sub("<home>", txt)
+    txt = FTP_PORT_RE.sub("ftp://127.0.0.1:<port>", txt)
+    txt = DOCACTIF_INSERT_RE.sub(r"\1<pid>\2'<hôte>'", txt)
+    txt = DOCACTIF_PID_RE.sub(r"\1<pid>", txt)
+    return txt
 
 
-def diff_files(a_path, b_path, label):
-    a_txt = normalise(Path(a_path).read_text(encoding="utf-8")).splitlines()
-    b_txt = normalise(Path(b_path).read_text(encoding="utf-8")).splitlines()
-    d = list(difflib.unified_diff(a_txt, b_txt, f"attendu/{label}", f"obtenu/{label}", lineterm="", n=2))
-    return d
+def lit_compare(path):
+    p = Path(path)
+    return p.read_text(encoding="utf-8", errors="replace") if p.is_file() else "<sortie absente>\n"
+
+
+def horodatages(ligne):
+    """Ligne -> (texte où chaque horodatage est remplacé par <horodatage>/<heure>, valeurs en secondes). Une heure seule
+    est rapportée au jour (comparée modulo 24 h)."""
+    valeurs = []
+
+    def complet(m):
+        a, mo, j, h, mi, s, f = m.groups()
+        try:
+            v = datetime.datetime(int(a), int(mo), int(j), int(h), int(mi), int(s)).timestamp()
+        except ValueError:  # date invalide (ex. 0000-00-00 00:00:00) : comparée telle quelle
+            return m.group(0)
+        valeurs.append(("j", v + (float("0." + f) if f else 0.0)))
+        return "<horodatage>"
+
+    def heure(m):
+        h, mi, s, f = m.groups()
+        valeurs.append(("h", int(h) * 3600 + int(mi) * 60 + int(s) + float("0." + f)))
+        return "<heure>"
+
+    ligne = HORODATAGE_RE.sub(complet, ligne)
+    ligne = HEURE_RE.sub(heure, ligne)
+    return ligne, valeurs
+
+
+def ecart_horodatage(x, y):
+    d = abs(x[1] - y[1])
+    return min(d, 86400 - d) if x[0] == "h" else d
+
+
+def diff_files(a_path, b_path, label, tolerance=TOLERANCE_HORODATAGE):
+    """Diff des sorties normalisées (lignes de différence au format unified diff). Les horodatages sont comparés
+    avec un écart toléré (`tolerance`, s) et leur ordre vérifié (voir HORODATAGE_RE)."""
+    a = [horodatages(l) for l in normalise(lit_compare(a_path)).splitlines()]
+    b = [horodatages(l) for l in normalise(lit_compare(b_path)).splitlines()]
+    d = list(difflib.unified_diff([x[0] for x in a], [x[0] for x in b], f"attendu/{label}", f"obtenu/{label}",
+                                  lineterm="", n=2))
+    if d:  # contenu ou ordre des lignes différent
+        return d
+    ecarts = []
+    seq_a, seq_b = [], []
+    for n, ((ta, va), (tb, vb)) in enumerate(zip(a, b), 1):
+        trop = [ecart_horodatage(x, y) for x, y in zip(va, vb) if ecart_horodatage(x, y) > tolerance]
+        if trop:
+            ecarts.append(f"@@ {label} ligne {n} : horodatage décalé de {max(trop):.2f} s (tolérance {tolerance} s)")
+        seq_a += [(n, x) for x in va if x[0] == "j"]
+        seq_b += [(n, x) for x in vb if x[0] == "j"]
+        if trop:
+            ecarts += ["-" + ligne for ligne in [lit_ligne(a_path, n)]] + ["+" + lit_ligne(b_path, n)]
+    # ordre : deux horodatages successifs que l'attendu sépare d'au moins 1 s ne doivent pas être inversés
+    for (n1, x1), (n2, x2), (_, y1), (_, y2) in zip(seq_a, seq_a[1:], seq_b, seq_b[1:]):
+        da, db = x2[1] - x1[1], y2[1] - y1[1]
+        if abs(da) >= 1 and da * db < 0:
+            ecarts += [f"@@ {label} lignes {n1}-{n2} : ordre des horodatages inversé",
+                       "-" + lit_ligne(a_path, n2), "+" + lit_ligne(b_path, n2)]
+    return ecarts
+
+
+def lit_ligne(path, n):
+    lignes = normalise(lit_compare(path)).splitlines()
+    return lignes[n - 1] if 0 < n <= len(lignes) else ""
 
 
 def expected_code(spec):
@@ -839,8 +977,10 @@ def compare_un(spec, a, affiche=True, journal=None):
     code = expected_code(spec)
     ok = rc == code
     ecarts = {}
-    for f in ("dump.sql", "sql.log"):
-        d = diff_files(expected / f, got / f, f)
+    meta = json.loads((sdir / "meta.json").read_text(encoding="utf-8"))
+    fichiers = ["fichiers/" + f.lstrip("@") for f in meta.get("fichiers", [])]
+    for f in ["dump.sql", "sql.log"] + fichiers:
+        d = diff_files(expected / f, got / f, f, float(meta.get("tolerance_horodatage", TOLERANCE_HORODATAGE)))
         ecarts[f] = len([l for l in d if l[:1] in "+-" and not l.startswith(("+++", "---"))])
         if d:
             ok = False
@@ -852,7 +992,8 @@ def compare_un(spec, a, affiche=True, journal=None):
         # à la main), différent de ref = régression (fail)
         journal.ajoute(spec, **info, statut=("xfail" if meta.get("xfail") else "pass") if ok else "fail",
                        obtenu="identique" if ok else
-                       f"code {rc}, dump ±{ecarts['dump.sql']} l., SQL ±{ecarts['sql.log']} l.",
+                       f"code {rc}, dump ±{ecarts['dump.sql']} l., SQL ±{ecarts['sql.log']} l."
+                       + (f", fichiers ±{sum(ecarts[f] for f in fichiers)} l." if fichiers else ""),
                        attendu=meta.get("xfail_attendu", "dump et SQL identiques à ref"),
                        duree=round(time.time() - t0, 2), raison=meta.get("xfail", ""),
                        reference="live" if a.live else "expected", sorties=str(work))

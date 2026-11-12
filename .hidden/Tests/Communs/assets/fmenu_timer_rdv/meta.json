@@ -1,0 +1,18 @@
+{
+ "id": "FMENU-T19",
+ "classe": "Fmenu",
+ "objet": "Rendez-vous rappelé par Timer1",
+ "description": "Jeu fmenu_timer_rdv (Fiches_Agenda : rendez-vous de « laurux » à 10h01 le 2026-01-15, un autre à 11h30, un d'un autre utilisateur à 10h01), date figée 10:00:10, /son2 activé par conf (synthèse vocale tracée). Attente du premier tick de Timer1 (60 s après la création de Fmenu) : clics inoffensifs sur le menu « ? » (Menu20) espacés de 11 à 19 s (le rejeu ramène à 1 s un écart de plus de 20 s ; ne pas lancer retime, qui comprimerait l'attente). Le rejeu applique après chaque événement l'écart qui le sépare du précédent : la réponse au Message.Warning de AffRdv.Aff_Rdv (bouton unique « OK », Espace) part 66 s après le premier clic (après le tick, vers 58 s), le dernier écart (1 s) n'est que l'attente avant la sortie. Comparés : requête SELECT de Fiches_Agenda à 10h01 (sql.log), @outils.trace (pico2wave « Il est 10 heure 1 . Rendez-vous client Martin », aplay).",
+ "dataset": "fmenu_timer_rdv",
+ "date": "2026-01-15 10:00:10",
+ "args": [],
+ "societe": "01",
+ "timeout": 95,
+ "timeout_accord": "accord utilisateur du 2026-11-12 : 95 s (tick de Timer1 à 60 s inhérent au test, 73,8 s mesurées + 25 %)",
+ "conf": {
+  "/son2": "-1"
+ },
+ "fichiers": [
+  "@outils.trace"
+ ]
+}

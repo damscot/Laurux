@@ -1,0 +1,18 @@
+{
+ "id": "FMENU-T12",
+ "classe": "Fmenu",
+ "objet": "Accès administrateur : menus protégés restants",
+ "description": "Complément de fmenu_acces_admin. Jeu mdp_shared/mdp_conf (Admin et AdminG activés, mots de passe MdpPrefs et MdpPrefsG « laurux »). Pour chaque menu protégé : mauvais mot de passe « x » (Message.Error, bouton unique validé par Espace, aucun écran) puis bon mot de passe (écran ouvert puis fermé) : Paramètres généraux Menu25 (mauvais seulement, le bon est dans fmenu_acces_admin), Préférences locales Menu110 (bon seulement, idem), Sociétés Menu26 (Fsoc), Restauration Menu65 (FRestore), Duplication Menu150 (Dup), Contrôle de la base Menu142 (DB_Sanity), Mise à jour Menu173 (mauvais seulement : Majversion interroge www.laurux.fr, résultat non reproductible), Préférences globales Menu329 (MDP global ; Prefs global fermé par Quitter, Button2, qui réécrit le blob conf), Nouvelle base Menu166 (LauruxConf laissé ouvert : sa fermeture redémarre l'application). Comparés : requêtes (écrans ouverts seulement après le bon mot de passe) et dump.",
+ "dataset": "mdp_shared/mdp_conf",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 180,
+ "timeout_accord": "accord utilisateur du 2026-11-12 : 180 s (142,6 s mesurées + 25 % ; durée doublée par REPLAYOBSERVER-A08, à réduire après sa correction)",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 700,
+  "fenetre": 800
+ }
+}

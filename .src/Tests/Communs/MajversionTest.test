@@ -1,0 +1,82 @@
+' Gambas test file
+
+''Tests de Majversion (.hidden/reference/.src/Communs/Majversion.class/test.md, MAJVERSION-T01 à T03 et T07) :
+''service de version (auto-instance du formulaire, non affiché) et suivi de progression du téléchargement.
+''assets/MajversionTest/pb1_wget.txt : journal réel de « wget --progress=dot » (LANG=fr_FR.UTF-8, 300 000 octets
+''servis en local), copié dans ~/tmp/pb1.txt. Valeurs attendues : assets/MajversionTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01VersionApp", "`RecupVersionApp`")
+  TestKit.Desc("T02VersionBase", "`RecupVersion(False)`")
+  TestKit.Desc("T03VersionBaseSansMaj", "`RecupVersion(True)` sans contrôle (`/Majver` = 0)")
+  TestKit.Desc("T07Avancement", "`Avancement` sur un journal `wget` préparé")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "MajversionTest")
+
+End
+
+Private Sub ContenuTmp() As String
+  ''Liste triée du contenu de ~/tmp (« <absent> » si le répertoire n'existe pas).
+
+  Dim aFic As String[]
+
+  If Not Exist(User.Home &/ "tmp") Then Return "<absent>"
+  aFic = Dir(User.Home &/ "tmp").Sort()
+  Return aFic.Join(",")
+
+End
+
+Public Sub T01VersionApp()
+
+  TestKit.Check("T01/Application.Version", Application.Version)
+  TestKit.Check("T01/RecupVersionApp", Majversion.RecupVersionApp())
+
+End
+
+Public Sub T02VersionBase()
+
+  TestKit.OuvreBase()
+  TestKit.Check("T02/Version_avant", Majversion.Version)
+  TestKit.Check("T02/retour", Majversion.RecupVersion(False))
+  TestKit.Check("T02/Version_apres", Majversion.Version)
+
+End
+
+Public Sub T03VersionBaseSansMaj()
+
+  Dim sAvant As String
+
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Majver"] = 0
+  sAvant = ContenuTmp()
+  TestKit.Check("T03/retour", Majversion.RecupVersion(True))
+  TestKit.Check("T03/Version", Majversion.Version)
+  TestKit.Check("T03/tmp_inchange", ContenuTmp() = sAvant)
+  TestKit.Check("T03/version_txt", Exist(User.Home &/ "tmp/version.txt"))
+
+End
+
+Public Sub T07Avancement()
+
+  Dim hWin As Window
+  Dim hLb As Label
+  Dim hPb As ProgressBar
+
+  hWin = New Window
+  hLb = New Label(hWin)
+  hPb = New ProgressBar(hWin)
+  If Not Exist(User.Home &/ "tmp") Then Mkdir User.Home &/ "tmp"
+  Copy Application.Path &/ ".hidden/Tests/Communs/assets/MajversionTest/pb1_wget.txt" To User.Home &/ "tmp/pb1.txt"
+  Majversion.Avancement(hLb, hPb)
+  TestKit.Check("T07/hpb.Value", hPb.Value)
+  TestKit.Check("T07/hlb.Text", hLb.Text)
+  TestKit.Check("T07/pb1_supprime", Not Exist(User.Home &/ "tmp/pb1.txt"))
+  hWin.Delete
+
+End

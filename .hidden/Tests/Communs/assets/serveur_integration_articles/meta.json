@@ -1,0 +1,29 @@
+{
+ "id": "SERVEUR-T08",
+ "classe": "Serveur",
+ "objet": "Intégration Articles : Art_Serveur.txt (création, suppression)",
+ "description": "Préférences /Soc01/Sprix, Sexport, SMajArt actives et /Soc01/Schmprix = ~/tmp (conf). Articles (Fmenu.Menu15) : code SRV9 + Entrée, désignation TEST, code fournisseur X1 + Entrée (CfourLF → CtrlArt : nouveau = 1), Enregistrer (Button4, tag 2) : bouton 1 « Oui » de Message.Warning « Vous allez créer l'article » (Articles.class:3887), INSERT et Serveur.Pass(\"Art\", \"C\") ; puis code SRV9, Supprimer (Button3, tag 1) : bouton 1 « Oui » de Message.Question (art_Suppr), DELETE et Serveur.Pass(\"Art\", \"S\") ; Quitter (Button5). Fichiers comparés : tmp/Art_Serveur.txt (ligne C de 68 champs puis S;SRV9;;X1;), tmp/CB_Serveur.txt, tmp/Rpl1_Serveur.txt, tmp/Rpl2_Serveur.txt (absents : code-barre et références liées non saisis, la saisie dans les ComboBox Cbarre/Rpl1 empêche l'apparition de la boîte de création au rejeu).",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Sprix": "1",
+  "/Soc01/Sexport": "1",
+  "/Soc01/SMajArt": "1",
+  "/Soc01/Schmprix": "~/tmp"
+ },
+ "fichiers": [
+  "tmp/Art_Serveur.txt",
+  "tmp/CB_Serveur.txt",
+  "tmp/Rpl1_Serveur.txt",
+  "tmp/Rpl2_Serveur.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 2000,
+  "fenetre": 1000
+ }
+}

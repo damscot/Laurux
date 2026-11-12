@@ -1,0 +1,26 @@
+{
+ "id": "LAURUXCONF-T04",
+ "classe": "LauruxConf",
+ "objet": "Base inconnue : création",
+ "description": "Nbase « Laurux05 » (base absente), Valider : Unknown database → Createbase, bouton 1 « Oui » de Message.Question (LauruxConf.class:332), base créée et remplie depuis Laurux01.sql, UPdate Laurux05.Fiches_Societes SET cd_sc = 05 (sql.log), Message.Info validé par Entrée. Base Laurux05 dumpée (« bases ») et configuration finale comparée (@Laurux.conf : préférences [Soc05], [Coul]). Comportement actuel figé (code_sortie 125) : Createbase ferme Utils.db (et son journal) ; le SET @@global.sql_mode de Utils.Fill_DataBase (ligne 1536) écrit dans le journal fermé en mode -l → erreur fatale « Uninitialized or already closed handler! » (candidat anomalie) après l'import : UPdate cd_sc et Message.Info non atteints.",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "xfail": "Createbase : Fill_DataBase exécute une requête sur Utils.db fermé, dont le journal est fermé : erreur fatale en mode -l avant l'UPdate cd_sc = 05 et le message final (candidat anomalie)",
+ "xfail_attendu": "base Laurux05 avec cd_sc = 05, Message.Info final",
+ "fichiers": [
+  "@Laurux.conf"
+ ],
+ "bases": [
+  "Laurux05"
+ ]
+}

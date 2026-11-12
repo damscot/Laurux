@@ -1,0 +1,17 @@
+{
+ "id": "FSOC-T07",
+ "classe": "Fsoc",
+ "objet": "Calcul du n° TVA intracommunautaire",
+ "description": "Siret « 732 829 320 00074 » (tronqué à « 732 829 320 000 » par MaxLength) + Entrée (tag 11) : Tvaintra calculé ; Entrée sur Tvaintra (contrôle valide, aucun message) ; Enregistrer (dump : tvaintra_sc). Puis SIREN 000000029 (clé 2 < 10) + Entrée (Siret effacé par BackSpace, Focus ne sélectionnant pas le texte) : clé sur 1 chiffre (CTESTTVA-A01 figée), l'Entrée sur Tvaintra affiche l'avertissement (le rejeu échoue en code 3 sinon), validé par Entrée ; Enregistrer : valeur finale dans le dump, les deux insert dans sql.log.",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 600,
+  "fenetre": 600
+ }
+}

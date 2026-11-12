@@ -1,0 +1,48 @@
+' Gambas test file
+
+''Tests de Abont (.hidden/reference/.src/Compta/Tables/Abont.class/test.md, ABONT-T06).
+''Prévu en replay par la saisie d'écriture (Saisecrit) : Compteur_Incr est appelé ici directement sur
+''l'auto-instance (comme le fait Saisecrit), jeu abont_masque. Valeurs attendues : assets/AbontTest/expected.txt
+''(clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06Compteur", "`Compteur_Incr` sur l'auto-instance")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "AbontTest")
+  TestKit.OuvreBase("abont_shared/abont_masque")
+
+End
+
+Private Sub Compteur(sNumero As String) As Variant
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT compteur FROM " & Cbase.Table("TabNumabon") & " WHERE numero = &1", sNumero)
+  If Not r.Available Then Return "<absent>"
+  Return r!compteur
+
+End
+
+Public Sub T06Compteur()
+
+  TestKit.Check("T06/avant", Compteur("1"))
+  Try Abont.Compteur_Incr("1")
+  If Error Then
+    TestKit.Check("T06/appel", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T06/apres_1", Compteur("1"))
+  Abont.Compteur_Incr("1")
+  TestKit.Check("T06/apres_2", Compteur("1"))
+  ' masque absent : aucune ligne modifiée, pas d'erreur
+  Try Abont.Compteur_Incr("99")
+  TestKit.Check("T06/absent_erreur", Error)
+  TestKit.Check("T06/absent", Compteur("99"))
+
+End

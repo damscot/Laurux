@@ -1,0 +1,20 @@
+{
+ "id": "START-T13",
+ "classe": "Start",
+ "objet": "Option --restore",
+ "description": "Base modifiée par le jeu start_cli_restore (article RESTORE ajouté), Laurux lancé avec « --restore Laurux01.sql » : Fmenu appelle Start.Restore_Args (Drop/Create/import de Laurux01 par mysql) ; le dump de Laurux01 ne contient plus l'article ajouté. Paramètres › Quitter. Cas « fichier absent » et préfixe non couverts (message console non comparé).",
+ "dataset": "start_cli_restore",
+ "date": "2026-01-15 10:00:00",
+ "args": [
+  "--restore",
+  "Laurux01.sql"
+ ],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

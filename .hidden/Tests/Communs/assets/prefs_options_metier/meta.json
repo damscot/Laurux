@@ -1,0 +1,20 @@
+{
+ "id": "PREFS-T14",
+ "classe": "Prefs",
+ "objet": "Options métiers pp/bois",
+ "description": "Préférences locales (Menu110) : cocher « Produits pétroliers » (pp_Click → modfichier.fichiercarbu ; ajout de Fiches_Art.art_trsp puis question modiffrais « recopier les frais dans Transport ? », bouton 1 « OUI » : Entrée) puis « Boissons » (bois_Click → modfichier.fichierboisson, colonne art_trsp déjà présente : pas de question) ; Quitter (Button2) cliqué deux fois : au rejeu, le clic qui suit bois_Click n'est traité qu'au tick suivant du rejeu (~1,1 s plus tard) ; sans second événement le rejeu se terminait avant form_close et Laurux.conf n'était pas écrit (attendus de la vague 2). Comparés : structure de la base (tables et colonnes créées), requêtes (dont ReadGlobal de form_close) et Laurux.conf : pp=-1 écrit, mais bois reste False (non expliqué, voir test.md).",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ]
+}

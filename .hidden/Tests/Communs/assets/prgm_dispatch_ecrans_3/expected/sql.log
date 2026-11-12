@@ -1,0 +1,26 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(brutfac Decimal(12,2),rmfac Decimal(12,2),totfac Decimal(12,2),marge_art Decimal(12,2),marge_mo Decimal(12,2),margepart Decimal(12,2),margepmo Decimal(12,2),date Datetime,nb integer , PRIMARY KEY (date)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20250201' and datefac <= '20260115' union SELECT * FROM Fiches_HistoFacM where datefac >= '20250201' and datefac <= '20260115' order by datefac
+SELECT * FROM Fiches_Bl where dtefac >= '20250201' and dtefac <= '20260115' and type = 'F' and imp = 1 union SELECT * FROM Fiches_BlM where dtefac >= '20250201' and dtefac <= '20260115' and type = 'F' and imp = 1 order by dtefac
+SELECT * FROM Total 
+SELECT * FROM Fiches_Bl where totalht is not NULL order by type

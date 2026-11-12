@@ -1,0 +1,25 @@
+{
+ "id": "FMENU-T15",
+ "classe": "Fmenu",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "objet": "Fermeture par Paramètres › Quitter (Menu118), sans sauvegarde",
+ "conf": {
+  "/Soc01/Ecran": "700;500",
+  "/Soc01/Sauvauto": 0
+ },
+ "fichiers": [
+  "tmp/resultat",
+  "@Laurux.conf"
+ ],
+ "description": "Conf : /Soc01/Ecran = 700;500, Sauvauto = 0. ~/tmp peuplé par Base › Restauration (Menu65) depuis /x (inexistant) : FRestore écrit ~/tmp/resultat (mysql « show variables like version ») puis Message.Error (Entrée), Quitter (Button3). Fermeture par Paramètres › Quitter (Menu118) → form_close : /Soc01/Ecran réécrit avec la taille de la fenêtre (896;632), pas de sauvegarde, ~/tmp conservé (Menu118 ne vide pas ~/tmp, FMENU-A14). Comparés : tmp/resultat (présent), @Laurux.conf."
+}

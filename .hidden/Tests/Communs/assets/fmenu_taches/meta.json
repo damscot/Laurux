@@ -1,0 +1,18 @@
+{
+ "id": "FMENU-T06",
+ "classe": "Fmenu",
+ "objet": "Tâches de l'utilisateur : touche sur la grille sans ligne sélectionnée",
+ "description": "Jeu fmenu_taches (/Taches activé par le global ; 3 tâches de « laurux », 1 d'un autre utilisateur). Au démarrage, RecupTaches remplit Coltaches (requête sur nom like \"laurux%\"). Focus sur la grille puis touche « x » (ColTaches_KeyPress) : aucune ligne n'est sélectionnée (la sélection d'une ligne n'est pas rejouable : grille sans Coltaches_Click), la question « effacer ? » s'affiche, bouton 1 « Oui » (Entrée), puis Coltaches[Coltaches.row, 0] lève « Bad row index » (Fmenu.ColTaches_KeyPress.329) : erreur fatale figée (code 125), aucune suppression. Comportement figé, candidat anomalie.",
+ "dataset": "fmenu_taches",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

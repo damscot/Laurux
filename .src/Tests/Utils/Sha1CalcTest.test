@@ -1,7 +1,7 @@
 ' Gambas test file
 
 ''Tests de Sha1Calc (.hidden/reference/.src/Utils/Sha1Calc.module/test.md, SHA1CALC-T01 à T09).
-''Jeu de données : .src/Tests/Framework/datasets/sha1calc_ecritures.sql (écritures de Fiches_Mvt/Mvt3 avec
+''Jeu de données : .hidden/Tests/Utils/assets/sha1calc_shared/sha1calc_ecritures.sql (écritures de Fiches_Mvt/Mvt3 avec
 ''modifications et suppression dans Fiches_MvtM/MvtM3, tickets). Laurux01.sql seul ne contient aucune écriture.
 ''Clés attendues : assets/Sha1CalcTest/expected.txt, produites dans le clone de référence (jamais recalculées).
 ''CalcSha1_all ouvre une ProgBar : exécutée sous Xvfb par le runner.
@@ -69,7 +69,7 @@ Private Sub OuvreSqlite()
   Utils.db.Host = sDir
   Utils.db.Name = "Laurux01.sqlite"
   Utils.db.Open
-  For Each sLigne In Split(File.Load(Application.Path &/ ".src/Tests/Framework/datasets/sha1calc_ecritures.sql"), "\n", "", True)
+  For Each sLigne In Split(File.Load(TestKit.JeuDeDonnees(Application.Path, "sha1calc_shared/sha1calc_ecritures", "Utils", "Sha1CalcTest")), "\n", "", True)
     If sLigne Begins "INSERT" Then Utils.db.Exec(sLigne)
   Next
 
@@ -79,7 +79,7 @@ End
 
 Public Sub T01RecalculComplet()
 
-  TestKit.OuvreBase("sha1calc_ecritures")
+  TestKit.OuvreBase("sha1calc_shared/sha1calc_ecritures")
   Sha1Calc.CalcSha1_all("Fiches_Mvt")
   TestKit.Check("T01/Fiches_Mvt", Controles("Fiches_Mvt"))
   TestKit.Check("T01/Fiches_MvtM", Controles("Fiches_MvtM"))
@@ -88,7 +88,7 @@ End
 
 Public Sub T02EcritureIsolee()
 
-  TestKit.OuvreBase("sha1calc_ecritures")
+  TestKit.OuvreBase("sha1calc_shared/sha1calc_ecritures")
   ' update = False : clé renvoyée, base inchangée
   TestKit.Check("T02/sans_maj/premiere", Sha1Calc.CalcSha1("Fiches_Mvt", "1", Null, False))
   TestKit.Check("T02/sans_maj/base", Controles("Fiches_Mvt"))
@@ -107,7 +107,7 @@ End
 
 Public Sub T03ChainageModifs()
 
-  TestKit.OuvreBase("sha1calc_ecritures")
+  TestKit.OuvreBase("sha1calc_shared/sha1calc_ecritures")
   ' écriture modifiée (2 lignes d'origine dans Fiches_MvtM)
   TestKit.Check("T03/ecriture_modifiee", Sha1Calc.CalcSha1("Fiches_Mvt", "2"))
   ' précédente (2) modifiée : control d'origine de Fiches_MvtM
@@ -120,7 +120,7 @@ End
 
 Public Sub T04Verification()
 
-  TestKit.OuvreBase("sha1calc_ecritures")
+  TestKit.OuvreBase("sha1calc_shared/sha1calc_ecritures")
   Sha1Calc.CalcSha1_all("Fiches_Mvt")
   TestKit.Check("T04/saine/1", Sha1Calc.CalcSha1_Verify("Fiches_Mvt", "1"))
   TestKit.Check("T04/saine/2", Sha1Calc.CalcSha1_Verify("Fiches_Mvt", "2"))
@@ -142,7 +142,7 @@ End
 
 Public Sub T05MoteurMysql()
 
-  TestKit.OuvreBase("sha1calc_ecritures")
+  TestKit.OuvreBase("sha1calc_shared/sha1calc_ecritures")
   Sha1Calc.CalcSha1_all("Fiches_Mvt")
   TestKit.Check("T05/mysql", Controles("Fiches_Mvt"))
 
@@ -161,7 +161,7 @@ Public Sub T06Tickets()
 
   Dim sReq As String = "SELECT numero, control, prev_numero FROM Fiches_EntTicketz ORDER BY numero"
 
-  TestKit.OuvreBase("sha1calc_ecritures")
+  TestKit.OuvreBase("sha1calc_shared/sha1calc_ecritures")
   ' sans mise à jour
   TestKit.Check("T06/sans_maj", Sha1Calc.CalcSha1T("Fiches_EntTicketz", "0000010", "0000009", False))
   TestKit.Check("T06/sans_maj/base", Lignes(sReq))
@@ -180,7 +180,7 @@ End
 
 Public Sub T07TablesExercices()
 
-  TestKit.OuvreBase("sha1calc_ecritures")
+  TestKit.OuvreBase("sha1calc_shared/sha1calc_ecritures")
   Sha1Calc.CalcSha1_all("Fiches_Mvt3")
   TestKit.Check("T07/Fiches_Mvt3", Controles("Fiches_Mvt3"))
   TestKit.Check("T07/Fiches_MvtM3", Controles("Fiches_MvtM3"))
