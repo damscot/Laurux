@@ -1,0 +1,17 @@
+{
+ "id": "PARAMETRE-T02",
+ "classe": "Parametre",
+ "objet": "Modification de chaque champ",
+ "description": "Paramètres généraux (Menu25), onglet globaux : nouvelles dates de clôture (datec, Date1, Datepc), compte de régul + 606100, journaux caisse/banque 50/53, périodes mc/mc2, devise, écart, coefficient, dernier n° article de 18 caractères (tronqué à 15 : ABCDEFGHIJ12345), case NfacM ; onglet métiers : compte de frais 606100 (saisi en premier : le changement d'onglet lui donne le focus et sa perte de focus à vide ouvrirait une question non rejouable), frais 2.5, TVA de frais 1 ; onglet caisse : numéros de ticket. Enregistrer puis Quitter : UPDATE de Fiches_Parametres (double enregistrement), verrou relâché. Cadence resserrée (traitement 300 ms), pause de 700 ms après chaque changement d'onglet.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 30,
+  "focus": 100,
+  "traitement": 300,
+  "fenetre": 1000
+ }
+}

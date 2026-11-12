@@ -1,7 +1,7 @@
 ' Gambas test file
 
 ''Tests de RenumBl (.hidden/reference/.src/Utils/RenumBl.class/test.md, RENUMBL-T01 à T03).
-''Jeu de données : .src/Tests/Framework/datasets/renumbl_factures.sql (Laurux01.sql ne contient ni BL ni
+''Jeu de données : .hidden/Tests/Utils/assets/renumbl_shared/renumbl_factures.sql (Laurux01.sql ne contient ni BL ni
 ''facture). Comportement destructeur figé. Valeurs attendues : assets/RenumBlTest/expected.txt, produites
 ''dans le clone de référence.
 
@@ -49,7 +49,7 @@ End
 
 Public Sub T01Renumerotation()
 
-  TestKit.OuvreBase("renumbl_factures")
+  TestKit.OuvreBase("renumbl_shared/renumbl_factures")
   Dump("T01/avant")
   RenumBl.run()
   Dump("T01/apres")
@@ -60,11 +60,11 @@ Public Sub T02Locale()
   ''Valeurs séparées par « ; » (les montants contiennent des virgules).
   ''Locale du processus : fr_FR.UTF-8 (runner), puis C (System.Language).
 
-  TestKit.OuvreBase("renumbl_factures")
+  TestKit.OuvreBase("renumbl_shared/renumbl_factures")
   TestKit.Check("T02/fr/langue", System.Language)
   RenumBl.run()
   TestKit.Check("T02/fr/Fiches_Ligbl", Lignes("SELECT num_ligbl, pu_ligbl, qte_ligbl, rem_ligbl, netht_ligbl, nettc_ligbl FROM Fiches_Ligbl ORDER BY num_ligbl"))
-  TestKit.OuvreBase("renumbl_factures")
+  TestKit.OuvreBase("renumbl_shared/renumbl_factures")
   System.Language = "C"
   TestKit.Check("T02/C/langue", System.Language)
   Try RenumBl.run()

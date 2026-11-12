@@ -21,7 +21,7 @@
 - Jeux dérivés (T04) générés par `gen_input.py`.
 - **Phase 2 (implémentation)** : scénarios `.hidden/Tests/Utils/assets/razart_{raz_stocks,pmp_prvt,stocke,
   raz_cbarre_filtre,raz_cbarre_tout,refus}/` (menu Gestion › Menu144 › RAZ zones article, `Menu279`), jeu
-  `.src/Tests/Framework/datasets/razart.sql` (zones non nulles, codes-barres contenant « 30 » au début et au
+  `.hidden/Tests/Utils/assets/razart_shared/razart.sql` (zones non nulles, codes-barres contenant « 30 » au début et au
   milieu). Réponse « Non » : `Keypress=16777216` (Échap) sur `FMessage`. Valeurs attendues à produire par
   `runner replay Utils/<nom> --expected` dès que les rejeux seront rétablis. T07 : base de test MariaDB seule.
 - **Rejeu phase 2** : T05 fige `art_cbarre = NULL` (la chaîne vide passée en `&1` devient `NULL`), pas `""`.

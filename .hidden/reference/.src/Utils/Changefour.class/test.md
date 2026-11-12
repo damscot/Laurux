@@ -23,7 +23,7 @@ normalisé de `Fiches_Art` (et de `Fiches_Four` pour contrôle) et diff des lign
   dump MariaDB normalisé, puis rejeu sur `Laurux_reworked` ; diff vide exigé.
 - **Données** : `Laurux01.sql` + jeu dérivé : 3 fournisseurs, 5 articles répartis, un code-barres.
 - **Non testable automatiquement** : sons, apparence du formulaire dynamique.
-- **Phase 2** : jeu `datasets/changefour.sql` ; scénarios `.hidden/Tests/Utils/assets/changefour_{article,champs_vides,fournisseur_global,liste_articles,liste_doublon,code_barre}/` (T01, T02, T03, T04, T05, T08). Le nouveau fournisseur est saisi au clavier (pas de `TriCpt`). Case `Liste` : valeur de rejeu `-1` (CheckBox, `CInt`).
+- **Phase 2** : jeu `.hidden/Tests/Utils/assets/changefour_shared/changefour.sql` ; scénarios `.hidden/Tests/Utils/assets/changefour_{article,champs_vides,fournisseur_global,liste_articles,liste_doublon,code_barre}/` (T01, T02, T03, T04, T05, T08). Le nouveau fournisseur est saisi au clavier (pas de `TriCpt`). Case `Liste` : valeur de rejeu `-1` (CheckBox, `CInt`).
 - **Rejeu phase 2** : T08 saisit `*2148413200001` (code-barres de l'article `001` présent dans `Fiches_CdBarre` de
   Laurux01.sql) : le code-barres de `CF5` du jeu `changefour.sql` n'existe que dans `art_cbarre`, or
   `Utils.Find_cbarre` ne consulte que `Fiches_CdBarre` puis `art_code`. En mode Liste, `Nfour` n'est pas vidé après

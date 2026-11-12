@@ -23,6 +23,6 @@ masquée) et sur les lignes `Exec_SQL` du log.
 - **Non testable automatiquement** : horloge, quantième, boutons `xdg-open` (vérification manuelle).
 - **Scénarios (phase 2)** : `.hidden/Tests/Utils/assets/agenda_replay_creation/` (T01), `.hidden/Tests/Utils/assets/agenda_replay_modification/` (T02 :
   création puis modification dans le même rejeu, `nuser` = utilisateur système, sans jeu de données) et
-  `.hidden/Tests/Utils/assets/agenda_replay_multi_user/` (T03 : jeu `datasets/agenda_autre_utilisateur.sql`, action de
+  `.hidden/Tests/Utils/assets/agenda_replay_multi_user/` (T03 : jeu `.hidden/Tests/Utils/assets/agenda_replay_multi_user/agenda_autre_utilisateur.sql`, action de
   « utilisateur_b » à 08h15 ; l'utilisateur courant crée puis modifie la sienne, l'UPDATE touche les deux,
   A02). Clic grille : `Click=9x1@Coldetail` (ligne 08h15, `Coldetail_Click`).

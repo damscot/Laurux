@@ -1,0 +1,44 @@
+{
+ "id": "START-T10",
+ "classe": "Start",
+ "objet": "Couleurs : /son invalide réécrit [Coul] (START-A06)",
+ "description": "Configuration de test avec les 21 clés /Coul renseignées (via conf) et /son (section [General]) = \"abc\" : Try Son = /son échoue, le If Error suivant réécrit les clés /Coul par défaut (comportement actuel figé, anomalie START-A06) ; Paramètres › Quitter (Menu118). Comparaison de la configuration finale (@Laurux.conf).",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Coul/Fnets": "Background: &H101010&; Font: Sans,8; ",
+  "/Coul/Btns": "Background: &H202020&; Font: Sans,8; ",
+  "/Coul/Znss": "Background: &H303030&; Font: Sans,8; ",
+  "/Coul/Znaff": "Background: &H404040&; Font: Sans,8; ",
+  "/Coul/Focus": "Background: &H505050&; Font: Sans,8; ",
+  "/Coul/Coulfonds": "10;20;30;",
+  "/Coul/Others": "40;50;60;",
+  "/Coul/Fcs": "Background: &H808080&; Font: Sans,8; ",
+  "/Coul/Stk": "Background: &H909090&; Font: Sans,8; ",
+  "/Coul/Facts": "Background: &HA0A0A0&; Font: Sans,8; ",
+  "/Coul/Avs": "Background: &HB0B0B0&; Font: Sans,8; ",
+  "/Coul/Bl": "Background: &HC0C0C0&; Font: Sans,8; ",
+  "/Coul/Devis": "Background: &HD0D0D0&; Font: Sans,8; ",
+  "/Coul/Devis2": "Background: &HE0E0E0&; Font: Sans,8; ",
+  "/Coul/Cmde": "Background: &HF0F0F0&; Font: Sans,8; ",
+  "/Coul/Prf": "Background: &H101010&; Font: Sans,8; ",
+  "/Coul/Nstk": "Background: &H202020&; Font: Sans,8; ",
+  "/Coul/Eps": "Background: &H303030&; Font: Sans,8; ",
+  "/Coul/Spd": "Background: &H404040&; Font: Sans,8; ",
+  "/Coul/Motps": "Background: &H505050&; Font: Sans,8; ",
+  "/Coul/Momnt": "Background: &H606060&; Font: Sans,8; ",
+  "/son": "abc"
+ }
+}

@@ -1,0 +1,29 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+Select * From  Laurux01.Fiches_Societes where cd_sc = '01'
+Select * From  Laurux02.Fiches_Societes where cd_sc = '02'
+SELECT * FROM Fiches_Identite
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+Select * From Laurux01.Fiches_Societes
+truncate Laurux01.Fiches_Societes
+Insert Into Laurux01.Fiches_Societes (cd_sc, type_sc, int_sc, adr1_sc, adr2_sc, cp_sc, burdis_sc, email_sc, rcs_sc, villerc_sc, siret_sc, tvaintra_sc, cap_sc, ape_sc, tel_sc, port_sc, fax_sc, site, banq, bic, libre)  VALUES ('01',NULL,'SOCIETE MODIFIEE','1 RUE DU TEST',NULL,NULL,NULL,NULL,NULL,NULL,'73282932000074',NULL,NULL,NULL,NULL,'06',NULL,NULL,NULL,NULL,NULL)
+Select * From  Laurux01.Fiches_Societes where cd_sc = '01'
+Select * From  Laurux02.Fiches_Societes where cd_sc = '02'
+SELECT * FROM Fiches_Societes where cd_sc = '02'

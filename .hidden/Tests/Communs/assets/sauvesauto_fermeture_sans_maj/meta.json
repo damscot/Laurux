@@ -1,0 +1,27 @@
+{
+ "id": "SAUVESAUTO-T03",
+ "classe": "SauvesAuto",
+ "objet": "Pas de sauvegarde à la fermeture si Maj = 0",
+ "description": "Variante de sauvesauto_fermeture avec /dbase/Maj = 0 (Sauvauto actif) : Paramètres › Quitter (Menu118), form_close n'appelle pas SauvesAuto.Sauvegarde. Comparés : @sauve/Laurux01.sql et @sauve/Laurux014.sql.gz (<fichier absent> attendu), Laurux.conf final.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Rep_Sauv": "{out}/sauve",
+  "/dbase/Maj": 0,
+  "/Soc01/Sauvauto": -1
+ },
+ "fichiers": [
+  "@sauve/Laurux01.sql",
+  "@sauve/Laurux014.sql.gz",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "id": "DOCACTIF-T06",
+ "classe": "DocActif",
+ "objet": "Get_Lock d'un process vivant du même poste",
+ "description": "Paramètres ouverts puis Quitter : le déclencheur du jeu docactif_pid_vivant met process_id à 1 (init, vivant) ; Free_Lock : « Annuler ». Réouverture : Get_Lock avertit « déjà pris par un autre de vos process » (« Sortir », DocActif.class:123) ; Quitter : Free_Lock « Forcer Libérer » : table vide.",
+ "dataset": "docactif_pid_vivant",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -31,6 +31,6 @@ jusqu'à la séparation traitement/GUI (VERIFDATE-004) qui rendra les prédicats
 - L'option `Utils.Option()` est lue depuis la configuration de test (`Laurux.conf` du répertoire du
   test).
 - **Phase 2 (implémentation)** : `.src/Tests/Utils/VerifDateTest.test` (T01-T05, T09), jeu
-  `.src/Tests/Framework/datasets/verifdate_bt.sql` (tables de régie créées comme `modfichier.module`,
+  `.hidden/Tests/Utils/assets/VerifDateTest/verifdate_bt.sql` (tables de régie créées comme `modfichier.module`,
   `arrete = '12.2023'`, `art_dra`) ; l'option B est forcée en mémoire (`/Soc01/bois = True`), T03/T09 vident
   `Fiches_ligregie` (et `arrete` pour T09) dans le test.

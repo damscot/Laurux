@@ -1,0 +1,54 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT compte_cc, intitule_cc, cent_cc  FROM Fiches_Comptes WHERE type_cc = 'C' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Mvt WHERE dte <= '2017-12-31 23:59:59' AND compte='411001' AND provisoire=False LIMIT 1
+SELECT montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2018-01-01' AND '2018-12-31 23:59:59' AND provisoire=False  AND  compte='411001'  ORDER BY dte asc
+SELECT * FROM Fiches_Parametres
+SELECT compte_cc, intitule_cc, cent_cc  FROM Fiches_Comptes WHERE type_cc = 'C' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Mvt WHERE dte <= '2017-12-31 23:59:59' AND compte='411001' AND provisoire=False LIMIT 1
+SELECT montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2018-01-01' AND '2018-12-31 23:59:59' AND provisoire=False  AND  compte='411001'  ORDER BY dte asc
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT compte_cc, intitule_cc, cent_cc  FROM Fiches_Comptes WHERE type_cc = 'C' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Mvt WHERE dte <= '2017-12-31 23:59:59' AND compte='411001' AND provisoire=False LIMIT 1
+SELECT montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2018-01-01' AND '2018-12-31 23:59:59' AND provisoire=False  AND  compte='411001'  ORDER BY dte asc

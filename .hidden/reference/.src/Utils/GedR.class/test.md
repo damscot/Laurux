@@ -25,7 +25,7 @@ des lignes `Exec_SQL` du log.
 - **Non testable automatiquement** : ouverture des documents (`Visualiseur`), aide HTML.
 - **SQLite** : l'écran ne fonctionne pas (A01) ; pas de replay SQLite tant que l'anomalie n'est pas
   traitée.
-- **Scénarios (phase 2)** : jeu `datasets/ged.sql` (repris de LGed) ; `.hidden/Tests/Utils/assets/gedr_replay_filtres/` (T01),
+- **Scénarios (phase 2)** : jeu `.hidden/Tests/Utils/assets/gedr_shared/ged.sql` (repris de LGed) ; `.hidden/Tests/Utils/assets/gedr_replay_filtres/` (T01),
   `.hidden/Tests/Utils/assets/gedr_replay_selection/` (T02 : Sel. Tous / Désel. Tous, la sélection ligne à ligne de la grille
   TriGen n'est pas rejouable), `.hidden/Tests/Utils/assets/gedr_replay_suppression/` (T03 : tag « urgent », docs 1 et 2),
   `.hidden/Tests/Utils/assets/gedr_replay_filtre_guillemet/` (T08 : si le rejeu sort en erreur, prévoir xfail ou outillage).

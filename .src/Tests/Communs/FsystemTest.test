@@ -1,0 +1,45 @@
+' Gambas test file
+
+''Tests de Fsystem (.hidden/reference/.src/Communs/Fsystem.class/test.md, FSYSTEM-T01).
+''Prévu en replay : la fenêtre est construite sans être affichée et Form_Open (public) appelé directement ; seule
+''la structure du texte est comparée (en-têtes de section « [ … ] », sections MySQL et Laurux, version), le contenu
+''dépendant de la machine. Valeurs attendues : assets/FsystemTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Ouverture", "Ouverture : sections du rapport")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "FsystemTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T01Ouverture()
+
+  Dim hF As Fsystem
+  Dim hC As Object
+  Dim sTexte, sLigne As String
+  Dim aSections As New String[]
+
+  hF = New Fsystem
+  Try hF.Form_Open()
+  If Error Then
+    TestKit.Check("T01/erreur", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hC = hF.Controls["txtInfo"]
+  sTexte = hC.Text
+  For Each sLigne In Split(sTexte, "\n")
+    If sLigne Begins "[" Then aSections.Add(Trim(sLigne))
+  Next
+  TestKit.Check("T01/sections", aSections)
+  TestKit.Check("T01/mysql", InStr(sTexte, "[Version Mysql]\n " & Utils.db.Version & "\n") > 0)
+  TestKit.Check("T01/laurux", InStr(sTexte, "[Version Laurux]\n " & Application.Version & " (") > 0)
+  TestKit.Check("T01/fin_chemin", sTexte Ends "(" & Application.Path & ")")
+
+End

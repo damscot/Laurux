@@ -41,7 +41,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RENMVT-A01 — [anomalie] `DELETE` sur le numéro tronqué `nm` au lieu du numéro de l'écriture
+- [ ] RENMVT-A01 — [anomalie] (confirmée phase 2 : écriture 1005 recopiée en n° 5, `DELETE … numero = '005'`, lignes 1005 restées dans `Fiches_Mvt`) `DELETE` sur le numéro tronqué `nm` au lieu du numéro de l'écriture
   copiée : l'écriture reste dans `Fiches_Mvt` et une autre écriture peut être supprimée · tests :
   T01 · sources : [RenMvt.module:20](../../../../../../.src/Compta/Utils/RenMvt.module#L20)
 - [ ] RENMVT-A02 — [anomalie] Pas de test `Available` : erreur d'exécution sans journal 80 ;

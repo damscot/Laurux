@@ -2,7 +2,7 @@
 
 ''Tests de LGed (.hidden/reference/.src/Utils/LGed.class/test.md, LGED-T01 à T09).
 ''Valeurs attendues : assets/LGedTest/expected.txt, produites dans le clone de référence.
-''Jeu de données : .src/Tests/Framework/datasets/ged.sql (4 documents, 5 tags, une liaison pendante).
+''Jeu de données : .hidden/Tests/Utils/assets/gedr_shared/ged.sql (4 documents, 5 tags, une liaison pendante).
 ''Les champs privés sont relus par l'API publique : form_Open() (remplit la fiche sans l'afficher) puis
 ''Controls[<nom>]. Les fichiers sont créés sous $HOME (HOME de test isolé par le runner ; User.Home,
 ''lui, désigne le vrai répertoire de l'utilisateur et n'est pas utilisé) ; les chemins et
@@ -31,7 +31,7 @@ End
 
 Private Sub OuvreGed()
 
-  TestKit.OuvreBase("ged")
+  TestKit.OuvreBase("gedr_shared/ged")
 
 End
 

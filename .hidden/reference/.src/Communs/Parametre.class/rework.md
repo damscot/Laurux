@@ -72,7 +72,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] PARAMETRE-A01 — [anomalie] `Valtip_Click` ouvre une transaction (`Utils.db.Begin`) sans
+- [ ] PARAMETRE-A01 — [anomalie] (confirmée phase 2 : la transaction est validée implicitement par le `LOCK TABLES` de `DocActif.Free_Lock`) `Valtip_Click` ouvre une transaction (`Utils.db.Begin`) sans
   `Commit` : les lignes `Art_Tipp` ne sont validées que par le prochain `Commit` d'un autre écran,
   ou perdues à la déconnexion · tests : T09 · sources : [Parametre.class:675](../../../../../.src/Communs/Parametre.class#L675)
 - [ ] PARAMETRE-A02 — [anomalie] `IsNan(datefedec.dte.G)` au lieu de `IsNull` : une date de fin du
@@ -92,3 +92,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (préfixe 411) et `Dnfournisseur_LostFocus` (préfixe 401) ne sont jamais déclenchés : les
   contrôles appartiennent au groupe `Par` (à confirmer par replay). Les rebrancher (dans
   `Par_lostfocus`, selon le `Tag`) active des contrôles aujourd'hui absents · tests : T07 · sources : [Parametre.class:Dnclient_LostFocus](../../../../../.src/Communs/Parametre.class#L444-L456), [Parametre.class:Dnfournisseur_LostFocus](../../../../../.src/Communs/Parametre.class#L458-L472), [Parametre.class:Dnbon_LostFocus](../../../../../.src/Communs/Parametre.class#L358-L369), [Parametre.class:Dnfac_LostFocus](../../../../../.src/Communs/Parametre.class#L371-L382)
+- [ ] PARAMETRE-A08 — [anomalie] Compte de frais inexistant enregistré malgré la réponse « Non » à « Voulez-vous le créer ? » : `cpts_LostFocus` positionne `b = 1`, puis la perte de focus provoquée par l'ouverture de la boîte le remet à 0, si bien que le contrôle ne bloque plus l'enregistrement (phase 2, vague 2, 2026-11-11) · tests : T04 · sources : [Parametre.class:326-345](../../../../../.src/Communs/Parametre.class#L326-L345)
+- [ ] PARAMETRE-A09 — [anomalie] Une période invalide (« 13.2024 ») est signalée par un message puis enregistrée « .. » sans blocage (phase 2, vague 2, 2026-11-11) · tests : T06 · sources : [Parametre.class:Form_Close](../../../../../.src/Communs/Parametre.class#L313-L322)
+- [ ] PARAMETRE-A10 — [anomalie] `Form_Close` appelle `Button2_Click` et affiche deux fois le `Message.Error` « Veuillez compléter correctement l'ensemble des zones » (phase 2, vague 2, 2026-11-11) · tests : T03 · sources : [Parametre.class:313-322](../../../../../.src/Communs/Parametre.class#L313-L322), [Parametre.class:549](../../../../../.src/Communs/Parametre.class#L549)

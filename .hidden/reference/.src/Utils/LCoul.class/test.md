@@ -20,6 +20,6 @@
   `TriFacture` et `Listextcpt` comparent les requêtes du log, ce qui suffit).
 - **Implémentation (phase 2)** : `.src/Tests/Utils/LCoulTest.test` (configuration posée en mémoire avant le
   premier accès à la classe statique), attendus dans `assets/LCoulTest/expected.txt`. T04 : jeu
-  `datasets/lcoul_couleurs.sql` (articles, `Fiches_Bl` et `Fiches_Mvt` dans chaque état) sous MySQL ;
+  `.hidden/Tests/Utils/assets/LCoulTest/lcoul_couleurs.sql` (articles, `Fiches_Bl` et `Fiches_Mvt` dans chaque état) sous MySQL ;
   partie SQLite sur une copie de `Laurux01.sqlite` sans jeu dérivé (`Fiches_Bl`/`Fiches_Mvt` vides).
   T03 figé : « Type mismatch: wanted SColor » au premier accès, puis « Null object ».

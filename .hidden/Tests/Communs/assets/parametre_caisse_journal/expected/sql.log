@@ -1,0 +1,38 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Parametres' and doc_num = '0'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Parametres', '0', 'laurux', 93, '734e3c61922441158719b21e28cd8250', 'a5a8ec44a5cd(15ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Comptes WHERE compte_cc = NULL
+SELECT * FROM Fiches_Tvaav WHERE code_tva=NULL
+SELECT * FROM Fiches_Comptes WHERE compte_cc = NULL
+SELECT * FROM Fiches_Tvaav WHERE code_tva=NULL
+UPdate  Fiches_Parametres  SET  dteclec = '2018-12-31 00:00:00', dteclec1 = '2017-12-31 00:00:00', dteclec2 ='2016-12-31 00:00:00',  dteclec3 ='2015-12-31 00:00:00', dteclec4 ='2014-12-31 00:00:00', dteclec5 ='2013-12-31 00:00:00',  dtepc ='2017-12-31 00:00:00', dtetdec ='2017-12-31 00:00:00', dtefedec ='2017-12-31 00:00:00', cptrplus ='758000', cptrmoins ='658000', jdr ='90', cptrsplus ='120000', cptrsmoins ='129000',dnc = '411027', dnf = '401026', dnbon = '000000', dnfac = '000000', coretro = '1,00', jrnal = '70', jrnal2 = '53', jrnal3 = '50', devise = 'Euros', dtepp = '12.2017', dtepec = '01.2018', jrnal4 = '70', jrnal5 = '60', nfac = 0, version = '3.69', dnart = '003'
+UPdate  Fiches_Parametres  SET  frais = 0, cptfrais = NULL, tvafrais = NULL, cutk = '0000001', dntk = '0000001', jrnod = '10', ecart = 0
+SELECT * FROM Fiches_Comptes WHERE compte_cc = NULL
+SELECT * FROM Fiches_Tvaav WHERE code_tva=NULL
+UPdate  Fiches_Parametres  SET  dteclec = '2018-12-31 00:00:00', dteclec1 = '2017-12-31 00:00:00', dteclec2 ='2016-12-31 00:00:00',  dteclec3 ='2015-12-31 00:00:00', dteclec4 ='2014-12-31 00:00:00', dteclec5 ='2013-12-31 00:00:00',  dtepc ='2017-12-31 00:00:00', dtetdec ='2017-12-31 00:00:00', dtefedec ='2017-12-31 00:00:00', cptrplus ='758000', cptrmoins ='658000', jdr ='90', cptrsplus ='120000', cptrsmoins ='129000',dnc = '411027', dnf = '401026', dnbon = '000000', dnfac = '000000', coretro = '1,00', jrnal = '70', jrnal2 = '53', jrnal3 = '50', devise = 'Euros', dtepp = '12.2017', dtepec = '01.2018', jrnal4 = '70', jrnal5 = '60', nfac = 0, version = '3.69', dnart = '003'
+UPdate  Fiches_Parametres  SET  frais = 0, cptfrais = NULL, tvafrais = NULL, cutk = '0000001', dntk = '0000001', jrnod = '10', ecart = 0
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Parametres' and doc_num = '0'
+DELETE FROM Fiches_Docactif where doc_type = 'Parametres' and doc_num = '0'
+UNLOCK TABLES

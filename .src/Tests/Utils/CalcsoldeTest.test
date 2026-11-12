@@ -2,7 +2,7 @@
 
 ''Tests de Calcsolde.Calcul (.hidden/reference/.src/Utils/Calcsolde.class/test.md, CALCSOLDE-T01 à T05).
 ''Valeurs attendues : assets/CalcsoldeTest/expected.txt, produites dans le clone de référence.
-''Jeu de données : datasets/calcsolde.sql. Calcul est appelé sur l'instance automatique du formulaire
+''Jeu de données : .hidden/Tests/Utils/assets/calcsolde_shared/calcsolde.sql. Calcul est appelé sur l'instance automatique du formulaire
 ''(jamais affiché) ; journal de report à nouveau : jdr de Fiches_Parametres (« 90 »).
 
 Public Sub _Desc()
@@ -19,7 +19,7 @@ End
 Public Sub _Setup()
 
   TestKit.Begin("Utils", "CalcsoldeTest")
-  TestKit.OuvreBase("calcsolde")
+  TestKit.OuvreBase("calcsolde_shared/calcsolde")
 
 End
 

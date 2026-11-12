@@ -1,0 +1,20 @@
+{
+ "id": "LAURUXCONF-T02",
+ "classe": "LauruxConf",
+ "objet": "Valider une connexion correcte",
+ "description": "Connexion nouvelle base (Fmenu.Menu166, non modal), Valider (Button1) sans modification : connexion rouverte, ALTER DATABASE Laurux01 DEFAULT COLLATE utf8mb4_unicode_ci, lecture de Fiches_Societes (sql.log), Message.Info validé par Entrée. Configuration finale comparée (@Laurux.conf réécrit : [Societes] Soc01, [dbase/ssh] Con-ssh…). Limite : Button1_Click ferme Utils.db, ce qui ferme aussi le journal de DB_Connection : ALTER DATABASE et les requêtes suivantes n'apparaissent pas dans sql.log (candidat anomalie) ; seule l'apparition de la boîte est vérifiée (code 3 sinon).",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ]
+}

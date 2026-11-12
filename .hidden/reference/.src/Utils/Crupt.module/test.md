@@ -31,7 +31,7 @@ couvre l'impression `EdRup` de bout en bout.
 - **Couverture** : les branches `Org <> "EdRup"` (code mort) ne sont couvertes que par un appel
   direct avec `Org = "Autre"`, utile pour figer leur comportement avant suppression (CRUPT-002).
 - **Phase 2 (implémentation)** : `.src/Tests/Utils/CruptTest.test` (T01-T07) sur le jeu
-  `.src/Tests/Framework/datasets/crupt.sql` (commandes fournisseurs/clients, `.DEP`, A10 chez deux
+  `.hidden/Tests/Utils/assets/CruptTest/crupt.sql` (commandes fournisseurs/clients, `.DEP`, A10 chez deux
   fournisseurs ; utilisé dès T01 car Laurux01.sql n'a aucune commande). Bornes basses « 0 »/« . » : une borne
   vide est transmise en NULL par `Subst` et ne sélectionne rien (figé, T04/bornes_vides). T07 : division par
   zéro (`art_txconv = 0`) figée ; appel hors EdRup (`Org = "Autre"`) : `RuptureC` n'est pas créée ; la branche

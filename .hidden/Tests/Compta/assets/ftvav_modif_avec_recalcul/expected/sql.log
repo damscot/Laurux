@@ -1,0 +1,47 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Tvaav 
+select * from Fiches_Fam  where cdtva_fam = '3'
+UPdate  Fiches_Fam  SET  txtva_fam = '21.00' WHERE code_fam = '03'
+UPdate  Fiches_Fam  SET  txtva_fam = '21.00' WHERE code_fam = '10'
+UPdate  Fiches_Fam  SET  txtva_fam = '21.00' WHERE code_fam = '11'
+select * from Fiches_Bl  where type <> 'F' or type = 'F' and imp = 0
+select * from Fiches_Ligbl  where num_ligbl = '900001' and tx_ligbl = '3' and typel_ligbl = 'A' or num_ligbl = '900001' and tx_ligbl = '3' and typel_ligbl = 'M' 
+select * from Fiches_Art  where art_code = 'TV05'
+UPdate  Fiches_Ligbl  SET  nettc_ligbl = '12,5475' WHERE num_ligbl = '900001' and numlig_ligbl = '1'
+select * from Fiches_Mo  where mo_code = '04'
+UPdate  Fiches_Ligbl  SET  nettc_ligbl = '42.35' WHERE num_ligbl = '900001' and numlig_ligbl = '2'
+select * from Fiches_BlM  where type <> 'F' or type = 'F' and imp = 0
+select * from Fiches_LigblM  where num_ligbl = '900002' and tx_ligbl = '3' and typel_ligbl = 'A' or num_ligbl = '900002' and tx_ligbl = '3' and typel_ligbl = 'M' 
+select * from Fiches_Art  where art_code = 'TV50'
+UPdate  Fiches_LigblM  SET  nettc_ligbl = '10,050' WHERE num_ligbl = '900002' and numlig_ligbl = '1'
+select * from Fiches_Mo  where mo_code = '04'
+UPdate  Fiches_LigblM  SET  nettc_ligbl = '42.35' WHERE num_ligbl = '900002' and numlig_ligbl = '2'
+select * from Fiches_Art  where art_tva = '3'
+UPdate  Fiches_Art  SET  art_pvttc = 0 WHERE art_code = '003'
+UPdate  Fiches_Art  SET  art_pvttc = 12.5475 WHERE art_code = 'TV05'
+UPdate  Fiches_Art  SET  art_pvttc = 10.05 WHERE art_code = 'TV50'
+select * from Fiches_Mo  where mo_tva = '3'
+UPdate  Fiches_Mo  SET  mo_valeurttc = 42.35 WHERE mo_code = '04'
+SELECT * FROM Fiches_Tvaav WHERE cc_tva = '445730'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '3'
+UPdate  Fiches_Tvaav  SET  code_tva = '3' , taux_tva = '21.00'  , cc_tva = '445730'WHERE code_tva = '3'
+UPdate  Fiches_Comptes  SET  taux_tvente = '21.00' WHERE code_tvente = '3'
+SELECT * FROM Fiches_Tvaav 

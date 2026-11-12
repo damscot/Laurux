@@ -40,6 +40,6 @@ au moment du test (jour, mois, année courants), pas à une constante.
 - **Couverture visée** : 100 % hors branches `Message.Error`.
 - **Implémentation (phase 2)** : `.src/Tests/Utils/LDateTest.test` (méthodes `T01_…` à `T14_…`, sauf T04),
   valeurs attendues dans `.hidden/Tests/Utils/assets/LDateTest/expected.txt`. T12 utilise le jeu
-  `.src/Tests/Framework/datasets/ldate_exercice_decale.sql` (clôtures au 30/06 de 2021 à 2025, `dteclec5` au
+  `.hidden/Tests/Utils/assets/LDateTest/ldate_exercice_decale.sql` (clôtures au 30/06 de 2021 à 2025, `dteclec5` au
   31/12/2019 : exercice 2020-01-01 → 2021-06-30 de 18 mois). Les cas relatifs à `Now` (T01, T02 `12.03.4`, T03)
   sont vérifiés par différence ; testés aussi avec `runner unit LDateTest --date …` (31/05/2031, 29/02/2028).

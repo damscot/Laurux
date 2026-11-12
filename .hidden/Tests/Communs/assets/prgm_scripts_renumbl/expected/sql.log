@@ -1,0 +1,32 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_HistoLigfac order by numlig_ligfac
+UPdate  Fiches_HistoLigfac SET typel_ligfac = 'A' where num_ligfac = '240001'
+UPdate  Fiches_HistoLigfac SET typel_ligfac = 'A' where num_ligfac = '240002'
+UPdate  Fiches_HistoLigfac SET typel_ligfac = 'A' where num_ligfac = '240001'
+SELECT * FROM Fiches_Bl order by numfac
+UPdate  Fiches_Bl SET numfac = '2040000001', dtefac = '2024-01-10 00:00:00' WHERE numfac = '240001' and numbl = '000001' 
+UPdate  Fiches_Bl SET numfac = '2040000002', dtefac = '2024-01-15 00:00:00' WHERE numfac = '240001' and numbl = '000002' 
+UPdate  Fiches_Bl SET numfac = '2040000003', dtefac = '2024-02-03 00:00:00' WHERE numfac = '240002' and numbl = '000003' 
+SELECT * FROM Fiches_Ligbl order by numlig_ligbl
+UPdate  Fiches_Ligbl SET tx_ligbl = '4', pu_ligbl = '12,50', qte_ligbl = '8,00',brut_ligbl = '100,00',rem_ligbl = '0,00',netht_ligbl = '100,00', nettc_ligbl = '120,00' where num_ligbl = '000001'
+UPdate  Fiches_Ligbl SET tx_ligbl = '4', pu_ligbl = '25,50', qte_ligbl = '2,00',brut_ligbl = '51,00',rem_ligbl = '1,50',netht_ligbl = '50,24', nettc_ligbl = '60,28' where num_ligbl = '000002'
+UPdate  Fiches_Ligbl SET tx_ligbl = '4', pu_ligbl = '30,00', qte_ligbl = '1,00',brut_ligbl = '30,00',rem_ligbl = '0,00',netht_ligbl = '30,00', nettc_ligbl = '36,00' where num_ligbl = '000003'
+UPdate  Fiches_Ligbl SET tx_ligbl = '4', pu_ligbl = '10,00', qte_ligbl = '1,00',brut_ligbl = '10,00',rem_ligbl = '0,00',netht_ligbl = '10,00', nettc_ligbl = '12,00' where num_ligbl = '000004'

@@ -48,3 +48,4 @@
 - [ ] MMYSQL-A02 — [anomalie] `Init` dépend de `gksu`/`kdesu` et de `/etc/init.d/mysql`, absents
   des distributions récentes : le redémarrage échoue silencieusement. Correction possible :
   `pkexec systemctl restart mariadb|mysql` · tests : T03 · sources : [Mmysql.module:15-16](../../../../../.src/Utils/Mmysql.module#L15-L16)
+- [ ] MMYSQL-A03 — [anomalie] `Process_List` lance `gksu 'mysqladmin … processlist'` : sans `gksu` (absent des distributions récentes), le message d'erreur du shell compte pour une ligne, `lg` vaut toujours 1 : ni le mauvais mot de passe ni les connexions actives ne sont détectés (FRestore, FSauve ; cf. MMYSQL-A01/A02) (phase 2, vague 2, 2026-11-11) · tests : FRESTORE-T08, T09, FSAUVE-T04 (à faire) · sources : [Mmysql.module:25-33](../../../../../.src/Utils/Mmysql.module#L25-L33)

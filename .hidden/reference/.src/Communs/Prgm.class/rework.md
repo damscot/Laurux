@@ -67,8 +67,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] PRGM-A04 — [anomalie] `CalcSha1 <suffixe>` : le suffixe saisi est concaténé au nom de table
   sans contrôle (table inexistante → erreur SQL, injection possible) ; restreindre à `1`…`5` ·
   tests : T04 · sources : [Prgm.class:90](../../../../../.src/Communs/Prgm.class#L90)
-- [ ] PRGM-A05 — [anomalie] Champ vide : `Arga[0]` sur le résultat de `Split("", " ")` (tableau
+- [ ] PRGM-A05 — [anomalie] (confirmée phase 2 : « Out of bounds ») Champ vide : `Arga[0]` sur le résultat de `Split("", " ")` (tableau
   éventuellement vide, erreur d'indice à confirmer) · tests : T07 · sources : [Prgm.class:55](../../../../../.src/Communs/Prgm.class#L55)
 - [ ] PRGM-A06 — [anomalie] `RenAN` met à jour `Fiches_Mvtoc`, table absente de la référence
   `db_control.csv` : le script échoue (erreur SQL) ; à retirer de la liste ou à corriger dans
   `RenAN` (lot Compta) · tests : T06 · sources : [Prgm.class:74](../../../../../.src/Communs/Prgm.class#L74), [RenAN.class:10](../../../../../.src/Compta/Utils/RenAN.class#L10)
+- [ ] PRGM-A07 — [anomalie] Double fermeture : `RazDocactif` et `HistoCom` appellent `Me.Close` (l. 98 et 109) puis le `Me.Close` final (l. 114) agit sur l'auto-instance déjà détruite : erreur fatale « Invalid object » (phase 2, vague 2, 2026-11-11) · tests : T03, T06 (code 125) · sources : [Prgm.class:98](../../../../../.src/Communs/Prgm.class#L98), [Prgm.class:109](../../../../../.src/Communs/Prgm.class#L109), [Prgm.class:114](../../../../../.src/Communs/Prgm.class#L114)

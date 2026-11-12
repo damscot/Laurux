@@ -1,0 +1,17 @@
+{
+ "id": "PARAMETRE-T10",
+ "classe": "Parametre",
+ "objet": "Caisse active",
+ "description": "Jeu parametre_caisse (/Soc01/Caisse = True). Paramètres généraux : journal de ventes caisse (Jrnal4) effacé sans quitter le champ, Enregistrer → refus (Message.Error, Entrée), aucune écriture ; Jrnal4 ressaisi (70) puis Quitter : enregistrement, fermeture, verrou relâché. Remarque : Jrnal4 vide est refusé même sans caisse (test IsNull inconditionnel avant celui de /Caisse).",
+ "dataset": "parametre_caisse",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

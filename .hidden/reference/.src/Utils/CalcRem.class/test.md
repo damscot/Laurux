@@ -21,4 +21,4 @@ CALCREM-002, un test **gbtest** de `RecalculeRemises()`.
 - **Données** : `Laurux01.sql` + jeu dérivé de 3 factures (5 lignes `M`/`A`/texte) ; pour T02,
   montants `0.1`/`0.2`.
 - **Non testable** : son (`Music.Play` sans `Load`).
-- **Phase 2** : écran ouvert par Gestion › Utilitaires › Appel programme (`Prgm`, saisie « CalcRem »). Jeux `datasets/calcrem.sql` (FA1 à FA3) et `datasets/calcrem_decimales.sql` (FD1, FD2) ; scénarios `.hidden/Tests/Utils/assets/calcrem_{recalcul,decimales,vide}/`.
+- **Phase 2** : écran ouvert par Gestion › Utilitaires › Appel programme (`Prgm`, saisie « CalcRem »). Jeux `.hidden/Tests/Utils/assets/calcrem_recalcul/calcrem.sql` (FA1 à FA3) et `.hidden/Tests/Utils/assets/calcrem_decimales/calcrem_decimales.sql` (FD1, FD2) ; scénarios `.hidden/Tests/Utils/assets/calcrem_{recalcul,decimales,vide}/`.

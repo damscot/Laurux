@@ -106,3 +106,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FSOC-A10 — [anomalie] `code_LostFocus` met `s = 1` sur un code invalide mais seul le cas
   tag 1 de `Soc_KeyPress` le remet à 0 ; `Button1_Click` peut aussi le mettre à 1 : focus resté
   bloqué sur `Code` à la saisie suivante (à confirmer) · tests : T09 · sources : [Fsoc.class:code_LostFocus](../../../../../.src/Communs/Fsoc.class#L435-L447), [Fsoc.class:246-253](../../../../../.src/Communs/Fsoc.class#L246-L253), [Fsoc.class:509](../../../../../.src/Communs/Fsoc.class#L509)
+- [ ] FSOC-A11 — [anomalie] Le Siret saisi avec espaces est tronqué à 15 caractères à l'enregistrement (« 732 829 320 000 ») alors que le champ accepte 25 caractères (`MaxLength = 25` ; longueur de la colonne en base à confirmer) (phase 2, vague 2, 2026-11-11) · tests : T02 · sources : [Fsoc.form:144](../../../../../.src/Communs/Fsoc.form#L144)

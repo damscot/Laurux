@@ -1,0 +1,94 @@
+' Gambas test file
+
+''Tests de DocActif (.hidden/reference/.src/Communs/DocActif.class/test.md, DOCACTIF-T01 à T03) : verrous de
+''documents (Fiches_Docactif) sans boîte de message. L'identité courante (utilisateur, machine-id, nom d'hôte,
+''process) est volatile (conteneur, PID) : le test la recalcule par les mêmes commandes que DocActif._new et ne
+''fige que des comparaisons (vrai/faux) et les colonnes stables. Valeurs attendues :
+''assets/DocActifTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01GetLockLibre", "`Get_Lock` sur document libre")
+  TestKit.Desc("T02IsLockSansMessage", "`Is_Lock` sans message")
+  TestKit.Desc("T03FreeLockPropre", "`Free_Lock` de son propre verrou")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Communs", "DocActifTest")
+  TestKit.OuvreBase()
+
+End
+
+'---------------------------------------------------------------------------------------------- outils
+
+Private Sub Identite(sCle As String)
+  ''Fige la ligne unique de Fiches_Docactif : colonnes stables en clair, colonnes volatiles comparées à
+  ''l'identité courante recalculée (mêmes commandes que DocActif._new).
+
+  Dim r As Result
+  Dim sMachine, sHote, sHostId As String
+
+  Shell "cat /etc/machine-id" To sMachine
+  Shell "hostname" To sHote
+  Shell "hostid" To sHostId
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabActif"))
+  TestKit.Check(sCle & "/nb_lignes", r.Count)
+  If Not r.Available Then Return
+  TestKit.Check(sCle & "/doc_type", r!doc_type)
+  TestKit.Check(sCle & "/doc_num", r!doc_num)
+  TestKit.Check(sCle & "/user_name_courant", r!user_name = Left$(User.Name, 50))
+  TestKit.Check(sCle & "/process_id_courant", r!process_id = Application.Id)
+  TestKit.Check(sCle & "/machine_id_courant", r!machine_id = Left$(Trim$(sMachine), 50))
+  TestKit.Check(sCle & "/host_id_courant", r!host_id = Left$(Trim$(sHote) & "(" & Trim$(sHostId) & ")", 50))
+  TestKit.Check(sCle & "/userdb_name", r!userdb_name)
+
+End
+
+Private Sub NbLignes() As Integer
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabActif"))
+  Return r.Count
+
+End
+
+'---------------------------------------------------------------------------------------------- tests
+
+Public Sub T01GetLockLibre()
+
+  Dim bRes As Boolean
+
+  TestKit.Check("T01/avant", NbLignes())
+  bRes = DocActif.Get_Lock("Test", "1")
+  TestKit.Check("T01/retour", bRes)
+  Identite("T01")
+
+End
+
+Public Sub T02IsLockSansMessage()
+
+  DocActif.Get_Lock("Test", "1")
+  TestKit.Check("T02/Test_1", DocActif.Is_Lock("Test", "1", False))
+  TestKit.Check("T02/Test_2", DocActif.Is_Lock("Test", "2", False))
+  TestKit.Check("T02/Autre_1", DocActif.Is_Lock("Autre", "1", False))
+  TestKit.Check("T02/nb_lignes", NbLignes())
+
+End
+
+Public Sub T03FreeLockPropre()
+
+  Dim bRes As Boolean
+
+  DocActif.Get_Lock("Test", "1")
+  DocActif.Get_Lock("Test", "2")
+  bRes = DocActif.Free_Lock("Test", "1")
+  TestKit.Check("T03/retour", bRes)
+  TestKit.Check("T03/Test_1", DocActif.Is_Lock("Test", "1", False))
+  TestKit.Check("T03/Test_2", DocActif.Is_Lock("Test", "2", False))
+  TestKit.Check("T03/nb_lignes", NbLignes())
+
+End

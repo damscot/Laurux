@@ -96,6 +96,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sources : [Extrait.class:1309](../../../../../.src/Compta/Extrait.class#L1309), [Extrait.class:1338-1343](../../../../../.src/Compta/Extrait.class#L1338-L1343)
 - [ ] EXTRAIT-A07 — [anomalie] `nmoins_click` sur un exercice archivé absent (`dteclecX` nul) :
   erreur `DateAdd` non interceptée ; `affichage` sans test `Available` sur `rrResult` (type sans
-  compte) · tests : T06 · sources : [Extrait.class:286](../../../../../.src/Compta/Extrait.class#L286), [Extrait.class:529-533](../../../../../.src/Compta/Extrait.class#L529-L533)
+  compte) — constat phase 2 (2026-11-11) : non reproduit par T06 (exercice N2 sans écriture : pas d'erreur), à confirmer · tests : T06 · sources : [Extrait.class:286](../../../../../.src/Compta/Extrait.class#L286), [Extrait.class:529-533](../../../../../.src/Compta/Extrait.class#L529-L533)
 - [ ] EXTRAIT-A08 — [anomalie] `Raz` : `CdP.Text = "" = 0` affecte le résultat d'une comparaison
   (sans effet visible, écrasé ensuite) · tests : T02 · sources : [Extrait.class:994](../../../../../.src/Compta/Extrait.class#L994)
+- [ ] EXTRAIT-A09 — [anomalie] Premier affichage d'un compte centralisé : `CREATE TABLE Ctrln … ENGINE = MYISAM` sans `DROP` préalable (échec si la table existe déjà, laissée par un autre poste ou un arrêt brutal ; complète EXTRAIT-A02) (phase 2, vague 2, 2026-11-11) · tests : T07 · sources : [Extrait.class:597](../../../../../.src/Compta/Extrait.class#L597)

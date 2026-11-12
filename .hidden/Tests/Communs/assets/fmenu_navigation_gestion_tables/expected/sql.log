@@ -1,0 +1,47 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Identite 
+SELECT * FROM Fiches_Identite 
+SELECT * FROM Fiches_Statut 
+SELECT * FROM Fiches_Commerciaux order by code
+SELECT * FROM Fiches_Reglements
+SELECT * FROM Fiches_Parametres
+select cli_code, cli_rs_soc, cli_nom, cli_pnm, cli_adr1, cli_adr2, cli_cd_ptl, cli_ville from Fiches_Cli where cli_code like  "%%" and cli_actif = 0   order by cli_code
+SELECT * FROM Fiches_Identite 
+SELECT * FROM Fiches_Centrales 
+select * from Fiches_Four where fo_code like  "%%" order by fo_code
+SELECT * FROM Fiches_Centrales 
+SELECT art_code FROM Fiches_Art
+SELECT * FROM Fiches_Parametres
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7
+select *, Case WHEN art_suspendu = 1 Then '&hffffff&' WHEN art_qte > 0 and art_stocke = 1 THEN '&hcff58e&' WHEN art_qte <= 0 and art_stocke = 1 THEN '&hffffff&' WHEN art_stocke = 0 THEN '&hffffff&' ELSE '&H00FFFF&' END as bgcolor from Fiches_Art       order by Fiches_Art.art_code limit 0, 7
+SELECT * FROM Fiches_Promo where datedeb <= '2026-01-15' and datefin >= '2026-01-15'
+SELECT dnart FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+select * from Fiches_Mo where mo_code like  "%" order by mo_code
+select * from Fiches_RemCliFam where codec like  "%" order by codec, codef
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Typec 
+SELECT * FROM Fiches_Promo where datedeb <= '2026-01-15' and datefin >= '2026-01-15'
+select imp, type, numbl, datebl, cdclibl, nmclibl, pnmclibl, numfac,totalttc from Fiches_Bl  where  numbl like  "%%" order by numbl desc 
+SELECT * FROM Fiches_Parametres
+SELECT numfac FROM Fiches_HistoFac
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "%" order by abs(lpad(numfac,10,' ')) desc limit 0, 21

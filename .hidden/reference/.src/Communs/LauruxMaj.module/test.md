@@ -8,7 +8,7 @@ de type replay, vérifie la mise à jour complète depuis la base de la version 
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LAURUXMAJ-T01 | replay | Mise à jour depuis une base précédente (3.68 → 3.69) | `Laurux01.sql` du tag `v3.68.8` (`git show v3.68.8:Laurux01.sql`, `version = 3.68`, latin1/MyISAM) ; `Laurux.conf` de test avec `/dbase/Maj=1`, société `01` ; lancement `./Laurux -c <conf>` puis fermeture | `Fiches_Parametres.version = 3.69` ; schéma obtenu (dump `--no-data` normalisé) comparé au schéma de `Laurux01.sql` de HEAD ; export `DB_Sanity` comparé à `db_control.csv` de HEAD ; écarts figés dans `expected/` | `tests/maj_depuis_base_precedente/` | à faire |
+| LAURUXMAJ-T01 | replay | Mise à jour depuis une base précédente (3.68 → 3.69) | `Laurux01.sql` du tag `v3.68.8` (`git show v3.68.8:Laurux01.sql`, `version = 3.68`, latin1/MyISAM) ; `Laurux.conf` de test avec `/dbase/Maj=1`, société `01` ; lancement `./Laurux -c <conf>` puis fermeture | `Fiches_Parametres.version = 3.69` ; schéma obtenu (dump `--no-data` normalisé) comparé au schéma de `Laurux01.sql` de HEAD ; export `DB_Sanity` comparé à `db_control.csv` de HEAD ; écarts figés dans `expected/` | `tests/maj_depuis_base_precedente/` | hors périmètre : décision utilisateur (migrations historiques non testées) |
 
 ## Détail des tests
 

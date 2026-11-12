@@ -18,5 +18,5 @@
 - La locale (séparateur décimal de `Format$`) doit être fixée (`LANG=fr_FR.UTF-8`) dans le runner.
 - Jeux dérivés T02-T04 générés par `gen_input.py`.
 - **Phase 2 (implémentation)** : T04 = scénario `.hidden/Tests/Utils/assets/expart_table_vide/` (`Menu281`, jeu
-  `datasets/articles_vide.sql`). T01-T03 : le CSV est écrit dans `Sauves` (par défaut `User.Home`, vrai HOME
+  `.hidden/Tests/Communs/assets/raz_shared/articles_vide.sql`). T01-T03 : le CSV est écrit dans `Sauves` (par défaut `User.Home`, vrai HOME
   non isolé) et n'est pas capturé par le runner (besoin d'outillage : capture des fichiers produits).

@@ -12,4 +12,4 @@
 
 - `run` est `Static Public` sans GUI : appelable depuis gb.test avec une connexion `Utils.db` sur la
   base Docker. Valeurs attendues produites dans le clone **Laurux non modifié** (dump normalisé).
-- **Implémentation (phase 2)** : `.src/Tests/Utils/HistoComTest.test`, jeu `.src/Tests/Framework/datasets/histocom_lignes.sql` (lignes C/A/M, libellé NULL, vide, `com_ligfac` déjà rempli). Un libellé vide est lu NULL par gb.db : la ligne n'est pas déplacée.
+- **Implémentation (phase 2)** : `.src/Tests/Utils/HistoComTest.test`, jeu `.hidden/Tests/Utils/assets/histocom_shared/histocom_lignes.sql` (lignes C/A/M, libellé NULL, vide, `com_ligfac` déjà rempli). Un libellé vide est lu NULL par gb.db : la ligne n'est pas déplacée.

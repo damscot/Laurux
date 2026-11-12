@@ -26,6 +26,6 @@ sont couverts par **replay** avec dump normalisé de `Fiches_Comptes` (`compte_c
   clôturée dans le journal `jdr`), relevé `TabRappro` pour T07.
 - **Non testable automatiquement** : son et message final (T06 par replay).
 - **Phase 2 (implémentation)** : `.src/Tests/Utils/CalcsoldeTest.test` (T01-T05), jeu
-  `.src/Tests/Framework/datasets/calcsolde.sql` (écritures 607000/512000/411001, soldes initiaux non nuls) ;
+  `.hidden/Tests/Utils/assets/calcsolde_shared/calcsolde.sql` (écritures 607000/512000/411001, soldes initiaux non nuls) ;
   `Calcul` appelé sur l'instance automatique du formulaire (jamais affiché). T06 = scénario
   `.hidden/Tests/Utils/assets/calcsolde_replay_global/` (`Menu76`, bouton `Button2` du groupe `Btn`).

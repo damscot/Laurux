@@ -1,0 +1,28 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Tvaav 
+select * from Fiches_Fam  where cdtva_fam = '4'
+select * from Fiches_Bl  where type <> 'F' or type = 'F' and imp = 0
+select * from Fiches_Ligbl  where num_ligbl = '900001' and tx_ligbl = '4' and typel_ligbl = 'A' or num_ligbl = '900001' and tx_ligbl = '4' and typel_ligbl = 'M' 
+select * from Fiches_BlM  where type <> 'F' or type = 'F' and imp = 0
+select * from Fiches_LigblM  where num_ligbl = '900002' and tx_ligbl = '4' and typel_ligbl = 'A' or num_ligbl = '900002' and tx_ligbl = '4' and typel_ligbl = 'M' 
+select * from Fiches_Art  where art_tva = '4'
+select * from Fiches_Mo  where mo_tva = '4'
+SELECT * FROM Fiches_Tvaav WHERE cc_tva = '445730'

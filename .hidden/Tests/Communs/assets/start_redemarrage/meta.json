@@ -1,0 +1,20 @@
+{
+ "id": "START-T17",
+ "classe": "Start",
+ "objet": "Redémarrage (LauruxConf non modal)",
+ "description": "Connexion nouvelle base (Menu166, non modal) puis Fermer (Button2) : LauruxConf.Form_Close positionne Start.Restart et ferme Fmenu ; Start.Main reboucle (seconde itération). Comportement actuel figé (code_sortie 125) : erreur fatale « Uninitialized or already closed handler! » dans LauruxConf.Form_Close (Observer_Close → GUI_Event).",
+ "dataset": "fsoc_shared/fsoc_deux_bases",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125,
+ "xfail": "La fermeture de LauruxConf écrit dans le journal de DB_Connection fermé par Utils.db.Close (Form_Close) : erreur fatale en mode -l, pas de seconde itération de Start.Main (candidat anomalie)",
+ "xfail_attendu": "deux itérations de Main, fin propre (code 0)"
+}
