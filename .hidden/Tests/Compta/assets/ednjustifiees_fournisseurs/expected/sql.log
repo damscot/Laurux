@@ -1,0 +1,48 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Typec
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT  compte_cc, intitule_cc, solde  FROM Fiches_Comptes WHERE  cast(compte_cc as char) >= '40100001'  and cast(compte_cc as char) <= '40199999'  and type_cc ='F'  order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Mvt WHERE compte = '401001' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401002' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401003' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401004' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401005' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401006' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401007' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401008' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401009' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401010' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401011' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401012' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401013' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401014' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401015' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401016' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401017' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401018' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401019' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401020' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401021' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401022' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401023' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401024' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401025' AND validee = 1 AND lettree = 0 order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401026' AND validee = 1 AND lettree = 0 order by dte 

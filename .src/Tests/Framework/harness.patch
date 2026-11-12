@@ -773,7 +773,7 @@ index 9d09130a..368e87de 100644
    GridView1.Columns.Count = 2
    GridView1.Columns[0].Width = 150
 diff --git a/.src/Start.module b/.src/Start.module
-index 7cfaf9e5..0db0d014 100644
+index 7cfaf9e5..6cc3178d 100644
 --- a/.src/Start.module
 +++ b/.src/Start.module
 @@ -40,7 +40,9 @@ Public Arg_Config_File As String
@@ -839,7 +839,7 @@ index 7cfaf9e5..0db0d014 100644
    
    remaining_args = Args.End()
    
-@@ -470,48 +479,552 @@ Public Sub Restore_Args()
+@@ -470,48 +479,590 @@ Public Sub Restore_Args()
  
  End
  
@@ -944,7 +944,7 @@ index 7cfaf9e5..0db0d014 100644
 +      Try cMeta = JSON.Decode(File.Load(sAssets &/ sLot &/ "assets" &/ sFic &/ "meta.json"))
 +      sClasse = Meta_Texte(cMeta, "classe")
 +      sId = Meta_Texte(cMeta, "id")
-+      aTests.Add(["replay", sLot, sClasse, sId, ".hidden/Tests" &/ sLot &/ "assets" &/ sFic, sLot & "/" & sFic, IIf(Meta_Texte(cMeta, "objet"), Meta_Texte(cMeta, "objet"), Meta_Texte(cMeta, "description")), "", IIf(Exist(sAssets &/ sLot &/ "assets" &/ sFic &/ "expected"), "1", "0")])
++      aTests.Add(["replay", sLot, sClasse, sId, ".hidden/Tests" &/ sLot &/ "assets" &/ sFic, sLot & "/" & sFic, IIf(Meta_Texte(cMeta, "objet"), Meta_Texte(cMeta, "objet"), Meta_Texte(cMeta, "description")), "", IIf(Exist(sAssets &/ sLot &/ "assets" &/ sFic &/ "expected") And Not Meta_Texte(cMeta, "verification_manuelle"), "1", "0")])
 +    Next
 +  Next
 +  Endif
@@ -1038,7 +1038,8 @@ index 7cfaf9e5..0db0d014 100644
 +    Else
 +      If LCase(sValeur) <> LCase(sDemande) Then Continue
      Endif
-+    ' scénario non validé : seulement s'il est listé, ou désigné exactement par son nom, son chemin ou lot/nom
++    ' scénario non validé ou « à vérifier à la main » (verification_manuelle de meta.json) : seulement s'il est listé,
++    ' ou désigné exactement par son nom, son chemin ou lot/nom (jamais par all, un type, un lot ou un joker)
 +    If aTest[8] = "1" Or bListe Then Return True
 +    If Not bMotif And If iChamp >= 3 And If iChamp <= 5 Then Return True
    Next
@@ -1241,7 +1242,8 @@ index 7cfaf9e5..0db0d014 100644
 +  ''   lancé si meta.json porte « ftp » : "ok" | "refus" | "absent", voir TestKit.FtpFactice ; « {home} » et
 +  ''   « {out} » y sont remplacés par le HOME de test du fils et le répertoire de sortie ; fichiers reçus dans
 +  ''   ftp/, commandes dans ftp.trace), copie les fichiers d'entrée du
-+  ''   scénario dans /tmp/laurux-test/ (même chemin sur le poste et dans le conteneur), place les enveloppes
++  ''   scénario dans /tmp/laurux-test/ (même chemin sur le poste et dans le conteneur) et ceux de « entrees »
++  ''   ({"fichier": "~/chemin"} : HOME de test, {out}/, /tmp/laurux-test/) à leur destination, place les enveloppes
 +  ''   mysql/mysqldump de Framework/bin en tête du PATH, dirige Desktop.Open vers laurux-ouvrir
 +  ''   (TestKit.OuvertureFactice, trace dans ouvrir.trace), remplace les outils externes sans effet sur Laurux
 +  ''   (clients mail, synthèse vocale, gammu, wput… : faux programmes de Framework/bin, trace dans outils.trace) ;
@@ -1336,6 +1338,42 @@ index 7cfaf9e5..0db0d014 100644
 +    Try Kill "/tmp/laurux-test" &/ sFic
 +    Copy sDir &/ sFic To "/tmp/laurux-test" &/ sFic
 +  Next
++  If cMeta.Exist("entrees") And If cMeta["entrees"] Then ' fichiers d'entrée à déposer : {"source": "destination"}
++    For Each vArg In cMeta["entrees"]
++      sFic = cMeta["entrees"].Key
++      sDst = CStr(vArg)
++      If InStr(sFic, "..") Or If sFic Begins "/" Or If InStr(sDst, "..") Then
++        Print "Rejeu " & sSpec & " : entrée « " & sFic & " » → « " & sDst & " » ignorée (« .. » ou source absolue)"
++        Continue
++      Endif
++      ' source : fichier des assets du scénario, ou « <classe>_shared/<fichier> » des assets du lot
++      If InStr(sFic, "/") Then
++        sSrc = sRoot &/ ".hidden/Tests" &/ sLot &/ "assets" &/ sFic
++      Else
++        sSrc = sDir &/ sFic
++      Endif
++      ' destination : HOME de test (« ~/… » ou « {home}/… »), sorties de -T (« {out}/… ») ou /tmp/laurux-test/…
++      If sDst Begins "~/" Then
++        sDst = sHome &/ Mid(sDst, 3)
++      Else If sDst Begins "{home}/" Then
++        sDst = sHome &/ Mid(sDst, 8)
++      Else If sDst Begins "{out}/" Then
++        sDst = sOut &/ Mid(sDst, 7)
++      Else If Not (sDst Begins "/tmp/laurux-test/") Then
++        Print "Rejeu " & sSpec & " : destination « " & sDst & " » refusée (~/, {home}/, {out}/ ou /tmp/laurux-test/)"
++        Continue
++      Endif
++      If Not Exist(sSrc) Then
++        Print "Rejeu " & sSpec & " : entrée introuvable « " & sSrc & " »"
++        TestKit.FinFtp()
++        Fin_Home(sHome) ' suppression gardée du HOME de test créé plus haut (voir Fin_Home)
++        Return False
++      Endif
++      Shell "mkdir -p " & Shell$(File.Dir(sDst)) Wait
++      Try Kill sDst
++      Copy sSrc To sDst
++    Next
++  Endif
 +  Try Kill sOut &/ "replay.log"
 +  Try Kill sOut &/ "replay.log.out"
 +  Copy sDir &/ "scenario.log" To sOut &/ "replay.log"

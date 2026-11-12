@@ -1,0 +1,80 @@
+' Gambas test file
+
+''Tests de Cecrit (.hidden/reference/.src/Compta/Cecrit.module/test.md, CECRIT-T01).
+''Cecrit est un module mort ; le test fige l'écran qui porte ses homonymes, TriEcritures2 (Affichages), lui-même
+''instancié nulle part (pas de menu : replay impossible). La fenêtre est instanciée ici sans être affichée
+''(écritures validées / non validées), puis ses procédures publiques de tri et de filtre sont appelées ; le
+''résultat (Utils.rs1, construit par Utils.Base) est relevé. Le test ne référence pas Cecrit : il reste valable
+''après la suppression du module. Jeu cecrit_ecritures. Valeurs attendues : assets/CecritTest/expected.txt (ref).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01TriEcritures2", "TriEcritures2 (homonymes de Cecrit) : ouverture, tris croissant/décroissant, filtre")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "CecritTest")
+  TestKit.OuvreBase("cecrit_ecritures")
+
+End
+
+Private Sub Releve(sCle As String, hF As TriEcritures2)
+  ''Lignes de la grille Ecrit et contenu de Utils.rs1 (3 premières lignes et dernière).
+
+  Dim r As Result = Utils.rs1
+  Dim hG As Object = hF.Controls["Ecrit"]
+  Dim i As Integer
+  Dim s As String
+
+  TestKit.Check(sCle & "/grille", hG.Rows.Count)
+  If Not r Then
+    TestKit.Check(sCle & "/rs1", "<Null>")
+    Return
+  Endif
+  TestKit.Check(sCle & "/count", r.Count)
+  If r.Count = 0 Then Return
+  For i = 0 To r.Count - 1
+    If i < 3 Or i = r.Count - 1 Then
+      r.MoveTo(i)
+      s &= i & ":" & r!jour & "/" & r!compte & "/" & Format(r!dte, "yyyy-mm-dd") & "/" & r!numero & "/" & r!numdoc & "/" & r!montantd & "/" & r!montantc & "/" & r!libelle & " "
+    Endif
+  Next
+  TestKit.Check(sCle & "/lignes", s)
+
+End
+
+Private Sub Appel(sCle As String, hF As TriEcritures2, sMethode As String)
+
+  Try Object.Call(hF, sMethode)
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  Releve(sCle, hF)
+
+End
+
+Public Sub T01TriEcritures2()
+
+  Dim hF As TriEcritures2
+  Dim sType As String
+
+  For Each sType In ["0", "1"]
+    Try hF = New TriEcritures2(sType, "", "1")
+    If Error Then
+      TestKit.Check("T01/" & sType & "/new", "ERREUR: " & Error.Text)
+      Continue
+    Endif
+    Releve("T01/" & sType & "/ouverture", hF)
+    ' double-clic sur l'en-tête Journal : tri décroissant puis retour au tri croissant
+    Appel("T01/" & sType & "/jour_desc", hF, "JO_Dblclick")
+    Appel("T01/" & sType & "/jour_asc", hF, "JO_Dblclick")
+    Appel("T01/" & sType & "/com_click", hF, "COM_Click")
+    Appel("T01/" & sType & "/debe1", hF, "Debe1")
+    Appel("T01/" & sType & "/debe2", hF, "Debe2")
+    Appel("T01/" & sType & "/debe3", hF, "Debe3")
+    Appel("T01/" & sType & "/debe4", hF, "Debe4")
+    Try Object.Lock(hF)
+  Next
+
+End

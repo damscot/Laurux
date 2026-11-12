@@ -1,0 +1,23 @@
+{
+ "id": "BALANCEM-T07",
+ "objet": "Exercice archivé N-1",
+ "classe": "BalanceM",
+ "description": "Écran Balance (jeu Compta/extrait_shared/extrait_base, 2018-06-15), Imprimer (Button1 → BalanceM.Imprime) ; PDF ~/tmp/Balance.pdf converti par pdftotext -layout via /Soc01/caisse/CmdVis (Visualiseur.Prog) dans ~/balance_pdf.txt, comparé ; balance client, N1 (Fiches_Mvt1, période par défaut de N-1).",
+ "dataset": "Compta/extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/balance_pdf.txt'"
+ },
+ "fichiers": [
+  "balance_pdf.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,37 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE if exists Fiches_relances
+CREATE TABLE Fiches_relances (compte Char(8) NOT NULL,rs char(10) ,intitule char(50) ,adr1 char(35) ,adr2 char(35) ,cp char(10) ,ville char(35) ,pays char(35) ,dte date ,numdoc char(10),numlot char(10) ,libelle char(50) ,montantd Decimal(12,2) ,montantc Decimal(12,2) ,numero char(8) ,journal char(2) ,niveau integer(1),lind char(10) ,PRIMARY KEY (compte, lind)) ENGINE = InnoDB
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT  montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2010-06-15' AND '2026-06-15 23:59:59' AND provisoire=False  AND compte LIKE '411%' AND collectif is null AND (dateech <= '20180615' Or dte<='20180615' OR dateech is null)  AND lettree='0' AND jour<>'90' ORDER BY dte asc
+SELECT * from Fiches_Cli where cli_code = '411999'
+SELECT * from Fiches_Cli where cli_code = '411002'
+INSERT INTO Fiches_relances (compte, rs, intitule, adr1, adr2, cp, ville, pays, dte, numdoc, numlot, libelle, montantd, montantc, numero, journal, niveau, lind) VALUES ('411002', NULL, 'B Divers  ', NULL, NULL, NULL, NULL, 'France', '2018-02-01 00:00:00', NULL, NULL, 'Facture sans numero', '20.00', '0.00', 64, '70', 3, 404)
+SELECT * from Fiches_Cli where cli_code = '411002'
+INSERT INTO Fiches_relances (compte, rs, intitule, adr1, adr2, cp, ville, pays, dte, numdoc, numlot, libelle, montantd, montantc, numero, journal, niveau, lind) VALUES ('411002', NULL, 'B Divers  ', NULL, NULL, NULL, NULL, 'France', '2018-03-01 00:00:00', 'F403', NULL, 'Facture F403', '80.00', '0.00', 63, '70', 3, 403)
+SELECT * from Fiches_Cli where cli_code = '411001'
+INSERT INTO Fiches_relances (compte, rs, intitule, adr1, adr2, cp, ville, pays, dte, numdoc, numlot, libelle, montantd, montantc, numero, journal, niveau, lind) VALUES ('411001', NULL, 'A Divers  ', NULL, NULL, NULL, NULL, 'France', '2018-04-01 00:00:00', 'F401', NULL, 'Facture F401', '100.00', '0.00', 61, '70', 1, 401)

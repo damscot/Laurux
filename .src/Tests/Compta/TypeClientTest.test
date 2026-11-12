@@ -1,0 +1,65 @@
+' Gambas test file
+
+''Tests de TypeClient (.hidden/reference/.src/Compta/Utils/TypeClient.class/test.md, TYPECLIENT-T01, T02).
+''Le contrôle (TreeView) est créé dans une fenêtre jamais affichée. Jeu typeclient_types (types 01, 02, 03 de
+''Laurux01 et « A' »). Valeurs attendues : assets/TypeClientTest/expected.txt (clone de référence).
+
+Private $hW As Window
+Private $hTc As TypeClient
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Chargement", "Éléments chargés depuis Fiches_Typec (clés, libellés, ordre)")
+  TestKit.Desc("T02Where", "Propriété `where` : aucune sélection, 1 type, 3 types, code avec apostrophe")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "TypeClientTest")
+  TestKit.OuvreBase("typeclient_types")
+  $hW = New Window
+  $hTc = New TypeClient($hW)
+
+End
+
+Private Sub Selectionne(aCles As String[])
+
+  Dim sCle As String
+
+  $hTc.UnselectAll
+  For Each sCle In aCles
+    $hTc[sCle].Selected = True
+  Next
+
+End
+
+Public Sub T01Chargement()
+
+  Dim sRes As String
+
+  TestKit.Check("T01/nombre", $hTc.Count)
+  If $hTc.MoveFirst() Then
+    TestKit.Check("T01/elements", "<aucun>")
+    Return
+  Endif
+  Repeat
+    sRes &= $hTc.Item.Key & "=" & $hTc.Item.Text & " | "
+  Until $hTc.MoveNext()
+  TestKit.Check("T01/elements", sRes)
+
+End
+
+Public Sub T02Where()
+
+  $hTc.Mode = Select.Multiple
+  TestKit.Check("T02/aucune", $hTc.where)
+  Selectionne(["02"])
+  TestKit.Check("T02/un", $hTc.where)
+  Selectionne(["01", "02", "03"])
+  TestKit.Check("T02/trois", $hTc.where)
+  Selectionne(["A'"])
+  TestKit.Check("T02/apostrophe", $hTc.where)
+
+End

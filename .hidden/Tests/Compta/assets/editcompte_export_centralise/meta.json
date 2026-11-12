@@ -1,0 +1,21 @@
+{
+ "id": "EDITCOMPTE-T06",
+ "objet": "Export avec compte centralise",
+ "classe": "Editcompte",
+ "description": "Jeu editcompte_centralise (707000 cent_cc = 1, janvier/fevrier/avril 2018, journaux 70 et 71) : Bgestion, Exporter -> lignes Centralisation mensuelles dans tmp/Glivre.txt, contenu final de Ctrln dans le dump ; question : bouton 2 'Non' (Tab + Espace).",
+ "dataset": "editcompte_centralise",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "@ouvrir.trace",
+  "tmp/Glivre.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}
