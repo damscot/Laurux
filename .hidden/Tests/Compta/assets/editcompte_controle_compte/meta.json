@@ -1,0 +1,20 @@
+{
+ "id": "EDITCOMPTE-T03",
+ "objet": "Controle du prefixe de compte (client)",
+ "classe": "Editcompte",
+ "description": "Client : Cpt = 401 + Entree -> Message.Warning 'Le compte saisit n'est un compte client !' (bouton 1 OK, Entree) ; Quitter. La presence de la boite est verifiee par le rejeu (code 0). Cas gestion (Cpt2 refuse, A01) non obtenu au rejeu : a faire.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "@ouvrir.trace"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

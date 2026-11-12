@@ -1,0 +1,29 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(numrub Char(5) NOT NULL,intitrub Char(70),type Char(1),detail Char(1),compte Char(8),intitcpt Char(50),Col1 Char(25),Col2 Char(25),col3 Char(25),col4 Char(25),PRIMARY KEY (numrub, compte)) ENGINE = InnoDB
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(numrub Char(5) NOT NULL,intitrub Char(70),type Char(1),detail Char(1),compte Char(8),intitcpt Char(50),col1 Char(12),prod Char(1),PRIMARY KEY (numrub, compte)) ENGINE = InnoDB
+SELECT * FROM Fiches_Rubriques WHERE left(numrub,1) = 'S' order by numrub
+SELECT * FROM centralisation Order by numrub, detail, compte

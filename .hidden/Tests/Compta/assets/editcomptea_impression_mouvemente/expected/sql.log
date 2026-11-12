@@ -1,0 +1,45 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT  compte_cc, intitule_cc, cent_cc  FROM Fiches_Comptes WHERE cast(compte_cc AS char) >= '60000'  and cast(compte_cc AS char) <= '69999999'  and type_cc = 'G' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Analytiques Where compte = '602100'
+SELECT * FROM Fiches_Analytiques Where compte = '603700'
+SELECT * FROM Fiches_Analytiques Where compte = '604000'
+SELECT * FROM Fiches_Analytiques Where compte = '605000'
+SELECT * FROM Fiches_Analytiques Where compte = '606100'
+SELECT * FROM Fiches_Analytiques Where compte = '606110'
+SELECT * FROM Fiches_Analytiques Where compte = '606120'
+SELECT * FROM Fiches_Analytiques Where compte = '606130'
+SELECT * FROM Fiches_Analytiques Where compte = '606150'
+SELECT * FROM Fiches_Analytiques Where compte = '606170'
+SELECT * FROM Fiches_Analytiques Where compte = '606300'
+SELECT * FROM Fiches_Analytiques Where compte = '606306'
+SELECT * FROM Fiches_Analytiques Where compte = '606400'
+SELECT * FROM Fiches_Analytiques Where compte = '606410'
+SELECT * FROM Fiches_Analytiques Where compte = '606800'
+SELECT * FROM Fiches_Analytiques Where compte = '606810'
+SELECT * FROM Fiches_Analytiques Where compte = '607000'
+SELECT * FROM Fiches_MvtA WHERE compte = '607000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+drop Table IF exists Ctrlnc
+CREATE TABLE IF NOT EXISTS Ctrlnc(compte Char(8) NOT NULL,intitule Char(30),jour Char(2),Mois Char(6) NOT NULL,libelle Char(30) ,dte Char(10) ,montantd Decimal(12,2),montantc Decimal(12,2),PRIMARY KEY (compte, Mois)) ENGINE = InnoDB

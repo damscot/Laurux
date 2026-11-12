@@ -1,0 +1,23 @@
+{
+ "id": "EXPORTA47-T04",
+ "objet": "FEC : règles de lignes et dates",
+ "classe": "ExportA47",
+ "description": "Export A47 (Menu298), jeu exporta47_lignes (exporta47_base + écriture 2017 n°3 : ligne collective 411000, débit et crédit sur une même ligne, ligne à zéro sans numdoc, datee/dteval renseignées ou nulles ; écriture n°4 non validée), E1, Exporter, Message.Question bouton 2 « Non », Quitter. Couvre aussi EXPORTA47-T05 (EcritureDate = datee sinon dte, ValidDate = dteval sinon dte).",
+ "dataset": "exporta47_lignes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-export": "{out}"
+ },
+ "fichiers": [
+  "@123456789FEC20171231-20170101"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

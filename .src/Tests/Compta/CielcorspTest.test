@@ -1,0 +1,197 @@
+' Gambas test file
+
+''Tests de Cielcorsp (.hidden/reference/.src/Compta/Cielcorsp.class/test.md, CIELCORSP-T01, T02, T03, T06).
+''Prévus en replay (menu Fmenu ou impfec) : la fenêtre est instanciée ici sans être affichée, ses champs sont
+''renseignés par les contrôles (Controls["…"]) et ses procédures publiques appelées directement (Button1_Click =
+''F1, Button2_Click = Ajouter, Listecompte_Activate = double-clic, Compte_delete = suppression de la touche
+''Suppr). Les cas qui ouvrent une boîte Message (doublons, compte inconnu) restent à faire. Base Laurux01 sans
+''tables Ciel. Valeurs attendues : assets/CielcorspTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PremiereOuverture", "Première ouverture : tables Ciel_Lrx, Ciel_Lrx_Jo et imp_ciel créées, liste vide")
+  TestKit.Desc("T02AjoutClient", "Ajout d'une correspondance client 411001 → 411DUPONT")
+  TestKit.Desc("T03ListeFournisseurs", "RadioButton2 puis F1 (Button1_Click) : liste des comptes fournisseurs")
+  TestKit.Desc("T06Suppression", "Suppression (Compte_delete) puis double-clic (Listecompte_Activate)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "CielcorspTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Ouvre(sCle As String) As Cielcorsp
+
+  Dim hF As Cielcorsp
+
+  Try hF = New Cielcorsp
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Tables(sCle As String)
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT table_name AS t FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'Ciel%' ORDER BY 1")
+  If r.Available Then
+    Repeat
+      s &= r!t & " "
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/tables", s)
+  r = Utils.db.Exec("SELECT count(*) AS n FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'Fiches_Parametres' AND column_name = 'imp_ciel'")
+  TestKit.Check(sCle & "/imp_ciel", r!n)
+
+End
+
+Private Sub Lignes(sCle As String)
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT * FROM Ciel_Lrx ORDER BY Cciel")
+  TestKit.Check(sCle & "/nb", r.Count)
+  If r.Available Then
+    Repeat
+      s &= r!Cciel & ";" & r!Clrx & ";" & r!Intitule & " | "
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/lignes", s)
+
+End
+
+Private Sub Liste(sCle As String, hF As Cielcorsp, sNom As String)
+  ''Contenu d'une ColumnView (Listecompte ou Colcpt) : nombre, 3 premiers éléments et dernier.
+
+  Dim hL As Object = hF.Controls[sNom]
+  Dim s As String
+  Dim i As Integer
+
+  TestKit.Check(sCle & "/" & sNom & "/nb", hL.Count)
+  TestKit.Check(sCle & "/" & sNom & "/visible", hL.Visible)
+  If hL.Count = 0 Then Return
+  hL.MoveFirst()
+  Repeat
+    If i < 3 Or i = hL.Count - 1 Then s &= hL.Item.Key & "=" & hL.Item[0] & ";" & hL.Item[1] & ";" & hL.Item[2] & " | "
+    Inc i
+  Until hL.MoveNext()
+  TestKit.Check(sCle & "/" & sNom & "/items", s)
+
+End
+
+Private Sub Saisit(hF As Cielcorsp, sLrx As String, sCiel As String)
+
+  Object.SetProperty(hF.Controls["CptLrx"], "Text", sLrx)
+  Object.SetProperty(hF.Controls["CptCiel"], "Text", sCiel)
+
+End
+
+Private Sub Ajoute(sCle As String, hF As Cielcorsp, sLrx As String, sCiel As String)
+
+  Saisit(hF, sLrx, sCiel)
+  Try hF.Button2_Click()
+  If Error Then TestKit.Check(sCle & "/ajout_err", "ERREUR: " & Error.Text)
+  TestKit.Check(sCle & "/champs", Object.GetProperty(hF.Controls["CptLrx"], "Text") & "|" & Object.GetProperty(hF.Controls["CptCiel"], "Text"))
+
+End
+
+Public Sub T01PremiereOuverture()
+
+  Dim hF As Cielcorsp
+
+  Tables("T01/avant")
+  hF = Ouvre("T01")
+  If Not hF Then Return
+  Tables("T01/apres")
+  Liste("T01", hF, "Listecompte")
+  Lignes("T01")
+  ' seconde ouverture : tables déjà présentes
+  hF = Ouvre("T01/bis")
+  If Not hF Then Return
+  Tables("T01/bis")
+
+End
+
+Public Sub T02AjoutClient()
+
+  Dim hF As Cielcorsp
+
+  hF = Ouvre("T02")
+  If Not hF Then Return
+  Ajoute("T02/a1", hF, "411001", "411DUPONT")
+  Ajoute("T02/a2", hF, "401002", "401MARTIN")
+  Lignes("T02")
+  Liste("T02", hF, "Listecompte")
+  ' réouverture : liste rechargée depuis Ciel_Lrx
+  hF = Ouvre("T02/re")
+  If Not hF Then Return
+  Liste("T02/re", hF, "Listecompte")
+
+End
+
+Public Sub T03ListeFournisseurs()
+
+  Dim hF As Cielcorsp
+  Dim hL As Object
+
+  hF = Ouvre("T03")
+  If Not hF Then Return
+  hF.Button1_Click()
+  Liste("T03/clients", hF, "Colcpt")
+  ' second appui : la liste se ferme
+  hF.Button1_Click()
+  Liste("T03/ferme", hF, "Colcpt")
+  Object.SetProperty(hF.Controls["RadioButton2"], "Value", True)
+  hF.Button1_Click()
+  Liste("T03/fournisseurs", hF, "Colcpt")
+  ' choix du 2e élément (curseur placé comme par Entrée, puis Colcpt_Click) : compte reporté dans CptLrx
+  ' (CptCiel.SetFocus final en erreur « Null object » : fenêtre non affichée)
+  hL = hF.Controls["Colcpt"]
+  hL.MoveFirst()
+  hL.MoveNext()
+  Try hF.Colcpt_Click()
+  If Error Then TestKit.Check("T03/click_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T03/CptLrx", Object.GetProperty(hF.Controls["CptLrx"], "Text"))
+  Liste("T03/apres_click", hF, "Colcpt")
+
+End
+
+Public Sub T06Suppression()
+
+  Dim hF As Cielcorsp
+  Dim hL As Object
+
+  hF = Ouvre("T06")
+  If Not hF Then Return
+  Ajoute("T06/a1", hF, "411001", "411A")
+  Ajoute("T06/a2", hF, "411002", "411B")
+  Ajoute("T06/a3", hF, "411003", "411C")
+  hF = Ouvre("T06/re")
+  If Not hF Then Return
+  hL = hF.Controls["Listecompte"]
+  ' touche Suppr sur 411A : Compte_delete puis suppression de l'élément courant
+  hL["411A"].Selected = True
+  TestKit.Check("T06/courant1", hL.Current.Key)
+  Try hF.Compte_delete()
+  If Error Then TestKit.Check("T06/delete_err", "ERREUR: " & Error.Text)
+  hL.Current.Delete
+  Lignes("T06/apres_suppr")
+  ' double-clic sur 411C : champs rechargés et ligne supprimée
+  hL["411C"].Selected = True
+  Try hF.Listecompte_Activate()
+  If Error Then TestKit.Check("T06/activate_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T06/champs", Object.GetProperty(hF.Controls["CptLrx"], "Text") & "|" & Object.GetProperty(hF.Controls["CptCiel"], "Text"))
+  Lignes("T06/apres_activate")
+  Liste("T06", hF, "Listecompte")
+
+End

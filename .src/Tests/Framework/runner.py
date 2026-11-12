@@ -498,6 +498,15 @@ def wrap(cmd, display=None, date=None):
     return cmd
 
 
+def manuel(spec):
+    """Raison de « verification_manuelle » (meta.json) : scénario connu instable ou en erreur, retiré des campagnes
+    (all, jokers, lots) et listé dans « Tests à vérifier à la main » de TODO.md ; lancé seulement par son nom exact."""
+    try:
+        return json.loads((scenario_dir(spec) / "meta.json").read_text(encoding="utf-8")).get("verification_manuelle", "")
+    except (OSError, ValueError):
+        return ""
+
+
 def selection(spec, non_valides=False):
     """Tests retenus par la sélection spec, avec la même syntaxe et la même logique que « ./Laurux -T » (tout est
     délégué à « Laurux -T list:<spec> ») : liste de dict {type, lot, classe, test, chemin, description, cle}, cle =
@@ -522,7 +531,7 @@ def selection(spec, non_valides=False):
             t["cle"] = f"{t['module']}.{meth}"
         else:
             t["cle"] = f"{t['lot']}/{Path(t['chemin']).name}"
-            valide = (scenario_dir(t["cle"]) / "expected" / "dump.sql").exists()
+            valide = (scenario_dir(t["cle"]) / "expected" / "dump.sql").exists() and not manuel(t["cle"])
             if not (valide or non_valides or {t["test"].lower(), t["chemin"].lower(), t["cle"].lower()} & exacts):
                 continue
         out.append(t)
@@ -851,6 +860,9 @@ def cmd_replay(a):
 # sépare d'au moins une seconde). Formes reconnues : « AAAA-MM-JJ hh:mm:ss[.f] » et heure seule « hh:mm:ss.f »
 # (Now formaté, ex. « dteinv = '2026-01-15 10:00:02.970' »).
 TOLERANCE_HORODATAGE = 5.0
+# comparaison de sql.log par scénario (« compare_sql_log » de meta.json) : skipped (défaut : dump seul), ordered,
+# unordered (multi-ensemble de requêtes : requêtes émises dans un ordre non déterministe)
+MODES_SQL = ("skipped", "ordered", "unordered")
 HORODATAGE_RE = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:[.,](\d{1,6}))?\b")
 HEURE_RE = re.compile(r"(?<![\d:.-])(\d{2}):(\d{2}):(\d{2})[.,](\d{1,6})\b")
 
@@ -914,11 +926,13 @@ def ecart_horodatage(x, y):
     return min(d, 86400 - d) if x[0] == "h" else d
 
 
-def diff_files(a_path, b_path, label, tolerance=TOLERANCE_HORODATAGE):
+def diff_files(a_path, b_path, label, tolerance=TOLERANCE_HORODATAGE, ordre=True):
     """Diff des sorties normalisées (lignes de différence au format unified diff). Les horodatages sont comparés
     avec un écart toléré (`tolerance`, s) et leur ordre vérifié (voir HORODATAGE_RE)."""
     a = [horodatages(l) for l in normalise(lit_compare(a_path)).splitlines()]
     b = [horodatages(l) for l in normalise(lit_compare(b_path)).splitlines()]
+    if not ordre:  # comparaison sans ordre (multi-ensemble de lignes), horodatages appariés après tri
+        a, b = sorted(a, key=lambda x: x[0]), sorted(b, key=lambda x: x[0])
     d = list(difflib.unified_diff([x[0] for x in a], [x[0] for x in b], f"attendu/{label}", f"obtenu/{label}",
                                   lineterm="", n=2))
     if d:  # contenu ou ordre des lignes différent
@@ -934,7 +948,7 @@ def diff_files(a_path, b_path, label, tolerance=TOLERANCE_HORODATAGE):
         if trop:
             ecarts += ["-" + ligne for ligne in [lit_ligne(a_path, n)]] + ["+" + lit_ligne(b_path, n)]
     # ordre : deux horodatages successifs que l'attendu sépare d'au moins 1 s ne doivent pas être inversés
-    for (n1, x1), (n2, x2), (_, y1), (_, y2) in zip(seq_a, seq_a[1:], seq_b, seq_b[1:]):
+    for (n1, x1), (n2, x2), (_, y1), (_, y2) in (zip(seq_a, seq_a[1:], seq_b, seq_b[1:]) if ordre else []):
         da, db = x2[1] - x1[1], y2[1] - y1[1]
         if abs(da) >= 1 and da * db < 0:
             ecarts += [f"@@ {label} lignes {n1}-{n2} : ordre des horodatages inversé",
@@ -979,8 +993,15 @@ def compare_un(spec, a, affiche=True, journal=None):
     ecarts = {}
     meta = json.loads((sdir / "meta.json").read_text(encoding="utf-8"))
     fichiers = ["fichiers/" + f.lstrip("@") for f in meta.get("fichiers", [])]
-    for f in ["dump.sql", "sql.log"] + fichiers:
-        d = diff_files(expected / f, got / f, f, float(meta.get("tolerance_horodatage", TOLERANCE_HORODATAGE)))
+    # sql.log (requêtes Exec_SQL) : comparé seulement sur demande du scénario (« compare_sql_log ») ; le dump, les
+    # fichiers déclarés et le code de sortie valident le comportement
+    mode_sql = meta.get("compare_sql_log", "skipped")
+    if mode_sql not in MODES_SQL:
+        die(f"{spec} : compare_sql_log « {mode_sql} » inconnu ({' | '.join(MODES_SQL)})")
+    ecarts["sql.log"] = 0
+    for f in ["dump.sql"] + (["sql.log"] if mode_sql != "skipped" else []) + fichiers:
+        d = diff_files(expected / f, got / f, f, float(meta.get("tolerance_horodatage", TOLERANCE_HORODATAGE)),
+                       ordre=not (f == "sql.log" and mode_sql == "unordered"))
         ecarts[f] = len([l for l in d if l[:1] in "+-" and not l.startswith(("+++", "---"))])
         if d:
             ok = False
@@ -992,9 +1013,11 @@ def compare_un(spec, a, affiche=True, journal=None):
         # à la main), différent de ref = régression (fail)
         journal.ajoute(spec, **info, statut=("xfail" if meta.get("xfail") else "pass") if ok else "fail",
                        obtenu="identique" if ok else
-                       f"code {rc}, dump ±{ecarts['dump.sql']} l., SQL ±{ecarts['sql.log']} l."
+                       f"code {rc}, dump ±{ecarts['dump.sql']} l."
+                       + (f", SQL ±{ecarts['sql.log']} l." if mode_sql != "skipped" else "")
                        + (f", fichiers ±{sum(ecarts[f] for f in fichiers)} l." if fichiers else ""),
-                       attendu=meta.get("xfail_attendu", "dump et SQL identiques à ref"),
+                       attendu=meta.get("xfail_attendu", "dump identique à ref" + ("" if mode_sql == "skipped" else
+                                        f", SQL identique ({mode_sql})")),
                        duree=round(time.time() - t0, 2), raison=meta.get("xfail", ""),
                        reference="live" if a.live else "expected", sorties=str(work))
     return ok, (f"{spec} : {'IDENTIQUE' if ok else 'DIFFÉRENT'} (rejeu rework : code {rc}, attendu {code} ; "
@@ -1172,7 +1195,8 @@ def doc_tests(docdir):
     tests = {}
     for l in txt.splitlines():
         m = re.match(r"^\| ([A-Z0-9_]+-T\d+) \| ([^|]*) \| ([^|]*) \|", l)
-        if m:
+        # statut (dernière colonne) « hors périmètre » : test écarté par décision de l'utilisateur, jamais à faire
+        if m and not re.match(r"\s*hors périmètre", l.rstrip().rstrip("|").rsplit("|", 1)[-1], re.I):
             tests[m[1]] = {"type": m[2].strip(), "objet": m[3].strip()}
     complexe = bool(re.search(r"(à faire valider|valider par l'utilisateur|module complexe)", txt[:3000], re.I))
     return tests, complexe
@@ -1322,8 +1346,14 @@ def write_todo(results, docs):
     from gambas_parse import parse  # noqa: E402
     from kpi import kpi_of  # noqa: E402
     done_ids = {r["id"] for r in results.values() if r["id"]}
-    verif = sorted((r for r in results.values() if r["statut"] in ("xfail", "fail", "xpass")),
-                   key=lambda r: (r["classe"].lower(), test_num(r)))
+    verif = []
+    for r in results.values():
+        raison_m = manuel(f"{r['lot']}/{r['test']}") if r.get("type") == "replay" else ""
+        if raison_m:  # vérification à la main (verification_manuelle) : retiré des campagnes, raison de meta.json
+            verif.append(dict(r, statut="à la main", raison=raison_m))
+        elif r["statut"] in ("xfail", "fail", "xpass"):
+            verif.append(r)
+    verif.sort(key=lambda r: (r["classe"].lower(), test_num(r)))
     todo = []
     for classe, d in docs.items():
         tests, complexe = doc_tests(d)
@@ -1344,8 +1374,9 @@ def write_todo(results, docs):
            "> Bloc généré par `python3 .src/Tests/Framework/runner.py report` ; liste détaillée des tests implémentés : "
            "[output/tests/list.md](../../output/tests/list.md).\n",
            f"### Tests à vérifier à la main ({len(verif)})\n",
-           "Tests synthétisés dont le comportement obtenu diffère de celui décrit par test.md (xfail), ou en "
-           "échec : à vérifier ou corriger par l'utilisateur.\n",
+           "Tests synthétisés dont le comportement obtenu diffère de celui décrit par test.md (xfail), en échec, ou "
+           "retirés des campagnes car connus instables ou en erreur (« à la main » : verification_manuelle de "
+           "meta.json, lancés seulement par leur nom exact) : à vérifier ou corriger par l'utilisateur.\n",
            "| Test | Statut | Obtenu | Attendu (test.md) | Raison | Description |", "|---|---|---|---|---|---|"]
     for r in verif:
         d = docs.get(r["classe"])
@@ -1382,6 +1413,34 @@ def outdir():
 
 
 # Commandes exécutées sur l'hôte (Docker, git) ; toutes les autres sont relancées dans le conteneur « runner ».
+# Une seule commande runner à la fois par base de test (port) : deux commandes concurrentes sur la même base
+# (ex. un compare lancé en arrière-plan pendant un replay --expected) restaurent et lisent la base en même temps
+# (dump incomplet, attendus faux). Les commandes sans base ni clone (list, report, retime, db up/down/status)
+# n'en ont pas besoin. Verrou pris côté hôte (le runner relancé dans le conteneur ne le reprend pas), relâché à
+# la fin du processus ; une commande concurrente attend.
+SANS_VERROU = {("list", None), ("report", None), ("retime", None), ("db", "up"), ("db", "down"), ("db", "status")}
+_VERROU = None
+
+
+def verrou_runner(commande):
+    global _VERROU
+    d = Path(pwd.getpwuid(os.getuid()).pw_dir) / ".cache" / "laurux-tests"
+    d.mkdir(parents=True, exist_ok=True)
+    _VERROU = open(d / f"runner-{DB['host']}-{DB['port']}.lock", "a+")
+    try:
+        fcntl.flock(_VERROU, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        _VERROU.seek(0)
+        tenu = _VERROU.read().strip()
+        print(f"runner: une autre commande runner utilise la base {DB['host']}:{DB['port']} ({tenu or 'pid inconnu'}) ; "
+              f"attente de sa fin (une seule commande runner à la fois)…", file=sys.stderr)
+        fcntl.flock(_VERROU, fcntl.LOCK_EX)
+    _VERROU.seek(0)
+    _VERROU.truncate()
+    _VERROU.write(f"pid {os.getpid()} : {commande}\n")
+    _VERROU.flush()
+
+
 HOST_ONLY = {("db", "up"), ("db", "down"), ("db", "status"), ("harness", None), ("retime", None)}
 
 
@@ -1501,6 +1560,8 @@ def main():
     p.set_defaults(func=cmd_record)
     a = ap.parse_args()
     key = (a.cmd, getattr(a, "action", None) if a.cmd == "db" else None)
+    if key not in SANS_VERROU and not IN_DOCKER:
+        verrou_runner(a.cmd)
     if USE_DOCKER and not IN_DOCKER and key not in HOST_ONLY:
         in_container(a, sys.argv[1:])  # le service runner dépend du service db (démarré par compose)
     if a.cmd in ("unit", "gbtest", "replay", "compare", "record", "dump") or key == ("db", "reset"):

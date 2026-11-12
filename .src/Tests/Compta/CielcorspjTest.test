@@ -1,0 +1,192 @@
+' Gambas test file
+
+''Tests de Cielcorspj (.hidden/reference/.src/Compta/Cielcorspj.class/test.md, CIELCORSPJ-T01, T02, T03, T06).
+''Prévus en replay (menu Fmenu ou impfec) : la fenêtre est instanciée ici sans être affichée, ses champs sont
+''renseignés par les contrôles (Controls["…"]) et ses procédures publiques appelées directement (Button2_Click =
+''Ajouter, Listecompte_Activate = double-clic, Compte_delete = suppression de la touche Suppr). Les cas qui
+''ouvrent une boîte Message (doublon, journal inconnu) restent à faire. Base Laurux01 sans tables Ciel : les
+''journaux Laurux sont 10, 50, 53, 60, 70, 90 (le « VT » du test.md devient « 70 »). Valeurs attendues :
+''assets/CielcorspjTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PremiereOuverture", "Première ouverture : tables Ciel créées, liste vide ; liste des journaux (F1)")
+  TestKit.Desc("T02AjoutJournal", "Ajout d'une correspondance journal 70 → VE")
+  TestKit.Desc("T03MemeJournalLaurux", "Deux journaux Ciel (VE, V2) vers le même journal Laurux 70")
+  TestKit.Desc("T06Suppression", "Suppression (Compte_delete) puis double-clic (Listecompte_Activate)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "CielcorspjTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Ouvre(sCle As String) As Cielcorspj
+
+  Dim hF As Cielcorspj
+
+  Try hF = New Cielcorspj
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Tables(sCle As String)
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT table_name AS t FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE 'Ciel%' ORDER BY 1")
+  If r.Available Then
+    Repeat
+      s &= r!t & " "
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/tables", s)
+  r = Utils.db.Exec("SELECT count(*) AS n FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'Fiches_Parametres' AND column_name = 'imp_ciel'")
+  TestKit.Check(sCle & "/imp_ciel", r!n)
+
+End
+
+Private Sub Lignes(sCle As String)
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT * FROM Ciel_Lrx_Jo ORDER BY Cciel")
+  TestKit.Check(sCle & "/nb", r.Count)
+  If r.Available Then
+    Repeat
+      s &= r!Cciel & ";" & r!Clrx & ";" & r!Intitule & " | "
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/lignes", s)
+
+End
+
+Private Sub Liste(sCle As String, hF As Cielcorspj, sNom As String)
+  ''Contenu d'une ColumnView (Listecompte ou Colcpt) : nombre, 3 premiers éléments et dernier.
+
+  Dim hL As Object = hF.Controls[sNom]
+  Dim s As String
+  Dim i As Integer
+
+  TestKit.Check(sCle & "/" & sNom & "/nb", hL.Count)
+  TestKit.Check(sCle & "/" & sNom & "/visible", hL.Visible)
+  If hL.Count = 0 Then Return
+  hL.MoveFirst()
+  Repeat
+    If i < 3 Or i = hL.Count - 1 Then s &= hL.Item.Key & "=" & hL.Item[0] & ";" & hL.Item[1] & ";" & hL.Item[2] & " | "
+    Inc i
+  Until hL.MoveNext()
+  TestKit.Check(sCle & "/" & sNom & "/items", s)
+
+End
+
+Private Sub Saisit(hF As Cielcorspj, sLrx As String, sCiel As String)
+
+  Object.SetProperty(hF.Controls["CptLrx"], "Text", sLrx)
+  Object.SetProperty(hF.Controls["CptCiel"], "Text", sCiel)
+
+End
+
+Private Sub Ajoute(sCle As String, hF As Cielcorspj, sLrx As String, sCiel As String)
+
+  Saisit(hF, sLrx, sCiel)
+  Try hF.Button2_Click()
+  If Error Then TestKit.Check(sCle & "/ajout_err", "ERREUR: " & Error.Text)
+  TestKit.Check(sCle & "/champs", Object.GetProperty(hF.Controls["CptLrx"], "Text") & "|" & Object.GetProperty(hF.Controls["CptCiel"], "Text"))
+
+End
+
+Public Sub T01PremiereOuverture()
+
+  Dim hF As Cielcorspj
+  Dim hL As Object
+
+  Tables("T01/avant")
+  hF = Ouvre("T01")
+  If Not hF Then Return
+  Tables("T01/apres")
+  Liste("T01", hF, "Listecompte")
+  Lignes("T01")
+  ' F1 : liste des journaux Laurux, puis choix du 5e (Colcpt_Click)
+  ' (CptCiel.SetFocus final en erreur « Null object » : fenêtre non affichée)
+  hF.Button1_Click()
+  Liste("T01/journaux", hF, "Colcpt")
+  hL = hF.Controls["Colcpt"]
+  hL.MoveTo("70")
+  Try hF.Colcpt_Click()
+  If Error Then TestKit.Check("T01/click_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T01/CptLrx", Object.GetProperty(hF.Controls["CptLrx"], "Text"))
+  ' seconde ouverture : tables déjà présentes
+  hF = Ouvre("T01/bis")
+  If Not hF Then Return
+  Tables("T01/bis")
+
+End
+
+Public Sub T02AjoutJournal()
+
+  Dim hF As Cielcorspj
+
+  hF = Ouvre("T02")
+  If Not hF Then Return
+  Ajoute("T02/a1", hF, "70", "VE")
+  Lignes("T02")
+  Liste("T02", hF, "Listecompte")
+  hF = Ouvre("T02/re")
+  If Not hF Then Return
+  Liste("T02/re", hF, "Listecompte")
+
+End
+
+Public Sub T03MemeJournalLaurux()
+
+  Dim hF As Cielcorspj
+
+  hF = Ouvre("T03")
+  If Not hF Then Return
+  Ajoute("T03/a1", hF, "70", "VE")
+  Ajoute("T03/a2", hF, "70", "V2")
+  Lignes("T03")
+  Liste("T03", hF, "Listecompte")
+
+End
+
+Public Sub T06Suppression()
+
+  Dim hF As Cielcorspj
+  Dim hL As Object
+
+  hF = Ouvre("T06")
+  If Not hF Then Return
+  Ajoute("T06/a1", hF, "70", "VE")
+  Ajoute("T06/a2", hF, "60", "AC")
+  Ajoute("T06/a3", hF, "50", "BQ")
+  hF = Ouvre("T06/re")
+  If Not hF Then Return
+  hL = hF.Controls["Listecompte"]
+  ' touche Suppr sur VE : Compte_delete puis suppression de l'élément courant
+  hL["VE"].Selected = True
+  TestKit.Check("T06/courant1", hL.Current.Key)
+  Try hF.Compte_delete()
+  If Error Then TestKit.Check("T06/delete_err", "ERREUR: " & Error.Text)
+  hL.Current.Delete
+  Lignes("T06/apres_suppr")
+  ' double-clic sur BQ : champs rechargés et ligne supprimée
+  hL["BQ"].Selected = True
+  Try hF.Listecompte_Activate()
+  If Error Then TestKit.Check("T06/activate_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T06/champs", Object.GetProperty(hF.Controls["CptLrx"], "Text") & "|" & Object.GetProperty(hF.Controls["CptCiel"], "Text"))
+  Lignes("T06/apres_activate")
+  Liste("T06", hF, "Listecompte")
+
+End

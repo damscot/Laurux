@@ -1,0 +1,20 @@
+{
+ "id": "EXPORTJDV-T09",
+ "objet": "Erreurs de saisie",
+ "classe": "ExportJdv",
+ "description": "Format 1 ; journal 99 inexistant -> 'Ce journal n'existe pas !' ; code journal vide -> 'Veuillez saisir un code journal SVP !' ; journal 70 et chemin d'export inaccessible (/home/laurux/x) -> 'Veuillez saisir le chemin du fichier Export/Import SVP !'. Chaque message ferme par Entree. Reglages Dte_exprt/... et copie cp executes malgre les erreurs (A05).",
+ "dataset": "exportjdv_shared/exportjdv_jeu",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Exp": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

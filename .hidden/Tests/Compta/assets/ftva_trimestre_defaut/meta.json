@@ -1,0 +1,18 @@
+{
+ "classe": "FTVA",
+ "dataset": "extrait_shared/extrait_base",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "FTVA-T09",
+ "objet": "Trimestre par défaut au 15/03 (A01)",
+ "description": "Récapitulatif TVA (Menu263) lancé au 15/03/2018 (date du scénario), jeu extrait_base, clic RadioBtnTrimestre : le trimestre proposé est « Trimestre 4 » (mois 3 non couvert, A01 figée) → requêtes month(dte) >= 10 and <= 12 ; Fermer. Le cas du 15/09 n'est pas joué.",
+ "date": "2018-03-15 10:00:00",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered"
+}

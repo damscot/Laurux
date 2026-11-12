@@ -1,0 +1,57 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+select * from Fiches_Societes
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+drop Table IF exists centralisations
+CREATE TABLE IF NOT EXISTS centralisations(cd_cent Char(8) NOT NULL,intitule Char(25),db_cent Decimal(12,2),crd_cent Decimal(12,2),njournal Char(2),PRIMARY KEY (cd_cent)) ENGINE = InnoDB
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Cli order by cli_code
+SELECT * FROM Fiches_Journaux WHERE code_jo = '70' 
+SELECT * FROM Fiches_Mvt WHERE jour = '70' and validee = 1 and dte >= '20180101' and dte <= '20181230' and jour = '70' and export <> '1' or jour = '70' and validee = 1 and dte >= '20180101' and dte <= '20181230' and jour = '70' and export is null order by dte, numero, compte
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000'
+SELECT * FROM centralisations WHERE cd_cent = '411000'
+INSERT INTO centralisations (cd_cent, intitule,db_cent, crd_cent, njournal) Values ('411000', 'Collectif client', '120', '0', '70')
+update Fiches_Mvt set export = '1' WHERE numero = 1
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411001'
+update Fiches_Mvt set export = '1' WHERE numero = 1
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM centralisations WHERE cd_cent = '445730'
+INSERT INTO centralisations (cd_cent, intitule,db_cent, crd_cent, njournal) Values ('445730', 'Tva', '0', '20', '70')
+update Fiches_Mvt set export = '1' WHERE numero = 1
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+SELECT * FROM centralisations WHERE cd_cent = '707000'
+INSERT INTO centralisations (cd_cent, intitule,db_cent, crd_cent, njournal) Values ('707000', 'Ventes', '0', '100', '70')
+update Fiches_Mvt set export = '1' WHERE numero = 1
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000'
+SELECT * FROM centralisations WHERE cd_cent = '411000'
+UPdate centralisations SET cd_cent = '411000', intitule ='Collectif client', db_cent = '180', crd_cent = '0', njournal = '70' WHERE cd_cent = '411000' and njournal = '70'
+update Fiches_Mvt set export = '1' WHERE numero = 2
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411002'
+update Fiches_Mvt set export = '1' WHERE numero = 2
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM centralisations WHERE cd_cent = '445730'
+UPdate centralisations SET cd_cent = '445730', intitule ='Tva', db_cent = '0', crd_cent = '20', njournal = '70' WHERE cd_cent = '445730' and njournal = '70'
+update Fiches_Mvt set export = '1' WHERE numero = 2
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+SELECT * FROM centralisations WHERE cd_cent = '707000'
+UPdate centralisations SET cd_cent = '707000', intitule ='Ventes', db_cent = '0', crd_cent = '100', njournal = '70' WHERE cd_cent = '707000' and njournal = '70'
+update Fiches_Mvt set export = '1' WHERE numero = 2
