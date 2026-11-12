@@ -41,10 +41,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RENMVT-A01 — [anomalie] (confirmée phase 2 : écriture 1005 recopiée en n° 5, `DELETE … numero = '005'`, lignes 1005 restées dans `Fiches_Mvt`) `DELETE` sur le numéro tronqué `nm` au lieu du numéro de l'écriture
+- [ ] RENMVT-A01 — [anomalie] (confirmée phase 2, vague 3 : 51001 recopiée sous 1001, le DELETE supprime la ligne 411000 de l'écriture 1001 du journal 10 et laisse 51001) (confirmée phase 2 : écriture 1005 recopiée en n° 5, `DELETE … numero = '005'`, lignes 1005 restées dans `Fiches_Mvt`) `DELETE` sur le numéro tronqué `nm` au lieu du numéro de l'écriture
   copiée : l'écriture reste dans `Fiches_Mvt` et une autre écriture peut être supprimée · tests :
   T01 · sources : [RenMvt.module:20](../../../../../../.src/Compta/Utils/RenMvt.module#L20)
-- [ ] RENMVT-A02 — [anomalie] Pas de test `Available` : erreur d'exécution sans journal 80 ;
+- [ ] RENMVT-A02 — [anomalie] (confirmée phase 2, vague 3 : sans journal 80 : « Result is not available ») Pas de test `Available` : erreur d'exécution sans journal 80 ;
   colonnes `control`, `numerodef`, `dateech`… non copiées (inaltérabilité rompue) · tests : T01,
   T02 · sources : [RenMvt.module:12](../../../../../../.src/Compta/Utils/RenMvt.module#L12), [RenMvt.module:19](../../../../../../.src/Compta/Utils/RenMvt.module#L19)
 - [ ] RENMVT-A03 — [anomalie] Script ponctuel destructeur accessible par `Prgm` sans confirmation :

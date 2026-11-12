@@ -51,7 +51,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] LETTRAGESOLDES-A01 — [anomalie] L'UPDATE ne lettre que les lignes dont le lot égale celui de
+- [ ] LETTRAGESOLDES-A01 — [anomalie] (confirmée phase 2, vague 3 : seul le lot A est lettré pour 411001) L'UPDATE ne lettre que les lignes dont le lot égale celui de
   la première ligne non lettrée ; si ce lot est `NULL`, rien n'est lettré mais le compte est compté
   dans le message · tests : T03 · sources : [Lettragesoldes.class:93](../../../../../../.src/Compta/Lettrages/Lettragesoldes.class#L93), [Lettragesoldes.class:97](../../../../../../.src/Compta/Lettrages/Lettragesoldes.class#L97)
 - [ ] LETTRAGESOLDES-A02 — [anomalie] Seul `Fiches_Comptes.solde = 0` est testé (égalité Float) :
@@ -61,3 +61,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   dont la première ligne n'a pas de lot · tests : T03 · sources : [Lettragesoldes.class:94](../../../../../../.src/Compta/Lettrages/Lettragesoldes.class#L94)
 - [ ] LETTRAGESOLDES-A04 — [anomalie] Le bouton d'aide ouvre la page `Lettragemontant` (à confirmer :
   page dédiée absente ou erreur de copie) · tests : aucun · sources : [Lettragesoldes.class:Button1_Click](../../../../../../.src/Compta/Lettrages/Lettragesoldes.class#L111-L115)
+- [ ] LETTRAGESOLDES-A05 — [anomalie] `Sha1Calc.CalcSha1` est appelé pour chaque ligne non lettrée du compte, y compris celles que l'UPDATE n'a pas lettrées (autre lot, lot NULL) : `control` recalculé sur des lignes non modifiées (ligne 302 de 411001, les deux lignes de 411002) (phase 2, vague 3, 2026-11-12) · tests : T03 · sources : [Lettragesoldes.class:98](../../../../../../.src/Compta/Lettrages/Lettragesoldes.class#L98)

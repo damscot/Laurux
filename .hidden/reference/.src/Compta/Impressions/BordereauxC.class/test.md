@@ -11,19 +11,23 @@ masquées si besoin, empreinte SHA-1 conservée car déterministe à données é
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| BORDEREAUXC-T01 | replay | Ouverture | jeu `Fiches_BordereauxC` (3 chèques clients, 2 chèques caisse) | grille chargée, combo banques hors `53` ; dump inchangé | `tests/ouverture/` | à faire |
-| BORDEREAUXC-T02 | replay | Ajout / modification / suppression de chèque | clic droit + saisie + « save » ; modification d'une ligne existante ; « trash » + Oui | dump `Fiches_BordereauxC` (date de la ligne modifiée et montant saisi avec virgule figés, A08) | `tests/grille/` | à faire |
-| BORDEREAUXC-T03 | replay | Impression sans comptabilisation | n° 12, banque 51, « Imprimer », Non à l'effacement | PDF normalisé ; copie sous `FactcheminC/Bordereaux/aaaa/mm` ; compteurs `numecriture*` incrémentés (A04 figée) | `tests/impression_seule/` | à faire |
-| BORDEREAUXC-T04 | replay | Remise complète | idem, Oui à l'effacement | dump : lignes `Fiches_Mvt` (clients, caisse, banque, collectif), soldes `Fiches_Comptes`, SHA-1, chèques supprimés ; libellé banque sans numéro (A01), collectif crédité deux fois du dernier chèque (A02), solde du collectif (A03) figés | `tests/remise_complete/` | à faire |
-| BORDEREAUXC-T05 | replay | Désélection | un chèque désélectionné (colonne 2) puis remise | chèque désélectionné conservé, absent du PDF et des écritures | `tests/deselection/` | à faire |
-| BORDEREAUXC-T06 | replay | Lettrage | chèque client dont le lot (n° de facture) solde exactement la facture | ligne `lettree = 1` ; chèque caisse jamais lettré (A05 figée) | `tests/lettrage/` | à faire |
-| BORDEREAUXC-T07 | replay | Chèque sans code client | ligne sans code | `Message.Error` avec le montant du chèque précédent (A06 figée) | `tests/sans_code/` | à faire |
-| BORDEREAUXC-T08 | replay | Contrôles de saisie | sans n° de bordereau ; sans banque | `Message.Warning` correspondant ; aucun changement en base | `tests/controles/` | à faire |
-| BORDEREAUXC-T09 | replay | Chemin de copie absent ou avec espace | `FactcheminC` vide ; puis chemin « /tmp/a b » | avertissement « Copie impossible » ; copie échouée sans message (A07 figée) | `tests/copie_pdf/` | à faire |
-| BORDEREAUXC-T10 | gbtest | `Comptabilise_Remise` (après BORDEREAUXC-006) | base de test, liste de chèques en paramètre | dump identique à T04 | `tests/comptabilise/` | à faire |
-| BORDEREAUXC-T11 | replay | SQLite | T04 sur `Laurux01.sqlite` | même dump fonctionnel que MySQL (sinon écart documenté) | `tests/sqlite/` | à faire |
+| BORDEREAUXC-T01 | replay | Ouverture | jeu `Fiches_BordereauxC` (3 chèques clients, 2 chèques caisse) | grille chargée, combo banques hors `53` ; dump inchangé | `tests/ouverture/` | implémenté (requêtes de chargement, dump inchangé ; contenu de la grille non comparé) |
+| BORDEREAUXC-T02 | replay | Ajout / modification / suppression de chèque | clic droit + saisie + « save » ; modification d'une ligne existante ; « trash » + Oui | dump `Fiches_BordereauxC` (date de la ligne modifiée et montant saisi avec virgule figés, A08) | `tests/grille/` | à faire : non traité en vague 3 (temps) |
+| BORDEREAUXC-T03 | replay | Impression sans comptabilisation | n° 12, banque 51, « Imprimer », Non à l'effacement | PDF normalisé ; copie sous `FactcheminC/Bordereaux/aaaa/mm` ; compteurs `numecriture*` incrémentés (A04 figée) | `tests/impression_seule/` | à faire : non traité en vague 3 (temps) |
+| BORDEREAUXC-T04 | replay | Remise complète | idem, Oui à l'effacement | dump : lignes `Fiches_Mvt` (clients, caisse, banque, collectif), soldes `Fiches_Comptes`, SHA-1, chèques supprimés ; libellé banque sans numéro (A01), collectif crédité deux fois du dernier chèque (A02), solde du collectif (A03) figés | `tests/remise_complete/` | à faire : non traité en vague 3 (temps) |
+| BORDEREAUXC-T05 | replay | Désélection | un chèque désélectionné (colonne 2) puis remise | chèque désélectionné conservé, absent du PDF et des écritures | `tests/deselection/` | à faire : non traité en vague 3 (temps) |
+| BORDEREAUXC-T06 | replay | Lettrage | chèque client dont le lot (n° de facture) solde exactement la facture | ligne `lettree = 1` ; chèque caisse jamais lettré (A05 figée) | `tests/lettrage/` | à faire : non traité en vague 3 (temps) |
+| BORDEREAUXC-T07 | replay | Chèque sans code client | ligne sans code | `Message.Error` avec le montant du chèque précédent (A06 figée) | `tests/sans_code/` | à faire : non traité en vague 3 (temps) |
+| BORDEREAUXC-T08 | replay | Contrôles de saisie | sans n° de bordereau ; sans banque | `Message.Warning` correspondant ; aucun changement en base | `tests/controles/` | implémenté |
+| BORDEREAUXC-T09 | replay | Chemin de copie absent ou avec espace | `FactcheminC` vide ; puis chemin « /tmp/a b » | avertissement « Copie impossible » ; copie échouée sans message (A07 figée) | `tests/copie_pdf/` | à faire : non traité en vague 3 (temps) |
+| BORDEREAUXC-T10 | gbtest | `Comptabilise_Remise` (après BORDEREAUXC-006) | base de test, liste de chèques en paramètre | dump identique à T04 | `tests/comptabilise/` | à faire : exige l'extraction BORDEREAUXC-006 |
+| BORDEREAUXC-T11 | replay | SQLite | T04 sur `Laurux01.sqlite` | même dump fonctionnel que MySQL (sinon écart documenté) | `tests/sqlite/` | à faire : non traité en vague 3 (temps) |
 
 ## Détail des tests
+
+- **Implémentés** : T01 `.hidden/Tests/Compta/assets/bordereauxc_ouverture/`, T08 `bordereauxc_controles/`
+  (jeu `bordereauxc_shared/bordereauxc_base.sql` : 3 chèques clients, date 2018-06-15). Menu
+  `Fmenu#Menu67#Menu321` (fenêtre modale).
 
 - **Génération des valeurs attendues** : clone **Laurux non modifié**, base MariaDB Docker restaurée
   avant chaque test, `faketime` à date fixe (date du bordereau, `DateChooser1`, titre du PDF),

@@ -80,7 +80,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `Mtc` passe par `Val(Utils.cpoint(…))` ; `Mtd` inséré sans `PointBase` sur la ligne de tiers
   (résultat dépendant du séparateur décimal du fichier, à confirmer) · tests : T10 ·
   sources : [Cielimp.class:328](../../../../../.src/Compta/Cielimp.class#L328), [Cielimp.class:331](../../../../../.src/Compta/Cielimp.class#L331), [Cielimp.class:364](../../../../../.src/Compta/Cielimp.class#L364)
-- [ ] CIELIMP-A05 — [anomalie] Trésorerie : `Tresor` (booléen) reçoit `type_jo` puis est comparé à
+- [ ] CIELIMP-A05 — [anomalie] (confirmée phase 2, vague 3 : `tresorerie` = 0 sur toutes les lignes importées, même pour le journal 50 de type TR, figé par T01) Trésorerie : `Tresor` (booléen) reçoit `type_jo` puis est comparé à
   `"TR"` (comparaison booléen/chaîne, probablement toujours fausse, à confirmer) · tests : T09 ·
   sources : [Cielimp.class:337-342](../../../../../.src/Compta/Cielimp.class#L337-L342)
 - [ ] CIELIMP-A06 — [anomalie] Compte de trésorerie `51210000` en dur ; `UPDATE … where numero =

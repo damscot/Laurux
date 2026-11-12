@@ -1,0 +1,28 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+Select * FROM Fiches_Mvt WHERE compte = '453200'
+Select * FROM Fiches_Comptes WHERE coll_cc = '453200'
+DELETE FROM Fiches_Comptes WHERE compte_cc = '453200'
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+Select * FROM Fiches_Mvt WHERE compte = '602100'
+Select * FROM Fiches_Comptes WHERE coll_cc = '602100'
+DELETE FROM Fiches_Comptes WHERE compte_cc = '602100'
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)

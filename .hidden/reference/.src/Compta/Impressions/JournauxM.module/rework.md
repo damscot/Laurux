@@ -76,13 +76,13 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   remettre `Journaux.Mouse` (curseur bloqué en attente), sans PDF, et sans remise à zéro de
   `Totdeb2`/`Totcred2` (la ligne « Total journal » de l'impression suivante est faussée) · tests :
   T07 · sources : [JournauxM.module:126-129](../../../../../../.src/Compta/Impressions/JournauxM.module#L126-L129), [JournauxM.module:204-205](../../../../../../.src/Compta/Impressions/JournauxM.module#L204-L205)
-- [ ] JOURNAUXM-A02 — [anomalie] Filtre de dates en SQL au format `yyyymmdd` sur une colonne
+- [ ] JOURNAUXM-A02 — [anomalie] (confirmée phase 2, vague 3 : écriture du dernier jour avec heure non nulle non centralisée) Filtre de dates en SQL au format `yyyymmdd` sur une colonne
   `datetime` : sous MySQL, les écritures du dernier jour avec une heure non nulle sont exclues ;
   sous SQLite, la comparaison texte `'2025-01-05' >= '20250101'` est fausse (journaux vides, à
   confirmer) · tests : T09, T10 · sources : [JournauxM.module:97](../../../../../../.src/Compta/Impressions/JournauxM.module#L97), [JournauxM.module:99](../../../../../../.src/Compta/Impressions/JournauxM.module#L99)
 - [ ] JOURNAUXM-A03 — [anomalie] Table de travail `centralisation` physique et partagée (DROP /
   CREATE à chaque journal) : deux postes qui impriment en même temps se corrompent mutuellement ;
   la passer en `TEMPORARY` change le dump · tests : T01, T03 · sources : [JournauxM.module:Createtable](../../../../../../.src/Compta/Impressions/JournauxM.module#L362-L374)
-- [ ] JOURNAUXM-A04 — [anomalie] Libellé de collectif : `Type` n'est pas réinitialisé, un collectif
+- [ ] JOURNAUXM-A04 — [anomalie] (confirmée phase 2, vague 3 : 421000 imprimé sous « Collectif clients ») Libellé de collectif : `Type` n'est pas réinitialisé, un collectif
   qui n'est ni `40…`, ni `41…`, ni `453` reprend le libellé du collectif précédent (ou une chaîne
   vide) · tests : T11 · sources : [JournauxM.module:225-235](../../../../../../.src/Compta/Impressions/JournauxM.module#L225-L235)

@@ -59,10 +59,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] JOURNAUXA-A01 — [anomalie] `pdf.level2J` appelé avec 9 arguments (paramètre `Nlot` absent,
+- [ ] JOURNAUXA-A01 — [anomalie] (confirmée phase 2, vague 3 : tri par postes → « Not enough arguments » sur `pdf.level2J` (l. 695), erreur fatale dès qu'une écriture est dans la période) `pdf.level2J` appelé avec 9 arguments (paramètre `Nlot` absent,
   non optionnel dans `Ccompta`) : erreur à la première écriture de la période, impression
   impossible (à confirmer par T02) · tests : T02 · sources : [JournauxA.class:695](../../../../../../.src/Compta/Impressions/JournauxA.class#L695), [Ccompta.class:level2J](../../../../../../.src/Reports/Ccompta.class#L289-L307)
-- [ ] JOURNAUXA-A02 — [anomalie] `Fiches_Postes` n'a pas de colonne `intitule` (c'est
+- [ ] JOURNAUXA-A02 — [anomalie] (confirmée phase 2, vague 3 : tri par journaux → « Unknown column 'intitule' ») `Fiches_Postes` n'a pas de colonne `intitule` (c'est
   `intitulep`) : liste des postes en erreur, tri journaux/postes en erreur SQL · tests : T01, T03 ·
   sources : [JournauxA.class:233](../../../../../../.src/Compta/Impressions/JournauxA.class#L233), [JournauxA.class:663](../../../../../../.src/Compta/Impressions/JournauxA.class#L663)
 - [ ] JOURNAUXA-A03 — [anomalie] Libellés de poste et de journal lus avec `>=` sans `ORDER BY` :
@@ -76,3 +76,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   poste/journal imprimés pour des écritures hors période (même défaut qu'EditcompteA:633) · tests : T04, T07 · sources : [JournauxA.class:615-619](../../../../../../.src/Compta/Impressions/JournauxA.class#L615-L619), [JournauxA.class:631-680](../../../../../../.src/Compta/Impressions/JournauxA.class#L631-L680)
 - [ ] JOURNAUXA-A06 — [anomalie] Saut de page : en-tête « Journal N° <compte> <intitulé du
   compte> » (variables de compte) · tests : T02 · sources : [JournauxA.class:716-725](../../../../../../.src/Compta/Impressions/JournauxA.class#L716-L725)
+- [ ] JOURNAUXA-A07 — [amélioration] Testabilité et ergonomie : action déclenchée par la touche F2 : non rejouable par le harnais (REPLAYOBSERVER : touches de fonction et Échap non rejouées) et peu découvrable. Proposition : offrir (ou rendre visible, s'il existe) un bouton ou une entrée de menu équivalente (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : JOURNAUXA-T01 · sources : [JournauxA.class:276](../../../../../../.src/Compta/Impressions/JournauxA.class#L276)

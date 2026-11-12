@@ -1,0 +1,23 @@
+{
+ "id": "CIELIMP-T06",
+ "objet": "Écriture déséquilibrée (au milieu)",
+ "classe": "Cielimp",
+ "description": "Import Ciel (Menu182) d'un fichier dont l'écriture 00001 (au milieu) est déséquilibrée (120 D / 100 C) : Message.Warning « L'écriture numero 00001 du journal 60 n'est pas équilibrée » (Entrée, Cielimp.class:147), sortie anticipée (fichiers laissés ouverts, A02) ; Quitter (Button4).",
+ "dataset": "cielimp_shared/cielimp_nominal",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/FCompte",
+  "tmp/FJournaux",
+  "tmp/FClients",
+  "@ouvrir.trace"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

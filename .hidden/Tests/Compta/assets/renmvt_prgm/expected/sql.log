@@ -1,0 +1,27 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Mvt where jour = '80' order by dte, numero
+SELECT * FROM Fiches_Mvt1 where numero = '1001' and compte = '411000'
+INSERT INTO Fiches_Mvt1(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,pointee, numcol) VALUES ('80', 1001, '411000', 'Clients', '2018-01-10 00:00:00', 'R1001', NULL, 'Report 80 un', '120.50', '0.00', '0', NULL, NULL, NULL, '0', '0', NULL )
+delete FROM Fiches_Mvt where numero = '1001' and compte = '411000'
+SELECT * FROM Fiches_Mvt1 where numero = '1001' and compte = '512000'
+INSERT INTO Fiches_Mvt1(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,cloturee,pointee, numcol) VALUES ('80', 1001, '512000', 'Banque', '2018-01-10 00:00:00', 'R1001', NULL, 'Report 80 un', '0.00', '120.50', '0', NULL, NULL, NULL, '0', '0', NULL )
+delete FROM Fiches_Mvt where numero = '1001' and compte = '512000'
+SELECT * FROM Fiches_Mvt1 where numero = '2002' and compte = '607000'

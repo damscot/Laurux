@@ -11,20 +11,20 @@ sont comparés tels quels). Tests de type **replay** sur l'écran ; après EXPOR
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EXPORTA47-T01 | replay | FEC définitif, exercice précédent | `EN`, période complète antérieure à `dtepc`, écritures validées avec `numerodef` | fichier `<SIREN>FEC<fin>-<début>` identique à la référence ; message de succès | `tests/fec_definitif/` | à faire |
-| EXPORTA47-T02 | replay | FEC provisoire | période dont la fin dépasse `dtepc` | numérotation `numero` | `tests/fec_provisoire/` | à faire |
-| EXPORTA47-T03 | replay | Champs réglementaires manquants | écritures sans `numerodef`, sans libellé, journal sans libellé | valeurs `Err:…` dans le fichier ; message listant les numéros (tronqué à ~20 caractères) | `tests/fec_erreurs/` | à faire |
-| EXPORTA47-T04 | replay | Règles de lignes | collectifs, lignes à débit et crédit, lignes à zéro, écritures non validées | collectifs, zéros et non validées absents ; montants compensés | `tests/fec_regles_lignes/` | à faire |
-| EXPORTA47-T05 | replay | Dates de ligne | `datee` et `dteval` nulles ou renseignées | `EcritureDate`/`ValidDate` selon la règle de repli sur `dte` | `tests/fec_dates/` | à faire |
-| EXPORTA47-T06 | replay | Caractères spéciaux et longueurs | libellés avec `'`, `é`, `ô`, retour ligne ; intitulé de 40 caractères avec apostrophe ; `numdoc` de 10 caractères | octets de référence (`\'`, `ô` → `e`, A08 figée ou erreur capturée) | `tests/fec_caracteres/` | à faire |
-| EXPORTA47-T07 | replay | Compte absent du plan comptable | écriture sur un compte supprimé | message d'abandon puis erreur Gambas, fichier partiel (A01 figée) | `tests/fec_compte_absent/` | à faire |
-| EXPORTA47-T08 | replay | Annulation | annuler la barre de progression à mi-parcours (≥ 1 500 lignes) | fichier tronqué et message de succès (A03 figée) | `tests/fec_annulation/` | à faire |
-| EXPORTA47-T09 | replay | Choix de période | `EC`, `EN`, `E1`…`E5` avec `dteclec*` de référence, date système figée | `DteN0`/`Dten1` de référence (`EC` : A02 figée) | `tests/fec_periodes/` | à faire |
-| EXPORTA47-T10 | replay | Contrôle des dates | début avant `dte1`, fin après `dte2`, calendrier | avertissements et remise aux bornes ; pas d'export | `tests/fec_controle_dates/` | à faire |
-| EXPORTA47-T11 | replay | Dernier jour avec heure non nulle | écriture datée `<fin> 14:00:00` | ligne absente (A07 figée, à confirmer) | `tests/fec_heure/` | à faire |
-| EXPORTA47-T12 | replay | Préférences | choisir un répertoire, saisir une adresse, Quitter, rouvrir | `Chemin-export`/`Adr-export` restaurés ; case « Envoi par Mail » sans effet (A06) | `tests/fec_preferences/` | à faire |
-| EXPORTA47-T13 | replay | Base SQLite | T01 sur la base SQLite dérivée | fichier identique à T01 (ou écart figé) | `tests/fec_sqlite/` | à faire |
-| EXPORTA47-T14 | replay | Performance | 50 000 lignes | durée et nombre de requêtes de référence (`gbx3 -p`, log `Exec_SQL`) | `tests/fec_perf/` | à faire |
+| EXPORTA47-T01 | replay | FEC définitif, exercice précédent | `EN`, période complète antérieure à `dtepc`, écritures validées avec `numerodef` | fichier `<SIREN>FEC<fin>-<début>` identique à la référence ; message de succès | `tests/fec_definitif/` | implémenté |
+| EXPORTA47-T02 | replay | FEC provisoire | période dont la fin dépasse `dtepc` | numérotation `numero` | `tests/fec_provisoire/` | implémenté |
+| EXPORTA47-T03 | replay | Champs réglementaires manquants | écritures sans `numerodef`, sans libellé, journal sans libellé | valeurs `Err:…` dans le fichier ; message listant les numéros (tronqué à ~20 caractères) | `tests/fec_erreurs/` | implémenté |
+| EXPORTA47-T04 | replay | Règles de lignes | collectifs, lignes à débit et crédit, lignes à zéro, écritures non validées | collectifs, zéros et non validées absents ; montants compensés | `tests/fec_regles_lignes/` | implémenté |
+| EXPORTA47-T05 | replay | Dates de ligne | `datee` et `dteval` nulles ou renseignées | `EcritureDate`/`ValidDate` selon la règle de repli sur `dte` | `tests/fec_dates/` | implémenté (scénario de T04) |
+| EXPORTA47-T06 | replay | Caractères spéciaux et longueurs | libellés avec `'`, `é`, `ô`, retour ligne ; intitulé de 40 caractères avec apostrophe ; `numdoc` de 10 caractères | octets de référence (`\'`, `ô` → `e`, A08 figée ou erreur capturée) | `tests/fec_caracteres/` | à faire : caractères accentués non rejouables à la saisie, jeu à écrire (non traité faute de temps) |
+| EXPORTA47-T07 | replay | Compte absent du plan comptable | écriture sur un compte supprimé | message d'abandon puis erreur Gambas, fichier partiel (A01 figée) | `tests/fec_compte_absent/` | implémenté (code de sortie 125 figé) |
+| EXPORTA47-T08 | replay | Annulation | annuler la barre de progression à mi-parcours (≥ 1 500 lignes) | fichier tronqué et message de succès (A03 figée) | `tests/fec_annulation/` | à faire : annulation de la ProgBar non rejouable |
+| EXPORTA47-T09 | replay | Choix de période | `EC`, `EN`, `E1`…`E5` avec `dteclec*` de référence, date système figée | `DteN0`/`Dten1` de référence (`EC` : A02 figée) | `tests/fec_periodes/` | à faire : non traité (vague 3, temps) |
+| EXPORTA47-T10 | replay | Contrôle des dates | début avant `dte1`, fin après `dte2`, calendrier | avertissements et remise aux bornes ; pas d'export | `tests/fec_controle_dates/` | implémenté (début hors exercice seulement ; fin hors exercice et calendrier DateChooser non rejoués) |
+| EXPORTA47-T11 | replay | Dernier jour avec heure non nulle | écriture datée `<fin> 14:00:00` | ligne absente (A07 figée, à confirmer) | `tests/fec_heure/` | à faire : non traité (vague 3, temps) |
+| EXPORTA47-T12 | replay | Préférences | choisir un répertoire, saisir une adresse, Quitter, rouvrir | `Chemin-export`/`Adr-export` restaurés ; case « Envoi par Mail » sans effet (A06) | `tests/fec_preferences/` | à faire : sélection de répertoire (Svs2, Dialog) non rejouable ; Chemin-export via @Laurux.conf possible |
+| EXPORTA47-T13 | replay | Base SQLite | T01 sur la base SQLite dérivée | fichier identique à T01 (ou écart figé) | `tests/fec_sqlite/` | à faire : base SQLite non disponible dans le bac |
+| EXPORTA47-T14 | replay | Performance | 50 000 lignes | durée et nombre de requêtes de référence (`gbx3 -p`, log `Exec_SQL`) | `tests/fec_perf/` | à faire : performance (50 000 lignes) hors délai de 20 s |
 
 ## Détail des tests
 
@@ -43,3 +43,9 @@ sont comparés tels quels). Tests de type **replay** sur l'écran ; après EXPOR
 - **Non testable automatiquement** : ouverture de l'éditeur (répondre « Non »), aide, son ;
   la conformité réglementaire elle-même (outil « Test Compta Demat » de la DGFiP) est hors
   périmètre des tests de non-régression et relève des anomalies A04/A05.
+- **Implémentation (phase 2, vague 3)** : scénarios `.hidden/Tests/Compta/assets/exporta47_fec_*` ; `Chemin-export`
+  = `{out}` (clé `conf`), fichier FEC comparé par `"fichiers": ["@123456789FEC<fin>-<début>"]`. Jeu commun
+  `exporta47_shared/exporta47_base` (copie de `extrait_base` + SIRET `123 456 789 00012`, `numerodef` 2017 = numéro + 100) ;
+  jeux propres : `exporta47_erreurs` (T03), `exporta47_lignes` (T04/T05), `exporta47_compte_absent` (T07).
+  T01 = E1 (2017, fin ≤ `dtepc` 2017-12-31 : `numerodef`), T02 = EN (2018 : `numero`). Fins de ligne `\r\n`.
+  T07 : `Result is not available` (ExportA47.Button2_Click.441) après `Me.Close`, `"code_sortie": 125`, fichier partiel.

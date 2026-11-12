@@ -1,0 +1,83 @@
+' Gambas test file
+
+''Tests de Renech (.hidden/reference/.src/Compta/Utils/Renech.class/test.md, RENECH-T01, T02).
+''Renech.run lit ~/Dtech.txt puis affiche un Message.Info bloquant en gb.test : le fichier se termine ici par
+''une ligne vide qui interrompt la boucle (Lig2[1] hors limites) après les mises à jour, avant le message.
+''Jeu Compta/recupdech_shared/recupdech_echeances. Valeurs attendues : assets/RenechTest/expected.txt (ref).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01AllerRetour", "Réimport du fichier de RecupDech après modification des échéances")
+  TestKit.Desc("T02CasLimites", "Fichier absent, ligne vide, date avec et sans heure")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "RenechTest")
+  TestKit.OuvreBase("recupdech_shared/recupdech_echeances")
+
+End
+
+Public Sub _Teardown()
+
+  Try Kill User.Home &/ "Dtech.txt"
+
+End
+
+' Échéances de Fiches_Mvt (lind:compte:numdoc=dateech)
+Private Sub Echeances() As String
+
+  Dim r As Result
+  Dim sRes As String
+
+  r = Utils.db.Exec("SELECT lind, compte, numdoc, dateech FROM " & Cbase.Table("TabMvt") & " ORDER BY lind")
+  If Not r.Available Then Return "<vide>"
+  Repeat
+    If IsNull(r!dateech) Then
+      sRes &= r!lind & ":" & r!compte & ":" & r!numdoc & "=NULL "
+    Else
+      sRes &= r!lind & ":" & r!compte & ":" & r!numdoc & "=" & Format$(r!dateech, "yyyy-mm-dd hh:nn:ss") & " "
+    Endif
+  Until r.MoveNext()
+  Return Trim(sRes)
+
+End
+
+Private Sub Lance(sCle As String)
+
+  Try Renech.run()
+  If Error Then
+    TestKit.Check(sCle, "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(sCle, "<aucune>")
+  Endif
+
+End
+
+Public Sub T01AllerRetour()
+
+  ' Fichier tel que produit par RecupDech dans ref (assets/recupdech_prgm/expected/fichiers/tmp/Dtech.txt)
+  TestKit.Check("T01/initial", Echeances())
+  Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET dateech = &1 WHERE dateech IS NOT NULL", "2019-01-01 00:00:00")
+  File.Save(User.Home &/ "Dtech.txt", "A0001;401001;04/30/2018 13:30:00;\nF0003;411002;03/04/2018 23:00:00;\nA0005;401002;05/30/2018 23:00:00;\n\n")
+  Lance("T01/erreur")
+  TestKit.Check("T01/apres", Echeances())
+
+End
+
+Public Sub T02CasLimites()
+
+  ' Fichier absent
+  Lance("T02/absent")
+  ' Ligne vide seule
+  File.Save(User.Home &/ "Dtech.txt", "\n")
+  Lance("T02/ligne_vide")
+  TestKit.Check("T02/apres_ligne_vide", Echeances())
+  ' Date avec heure (F0003), date sans heure (A0005)
+  File.Save(User.Home &/ "Dtech.txt", "F0003;411002;08/31/2024 10:00:00;\nA0005;401002;08/31/2024;\n\n")
+  Lance("T02/dates")
+  TestKit.Check("T02/apres_dates", Echeances())
+
+End

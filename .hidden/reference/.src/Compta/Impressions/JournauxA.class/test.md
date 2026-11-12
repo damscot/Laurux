@@ -10,14 +10,14 @@ décision sur les anomalies.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| JOURNAUXA-T01 | replay | Liste des postes | F2 sur `Cpt` (postes existants) | erreur sur le champ `intitule` (A02 figée, message exact à capturer) | `tests/liste_postes/` | à faire |
-| JOURNAUXA-T02 | replay | Impression, tri postes/journaux | `Fiches_MvtA` : 2 postes, 2 journaux, écritures dans la période | comportement figé (erreur d'arguments de `level2J` attendue, A01 à confirmer) | `tests/tri_postes/` | à faire |
-| JOURNAUXA-T03 | replay | Impression, tri journaux/postes | mêmes données, `RadioButton2` | erreur SQL `intitule` (A02 figée) | `tests/tri_journaux/` | à faire |
-| JOURNAUXA-T04 | replay | Écritures toutes hors période | `Fiches_MvtA` avec dates hors période | PDF avec titres de rupture sans ligne + page de centralisation vide (A05 figée) | `tests/hors_periode/` | à faire |
-| JOURNAUXA-T05 | replay | Aucune écriture | postes `998`-`999` | message « Aucune ecriture pour cette demande » | `tests/aucune_ecriture/` | à faire |
-| JOURNAUXA-T06 | replay | Complétion de date | saisie `15` puis `15.03` dans `dteN0`/`dteN1` | `15.<mois>.<année>` et `15.03.<année>` courants | `tests/completion_date/` | à faire |
-| JOURNAUXA-T07 | replay | Choix d'exercice | `N1`…`N5` puis impression | dates de référence ; lecture de `Fiches_MvtA` quel que soit l'exercice (A05 figée) | `tests/choix_exercice/` | à faire |
-| JOURNAUXA-T08 | replay | Quitter | Quitter après impression | `~/tmp/Journaux.pdf` supprimé | `tests/quitter/` | à faire |
+| JOURNAUXA-T01 | replay | Liste des postes | F2 sur `Cpt` (postes existants) | erreur sur le champ `intitule` (A02 figée, message exact à capturer) | `tests/liste_postes/` | à faire : touche F2 non rejouée |
+| JOURNAUXA-T02 | replay | Impression, tri postes/journaux | `Fiches_MvtA` : 2 postes, 2 journaux, écritures dans la période | comportement figé (erreur d'arguments de `level2J` attendue, A01 à confirmer) | `tests/tri_postes/` | implémenté |
+| JOURNAUXA-T03 | replay | Impression, tri journaux/postes | mêmes données, `RadioButton2` | erreur SQL `intitule` (A02 figée) | `tests/tri_journaux/` | implémenté |
+| JOURNAUXA-T04 | replay | Écritures toutes hors période | `Fiches_MvtA` avec dates hors période | PDF avec titres de rupture sans ligne + page de centralisation vide (A05 figée) | `tests/hors_periode/` | implémenté |
+| JOURNAUXA-T05 | replay | Aucune écriture | postes `998`-`999` | message « Aucune ecriture pour cette demande » | `tests/aucune_ecriture/` | implémenté |
+| JOURNAUXA-T06 | replay | Complétion de date | saisie `15` puis `15.03` dans `dteN0`/`dteN1` | `15.<mois>.<année>` et `15.03.<année>` courants | `tests/completion_date/` | à faire : dates complétées visibles seulement à l'écran et dans le PDF (non comparés) |
+| JOURNAUXA-T07 | replay | Choix d'exercice | `N1`…`N5` puis impression | dates de référence ; lecture de `Fiches_MvtA` quel que soit l'exercice (A05 figée) | `tests/choix_exercice/` | à faire : dates de référence visibles seulement à l'écran et dans le PDF (non comparés) |
+| JOURNAUXA-T08 | replay | Quitter | Quitter après impression | `~/tmp/Journaux.pdf` supprimé | `tests/quitter/` | implémenté |
 
 ## Détail des tests
 
@@ -32,3 +32,8 @@ décision sur les anomalies.
   mode strict ; fixer `sql_mode` dans le conteneur et le noter dans `tests/`.
 - **Date système** : `_New`/`Ex1` dépendent de `Now` : horloge figée (`faketime`).
 - **Non testable automatiquement** : visualiseur PDF, aide, sons.
+- **Scénarios (vague 3)** : `.hidden/Tests/Compta/assets/journauxa_<nom>/` — `tri_postes` (T02, `code_sortie` 125 :
+  « Not enough arguments » sur `pdf.level2J`, l. 695, A01 confirmée), `tri_journaux` (T03, `code_sortie` 125 :
+  « Unknown column 'intitule' », A02), `hors_periode` (T04 et T08 : PDF ouvert puis supprimé par Quitter, `tmp/Journaux.pdf`
+  comparé « <fichier absent> »), `aucune_ecriture` (T05, Laurux01). Jeux : `journauxa_shared/journauxa_base.sql` (postes 10/20,
+  Fiches_MvtA 2018), `journauxa_hors_periode/journauxa_hors_periode.sql` (écritures 2016).

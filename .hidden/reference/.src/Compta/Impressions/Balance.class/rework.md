@@ -69,11 +69,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] BALANCE-A01 — [anomalie] Export client/fournisseur : `FROM Fiches_Comptes Fiches_Cli WHERE
+- [ ] BALANCE-A01 — [anomalie] (confirmée phase 2, vague 3 : export client/fournisseur en échec sur `cli_code`, figé par T07) Export client/fournisseur : `FROM Fiches_Comptes Fiches_Cli WHERE
   cli_code = compte_cc` (virgule manquante, `Fiches_Cli` devient un alias) → erreur SQL
   systématique, export impossible. Corriger comme `BalanceM` (commit `729b22cf`) avec
   `Cbase.Table("TabCli")` · tests : T07 · sources : [Balance.class:647](../../../../../../.src/Compta/Impressions/Balance.class#L647), [BalanceM.module:82](../../../../../../.src/Compta/Impressions/BalanceM.module#L82)
-- [ ] BALANCE-A02 — [anomalie] Export balance générale : `… and type_cc = &4 or type_cc = &5` sans
+- [ ] BALANCE-A02 — [anomalie] (confirmée phase 2, vague 3 : l'export de la balance générale inclut tous les comptes B quelle que soit la plage, figé par T06) Export balance générale : `… and type_cc = &4 or type_cc = &5` sans
   parenthèses → tous les comptes de bilan sont exportés, hors plage et collectifs compris · tests :
   T06 · sources : [Balance.class:644](../../../../../../.src/Compta/Impressions/Balance.class#L644)
 - [ ] BALANCE-A03 — [anomalie] L'export exclut les comptes collectifs (`coll <> 1`) alors que
@@ -84,3 +84,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (dépend de la levée de `E0_Click`, à confirmer) · tests : T04 · sources : [Balance.class:410](../../../../../../.src/Compta/Impressions/Balance.class#L410), [Balance.class:424](../../../../../../.src/Compta/Impressions/Balance.class#L424)
 - [ ] BALANCE-A05 — [anomalie] Textes incohérents : « Balances.txt » annoncé pour `~/balances.txt`,
   `Nom = "Client"` à l'ouverture contre `"client"` après clic (titre du PDF) · tests : T03, T06 · sources : [Balance.class:74](../../../../../../.src/Compta/Impressions/Balance.class#L74), [Balance.class:463](../../../../../../.src/Compta/Impressions/Balance.class#L463), [Balance.class:698](../../../../../../.src/Compta/Impressions/Balance.class#L698)
+- [ ] BALANCE-A06 — [amélioration] Testabilité et ergonomie : action déclenchée par la touche F2 : non rejouable par le harnais (REPLAYOBSERVER : touches de fonction et Échap non rejouées) et peu découvrable. Proposition : offrir (ou rendre visible, s'il existe) un bouton ou une entrée de menu équivalente (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : BALANCE-T09 · sources : [Balance.class](../../../../../../.src/Compta/Impressions/Balance.class)

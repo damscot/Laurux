@@ -1,0 +1,17 @@
+{
+ "id": "RAZCLOS-T03",
+ "objet": "Effet du déblocage sur le contrôle des clés",
+ "classe": "RazClos",
+ "description": "Jeu razclos_cloturee (clés control factices = écritures altérées après scellement) : Déblocage écritures (Menu311) de l'écriture 10, message validé, Quitter ; puis Impressions › Anomalies des clés (Menu324) du 01.01.2018 au 31.12.2018, Traitement, message validé. sql.log : l'écriture 10 re-scellée par RazClos n'est plus signalée (pas de recalcul de clé pour le rapport), l'écriture 11 l'est encore (RAZCLOS-A01, figé). Modification par Saisecrit non rejouée : l'altération est portée par le jeu de données.",
+ "dataset": "razclos_shared/razclos_cloturee",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

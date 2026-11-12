@@ -55,7 +55,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FTVAC-A01 — [anomalie] `Txtva_LostFocus` et `Tvacc_LostFocus` ne sont jamais déclenchés
+- [ ] FTVAC-A01 — [anomalie] (confirmée phase 2, vague 3 : taux enregistré tel que saisi (`'10'`, `'6'`) sans le format `0.00` affiché) `Txtva_LostFocus` et `Tvacc_LostFocus` ne sont jamais déclenchés
   (groupe `Tva`) : taux non normalisé, compte de TVA jamais contrôlé (`Tvaman`), `Enr` toujours 0 →
   Entrée sur le compte ne passe jamais au bouton Enregistrer et un compte inexistant est accepté.
   Proposition : appeler ces contrôles depuis `Tva_KeyPress`/`Button1_Click` · tests : T04 · sources : [FTvac.class:Txtva_LostFocus](../../../../../../.src/Compta/Tables/FTvac.class#L217-L231), [FTvac.class:Tvacc_LostFocus](../../../../../../.src/Compta/Tables/FTvac.class#L239-L243), [FTvac.class:152](../../../../../../.src/Compta/Tables/FTvac.class#L152)
@@ -68,3 +68,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (Tab, flèches) déclenche l'enregistrement · tests : T04 · sources : [FTvac.class:Btn_KeyPress](../../../../../../.src/Compta/Tables/FTvac.class#L177-L186)
 - [ ] FTVAC-A05 — [anomalie] Pas de contrôle d'unicité du compte de TVA entre codes, contrairement
   à `FTvav.Button1_Click` (à confirmer : règle voulue pour les ventes seulement ?) · tests : T01 · sources : [FTvac.class:Button1_Click](../../../../../../.src/Compta/Tables/FTvac.class#L251-L273), [FTvav.class:261](../../../../../../.src/Compta/Tables/FTvav.class#L261)
+- [ ] FTVAC-A06 — [amélioration] Testabilité et ergonomie : action déclenchée par la touche F2 : non rejouable par le harnais (REPLAYOBSERVER : touches de fonction et Échap non rejouées) et peu découvrable ; boîte `Message.*` ouverte depuis un `LostFocus` : non vue comme fenêtre active au rejeu (code 3) et dépendante de l'ordre des changements de focus. Proposition : offrir (ou rendre visible, s'il existe) un bouton ou une entrée de menu équivalente ; déplacer le contrôle de saisie du `LostFocus` vers la validation (bouton Enregistrer/Valider) (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : FTVAC-T04, FTVAC-T05 · sources : [FTvac.class:357](../../../../../../.src/Compta/Tables/FTvac.class#L357)

@@ -10,13 +10,13 @@ une ligne au `control` altéré).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| ECRITURES-T01 | replay | Écran 1 par type | cliquer C, F, G, B | requêtes `Exec_SQL` et lignes affichées | `tests/soldes_types/` | à faire |
-| ECRITURES-T02 | replay | Écran 2 et navigation | choisir un compte, précédent, suivant | extrait, solde progressif, lettrage | `tests/extrait/` | à faire |
-| ECRITURES-T03 | replay | Écran 3 et clés | choisir une écriture (dont celle au `control` altéré) | lignes, clé mémorisée ≠ clé calculée | `tests/detail_cles/` | à faire |
-| ECRITURES-T04 | replay | Modification via `Saisecrit` | écriture non clôturée, `Necrit`, modifier un libellé | dump `Fiches_Mvt`/`Fiches_MvtM` ; repositionnement | `tests/modif_saisecrit/` | à faire |
-| ECRITURES-T05 | replay | Modification via `Tresor` | écriture de trésorerie, `Necrit` | dump ; repositionnement | `tests/modif_tresor/` | à faire |
-| ECRITURES-T06 | replay | Écriture clôturée | clic sur une ligne clôturée | message d'erreur, pas de `Necrit` | `tests/cloturee/` | à faire |
-| ECRITURES-T07 | replay | Retour arrière | `Button1` depuis les écrans 3 puis 2 | visibilité des grilles et boutons | `tests/retour/` | à faire |
+| ECRITURES-T01 | replay | Écran 1 par type | cliquer C, F, G, B | requêtes `Exec_SQL` et lignes affichées | `tests/soldes_types/` | implémenté |
+| ECRITURES-T02 | replay | Écran 2 et navigation | choisir un compte, précédent, suivant | extrait, solde progressif, lettrage | `tests/extrait/` | implémenté |
+| ECRITURES-T03 | replay | Écran 3 et clés | choisir une écriture (dont celle au `control` altéré) | lignes, clé mémorisée ≠ clé calculée | `tests/detail_cles/` | implémenté |
+| ECRITURES-T04 | replay | Modification via `Saisecrit` | écriture non clôturée, `Necrit`, modifier un libellé | dump `Fiches_Mvt`/`Fiches_MvtM` ; repositionnement | `tests/modif_saisecrit/` | implémenté |
+| ECRITURES-T05 | replay | Modification via `Tresor` | écriture de trésorerie, `Necrit` | dump ; repositionnement | `tests/modif_tresor/` | implémenté |
+| ECRITURES-T06 | replay | Écriture clôturée | clic sur une ligne clôturée | message d'erreur, pas de `Necrit` | `tests/cloturee/` | implémenté |
+| ECRITURES-T07 | replay | Retour arrière | `Button1` depuis les écrans 3 puis 2 | visibilité des grilles et boutons | `tests/retour/` | implémenté |
 
 ## Détail des tests
 
@@ -24,3 +24,10 @@ une ligne au `control` altéré).
   modifié » (ECRITURES-002), le diff `Exec_SQL` est informatif et la comparaison porte sur les
   lignes affichées.
 - Les écrans `Saisecrit`/`Tresor` ont leurs propres tests ; T04/T05 ne vérifient que l'enchaînement.
+- **Implémentation (phase 2, vague 3)** : scénarios `.hidden/Tests/Compta/assets/ecritures_<nom>/` (`soldes_types`,
+  `extrait`, `detail_cles`, `modif_saisecrit`, `modif_tresor`, `cloturee`, `retour`), jeu partagé
+  `ecritures_shared/ecritures_base.sql` (3 écritures 2018 à `collectif` NULL : n°1 facture 411001 au `control`
+  altéré, n°2 règlement de trésorerie, n°3 facture 411002 clôturée). T04/T05 : ouverture de `Saisecrit`/`Tresor`
+  (Question « Vous allez modifier l'écriture » : Oui), puis Quitter + Oui : l'écriture repasse en non validée
+  (`validee = 0, provisoire = 1`, copie dans `Fiches_MvtM`) ; le libellé n'est pas modifié. Bouton Quitter de
+  Saisecrit : `Button1#Saisecrit#HBox2#Button1#`.

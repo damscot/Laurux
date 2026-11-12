@@ -10,18 +10,25 @@ produites dans le clone **Laurux non modifié** (anomalies comprises).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| BALANCE-T01 | replay | Bornes d'exercice | ouverture, puis clic sur `E1`, `N1` … `N5`, `E0` | contenu de `dteN0`/`dteN1` après chaque clic (log des contrôles) | `tests/bornes_exercice/` | à faire |
-| BALANCE-T02 | replay | `Ex1` avec début d'exercice futur | jeu dont `dteclec` est postérieur à aujourd'hui ; ouverture | bascule sur `Exo` (dates de l'exercice précédent) | `tests/ex1_debut_futur/` | à faire |
-| BALANCE-T03 | replay | Choix de la nature | clic `Bclient`, `Bfournisseur`, `Bgestion` puis **Imprimer** | `Cpt`, visibilité de `TypeClient1`, titre du PDF (« Balance client » / « Client ») | `tests/nature_balance/` | à faire |
-| BALANCE-T04 | replay | Contrôle des dates | `dteN0` avant le début, puis `dteN1` après la fin, puis `dteN1 < dteN0` (Entrée) | messages, période remise sur `Exo`, `E0` coché (A04 figée), `Tab0` vu par l'impression suivante | `tests/controle_dates/` | à faire |
-| BALANCE-T05 | replay | Saisie de date abrégée | `dteN0` = `0101`, `010119`, `1.1` | texte normalisé par `Cdate_calc`/`Cdate_aff` | `tests/date_abregee/` | à faire |
-| BALANCE-T06 | replay | Export balance générale | `Bgestion`, plage 6… à 7…, **Exporter** | `~/balances.txt` (tous les comptes `B` présents : A02 figée) | `tests/export_generale/` | à faire |
-| BALANCE-T07 | replay | Export client / fournisseur | `Bclient` puis `Bfournisseur`, **Exporter** | `Message.Error` SQL `cli_code` (A01 figée), fichier vide | `tests/export_client/` | à faire |
-| BALANCE-T08 | replay | Export avec comptes non mouvementés | `Bgestion`, `Impc` coché puis décoché | lignes `compte;intitulé;;;` présentes / absentes | `tests/export_non_mouvementes/` | à faire |
-| BALANCE-T09 | replay | Sélection de compte par `TriCpt` | F2 sur `Cpt` puis `Cpt2`, sélection d'une ligne ; idem en balance générale | `Cpt`/`Cpt2` remplis, `TriCpt` ouvert en mode `General` pour `G/B` | `tests/tricpt/` | à faire |
-| BALANCE-T10 | replay | Export sans écriture | plage sans compte | message « Aucune ecriture pour cette demande » | `tests/export_vide/` | à faire |
+| BALANCE-T01 | replay | Bornes d'exercice | ouverture, puis clic sur `E1`, `N1` … `N5`, `E0` | contenu de `dteN0`/`dteN1` après chaque clic (log des contrôles) | `tests/bornes_exercice/` | implémenté (bornes et table lues dans sql.log via Exporter) |
+| BALANCE-T02 | replay | `Ex1` avec début d'exercice futur | jeu dont `dteclec` est postérieur à aujourd'hui ; ouverture | bascule sur `Exo` (dates de l'exercice précédent) | `tests/ex1_debut_futur/` | à faire : jeu à dteclec futur + date figée à prévoir ; seul effet = TextBox (à observer par Exporter) |
+| BALANCE-T03 | replay | Choix de la nature | clic `Bclient`, `Bfournisseur`, `Bgestion` puis **Imprimer** | `Cpt`, visibilité de `TypeClient1`, titre du PDF (« Balance client » / « Client ») | `tests/nature_balance/` | à faire : sortie PDF non comparée (Imprimer) ; nature Cpt/Type couverte par T06/T07 (requêtes) |
+| BALANCE-T04 | replay | Contrôle des dates | `dteN0` avant le début, puis `dteN1` après la fin, puis `dteN1 < dteN0` (Entrée) | messages, période remise sur `Exo`, `E0` coché (A04 figée), `Tab0` vu par l'impression suivante | `tests/controle_dates/` | implémenté (cas dteN0 et dteN1 avant le début ; cas dteN1 < dteN0 non couvert) |
+| BALANCE-T05 | replay | Saisie de date abrégée | `dteN0` = `0101`, `010119`, `1.1` | texte normalisé par `Cdate_calc`/`Cdate_aff` | `tests/date_abregee/` | implémenté (0302 et 3004 ; 010119 et 1.1 non couverts) |
+| BALANCE-T06 | replay | Export balance générale | `Bgestion`, plage 6… à 7…, **Exporter** | `~/balances.txt` (tous les comptes `B` présents : A02 figée) | `tests/export_generale/` | implémenté |
+| BALANCE-T07 | replay | Export client / fournisseur | `Bclient` puis `Bfournisseur`, **Exporter** | `Message.Error` SQL `cli_code` (A01 figée), fichier vide | `tests/export_client/` | implémenté (A01 figée) |
+| BALANCE-T08 | replay | Export avec comptes non mouvementés | `Bgestion`, `Impc` coché puis décoché | lignes `compte;intitulé;;;` présentes / absentes | `tests/export_non_mouvementes/` | implémenté (Impc coché seulement) |
+| BALANCE-T09 | replay | Sélection de compte par `TriCpt` | F2 sur `Cpt` puis `Cpt2`, sélection d'une ligne ; idem en balance générale | `Cpt`/`Cpt2` remplis, `TriCpt` ouvert en mode `General` pour `G/B` | `tests/tricpt/` | à faire : touche F2 non rejouée |
+| BALANCE-T10 | replay | Export sans écriture | plage sans compte | message « Aucune ecriture pour cette demande » | `tests/export_vide/` | implémenté |
 
 ## Détail des tests
+
+- **Scénarios implémentés** (`.hidden/Tests/Compta/assets/`) : T01 `balance_bornes_exercice` (E1, N1, N2) et
+  `balance_bornes_exercice_n3` (N3, N4, N5), T04 `balance_controle_dates`, T05 `balance_date_abregee`, T06
+  `balance_export_generale`, T07 `balance_export_client`, T08 `balance_export_non_mouvementes`, T10
+  `balance_export_vide`. Date figée 2018-06-15 ; jeu `Compta/extrait_shared/extrait_base` (lecture seule) pour
+  T06/T07/T08, Laurux01 seul pour les autres (export générale sans écriture → « Aucune ecriture », ce qui
+  rend les bornes et la table observables dans `sql.log`). `~/balances.txt` comparé (`"fichiers"`).
 
 - **Données** : `Laurux01.sql` n'a **aucune écriture** (`Fiches_Mvt*` vides). Les tests utilisent un
   jeu dérivé commun aux éditions comptables (`Balance`, `BalanceM`, `Editcompte`, `EditcompteA`,

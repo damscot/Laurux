@@ -9,16 +9,16 @@ altérée). Résultat comparé : texte du PDF (`pdftotext`), messages, dump inch
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| ANOMALIES-T01 | replay | Dates par exercice | ouverture, puis clic sur N-1…N-5 | dates `DteN0`/`DteN1` de référence | `tests/anomalies_dates/` | à faire |
-| ANOMALIES-T02 | replay | Exercice en cours | 3 lignes altérées dans `Fiches_Mvt` | texte PDF (numéros, clés mémorisée et calculée) | `tests/anomalies_n/` | à faire |
-| ANOMALIES-T03 | replay | Exercice N-1 | 2 lignes altérées dans `Fiches_Mvt1` | texte PDF (clé calculée sur `Fiches_Mvt`, A01 figée) | `tests/anomalies_n1/` | à faire |
-| ANOMALIES-T04 | replay | Aucune anomalie, plage vide, table absente | base saine ; plage sans écriture ; N-5 sans table | « Aucune anomalie ! » ; aucun message (A03) ; message d'erreur | `tests/anomalies_cas_limites/` | à faire |
-| ANOMALIES-T05 | gbtest | `Exercice_End`/`Exercice_Begin` | indices 0 à 5 | dates de référence ; égalité avec `LDate.Exercice_Cloture` au jour près | `tests/anomalies_exercice/` | à faire |
+| ANOMALIES-T01 | replay | Dates par exercice | ouverture, puis clic sur N-1…N-5 | dates `DteN0`/`DteN1` de référence | `tests/anomalies_dates/` | à faire : seul effet = texte des TextBox DteN0/DteN1 (non comparé) ; logique couverte par T05 |
+| ANOMALIES-T02 | replay | Exercice en cours | 3 lignes altérées dans `Fiches_Mvt` | texte PDF (numéros, clés mémorisée et calculée) | `tests/anomalies_n/` | à faire : sortie PDF non comparée (jeu mvt_cles à créer) |
+| ANOMALIES-T03 | replay | Exercice N-1 | 2 lignes altérées dans `Fiches_Mvt1` | texte PDF (clé calculée sur `Fiches_Mvt`, A01 figée) | `tests/anomalies_n1/` | à faire : sortie PDF non comparée |
+| ANOMALIES-T04 | replay | Aucune anomalie, plage vide, table absente | base saine ; plage sans écriture ; N-5 sans table | « Aucune anomalie ! » ; aucun message (A03) ; message d'erreur | `tests/anomalies_cas_limites/` | à faire : messages Message.Info/Error et PDF non comparés |
+| ANOMALIES-T05 | gbtest | `Exercice_End`/`Exercice_Begin` | indices 0 à 5 | dates de référence ; égalité avec `LDate.Exercice_Cloture` au jour près | `tests/anomalies_exercice/` | implémenté |
 
 ## Détail des tests
 
 - **Valeurs attendues** : capturées dans le clone **Laurux non modifié**, `HOME` isolé, date
   d'impression masquée.
-- T05 instancie le formulaire sans l'afficher (gb.test sous Xvfb, à confirmer) ; il disparaît si
+- T05 : `.src/Tests/Compta/AnomaliesTest.test` (`T05Exercice`, base Laurux01 : exercices 2013 à 2018, indice 9 → exercice en cours) ; instancie le formulaire sans l'afficher (gb.test sous Xvfb, à confirmer) ; il disparaît si
   les fonctions sont supprimées au profit de `LDate`.
 - **Non testable automatiquement** : l'interruption de la `ProgBar` en cours de traitement.

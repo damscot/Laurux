@@ -70,5 +70,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDITCOMPTEM-A04 — [anomalie] Pas de `Catch` : une erreur SQL laisse le curseur en attente et le
   module dans un état partiel ; curseur final `Mouse.Pointing` au lieu de `Mouse.Default` ; titre des
   pages suivantes « Grand livre » sans la nature · tests : T08, T13 · sources : [EditcompteM.module:274](../../../../../../.src/Compta/Impressions/EditcompteM.module#L274), [EditcompteM.module:282](../../../../../../.src/Compta/Impressions/EditcompteM.module#L282)
-- [ ] EDITCOMPTEM-A05 — [anomalie] `Ctrln` recréée à chaque compte mouvementé et laissée en base,
+- [ ] EDITCOMPTEM-A05 — [anomalie] (confirmée phase 2, vague 3 : `Ctrln` supprimée puis recréée pour chaque compte avec écritures : seule la dernière centralisation subsiste) `Ctrln` recréée à chaque compte mouvementé et laissée en base,
   nom partagé avec 5 autres éditions (collision multi-poste) ; voir EDITCOMPTE-A06 · tests : T06 · sources : [EditcompteM.module:150](../../../../../../.src/Compta/Impressions/EditcompteM.module#L150)
+- [ ] EDITCOMPTEM-A06 — [anomalie] `IntituleCpt` n'est jamais affecté dans `Imprime` : `Ctrln.intitule` toujours NULL (phase 2, vague 3, 2026-11-12) · tests : T06 · sources : [EditcompteM.module:28](../../../../../../.src/Compta/Impressions/EditcompteM.module#L28), [EditcompteM.module:313](../../../../../../.src/Compta/Impressions/EditcompteM.module#L313)

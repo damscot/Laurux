@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RAZECR-T01 | replay | Lancement par `Prgm`, Lancer, Quitter | saisie `RazEcr`, clic Lancer puis Quitter | fenêtre ouverte puis fermée ; dump inchangé | `tests/razecr_sans_effet/` | à faire |
+| RAZECR-T01 | replay | Lancement par `Prgm`, Lancer, Quitter | saisie `RazEcr`, clic Lancer puis Quitter | fenêtre ouverte puis fermée ; dump inchangé | `tests/razecr_sans_effet/` | implémenté (Compta/razecr_sans_effet) |
 
 ## Détail des tests
 

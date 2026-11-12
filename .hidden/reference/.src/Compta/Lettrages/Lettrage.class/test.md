@@ -9,13 +9,13 @@ Valeurs attendues produites dans le clone **Laurux non modifié** (caractérisat
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LETTRAGE-T01 | replay | Ouverture et affichage | Menu Lettrage (`Menu51`) ; compte 411 saisi + Entrée ; radios Non lettrées / Lettrées / Toutes ; `Tdate` | contenu de `Colcli`, `Sld`, `Label2` relevés ; aucune écriture en base | `tests/affichage_filtres/` | à faire |
-| LETTRAGE-T02 | replay | Lettrage équilibré | facture + règlement de même montant cochés ; `numlot` vide puis lot saisi | `Fiches_Mvt*` : `lettree = 1`, `numlot` (lot aléatoire masqué par la normalisation) | `tests/lettrage_equilibre/` | à faire |
-| LETTRAGE-T03 | replay | Lettrage refusé | 2 lignes de montants différents, dont une déjà lettrée (`L` → `*`) | message « Lettrage impossible » ; lignes cochées **délettrées** en base (A01 figée) | `tests/lettrage_refuse/` | à faire |
-| LETTRAGE-T04 | replay | Délettrage | lignes lettrées cochées, bouton Délettrer | `lettree = 0`, `numlot` = lot de la dernière ligne cliquée (A03 figée) | `tests/delettrage/` | à faire |
-| LETTRAGE-T05 | replay | Navigation et types | boutons premier/précédent/suivant/dernier ; radios Clients/Fournisseurs/Bilan ; F2 (`TriCpt`) | compte affiché à chaque étape ; liste vide → erreur figée (A04) | `tests/navigation/` | à faire |
-| LETTRAGE-T06 | replay | Ouverture depuis l'extrait | `Extrait`, compte 401, F4 | fenêtre ouverte sur le compte et le type fournisseur | `tests/depuis_extrait/` | à faire |
-| LETTRAGE-T07 | gbtest | `TotalSelection` (après LETTRAGE-007) | cumuls : `"12,50"`/`"0,00"`, `""`, valeurs négatives, cocher/décocher | Float de référence | `tests/total_selection/` | à faire |
+| LETTRAGE-T01 | replay | Ouverture et affichage | Menu Lettrage (`Menu51`) ; compte 411 saisi + Entrée ; radios Non lettrées / Lettrées / Toutes ; `Tdate` | contenu de `Colcli`, `Sld`, `Label2` relevés ; aucune écriture en base | `tests/affichage_filtres/` | implémenté (requêtes comparées ; Colcli/Sld non comparés) |
+| LETTRAGE-T02 | replay | Lettrage équilibré | facture + règlement de même montant cochés ; `numlot` vide puis lot saisi | `Fiches_Mvt*` : `lettree = 1`, `numlot` (lot aléatoire masqué par la normalisation) | `tests/lettrage_equilibre/` | à faire : clic Colcli non rejouable (ColumnView Mode=Multiple : Current Null au rejeu, Lettrage.Colcli_Click.374 #13 Null object) |
+| LETTRAGE-T03 | replay | Lettrage refusé | 2 lignes de montants différents, dont une déjà lettrée (`L` → `*`) | message « Lettrage impossible » ; lignes cochées **délettrées** en base (A01 figée) | `tests/lettrage_refuse/` | à faire : clic Colcli non rejouable (ColumnView Mode=Multiple : Current Null au rejeu, Lettrage.Colcli_Click.374 #13 Null object) |
+| LETTRAGE-T04 | replay | Délettrage | lignes lettrées cochées, bouton Délettrer | `lettree = 0`, `numlot` = lot de la dernière ligne cliquée (A03 figée) | `tests/delettrage/` | à faire : clic Colcli non rejouable (ColumnView Mode=Multiple : Current Null au rejeu, Lettrage.Colcli_Click.374 #13 Null object) |
+| LETTRAGE-T05 | replay | Navigation et types | boutons premier/précédent/suivant/dernier ; radios Clients/Fournisseurs/Bilan ; F2 (`TriCpt`) | compte affiché à chaque étape ; liste vide → erreur figée (A04) | `tests/navigation/` | implémenté (sans F2/TriCpt, non rejoué ; liste Bilan vide sans erreur) |
+| LETTRAGE-T06 | replay | Ouverture depuis l'extrait | `Extrait`, compte 401, F4 | fenêtre ouverte sur le compte et le type fournisseur | `tests/depuis_extrait/` | à faire : touche F4 non rejouée |
+| LETTRAGE-T07 | gbtest | `TotalSelection` (après LETTRAGE-007) | cumuls : `"12,50"`/`"0,00"`, `""`, valeurs négatives, cocher/décocher | Float de référence | `tests/total_selection/` | à faire : extraction LETTRAGE-007 requise |
 
 ## Détail des tests
 
@@ -29,3 +29,4 @@ Valeurs attendues produites dans le clone **Laurux non modifié** (caractérisat
 - **Non testable automatiquement** : le son (`Music.Play`) ; le déplacement Haut/Bas éventuellement
   doublé de `Colcli_KeyPress` (vérification visuelle).
 - **Couverture visée** : toutes les branches de `affichage` et de `Button5_Click`.
+- **Assets (phase 2)** : jeu `.hidden/Tests/Compta/assets/lettrage_shared/lettrage_base.sql` (411001 : lind 101..105, 411002 : lind 106 ; clé Colcli = lind & numero) ; scénarios `lettrage_affichage_filtres/` (T01), `lettrage_navigation/` (T05). Fenêtre `Lettrage` (Fmenu › Menu67 › Menu6 › Menu51) ; boutons du groupe `Btn` (handler `Btn_Click`).

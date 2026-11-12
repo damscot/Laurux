@@ -46,11 +46,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EQUILIBRAGE-A01 — [anomalie] La dernière écriture du journal n'est jamais contrôlée (pas de
+- [ ] EQUILIBRAGE-A01 — [anomalie] (confirmée phase 2, vague 3 : figée) La dernière écriture du journal n'est jamais contrôlée (pas de
   traitement après la boucle) · tests : T01 · sources : [Equilibrage.class:76-92](../../../../../../.src/Compta/Utils/Equilibrage.class#L76-L92)
-- [ ] EQUILIBRAGE-A02 — [anomalie] `montantc` modifié sans recalcul de la clé `control`
+- [ ] EQUILIBRAGE-A02 — [anomalie] (confirmée phase 2, vague 3 : figée) `montantc` modifié sans recalcul de la clé `control`
   (`Sha1Calc`) ni du solde des comptes : rupture de la chaîne d'intégrité · tests : T01 · sources :
   [Equilibrage.class:81](../../../../../../.src/Compta/Utils/Equilibrage.class#L81)
-- [ ] EQUILIBRAGE-A03 — [anomalie] Écriture sans crédit jamais corrigée ; `UPDATE` sur `compte` +
+- [ ] EQUILIBRAGE-A03 — [anomalie] (confirmée phase 2, vague 3 : figée) Écriture sans crédit jamais corrigée ; `UPDATE` sur `compte` +
   `numero` modifie toutes les lignes du même compte dans l'écriture ; journal `"70"` en dur · tests :
   T01 · sources : [Equilibrage.class:72](../../../../../../.src/Compta/Utils/Equilibrage.class#L72), [Equilibrage.class:78](../../../../../../.src/Compta/Utils/Equilibrage.class#L78), [Equilibrage.class:81](../../../../../../.src/Compta/Utils/Equilibrage.class#L81)

@@ -5,9 +5,9 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TYPECLIENT-T01 | gbtest | Chargement | `Laurux01.sql` + 3 types dans `Fiches_Typec` ; `New TypeClient(fenêtre de test)` (Xvfb) | clés et libellés des éléments dans l'ordre | `tests/typeclient_chargement/` | à faire |
-| TYPECLIENT-T02 | gbtest | Propriété `where` | aucune sélection ; 1 type ; 3 types ; code avec apostrophe | `""`, `cli_typec IN('A')`, `cli_typec IN('A','B','C')`, quote échappée | `tests/typeclient_where/` | à faire |
-| TYPECLIENT-T03 | replay | Balance filtrée par type | écran Balance, sélection de 2 types, impression | lignes `Exec_SQL` et texte PDF de référence | `tests/typeclient_balance/` | à faire |
+| TYPECLIENT-T01 | gbtest | Chargement | `Laurux01.sql` + 3 types dans `Fiches_Typec` ; `New TypeClient(fenêtre de test)` (Xvfb) | clés et libellés des éléments dans l'ordre | `tests/typeclient_chargement/` | implémenté (Compta/TypeClientTest.T01Chargement, jeu typeclient_types) |
+| TYPECLIENT-T02 | gbtest | Propriété `where` | aucune sélection ; 1 type ; 3 types ; code avec apostrophe | `""`, `cli_typec IN('A')`, `cli_typec IN('A','B','C')`, quote échappée | `tests/typeclient_where/` | implémenté (Compta/TypeClientTest.T02Where ; aucune sélection : chaîne vide affichée <Null>) |
+| TYPECLIENT-T03 | replay | Balance filtrée par type | écran Balance, sélection de 2 types, impression | lignes `Exec_SQL` et texte PDF de référence | `tests/typeclient_balance/` | à faire : sélection dans le TreeView TypeClient non rejouée (clic ListView/TreeView) et sortie PDF non comparée |
 
 ## Détail des tests
 

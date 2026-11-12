@@ -1,0 +1,344 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(numrub Char(5) NOT NULL,intitrub Char(70),type Char(1),detail Char(1),compte Char(8),intitcpt Char(50),Col1 Char(25),Col2 Char(25),col3 Char(25),col4 Char(25),PRIMARY KEY (numrub, compte)) ENGINE = InnoDB
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(numrub Char(5) NOT NULL,intitrub Char(70),type Char(1),detail Char(1),compte Char(8),intitcpt Char(50),Col1 Char(12),Col2 Char(12),col3 Char(12),col4 Char(12),amortissement Tinyint(1),amortissement2 Tinyint(1),actif Tinyint(1),actif2 Tinyint(1),PRIMARY KEY (numrub, amortissement, amortissement2)) ENGINE = InnoDB
+DROP TABLE IF EXISTS Comptes
+CREATE TABLE Comptes(compte char(8) NOT NULL ,intitule VarCHAR(40) , solde Decimal(14,4) NOT NULL ,solde2 Decimal(14,4) NOT NULL ,annee char(2), numrub Char(5),intitrub VarCHAR(40) , type Char(1),detail char(1), Col1 Char(14),Col2 Char(14),col3 Char(14),col4 Char(14),amortissement Tinyint(1),amortissement2 Tinyint(1),actif Tinyint(1),actif2 Tinyint(1),PRIMARY KEY (compte)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt WHERE left(compte,1) = 6 and dte >= '20180101' and dte <= '20181231' and validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE left(compte,1) = 7 and dte >= '20180101' and dte <= '20181231' and validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE left(compte,1) = 6  and dte >= '20170101' and dte <= '20171231'  order by compte
+SELECT * FROM Fiches_Mvt1 WHERE left(compte,1) = 7  and dte >= '20170101' and dte <= '20171231'  order by compte
+SELECT * FROM Fiches_Comptes where type_cc <> 'C' and type_cc <> 'F' and type_cc <> 'G' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Mvt WHERE compte = '101000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '101000', 'Capital', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '106800' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '106800', 'Autres reserves', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '108000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '108000', 'Exploitant', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '110000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '110000', 'Report a nouveau credit', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '119000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '119000', 'Report a nouveau debit', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '120000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '120000', 'Resultat. Benefices', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '129000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '129000', 'Resultat. Perte', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '168800' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '168800', 'Interets courus', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '211000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '211000', 'Terrain', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '213000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '213000', 'Construction', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '213500' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '213500', 'Inst. Gen. Agen. Ame.', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '218200' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '218200', 'Materiel de transport', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '218300' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '218300', 'Materiel bureau informatique', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '218400' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '218400', 'Mobilier', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '218820' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '218820', 'Amortissement materiels de transport', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '231000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '231000', 'Immobilisation en cours', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '231500' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '231500', 'Amenagement en cours', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '261000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '261000', 'Titres de participation', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '266000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '266000', 'Autres formes de participation', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '275000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '275000', 'Depots et cautionnements', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '281300' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '281300', 'Amortissement construction', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '281400' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '281400', 'Amortissement mobilier', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '281500' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '281500', 'Amortissement materiel de bureau', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '281600' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '281600', 'Amortissement materiel de transport', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '281700' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '281700', 'Amortissement materiel informatique', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '335000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '335000', 'Travaux en cours', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '370000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '370000', 'Stock marchandises', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '397000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '397000', 'Provision depreciation stock', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '401000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '401000', 'Collectif fournisseur', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '408000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '408000', 'Factures non parvenues', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '408100' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '408100', 'Fournisseurs factures non parvenues', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '409600' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '409600', 'Fourniseurs emballages a rendre', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '409700' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '409700', 'Avoirs non parvenus', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '411000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '411000', 'Collectif client', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '416000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '416000', 'Clients douteux', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '419100' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '419100', 'Clients avances et acomptes reçus', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '419700' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '419700', 'Clients autres avoirs', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '421000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '421000', 'Remuneration employes', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '428200' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '428200', 'Provisions conges payes', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '437100' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '437100', 'Organismes sociaux', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '437200' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '437200', 'Retraite employes', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '444000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '444000', 'Impots societes', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445510' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445510', 'Tva a decaisser', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445620' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445620', 'Tva deductible sur immobilisation', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445660' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445660', 'Tva sur achat 2.10', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445670' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445670', 'Tva sur achat 5.50', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445680' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445680', 'Tva sur achat 19.60', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445710' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445710', 'Tva sur ventes 2.10', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445720' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445720', 'Tva sur ventes 5.50', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '445730' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '445730', 'Tva sur ventes 19.60', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '468700' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '468700', 'Débiteurs divers produits à recevoir', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '471000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '471000', 'Compte d''attente', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '491000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '491000', 'Provisions pour creances', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '512000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '512000', 'Banque', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '512001' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '512001', 'Banque 2', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '518600' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '518600', 'Interets courus', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '530000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '530000', 'Caisse', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '580000' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '580000', 'Virements internes', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '580001' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '580001', 'Virements internes cartes', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '580002' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '580002', 'Virements internes chèques', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Mvt WHERE compte = '580003' and dte >= '20180101' and dte <= '20181231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde, solde2,annee) VALUES ( '580003', 'Virements internes autres', 'B', '0', 0,'N')
+SELECT * FROM Fiches_Comptes where type_cc <> 'C' and type_cc <> 'F' and type_cc <> 'G' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Mvt1 WHERE compte = '101000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '101000', 'Capital', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '101000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '106800' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '106800', 'Autres reserves', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '106800'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '108000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '108000', 'Exploitant', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '108000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '110000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '110000', 'Report a nouveau credit', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '110000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '119000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '119000', 'Report a nouveau debit', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '119000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '120000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '120000', 'Resultat. Benefices', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '120000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '129000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '129000', 'Resultat. Perte', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '129000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '168800' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '168800', 'Interets courus', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '168800'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '211000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '211000', 'Terrain', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '211000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '213000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '213000', 'Construction', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '213000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '213500' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '213500', 'Inst. Gen. Agen. Ame.', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '213500'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '218200' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '218200', 'Materiel de transport', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '218200'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '218300' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '218300', 'Materiel bureau informatique', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '218300'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '218400' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '218400', 'Mobilier', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '218400'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '218820' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '218820', 'Amortissement materiels de transport', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '218820'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '231000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '231000', 'Immobilisation en cours', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '231000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '231500' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '231500', 'Amenagement en cours', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '231500'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '261000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '261000', 'Titres de participation', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '261000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '266000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '266000', 'Autres formes de participation', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '266000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '275000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '275000', 'Depots et cautionnements', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '275000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '281300' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '281300', 'Amortissement construction', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '281300'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '281400' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '281400', 'Amortissement mobilier', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '281400'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '281500' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '281500', 'Amortissement materiel de bureau', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '281500'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '281600' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '281600', 'Amortissement materiel de transport', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '281600'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '281700' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '281700', 'Amortissement materiel informatique', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '281700'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '335000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '335000', 'Travaux en cours', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '335000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '370000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '370000', 'Stock marchandises', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '370000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '397000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '397000', 'Provision depreciation stock', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '397000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '401000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '401000', 'Collectif fournisseur', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '401000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '408000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '408000', 'Factures non parvenues', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '408000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '408100' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '408100', 'Fournisseurs factures non parvenues', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '408100'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '409600' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '409600', 'Fourniseurs emballages a rendre', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '409600'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '409700' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '409700', 'Avoirs non parvenus', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '409700'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '411000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '411000', 'Collectif client', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '411000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '416000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '416000', 'Clients douteux', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '416000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '419100' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '419100', 'Clients avances et acomptes reçus', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '419100'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '419700' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '419700', 'Clients autres avoirs', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '419700'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '421000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '421000', 'Remuneration employes', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '421000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '428200' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '428200', 'Provisions conges payes', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '428200'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '437100' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '437100', 'Organismes sociaux', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '437100'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '437200' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '437200', 'Retraite employes', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '437200'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '444000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '444000', 'Impots societes', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '444000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445510' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445510', 'Tva a decaisser', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445510'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445620' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445620', 'Tva deductible sur immobilisation', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445620'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445660' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445660', 'Tva sur achat 2.10', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445660'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445670' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445670', 'Tva sur achat 5.50', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445670'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445680' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445680', 'Tva sur achat 19.60', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445680'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445710' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445710', 'Tva sur ventes 2.10', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445710'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445720' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445720', 'Tva sur ventes 5.50', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445720'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '445730' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '445730', 'Tva sur ventes 19.60', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '445730'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '468700' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '468700', 'Débiteurs divers produits à recevoir', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '468700'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '471000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '471000', 'Compte d''attente', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '471000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '491000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '491000', 'Provisions pour creances', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '491000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '512000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '512000', 'Banque', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '512000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '512001' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '512001', 'Banque 2', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '512001'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '518600' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '518600', 'Interets courus', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '518600'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '530000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '530000', 'Caisse', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '530000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '580000' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '580000', 'Virements internes', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '580000'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '580001' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '580001', 'Virements internes cartes', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '580001'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '580002' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '580002', 'Virements internes chèques', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '580002'
+SELECT * FROM Fiches_Mvt1 WHERE compte = '580003' and dte >= '20170101' and dte <= '20171231' and validee = 1 order by dte
+INSERT INTO Comptes(compte, intitule, type, solde2, annee, solde) VALUES ( '580003', 'Virements internes autres', 'B', '0', 'N1',0)
+UPdate  Comptes  SET  solde2 = 0 WHERE compte = '580003'
+SELECT * FROM Fiches_RubCompt as e inner join Fiches_Rubriques as i on i.numrub = e.numrub WHERE left(e.numrub,1) = 'B' order by e.numrub
+SELECT * FROM Fiches_Rubriques WHERE left(numrub,1) = 'B' order by numrub
+SELECT * FROM Fiches_Rubriques WHERE left(numrub,1) = 'B' order by numrub
+SELECT * FROM centralisation where left(numrub,1) = 'B' Order by numrub

@@ -1,0 +1,73 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Comptes WHERE type_cc = 'C' and solde = 0 order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Mvt WHERE compte = '411001' and lettree = 0 order by compte, numlot
+UPdate Fiches_Mvt SET numlot = 'SA', lettree = 1 where compte = '411001' and numlot = 'A'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '51' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '51' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '51' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '51' order by lind desc limit 2
+update Fiches_Mvt set  control = 'TFBcNfq1UvAYynUXJBUh175XOcA=' where lind = 301
+UPdate Fiches_Mvt SET numlot = 'SA', lettree = 1 where compte = '411001' and numlot = 'A'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '52' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '52' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 51 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '52' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '52' order by lind desc limit 2
+update Fiches_Mvt set  control = 'lQFcvB1JfGoUTTOdUTBVZHSDf+w=' where lind = 302
+SELECT * FROM Fiches_Mvt WHERE compte = '411002' and lettree = 0 order by compte, numlot
+UPdate Fiches_Mvt SET numlot = 'S', lettree = 1 where compte = '411002' and numlot = NULL
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '53' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '53' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 52 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '53' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '53' order by lind desc limit 2
+update Fiches_Mvt set  control = 'Rx9zK2LtZvbC8ZDjU8EmThpwYF4=' where lind = 303
+UPdate Fiches_Mvt SET numlot = 'S', lettree = 1 where compte = '411002' and numlot = NULL
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '54' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '54' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 53 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '54' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '54' order by lind desc limit 2
+update Fiches_Mvt set  control = 'jyRXFX7ibuOtFGSGO+QqsrUrpg0=' where lind = 304
+SELECT * FROM Fiches_Mvt WHERE compte = '411004' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411005' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411006' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411007' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411008' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411009' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411010' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411011' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411012' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411013' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411014' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411015' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411016' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411017' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411018' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411019' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411020' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411021' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411022' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411023' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411024' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411025' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411026' and lettree = 0 order by compte, numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411027' and lettree = 0 order by compte, numlot

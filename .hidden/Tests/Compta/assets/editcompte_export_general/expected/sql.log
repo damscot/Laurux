@@ -1,0 +1,187 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT  compte_cc, intitule_cc, cent_cc, cprincipal, type_cc  FROM Fiches_Comptes WHERE cast(compte_cc AS char) >= '10000'  and cast(compte_cc AS char) <= '99999999'  and type_cc = 'G' or cast(compte_cc AS char) >= '10000'  and cast(compte_cc AS char) <= '99999999'  and type_cc = 'B' order by type_cc, cast(compte_cc AS char)
+SELECT * FROM Fiches_Mvt WHERE compte = '101000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '106800'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '108000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '110000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '119000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '120000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '129000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '168800'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '211000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '213000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '213500'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '218200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '218300'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '218400'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '218820'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '231000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '231500'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '261000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '266000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '275000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '281300'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '281400'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '281500'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '281600'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '281700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '335000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '370000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '397000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '401000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '408000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '408100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '409600'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '409700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '411000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '416000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '419100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '419700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '421000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '428200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '437100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '437200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '444000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445510'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445620'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445660'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445670'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445680'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445710'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445720'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '445730'  and validee = 1  order by dte 
+drop Table IF exists Ctrln
+CREATE TABLE IF NOT EXISTS Ctrln(compte Char(8) NOT NULL,intitule Char(40),jour Char(2),Mois Char(6) NOT NULL,libelle Char(30) ,dte Integer ,montantd Decimal(12,2),montantc Decimal(12,2),PRIMARY KEY (compte, Mois)) ENGINE = InnoDB
+SELECT * FROM Ctrln WHERE compte = '445730' and Mois = '201802'
+INSERT INTO Ctrln(compte,intitule,dte,libelle, montantd, montantc, jour, Mois) VALUES ('445730', 'Tva sur ventes 19.60', '20180228', 'Centralisation', 0, 20, '70', '201802')
+SELECT * FROM Ctrln WHERE compte = '445730' and Mois = '201804'
+INSERT INTO Ctrln(compte,intitule,dte,libelle, montantd, montantc, jour, Mois) VALUES ('445730', 'Tva sur ventes 19.60', '20180430', 'Centralisation', 0, 10, '70', '201804')
+SELECT * FROM Ctrln WHERE compte = '445730' and Mois = '201804'
+Update Ctrln set montantd = 0, montantc = 15, dte = '20180430' Where compte = '445730' and Mois = '201804'
+SELECT * FROM Ctrln WHERE compte = '445730' Order by Mois
+SELECT * FROM Fiches_Mvt WHERE compte = '468700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '471000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '491000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '512000'  and validee = 1  order by dte 
+drop Table IF exists Ctrln
+CREATE TABLE IF NOT EXISTS Ctrln(compte Char(8) NOT NULL,intitule Char(40),jour Char(2),Mois Char(6) NOT NULL,libelle Char(30) ,dte Integer ,montantd Decimal(12,2),montantc Decimal(12,2),PRIMARY KEY (compte, Mois)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt WHERE compte = '512001'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '518600'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '530000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '580000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '580001'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '580002'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '580003'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '602100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '603700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '604000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '605000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606100'  and validee = 1  order by dte 
+drop Table IF exists Ctrln
+CREATE TABLE IF NOT EXISTS Ctrln(compte Char(8) NOT NULL,intitule Char(40),jour Char(2),Mois Char(6) NOT NULL,libelle Char(30) ,dte Integer ,montantd Decimal(12,2),montantc Decimal(12,2),PRIMARY KEY (compte, Mois)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt WHERE compte = '606110'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606120'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606130'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606150'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606170'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606300'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606306'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606400'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606410'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606800'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '606810'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '607000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '607010'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '607020'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '609700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '612200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '613200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '622603'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '622604'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '622605'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '622700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '623100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '623400'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '623700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '623705'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '623800'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '625100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '625500'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '625600'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '626100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '627000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '627200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '627800'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '631200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '633300'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '635110'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '635120'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '635150'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '637100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '637810'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '637820'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '641100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '641110'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '641200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '641400'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '644000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '645000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '645320'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '645500'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '645800'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '646200'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '646210'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '646300'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '647500'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '654100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '658000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '661100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '671000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '671800'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '678000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '681120'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '681730'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '695100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '705000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '706100'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '706105'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '706110'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '707000'  and validee = 1  order by dte 
+drop Table IF exists Ctrln
+CREATE TABLE IF NOT EXISTS Ctrln(compte Char(8) NOT NULL,intitule Char(40),jour Char(2),Mois Char(6) NOT NULL,libelle Char(30) ,dte Integer ,montantd Decimal(12,2),montantc Decimal(12,2),PRIMARY KEY (compte, Mois)) ENGINE = InnoDB
+SELECT * FROM Ctrln WHERE compte = '707000' and Mois = '201802'
+INSERT INTO Ctrln(compte,intitule,dte,libelle, montantd, montantc, jour, Mois) VALUES ('707000', 'Ventes marchandises 2.10', '20180228', 'Centralisation', 0, 100, '70', '201802')
+SELECT * FROM Ctrln WHERE compte = '707000' and Mois = '201804'
+INSERT INTO Ctrln(compte,intitule,dte,libelle, montantd, montantc, jour, Mois) VALUES ('707000', 'Ventes marchandises 2.10', '20180430', 'Centralisation', 0, 50, '70', '201804')
+SELECT * FROM Ctrln WHERE compte = '707000' and Mois = '201804'
+Update Ctrln set montantd = 0, montantc = 75, dte = '20180430' Where compte = '707000' and Mois = '201804'
+SELECT * FROM Ctrln WHERE compte = '707000' Order by Mois
+SELECT * FROM Fiches_Mvt WHERE compte = '707010'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '707020'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '709000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '709700'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '722000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '758000'  and validee = 1  order by dte 
+SELECT * FROM Fiches_Mvt WHERE compte = '791000'  and validee = 1  order by dte 

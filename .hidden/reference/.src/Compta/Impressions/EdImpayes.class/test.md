@@ -9,8 +9,8 @@ suppression, à une caractérisation par ouverture directe.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDIMPAYES-T01 | gbtest | Absence de référence | `grep -rn "EdImpayes" .src` hors du couple ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/absence_reference/` | à faire |
-| EDIMPAYES-T02 | replay | Caractérisation (seulement si A01 refusée) | ouverture directe par un harnais (`EdImpayes.Show` depuis un module de test, à confirmer) ; jeu non lettré ; « Imprimer » | PDF `Enlettrees.pdf` comparé après `pdftotext` et normalisation (date, utilisateur) ; table `Ctrln` présente dans le dump | `tests/caracterisation/` | à faire |
+| EDIMPAYES-T01 | gbtest | Absence de référence | `grep -rn "EdImpayes" .src` hors du couple ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/absence_reference/` | à faire : contrôle statique (grep + gbc3 après suppression), ni gb.test ni rejeu ; constat du 2026-11-12 : aucune référence hors du couple .class/.form |
+| EDIMPAYES-T02 | replay | Caractérisation (seulement si A01 refusée) | ouverture directe par un harnais (`EdImpayes.Show` depuis un module de test, à confirmer) ; jeu non lettré ; « Imprimer » | PDF `Enlettrees.pdf` comparé après `pdftotext` et normalisation (date, utilisateur) ; table `Ctrln` présente dans le dump | `tests/caracterisation/` | à faire : écran atteignable par aucun menu (pas de rejeu depuis Fmenu) ; ouverture directe par harnais non prévue (outillage) |
 
 ## Détail des tests
 

@@ -75,7 +75,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 Les anomalies A04 et A05 portent sur la **conformité réglementaire** : à valider avec
 l'expert-comptable et l'outil de contrôle de la DGFiP avant toute correction.
 
-- [ ] EXPORTA47-A01 — [anomalie] Compte absent du plan comptable : `Message.Error` puis
+- [ ] EXPORTA47-A01 — [anomalie] (confirmée phase 2, vague 3 : après `Message.Error` + `Me.Close`, « Result is not available » (`Button2_Click.441`), fichier partiel) Compte absent du plan comptable : `Message.Error` puis
   `Me.Close` sans `Return` ; la lecture de `type_cc` sur un résultat vide lève une erreur, le
   fichier reste ouvert et partiel · tests : T07 · sources : [ExportA47.class:436-441](../../../../../../.src/Compta/Impressions/ExportA47.class#L436-L441)
 - [ ] EXPORTA47-A02 — [anomalie] « Exercice en cours » calculé sur `Now + 1 an` : pour un
@@ -101,3 +101,4 @@ l'expert-comptable et l'outil de contrôle de la DGFiP avant toute correction.
   comportement à confirmer (erreur ou chaîne vide) · tests : T06 · sources : [ExportA47.class:512-513](../../../../../../.src/Compta/Impressions/ExportA47.class#L512-L513), [ExportA47.class:520](../../../../../../.src/Compta/Impressions/ExportA47.class#L520)
 - [ ] EXPORTA47-A09 — [anomalie] `DROP`/`CREATE` de la table `centralisation` sans usage ; la
   suppression change le dump · tests : T01 · sources : [ExportA47.class:404-411](../../../../../../.src/Compta/Impressions/ExportA47.class#L404-L411)
+- [ ] EXPORTA47-A10 — [anomalie] `siret_sc` NULL : fichier FEC nommé `FEC…` (SIREN vide) sans avertissement (phase 2, vague 3, 2026-11-12) · tests : T01 · sources : [ExportA47.class:392-393](../../../../../../.src/Compta/Impressions/ExportA47.class#L392-L393), [ExportA47.class:412](../../../../../../.src/Compta/Impressions/ExportA47.class#L412)

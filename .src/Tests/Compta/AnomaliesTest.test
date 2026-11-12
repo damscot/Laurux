@@ -1,0 +1,53 @@
+' Gambas test file
+
+''Tests de Anomalies (.hidden/reference/.src/Compta/Impressions/Anomalies.class/test.md, ANOMALIES-T05).
+''Formulaire instancié sans affichage (Form_Open non appelé), base Laurux01.
+''Valeurs attendues : assets/AnomaliesTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05Exercice", "`Exercice_End`/`Exercice_Begin` pour les indices 0 à 5, comparés à `LDate.Exercice_Cloture`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "AnomaliesTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T05Exercice()
+
+  Dim hF As Anomalies
+  Dim i As Integer
+  Dim dFin, dDeb As Date
+  Dim hCl As LDate
+
+  Try hF = New Anomalies
+  If Error Then
+    TestKit.Check("T05/creation", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  For i = 0 To 5
+    Try dFin = hF.Exercice_End(i)
+    If Error Then
+      TestKit.Check("T05/fin/" & i, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T05/fin/" & i, dFin)
+    Endif
+    Try dDeb = hF.Exercice_Begin(i)
+    If Error Then
+      TestKit.Check("T05/debut/" & i, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T05/debut/" & i, dDeb)
+    Endif
+    hCl = LDate.Exercice_Cloture(i)
+    TestKit.Check("T05/egal_ldate/" & i, DateDiff(dFin, hCl.G, gb.Day))
+  Next
+  ' indice hors plage : branche Case Else (exercice en cours)
+  TestKit.Check("T05/fin/9", hF.Exercice_End(9))
+  Object.Lock(hF)
+
+End

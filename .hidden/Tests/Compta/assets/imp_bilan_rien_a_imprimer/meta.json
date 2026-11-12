@@ -1,0 +1,22 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "IMP_BILAN-T07",
+ "classe": "Imp_Bilan",
+ "objet": "Bilan : rien à imprimer",
+ "dataset": "imp_bilan_sans_rubrique",
+ "fichiers": [
+  "tmp/BilanDetail.csv",
+  "tmp/BilanRub.csv",
+  "tmp/Bilan.pdf"
+ ],
+ "description": "Impressions comptables (RubImp, Menu124), jeu imp_bilan_sans_rubrique (Fiches_Rubriques sans préfixe B), Bilan, Imprimer ; Message.Info « traitement long » (Entrée) puis Message.Info « Rien a imprimer pour cette période ! » (Entrée) ; CSV vides, pas de Bilan.pdf, tables de travail du dump ; Quitter (Button3).",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

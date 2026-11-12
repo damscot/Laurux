@@ -67,7 +67,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   dernière ligne chargée) au lieu de `Colcol.Current[4]` : la case « Amortissement » affichée peut
   être celle d'une autre plage, et l'enregistrement suivant écrase alors le drapeau (à confirmer
   à l'exécution) · tests : T06 · sources : [Rubcompt.class:83](../../../../../../.src/Compta/Utils/Rubcompt.class#L83), [Rubcompt.class:Maj_Zones](../../../../../../.src/Compta/Utils/Rubcompt.class#L77-L91)
-- [ ] RUBCOMPT-A02 — [anomalie] Suppression : la rubrique vient de la ligne sélectionnée
+- [ ] RUBCOMPT-A02 — [anomalie] (confirmée phase 2, vague 3 : `Cpt1` modifié avant Supprimer → autre plage effacée (B0050/201 au lieu de B0050/2800)) Suppression : la rubrique vient de la ligne sélectionnée
   (`colcol.Current[0]`) et le compte du champ `Cpt1` ; si l'utilisateur a modifié la saisie, une
   autre plage (ou aucune) est supprimée ; erreur d'exécution si aucune ligne n'est sélectionnée ·
   tests : T04 · sources : [Rubcompt.class:224](../../../../../../.src/Compta/Utils/Rubcompt.class#L224)
@@ -79,3 +79,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sources : [Rubcompt.class:134](../../../../../../.src/Compta/Utils/Rubcompt.class#L134)
 - [ ] RUBCOMPT-A05 — [anomalie] `Btn_KeyPress` enregistre sur **toute** touche pressée quand le
   focus est sur « Enregistrer » (Tab, Échap…), en plus du clic · tests : T07 · sources : [Rubcompt.class:Btn_KeyPress](../../../../../../.src/Compta/Utils/Rubcompt.class#L172-L181)
+- [ ] RUBCOMPT-A06 — [anomalie] Case Amortissement cochée écrite `amortissement = -1` (booléen Gambas) dans une colonne `tinyint(1)` (phase 2, vague 3, 2026-11-12) · tests : T03 · sources : [Rubcompt.class:241](../../../../../../.src/Compta/Utils/Rubcompt.class#L241), [Rubcompt.class:245](../../../../../../.src/Compta/Utils/Rubcompt.class#L245)
+- [ ] RUBCOMPT-A07 — [anomalie] « Enregistrer » avec `Numrub` seul : `compte1 = NULL` refusé par MariaDB (NOT NULL), l'utilisateur ne voit que « Veuillez saisir les données » ; le SELECT de contrôle `compte1 = NULL` est toujours faux (phase 2, vague 3, 2026-11-12) · tests : T07 · sources : [Rubcompt.class:239](../../../../../../.src/Compta/Utils/Rubcompt.class#L239), [Rubcompt.class:241](../../../../../../.src/Compta/Utils/Rubcompt.class#L241), [Rubcompt.class:243](../../../../../../.src/Compta/Utils/Rubcompt.class#L243)

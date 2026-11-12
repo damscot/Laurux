@@ -1,0 +1,47 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "JOURNAUX-T08",
+ "classe": "Journaux",
+ "objet": "Exports successifs",
+ "dataset": "jourcent_shared/jourcent_collectif_453",
+ "conf": {
+  "/ExportJournal01/Entete0": "0",
+  "/ExportJournal01/Titre0": "Code journal",
+  "/ExportJournal01/Entete1": "1",
+  "/ExportJournal01/Titre1": "Compte",
+  "/ExportJournal01/Entete2": "2",
+  "/ExportJournal01/Titre2": "Intitule",
+  "/ExportJournal01/Entete3": "3",
+  "/ExportJournal01/Titre3": "Piece",
+  "/ExportJournal01/Entete4": "4",
+  "/ExportJournal01/Titre4": "Date",
+  "/ExportJournal01/Entete5": "5",
+  "/ExportJournal01/Titre5": "Numero",
+  "/ExportJournal01/Entete6": "6",
+  "/ExportJournal01/Titre6": "Libelle",
+  "/ExportJournal01/Entete7": "7",
+  "/ExportJournal01/Titre7": "Debit",
+  "/ExportJournal01/Entete8": "8",
+  "/ExportJournal01/Titre8": "Credit",
+  "/ExportJournal01/Entete9": "9",
+  "/ExportJournal01/Titre9": "Solde",
+  "/ExportJournal01/Entete10": "10",
+  "/ExportJournal01/Titre10": "Vide1",
+  "/ExportJournal01/Entete11": "11",
+  "/ExportJournal01/Titre11": "Vide2"
+ },
+ "fichiers": [
+  "tmp/journaux.txt",
+  "@outils.trace"
+ ],
+ "description": "Journaux (jeu jourcent_collectif_453 : journal 53, lignes non collectives déséquilibrées de 30 car le collectif 453000 n'est pas exporté ; configuration 12 colonnes) : deux exports successifs sans fermer l'écran (bouton 2 « Non » de Message.Question à chaque fois) : le second journaux.txt (comparé) part du solde laissé par le premier export (A02 figée). Le changement de configuration entre les deux (A03) n'est pas rejoué (écran journauxSetting à glisser-déposer).",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

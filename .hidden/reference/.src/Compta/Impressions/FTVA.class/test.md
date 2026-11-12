@@ -12,19 +12,19 @@ FTVA-010/011, testées en `gbtest` sur les fonctions extraites.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FTVA-T01 | replay | Mode mensuel (défaut) | jeu TVA ; ouverture, `ComboBoxMois` = 03, année courante | requêtes `Exec_SQL` ; totaux vente/achat/TVA à déclarer relevés | `tests/mensuel/` | à faire |
-| FTVA-T02 | replay | Mode trimestriel | clic `RadioBtnTrimestre`, Trimestre 1 à 4 | 4 jeux de totaux ; requêtes `month(dte) >= 1..10` | `tests/trimestriel/` | à faire |
-| FTVA-T03 | replay | Mode annuel | clic `RadioBtnAnnuel`, année N puis N-1 | totaux ; N-1 vide si les écritures sont en `Fiches_Mvt1` (A02 figée) | `tests/annuel/` | à faire |
-| FTVA-T04 | replay | Détail des écritures | `Detail` coché en mensuel | une ligne par écriture ; lignes à 0,00 exclues côté ventes | `tests/detail_ecran/` | à faire |
-| FTVA-T05 | replay | Impression mensuelle | T01 puis « Imprimer » | `TVA.pdf` → texte normalisé identique ; table `Ctrln` vide présente dans le dump | `tests/pdf_mensuel/` | à faire |
-| FTVA-T06 | replay | Impression détaillée multipage | jeu de > 60 écritures TVA sur un trimestre, `Detail` coché | texte normalisé ; en-têtes répétés, en-tête sans « Sélection du » avant un total (A04 figée), pied de page sur la dernière page seulement | `tests/pdf_multipage/` | à faire |
-| FTVA-T07 | replay | Impression annuelle | mode annuel, « Imprimer » | texte normalisé ; libellé « Total pour l'année <AAAA> » | `tests/pdf_annuel/` | à faire |
-| FTVA-T08 | replay | Année refusée | `ComboBoxYear` = année courante - 5 | `Message.Warning` « Votre saisie n'est pas valable ! » ; année remise à l'année courante | `tests/annee_refusee/` | à faire |
-| FTVA-T09 | replay | Trimestre par défaut (A01) | lancement sous `faketime` au 15/03 et au 15/09 | « Trimestre 4 » affiché dans les deux cas (anomalie figée) | `tests/trimestre_defaut/` | à faire |
-| FTVA-T10 | replay | Impression sans interaction (A05) | ouverture puis « Imprimer » immédiat | figer le contenu (mois 0 ou mois courant selon le déclenchement de `ComboBoxMois_Click`) | `tests/impression_directe/` | à faire |
-| FTVA-T11 | gbtest | `TvaADeclarer` (après FTVA-010) | couples vente/achat : 0/0, 100/50, 50/100, 1500/-200, -10/-20, 1 234,56/999 | valeurs produites par le clone non modifié (A03 figée) | `tests/tva_a_declarer/` | à faire |
-| FTVA-T12 | gbtest | `SoldesTVA` (après FTVA-010) | jeu TVA ; préfixes 4456/4457, détail oui/non | lignes et total identiques à T01/T04 | `tests/soldes_tva/` | à faire |
-| FTVA-T13 | replay | SQLite | T01 et T05 sur `Laurux01.sqlite` + jeu TVA | mêmes totaux et même texte PDF que MySQL (sinon écart documenté) | `tests/sqlite/` | à faire |
+| FTVA-T01 | replay | Mode mensuel (défaut) | jeu TVA ; ouverture, `ComboBoxMois` = 03, année courante | requêtes `Exec_SQL` ; totaux vente/achat/TVA à déclarer relevés | `tests/mensuel/` | implémenté (requêtes comparées ; totaux affichés non comparés) |
+| FTVA-T02 | replay | Mode trimestriel | clic `RadioBtnTrimestre`, Trimestre 1 à 4 | 4 jeux de totaux ; requêtes `month(dte) >= 1..10` | `tests/trimestriel/` | implémenté (requêtes comparées ; totaux affichés non comparés) |
+| FTVA-T03 | replay | Mode annuel | clic `RadioBtnAnnuel`, année N puis N-1 | totaux ; N-1 vide si les écritures sont en `Fiches_Mvt1` (A02 figée) | `tests/annuel/` | implémenté (requêtes comparées, N-1 sur Fiches_Mvt) |
+| FTVA-T04 | replay | Détail des écritures | `Detail` coché en mensuel | une ligne par écriture ; lignes à 0,00 exclues côté ventes | `tests/detail_ecran/` | implémenté (requêtes comparées ; lignes affichées non comparées) |
+| FTVA-T05 | replay | Impression mensuelle | T01 puis « Imprimer » | `TVA.pdf` → texte normalisé identique ; table `Ctrln` vide présente dans le dump | `tests/pdf_mensuel/` | implémenté (requêtes et Ctrln ; sortie PDF non comparée) |
+| FTVA-T06 | replay | Impression détaillée multipage | jeu de > 60 écritures TVA sur un trimestre, `Detail` coché | texte normalisé ; en-têtes répétés, en-tête sans « Sélection du » avant un total (A04 figée), pied de page sur la dernière page seulement | `tests/pdf_multipage/` | à faire : sortie PDF non comparée |
+| FTVA-T07 | replay | Impression annuelle | mode annuel, « Imprimer » | texte normalisé ; libellé « Total pour l'année <AAAA> » | `tests/pdf_annuel/` | à faire : sortie PDF non comparée |
+| FTVA-T08 | replay | Année refusée | `ComboBoxYear` = année courante - 5 | `Message.Warning` « Votre saisie n'est pas valable ! » ; année remise à l'année courante | `tests/annee_refusee/` | à faire : ComboBoxYear ne propose que N et N-1, année N-5 non sélectionnable par clic |
+| FTVA-T09 | replay | Trimestre par défaut (A01) | lancement sous `faketime` au 15/03 et au 15/09 | « Trimestre 4 » affiché dans les deux cas (anomalie figée) | `tests/trimestre_defaut/` | implémenté (15/03 seulement) |
+| FTVA-T10 | replay | Impression sans interaction (A05) | ouverture puis « Imprimer » immédiat | figer le contenu (mois 0 ou mois courant selon le déclenchement de `ComboBoxMois_Click`) | `tests/impression_directe/` | à faire : sortie PDF non comparée |
+| FTVA-T11 | gbtest | `TvaADeclarer` (après FTVA-010) | couples vente/achat : 0/0, 100/50, 50/100, 1500/-200, -10/-20, 1 234,56/999 | valeurs produites par le clone non modifié (A03 figée) | `tests/tva_a_declarer/` | à faire : extraction FTVA-010 requise |
+| FTVA-T12 | gbtest | `SoldesTVA` (après FTVA-010) | jeu TVA ; préfixes 4456/4457, détail oui/non | lignes et total identiques à T01/T04 | `tests/soldes_tva/` | à faire : extraction FTVA-010 requise |
+| FTVA-T13 | replay | SQLite | T01 et T05 sur `Laurux01.sqlite` + jeu TVA | mêmes totaux et même texte PDF que MySQL (sinon écart documenté) | `tests/sqlite/` | à faire : base SQLite non disponible dans le bac |
 
 ## Détail des tests
 
@@ -41,3 +41,7 @@ FTVA-010/011, testées en `gbtest` sur les fonctions extraites.
 - **Dates** : le mois, le trimestre et l'année par défaut dépendent de `Now` : tous les replays sont
   lancés sous `faketime` à une date fixe (sauf T09 qui la fait varier).
 - **Non testable automatiquement** : rendu visuel du PDF (polices, couleurs), viewer externe.
+- **Implémentation (phase 2, vague 3)** : scénarios `.hidden/Tests/Compta/assets/ftva_{mensuel,trimestriel,annuel,detail_ecran,pdf_mensuel,trimestre_defaut}/`,
+  jeu `extrait_shared/extrait_base` (TVA collectée 445730 en 02 et 04/2018). Seules les requêtes (`sql.log`) et le dump sont
+  comparés : les totaux de l'écran et le PDF ne le sont pas. T01 joue les mois 02 et 04 (le jeu n'a pas d'écriture en 03).
+  T09 : lancé au 15/03/2018, `RadioBtnTrimestre` → requêtes `month(dte) >= 10 and <= 12` (A01 figée).
