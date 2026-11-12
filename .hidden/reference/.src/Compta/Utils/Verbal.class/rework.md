@@ -67,9 +67,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `Syntheses.Message` (son ou voix, rien d'affiché) ; test `Sgenerale.Text <> "0,00"` dépendant de
   la locale et vrai pour `-0,00` ; les écarts collectif/balance auxiliaire ne sont pas signalés ·
   tests : T02, T03 · sources : [Verbal.class:413](../../../../../../.src/Compta/Utils/Verbal.class#L413), [Verbal.class:415](../../../../../../.src/Compta/Utils/Verbal.class#L415)
-- [ ] VERBAL-A03 — [anomalie] Seule `Fiches_Mvt` (exercice courant) est lue : une période d'un
+- [ ] VERBAL-A03 — [anomalie] (constat phase 2, vague 3 : non reproductible par l'écran : une période 2017 est remise sur 2018 avant le traitement, T05 fige des valeurs de 2018) Seule `Fiches_Mvt` (exercice courant) est lue : une période d'un
   exercice antérieur, acceptée avec un simple avertissement, donne des balances nulles · tests :
   T05 · sources : [Verbal.class:350](../../../../../../.src/Compta/Utils/Verbal.class#L350), [Verbal.class:dteN0_LF](../../../../../../.src/Compta/Utils/Verbal.class#L228-L250)
 - [ ] VERBAL-A04 — [anomalie] Une date de fin antérieure à la date de début ne produit qu'un
   avertissement sans correction ; la borne haute acceptée est `année(fin d'exercice) + 1` ·
   tests : T04 · sources : [Verbal.class:239](../../../../../../.src/Compta/Utils/Verbal.class#L239), [Verbal.class:272](../../../../../../.src/Compta/Utils/Verbal.class#L272)
+- [ ] VERBAL-A05 — [anomalie] `Ex1` place la date de **fin** d'exercice (`dteclec`) dans `DteN0` ; après un avertissement sur `DteN0`, `Compdate` rappelle `Ex1` qui prend la date du jour comme borne haute (`dte2`) : `DteN1` = 31.12.2020 accepté sans avertissement (phase 2, vague 3, 2026-11-12) · tests : T04 · sources : [Verbal.class:193](../../../../../../.src/Compta/Utils/Verbal.class#L193), [Verbal.class:Ex1](../../../../../../.src/Compta/Utils/Verbal.class#L185-L204), [Verbal.class:292](../../../../../../.src/Compta/Utils/Verbal.class#L292)

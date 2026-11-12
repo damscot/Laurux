@@ -47,3 +47,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LDATEC-A01 — [anomalie] Le sélecteur s'ouvre en mode date-heure même pour un champ date
   seule (`TextReg` ne passe pas `mode`) ; correction dans `TextReg` (passer `DateChooser.Date`) ·
   appelants : `TextReg` · tests : T01 · sources : [TextReg.class:144](../../../../../.src/Utils/TextReg.class#L144), [LDateC.class:14](../../../../../.src/Utils/LDateC.class#L14)
+- [ ] LDATEC-A02 — [amélioration] Testabilité et ergonomie : action déclenchée par la touche F2, Échap : non rejouable par le harnais (REPLAYOBSERVER : touches de fonction et Échap non rejouées) et peu découvrable. Proposition : offrir (ou rendre visible, s'il existe) un bouton ou une entrée de menu équivalente (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : LDATEC-T01, LDATEC-T02, LDATEC-T03 · sources : [LDateC.class](../../../../../.src/Utils/LDateC.class)

@@ -48,5 +48,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   écriture clôturée peut être modifiée sans que « Anomalies des clés » le détecte ; pas de mot de
   passe sur le menu ni de trace. À protéger (mot de passe Admin, confirmation, journal) ou à
   retirer · tests : T03 · sources : [RazClos.class:12](../../../../../../.src/Compta/Utils/RazClos.class#L12), [Fmenu.class:2372](../../../../../../.src/Communs/Fmenu.class#L2372)
-- [ ] RAZCLOS-A02 — [anomalie] Aucun contrôle du numéro saisi : message de succès même si aucune
+- [ ] RAZCLOS-A02 — [anomalie] (confirmée phase 2, vague 3 : champ vidé → `numero = NULL`, « Ecriture débloquée ! » affiché dans tous les cas) Aucun contrôle du numéro saisi : message de succès même si aucune
   écriture n'existe · tests : T02 · sources : [RazClos.class:Raz](../../../../../../.src/Compta/Utils/RazClos.class#L9-L15)

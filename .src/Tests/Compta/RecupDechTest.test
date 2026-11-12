@@ -1,0 +1,41 @@
+' Gambas test file
+
+''Tests de RecupDech (.hidden/reference/.src/Compta/Utils/RecupDech.class/test.md, RECUPDECH-T02).
+''T01 (export nominal) se termine par un Message.Info bloquant en gb.test : couvert par le rejeu
+''Compta/recupdech_prgm (fichier ~/tmp/Dtech.txt comparé). Valeurs attendues :
+''assets/RecupDechTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02SansTmp", "`run` sans répertoire ~/tmp : erreur d'ouverture du fichier")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "RecupDechTest")
+  TestKit.OuvreBase("recupdech_shared/recupdech_echeances")
+
+End
+
+Public Sub T02SansTmp()
+
+  Dim sTmp As String = User.Home &/ "tmp"
+  Dim sSauve As String = User.Home &/ "tmp.recupdech"
+  Dim bExiste As Boolean
+
+  ' HOME de test : ~/tmp mis de côté le temps de l'appel (renommé, jamais supprimé)
+  bExiste = Exist(sTmp)
+  If bExiste Then Move sTmp To sSauve
+  TestKit.Check("T02/tmp_present", Exist(sTmp))
+  Try RecupDech.run()
+  If Error Then
+    TestKit.Check("T02/erreur", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/erreur", "<aucune>")
+  Endif
+  TestKit.Check("T02/fichier", Exist(sTmp &/ "Dtech.txt"))
+  If bExiste Then Move sSauve To sTmp
+
+End

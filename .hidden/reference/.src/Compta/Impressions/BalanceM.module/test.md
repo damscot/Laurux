@@ -11,18 +11,24 @@ valeurs attendues sont produites dans le clone **Laurux non modifié**, anomalie
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| BALANCEM-T01 | replay | Balance client sans cumuls | `Bclient`, 41100001 → 99999999, période de l'exercice courant, `Impcumul` et `Impc` décochés | texte PDF de référence (`Level1a`/`Level2a`, total « Client ») | `tests/client_simple/` | à faire |
-| BALANCEM-T02 | replay | Balance client avec cumuls hors période | même plage, période d'un trimestre, `Impcumul` coché | colonnes hors période incluant les écritures **postérieures** (A02 figée) | `tests/client_cumuls/` | à faire |
-| BALANCEM-T03 | replay | Balance générale, ruptures de classe | `Bgestion`, 10000 → 99999999, `Impcumul` coché | totaux par classe (1 à 7), total balance, comptes collectifs inclus | `tests/generale_classes/` | à faire |
-| BALANCEM-T04 | replay | Saut de page | balance générale sur un jeu de plus de 60 comptes mouvementés | pages 2+ titrées « Impression des balances » ; page sans pied si rupture de classe au-delà de 274 mm (A03 figée) | `tests/saut_page/` | à faire |
-| BALANCEM-T05 | replay | Comptes non mouvementés | balance fournisseur avec un compte sans écriture, `Impc` coché puis décoché | compte imprimé avec montants vides / absent | `tests/non_mouvementes/` | à faire |
-| BALANCEM-T06 | replay | Filtre par type de client | `Bclient`, sélection de 1 puis 2 types dans `TypeClient1` ; puis `Bfournisseur` avec une sélection restée active | seuls les clients des types choisis ; filtre ignoré en fournisseur | `tests/type_client/` | à faire |
-| BALANCEM-T07 | replay | Exercice archivé | `N1` (table `Fiches_Mvt1`), période par défaut | balance de l'exercice N-1 | `tests/exercice_n1/` | à faire |
-| BALANCEM-T08 | replay | Aucun compte | plage sans compte du type demandé | message « Aucune ecriture pour cette demande », pas de PDF | `tests/aucun_compte/` | à faire |
-| BALANCEM-T09 | replay | Deux impressions successives | T01 puis T03 sans fermer l'écran | second PDF identique à T03 seul (état de module remis à zéro) | `tests/impressions_successives/` | à faire |
-| BALANCEM-T10 | replay | Soldes nuls et arrondis | compte soldé à 0, compte à 0,005 € de différence | affichage des montants vides / `0,00` / `-0,00` | `tests/soldes_nuls/` | à faire |
+| BALANCEM-T01 | replay | Balance client sans cumuls | `Bclient`, 41100001 → 99999999, période de l'exercice courant, `Impcumul` et `Impc` décochés | texte PDF de référence (`Level1a`/`Level2a`, total « Client ») | `tests/client_simple/` | implémenté |
+| BALANCEM-T02 | replay | Balance client avec cumuls hors période | même plage, période d'un trimestre, `Impcumul` coché | colonnes hors période incluant les écritures **postérieures** (A02 figée) | `tests/client_cumuls/` | implémenté (période 01.03 → 30.03.2018) |
+| BALANCEM-T03 | replay | Balance générale, ruptures de classe | `Bgestion`, 10000 → 99999999, `Impcumul` coché | totaux par classe (1 à 7), total balance, comptes collectifs inclus | `tests/generale_classes/` | implémenté |
+| BALANCEM-T04 | replay | Saut de page | balance générale sur un jeu de plus de 60 comptes mouvementés | pages 2+ titrées « Impression des balances » ; page sans pied si rupture de classe au-delà de 274 mm (A03 figée) | `tests/saut_page/` | à faire : jeu de plus de 60 comptes mouvementés à créer |
+| BALANCEM-T05 | replay | Comptes non mouvementés | balance fournisseur avec un compte sans écriture, `Impc` coché puis décoché | compte imprimé avec montants vides / absent | `tests/non_mouvementes/` | implémenté (Impc coché seulement) |
+| BALANCEM-T06 | replay | Filtre par type de client | `Bclient`, sélection de 1 puis 2 types dans `TypeClient1` ; puis `Bfournisseur` avec une sélection restée active | seuls les clients des types choisis ; filtre ignoré en fournisseur | `tests/type_client/` | à faire : sélection dans le contrôle TypeClient non synthétisée |
+| BALANCEM-T07 | replay | Exercice archivé | `N1` (table `Fiches_Mvt1`), période par défaut | balance de l'exercice N-1 | `tests/exercice_n1/` | implémenté |
+| BALANCEM-T08 | replay | Aucun compte | plage sans compte du type demandé | message « Aucune ecriture pour cette demande », pas de PDF | `tests/aucun_compte/` | implémenté |
+| BALANCEM-T09 | replay | Deux impressions successives | T01 puis T03 sans fermer l'écran | second PDF identique à T03 seul (état de module remis à zéro) | `tests/impressions_successives/` | implémenté (texte identique à generale_classes) |
+| BALANCEM-T10 | replay | Soldes nuls et arrondis | compte soldé à 0, compte à 0,005 € de différence | affichage des montants vides / `0,00` / `-0,00` | `tests/soldes_nuls/` | à faire : jeu à créer (compte soldé, écart 0,005) |
 
 ## Détail des tests
+
+- **Scénarios implémentés** (`.hidden/Tests/Compta/assets/balancem_*`) : T01 `client_simple`, T02 `client_cumuls`,
+  T03 `generale_classes`, T05 `non_mouvementes`, T07 `exercice_n1`, T08 `aucun_compte`, T09
+  `impressions_successives`. Jeu `Compta/extrait_shared/extrait_base` (lecture seule), date 2018-06-15. Capture :
+  `"conf": {"/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/balance_pdf.txt'"}` et
+  `"fichiers": ["balance_pdf.txt"]` (date d'édition figée par la date du rejeu, utilisateur `laurux`).
 
 - **Données** : jeu dérivé commun aux éditions comptables (voir [Balance](../Balance.class/test.md)) :
   `Laurux01.sql` + écritures validées et non validées dans `Fiches_Mvt` et `Fiches_Mvt1`, clients typés

@@ -1,0 +1,35 @@
+' Gambas test file
+
+''Tests de Epurjdv (.hidden/reference/.src/Compta/Utils/Epurjdv.class/test.md, EPURJDV-T01).
+''Valeurs attendues : assets/EpurjdvTest/expected.txt, produites dans le clone de référence.
+''La fenêtre (sans point d'entrée dans l'application) est instanciée sans être affichée et Form_Open (public) est
+''appelé directement sur Laurux01.sql ; en fin de test, ses événements sont verrouillés.
+''EPURJDV-T02 (Button1_Click) reste à faire : Message.Question / Message.Warning bloquants en gb.test.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DatesPeriode", "Form_Open : dates de clôture et de période affichées (datecl, dateprc) sur Laurux01")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EpurjdvTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T01DatesPeriode()
+
+  Dim hF As Epurjdv
+
+  hF = New Epurjdv
+  Try hF.Form_Open()
+  If Error Then TestKit.Check("Form_Open", "ERREUR: " & Error.Text)
+  TestKit.Check("datecl", Object.GetProperty(hF.Controls["Datecl"], "Text"))
+  TestKit.Check("dateprc", Object.GetProperty(hF.Controls["Dateprc"], "Text"))
+  TestKit.Check("CheckBox1", Object.GetProperty(hF.Controls["CheckBox1"], "Value"))
+  Object.Lock(hF)
+
+End

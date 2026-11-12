@@ -60,7 +60,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FEDITREL-A01 — [anomalie] `prgb.Close` appelé alors que la barre n'existe pas (date vide ou
+- [ ] FEDITREL-A01 — [anomalie] (confirmée phase 2, vague 3 : `prgb.Close` sur objet nul (`Button1_Click.393`), code 125) `prgb.Close` appelé alors que la barre n'existe pas (date vide ou
   aucune écriture à relancer) → erreur « objet nul » · tests : T03 · sources : [FEditrel.class:393](../../../../../../.src/Compta/Relances/FEditrel.class#L393)
 - [ ] FEDITREL-A02 — [anomalie] `Impressionr` : boucle `Repeat … Until i = tabl.count` exécutée
   même sans ligne → erreur d'indice ; en-tête société lu sans `Available` · tests : T01, T06 ·
@@ -70,3 +70,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `Fiches_Mvt` (exercice courant) sont mises à jour · tests : T06 · sources : [FEditrel.class:528](../../../../../../.src/Compta/Relances/FEditrel.class#L528), [FEditrel.class:557](../../../../../../.src/Compta/Relances/FEditrel.class#L557)
 - [ ] FEDITREL-A04 — [anomalie] `Fiches_relances` est recréée à chaque génération sans distinction
   de poste : deux utilisateurs simultanés s'écrasent · tests : T02 · sources : [FEditrel.class:325-345](../../../../../../.src/Compta/Relances/FEditrel.class#L325-L345)
+- [ ] FEDITREL-A05 — [anomalie, à confirmer] `Fiches_relances` absente au lancement : la génération remplit la table mais `affiche()` n'affiche rien (`Utils.db.Tables.Exist` sur un cache périmé ?) ; « Éditer » plante ensuite (`Impressionr.519 : Out of bounds`, voir A02) (phase 2, vague 3, 2026-11-12) · tests : T01, T02 · sources : [FEditrel.class:140](../../../../../../.src/Compta/Relances/FEditrel.class#L140), [FEditrel.class:519](../../../../../../.src/Compta/Relances/FEditrel.class#L519)
+- [ ] FEDITREL-A06 — [anomalie] `Impressionr` : une écriture sans `numdoc` n'est jamais marquée relancée (`UPdate … SET relance = … WHERE … numdoc = NULL`) (phase 2, vague 3, 2026-11-12) · tests : T06 · sources : [FEditrel.class:557](../../../../../../.src/Compta/Relances/FEditrel.class#L557)
+- [ ] FEDITREL-A07 — [anomalie] « Tout sélectionner » décoché puis recoché : chaque `Ligcli.Checkselec_Click` supprime le client de `Fiches_relances` (DELETE) sans le recréer au recochage ; les lignes de 411002 restent pourtant dans le dump et la ligne 403 passe du niveau 3 au niveau 2 (phase 2, vague 3, 2026-11-12) · tests : T05 · sources : [FEditrel.class:Checktout_Click](../../../../../../.src/Compta/Relances/FEditrel.class#L102-L119), [Ligcli.class:Checkselec_Click](../../../../../../.src/Compta/Relances/Ligcli.class#L106-L116)

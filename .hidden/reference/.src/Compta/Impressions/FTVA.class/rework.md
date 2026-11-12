@@ -89,7 +89,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FTVA-A01 — [anomalie] `trimestre()` : mars et septembre sont classés « Trimestre 4 »
   (bornes `< 3` / `> 3` et `< 9` fausses) ; le trimestre proposé par défaut est faux deux mois par
   an · tests : T09 · sources : [FTVA.class:trimestre](../../../../../../.src/Compta/Impressions/FTVA.class#L379-L396), [FTVA.class:382-393](../../../../../../.src/Compta/Impressions/FTVA.class#L382-L393)
-- [ ] FTVA-A02 — [anomalie] Seule `Fiches_Mvt` est lue : l'année N-1 proposée par `ComboBoxYear`
+- [ ] FTVA-A02 — [anomalie] (confirmée phase 2, vague 3 : en mode annuel, N-1 lit `Fiches_Mvt` (`year(dte) = 2017`) et non `Fiches_Mvt1`) Seule `Fiches_Mvt` est lue : l'année N-1 proposée par `ComboBoxYear`
   ne montre rien si ses écritures sont déjà en `Fiches_Mvt1` (après clôture) ; aucun filtre
   `validee`/`provisoire` (brouillard inclus) · tests : T03 · sources : [FTVA.class:81](../../../../../../.src/Compta/Impressions/FTVA.class#L81), [FTVA.class:134](../../../../../../.src/Compta/Impressions/FTVA.class#L134), [FTVA.class:572](../../../../../../.src/Compta/Impressions/FTVA.class#L572)
 - [ ] FTVA-A03 — [anomalie] « TVA à déclarer » relit `TextLabelTAchat.Text` (formaté `",0.00"`)

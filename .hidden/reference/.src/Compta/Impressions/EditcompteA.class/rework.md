@@ -59,7 +59,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDITCOMPTEA-A01 — [anomalie] `pdf.level4C(totdeb, totcred, totsld, Posy)` : 4 arguments pour 5
+- [ ] EDITCOMPTEA-A01 — [anomalie] (confirmée phase 2, vague 3 : `EditcompteA.Button1_Click.726: Not enough arguments` sur `pdf.level4C(...)`, erreur fatale, aucun PDF) `pdf.level4C(totdeb, totcred, totsld, Posy)` : 4 arguments pour 5
   paramètres (`Ccompta.Level4C(…, compte, posy)`) → erreur d'exécution non interceptée au premier
   compte mouvementé, l'extrait analytique n'aboutit jamais (à confirmer par T03). Correction :
   passer `Compt` ; débloque la fusion avec `EditcompteM` · tests : T03 · sources : [EditcompteA.class:726](../../../../../../.src/Compta/Impressions/EditcompteA.class#L726)
@@ -72,3 +72,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDITCOMPTEA-A04 — [anomalie] `Compdate`/`compdate2` remettent la période sur `Exo` et cochent
   `E0` (même défaut que BALANCE-A04) ; curseur final `Mouse.Pointing` au lieu de `Mouse.Default` ·
   tests : T01, T02 · sources : [EditcompteA.class:Compdate](../../../../../../.src/Compta/Impressions/EditcompteA.class#L389-L400), [EditcompteA.class:770](../../../../../../.src/Compta/Impressions/EditcompteA.class#L770)
+- [ ] EDITCOMPTEA-A05 — [amélioration] Testabilité et ergonomie : action déclenchée par la touche F2 : non rejouable par le harnais (REPLAYOBSERVER : touches de fonction et Échap non rejouées) et peu découvrable. Proposition : offrir (ou rendre visible, s'il existe) un bouton ou une entrée de menu équivalente (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : EDITCOMPTEA-T07 · sources : [EditcompteA.class](../../../../../../.src/Compta/Impressions/EditcompteA.class)

@@ -8,7 +8,7 @@ suppression.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RECALCSOLDE-T01 | gbtest | Équivalence avec `Csolde.Recalc_solde` | `Laurux01.sql` ; soldes remis à zéro, appel de `Recalcsolde.Calc`, dump ; restauration, appel de `Csolde.Recalc_solde`, dump | dumps `Fiches_Comptes` identiques | `tests/recalcsolde_equivalence/` | à faire |
+| RECALCSOLDE-T01 | gbtest | Équivalence avec `Csolde.Recalc_solde` | `Laurux01.sql` ; soldes remis à zéro, appel de `Recalcsolde.Calc`, dump ; restauration, appel de `Csolde.Recalc_solde`, dump | dumps `Fiches_Comptes` identiques | `tests/recalcsolde_equivalence/` | implémenté (Compta/RecalcsoldeTest.T01Equivalence, jeu razclos_shared/razclos_cloturee) |
 
 ## Détail des tests
 

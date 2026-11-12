@@ -1,0 +1,28 @@
+' Gambas test file
+
+''Tests de EditcompteM (.hidden/reference/.src/Compta/Impressions/EditcompteM.module/test.md).
+''T11 : fonction pure `finmois`. Valeurs attendues : assets/EditcompteMTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T11Finmois", "`finmois` : dernier jour du mois (bissextile, décembre)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EditcompteMTest")
+
+End
+
+Public Sub T11Finmois()
+
+  TestKit.Check("T11/2024-01-15", EditcompteM.finmois(Date(2024, 1, 15)))
+  TestKit.Check("T11/2024-02-10", EditcompteM.finmois(Date(2024, 2, 10)))
+  TestKit.Check("T11/2023-02-10", EditcompteM.finmois(Date(2023, 2, 10)))
+  TestKit.Check("T11/2023-04-30", EditcompteM.finmois(Date(2023, 4, 30)))
+  TestKit.Check("T11/2023-12-31", EditcompteM.finmois(Date(2023, 12, 31)))
+  TestKit.Check("T11/2024-12-01", EditcompteM.finmois(Date(2024, 12, 1)))
+
+End

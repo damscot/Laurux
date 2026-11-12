@@ -44,6 +44,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] RECUPDECH-A01 — [anomalie] Formulaire `RecupDech.form` et `Button2_Click` jamais utilisés
   (aucune ouverture, `Button1` sans handler) : suppression du `.form` et du handler, la classe
   restant statique · tests : T03 · sources : [RecupDech.class:Button2_Click](../../../../../../.src/Compta/Utils/RecupDech.class#L22-L26)
-- [ ] RECUPDECH-A02 — [anomalie] Date exportée par conversion implicite (heure incluse si non
+- [ ] RECUPDECH-A02 — [anomalie] (confirmée phase 2, vague 3 : échéance écrite par conversion implicite date → chaîne (`RecupDech.class:20`) : décalage d'une heure (`2018-03-05 00:00` → `03/04/2018 23:00:00`), heure toujours présente) Date exportée par conversion implicite (heure incluse si non
   nulle, illisible par `Renech`) et répertoire `~/tmp` supposé existant ; chemin différent de celui
-  lu par `Renech` (voir RENECH-A02) · tests : T01, T02 · sources : [RecupDech.class:9](../../../../../../.src/Compta/Utils/RecupDech.class#L9), [RecupDech.class:14](../../../../../../.src/Compta/Utils/RecupDech.class#L14)
+  lu par `Renech` (voir RENECH-A02) · tests : T01, T02 · sources : [RecupDech.class:15](../../../../../../.src/Compta/Utils/RecupDech.class#L15), [RecupDech.class:20](../../../../../../.src/Compta/Utils/RecupDech.class#L20)

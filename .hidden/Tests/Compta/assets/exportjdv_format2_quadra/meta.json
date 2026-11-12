@@ -1,0 +1,25 @@
+{
+ "id": "EXPORTJDV-T02",
+ "objet": "Export format 2 Quadra",
+ "classe": "ExportJdv",
+ "description": "Comptabilite > Outils > Export des journaux (Menu133, /Soc01/Exp actif) : dates par defaut calculees par Ex1/Exo (requete : dte de 20180101 a 20181230), journal 70 par defaut (Fiches_Parametres.jrnal), format 2 Quadra (Tpj index 1), non exportees ; Exporter (Button2, tag 2). Fichiers ecritures70.csv et clients.txt dans le HOME (Chemin-export vide -> User.Home), Fiches_Mvt.export = 1, reglages Dte_exprt/Dte2_exprt/Numdoc_exprt du Laurux.conf.",
+ "dataset": "exportjdv_shared/exportjdv_jeu",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Exp": -1
+ },
+ "fichiers": [
+  "ecritures70.csv",
+  "clients.txt",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

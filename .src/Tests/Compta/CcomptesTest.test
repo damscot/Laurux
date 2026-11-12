@@ -1,0 +1,125 @@
+' Gambas test file
+
+''Tests de Ccomptes (.hidden/reference/.src/Compta/Ccomptes.module/test.md, CCOMPTES-T01, T02, T03, T05).
+''Prévus en replay depuis le plan comptable (FComptes) : les procédures publiques Deb2…Deb9 et Tris sont
+''appelées ici sur une GridView non affichée ; le résultat de la requête (Utils.rs3, construit par Utils.Base3)
+''et le nombre de lignes de la grille sont relevés. Colco_Data n'est pas appelable hors de l'événement Data de
+''la grille (T04 : couleurs, à faire). Base Laurux01 ; T02 ajoute quelques comptes 41xxxx et 512xxx (jeu
+''ccomptes_comptes). Valeurs attendues : assets/CcomptesTest/expected.txt (clone de référence).
+
+Private $hW As Window
+Private $hG As GridView
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01OuvertureTri", "Deb2 sans filtre (tri croissant par cast(compte_cc)) et Tris")
+  TestKit.Desc("T02RecherchePrefixe", "Deb2 filtré par préfixe 41, 512 et préfixe absent")
+  TestKit.Desc("T03TriDecroissant", "Deb3 (tri décroissant) sur le code puis l'intitulé, retour Deb2")
+  TestKit.Desc("T05Requetes", "Deb4…Deb9 : filtres par type, collectif, banque, pagination, tris")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "CcomptesTest")
+  TestKit.OuvreBase("ccomptes_comptes")
+  $hW = New Window
+  $hG = New GridView($hW)
+
+End
+
+Private Sub Releve(sCle As String)
+  ''Lignes de la grille et contenu de Utils.rs3 (5 premières lignes et dernière).
+
+  Dim r As Result = Utils.rs3
+  Dim i As Integer
+  Dim s As String
+
+  TestKit.Check(sCle & "/grille", $hG.Rows.Count)
+  TestKit.Check(sCle & "/count", r.Count)
+  If r.Count = 0 Then Return
+  For i = 0 To r.Count - 1
+    If i < 5 Or i = r.Count - 1 Then
+      r.MoveTo(i)
+      s &= i & ":" & r!compte_cc & "/" & r!intitule_cc & "/" & r!type_cc & "/" & r!coll & "/" & r!comptr_cc & " "
+    Endif
+  Next
+  TestKit.Check(sCle & "/lignes", s)
+
+End
+
+Public Sub T01OuvertureTri()
+
+  Dim hCo, hInt, hTy, hSol, hCo2 As TextBox
+
+  Ccomptes.Deb2($hG, Cbase.Table("TabComptes"), "cast(compte_cc AS char)", "")
+  Releve("T01/deb2")
+  hCo = New TextBox($hW)
+  hCo.Width = 80
+  hInt = New TextBox($hW)
+  hInt.Width = 300
+  hTy = New TextBox($hW)
+  hTy.Width = 40
+  hSol = New TextBox($hW)
+  hSol.Width = 100
+  hCo2 = New TextBox($hW)
+  hCo2.Width = 90
+  Ccomptes.Tris($hG, hCo, hInt, hTy, hSol, hCo2)
+  TestKit.Check("T01/tris", $hG.Columns.Count & ":" & $hG.Columns[0].Width & "," & $hG.Columns[1].Width & "," & $hG.Columns[2].Width & "," & $hG.Columns[3].Width & "," & $hG.Columns[4].Width)
+
+End
+
+Public Sub T02RecherchePrefixe()
+
+  Dim sSel As String
+
+  For Each sSel In ["41", "512", "999"]
+    Ccomptes.Deb2($hG, Cbase.Table("TabComptes"), "cast(compte_cc AS char)", sSel)
+    Releve("T02/" & sSel)
+  Next
+
+End
+
+Public Sub T03TriDecroissant()
+
+  Ccomptes.Deb3($hG, Cbase.Table("TabComptes"), "cast(compte_cc AS char)", "")
+  Releve("T03/code_desc")
+  Ccomptes.Deb3($hG, Cbase.Table("TabComptes"), "intitule_cc", "")
+  Releve("T03/intitule_desc")
+  Ccomptes.Deb2($hG, Cbase.Table("TabComptes"), "intitule_cc", "")
+  Releve("T03/intitule_asc")
+  Ccomptes.Deb3($hG, Cbase.Table("TabComptes"), "cast(compte_cc AS char)", "41")
+  Releve("T03/code_desc_41")
+
+End
+
+Public Sub T05Requetes()
+
+  Dim sTab As String = Cbase.Table("TabComptes")
+  Dim sTri As String = "cast(compte_cc AS char)"
+  Dim sType As String
+
+  For Each sType In ["C", "B", ""]
+    Ccomptes.Deb4($hG, sTab, sTri, "", sType, 0, 5)
+    Releve("T05/deb4/" & sType)
+    Ccomptes.Deb5($hG, sTab, sTri, "", sType, 2, 5)
+    Releve("T05/deb5/" & sType)
+    Ccomptes.Deb8($hG, sTab, sTri, "", sType, 0, 50)
+    Releve("T05/deb8/" & sType)
+    Ccomptes.Deb9($hG, sTab, sTri, "", sType, 0, 50)
+    Releve("T05/deb9/" & sType)
+  Next
+  Ccomptes.Deb6($hG, sTab, sTri, "4", "C", "F")
+  Releve("T05/deb6/CF")
+  Ccomptes.Deb6($hG, sTab, sTri, "5", "B", "G")
+  Releve("T05/deb6/BG")
+  Ccomptes.Deb7($hG, sTab, sTri, "4", "C", "F")
+  Releve("T05/deb7/CF")
+  Ccomptes.Deb7($hG, sTab, sTri, "5", "B", "G")
+  Releve("T05/deb7/BG")
+  ' sélection accentuée sur l'intitulé
+  Ccomptes.Deb2($hG, sTab, "intitule_cc", "Ré")
+  Releve("T05/accent")
+
+End

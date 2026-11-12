@@ -1,0 +1,23 @@
+{
+ "id": "EXPORTJDV-T10",
+ "objet": "Journal desequilibre (A01)",
+ "classe": "ExportJdv",
+ "description": "Format 1 sur un journal 70 dont l'ecriture n1 est desequilibree (debit 120, credit 110) ; Exporter puis Entree sur le message affiche.",
+ "dataset": "exportjdv_desequilibre",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Exp": -1
+ },
+ "fichiers": [
+  "ecritures70.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

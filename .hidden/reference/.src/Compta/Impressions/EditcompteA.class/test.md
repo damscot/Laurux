@@ -10,14 +10,14 @@ normalisé (date d'édition et utilisateur du pied de page). Valeurs attendues p
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDITCOMPTEA-T01 | replay | Ouverture et bornes d'exercice | ouverture (date fixée), `E1`, `N1`…`N5`, `E0` | `dteN0`/`dteN1`, `cpt`/`cpt2` (`60000`/`69999999`) | `tests/bornes_exercice/` | à faire |
-| EDITCOMPTEA-T02 | replay | Prétraitement des dates saisies | `dteN0` = `12`, `1.2`, `1210`, `12.10`, `121025`, `12.10.25` (Entrée) | texte obtenu (A03 figée : année perdue pour `121025`) | `tests/saisie_dates/` | à faire |
-| EDITCOMPTEA-T03 | replay | Impression avec écritures analytiques | compte 6… ventilé (`Fiches_Analytiques`) avec écritures `Fiches_MvtA` dans la période | comportement actuel figé : erreur « Not enough arguments » sur `level4C` (A01, à confirmer), pas de PDF | `tests/impression_mouvemente/` | à faire |
-| EDITCOMPTEA-T04 | replay | Comptes ventilés sans écriture | compte ventilé sans `Fiches_MvtA` dans la période | message « Aucune ecriture pour cette demande » | `tests/sans_ecriture/` | à faire |
-| EDITCOMPTEA-T05 | replay | Aucun compte | plage sans compte de la nature | message « Aucune ecriture… » | `tests/aucun_compte/` | à faire |
-| EDITCOMPTEA-T06 | replay | Exercice N-1 | `N1` puis **Imprimer** sur une période N-1 | lecture de `Fiches_MvtA` (A02 figée) : message ou PDF selon le jeu | `tests/exercice_n1/` | à faire |
-| EDITCOMPTEA-T07 | replay | Nature bilan et `TriCpt` | `Bbilan`, F2 sur `cpt` | plage `10000`/`99999999`, `TriCpt` en mode `Bilan` | `tests/bilan_tricpt/` | à faire |
-| EDITCOMPTEA-T08 | replay | Fermeture | T04 puis **Quitter** ; puis impression réussie (après correction A01) puis **Quitter** | `~/tmp/Extrait.pdf` supprimé à la fermeture s'il existe | `tests/fermeture/` | à faire |
+| EDITCOMPTEA-T01 | replay | Ouverture et bornes d'exercice | ouverture (date fixée), `E1`, `N1`…`N5`, `E0` | `dteN0`/`dteN1`, `cpt`/`cpt2` (`60000`/`69999999`) | `tests/bornes_exercice/` | à faire : non scénarisé (durée de la vague ; dates affichées non comparées) |
+| EDITCOMPTEA-T02 | replay | Prétraitement des dates saisies | `dteN0` = `12`, `1.2`, `1210`, `12.10`, `121025`, `12.10.25` (Entrée) | texte obtenu (A03 figée : année perdue pour `121025`) | `tests/saisie_dates/` | à faire : non scénarisé (texte des dates non comparé par le rejeu) |
+| EDITCOMPTEA-T03 | replay | Impression avec écritures analytiques | compte 6… ventilé (`Fiches_Analytiques`) avec écritures `Fiches_MvtA` dans la période | comportement actuel figé : erreur « Not enough arguments » sur `level4C` (A01, à confirmer), pas de PDF | `tests/impression_mouvemente/` | implémenté (erreur fatale « Not enough arguments » ligne 726, level4C : A01 confirmée, code_sortie 125 figé ; Ctrlnc recréée) |
+| EDITCOMPTEA-T04 | replay | Comptes ventilés sans écriture | compte ventilé sans `Fiches_MvtA` dans la période | message « Aucune ecriture pour cette demande » | `tests/sans_ecriture/` | à faire : non scénarisé (durée de la vague) |
+| EDITCOMPTEA-T05 | replay | Aucun compte | plage sans compte de la nature | message « Aucune ecriture… » | `tests/aucun_compte/` | implémenté |
+| EDITCOMPTEA-T06 | replay | Exercice N-1 | `N1` puis **Imprimer** sur une période N-1 | lecture de `Fiches_MvtA` (A02 figée) : message ou PDF selon le jeu | `tests/exercice_n1/` | à faire : non scénarisé (durée de la vague) |
+| EDITCOMPTEA-T07 | replay | Nature bilan et `TriCpt` | `Bbilan`, F2 sur `cpt` | plage `10000`/`99999999`, `TriCpt` en mode `Bilan` | `tests/bilan_tricpt/` | à faire : touche F2 non rejouée (partie Bbilan seule non scénarisée) |
+| EDITCOMPTEA-T08 | replay | Fermeture | T04 puis **Quitter** ; puis impression réussie (après correction A01) puis **Quitter** | `~/tmp/Extrait.pdf` supprimé à la fermeture s'il existe | `tests/fermeture/` | à faire : suppression de ~/tmp/Extrait.pdf non observable sans PDF produit (A01) ; non scénarisé |
 
 ## Détail des tests
 
@@ -30,3 +30,9 @@ normalisé (date d'édition et utilisateur du pied de page). Valeurs attendues p
 - **Base** : l'impression écrit `Ctrlnc` (DROP/CREATE à chaque compte mouvementé) : le dump final est
   comparé (y compris `Ctrlnc`).
 - **Non testable automatiquement** : son, coloration du focus, aide HTML, curseur `Mouse.Pointing`.
+
+- **Phase 2 (agent 3, vague 3)** : scénarios `.hidden/Tests/Compta/assets/editcomptea_<nom>/`
+  (`impression_mouvemente`, `aucun_compte`), jeu `editcomptea_impression_mouvemente/editcomptea_mvta.sql`
+  (607000 ventilé A01 100 %, 2 écritures Fiches_MvtA 2018). T03 : erreur fatale reproduite dans le clone non
+  modifié (`EditcompteA.Button1_Click.726: #4: Not enough arguments`, appel `pdf.level4C(totdeb, totcred,
+  totsld, Posy)`), `"code_sortie": 125`.

@@ -1,0 +1,37 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Societes
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT siret_sc FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(cd_cent Char(8) NOT NULL,intitule Char(40),db_cent FLOAT,crd_cent FLOAT,njournal Char(2),PRIMARY KEY (cd_cent)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt1 a inner join Fiches_Journaux i on i.code_jo = a.jour WHERE a.validee = 1 And a.dte >= '2017-01-01' And a.dte <= '2017-12-31' order by a.dte, a.numero, a.compte 
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411001'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411002'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'

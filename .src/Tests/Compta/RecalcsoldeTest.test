@@ -1,0 +1,68 @@
+' Gambas test file
+
+''Tests de Recalcsolde (.hidden/reference/.src/Compta/Utils/Recalcsolde.module/test.md, RECALCSOLDE-T01).
+''Jeu razclos_shared/razclos_cloturee (écritures validées 10 et 11 dans Fiches_Mvt). Valeurs attendues :
+''assets/RecalcsoldeTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Equivalence", "`Calc` et `Csolde.Recalc_solde` donnent les mêmes soldes")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "RecalcsoldeTest")
+  TestKit.OuvreBase("razclos_shared/razclos_cloturee")
+
+End
+
+' Soldes non nuls de Fiches_Comptes (compte=solde), nombre de comptes et somme des soldes
+Private Sub Soldes() As String
+
+  Dim r As Result
+  Dim sRes As String
+  Dim fTot As Float
+
+  r = Utils.db.Exec("SELECT compte_cc, solde FROM " & Cbase.Table("TabComptes") & " ORDER BY compte_cc")
+  If Not r.Available Then Return "<vide>"
+  Repeat
+    fTot += CFloat(r!solde)
+    If CFloat(r!solde) <> 0 Then sRes &= r!compte_cc & "=" & r!solde & " "
+  Until r.MoveNext()
+  Return sRes & "| comptes=" & r.Count & " total=" & Format$(fTot, "0.00")
+
+End
+
+Private Sub RazSoldes()
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabComptes") & " SET solde = &1", 0)
+
+End
+
+Public Sub T01Equivalence()
+
+  Dim sCalc As String
+  Dim sCsolde As String
+
+  TestKit.Check("T01/initial", Soldes())
+  RazSoldes()
+  Try Recalcsolde.Calc()
+  If Error Then
+    TestKit.Check("T01/calc", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  sCalc = Soldes()
+  TestKit.Check("T01/apres_calc", sCalc)
+  RazSoldes()
+  Try Csolde.Recalc_solde()
+  If Error Then
+    TestKit.Check("T01/recalc_solde", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  sCsolde = Soldes()
+  TestKit.Check("T01/apres_csolde", sCsolde)
+  TestKit.Check("T01/identiques", sCalc = sCsolde)
+
+End

@@ -8,10 +8,11 @@ sans modifier le code. Le seul test utile vérifie que la suppression proposée 
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FPREPREL2-T01 | replay | Non-régression après suppression | compilation `gbc3 -agt` ; rejouer les replays de `FEditrel` (T02, T06) | compilation sans erreur ; diffs vides | `tests/suppression/` | à faire |
+| FPREPREL2-T01 | replay | Non-régression après suppression | compilation `gbc3 -agt` ; rejouer les replays de `FEditrel` (T02, T06) | compilation sans erreur ; diffs vides | `tests/suppression/` | à faire : conditionnel (suppression FPREPREL2-A01 non validée) ; scénarios FEditrel T02/T06 prêts à rejouer |
 
 ## Détail des tests
 
 - Le test n'a de sens qu'avec l'anomalie FPREPREL2-A01 validée ; il réutilise les données et les
   valeurs attendues des tests `FEditrel`.
 - Les handlers de l'écran ne sont pas testables (aucun point d'entrée).
+

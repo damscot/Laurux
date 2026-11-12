@@ -59,7 +59,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LISTEXTCPT-A01 — [anomalie] Calcul de `der` : `$dtes` comparée deux fois à `dteinf`
   (`dtesup` probablement voulu) ; `der` reste l'exercice en cours, requêtes `UNION` inutiles et
   condition `i = der` de la ligne 96 faussée · tests : T01, T04 · sources : [Listextcpt.class:82](../../../../../../.src/Compta/Utils/Listextcpt.class#L82)
-- [ ] LISTEXTCPT-A02 — [anomalie] Ligne « Report a nouveau » : colonnes `numero`/`intitule`
+- [ ] LISTEXTCPT-A02 — [anomalie] (confirmée phase 2, vague 3 : ligne de report : `numero` et `intitule` inversés) Ligne « Report a nouveau » : colonnes `numero`/`intitule`
   inversées par rapport à `champ` (UNION positionnel) → `intitule = 0`, `numero = ' '` · tests :
   T03 · sources : [Listextcpt.class:107](../../../../../../.src/Compta/Utils/Listextcpt.class#L107)
 - [ ] LISTEXTCPT-A03 — [anomalie] Alias `$dtei = $brn[0].dteinf` puis `$dtei.L = dtei` : la borne
@@ -69,7 +69,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   tables d'exercice sans borne de date : un même `numero`/`numlot` réutilisé dans un autre
   exercice du même compte est aussi modifié (à confirmer selon la renumérotation à la clôture) ·
   tests : T07, T10 · sources : [Listextcpt.class:enregistrepointage](../../../../../../.src/Compta/Utils/Listextcpt.class#L330-L346), [Listextcpt.class:letgroupe](../../../../../../.src/Compta/Utils/Listextcpt.class#L210-L218)
-- [ ] LISTEXTCPT-A05 — [anomalie] `cherche` sans lecture préalable de `resext`, ou sur un
+- [ ] LISTEXTCPT-A05 — [anomalie] (confirmée phase 2, vague 3 : `litleres`/`letcpt` sans lecture préalable de `resext` → « Null object ») `cherche` sans lecture préalable de `resext`, ou sur un
   extrait vide : erreur d'exécution ; `litleres` renvoie `Null` implicitement · tests : T05, T11 · sources : [Listextcpt.class:cherche](../../../../../../.src/Compta/Utils/Listextcpt.class#L162-L186), [Listextcpt.class:litleres](../../../../../../.src/Compta/Utils/Listextcpt.class#L149-L160)
 - [ ] LISTEXTCPT-A06 — [anomalie] SQLite : `UNION (SELECT …)` entre parenthèses (exercices
   suivants) n'est pas accepté par SQLite (à confirmer) ; extrait sur deux exercices en échec ·
@@ -77,3 +77,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LISTEXTCPT-A07 — [anomalie, sécurité] `totalpointe`/`enregistrepointage` concatènent la
   liste `selected` dans `IN (…)` et `rechedoc` concatène l'opérateur `egal` ; valeurs internes
   aujourd'hui (numéros de la grille), à paramétrer · tests : T09, T10 · sources : [Listextcpt.class:totalpointe](../../../../../../.src/Compta/Utils/Listextcpt.class#L308-L328), [Listextcpt.class:enregistrepointage](../../../../../../.src/Compta/Utils/Listextcpt.class#L330-L346), [Listextcpt.class:rechedoc](../../../../../../.src/Compta/Utils/Listextcpt.class#L287-L305)
+- [ ] LISTEXTCPT-A08 — [anomalie] `Controle` d'un lot inexistant renvoie 1 (aucune ligne lue, `TotL = 0`) : le lot est jugé équilibré (phase 2, vague 3, 2026-11-12) · tests : T08 · sources : [Listextcpt.class:258](../../../../../../.src/Compta/Utils/Listextcpt.class#L258)
+- [ ] LISTEXTCPT-A09 — [anomalie] Report à nouveau : la somme ne porte que sur la table de l'exercice du début d'extrait ; pour un extrait commençant en 2017, les montants 2016 sont ignorés (phase 2, vague 3, 2026-11-12) · tests : T03 · sources : [Listextcpt.class:107](../../../../../../.src/Compta/Utils/Listextcpt.class#L107)

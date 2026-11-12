@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RENAN-T01 | replay | Lancement par `Prgm` | `Laurux01.sql`, saisie `RenAN` | message d'erreur SQL (table `Fiches_Mvtoc` inexistante) figé ; dump inchangé | `tests/renan_prgm/` | à faire |
+| RENAN-T01 | replay | Lancement par `Prgm` | `Laurux01.sql`, saisie `RenAN` | message d'erreur SQL (table `Fiches_Mvtoc` inexistante) figé ; dump inchangé | `tests/renan_prgm/` | implémenté (couvert par Communs/prgm_scripts_renan, PRGM-T06 : Query failed fatal figé, code 125) |
 
 ## Détail des tests
 

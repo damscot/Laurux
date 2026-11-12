@@ -73,7 +73,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] JOURNAUX-A01 — [anomalie] `Button1_Click` passe la commande `RadioButton1` (objet, converti
   en `True`) au lieu de `RadioButton1.Value` : le tri « numéro/date/compte » n'est jamais appliqué
   à l'impression · tests : T05, JOURNAUXM-T01 · sources : [Journaux.class:607](../../../../../../.src/Compta/Impressions/Journaux.class#L607), [JournauxM.module:96](../../../../../../.src/Compta/Impressions/JournauxM.module#L96)
-- [ ] JOURNAUX-A02 — [anomalie] Export : le solde de ligne n'est jamais remis à zéro (`pl` n'est
+- [ ] JOURNAUX-A02 — [anomalie] (confirmée phase 2, vague 3 : au second export, le solde reprend la valeur laissée par le premier) Export : le solde de ligne n'est jamais remis à zéro (`pl` n'est
   jamais incrémenté, `Raz` ne touche pas `solde`) ; il court d'un journal à l'autre et d'un export
   à l'autre dans la même session · tests : T08 · sources : [Journaux.class:721](../../../../../../.src/Compta/Impressions/Journaux.class#L721), [Journaux.class:733-737](../../../../../../.src/Compta/Impressions/Journaux.class#L733-L737), [Journaux.class:Raz](../../../../../../.src/Compta/Impressions/Journaux.class#L611-L624)
 - [ ] JOURNAUX-A03 — [anomalie] Export : `q[]` n'est pas réinitialisé ; après réduction du nombre
@@ -87,9 +87,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] JOURNAUX-A06 — [anomalie] Export : boucle `For y = 0 To 15` sur `q` de taille 12 ;
   dépassement d'indice si `Entete12..15` est renseigné (configuration modifiée à la main) ·
   tests : T06 · sources : [Journaux.class:753-756](../../../../../../.src/Compta/Impressions/Journaux.class#L753-L756), [Journaux.class:52-53](../../../../../../.src/Compta/Impressions/Journaux.class#L52-L53)
-- [ ] JOURNAUX-A07 — [anomalie] Date hors bornes ou fin < début : `Exo()` recharge les dates de
+- [ ] JOURNAUX-A07 — [anomalie] (confirmée phase 2, vague 3 : date « Du » hors bornes → avertissement, `Compdate` recharge l'exercice précédent et recoche `E0`, qui relance `Ex1` : la période finale est celle de l'exercice en cours) Date hors bornes ou fin < début : `Exo()` recharge les dates de
   l'**exercice précédent** puis coche « Exercice en cours » (`E0.Value = True`). Si ce changement
   ne déclenche pas `E0_Click` (à confirmer), `Tab0` garde la table de l'exercice choisi (ex. `N3`
   → requêtes sur `Fiches_Mvt3` avec les dates de l'exercice précédent : journaux vides) ; s'il le
   déclenche, `Ex1` écrase aussitôt les dates. Dans tous les cas la saisie est remplacée par une
   autre période que celle de l'exercice sélectionné · tests : T03 · sources : [Journaux.class:427-429](../../../../../../.src/Compta/Impressions/Journaux.class#L427-L429), [Journaux.class:Compdate](../../../../../../.src/Compta/Impressions/Journaux.class#L438-L450), [Journaux.class:compdate2](../../../../../../.src/Compta/Impressions/Journaux.class#L452-L464)
+- [ ] JOURNAUX-A08 — [anomalie] Export : montants de `journaux.txt` écrits avec une virgule (`120,00`) alors que le test.md annonce un point via `Utils.cpoint` (Float passé à `cpoint`, conversion selon la locale) : sortie dépendante de la locale (phase 2, vague 3, 2026-11-12) · tests : T06 · sources : [Journaux.class:748-750](../../../../../../.src/Compta/Impressions/Journaux.class#L748-L750)
+- [ ] JOURNAUX-A09 — [amélioration] Testabilité et ergonomie : action déclenchée par la touche F2, Échap : non rejouable par le harnais (REPLAYOBSERVER : touches de fonction et Échap non rejouées) et peu découvrable. Proposition : offrir (ou rendre visible, s'il existe) un bouton ou une entrée de menu équivalente (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : JOURNAUX-T04 · sources : [Journaux.class:493](../../../../../../.src/Compta/Impressions/Journaux.class#L493), [Journaux.class:493](../../../../../../.src/Compta/Impressions/Journaux.class#L493)

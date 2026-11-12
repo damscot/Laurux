@@ -1,0 +1,194 @@
+' Gambas test file
+
+''Tests de VarEcr (.hidden/reference/.src/Compta/Utils/VarEcr.class/test.md, VARECR-T01 à T06).
+''Classe de calcul pur, sans base. Valeurs attendues : assets/VarEcrTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Conteneur", "`plus`, `nb`, `Max`, `_get` (dont indice hors bornes)")
+  TestKit.Desc("T02Enumeration", "`For Each` : vide, 1 ligne, 3 lignes, racine ajoutée à elle-même")
+  TestKit.Desc("T03Moins", "`moins` par index, par objet, objet absent")
+  TestKit.Desc("T04Recherche", "`trouve`, `reccomp`, `modifi`")
+  TestKit.Desc("T05Somme", "`somme` : lignes normales, collectives, supprimées, 3 décimales")
+  TestKit.Desc("T06Lettrage", "`newTbl` et `Tlettrage`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "VarEcrTest")
+
+End
+
+Private Sub Ligne(sCompte As String, Optional fDebit As Float, Optional fCredit As Float, Optional bColl As Boolean, Optional iEtat As Integer) As VarEcr
+
+  Dim hL As New VarEcr
+
+  hL.compte = sCompte
+  hL.montantd = fDebit
+  hL.montantc = fCredit
+  hL.collectif = bColl
+  hL.etat = iEtat
+  Return hL
+
+End
+
+' Comptes des lignes, dans l'ordre de l'énumération
+Private Sub Liste(hV As VarEcr) As String
+
+  Dim hL As VarEcr
+  Dim sRes As String
+
+  For Each hL In hV
+    If hL = hV Then
+      sRes &= "<racine> "
+    Else
+      sRes &= hL.compte & " "
+    Endif
+  Next
+  If Not sRes Then Return "<vide>"
+  Return Trim(sRes)
+
+End
+
+Private Sub Cpt(vVal As Variant) As String
+
+  If IsNull(vVal) Then Return "<Null>"
+  If TypeOf(vVal) = gb.Object Then Return "objet " & vVal.compte
+  Return "valeur " & CStr(vVal)
+
+End
+
+Public Sub T01Conteneur()
+
+  Dim hV As New VarEcr
+
+  TestKit.Check("T01/nb_vide", hV.nb())
+  TestKit.Check("T01/max_vide", hV.Max)
+  TestKit.Check("T01/plus_0", hV.plus(Ligne("411000")))
+  TestKit.Check("T01/plus_1", hV.plus(Ligne("512000")))
+  TestKit.Check("T01/plus_2", hV.plus(Ligne("706000")))
+  TestKit.Check("T01/nb", hV.nb())
+  TestKit.Check("T01/max", hV.Max)
+  TestKit.Check("T01/get_0", Cpt(hV[0]))
+  TestKit.Check("T01/get_2", Cpt(hV[2]))
+  TestKit.Check("T01/get_5", Cpt(hV[5]))
+  Try TestKit.Check("T01/get_moins1", Cpt(hV[-1]))
+  If Error Then TestKit.Check("T01/get_moins1", "ERREUR: " & Error.Text)
+
+End
+
+Public Sub T02Enumeration()
+
+  Dim hV As New VarEcr
+
+  TestKit.Check("T02/vide", Liste(hV))
+  hV.plus(Ligne("411000"))
+  TestKit.Check("T02/une", Liste(hV))
+  hV.plus(Ligne("512000"))
+  hV.plus(Ligne("706000"))
+  TestKit.Check("T02/trois", Liste(hV))
+  TestKit.Check("T02/trois_bis", Liste(hV))
+  hV.plus(hV)
+  TestKit.Check("T02/racine", Liste(hV))
+
+End
+
+Public Sub T03Moins()
+
+  Dim hV As New VarEcr
+  Dim hB As VarEcr
+
+  hV.plus(Ligne("411000"))
+  hB = Ligne("512000")
+  hV.plus(hB)
+  hV.plus(Ligne("706000"))
+  hV.plus(Ligne("445710"))
+  TestKit.Check("T03/index_0", hV.moins(0))
+  TestKit.Check("T03/apres_index", Liste(hV))
+  TestKit.Check("T03/objet", hV.moins(hB))
+  TestKit.Check("T03/apres_objet", Liste(hV))
+  TestKit.Check("T03/objet_absent", hV.moins(hB))
+  TestKit.Check("T03/autre_absent", hV.moins(Ligne("706000")))
+  TestKit.Check("T03/apres_absent", Liste(hV))
+  Try TestKit.Check("T03/index_hors", hV.moins(10))
+  If Error Then TestKit.Check("T03/index_hors", "ERREUR: " & Error.Text)
+  TestKit.Check("T03/index_moins1", hV.moins(-1))
+  TestKit.Check("T03/final", Liste(hV))
+
+End
+
+Public Sub T04Recherche()
+
+  Dim hV As New VarEcr
+  Dim hA As VarEcr
+  Dim hB As VarEcr
+  Dim hN As VarEcr
+
+  hA = Ligne("411000")
+  hB = Ligne("512000")
+  hV.plus(hA)
+  hV.plus(hB)
+  hV.plus(Ligne("411000"))
+  TestKit.Check("T04/trouve_1", Cpt(hV.trouve(1)))
+  TestKit.Check("T04/trouve_3", Cpt(hV.trouve(3)))
+  Try TestKit.Check("T04/trouve_moins1", Cpt(hV.trouve(-1)))
+  If Error Then TestKit.Check("T04/trouve_moins1", "ERREUR: " & Error.Text)
+  TestKit.Check("T04/trouve_objet", Cpt(hV.trouve(hB)))
+  TestKit.Check("T04/trouve_absent", Cpt(hV.trouve(Ligne("512000"))))
+  TestKit.Check("T04/reccomp_411", hV.reccomp("411000"))
+  TestKit.Check("T04/reccomp_512", hV.reccomp("512000"))
+  TestKit.Check("T04/reccomp_absent", hV.reccomp("999999"))
+  hN = Ligne("607000")
+  TestKit.Check("T04/modifi_moins1", hV.modifi(-1, hN))
+  TestKit.Check("T04/modifi_1", hV.modifi(1, hN))
+  TestKit.Check("T04/modifi_3", hV.modifi(3, hN))
+  TestKit.Check("T04/modifi_meme", hV.modifi(hV.trouve(hA), hA))
+  TestKit.Check("T04/apres_modifi", Liste(hV))
+
+End
+
+Public Sub T05Somme()
+
+  Dim hV As New VarEcr
+
+  TestKit.Check("T05/vide", hV.somme())
+  hV.plus(Ligne("607000", 100.125))
+  hV.plus(Ligne("445660", 20.004))
+  TestKit.Check("T05/normales", hV.somme())
+  hV.plus(Ligne("401000", 0, 120, True))
+  TestKit.Check("T05/collectif", hV.somme())
+  hV.plus(Ligne("512000", 0, 50.5, False, VarEcr.L_sup))
+  TestKit.Check("T05/supprimee", hV.somme())
+  hV.plus(Ligne("530000", 0, 120.129, False, VarEcr.L_modif))
+  TestKit.Check("T05/modifiee", hV.somme())
+  hV.plus(Ligne("658000", 0.001, 0, False, VarEcr.L_caisse))
+  TestKit.Check("T05/caisse", hV.somme())
+
+End
+
+Public Sub T06Lettrage()
+
+  Dim hV As New VarEcr
+  Dim hT1 As Object
+  Dim hT2 As Object
+
+  TestKit.Check("T06/tlettrage_initial", hV.Tlettrage.Count)
+  TestKit.Check("T06/tbl_initial", Object.IsValid(hV.Tbl))
+  hV.newTbl()
+  hT1 = hV.Tbl
+  hV.Tbl.compte = "411000"
+  hV.Tbl.montantd = 12.5
+  hV.Tlettrage.Add(hV.Tbl)
+  hV.newTbl()
+  hT2 = hV.Tbl
+  TestKit.Check("T06/distinct", hT1 <> hT2)
+  TestKit.Check("T06/tbl2_compte", hV.Tbl.compte)
+  hV.Tbl.compte = "411001"
+  hV.Tlettrage.Add(hV.Tbl)
+  TestKit.Check("T06/tlettrage_nb", hV.Tlettrage.Count)
+  TestKit.Check("T06/tlettrage_0", hV.Tlettrage[0].compte & " " & hV.Tlettrage[0].montantd)
+  TestKit.Check("T06/tlettrage_1", hV.Tlettrage[1].compte)
+
+End

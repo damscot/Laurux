@@ -14,22 +14,22 @@ puis compare :
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EXPORTJDV-T01 | replay | Format 1 « Fichier texte » | `Laurux01.sql`, journal VE, période d'un mois, non exportées | `ecrituresVE.csv`, `clients.txt`, `JDV….csv` ; `export = '1'` | `tests/format1_texte/` | à faire |
-| EXPORTJDV-T02 | replay | Format 2 « Quadra » | idem | fichier de référence (montant écrit deux fois, figé) | `tests/format2_quadra/` | à faire |
-| EXPORTJDV-T03 | replay | Format 3 « Ciel » | idem | `.txt` windows-1252 de référence | `tests/format3_ciel/` | à faire |
-| EXPORTJDV-T04 | replay | Format 4 « CCMX Winner » | idem | `.txt` de référence (compteur figé) | `tests/format4_winner/` | à faire |
-| EXPORTJDV-T05 | replay | Format 5 « Cador » | idem | enregistrements `1`/`2`/`3` de référence | `tests/format5_cador/` | à faire |
-| EXPORTJDV-T06 | replay | Format 6 « Sage », tous clients avec `cli_sage` | `/Soc01/Sage` vrai, codes Sage renseignés | `ecrituresVE.pnm`, `clients.pnc` ; copie `JDV….txt` absente (figé, A05) | `tests/format6_sage/` | à faire |
-| EXPORTJDV-T07 | replay | Sage avec clients sans `cli_sage` (A04) | un client du journal sans code Sage | liste écrite dans `ecritures*.pnm`, message, aucun `export = '1'` | `tests/sage_controle/` | à faire |
-| EXPORTJDV-T08 | replay | Ré-export | T01 puis nouvel export « non exportées », puis « ensemble des écritures » | message « Aucune écriture… » puis fichier complet | `tests/reexport/` | à faire |
-| EXPORTJDV-T09 | replay | Erreurs de saisie | journal inexistant, code vide, chemin inaccessible | messages ; réglages et copie `cp` tout de même exécutés (figé, A05) | `tests/erreurs_saisie/` | à faire |
-| EXPORTJDV-T10 | replay | Journal déséquilibré (A01) | base dérivée : une écriture VE à débit ≠ crédit | export réalisé sans message (figé) | `tests/desequilibre/` | à faire |
-| EXPORTJDV-T11 | replay | Journal sans ligne collectif, formats 4 et 6 (A03) | base dérivée : journal OD sans collectif | message « Aucune écriture » malgré les lignes écrites et marquées (figé) | `tests/sans_collectif/` | à faire |
-| EXPORTJDV-T12 | replay | Saisie des dates | dates partielles `05`, `05.03`, date hors période, fin < début, E0/E1 | textes des champs et messages de référence | `tests/saisie_dates/` | à faire |
-| EXPORTJDV-T13 | replay | Intitulé de collectif avec apostrophe (A08) | compte collectif `Clients d'Europe` | erreur SQL attrapée par le `Catch`, export interrompu (figé) | `tests/apostrophe_collectif/` | à faire |
-| EXPORTJDV-T14 | gbtest | Fonctions de ligne par format (après EXPORTJDV-009) | lignes `Fiches_Mvt` de T01-T06 en entrée | chaînes identiques aux lignes des fichiers de référence | `tests/lignes_formats/` | à faire |
-| EXPORTJDV-T15 | replay | Aller-retour avec ImpJdv | fichiers de T01 importés dans une seconde base | voir IMPJDV-T06 | `tests/aller_retour_impjdv/` | à faire |
-| EXPORTJDV-T16 | replay | Export format 4 CCMX Winner (A11) | journal avec au moins une écriture non collectif, format 4 | figer le comportement actuel : erreur « Too many arguments » attendue à `ExportJdv.class:758`, fichier partiel | `tests/format4_ccmx/` | à faire |
+| EXPORTJDV-T01 | replay | Format 1 « Fichier texte » | `Laurux01.sql`, journal VE, période d'un mois, non exportées | `ecrituresVE.csv`, `clients.txt`, `JDV….csv` ; `export = '1'` | `tests/format1_texte/` | implémenté |
+| EXPORTJDV-T02 | replay | Format 2 « Quadra » | idem | fichier de référence (montant écrit deux fois, figé) | `tests/format2_quadra/` | implémenté |
+| EXPORTJDV-T03 | replay | Format 3 « Ciel » | idem | `.txt` windows-1252 de référence | `tests/format3_ciel/` | implémenté |
+| EXPORTJDV-T04 | replay | Format 4 « CCMX Winner » | idem | `.txt` de référence (compteur figé) | `tests/format4_winner/` | implémenté (figé A11 : export interrompu après la 1re ligne collectif) |
+| EXPORTJDV-T05 | replay | Format 5 « Cador » | idem | enregistrements `1`/`2`/`3` de référence | `tests/format5_cador/` | implémenté |
+| EXPORTJDV-T06 | replay | Format 6 « Sage », tous clients avec `cli_sage` | `/Soc01/Sage` vrai, codes Sage renseignés | `ecrituresVE.pnm`, `clients.pnc` ; copie `JDV….txt` absente (figé, A05) | `tests/format6_sage/` | à faire : non commencé (vague 3, faute de temps ; nécessite /Soc01/Sage et cli_sage) |
+| EXPORTJDV-T07 | replay | Sage avec clients sans `cli_sage` (A04) | un client du journal sans code Sage | liste écrite dans `ecritures*.pnm`, message, aucun `export = '1'` | `tests/sage_controle/` | à faire : non commencé (vague 3, faute de temps) |
+| EXPORTJDV-T08 | replay | Ré-export | T01 puis nouvel export « non exportées », puis « ensemble des écritures » | message « Aucune écriture… » puis fichier complet | `tests/reexport/` | à faire : rejeu en délai dépassé (code 124, console vide) après le 1er export et la question « Voulez-vous ouvrir » (Oui comme Non), lors de la réouverture de l'écran ; à analyser |
+| EXPORTJDV-T09 | replay | Erreurs de saisie | journal inexistant, code vide, chemin inaccessible | messages ; réglages et copie `cp` tout de même exécutés (figé, A05) | `tests/erreurs_saisie/` | implémenté |
+| EXPORTJDV-T10 | replay | Journal déséquilibré (A01) | base dérivée : une écriture VE à débit ≠ crédit | export réalisé sans message (figé) | `tests/desequilibre/` | implémenté |
+| EXPORTJDV-T11 | replay | Journal sans ligne collectif, formats 4 et 6 (A03) | base dérivée : journal OD sans collectif | message « Aucune écriture » malgré les lignes écrites et marquées (figé) | `tests/sans_collectif/` | à faire : non commencé (vague 3, faute de temps) |
+| EXPORTJDV-T12 | replay | Saisie des dates | dates partielles `05`, `05.03`, date hors période, fin < début, E0/E1 | textes des champs et messages de référence | `tests/saisie_dates/` | à faire : non commencé (vague 3, faute de temps) |
+| EXPORTJDV-T13 | replay | Intitulé de collectif avec apostrophe (A08) | compte collectif `Clients d'Europe` | erreur SQL attrapée par le `Catch`, export interrompu (figé) | `tests/apostrophe_collectif/` | implémenté |
+| EXPORTJDV-T14 | gbtest | Fonctions de ligne par format (après EXPORTJDV-009) | lignes `Fiches_Mvt` de T01-T06 en entrée | chaînes identiques aux lignes des fichiers de référence | `tests/lignes_formats/` | à faire : après extraction EXPORTJDV-009 |
+| EXPORTJDV-T15 | replay | Aller-retour avec ImpJdv | fichiers de T01 importés dans une seconde base | voir IMPJDV-T06 | `tests/aller_retour_impjdv/` | à faire : dépend de IMPJDV-T06 (seconde base) |
+| EXPORTJDV-T16 | replay | Export format 4 CCMX Winner (A11) | journal avec au moins une écriture non collectif, format 4 | figer le comportement actuel : erreur « Too many arguments » attendue à `ExportJdv.class:758`, fichier partiel | `tests/format4_ccmx/` | implémenté (scénario exportjdv_format4_winner, commun avec T04) |
 
 ## Détail des tests
 
@@ -45,3 +45,12 @@ puis compare :
 - T07, T09, T10, T11, T13 sont des tests de caractérisation d'anomalies.
 - **T14** n'existe qu'après l'extraction des fonctions de ligne (`Public` dans un module, ou
   testées via une fonction publique).
+- **Implémentation (phase 2, vague 3)** : scénarios `.hidden/Tests/Compta/assets/exportjdv_<nom>/` (`format1_texte`,
+  `format2_quadra`, `format3_ciel`, `format4_winner`, `format5_cador`, `erreurs_saisie`, `desequilibre`,
+  `apostrophe_collectif`) ; `"conf": {"/Soc01/Exp": -1}` (Menu133 `Fmenu#Menu67#Menu75#Menu133#`), Chemin-export
+  vide → HOME, fichiers produits comparés par `"fichiers"`. Jeu partagé `exportjdv_shared/exportjdv_jeu.sql`
+  (journal 70, 2 factures avec ligne collectif 411000) ; jeux propres `exportjdv_desequilibre.sql` (T10) et
+  `exportjdv_apostrophe.sql` (T13). Dates par défaut (Ex1/Exo) : requête du 20180101 au 20181230. Question finale
+  « Voulez-vous ouvrir … » : Oui (Entrée, xdg-open factice). T10 : export réalisé sans message (contrôle
+  `totsld = totdeb - totdeb` toujours nul, A01). T13 : INSERT `centralisations` cassé par l'apostrophe, erreur
+  attrapée (Message.Error). T09 : chemin inaccessible obtenu en ajoutant `/x` au champ `Chmexport`.

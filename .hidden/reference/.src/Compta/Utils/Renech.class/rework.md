@@ -41,7 +41,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RENECH-A01 — [anomalie] Fichier absent ou ligne incomplète → erreur d'exécution ; date avec
+- [ ] RENECH-A01 — [anomalie] (confirmée phase 2, vague 3 : une date avec heure (format produit par `RecupDech`) est enregistrée NULL dans `dateech` (`Renech.class:16`) : l'aller-retour RecupDech → Renech efface toutes les échéances, figé par T01) Fichier absent ou ligne incomplète → erreur d'exécution ; date avec
   heure → `dateech` invalide ; aucune confirmation (PRGM-A02). Retirer le script avec
   `RecupDech` ou le fiabiliser (`Try`, `LDate`, confirmation) · tests : T02 · sources : [Renech.class:10](../../../../../../.src/Compta/Utils/Renech.class#L10), [Renech.class:16](../../../../../../.src/Compta/Utils/Renech.class#L16), [Prgm.class:84](../../../../../../.src/Communs/Prgm.class#L84)
 - [ ] RENECH-A02 — [anomalie] Chemins incohérents avec `RecupDech` (`~/Dtech.txt` lu,

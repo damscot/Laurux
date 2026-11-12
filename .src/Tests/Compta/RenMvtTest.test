@@ -1,0 +1,44 @@
+' Gambas test file
+
+''Tests de RenMvt (.hidden/reference/.src/Compta/Utils/RenMvt.module/test.md, RENMVT-T02).
+''T01 (Run avec journal 80) se termine par un Message.Warning bloquant en gb.test : couvert par le rejeu
+''Compta/renmvt_prgm. Valeurs attendues : assets/RenMvtTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02SansJournal80", "`Run` sans écriture du journal 80 : erreur d'exécution, base inchangée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "RenMvtTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Compte(sTable As String) As Integer
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT count(*) AS n FROM " & sTable)
+  If Not r.Available Then Return -1
+  Return r!n
+
+End
+
+Public Sub T02SansJournal80()
+
+  TestKit.Check("T02/mvt_avant", Compte(Cbase.Table("TabMvt")))
+  TestKit.Check("T02/mvt1_avant", Compte(Cbase.Table("TabMvt1")))
+  Try RenMvt.Run()
+  If Error Then
+    TestKit.Check("T02/erreur", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/erreur", "<aucune>")
+  Endif
+  TestKit.Check("T02/mvt_apres", Compte(Cbase.Table("TabMvt")))
+  TestKit.Check("T02/mvt1_apres", Compte(Cbase.Table("TabMvt1")))
+
+End

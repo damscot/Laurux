@@ -92,6 +92,16 @@ vont dans `output/tests/`, non versionné.
                                        "timeout_accord" (accord de l'utilisateur), sinon ramené à 20
                                        code_sortie : code attendu du rejeu (défaut 0 ; 3 = événement non
                                        rejouable ; 125 = erreur fatale figée, voir « Modes d'exécution »)
+                                       verification_manuelle : raison (scénario connu instable ou en
+                                       erreur) : retiré des campagnes (all, lots, jokers), lancé seulement par
+                                       son nom exact, listé « à la main » dans « Tests à vérifier à la main »
+                                       de TODO.md
+                                       compare_sql_log : comparaison de sql.log par compare : "skipped"
+                                       (défaut : le dump, les fichiers déclarés et le code de sortie suffisent),
+                                       "ordered" (requêtes dans le même ordre ; scénarios en lecture seule :
+                                       consultations, navigations, éditions, saisies refusées, dont le dump
+                                       ne change pas), "unordered" (même multi-ensemble de requêtes, ordre
+                                       libre : requêtes émises dans un ordre non déterministe)
                                        tolerance_horodatage : écart toléré (s) entre horodatages attendu et
                                        obtenu (défaut 5 ; voir « Limites à connaître »)
                                        conf : surcharge de Laurux-test.conf propre au scénario,
@@ -104,6 +114,11 @@ vont dans `output/tests/`, non versionné.
                                        appels Desktop.Open ; @outils.trace : outils externes factices ;
                                        @ftp.trace : commandes FTP reçues) ; « <fichier absent> » s'il
                                        n'existe pas
+                                       entrees : fichiers d'entrée à déposer avant le rejeu,
+                                       {"<fichier des assets>": "<destination>"} ; source : fichier du
+                                       scénario ou « <classe>_shared/<fichier> » ; destination : « ~/… » ou
+                                       « {home}/… » (HOME de test), « {out}/… » (sorties de -T) ou
+                                       « /tmp/laurux-test/… » (ex. {"Dtech.txt": "~/Dtech.txt"})
                                        ftp : faux serveur FTP lancé pour le rejeu, "ok" | "refus" | "absent"
                                        (voir « Outils externes factices ») ; « {ftp} » dans une valeur de
                                        conf est remplacé par son URL (ex. {"/Soc01/Adrbase": "{ftp}/sauve"})
@@ -170,6 +185,15 @@ comme serveur de test », bases conservées (seule `Laurux01` est recréée, com
 sur un serveur qui contient des données réelles.
 
 ### Modes d'exécution
+
+> **Une seule commande runner à la fois par base de test.** Deux commandes concurrentes sur la même base (par
+> exemple un `compare` lancé en arrière-plan pendant un `replay --expected`) restaureraient et liraient la base en
+> même temps : dump incomplet, attendus faux. Le runner pose donc un verrou par base (hôte et port,
+> `~/.cache/laurux-tests/runner-<hôte>-<port>.lock`) pour toute commande qui touche la base ou les clones (`gbtest`,
+> `replay`, `compare`, `record`, `dump`, `db reset`, `build`, `harness`) : une seconde commande attend la fin de la
+> première (message « une autre commande runner utilise la base … »). `list`, `report`, `retime` et
+> `db up/down/status` n'en prennent pas. Pour travailler en parallèle, utiliser des bases distinctes (bacs à sable,
+> `LAURUX_TEST_DB_PORT`).
 
 | | Dans un conteneur (référence) | Hors conteneur, sur le poste |
 |---|---|---|
@@ -473,6 +497,17 @@ vers la base de test ; `curl`, `wget`, `ps`, `lpstat`, `lpc`, `ssh`, `gksu`, `ho
 changerait le comportement testé. Pour en ajouter un : lien symbolique `bin/<outil> -> laurux-factice` si la sortie
 n'est pas lue, sinon un faux programme dédié qui reproduit la réponse attendue (modèle : `gammu`).
 
+**Comparer un PDF produit (en attendant une sortie intermédiaire dans Laurux).** Les éditions affichent leur PDF par
+`Visualiseur.Prog`, qui lance la commande de visualisation de la configuration (`/Soc01/caisse/CmdVis`). Un scénario
+la remplace par `pdftotext`, qui écrit le texte du PDF dans le HOME de test, puis compare ce texte :
+```json
+"conf": {"/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"},
+"fichiers": ["edition.txt"]
+```
+Le texte est stable (date d'édition figée par `faketime`, utilisateur `laurux`) ; sans PDF produit, le fichier est
+noté `<fichier absent>`. Solution d'attente : à terme, Laurux produira directement un fichier intermédiaire
+comparable (CSV, ou XML embarqué au format Factur-X).
+
 **FTP.** `FtpClient` (libcurl, dans le processus Gambas) ne passe par aucun programme externe : le PATH ne peut pas
 le remplacer. `TestKit.FtpFactice(Mode, Dossier)` lance donc `bin/laurux-ftp`, petit serveur FTP en Python
 (bibliothèque standard) sur `127.0.0.1` (port libre), qui accepte les envois (`USER`/`PASS`, `CWD`, `MKD`,
@@ -587,7 +622,8 @@ Les actions enregistrées sont : `Click`, `Keypress` (uniquement si le contrôle
 - `faketime` fixe l'heure de départ du rejeu, mais l'horloge avance ensuite : un horodatage issu de `Now` dépend de
   la durée du rejeu (et de la vitesse de ref et de rework). Les horodatages ne sont **pas masqués** (un masquage
   cacherait une régression, ex. 9:59:59.99 contre 10:00:00.00, ou un changement de jour à minuit) : `compare`
-  vérifie d'abord le contenu et l'**ordre** des lignes (`sql.log`, `dump.sql`, fichiers comparés), horodatages
+  vérifie d'abord le contenu et l'**ordre** des lignes (`dump.sql`, fichiers comparés, `sql.log` selon
+  `compare_sql_log` : en mode `unordered`, sans ordre), horodatages
   mis de côté, puis compare chaque horodatage obtenu à celui de la même position dans l'attendu avec un **écart
   toléré** : `"tolerance_horodatage"` de `meta.json`, en secondes (défaut 5). Il signale aussi l'inversion de deux
   horodatages successifs que l'attendu sépare d'au moins 1 s. Formes reconnues : `AAAA-MM-JJ hh:mm:ss[.f]` et heure

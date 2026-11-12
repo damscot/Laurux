@@ -53,7 +53,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] LETTRAGEMONTANT-A01 — [anomalie] Montant de référence nul (première ligne au crédit pour un
+- [ ] LETTRAGEMONTANT-A01 — [anomalie] (confirmée phase 2, vague 3 : 411002 lettré lot MA1 alors que sa 1re ligne est un crédit) Montant de référence nul (première ligne au crédit pour un
   client, au débit pour un fournisseur) : le filtre `montantd = 0 or montantc = 0` sélectionne
   presque toutes les lignes non lettrées du compte, qui sont lettrées ensemble si elles s'équilibrent
   (lettrage « par solde » et non « par montant ») · tests : T03 · sources : [Lettragemontant.class:102](../../../../../../.src/Compta/Lettrages/Lettragemontant.class#L102), [Lettragemontant.class:104](../../../../../../.src/Compta/Lettrages/Lettragemontant.class#L104)
@@ -63,6 +63,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LETTRAGEMONTANT-A03 — [anomalie] Lot `"M" & Right$(num, 9)` : vaut `"M"` pour toutes les
   écritures sans lot ; tous les groupes lettrés partagent le même lot (indiscernables pour
   `Listextcpt.rechechelot`) · tests : T03 · sources : [Lettragemontant.class:122](../../../../../../.src/Compta/Lettrages/Lettragemontant.class#L122)
-- [ ] LETTRAGEMONTANT-A04 — [anomalie] Au plus deux groupes lettrés par compte et par lancement
+- [ ] LETTRAGEMONTANT-A04 — [anomalie] (confirmée phase 2, vague 3 : 2 groupes sur 3 lettrés pour 411003) Au plus deux groupes lettrés par compte et par lancement
   (`For i = 1 To 2`) ; égalité stricte `Tote = 0` sur des Float ; seules les écritures de
   `Fiches_Mvt` sont traitées · tests : T03 · sources : [Lettragemontant.class:98](../../../../../../.src/Compta/Lettrages/Lettragemontant.class#L98), [Lettragemontant.class:119](../../../../../../.src/Compta/Lettrages/Lettragemontant.class#L119)

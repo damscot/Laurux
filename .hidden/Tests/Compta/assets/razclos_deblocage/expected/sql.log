@@ -1,0 +1,27 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:00' AND dtmaj = '1'
+UPdate  Fiches_Mvt  SET  cloturee = 0 where numero = '10'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '10' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '10' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '10' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '10' order by lind desc limit 2
+update Fiches_Mvt set  control = '2cEszhO9KV1Iu/m4nhpPOdu3NR4=' where lind = 1
+update Fiches_Mvt set  control = 'ROIHoslbraLeq1x4CayQ1QoqhWg=' where lind = 2
+update Fiches_Mvt set  control = 'wFSN1ZKfIGB58/3SYDfmeJ3OYwU=' where lind = 3

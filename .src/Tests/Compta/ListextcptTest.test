@@ -1,0 +1,364 @@
+' Gambas test file
+
+''Tests de Listextcpt (.hidden/reference/.src/Compta/Utils/Listextcpt.class/test.md, LISTEXTCPT-T01 à T11).
+''Jeu listextcpt_shared/listext_base : écritures 2016 (Fiches_Mvt2), 2017 (Fiches_Mvt1), 2018 (Fiches_Mvt).
+''Valeurs attendues : assets/ListextcptTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Requete", "Texte SQL de `requete` (comptes, filtres de lettrage, plages, relance, tri)")
+  TestKit.Desc("T02Resext", "Lignes de `resext` pour les cas de T01, appel sans dates, compte vide")
+  TestKit.Desc("T03Report", "Ligne « Report a nouveau » (ltr t, début en milieu d'exercice N et N-1)")
+  TestKit.Desc("T04Bornes", "Bornes d'exercice : tables Mvt1/Mvt2 vides ou non, début antérieur au premier exercice")
+  TestKit.Desc("T05Litleres", "`litleres` : numéro dans N, dans N-1, absent")
+  TestKit.Desc("T06Letcpt", "`letcpt` : choix numlot, lettrage, tresor ; lind absent")
+  TestKit.Desc("T07Letgroupe", "`letgroupe` sur un lot à cheval sur deux exercices")
+  TestKit.Desc("T08Controle", "`Controle` / `Ecart` : lot équilibré, déséquilibré, inexistant, numcpt omis")
+  TestKit.Desc("T09Recherche", "`rechechelot` multi-exercices, `rechedoc` exact et like")
+  TestKit.Desc("T10Pointage", "`totalpointe`, `enregistrepointage`, `litpointee`")
+  TestKit.Desc("T11ChercheVide", "`litleres` / `letcpt` sans lecture préalable de `resext`")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "ListextcptTest")
+  TestKit.OuvreBase("listextcpt_shared/listext_base")
+
+End
+
+Private Function Lignes(r As Result) As String
+  ''Toutes les lignes d'un Result (toutes colonnes), séparées par « || ».
+
+  Dim aLig As New String[]
+  Dim aVal As String[]
+  Dim hChamp As ResultField
+
+  If IsNull(r) Then Return "<Null>"
+  If Not r.Available Then Return "<vide>"
+  r.MoveFirst
+  Repeat
+    aVal = New String[]
+    For Each hChamp In r.Fields
+      aVal.Add(hChamp.Name & "=" & TestKit.Canonique(r[hChamp.Name]))
+    Next
+    aLig.Add(aVal.Join(","))
+  Until r.MoveNext()
+  Return r.Count & ":" & aLig.Join(" || ")
+
+End
+
+Private Function Dump(Optional sCompte As String) As String
+  ''numero, compte, numlot, lettree, pointee, nrlv des trois tables d'écritures (ordre lind).
+
+  Dim aRes As New String[]
+  Dim sTab As String
+  Dim r As Result
+
+  For Each sTab In ["Fiches_Mvt2", "Fiches_Mvt1", "Fiches_Mvt"]
+    If sCompte Then
+      r = Utils.db.Exec("SELECT numero,compte,numlot,lettree,pointee,nrlv FROM " & sTab & " WHERE compte = &1 ORDER BY lind", sCompte)
+    Else
+      r = Utils.db.Exec("SELECT numero,compte,numlot,lettree,pointee,nrlv FROM " & sTab & " ORDER BY lind")
+    Endif
+    If r.Available Then
+      Repeat
+        aRes.Add(sTab & ":" & r!numero & "/" & r!compte & "/" & TestKit.Canonique(r!numlot) & "/" & TestKit.Canonique(r!lettree) & "/" & TestKit.Canonique(r!pointee) & "/" & TestKit.Canonique(r!nrlv))
+      Until r.MoveNext()
+    Endif
+  Next
+  Return aRes.Join(" ; ")
+
+End
+
+Private Function Ext(Cas As String) As Listextcpt
+  ''Cas de référence de T01/T02 (dates toujours explicites).
+
+  Select Case Cas
+    Case "c1"
+      Return New Listextcpt("411001", "01.01.2018", "31.12.2018", "n")
+    Case "c2"
+      Return New Listextcpt("411001", "01.01.2017", "31.12.2018", "o")
+    Case "c3"
+      Return New Listextcpt("411001", "15.03.2018", "31.12.2018", "t")
+    Case "c4"
+      Return New Listextcpt("411001", "01.01.2010", "31.12.2018", "t")
+    Case "c5"
+      Return New Listextcpt("411001", "01.01.2018", "31.12.2018", "t")
+    Case "c6"
+      Return New Listextcpt("512000", "01.01.2017", "31.12.2018", "x", " numero")
+    Case "c7"
+      Return New Listextcpt("411%", "01.01.2016", "31.12.2018", "n", " dte", "relance", "2018-04-30 00:00:00")
+    Case "c8"
+      Return New Listextcpt("401001", "01.01.2018", "31.12.2018", "n")
+    Case "c9"
+      Return New Listextcpt("411001", "15.06.2017", "31.12.2018", "t")
+    Case "c10"
+      Return New Listextcpt("411001", "01.01.2016", "30.06.2017", "t")
+  End Select
+
+End
+
+Public Sub T01Requete()
+
+  Dim sCas As String
+  Dim hLst As Listextcpt
+  Dim v As Variant
+
+  For Each sCas In ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10"]
+    Try hLst = Ext(sCas)
+    If Error Then
+      v = "ERREUR: " & Error.Text
+    Else
+      v = hLst.requete
+    Endif
+    TestKit.Check("T01/" & sCas, v)
+  Next
+
+End
+
+Public Sub T02Resext()
+
+  Dim sCas As String
+  Dim hLst, hDef As Listextcpt
+  Dim v As Variant
+
+  For Each sCas In ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10"]
+    Try hLst = Ext(sCas)
+    If Not Error Then Try v = Lignes(hLst.resext)
+    If Error Then v = "ERREUR: " & Error.Text
+    TestKit.Check("T02/" & sCas, v)
+  Next
+  ' sans dates : bornes par défaut (Now ± 8 ans), filtre « n » ; vérifié par différence avec un appel explicite
+  ' (le résultat dépend de la date du jour)
+  hLst = New Listextcpt("411001")
+  hDef = New Listextcpt("411001", LDate(DateAdd(Now, gb.Year, -8)).L, LDate(DateAdd(Now, gb.Year, 8)).L, "n")
+  Try v = (Lignes(hLst.resext) = Lignes(hDef.resext)) And (hLst.requete = hDef.requete)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T02/defaut_egal_explicite", v)
+  ' compte vide : pas de requête
+  hLst = New Listextcpt("")
+  TestKit.Check("T02/vide_requete", hLst.requete)
+  Try v = IsNull(hLst.resext)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T02/vide_resext_null", v)
+
+End
+
+Private Function Report(r As Result) As String
+
+  Dim aRes As New String[]
+
+  If IsNull(r) Then Return "<Null>"
+  If Not r.Available Then Return "<vide>"
+  Repeat
+    If r!libelle = "Report a nouveau" Then aRes.Add("numero=" & TestKit.Canonique(r!numero) & ",intitule=" & TestKit.Canonique(r!intitule) & ",dte=" & TestKit.Canonique(r!dte) & ",d=" & r!montantd & ",c=" & r!montantc & ",cloturee=" & TestKit.Canonique(r!cloturee))
+  Until r.MoveNext()
+  Return aRes.Join(" || ")
+
+End
+
+Public Sub T03Report()
+
+  Dim hLst As Listextcpt
+  Dim v As Variant
+
+  hLst = New Listextcpt("411001", "15.03.2018", "31.12.2018", "t")
+  Try v = Report(hLst.resext)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T03/milieu_N", v)
+  hLst = New Listextcpt("411001", "15.06.2017", "31.12.2018", "t")
+  Try v = Report(hLst.resext)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T03/milieu_N1", v)
+  ' sans écriture antérieure : pas de report
+  hLst = New Listextcpt("401001", "15.06.2018", "31.12.2018", "t")
+  Try v = Report(hLst.resext)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T03/sans_anterieur", v)
+
+End
+
+Public Sub T04Bornes()
+
+  Dim hLst As Listextcpt
+  Dim v As Variant
+
+  ' trois exercices non vides, début antérieur au premier exercice
+  hLst = New Listextcpt("411001", "01.01.2010", "31.12.2018", "n")
+  TestKit.Check("T04/trois_tables_requete", hLst.requete)
+  Try v = Lignes(hLst.rechechelot("L1"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T04/trois_tables_rechechelot", v)
+  ' Fiches_Mvt1 et Fiches_Mvt2 vidées : seule Fiches_Mvt est retenue
+  Utils.db.Exec("DELETE FROM Fiches_Mvt1")
+  Utils.db.Exec("DELETE FROM Fiches_Mvt2")
+  hLst = New Listextcpt("411001", "01.01.2010", "31.12.2018", "n")
+  TestKit.Check("T04/une_table_requete", hLst.requete)
+  Try v = Lignes(hLst.resext)
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T04/une_table_resext", v)
+  Try v = Lignes(hLst.rechechelot("A"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T04/une_table_rechechelot", v)
+  ' fin d'extrait au-delà du dernier exercice
+  hLst = New Listextcpt("411001", "01.01.2018", "31.12.2020", "t")
+  TestKit.Check("T04/fin_apres_exercice", hLst.requete)
+
+End
+
+Public Sub T05Litleres()
+
+  Dim hLst As Listextcpt
+  Dim r As Result
+  Dim v As Variant
+  Dim sNum As String
+
+  hLst = New Listextcpt("411001", "01.01.2016", "31.12.2018", "t")
+  r = hLst.resext
+  For Each sNum In ["2", "202", "101", "999"]
+    Try v = Lignes(hLst.litleres(sNum))
+    If Error Then v = "ERREUR: " & Error.Text
+    TestKit.Check("T05/" & sNum, v)
+  Next
+
+End
+
+Private Function Lind(sTab As String, iNum As Integer, sCompte As String) As Integer
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT lind FROM " & sTab & " WHERE numero = &1 AND compte = &2", iNum, sCompte)
+  If Not r.Available Then Return -1
+  Return r!lind
+
+End
+
+Public Sub T06Letcpt()
+
+  Dim hLst As Listextcpt
+  Dim r As Result
+
+  hLst = New Listextcpt("411001", "01.01.2017", "31.12.2018", "t")
+  r = hLst.resext
+  Try hLst.letcpt(Lind("Fiches_Mvt", 4, "411001"), True, "C", "lettrage")
+  TestKit.Check("T06/lettrage_erreur", Error)
+  Try hLst.letcpt(Lind("Fiches_Mvt", 5, "411001"), False, "D", "numlot")
+  TestKit.Check("T06/numlot_erreur", Error)
+  Try hLst.letcpt(Lind("Fiches_Mvt1", 202, "411001"), True, "E", "lettrage")
+  TestKit.Check("T06/lettrage_N1_erreur", Error)
+  Try hLst.letcpt("2", False, "F", "tresor")
+  TestKit.Check("T06/tresor_erreur", Error)
+  Try hLst.letcpt(99999, True, "Z", "lettrage")
+  TestKit.Check("T06/absent_erreur", Error)
+  TestKit.Check("T06/dump", Dump("411001"))
+
+End
+
+Public Sub T07Letgroupe()
+
+  Dim hLst As Listextcpt
+
+  hLst = New Listextcpt("411001", "01.01.2016", "31.12.2018", "t")
+  Try hLst.letgroupe("L1", "L9", False, "411001")
+  TestKit.Check("T07/L1_erreur", Error)
+  Try hLst.letgroupe("A", "A2", True, "512000")
+  TestKit.Check("T07/autre_compte_erreur", Error)
+  TestKit.Check("T07/dump", Dump())
+
+End
+
+Public Sub T08Controle()
+
+  Dim hLst As Listextcpt
+  Dim sLot As String
+  Dim v As Variant
+
+  hLst = New Listextcpt("411001", "01.01.2016", "31.12.2018", "t")
+  For Each sLot In ["A", "B", "L1", "ZZ"]
+    Try v = hLst.Controle(sLot)
+    If Error Then v = "ERREUR: " & Error.Text
+    TestKit.Check("T08/" & sLot, v)
+    TestKit.Check("T08/" & sLot & "_ecart", hLst.Ecart)
+  Next
+  Try v = hLst.Controle("A", "512000")
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T08/A_512000", v)
+  TestKit.Check("T08/A_512000_ecart", hLst.Ecart)
+
+End
+
+Public Sub T09Recherche()
+
+  Dim hLst As Listextcpt
+  Dim v As Variant
+
+  hLst = New Listextcpt("411001", "01.01.2016", "31.12.2018", "t")
+  Try v = Lignes(hLst.rechechelot("L1"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T09/lot_L1", v)
+  Try v = Lignes(hLst.rechechelot("A", "411001"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T09/lot_A", v)
+  Try v = Lignes(hLst.rechedoc("F001"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T09/doc_F001", v)
+  Try v = Lignes(hLst.rechedoc("F0%", " like "))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T09/doc_like", v)
+  Try v = Lignes(hLst.rechedoc("INCONNU"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T09/doc_absent", v)
+
+End
+
+Public Sub T10Pointage()
+
+  Dim hLst As Listextcpt
+  Dim v As Variant
+  Dim aVide As New String[]
+
+  hLst = New Listextcpt("512000", "01.01.2016", "31.12.2018", "t")
+  Try v = Lignes(hLst.totalpointe(aVide, "512000"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T10/total_vide", v)
+  Try v = Lignes(hLst.totalpointe(["3"], "512000"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T10/total_1", v)
+  Try v = Lignes(hLst.totalpointe(["3", "5", "201"], "512000"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T10/total_3", v)
+  Try hLst.enregistrepointage(["5", "201"], True, "512000", "2")
+  TestKit.Check("T10/pointe_erreur", Error)
+  Try v = hLst.litpointee("512000", "2")
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T10/litpointee_2", v)
+  Try hLst.enregistrepointage(["3"], False, "512000", "")
+  TestKit.Check("T10/depointe_erreur", Error)
+  Try v = hLst.litpointee("512000", "1")
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T10/litpointee_1", v)
+  TestKit.Check("T10/dump", Dump("512000"))
+
+End
+
+Public Sub T11ChercheVide()
+
+  Dim hLst As Listextcpt
+  Dim v As Variant
+
+  hLst = New Listextcpt("411001", "01.01.2018", "31.12.2018", "t")
+  Try v = Lignes(hLst.litleres("2"))
+  If Error Then v = "ERREUR: " & Error.Text
+  TestKit.Check("T11/litleres", v)
+  Try hLst.letcpt(Lind("Fiches_Mvt", 4, "411001"), True, "C", "lettrage")
+  If Error Then
+    v = "ERREUR: " & Error.Text
+  Else
+    v = "ok"
+  Endif
+  TestKit.Check("T11/letcpt", v)
+  TestKit.Check("T11/dump", Dump("411001"))
+
+End

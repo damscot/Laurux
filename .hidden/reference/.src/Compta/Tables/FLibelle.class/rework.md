@@ -51,3 +51,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] FLIBELLE-A01 — [anomalie] La suppression vise la ligne sélectionnée (`colcol.Current[0]`) et
   non le numéro saisi ; erreur si aucune ligne n'est sélectionnée · tests : T03 · sources : [FLibelle.class:170](../../../../../../.src/Compta/Tables/FLibelle.class#L170)
+- [ ] FLIBELLE-A02 — [anomalie] `Utils.Remplace` transforme `"` en `''` et `&` en `et` : le texte s'allonge et `MaxLength = 25` d'`Intitule` le tronque sans avertissement (« Virement ''SEPA'' et frai ») (phase 2, vague 3, 2026-11-12) · tests : T01 · sources : [FLibelle.class:155](../../../../../../.src/Compta/Tables/FLibelle.class#L155), [FLibelle.class:189](../../../../../../.src/Compta/Tables/FLibelle.class#L189), [FLibelle.form:40](../../../../../../.src/Compta/Tables/FLibelle.form#L40)

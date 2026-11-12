@@ -44,8 +44,8 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FPOSTES-A01 — [anomalie] Suppression d'un poste sans contrôle d'usage (`Fiches_Analytiques`,
+- [ ] FPOSTES-A01 — [anomalie] (confirmée phase 2, vague 3 : figée) Suppression d'un poste sans contrôle d'usage (`Fiches_Analytiques`,
   écritures analytiques) · tests : T03 · sources : [FPostes.class:143](../../../../../../.src/Compta/Tables/FPostes.class#L143)
-- [ ] FPOSTES-A02 — [anomalie] Zone code de 8 caractères pour une colonne `char(3)` ; codes en
+- [ ] FPOSTES-A02 — [anomalie] (confirmée phase 2, vague 3 : code `ATELIER1` tronqué en `ATE` par la base (sql_mode non strict), sans erreur) Zone code de 8 caractères pour une colonne `char(3)` ; codes en
   double possibles (pas de clé sur `code`), UPDATE/DELETE agissent alors sur tous les doublons ·
   tests : T04 · sources : [FPostes.class:156](../../../../../../.src/Compta/Tables/FPostes.class#L156), [FPostes.class:158](../../../../../../.src/Compta/Tables/FPostes.class#L158)

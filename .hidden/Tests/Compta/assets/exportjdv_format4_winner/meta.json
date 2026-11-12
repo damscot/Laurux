@@ -1,0 +1,25 @@
+{
+ "id": "EXPORTJDV-T04",
+ "objet": "Export format 4 CCMX Winner",
+ "classe": "ExportJdv",
+ "description": "Comptabilite > Outils > Export des journaux (Menu133, /Soc01/Exp actif) : dates par defaut calculees par Ex1/Exo (requete : dte de 20180101 a 20181230), journal 70 par defaut (Fiches_Parametres.jrnal), format 4 CCMX Winner (Tpj index 3), non exportees ; Exporter (Button2, tag 2). Fichiers ecritures70.txt et clients.txt dans le HOME (Chemin-export vide -> User.Home), Fiches_Mvt.export = 1, reglages Dte_exprt/Dte2_exprt/Numdoc_exprt du Laurux.conf. Couvre aussi EXPORTJDV-T16 (A11) : Donnees4 appele avec 9 arguments pour 8 parametres -> erreur attrapee par le Catch (Message.Error ferme par Entree), export interrompu apres la ligne collectif de l'ecriture n1 (fichier partiel, seule n1 marquee export = 1).",
+ "dataset": "exportjdv_shared/exportjdv_jeu",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Exp": -1
+ },
+ "fichiers": [
+  "ecritures70.txt",
+  "clients.txt",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

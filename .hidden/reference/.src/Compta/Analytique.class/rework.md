@@ -60,16 +60,20 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ANALYTIQUE-A01 — [anomalie] Bouton d'aide inopérant à la souris : `Button1` est dans le
   groupe `Btn` et `Btn_Click` est vide (correction : `Btn_Click` appelle `Button1_Click` selon
   `Last.Tag = 5`, sans toucher au `.form`) · tests : T06 · sources : [Analytique.class:Btn_Click](../../../../../.src/Compta/Analytique.class#L225-L227), [Analytique.class:Button1_Click](../../../../../.src/Compta/Analytique.class#L219-L223)
-- [ ] ANALYTIQUE-A02 — [anomalie] `Button2_Click` : suppression de **toutes** les lignes
+- [ ] ANALYTIQUE-A02 — [anomalie] (confirmée phase 2, vague 3 : une seule ligne insérée pour une nouvelle ventilation ; valider un 2e compte efface la ventilation du 1er, figé par T01/T05) `Button2_Click` : suppression de **toutes** les lignes
   `Fiches_MvtA` du numéro d'écriture (autres comptes compris), avant même le contrôle d'équilibre ;
   nombre de postes enregistrés borné par le nombre de lignes existant auparavant
   (`ligne >= nResult.count`) — comportement exact à confirmer par T01/T05 · tests : T01, T04, T05 ·
-  sources : [Analytique.class:185-186](../../../../../.src/Compta/Analytique.class#L185-L186), [Analytique.class:201](../../../../../.src/Compta/Analytique.class#L201)
+  sources : [Analytique.class:187-188](../../../../../.src/Compta/Analytique.class#L187-L188), [Analytique.class:201](../../../../../.src/Compta/Analytique.class#L201)
 - [ ] ANALYTIQUE-A03 — [anomalie] `Poste` limité à 20 postes (`New String[20]`) : dépassement
   d'indice à l'ouverture au-delà · tests : T07 · sources : [Analytique.class:15](../../../../../.src/Compta/Analytique.class#L15), [Analytique.class:47](../../../../../.src/Compta/Analytique.class#L47)
 - [ ] ANALYTIQUE-A04 — [anomalie] `Label4` (% restant) n'est pas calculé par `Deb1` : une
   ventilation rechargée ou par défaut non équilibrée est acceptée si l'utilisateur valide sans
   éditer ; comparaison localisée `"0,00 %"` · tests : T01, T02 · sources : [Analytique.class:Deb1](../../../../../.src/Compta/Analytique.class#L130-L170), [Analytique.class:187](../../../../../.src/Compta/Analytique.class#L187)
-- [ ] ANALYTIQUE-A05 — [anomalie] `Deb1`, seconde branche : `Repeat` sans test `Available`
+- [ ] ANALYTIQUE-A05 — [anomalie] (confirmée phase 2, vague 3 : relevée de nouveau à la relecture de `Deb1`, non testée) `Deb1`, seconde branche : `Repeat` sans test `Available`
   (erreur si le compte n'a plus de ventilation par défaut entre l'ouverture de `Saisecrit` et
-  celle de l'écran) · tests : manuel · sources : [Analytique.class:153-155](../../../../../.src/Compta/Analytique.class#L153-L155)
+  celle de l'écran) · tests : manuel · sources : [Analytique.class:155-157](../../../../../.src/Compta/Analytique.class#L155-L157)
+- [ ] ANALYTIQUE-A06 — [anomalie] `Button2_Click` : `pourcent` écrit dans `Fiches_MvtA` tel qu'affiché, avec la virgule de la locale (« 60,00 »), alors que les données existantes utilisent le point (phase 2, vague 3, 2026-11-12) · tests : T01, T05 · sources : [Analytique.class:192](../../../../../.src/Compta/Analytique.class#L192), [Analytique.class:200](../../../../../.src/Compta/Analytique.class#L200)
+- [ ] ANALYTIQUE-A07 — [anomalie] `Tbrem_Save` : aucun contrôle de doublon, un même poste peut être choisi sur deux lignes et le total dépasse 100 % (phase 2, vague 3, 2026-11-12) · tests : T03 · sources : [Analytique.class:Tbrem_Save](../../../../../.src/Compta/Analytique.class#L86-L130)
+- [ ] ANALYTIQUE-A08 — [anomalie] `Deb1`, seconde branche : compte concaténé sans quotes dans la requête `TabAna` (`a.compte = " & Tri`) au lieu d'un paramètre `&1` (phase 2, vague 3, 2026-11-12) · tests : manuel · sources : [Analytique.class:155](../../../../../.src/Compta/Analytique.class#L155)
+- [ ] ANALYTIQUE-A09 — [amélioration] Testabilité et ergonomie : action déclenchée par la touche F1 : non rejouable par le harnais (REPLAYOBSERVER : touches de fonction et Échap non rejouées) et peu découvrable. Proposition : offrir (ou rendre visible, s'il existe) un bouton ou une entrée de menu équivalente (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : ANALYTIQUE-T06 · sources : [Analytique.class:214](../../../../../.src/Compta/Analytique.class#L214)

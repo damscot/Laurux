@@ -10,12 +10,17 @@ Comparaison : dump de `Fiches_Mvt` (dont `control`) et `Fiches_Comptes`.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EQUILIBRAGE-T01 | replay | Rééquilibrage | jeu décrit ci-dessus, bouton Lancer | dump de référence (dernière écriture non corrigée, `control` inchangé) | `tests/reequilibrage/` | à faire |
-| EQUILIBRAGE-T02 | replay | Aucune écriture du journal 70 | `Laurux01.sql` brut | aucun UPDATE, message « Traitement terminé » | `tests/vide/` | à faire |
-| EQUILIBRAGE-T03 | replay | Fermeture | bouton Fermer | aucune requête de modification | `tests/fermeture/` | à faire |
+| EQUILIBRAGE-T01 | replay | Rééquilibrage | jeu décrit ci-dessus, bouton Lancer | dump de référence (dernière écriture non corrigée, `control` inchangé) | `tests/reequilibrage/` | implémenté |
+| EQUILIBRAGE-T02 | replay | Aucune écriture du journal 70 | `Laurux01.sql` brut | aucun UPDATE, message « Traitement terminé » | `tests/vide/` | implémenté |
+| EQUILIBRAGE-T03 | replay | Fermeture | bouton Fermer | aucune requête de modification | `tests/fermeture/` | implémenté |
 
 ## Détail des tests
 
 - **Valeurs attendues** : capturées dans le clone Laurux non modifié ; T01 fige les anomalies A01 à
   A03.
 - Pour un rework qui passe les cumuls en `Float`, le dump doit rester identique (arrondi `0.00`).
+- **Implémentation (phase 2, vague 3)** : scénarios `.hidden/Tests/Compta/assets/equilibrage_{reequilibrage,vide,fermeture}/`
+  (Prgm `Equilibrage`, boutons du groupe `Btn` : `Button2` tag 1, `Button6` tag 2). Jeu propre à T01 :
+  `equilibrage_reequilibrage/equilibrage_jeu.sql` (n°1 équilibrée, n°2 crédit insuffisant → 707000 passé à 100,
+  n°3 sans crédit ignorée, n°4 deux lignes 707000 toutes deux passées à 30 (A03), n°5 dernière non corrigée (A01),
+  n°6 journal 60 ignorée ; `control` inchangé (A02)).

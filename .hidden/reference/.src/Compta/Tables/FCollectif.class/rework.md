@@ -46,11 +46,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FCOLLECTIF-A01 — [anomalie] UPDATE par concaténation : un intitulé avec apostrophe provoque
+- [ ] FCOLLECTIF-A01 — [anomalie] (confirmée phase 2, vague 3 : figée) UPDATE par concaténation : un intitulé avec apostrophe provoque
   une erreur SQL ; proposition : paramètres `&1…` · tests : T03 · sources : [FCollectif.class:219](../../../../../../.src/Compta/Tables/FCollectif.class#L219)
-- [ ] FCOLLECTIF-A02 — [anomalie] Toute modification d'intitulé remet `solde = '0,00'` ; un
+- [ ] FCOLLECTIF-A02 — [anomalie] (confirmée phase 2, vague 3 : figée) Toute modification d'intitulé remet `solde = '0,00'` ; un
   changement de type seul est ignoré · tests : T03 · sources : [FCollectif.class:218](../../../../../../.src/Compta/Tables/FCollectif.class#L218), [FCollectif.class:219](../../../../../../.src/Compta/Tables/FCollectif.class#L219)
-- [ ] FCOLLECTIF-A03 — [anomalie] La suppression accepte n'importe quel compte saisi (pas seulement
+- [ ] FCOLLECTIF-A03 — [anomalie] (confirmée phase 2, vague 3 : figée) La suppression accepte n'importe quel compte saisi (pas seulement
   un collectif) et ne contrôle les mouvements que dans `Fiches_Mvt` (ni `Mvt1-5`, ni `MvtM*`) ·
   tests : T04 · sources : [FCollectif.class:174](../../../../../../.src/Compta/Tables/FCollectif.class#L174), [FCollectif.class:178](../../../../../../.src/Compta/Tables/FCollectif.class#L178)
 - [ ] FCOLLECTIF-A04 — [anomalie] Le message autorise `456` mais le test le refuse · tests : T02 · sources : [FCollectif.class:207](../../../../../../.src/Compta/Tables/FCollectif.class#L207), [FCollectif.class:211](../../../../../../.src/Compta/Tables/FCollectif.class#L211)

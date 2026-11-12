@@ -1,0 +1,24 @@
+{
+ "id": "EXPORTA47-T07",
+ "objet": "FEC : compte absent du plan comptable",
+ "classe": "ExportA47",
+ "description": "Export A47 (Menu298), jeu exporta47_compte_absent (écriture 2017 n°5 sur 999999 absent de Fiches_Comptes), E1, Exporter : Message.Error « Le compte 999999 n'existe pas, Abandon de l'export » (bouton unique, Entrée), puis erreur Gambas (lecture du Result vide après Me.Close, A01 figée) ; fichier partiel comparé.",
+ "dataset": "exporta47_compte_absent",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-export": "{out}"
+ },
+ "fichiers": [
+  "@123456789FEC20171231-20170101"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

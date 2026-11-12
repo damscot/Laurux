@@ -8,8 +8,8 @@ tests ci-dessous ne sont à réaliser **que si l'anomalie EPURJDV-A01 (suppressi
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EPURJDV-T01 | gbtest | Calcul des dates (`Form_Open`, `Aff_date`) sous Xvfb | `New Epurjdv` + `Show` sur `Laurux01.sql` (dates de clôture connues) | textes de `datecl` / `dateprc` de référence | `tests/dates_periode/` | à faire (conditionnel) |
-| EPURJDV-T02 | gbtest | Épuration complète sous Xvfb (`Button1_Click`, confirmation simulée) | copie jetable de `Laurux01.sql`, case cochée puis décochée | dump normalisé de `Fiches_Mvt*` et `Fiches_Parametres` ; fichier `~/Laurux_<AAAA>.sql` présent | `tests/epuration/` | à faire (conditionnel) |
+| EPURJDV-T01 | gbtest | Calcul des dates (`Form_Open`, `Aff_date`) sous Xvfb | `New Epurjdv` + `Show` sur `Laurux01.sql` (dates de clôture connues) | textes de `datecl` / `dateprc` de référence | `tests/dates_periode/` | implémenté (module `.src/Tests/Compta/EpurjdvTest.test`, T01DatesPeriode ; Form_Open appelé directement) |
+| EPURJDV-T02 | gbtest | Épuration complète sous Xvfb (`Button1_Click`, confirmation simulée) | copie jetable de `Laurux01.sql`, case cochée puis décochée | dump normalisé de `Fiches_Mvt*` et `Fiches_Parametres` ; fichier `~/Laurux_<AAAA>.sql` présent | `tests/epuration/` | à faire : Message.Question puis Message.Warning bloquants en gb.test ; pas de point d'entrée pour un rejeu |
 
 ## Détail des tests
 

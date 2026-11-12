@@ -10,14 +10,14 @@ replay quand l'observateur l'enregistre (à confirmer en phase 2), sinon par cap
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RUBCOMPT-T01 | replay | Ouverture et liste | `Laurux01.sql` (364 plages) | grille : rubrique, intitulé, début, fin, drapeau ; dump inchangé | `tests/ouverture_liste/` | à faire |
-| RUBCOMPT-T02 | replay | Ajout d'une plage | rubrique `B0050`, `Cpt1 = 205` (fin proposée `20599999`), Enregistrer | nouvelle ligne `('B0050','205','20599999',0)` dans le dump ; ligne sélectionnée | `tests/ajout_plage/` | à faire |
-| RUBCOMPT-T03 | replay | Modification avec amortissement | clic sur une plage existante, case cochée, `Cpt2` modifié, Enregistrer | `compte2` et `amortissement = 1` dans le dump | `tests/modif_plage/` | à faire |
-| RUBCOMPT-T04 | replay | Suppression | sélection d'une plage ; Supprimer → Non, puis Oui ; variante : `Cpt1` modifié avant Supprimer (A02 figée) | dump inchangé (Non), plage supprimée (Oui) ; variante : ligne effacée selon `Current[0]` + `Cpt1` | `tests/suppression/` | à faire |
-| RUBCOMPT-T05 | replay | Rubrique inconnue / liste des rubriques | `Numrub = X9999` + Entrée ; puis F2, flèches, Entrée | `Message.Warning`, focus sur `Numrub` ; liste des rubriques `L`, champs remplis, focus `Cpt1` | `tests/rubrique_inconnue/` | à faire |
-| RUBCOMPT-T06 | replay | État de la case amortissement au clic (A01 figée) | clic sur une plage `amortissement = 0` après chargement (dernière ligne = 1, ou l'inverse) | valeur de la case figée (curseur `Item` et non `Current`) | `tests/clic_amortissement/` | à faire |
-| RUBCOMPT-T07 | replay | Enregistrer sans compte, touches sur Enregistrer | `Numrub` seul + Enregistrer (INSERT en erreur ou non selon le moteur) ; Tab sur `Button2` (A05 figée) | `Message.Info` ou ligne vide, figé ; enregistrement déclenché par Tab | `tests/saisie_incomplete/` | à faire |
-| RUBCOMPT-T08 | gbtest | Fin de plage proposée (après RUBCOMPT-004) | `FinPlage("6")`, `("601")`, `("60100000")`, `("")` | `"69999999"`, `"60199999"`, `"60100000"`, `"99999999"` ; cas > 8 caractères documenté | `tests/fin_plage/` | à faire |
+| RUBCOMPT-T01 | replay | Ouverture et liste | `Laurux01.sql` (364 plages) | grille : rubrique, intitulé, début, fin, drapeau ; dump inchangé | `tests/ouverture_liste/` | implémenté (requêtes et dump ; contenu de la grille non comparé) |
+| RUBCOMPT-T02 | replay | Ajout d'une plage | rubrique `B0050`, `Cpt1 = 205` (fin proposée `20599999`), Enregistrer | nouvelle ligne `('B0050','205','20599999',0)` dans le dump ; ligne sélectionnée | `tests/ajout_plage/` | implémenté |
+| RUBCOMPT-T03 | replay | Modification avec amortissement | clic sur une plage existante, case cochée, `Cpt2` modifié, Enregistrer | `compte2` et `amortissement = 1` dans le dump | `tests/modif_plage/` | implémenté (MariaDB ; amortissement écrit = -1, valeur de la CheckBox) |
+| RUBCOMPT-T04 | replay | Suppression | sélection d'une plage ; Supprimer → Non, puis Oui ; variante : `Cpt1` modifié avant Supprimer (A02 figée) | dump inchangé (Non), plage supprimée (Oui) ; variante : ligne effacée selon `Current[0]` + `Cpt1` | `tests/suppression/` | implémenté |
+| RUBCOMPT-T05 | replay | Rubrique inconnue / liste des rubriques | `Numrub = X9999` + Entrée ; puis F2, flèches, Entrée | `Message.Warning`, focus sur `Numrub` ; liste des rubriques `L`, champs remplis, focus `Cpt1` | `tests/rubrique_inconnue/` | implémenté (F2 et flèches non rejouables : liste ouverte par ToggleButton1, clic sur Rublist) |
+| RUBCOMPT-T06 | replay | État de la case amortissement au clic (A01 figée) | clic sur une plage `amortissement = 0` après chargement (dernière ligne = 1, ou l'inverse) | valeur de la case figée (curseur `Item` et non `Current`) | `tests/clic_amortissement/` | implémenté (MariaDB : case non cochée, UPdate amortissement = 0) |
+| RUBCOMPT-T07 | replay | Enregistrer sans compte, touches sur Enregistrer | `Numrub` seul + Enregistrer (INSERT en erreur ou non selon le moteur) ; Tab sur `Button2` (A05 figée) | `Message.Info` ou ligne vide, figé ; enregistrement déclenché par Tab | `tests/saisie_incomplete/` | implémenté (partiel : Tab sur Button2 non rejoué, Btn_KeyPress non déclenché au rejeu) |
+| RUBCOMPT-T08 | gbtest | Fin de plage proposée (après RUBCOMPT-004) | `FinPlage("6")`, `("601")`, `("60100000")`, `("")` | `"69999999"`, `"60199999"`, `"60100000"`, `"99999999"` ; cas > 8 caractères documenté | `tests/fin_plage/` | à faire : FinPlage n'existe qu'après l'extraction RUBCOMPT-004 |
 
 ## Détail des tests
 
@@ -29,3 +29,10 @@ replay quand l'observateur l'enregistre (à confirmer en phase 2), sinon par cap
 - **Non testable automatiquement** : le son (`Music.Play`), l'ouverture de l'aide `Doc.Open`
   (vérifier seulement l'appel dans le log), le cas `Cpt1` de plus de 8 caractères si l'erreur
   d'exécution interrompt le replay (à documenter comme test manuel).
+
+- **Implémentation (phase 2, vague 3)** : scénarios `.hidden/Tests/Compta/assets/rubcompt_<nom>/` (`ouverture_liste`,
+  `ajout_plage`, `modif_plage`, `suppression`, `rubrique_inconnue`, `clic_amortissement`, `saisie_incomplete`), base
+  `Laurux01.sql` sans jeu dérivé, MariaDB uniquement (SQLite non joué). Menu `Fmenu#Menu67#Menu119#Menu123`.
+  Comportements figés : T03 la case cochée est écrite `amortissement = -1` (valeur Gambas de la CheckBox) ;
+  T04 variante A02 : Cpt1 modifié avant Supprimer efface la plage `Current[0]` + `Cpt1` (B0050/201 au lieu de
+  B0050/2800) ; T07 Enregistrer sans compte : `compte1 = NULL` refusé par MariaDB (NOT NULL), Message.Info.

@@ -75,7 +75,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EXPORTJDV-A01 — [anomalie] Contrôle d'équilibre inopérant : `totsld = totdeb - totdeb` vaut
+- [ ] EXPORTJDV-A01 — [anomalie] (confirmée phase 2, vague 3 : `totsld = totdeb - totdeb` (l. 864) toujours 0 : journal déséquilibré exporté sans message, `export = 1` (T10)) Contrôle d'équilibre inopérant : `totsld = totdeb - totdeb` vaut
   toujours 0, un journal déséquilibré est exporté sans message (la branche « solde différent de 0 »
   est inatteignable) · tests : T10 · sources : [ExportJdv.class:864](../../../../../../.src/Compta/Utils/ExportJdv.class#L864), [ExportJdv.class:886-893](../../../../../../.src/Compta/Utils/ExportJdv.class#L886-L893)
 - [ ] EXPORTJDV-A02 — [anomalie] Écritures marquées `export = '1'` à la lecture, avant tout
@@ -98,7 +98,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EXPORTJDV-A07 — [anomalie] `_New` lit `Fiches_Societes` sans `WHERE cd_sc = Start.Societe` ni
   test `Available` : en multi-sociétés, l'en-tête des fichiers porte l'intitulé de la première
   société · tests : T01 · sources : [ExportJdv.class:72-74](../../../../../../.src/Compta/Utils/ExportJdv.class#L72-L74)
-- [ ] EXPORTJDV-A08 — [anomalie] Table de travail `centralisations` jamais relue (code mort à effet
+- [ ] EXPORTJDV-A08 — [anomalie] (confirmée phase 2, vague 3 : intitulé « Clients d'Europe » concaténé sans échappement dans l'INSERT `centralisations`) Table de travail `centralisations` jamais relue (code mort à effet
   sur le dump) ; SQL construit par concaténation (apostrophe dans l'intitulé d'un collectif →
   erreur, export interrompu) ; l'`UPDATE` des comptes non collectifs n'ajoute pas le crédit.
   Proposition : supprimer la table et son alimentation (le dump ne contient plus `centralisations`) ·
@@ -112,7 +112,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   apostrophes échappées `\'` dans un CSV, intitulé société en 1re ligne (incompatible avec
   `ImpJdv`, IMPJDV-A05), ajustement silencieux des écarts < 0,03 sur les montants exportés · tests :
   T01, T02, T15 · sources : [ExportJdv.class:747](../../../../../../.src/Compta/Utils/ExportJdv.class#L747), [ExportJdv.class:744](../../../../../../.src/Compta/Utils/ExportJdv.class#L744), [ExportJdv.class:588-589](../../../../../../.src/Compta/Utils/ExportJdv.class#L588-L589), [ExportJdv.class:697-709](../../../../../../.src/Compta/Utils/ExportJdv.class#L697-L709)
-- [ ] EXPORTJDV-A11 — [anomalie] Format 4 (CCMX Winner) : `Button2_Click` appelle `Donnees4` avec
+- [ ] EXPORTJDV-A11 — [anomalie] (confirmée phase 2, vague 3 : `Donnees4` appelé avec 9 arguments pour 8 paramètres (l. 758) : export format 4 interrompu après la première ligne de collectif) Format 4 (CCMX Winner) : `Button2_Click` appelle `Donnees4` avec
   **9 arguments** alors que la méthode en déclare 8 (`p1` à `p8`) : erreur Gambas « Too many
   arguments » dès la première ligne non collectif, l'export CCMX Winner n'aboutit jamais (à confirmer
   par T16). Détecté par le contrôle d'arité de `deps.py` · tests : T16 · sources : [ExportJdv.class:758](../../../../../../.src/Compta/Utils/ExportJdv.class#L758), [ExportJdv.class:donnees4](../../../../../../.src/Compta/Utils/ExportJdv.class#L454-L458)
@@ -120,3 +120,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   appelle `EnvMail.Envoi3` avec **5 arguments** pour 4 : « Too many arguments » (vérifié sur un projet
   minimal) capté par le `Catch`, l'export en deux fichiers n'est jamais envoyé par courriel. Correction
   proposée : `Envoi2(…, Fle1, Fle2)`, puis suppression d'`Envoi3` (ENVMAIL) · tests : T16 · sources : [ExportJdv.class:1000](../../../../../../.src/Compta/Utils/ExportJdv.class#L1000), [EnvMail.module:Envoi3](../../../../../../.src/Gestion/Mails/EnvMail.module#L87-L122)
+- [ ] EXPORTJDV-A13 — [anomalie, à confirmer] `Dte_exprt`, `Dte2_exprt`, `Numdoc_exprt` jamais présents dans le `Laurux.conf` final après un export (affectés en fin de `Button2_Click`, jamais sauvés ?) (phase 2, vague 3, 2026-11-12) · tests : T01 · sources : [ExportJdv.class:920-922](../../../../../../.src/Compta/Utils/ExportJdv.class#L920-L922)

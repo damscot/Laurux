@@ -1,0 +1,18 @@
+{
+ "id": "VERBAL-T04",
+ "objet": "Contrôle des dates saisies",
+ "classe": "Verbal",
+ "description": "DteN0 01012016 (avant le début 01.01.2018) + Entrée : Message.Warning (Espace), dates remises ; DteN0 remise par Ex1 (31.12.2018, borne haute dte2 = date du jour 15.01.2026) ; DteN1 31122020 + Entrée : aucun avertissement (la borne « année + 1 » est calculée sur la date du jour après la remise) ; Traitement : période 31.12.2018–31.12.2020 figée par sql.log. Cas « fin < début » non joué.",
+ "dataset": "verbal_shared/verbal_base",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered"
+}

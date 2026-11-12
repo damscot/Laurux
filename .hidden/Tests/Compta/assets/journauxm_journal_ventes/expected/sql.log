@@ -1,0 +1,86 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(cd_cent Char(8) NOT NULL,intitule Char(50),db_cent Decimal(12,2),crd_cent Decimal(12,2),njournal Char(2),PRIMARY KEY (cd_cent)) ENGINE = InnoDB
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Journaux WHERE code_jo >= '01'  and code_jo <= '99'  order by code_jo
+SELECT * FROM Fiches_Mvt WHERE jour = '10' and validee = 1 and dte >= '20180101' and dte <= '20181231' order by dte, numero, compte
+SELECT * FROM Fiches_Mvt WHERE jour = '50' and validee = 1 and dte >= '20180101' and dte <= '20181231' order by dte, numero, compte
+SELECT * FROM Fiches_Mvt WHERE jour = '53' and validee = 1 and dte >= '20180101' and dte <= '20181231' order by dte, numero, compte
+SELECT * FROM Fiches_Mvt WHERE jour = '60' and validee = 1 and dte >= '20180101' and dte <= '20181231' order by dte, numero, compte
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '401000'
+SELECT * FROM centralisation WHERE cd_cent = '401000'
+INSERT INTO centralisation (cd_cent, intitule,db_cent, crd_cent, njournal) Values ('401000', 'Collectif fournisseurs', '0.00', '48.00', '60')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '401001'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445660'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445660'
+SELECT * FROM centralisation WHERE cd_cent = '445660'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('445660', 'Tva sur achat 2.10', 8, 0, '60')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '607000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '607000'
+SELECT * FROM centralisation WHERE cd_cent = '607000'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('607000', 'Achat de marchandises 2.10', 40, 0, '60')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '401000'
+SELECT * FROM centralisation WHERE cd_cent = '401000'
+UPDATE centralisation SET cd_cent = '401000', db_cent = '0', crd_cent = '72', njournal = '60' WHERE cd_cent = '401000' and njournal = '60'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '401001'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445660'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445660'
+SELECT * FROM centralisation WHERE cd_cent = '445660'
+UPDATE centralisation SET cd_cent = '445660', intitule = 'Tva sur achat 2.10', db_cent = 12, crd_cent = 0, njournal = '60' WHERE cd_cent = '445660' and njournal = '60'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '607000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '607000'
+SELECT * FROM centralisation WHERE cd_cent = '607000'
+UPDATE centralisation SET cd_cent = '607000', intitule = 'Achat de marchandises 2.10', db_cent = 60, crd_cent = 0, njournal = '60' WHERE cd_cent = '607000' and njournal = '60'
+SELECT * FROM centralisation where njournal = '60' order by cd_cent
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(cd_cent Char(8) NOT NULL,intitule Char(50),db_cent Decimal(12,2),crd_cent Decimal(12,2),njournal Char(2),PRIMARY KEY (cd_cent)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt WHERE jour = '70' and validee = 1 and dte >= '20180101' and dte <= '20181231' order by dte, numero, compte
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000'
+SELECT * FROM centralisation WHERE cd_cent = '411000'
+INSERT INTO centralisation (cd_cent, intitule,db_cent, crd_cent, njournal) Values ('411000', 'Collectif clients', '120.00', '0.00', '70')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411001'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM centralisation WHERE cd_cent = '445730'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('445730', 'Tva sur ventes 19.60', 0, 20, '70')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+SELECT * FROM centralisation WHERE cd_cent = '707000'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('707000', 'Ventes marchandises 2.10', 0, 100, '70')
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000'
+SELECT * FROM centralisation WHERE cd_cent = '411000'
+UPDATE centralisation SET cd_cent = '411000', db_cent = '180', crd_cent = '0', njournal = '70' WHERE cd_cent = '411000' and njournal = '70'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411002'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM centralisation WHERE cd_cent = '445730'
+UPDATE centralisation SET cd_cent = '445730', intitule = 'Tva sur ventes 19.60', db_cent = 0, crd_cent = 30, njournal = '70' WHERE cd_cent = '445730' and njournal = '70'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '707000'
+SELECT * FROM centralisation WHERE cd_cent = '707000'
+UPDATE centralisation SET cd_cent = '707000', intitule = 'Ventes marchandises 2.10', db_cent = 0, crd_cent = 150, njournal = '70' WHERE cd_cent = '707000' and njournal = '70'
+SELECT * FROM centralisation where njournal = '70' order by cd_cent
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(cd_cent Char(8) NOT NULL,intitule Char(50),db_cent Decimal(12,2),crd_cent Decimal(12,2),njournal Char(2),PRIMARY KEY (cd_cent)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt WHERE jour = '90' and validee = 1 and dte >= '20180101' and dte <= '20181231' order by dte, numero, compte

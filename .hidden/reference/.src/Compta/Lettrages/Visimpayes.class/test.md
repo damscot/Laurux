@@ -9,7 +9,7 @@ le fichier (VISIMPAYES-A01).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VISIMPAYES-T01 | gbtest | Instanciation directe (sous Xvfb) | `Laurux01.sql` ; `New Visimpayes` puis fermeture | contenu de `Facturefm`/`Detail`, `Label1` ; destruction de `Facturefm` figée | `tests/instanciation/` | à faire |
+| VISIMPAYES-T01 | gbtest | Instanciation directe (sous Xvfb) | `Laurux01.sql` ; `New Visimpayes` puis fermeture | contenu de `Facturefm`/`Detail`, `Label1` ; destruction de `Facturefm` figée | `tests/instanciation/` | à faire : conditionnel (décision sur VISIMPAYES-A01 non connue ; écran sans point d'entrée) |
 
 ## Détail des tests
 
@@ -17,3 +17,4 @@ le fichier (VISIMPAYES-A01).
 - **Données** : `Laurux01.sql` ; une écriture `411…` sans fiche `Fiches_Cli` provoque l'erreur décrite
   (cas exclu du jeu nominal).
 - **Non testable** : `Coldetail_Keypress` (Suppr + `Message.Question`) sans pilotage GUI.
+

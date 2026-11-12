@@ -62,10 +62,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] JOURCENT-A01 — [anomalie] Collectif hors `401`/`411` (ex. `453`) : cumulé avec `debit`/
+- [ ] JOURCENT-A01 — [anomalie] (confirmée phase 2, vague 3 : collectif 453000 placé après une ligne 706100 inséré avec les montants de cette ligne) Collectif hors `401`/`411` (ex. `453`) : cumulé avec `debit`/
   `credit` de la **ligne non collective précédente** au lieu de ses propres montants · tests :
   T03 · sources : [Jourcent.class:712-724](../../../../../../.src/Compta/Impressions/Jourcent.class#L712-L724), [Jourcent.class:734-748](../../../../../../.src/Compta/Impressions/Jourcent.class#L734-L748)
-- [ ] JOURCENT-A02 — [anomalie] Collectifs `401` et `411` insérés sous le libellé « Clients » ;
+- [ ] JOURCENT-A02 — [anomalie] (confirmée phase 2, vague 3 : 401000 libellé « Clients » ; intitulé avec apostrophe → UPDATE concaténé l. 757 en échec, erreur fatale code 125) Collectifs `401` et `411` insérés sous le libellé « Clients » ;
   `UPDATE` par concaténation : erreur SQL si l'intitulé du collectif contient une apostrophe ·
   tests : T02, T08 · sources : [Jourcent.class:757](../../../../../../.src/Compta/Impressions/Jourcent.class#L757), [Jourcent.class:761](../../../../../../.src/Compta/Impressions/Jourcent.class#L761)
 - [ ] JOURCENT-A03 — [anomalie] Curseur final `Mouse.Custom` au lieu de `Mouse.Default` ·
@@ -74,3 +74,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   centralisés, `453` traités comme comptes ordinaires, 401/411 détaillés exclus) : deux éditions
   « centralisation » différentes pour le même journal ; à arbitrer par l'utilisateur · tests :
   T04, JOURNAUXM-T01 · sources : [Jourcent.class:734](../../../../../../.src/Compta/Impressions/Jourcent.class#L734), [JournauxM.module:207](../../../../../../.src/Compta/Impressions/JournauxM.module#L207)
+- [ ] JOURCENT-A05 — [anomalie] Date « Du » hors bornes : avertissement, puis `Compdate` recharge l'exercice précédent (`Exo`) et recoche `E0`, ce qui relance `Ex1` : la période finale est celle de l'exercice en cours, contrairement au message (même défaut que JOURNAUX-A07) (phase 2, vague 3, 2026-11-12) · tests : T10 · sources : [Jourcent.class:Compdate](../../../../../../.src/Compta/Impressions/Jourcent.class#L446-L458), [Jourcent.class:compdate2](../../../../../../.src/Compta/Impressions/Jourcent.class#L460-L472)

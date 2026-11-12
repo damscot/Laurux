@@ -52,12 +52,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FJOURNAUX-A01 — [anomalie] SQL par concaténation sous `Try` : un libellé avec apostrophe
+- [ ] FJOURNAUX-A01 — [anomalie] (confirmée phase 2, vague 3 : figée) SQL par concaténation sous `Try` : un libellé avec apostrophe
   (« Journal d'achats ») fait échouer l'enregistrement sans message · tests : T04 · sources : [FJournaux.class:225](../../../../../../.src/Compta/Tables/FJournaux.class#L225), [FJournaux.class:227](../../../../../../.src/Compta/Tables/FJournaux.class#L227), [FJournaux.class:229](../../../../../../.src/Compta/Tables/FJournaux.class#L229), [FJournaux.class:270](../../../../../../.src/Compta/Tables/FJournaux.class#L270)
-- [ ] FJOURNAUX-A02 — [anomalie] L'UPDATE vise la ligne sélectionnée (`coljo.Current.key`) et non
+- [ ] FJOURNAUX-A02 — [anomalie] (confirmée phase 2, vague 3 : figée ; après `ColjoRefresh`, `coljo.Current` probablement nul et erreur masquée par `Try` (non observé directement)) L'UPDATE vise la ligne sélectionnée (`coljo.Current.key`) et non
   le code saisi : sélection différente → tentative de renommage et conflit de clé silencieux ;
   aucune sélection → erreur avalée · tests : T03 · sources : [FJournaux.class:227](../../../../../../.src/Compta/Tables/FJournaux.class#L227)
-- [ ] FJOURNAUX-A03 — [anomalie] Suppression sans contrôle d'usage du journal dans les écritures,
+- [ ] FJOURNAUX-A03 — [anomalie] (confirmée phase 2, vague 3 : figée) Suppression sans contrôle d'usage du journal dans les écritures,
   sur la ligne sélectionnée et non le code saisi · tests : T05 · sources : [FJournaux.class:Button3_Click](../../../../../../.src/Compta/Tables/FJournaux.class#L261-L276)
 - [ ] FJOURNAUX-A04 — [anomalie] `Btn_KeyPress` : toute touche sur Enregistrer enregistre ;
   avertissement « pas un compte de trésorerie » non bloquant (`b` écrasé) · tests : T02, T05 · sources : [FJournaux.class:Btn_KeyPress](../../../../../../.src/Compta/Tables/FJournaux.class#L148-L163), [FJournaux.class:375](../../../../../../.src/Compta/Tables/FJournaux.class#L375)
