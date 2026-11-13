@@ -1,0 +1,42 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Art WHERE art_tva = NULL and art_fam = 'SV'
+SELECT * FROM Fiches_Tvaav where code_tva = '3'
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = '707020'
+SELECT * FROM Fiches_Art WHERE art_tva = NULL and art_fam = 'SV'
+SELECT * FROM Fiches_Tvaav where code_tva = '3'
+SELECT * FROM Fiches_Fam WHERE code_fam = 'SV'
+INSERT INTO Fiches_Fam(code_fam,libell_fam,compt_fam,compt2_fam,compt3_fam,compt4_fam,compt5_fam, coef_fam, cdtva_fam, txtva_fam, cptrem_fam, ect_fam, rem_fam, qte1, qte2, rem1, qte3, qte4, rem2, qte5, qte6, rem3, qte7, qte8, rem4, qte9, qte10, rem5, qte11, qte12, rem6) VALUES ('SV', 'Serveur', '707020', NULL, NULL, NULL, NULL, '1.200', '3', '20.00', '709000', 0, '0.000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+SELECT * FROM Fiches_Fam where code_fam = 'SV'
+SELECT * FROM Fiches_FamDep WHERE fam = 'SV' and depot = NULL
+INSERT INTO Fiches_FamDep (fam,compte, depot) VALUES('SV', '707020', NULL)
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = '709000'
+SELECT * FROM Fiches_Fam where code_fam = 'SV'
+SELECT * FROM Fiches_Tvaav where code_tva = '3'
+SELECT * FROM Fiches_Fam WHERE code_fam = 'SV'
+UPdate  Fiches_Fam  SET  code_fam = 'SV' , libell_fam = 'Serveur' , compt_fam = '707020', coef_fam = '1.400', cdtva_fam = '3', txtva_fam = '20.00', cptrem_fam = '709000' , ect_fam = 0 , rem_fam = '0.000', qte1 = NULL, qte2 = NULL, rem1 = NULL, qte3 = NULL, qte4 = NULL, rem2 = NULL, compt2_fam = NULL, compt3_fam = NULL, compt4_fam = NULL , compt5_fam = NULL WHERE code_fam = 'SV'
+UPdate  Fiches_Fam  SET  qte5 = NULL, qte6 = NULL, rem3 = NULL, qte7 = NULL, qte8 = NULL, rem4 = NULL, qte9 = NULL, qte10 = NULL, rem5 = NULL, qte11 = NULL, qte12=  NULL, rem6 = NULL  WHERE code_fam = 'SV'
+SELECT * FROM Fiches_Fam where code_fam = 'SV'
+SELECT * FROM Fiches_FamDep WHERE fam = 'SV' and depot = NULL
+INSERT INTO Fiches_FamDep (fam,compte, depot) VALUES('SV', '707020', NULL)
+SELECT * FROM Fiches_Fam order by code_fam

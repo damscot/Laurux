@@ -10,12 +10,12 @@ de `Fiches_RelFacture`, texte du PDF.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FRELFACTURE-T01 | replay | Liste clients | période, `RB3` | dump `Fiches_RelFacture` (journaux VE, `cli_rlvf`, doublon ignoré) | `tests/liste_clients/` | à faire |
-| FRELFACTURE-T02 | replay | Liste fournisseurs | période, `RB4` | dump (journaux AC) ; erreur figée en cas de doublon | `tests/liste_fournisseurs/` | à faire |
-| FRELFACTURE-T03 | replay | Édition de tous les comptes | `RB1`, Éditer | texte PDF : dates de ligne (A01 figée), solde en lettres | `tests/edition_tous/` | à faire |
-| FRELFACTURE-T04 | replay | Édition de la sélection, solde négatif | `RB2`, un compte créditeur | texte PDF « - … » | `tests/edition_selection/` | à faire |
-| FRELFACTURE-T05 | replay | Contrôle de période | comme FRELCOMPTE-T05 | avertissement (A02 de `FRelCompte` figée) | `tests/controle_periode/` | à faire |
-| FRELFACTURE-T06 | gbtest | Conversion de date de ligne | `CStr` + découpage sur dates à 00:00 locales (été, hiver) | chaînes de référence produites par le code actuel | `tests/date_ligne/` | à faire |
+| FRELFACTURE-T01 | replay | Liste clients | période, `RB3` | dump `Fiches_RelFacture` (journaux VE, `cli_rlvf`, doublon ignoré) | `tests/liste_clients/` | implémenté |
+| FRELFACTURE-T02 | replay | Liste fournisseurs | période, `RB4` | dump (journaux AC) ; erreur figée en cas de doublon | `tests/liste_fournisseurs/` | implémenté |
+| FRELFACTURE-T03 | replay | Édition de tous les comptes | `RB1`, Éditer | texte PDF : dates de ligne (A01 figée), solde en lettres | `tests/edition_tous/` | implémenté |
+| FRELFACTURE-T04 | replay | Édition de la sélection, solde négatif | `RB2`, un compte créditeur | texte PDF « - … » | `tests/edition_selection/` | à faire : sélection de comptes dans `CompteRel` non rejouable (ColumnView sans `CompteRel_Click`) |
+| FRELFACTURE-T05 | replay | Contrôle de période | comme FRELCOMPTE-T05 | avertissement (A02 de `FRelCompte` figée) | `tests/controle_periode/` | implémenté |
+| FRELFACTURE-T06 | gbtest | Conversion de date de ligne | `CStr` + découpage sur dates à 00:00 locales (été, hiver) | chaînes de référence produites par le code actuel | `tests/date_ligne/` | implémenté |
 
 ## Détail des tests
 
@@ -23,3 +23,10 @@ de `Fiches_RelFacture`, texte du PDF.
   poste fixé (`TZ=Europe/Paris`) : le résultat de A01 dépend du fuseau.
 - T06 teste l'expression isolée (la fonction n'est pas publique) : il sert de caractérisation de
   l'anomalie A01 et devient obsolète après correction.
+- **Implémentation (phase 2, vague 4)** : jeu partagé `Compta/frelcompte_shared/frel_base` (voir FRelCompte ;
+  écriture 9 : deux lignes 411001 de même `numdoc`/`numero`, doublon ignoré ; F104 lettrée et règlements de
+  trésorerie exclus). Scénarios `.hidden/Tests/Compta/assets/frelfacture_<nom>/` : T01 `liste_clients`,
+  T02 `liste_fournisseurs` (pas de doublon fournisseur : l'erreur de doublon n'est pas couverte),
+  T03 `edition_tous` (texte du PDF : dates de ligne `02.06.0:00`, A01 figée ; solde en lettres),
+  T05 `controle_periode`. T06 : `.src/Tests/Compta/FRelFactureTest.test` (`T06DateLigne`, expression reproduite
+  sur des dates lues en base).

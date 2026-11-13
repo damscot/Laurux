@@ -61,5 +61,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   tests : aucun (son) · sources : [Commerciaux.class:115](../../../../../../.src/Gestion/Tables/Commerciaux.class#L115)
 - [ ] COMMERCIAUX-A03 — [anomalie] `Utils.Observers(Me)` réexécuté à chaque `Refresh` (via
   `Form_Open`) : observateurs de rejeu cumulés (à confirmer) · tests : T05 · sources : [Commerciaux.class:7](../../../../../../.src/Gestion/Tables/Commerciaux.class#L7), [Commerciaux.class:Refresh](../../../../../../.src/Gestion/Tables/Commerciaux.class#L126-L132)
-- [ ] COMMERCIAUX-A04 — [anomalie] Code non unique en base et suppression sans contrôle d'usage
+- [ ] COMMERCIAUX-A04 — [anomalie] (confirmée phase 2, vague 4 : la suppression laisse `cli_comm = '01'` orphelin (client 411001), T04) Code non unique en base et suppression sans contrôle d'usage
   (`Fiches_Cli.cli_comm`) ; l'UPDATE touche toutes les lignes du même code · tests : T04 · sources : [Commerciaux.class:99](../../../../../../.src/Gestion/Tables/Commerciaux.class#L99)

@@ -1,0 +1,24 @@
+{
+ "id": "ECHEANCIER-T04",
+ "objet": "Clients, tri par compte, mode Chèque (filtre ignoré)",
+ "classe": "Echeancier",
+ "description": "Jeu echeancier_ech : TpCompte, Eche = index 2 (05 | Chèque), Imprimer : toutes les factures clients (filtre de mode ignoré, A03 figée), ruptures par compte ; texte du PDF comparé ; Quitter.",
+ "dataset": "echeancier_shared/echeancier_ech",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/echeancier_pdf.txt'"
+ },
+ "fichiers": [
+  "echeancier_pdf.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

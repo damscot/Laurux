@@ -81,3 +81,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] MVTEX-A04 — [anomalie, à confirmer] `imprim` inverse le signe de la quantité par rapport à
   `Enrgbl` pour `Calculdroit` (volumes négatifs pour les entrées sur l'édition) · tests : T07 ·
   sources : [Mvtex.class:710-714](../../../../../../.src/Gestion/Stock/Mvtex.class#L710-L714), [Mvtex.class:470-474](../../../../../../.src/Gestion/Stock/Mvtex.class#L470-L474)
+- [ ] MVTEX-A05 — [anomalie, à confirmer] `Rcpt_lostfocus` aiguille par `Last.tag` : après la boîte de cumul (`Message.Question`), le code saisi dans `Cart` est enregistré sans passer par `art_man` (constaté au rejeu dans ref ; écran ou rejeu, à confirmer) (phase 2, vague 4, 2026-11-13) · tests : T03 (remplacement laissé à faire) · sources : [Mvtex.class:Rcpt_lostfocus](../../../../../../.src/Gestion/Stock/Mvtex.class#L99-L119), [Mvtex.class:art_man](../../../../../../.src/Gestion/Stock/Mvtex.class#L221-L258)

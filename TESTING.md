@@ -17,8 +17,11 @@ gbc3 -ag .                    # compile aussi les modules .test
 ./Laurux -T gbtest            # tous les gb.test ;  ./Laurux -T replay : tous les scénarios validés
 ./Laurux -T "LPRIX-T0*,Utils/impclient_*"   # jokers * ? [ ], entre guillemets
 ./Laurux -T LPrixTest         # un module ; « LPrixTest.Matrice » pour un seul test
-gbx3 -T LPrixTest.T01ConversionEntree   # un seul test, directement (depuis le répertoire du projet)
+./Laurux -T LPrixTest.T01ConversionEntree   # un seul test
 ```
+
+`gbx3 -T` lancé directement (ou depuis l'IDE Gambas) est refusé par `TestKit.Begin` : il s'exécuterait avec le
+HOME réel (voir « Garde-fous de suppression »).
 
 **Un processus par test.** `./Laurux -T` et `runner.py gbtest` lancent chaque test dans son propre processus
 (`gbx3 -T Module.Méthode`). `gbx3 -T "*"` (tous les tests dans un même processus) **n'est pas pris en charge**
@@ -413,6 +416,7 @@ les éprouver sur le HOME réel.
 | `Start.Fin_Home` (exécution) | points de montage FUSE sous le HOME de test lus dans `/proc/mounts` puis démontés un à un (`fusermount3 -u -z`, chemins échappés) ; `rm -rf --one-file-system` : jamais de traversée vers un autre système de fichiers |
 | `runner.py`, `dossier_temp` | ne supprime que le répertoire qu'il vient de créer (`mkdtemp`) : nom au préfixe attendu, directement dans le répertoire temporaire du système, pas un lien, chemin résolu identique, ni `/` ni le HOME réel ni un de ses parents |
 | `runner.py`, `test_env` (conteneur) | ne vide `/home/laurux` que si c'est le HOME du compte du conteneur (passwd généré par le runner) |
+| `TestKit.Begin` (protection du HOME réel) | tout module gb.test refuse de s'exécuter (« Bail out! », aucun test du module lancé) si `$HOME` ou `User.Home` ne contient pas le marqueur `.laurux-test-home` : posé par `Start.Home_Test` (`./Laurux -T`) et par `runner.py` `test_env` (HOME `mkdtemp` ou `/home/laurux` du conteneur). Un `gbx3 -T` lancé directement ou depuis l'IDE Gambas, avec le HOME réel, est donc refusé avant toute écriture (un test qui installe de faux outils dans `~/bin` les aurait sinon placés dans le PATH de l'utilisateur). Le marqueur posé par le runner ne rend aucun répertoire supprimable par `Fin_Home`, qui exige d'abord un chemin `/tmp/laurux-test/home-*` |
 
 En cas de refus, rien n'est supprimé et un message `garde-fou` indique la raison (`# HOME de test non supprimé
 (garde-fou : …)` pour `-T`, `runner: … non supprimé (garde-fou)` pour le runner). Un test qui écrit

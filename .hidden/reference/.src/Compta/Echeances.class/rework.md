@@ -63,6 +63,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   après une création (comportement incohérent) · tests : T02, T03 · sources : [Echeances.class:283-288](../../../../../.src/Compta/Echeances.class#L283-L288)
 - [ ] ECHEANCES-A03 — [anomalie] Message erroné « Veuillez saisir une date » pour un nombre de jours
   manquant (tag 4) · tests : T06 · sources : [Echeances.class:159-160](../../../../../.src/Compta/Echeances.class#L159-L160)
-- [ ] ECHEANCES-A04 — [anomalie] `Finm` relu sans conversion dans `echman` (`Finm.Value =
+- [ ] ECHEANCES-A04 — [anomalie] (confirmée phase 2, vague 4 : `Button2_Click` écrit `finmois = -1` (True Gambas) dans un tinyint, y compris après rappel par `echman` (l. 236, 284, 286), T03 et T07) `Finm` relu sans conversion dans `echman` (`Finm.Value =
   rResult!finmois`) alors que `Maj_Zones` utilise `Utils.convBool` ; valeur Boolean stockée par
   `Subst` à vérifier (à confirmer) · tests : T02, T07 · sources : [Echeances.class:236](../../../../../.src/Compta/Echeances.class#L236), [Echeances.class:82](../../../../../.src/Compta/Echeances.class#L82)

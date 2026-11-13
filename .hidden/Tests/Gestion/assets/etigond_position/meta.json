@@ -1,0 +1,24 @@
+{
+ "id": "ETIGOND-T06",
+ "objet": "Position de départ, deux impressions",
+ "classe": "Etigond",
+ "description": "Modèle Gondole ; Posetiq 4, Générer ; puis Posetiq 1, Générer (2e PDF : position figée, ETIGOND-A04) ; textes concaténés.",
+ "dataset": "etigond_shared/etigond_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "id": "FRELFACTURE-T03",
+ "objet": "Édition de tous les comptes",
+ "classe": "FRelFacture",
+ "description": "Jeu Compta/frelcompte_shared/frel_base (date 2018-06-15), Relevés › De facture (Menu52) : clic RB1 (sélection globale) → MajTab, puis Éditer (Button1) → Releves : PDF ~/tmp/RelFacture.pdf converti par pdftotext -layout via /Soc01/caisse/CmdVis (Visualiseur.Prog) dans ~/edition.txt, comparé ; 411002 a 35 écritures (saut de page).",
+ "dataset": "frelcompte_shared/frel_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

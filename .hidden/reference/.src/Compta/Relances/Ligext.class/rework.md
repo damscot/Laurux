@@ -47,6 +47,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] LIGEXT-A01 — [anomalie] `CheckBox1_Click` : pas de `Catch`/`Rollback`, une erreur SQL laisse
   la transaction ouverte · tests : T02 · sources : [Ligext.class:CheckBox1_Click](../../../../../../.src/Compta/Relances/Ligext.class#L38-L70)
-- [ ] LIGEXT-A02 — [anomalie] Ligne réinsérée différente de celle générée par `FEditrel` :
+- [ ] LIGEXT-A02 — [anomalie] (confirmée phase 2, vague 4 : ligne recochée réinsérée avec `niveau` NULL (copie de `relance` NULL) au lieu de 1 (T02)) Ligne réinsérée différente de celle générée par `FEditrel` :
   `intitule` sans le prénom et `niveau` = `relance` au lieu de `relance + 1` (borné à 3) ; la lettre
   imprimée peut changer de niveau · tests : T02 · sources : [Ligext.class:48](../../../../../../.src/Compta/Relances/Ligext.class#L48), [Ligext.class:62](../../../../../../.src/Compta/Relances/Ligext.class#L62), [FEditrel.class:358-366](../../../../../../.src/Compta/Relances/FEditrel.class#L358-L366)
+- [ ] LIGEXT-A03 — [anomalie] `selection_Write` : `av = Value` puis `If av <> Value` toujours faux, l'appel explicite de `CheckBox1_Click` est du code mort (sans effet : l'affectation de `CheckBox1.Value` déclenche déjà `CheckBox1_Click`) (phase 2, vague 4, 2026-11-13) · tests : T03 · sources : [Ligext.class:selection_Write](../../../../../../.src/Compta/Relances/Ligext.class#L80-L88), [Ligext.class:86](../../../../../../.src/Compta/Relances/Ligext.class#L86)

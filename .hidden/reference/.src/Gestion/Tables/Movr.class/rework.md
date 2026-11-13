@@ -71,7 +71,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] MOVR-A01 — [anomalie] `mo_man` (code existant saisi au clavier) charge partiellement la
+- [ ] MOVR-A01 — [anomalie] (confirmée phase 2, vague 4 : `mo_tempmont` = 1, `mo_prvt` et `mo_valeurht` = 0 après enregistrement (T04)) `mo_man` (code existant saisi au clavier) charge partiellement la
   fiche : ni valeur HT/TTC, ni arrondi, ni prix de revient, ni commentaire, ni impression, et ne
   bascule pas en mode forfait (`If mo_tempmont <> 0 Then Temps`) ; enregistrer ensuite écrase ces
   colonnes (forfait enregistré au temps). Correction : `ChargeMo` commun avec `Maj_Zones` ·
@@ -91,3 +91,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] MOVR-A06 — [anomalie] Incohérences clavier/souris des listes : `fourList_Click` passe à
   `Valeur` (Entrée passe au taux) ; `CmoList_KeyPress` recopie le taux sans format `0.00` ni
   changement de zone (le clic formate en `00.00` et passe au prix de revient) · tests : T06 · sources : [Movr.class:923](../../../../../../.src/Gestion/Tables/Movr.class#L923), [Movr.class:940](../../../../../../.src/Gestion/Tables/Movr.class#L940), [Movr.class:1259](../../../../../../.src/Gestion/Tables/Movr.class#L1259), [Movr.class:1280](../../../../../../.src/Gestion/Tables/Movr.class#L1280)
+- [ ] MOVR-A07 — [anomalie, à confirmer] `Valeur2TTC_LostFocus` recalcule le HT à partir du TTC saisi sans appeler `arrondi` : avec l'arrondi 1,00, le TTC 41,23 est enregistré tel quel (`mo_valeurht` 34.36) (intention à confirmer) (phase 2, vague 4, 2026-11-13) · tests : T02 · sources : [Movr.class:Valeur2TTC_LostFocus](../../../../../../.src/Gestion/Tables/Movr.class#L1549-L1576)

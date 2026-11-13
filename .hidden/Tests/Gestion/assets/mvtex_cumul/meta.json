@@ -1,0 +1,23 @@
+{
+ "id": "MVTEX-T03",
+ "objet": "Cumul (partie remplacement à faire)",
+ "classe": "Mvtex",
+ "description": "A1 entrée 2, puis A1 sortie 5 → bouton 1 \"1\" (cumuler) de message.Question (Mvtex.class:368), Valider : une ligne A1 sortie 3, art_qte 10 → 7. La partie remplacement (A2) n'est pas rejouable de façon fiable après la boîte (art_man non appelé).",
+ "dataset": "mvtex_shared/stock_mvtex",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "mvtex_pdf.txt"
+ ],
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/mvtex_pdf.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

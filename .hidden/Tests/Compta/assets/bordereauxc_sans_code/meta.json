@@ -1,0 +1,24 @@
+{
+ "id": "BORDEREAUXC-T07",
+ "objet": "Chèque sans code client",
+ "classe": "BordereauxC",
+ "description": "Bordereaux de chèques, jeu bordereauxc_sans_code (chèque de 45 sans code client entre deux chèques clients) : n° 12, banque 50, Imprimer, Oui (Entrée) ; Message.Error « chèque ... sans code client » avec le montant du chèque précédent (A06) validé par Entrée ; Message.Info (Entrée) ; Fermer ; dump.",
+ "dataset": "bordereauxc_sans_code",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'",
+  "/Soc01/FactcheminC": "{home}/pdfc"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

@@ -1,0 +1,33 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Tvaav
+SELECT * FROM Fiches_Comptes where left(compte_cc,1) = '7' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where left(compte_cc,1) = '7' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where left(compte_cc,1) = '7' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where left(compte_cc,1) = '6' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Art WHERE art_tva = NULL and art_fam = 'YY'
+SELECT * FROM Fiches_Tvaav where code_tva = '2'
+SELECT * FROM Fiches_Fam WHERE code_fam = 'YY'
+INSERT INTO Fiches_Fam(code_fam,libell_fam,compt_fam,compt2_fam,compt3_fam,compt4_fam,compt5_fam, coef_fam, cdtva_fam, txtva_fam, cptrem_fam, ect_fam, rem_fam, qte1, qte2, rem1, qte3, qte4, rem2, qte5, qte6, rem3, qte7, qte8, rem4, qte9, qte10, rem5, qte11, qte12, rem6) VALUES ('YY', 'Listes', '707010', '706100', '606130', NULL, NULL, '1.000', '2', '7.00', '709000', 0, '0.00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+SELECT * FROM Fiches_FamDep WHERE fam = 'YY' and depot = NULL
+INSERT INTO Fiches_FamDep (fam,compte, depot) VALUES('YY', '707010', NULL)
+SELECT * FROM Fiches_Fam order by code_fam

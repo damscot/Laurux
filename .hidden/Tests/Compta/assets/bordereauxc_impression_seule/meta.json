@@ -1,0 +1,25 @@
+{
+ "id": "BORDEREAUXC-T03",
+ "objet": "Impression sans comptabilisation",
+ "classe": "BordereauxC",
+ "description": "Bordereaux de chèques (Menu321, jeu bordereauxc_base) : n° 12, banque 50 (Bq index 0), Imprimer ; texte du PDF comparé (pdftotext, edition.txt), copie sous FactcheminC/Bordereaux/2018/06/Bordereau12.pdf ; Message.Question « effacer les chèques » bouton 2 « Non » (Tab + Espace) ; Fermer ; dump : chèques conservés, compteurs numecriture/numecriture2 incrémentés (A04).",
+ "dataset": "bordereauxc_shared/bordereauxc_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'",
+  "/Soc01/FactcheminC": "{home}/pdfc"
+ },
+ "fichiers": [
+  "edition.txt",
+  "pdfc/Bordereaux/2018/06/Bordereau12.pdf"
+ ]
+}

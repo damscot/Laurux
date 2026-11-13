@@ -1,0 +1,64 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Typec
+SELECT * FROM Fiches_Commerciaux
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),adr1 Char(35),adr2 Char(35),ville Char(35),totf Char(12),tottc Char(12),gestbl Decimal(6,2),PRIMARY KEY (code, nom))  ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),nom Char(35),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num))  ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where (type = 'B' or type='F') and totalht <> 0 and  cli_div = 0 and imp <> 1 and cli_div = 0 AND datebl<='20180630' AND cli_regr='S' AND cli_typec='01' order by cdclibl, numbl
+SELECT * FROM Facturefm WHERE code = '411901'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc,gestbl) Values ('411901', 'DURAND', '75001','PARIS','100,00', '120,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00001' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00001', '411901', 'DURAND', '2018-06-05 00:00:00', '100,00', '120,00')
+SELECT * FROM Facturefm WHERE code = '411901'
+UPdate Facturefm SET totf = '155,00', tottc = '186,00', gestbl=5 WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00002' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00002', '411901', 'DURAND', '2018-06-20 00:00:00', '55,00', '66,00')
+SELECT * FROM Facturefm WHERE code = '411901'
+SELECT tvafrais,taux_tva  FROM Fiches_Parametres,Fiches_Tvaav WHERE tvafrais=code_tva
+SELECT tvafrais,taux_tva  FROM Fiches_Parametres,Fiches_Tvaav WHERE tvafrais=code_tva
+UPdate Facturefm SET totf = '185,00', tottc = '228,00', gestbl=5 WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00003' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00003', '411901', 'DURAND', '2018-06-25 00:00:00', '30,00', '42,00')
+SELECT * FROM Facturefm order by nom
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),adr1 Char(35),adr2 Char(35),ville Char(35),totf Char(12),tottc Char(12),gestbl Decimal(6,2),PRIMARY KEY (code, nom))  ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),nom Char(35),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num))  ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where (type = 'B' or type='F') and totalht <> 0 and  cli_div = 0 and imp <> 1 and cli_div = 0 AND datebl<='20180630' AND cli_regr='S' AND cli_comm='01' order by cdclibl, numbl
+SELECT * FROM Facturefm WHERE code = '411901'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc,gestbl) Values ('411901', 'DURAND', '75001','PARIS','100,00', '120,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00001' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00001', '411901', 'DURAND', '2018-06-05 00:00:00', '100,00', '120,00')
+SELECT * FROM Facturefm WHERE code = '411901'
+UPdate Facturefm SET totf = '155,00', tottc = '186,00', gestbl=5 WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00002' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00002', '411901', 'DURAND', '2018-06-20 00:00:00', '55,00', '66,00')
+SELECT * FROM Facturefm WHERE code = '411901'
+SELECT tvafrais,taux_tva  FROM Fiches_Parametres,Fiches_Tvaav WHERE tvafrais=code_tva
+SELECT tvafrais,taux_tva  FROM Fiches_Parametres,Fiches_Tvaav WHERE tvafrais=code_tva
+UPdate Facturefm SET totf = '185,00', tottc = '228,00', gestbl=5 WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00003' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00003', '411901', 'DURAND', '2018-06-25 00:00:00', '30,00', '42,00')
+SELECT * FROM Facturefm order by nom

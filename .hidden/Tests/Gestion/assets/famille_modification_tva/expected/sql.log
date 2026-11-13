@@ -1,0 +1,40 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Fam where code_fam = '01'
+SELECT * FROM Fiches_Tvaav where code_tva = '1'
+SELECT * FROM Fiches_Fam WHERE code_fam = '01'
+UPdate  Fiches_Fam  SET  code_fam = '01' , libell_fam = 'Produits 2.10' , compt_fam = '707000', coef_fam = '2.500', cdtva_fam = '1', txtva_fam = '2.10', cptrem_fam = '709000' , ect_fam = 0 , rem_fam = '0.000', qte1 = 0, qte2 = 10, rem1 = 0, qte3 = 10.01, qte4 = 50, rem2 = 2, compt2_fam = '707000', compt3_fam = '606130', compt4_fam = '707010' , compt5_fam = '707000' WHERE code_fam = '01'
+UPdate  Fiches_Fam  SET  qte5 = 50.01, qte6 = 100, rem3 = 4, qte7 = 100.01, qte8 = 500, rem4 = 10, qte9 = 500.01, qte10 = 9999999.99, rem5 = 15, qte11 = 10000000, qte12=  NULL, rem6 = NULL  WHERE code_fam = '01'
+SELECT * FROM Fiches_FamDep WHERE fam = '01' and depot = NULL
+INSERT INTO Fiches_FamDep (fam,compte, depot) VALUES('01', '707000', NULL)
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Fam where code_fam = '10'
+SELECT * FROM Fiches_Art WHERE art_tva = '3' and art_fam = '10'
+SELECT * FROM Fiches_Tvaav where code_tva = '2'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+UPdate  Fiches_Fam  SET  code_fam = '10' , libell_fam = 'Mo 20.00' , compt_fam = '706100', coef_fam = '2.000', cdtva_fam = '2', txtva_fam = '7.00', cptrem_fam = '709000' , ect_fam = 0 , rem_fam = '0.000', qte1 = NULL, qte2 = NULL, rem1 = NULL, qte3 = NULL, qte4 = NULL, rem2 = NULL, compt2_fam = '706100', compt3_fam = NULL, compt4_fam = NULL , compt5_fam = '706100' WHERE code_fam = '10'
+UPdate  Fiches_Fam  SET  qte5 = NULL, qte6 = NULL, rem3 = NULL, qte7 = NULL, qte8 = NULL, rem4 = NULL, qte9 = NULL, qte10 = NULL, rem5 = NULL, qte11 = NULL, qte12=  NULL, rem6 = NULL  WHERE code_fam = '10'
+SELECT * FROM Fiches_FamDep WHERE fam = '10' and depot = NULL
+INSERT INTO Fiches_FamDep (fam,compte, depot) VALUES('10', '706100', NULL)
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Art WHERE art_tva = '3' and art_fam = NULL
+SELECT * FROM Fiches_Tvaav where code_tva = '2'

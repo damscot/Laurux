@@ -1,0 +1,24 @@
+{
+ "id": "ETIQPROMO-T03",
+ "objet": "Article dans deux promotions (caractérisation)",
+ "classe": "EtiqPromo",
+ "description": "Promo P2 : 002 présent aussi dans P1 ; la jointure Fiches_Art left join Fiches_ArtPromo sans code_promo lit la première ligne : prix figés (ETIQPROMO-A02).",
+ "dataset": "etiqpromo_shared/etiqpromo_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -65,9 +65,9 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ETIGOND-A01 — [anomalie] Imprimante Zebra : aucun PDF créé, `pdf.Open()` sur `Null` ;
+- [ ] ETIGOND-A01 — [anomalie] (confirmée phase 2, vague 4 : « Null object » figé par T10) Imprimante Zebra : aucun PDF créé, `pdf.Open()` sur `Null` ;
   `Connect` jamais appelée (décision commune ZEBRA-A01) · tests : T10 · sources : [Etigond.class:794](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L794), [Etigond.class:Connect](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L1031-L1050), [Etigond.class:983](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L983)
-- [ ] ETIGOND-A02 — [anomalie] `Init` saute les positions `Posetiq` **avant** la création du PDF :
+- [ ] ETIGOND-A02 — [anomalie] (confirmée phase 2, vague 4 : Dymo : « Null object » figé par T09) `Init` saute les positions `Posetiq` **avant** la création du PDF :
   en Dymo, `pos_Etiq` appelle `pdf.NewPage()` dès la 2e position (« Null object » au premier
   passage, page en trop sur un ancien PDF ensuite) ; en A4, idem si `Posetiq` dépasse une page ;
   `Import_Portable` ouvre le PDF dans l'éditeur au lieu de `ImpT.txt` (voir ETIQART-A02) · tests :
@@ -78,7 +78,8 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ETIGOND-A04 — [anomalie] Le membre `Nb` n'est jamais remis à faux : après une impression
   avec `Posetiq > 1`, l'impression suivante place la 1re étiquette en (0, 0) (positions remises à 0
   en fin de traitement) au lieu de la marge (à confirmer en replay) · tests : T06 · sources : [Etigond.class:845](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L845), [Etigond.class:1095](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L1095), [Etigond.class:921](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L921)
-- [ ] ETIGOND-A05 — [anomalie] Lectures sans test `Available` : taux de TVA (`code_tva` absent →
+- [ ] ETIGOND-A05 — [anomalie] (confirmée phase 2, vague 4 : `Imprime.905` : code TVA inconnu → « Result is not available », erreur fatale (T11)) Lectures sans test `Available` : taux de TVA (`code_tva` absent →
   erreur), article orphelin de la liste (erreur dans `Imprime`), liste vide (PDF vide sans
   message) ; aide ouverte sur la page `Etiqart` ; `CheckBox1` décochée affiche « Impression du
   Taux de TVA » alors que la TVA est toujours imprimée · tests : T04, T11 · sources : [Etigond.class:905](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L905), [Etigond.class:824](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L824), [Etigond.class:1105](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L1105), [Etigond.class:CheckBox1_Click](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L1155-L1163)
+- [ ] ETIGOND-A06 — [anomalie] `Art_man` : le contrôle `art_etiq` est commenté : un article non étiquetable (005) est accepté en mode liste, contrairement à `Etiqart` (phase 2, vague 4, 2026-11-13) · tests : T07 · sources : [Etigond.class:662](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L662), [Etiqart.class:651](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L651)

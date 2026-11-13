@@ -1,0 +1,27 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),ville Char(35),totf Char(12),tottc Char(12),PRIMARY KEY (code)) ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num)) ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl  where cdclibl = '411915' and type = 'A' and totalht <> 0 and dtefac <= '20180615' or cdclibl = '411915' and type = 'A' and totalht <> 0 and isnull(dtefac) order by dtefac desc
+SELECT * FROM Facturefm order by nom

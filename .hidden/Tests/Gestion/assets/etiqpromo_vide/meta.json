@@ -1,0 +1,26 @@
+{
+ "id": "ETIQPROMO-T07",
+ "objet": "Promotion vide / article supprimé (caractérisation)",
+ "classe": "EtiqPromo",
+ "description": "Promo P3 sans article : « Aucun article pour cette demande » (Entrée) ; promo P4 dont l'article 999 est absent de Fiches_Art : erreur figée (ETIQPROMO-A04), code 125.",
+ "dataset": "etiqpromo_shared/etiqpromo_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

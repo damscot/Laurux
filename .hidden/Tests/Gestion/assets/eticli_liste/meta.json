@@ -1,0 +1,23 @@
+{
+ "id": "ETICLI-T05",
+ "objet": "Mode liste",
+ "classe": "Eticli",
+ "description": "Liste cochée (table temporaire Etiquettes) ; 411103, 411101, 411103 (doublon ignoré), 999 refusé (« Veuillez saisir un compte existant », boîte ouverte par Entrée validée par Espace) ; Générer : PDF (lecture cli_code >= code de la liste).",
+ "dataset": "eticli_shared/eticli_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

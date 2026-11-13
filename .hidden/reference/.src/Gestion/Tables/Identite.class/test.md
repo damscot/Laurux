@@ -8,11 +8,11 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| IDENTITE-T01 | replay | Création | menu Identité ; `24`, `SARLU` ; Enregistrer | ligne insérée | `tests/creation/` | à faire |
-| IDENTITE-T02 | replay | Modification | clic `01` ; libellé `SARL2` ; Enregistrer | UPDATE du libellé | `tests/modification/` | à faire |
-| IDENTITE-T03 | replay | Relecture à la sortie du code | saisie `03`, Tab | libellé `SA` affiché (`Quitte_Cdtype`) | `tests/relecture_code/` | à faire |
-| IDENTITE-T04 | replay | Suppression du code saisi | sélection `01`, code saisi `02` ; Supprimer, Oui | `02` supprimé | `tests/suppression/` | à faire |
-| IDENTITE-T05 | replay | Code avec apostrophe | code `0'`, Tab | erreur SQL de `Quitte_Cdtype` (A01 figée) | `tests/apostrophe/` | à faire |
+| IDENTITE-T01 | replay | Création | menu Identité ; `24`, `SARLU` ; Enregistrer | ligne insérée | `tests/creation/` | implémenté (`Gestion/identite_creation`) |
+| IDENTITE-T02 | replay | Modification | clic `01` ; libellé `SARL2` ; Enregistrer | UPDATE du libellé | `tests/modification/` | implémenté (`Gestion/identite_modification`) |
+| IDENTITE-T03 | replay | Relecture à la sortie du code | saisie `03`, Tab | libellé `SA` affiché (`Quitte_Cdtype`) | `tests/relecture_code/` | implémenté (`Gestion/identite_relecture_code`, valeur relue rendue observable par Enregistrer, sql.log comparé) |
+| IDENTITE-T04 | replay | Suppression du code saisi | sélection `01`, code saisi `02` ; Supprimer, Oui | `02` supprimé | `tests/suppression/` | implémenté (`Gestion/identite_suppression`) |
+| IDENTITE-T05 | replay | Code avec apostrophe | code `0'`, Tab | erreur SQL de `Quitte_Cdtype` (A01 figée) | `tests/apostrophe/` | implémenté (`Gestion/identite_apostrophe`, code de sortie 125 figé) |
 
 ## Détail des tests
 

@@ -1,0 +1,36 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+UPdate  Fiches_Cli  SET  cli_code = '411001', cli_rs_soc= NULL, cli_nom = 'A Divers', cli_pnm = 'Jean', cli_adr1 = '1 rue A', cli_adr2 = NULL, cli_cd_ptl = '75001', cli_ville = 'Paris', cli_email = 'a@exemple.fr', cli_tel_dom = '0102030405', cli_tel_bur = NULL, cli_tel_poste = NULL, cli_pble = NULL, cli_fx1 = NULL, cli_fx2 = NULL, cli_plaf_ecrs = '0', cli_cd_bq = NULL, cli_cd_gch = NULL, cli_cle_rib = NULL, cli_num_cpt = NULL, cli_dmln = NULL , cli_cd_ent = '0', cli_cd_acc = '0',cli_ref_tir = '0', cli_id_tva = NULL, cli_rlvc = '0', cli_rlvf = '0', cli_obs = 'import', cli_collectif = '411000' WHERE cli_code = '411001'
+Update Fiches_Cli set cli_rmo = '0', cli_rart = '0' where cli_code = '411001'
+UPdate Fiches_Comptes SET compte_cc = '411001', intitule_cc = 'A Divers', type_cc = 'C', coll = 0, coll_cc = '411000', cent_cc = 0, comptr_cc = 0, gen_tv = 0, gen_ta = 0 WHERE compte_cc = '411001'
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+UPdate  Fiches_Cli  SET  cli_code = '411002', cli_rs_soc= NULL, cli_nom = 'B Divers', cli_pnm = 'Paul', cli_adr1 = '2 rue B', cli_adr2 = NULL, cli_cd_ptl = '69001', cli_ville = 'Lyon', cli_email = NULL, cli_tel_dom = NULL, cli_tel_bur = NULL, cli_tel_poste = NULL, cli_pble = NULL, cli_fx1 = NULL, cli_fx2 = NULL, cli_plaf_ecrs = '0', cli_cd_bq = NULL, cli_cd_gch = NULL, cli_cle_rib = NULL, cli_num_cpt = NULL, cli_dmln = NULL , cli_cd_ent = '0', cli_cd_acc = '0',cli_ref_tir = '0', cli_id_tva = NULL, cli_rlvc = '0', cli_rlvf = '0', cli_obs = NULL, cli_collectif = '411000' WHERE cli_code = '411002'
+Update Fiches_Cli set cli_rmo = '0', cli_rart = '0' where cli_code = '411002'
+UPdate Fiches_Comptes SET compte_cc = '411002', intitule_cc = 'B Divers', type_cc = 'C', coll = 0, coll_cc = '411000', cent_cc = 0, comptr_cc = 0, gen_tv = 0, gen_ta = 0 WHERE compte_cc = '411002'
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Fiches_Comptes Where compte_cc = '658999'
+SELECT * FROM Nvcompte WHERE cd = '658999'
+INSERT INTO Nvcompte (cd, intitule) Values ('658999', 'L''atelier')
+SELECT * FROM Fiches_Comptes Where compte_cc = '658999'
+SELECT * FROM Nvcompte WHERE cd = '658999'
+UPdate Nvcompte SET cd = '658999', intitule ='L'atelier'WHERE cd = '658999' 

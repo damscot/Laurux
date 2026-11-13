@@ -75,7 +75,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FAMILLE-A03 — [anomalie] `Button3_Click` ne supprime pas les lignes `Fiches_FamDep` de la
   famille et ne notifie pas le serveur (`Serveur.Pass`), contrairement à la création et à la
   modification (à confirmer) · tests : T05, T09 · sources : [Famille.class:Button3_Click](../../../../../../.src/Gestion/Tables/Famille.class#L447-L483)
-- [ ] FAMILLE-A04 — [anomalie] `Button1_Click` écrit `Fiches_FamDep` même sans l'option dépôts
+- [ ] FAMILLE-A04 — [anomalie] (précisée phase 2, vague 4 : `Left$(Dep.Text, 2)` vide est substitué en NULL : `depot = NULL` n'est jamais trouvé, une nouvelle ligne `Fiches_FamDep` (fam, compte, NULL) est insérée à chaque enregistrement ; les lignes `depot = ''` ne sont jamais mises à jour (l. 406-410)) `Button1_Click` écrit `Fiches_FamDep` même sans l'option dépôts
   (ligne `depot = ''` pour chaque famille enregistrée) · tests : T01 · sources : [Famille.class:406](../../../../../../.src/Gestion/Tables/Famille.class#L406), [Famille.class:410](../../../../../../.src/Gestion/Tables/Famille.class#L410)
 - [ ] FAMILLE-A05 — [anomalie] `TBfam_click` rappelle `Utils.Observers(Me)` à chaque changement
   d'onglet : `ReplayObserver` en double (événements journalisés plusieurs fois, rejeu faussé) et
@@ -83,3 +83,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FAMILLE-A06 — [anomalie] `Maj_Zones` lit la famille sans tester `Available` et masque toute
   erreur par un `Catch` vide (famille supprimée par un autre poste : zones partiellement
   remplies, sans message) · tests : T05 · sources : [Famille.class:151](../../../../../../.src/Gestion/Tables/Famille.class#L151), [Famille.class:194](../../../../../../.src/Gestion/Tables/Famille.class#L194)
+- [ ] FAMILLE-A07 — [anomalie] Option dépôts : le compte saisi pour le dépôt 02 remplace aussi `compt_fam` de la famille (même zone `codecompt` dans l'`UPdate` de `Fiches_Fam` et dans celui de `Fiches_FamDep`) (phase 2, vague 4, 2026-11-13) · tests : T07 · sources : [Famille.class:396](../../../../../../.src/Gestion/Tables/Famille.class#L396), [Famille.class:406-410](../../../../../../.src/Gestion/Tables/Famille.class#L406-L410)

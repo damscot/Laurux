@@ -10,14 +10,14 @@ d'abonnement (`type = "A"`) et des clients de chaque périodicité. Comparaisons
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FACTUREFMA-T01 | replay | Sélection mensuelle | clients « 1- Mensuel » : jamais facturé, facturé le mois précédent avant/après `cli_datab`, facturé ce mois | clients retenus dans `Facturefm`/`Bl` | `tests/mensuel/` | à faire |
+| FACTUREFMA-T01 | replay | Sélection mensuelle | clients « 1- Mensuel » : jamais facturé, facturé le mois précédent avant/après `cli_datab`, facturé ce mois | clients retenus dans `Facturefm`/`Bl` | `tests/mensuel/` | implémenté (`Gestion/facturefma_mensuel`) |
 | FACTUREFMA-T02 | replay | Bimensuel, trimestriel, semestriel | dates saisies en janvier, février, juillet | figer la sélection (A03 en début d'année) | `tests/periodicites/` | à faire |
 | FACTUREFMA-T03 | replay | Annuel | client facturé il y a un an jour pour jour | figer la sélection (A02) | `tests/annuel/` | à faire |
-| FACTUREFMA-T04 | replay | Client sans périodicité, client unique | `cli_aban` nul ; `RadioButton2` + code | avertissement ; sélection limitée au client | `tests/sans_periodicite/` | à faire |
+| FACTUREFMA-T04 | replay | Client sans périodicité, client unique | `cli_aban` nul ; `RadioButton2` + code | avertissement ; sélection limitée au client | `tests/sans_periodicite/` | implémenté (`Gestion/facturefma_sans_periodicite`) |
 | FACTUREFMA-T05 | replay | Retraits | Suppr client, Suppr BL | tables de travail ; colonne Ville modifiée (A01 figée) | `tests/retraits/` | à faire |
-| FACTUREFMA-T06 | replay | Édition | `Imprimer`, date du panneau modifiée, `OK` | factures émises (dump complet) ; date utilisée = `Datej` (A05 figée) | `tests/edition/` | à faire |
-| FACTUREFMA-T07 | replay | Client divers abonné | client `cli_div = 1` | figer l'erreur SQL de `ObjFac.calcul` (colonne `nom` absente, A04) | `tests/client_divers/` | à faire |
-| FACTUREFMA-T08 | gbtest | Conversion de `dtefac` | `Date` → `String` implicite pour des dates à 00:00 (été, hiver, 1er du mois) | chaînes de référence ; `Left$(…, 2)`, `Right$(…, 4)` | `tests/conversion_dtefac/` | à faire |
+| FACTUREFMA-T06 | replay | Édition | `Imprimer`, date du panneau modifiée, `OK` | factures émises (dump complet) ; date utilisée = `Datej` (A05 figée) | `tests/edition/` | à faire : édition par `OptFac` → `ObjFac` (classe complexe exclue) |
+| FACTUREFMA-T07 | replay | Client divers abonné | client `cli_div = 1` | figer l'erreur SQL de `ObjFac.calcul` (colonne `nom` absente, A04) | `tests/client_divers/` | à faire : l'erreur est levée dans `ObjFac.calcul` (édition, classe complexe exclue) |
+| FACTUREFMA-T08 | gbtest | Conversion de `dtefac` | `Date` → `String` implicite pour des dates à 00:00 (été, hiver, 1er du mois) | chaînes de référence ; `Left$(…, 2)`, `Right$(…, 4)` | `tests/conversion_dtefac/` | à faire : expression dans `recup_bl` (non publique), extraction de phase 4 |
 
 ## Détail des tests
 
@@ -28,3 +28,11 @@ d'abonnement (`type = "A"`) et des clients de chaque périodicité. Comparaisons
   `cli_datab` avant/après le jour saisi ; un client sans `cli_aban`, un client divers.
 - T08 isole l'expression de conversion (fonction non publique) : caractérisation de A02/A03.
 - L'envoi FTP (code mort) n'est pas testé.
+
+- **Assets** (`.hidden/Tests/Gestion/assets/`) : jeu `facturefma_shared/abonnements.sql` (clients 411911–411915,
+  BL `A` A00001–A00005, `dtepec` = `06.2018` pour éviter l'avertissement de `Quittedate`). Les scénarios posent
+  `"/Soc01/Faca": 0` (entier : la chaîne « 0 » est vraie pour `If`) : avec `/Faca` = 1, `Fmenu.Form_Open` appelle
+  `Abonnement()` qui ouvre une boîte avant le démarrage du rejeu (START-A09) ; le menu masqué `Menu299` reste
+  cliquable par le rejeu.
+- T02, T03, T05 non commencés (vague 4, durée écoulée) : le même jeu peut être étendu (clients bimensuel,
+  trimestriel, annuel ; retraits comme `Gestion/facturefm_retraits`, avec `Focus` avant Suppr).

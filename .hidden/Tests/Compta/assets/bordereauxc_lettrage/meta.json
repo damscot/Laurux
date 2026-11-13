@@ -1,0 +1,24 @@
+{
+ "id": "BORDEREAUXC-T06",
+ "objet": "Lettrage à la remise",
+ "classe": "BordereauxC",
+ "description": "Bordereaux de chèques, jeu bordereauxc_lettrage (chèque 411001 dont le lot F001 solde exactement la facture, chèque 411002 dont le lot ne solde pas, chèque du client caisse 411027) : n° 12, banque 50, Imprimer, Oui (Entrée), Message.Info (Entrée), Fermer ; dump : lettree des lignes Fiches_Mvt créées (chèque caisse jamais lettré, A05).",
+ "dataset": "bordereauxc_lettrage",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'",
+  "/Soc01/FactcheminC": "{home}/pdfc"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

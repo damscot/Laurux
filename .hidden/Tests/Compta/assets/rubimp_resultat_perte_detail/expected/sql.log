@@ -1,0 +1,992 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(numrub Char(5) NOT NULL,intitrub Char(70),type Char(1),detail Char(1),compte Char(8),intitcpt Char(50),Col1 Char(25),Col2 Char(25),col3 Char(25),col4 Char(25),PRIMARY KEY (numrub, compte)) ENGINE = InnoDB
+SELECT * FROM Fiches_Rubriques WHERE left(numrub,1) = 'R' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0010'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0010', 'COMPTE DE RESULTAT - CHARGES', 'T', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0020'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0020', 'CHARGES D''EXPLOITATION', 'E', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0030'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0030', 'Cout d''achat des marchandises vendues dans l''exercice', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0040'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0040', 'Achats de marchandises', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0040' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '607' and compte <= '60799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6087' and compte <= '60879999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6097' and compte <= '60979999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67207' and compte <= '67207999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0050'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0050', 'Variations des stocks de marchandises', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0050' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6037' and compte <= '60379999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0060'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0060', 'Consommations de l''exercice en provenance des tiers', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0030'
+UPdate  centralisation  SET  numrub = 'R0030', intitrub = 'Cout d''achat des marchandises vendues dans l''exercice', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0030'
+SELECT * FROM centralisation WHERE numrub = 'R0070'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0070', 'Achats stockes d''approvisionnements :', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0070' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0080'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0080', 'Matieres premières', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0080' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '601' and compte <= '60199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6081' and compte <= '60819999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6090' and compte <= '60909999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6091' and compte <= '60919999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '672' and compte <= '67299999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0090'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0090', 'Autres approvisionnements', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0090' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '602' and compte <= '60299999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6082' and compte <= '60829999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6092' and compte <= '60929999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67202' and compte <= '67202999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0100'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0100', 'Variations des stocks d''approvisionnements', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0100' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6031' and compte <= '60319999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6032' and compte <= '60329999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0110'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0110', 'Achats de sous-traitances', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0110' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '604' and compte <= '60499999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '605' and compte <= NULL And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6084' and compte <= '60849999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6085' and compte <= '60859999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6094' and compte <= '60949999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6095' and compte <= '60959999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67204' and compte <= '67204999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67205' and compte <= '67205999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67206' and compte <= '67206999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0120'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0120', 'Achats non stockes de matieres et fournitures', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0120' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '606' and compte <= '60699999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0120' and compte = '606100'
+INSERT INTO centralisation(numrub, intitrub, compte, intitcpt, type, detail, col3, col4) VALUES ( 'R0120', 'Achats non stockes de matieres et fournitures', '606100', 'Fournitures', 'L', 'O', 250, 0)
+SELECT * FROM centralisation WHERE numrub = 'R0120'
+UPdate  centralisation  SET  numrub = 'R0120', intitrub = 'Achats non stockes de matieres et fournitures', compte = ' ', intitcpt = NULL, type = 'L', detail = 'N', col3 = 250 , col4 = 0 WHERE numrub = 'R0120' and compte = ' '
+SELECT * FROM Fiches_Mvt WHERE compte >= '6086' and compte <= '60869999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6098' and compte <= '60989999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0130'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0130', 'Services exterieurs :', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0130' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0140'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0140', 'Personnel exterieur', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0140' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '621' and compte <= '62199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67221' and compte <= '67221999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0150'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0150', 'Loyers en credit-bail', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0150' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6122' and compte <= '61229999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6125' and compte <= '61259999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6732' and compte <= '67329999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6735' and compte <= '67359999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0160'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0160', 'Autres', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0160' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '611' and compte <= '61199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '613' and compte <= '61399999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0160' and compte = '613200'
+INSERT INTO centralisation(numrub, intitrub, compte, intitcpt, type, detail, col3, col4) VALUES ( 'R0160', 'Autres', '613200', 'Locations', 'L', 'O', 80, 0)
+SELECT * FROM centralisation WHERE numrub = 'R0160'
+UPdate  centralisation  SET  numrub = 'R0160', intitrub = 'Autres', compte = ' ', intitcpt = NULL, type = 'L', detail = 'N', col3 = 80 , col4 = 0 WHERE numrub = 'R0160' and compte = ' '
+SELECT * FROM Fiches_Mvt WHERE compte >= '614' and compte <= '61999999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '622' and compte <= '62999999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6721' and compte <= '67219999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67228' and compte <= '67228999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0170'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0170', 'Impots, taxes, et versements assimiles', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0060'
+UPdate  centralisation  SET  numrub = 'R0060', intitrub = 'Consommations de l''exercice en provenance des tiers', type = 'E', detail = 'N', col3 = 330, col4 = 0 WHERE numrub = 'R0060'
+SELECT * FROM centralisation WHERE numrub = 'R0180'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0180', 'Sur remunerations', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0180' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '631' and compte <= '63199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '633' and compte <= '63399999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67231' and compte <= '67231999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0190'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0190', 'Autres', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0190' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '635' and compte <= '63599999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '637' and compte <= '63799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67235' and compte <= '67235999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0200'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0200', 'Charges de personnel', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0170'
+UPdate  centralisation  SET  numrub = 'R0170', intitrub = 'Impots, taxes, et versements assimiles', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0170'
+SELECT * FROM centralisation WHERE numrub = 'R0210'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0210', 'Salaires et traitements', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0210' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '641' and compte <= '64199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '644' and compte <= '64499999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67241' and compte <= '67241999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0220'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0220', 'Charges sociales', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0220' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '645' and compte <= '64899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67245' and compte <= '67245999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0230'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0230', 'Dotations aux amortissements et aux provisions', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0200'
+UPdate  centralisation  SET  numrub = 'R0200', intitrub = 'Charges de personnel', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0200'
+SELECT * FROM centralisation WHERE numrub = 'R0240'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0240', 'Sur immobilisations : Dotations aux amortissements', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0240' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6811' and compte <= '68129999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0250'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0250', 'Sur immobilisations : Dotations aux provisions', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0250' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6816' and compte <= '68169999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0260'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0260', 'Sur actif circulant : Dotations aux provisions', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0260' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6817' and compte <= '68179999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0270'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0270', 'Pour risques et charges : Dotations aux provisions', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0270' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6815' and compte <= '68159999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0280'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0280', 'Autres charges', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0230'
+UPdate  centralisation  SET  numrub = 'R0230', intitrub = 'Dotations aux amortissements et aux provisions', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0230'
+SELECT * FROM centralisation WHERE numrub = 'R0290'
+UPdate  centralisation  SET  numrub = 'R0290', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R0290'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0290' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '651' and compte <= '65199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '653' and compte <= '65499999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '658' and compte <= '65899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67258' and compte <= '67258999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0300'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0300', 'TOTAL I', 'S', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0310'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0310', 'QUOTES-PARTS DE RESULTAT SUR OP FAITES EN COMMUN (II)', 'E', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0320'
+UPdate  centralisation  SET  numrub = 'R0320', intitrub = NULL, type = 'I', detail = NULL, Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R0320'
+SELECT * FROM centralisation WHERE numrub = 'R0330'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0330', 'CHARGES FINANCIERES (III)', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0280'
+UPdate  centralisation  SET  numrub = 'R0280', intitrub = 'Autres charges', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0280'
+SELECT * FROM centralisation WHERE numrub = 'R0340'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0340', 'Dotations aux amortissemnts et aux provisions', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0340' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '686' and compte <= '68699999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0350'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0350', 'Interets et charges assimilees', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0350' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '661' and compte <= '66199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '664' and compte <= '66599999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '668' and compte <= '66899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67261' and compte <= '67261999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0360'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0360', 'Differences negatives de change', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0360' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '666' and compte <= '66699999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '67266' and compte <= '67266999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0370'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0370', 'Charges nettes/cessions de valeurs mobilieres de placement', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0370' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '667' and compte <= '66799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0380'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0380', 'CHARGES EXCEPTIONNELLES (IV)', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0330'
+UPdate  centralisation  SET  numrub = 'R0330', intitrub = 'CHARGES FINANCIERES (III)', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0330'
+SELECT * FROM centralisation WHERE numrub = 'R0390'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0390', 'Sur operations de gestion', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0390' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '671' and compte <= '67199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0400'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0400', 'Sur operations en capital :', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0400' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0410'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0410', 'Valeurs comptables des elements immob et financiers cede', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0410' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '675' and compte <= '67599999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0420'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0420', 'Autres', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0420' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '678' and compte <= '67899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0430'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0430', 'Dotations aux amortissements et aux provisions :', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0430' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0440'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0440', 'Dotations aux provisions reglementees', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0440' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6872' and compte <= '68769999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0450'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0450', 'Dotations aux amortissements et autres provisions', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0450' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6871' and compte <= '68719999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6875' and compte <= '68769999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0460'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0460', 'PARTICIPATION DES SALARIES AUX FRUITS DE L''EXPANSION (V)', 'E', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0470'
+UPdate  centralisation  SET  numrub = 'R0470', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R0470'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0470' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0480'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0480', 'IMPOTS SUR LES BENEFICES (VI)', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0380'
+UPdate  centralisation  SET  numrub = 'R0380', intitrub = 'CHARGES EXCEPTIONNELLES (IV)', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0380'
+SELECT * FROM centralisation WHERE numrub = 'R0490'
+UPdate  centralisation  SET  numrub = 'R0490', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R0490'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0490' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '695' and compte <= '69599999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '697' and compte <= '69799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0700'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0700', 'TOTAL DES CHARGES (I+II+II+IV+V+VI)', 'O', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0480'
+UPdate  centralisation  SET  numrub = 'R0480', intitrub = 'IMPOTS SUR LES BENEFICES (VI)', type = 'O', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R0480'
+SELECT * FROM centralisation WHERE numrub = 'R0800'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0800', 'SOLDE CREDITEUR = Bénefice (VII)', 'C', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0900'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R0900', 'TOTAL GENERAL (I+II+III+IV+V+VI+VII)', 'R', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1010'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1010', 'COMPTE DE RESULTAT - PRODUITS', 'T', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1020'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1020', 'PRODUITS D''EXPLOITATION :', 'E', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1030'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1030', 'Ventes de marchandises', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R0700'
+UPdate  centralisation  SET  numrub = 'R0700', intitrub = 'TOTAL DES CHARGES (I+II+II+IV+V+VI)', type = 'E', detail = NULL, col3 = 0, col4 = 0 WHERE numrub = 'R0700'
+SELECT * FROM centralisation WHERE numrub = 'R1040'
+UPdate  centralisation  SET  numrub = 'R1040', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1040'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1040' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '707' and compte <= '70799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1040' and compte = '707000'
+INSERT INTO centralisation(numrub, intitrub, compte, intitcpt, type, detail, col3, col4) VALUES ( 'R1040', NULL, '707000', 'Ventes', 'L', 'O', -100, 0)
+SELECT * FROM centralisation WHERE numrub = 'R1040'
+UPdate  centralisation  SET  numrub = 'R1040', intitrub = NULL, compte = ' ', intitcpt = NULL, type = 'L', detail = 'N', col3 = -100 , col4 = 0 WHERE numrub = 'R1040' and compte = ' '
+SELECT * FROM Fiches_Mvt WHERE compte >= '7097' and compte <= '70979999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77207' and compte <= '77207999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1050'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1050', 'Production vendue', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1030'
+UPdate  centralisation  SET  numrub = 'R1030', intitrub = 'Ventes de marchandises', type = 'E', detail = 'N', col3 = -100, col4 = 0 WHERE numrub = 'R1030'
+SELECT * FROM centralisation WHERE numrub = 'R1060'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1060', 'Ventes', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1060' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '701' and compte <= '70399999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7091' and compte <= '70929999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77201' and compte <= '77201999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1070'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1070', 'Travaux', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1070' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '704' and compte <= '70499999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7094' and compte <= '70949999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7314' and compte <= '73149999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7394' and compte <= '73949999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77204' and compte <= '77204999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1080'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1080', 'Prestations de services', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1080' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '705' and compte <= '70699999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '708' and compte <= '70899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7095' and compte <= '70969999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7098' and compte <= '70989999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7315' and compte <= '73159999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '7395' and compte <= '73959999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77205' and compte <= '77205999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1090'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1090', 'MONTANT NET DU CHIFFRE D''AFFAIRES :', 'S', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1100'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1100', 'Dont a l''exportation :', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1050'
+UPdate  centralisation  SET  numrub = 'R1050', intitrub = 'Production vendue', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1050'
+SELECT * FROM centralisation WHERE numrub = 'R1105'
+UPdate  centralisation  SET  numrub = 'R1105', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1105'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1105' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R1110'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1110', 'Production stockee', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1100'
+UPdate  centralisation  SET  numrub = 'R1100', intitrub = 'Dont a l''exportation :', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1100'
+SELECT * FROM centralisation WHERE numrub = 'R1120'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1120', 'En cours de production de biens', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1120' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '7133' and compte <= '71339999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1130'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1130', 'En cours de production de services', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1130' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '7134' and compte <= '71349999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1140'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1140', 'produits', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1140' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '7135' and compte <= '71359999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1150'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1150', 'Production immobilisee', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1110'
+UPdate  centralisation  SET  numrub = 'R1110', intitrub = 'Production stockee', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1110'
+SELECT * FROM centralisation WHERE numrub = 'R1160'
+UPdate  centralisation  SET  numrub = 'R1160', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1160'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1160' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '72' and compte <= '72999999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1170'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1170', 'Subvention d''exploitation', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1150'
+UPdate  centralisation  SET  numrub = 'R1150', intitrub = 'Production immobilisee', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1150'
+SELECT * FROM centralisation WHERE numrub = 'R1180'
+UPdate  centralisation  SET  numrub = 'R1180', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1180'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1180' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '74' and compte <= '74999999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77240' and compte <= '77240999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1190'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1190', 'Reprises sur provisions (et amortissements)', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1170'
+UPdate  centralisation  SET  numrub = 'R1170', intitrub = 'Subvention d''exploitation', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1170'
+SELECT * FROM centralisation WHERE numrub = 'R1200'
+UPdate  centralisation  SET  numrub = 'R1200', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1200'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1200' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '781' and compte <= '78199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1210'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1210', 'Transferts de charges', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1190'
+UPdate  centralisation  SET  numrub = 'R1190', intitrub = 'Reprises sur provisions (et amortissements)', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1190'
+SELECT * FROM centralisation WHERE numrub = 'R1220'
+UPdate  centralisation  SET  numrub = 'R1220', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1220'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1220' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '791' and compte <= '79199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1230'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1230', 'Autres produits', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1210'
+UPdate  centralisation  SET  numrub = 'R1210', intitrub = 'Transferts de charges', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1210'
+SELECT * FROM centralisation WHERE numrub = 'R1240'
+UPdate  centralisation  SET  numrub = 'R1240', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1240'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1240' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '751' and compte <= '75399999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '758' and compte <= '75899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77208' and compte <= '77208999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77258' and compte <= '77258999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1250'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1250', 'TOTAL I', 'S', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1300'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1300', 'QUOTES-PARTS DE RESULTAT SUR OP. FAITES EN COMMUN (II)', 'E', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1310'
+UPdate  centralisation  SET  numrub = 'R1310', intitrub = NULL, type = 'L', detail = 'N', Col1 = 0, Col2 = 0, col3 = 0, col4 = 0 WHERE numrub = 'R1310'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1310' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '755' and compte <= '75599999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1350'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1350', 'PRODUITS FINANCIERS (III)', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1230'
+UPdate  centralisation  SET  numrub = 'R1230', intitrub = 'Autres produits', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1230'
+SELECT * FROM centralisation WHERE numrub = 'R1360'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1360', 'Departicipations', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1360' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '761' and compte <= '76199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77261' and compte <= '77261999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1370'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1370', 'D''autres valeurs mobilieres et creances de l''actif immobilier', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1370' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '762' and compte <= '76299999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77262' and compte <= '77262999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1380'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1380', 'Autres interets et produits assimiles', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1380' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '763' and compte <= '76599999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '768' and compte <= '76899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77263' and compte <= '77263999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1390'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1390', 'Reprises sur provisions et transferts de charges financiere', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1390' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '786' and compte <= '78699999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '796' and compte <= '79699999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1400'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1400', 'Differences positives de change', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1400' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '766' and compte <= '76699999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '77266' and compte <= '77266999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1410'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1410', 'Produits nets sur cessions de valeurs mobilieres de placement', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1410' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '767' and compte <= '76799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1450'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1450', 'PRODUITS EXCEPTIONNELS (IV)', 'E', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1350'
+UPdate  centralisation  SET  numrub = 'R1350', intitrub = 'PRODUITS FINANCIERS (III)', type = 'E', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1350'
+SELECT * FROM centralisation WHERE numrub = 'R1460'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1460', 'Sur operations de gestion', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1460' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '771' and compte <= '77199999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1470'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1470', 'Sur operations en capital :', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1470' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R1480'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1480', 'produits des cessions d''elements d''actif', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1480' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '775' and compte <= '77599999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1490'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1490', 'Subventions d''investissement virees aux resultats de l''exercice', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1490' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '777' and compte <= '77799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1500'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1500', 'Autres', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1500' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '778' and compte <= '77899999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1510'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1510', 'Reprises sur provisions et transferts de charges exceptionnelles', 'L', 'N', 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1510' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '787' and compte <= '78799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '797' and compte <= '79799999' And dte >= '20180101' And dte <= '20181231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1700'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1700', 'TOTAL DES PRODUITS (I+II+III+IV)', 'O', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1450'
+UPdate  centralisation  SET  numrub = 'R1450', intitrub = 'PRODUITS EXCEPTIONNELS (IV)', type = 'O', detail = 'N', col3 = 0, col4 = 0 WHERE numrub = 'R1450'
+SELECT * FROM centralisation WHERE numrub = 'R1800'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1800', 'SOLDE DEBITEUR = PERTE (V)', 'D', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM centralisation WHERE numrub = 'R1810'
+INSERT INTO centralisation(numrub, intitrub, type, detail, Col1, Col2, col3, col4, compte) VALUES ( 'R1810', 'TOTAL GENERAL(I+II+III+IV+V)', 'G', NULL, 0, 0, 0, 0, '0')
+SELECT * FROM Fiches_Rubriques WHERE left(numrub,1) = 'R' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0010'
+UPdate  centralisation  SET  numrub = 'R0010', intitrub = 'COMPTE DE RESULTAT - CHARGES', type = 'T' WHERE numrub = 'R0010'
+SELECT * FROM centralisation WHERE numrub = 'R0020'
+UPdate  centralisation  SET  numrub = 'R0020', intitrub = 'CHARGES D''EXPLOITATION', type = 'E' WHERE numrub = 'R0020'
+SELECT * FROM centralisation WHERE numrub = 'R0030'
+UPdate  centralisation  SET  numrub = 'R0030', intitrub = 'Cout d''achat des marchandises vendues dans l''exercice', type = 'E' WHERE numrub = 'R0030'
+SELECT * FROM centralisation WHERE numrub = 'R0040'
+UPdate  centralisation  SET  numrub = 'R0040', intitrub = 'Achats de marchandises', type = 'L' WHERE numrub = 'R0040'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0040' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '607' and compte <= '60799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6087' and compte <= '60879999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6097' and compte <= '60979999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67207' and compte <= '67207999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0050'
+UPdate  centralisation  SET  numrub = 'R0050', intitrub = 'Variations des stocks de marchandises', type = 'L' WHERE numrub = 'R0050'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0050' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6037' and compte <= '60379999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0060'
+UPdate  centralisation  SET  numrub = 'R0060', intitrub = 'Consommations de l''exercice en provenance des tiers', type = 'E' WHERE numrub = 'R0060'
+SELECT * FROM centralisation WHERE numrub = 'R0030'
+UPdate  centralisation  SET  numrub = 'R0030', intitrub = 'Cout d''achat des marchandises vendues dans l''exercice', type = 'E', col4 = 0 WHERE numrub = 'R0030'
+SELECT * FROM centralisation WHERE numrub = 'R0070'
+UPdate  centralisation  SET  numrub = 'R0070', intitrub = 'Achats stockes d''approvisionnements :', type = 'L' WHERE numrub = 'R0070'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0070' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0080'
+UPdate  centralisation  SET  numrub = 'R0080', intitrub = 'Matieres premières', type = 'L' WHERE numrub = 'R0080'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0080' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '601' and compte <= '60199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6081' and compte <= '60819999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6090' and compte <= '60909999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6091' and compte <= '60919999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '672' and compte <= '67299999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0090'
+UPdate  centralisation  SET  numrub = 'R0090', intitrub = 'Autres approvisionnements', type = 'L' WHERE numrub = 'R0090'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0090' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '602' and compte <= '60299999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6082' and compte <= '60829999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6092' and compte <= '60929999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67202' and compte <= '67202999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0100'
+UPdate  centralisation  SET  numrub = 'R0100', intitrub = 'Variations des stocks d''approvisionnements', type = 'L' WHERE numrub = 'R0100'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0100' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6031' and compte <= '60319999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6032' and compte <= '60329999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0110'
+UPdate  centralisation  SET  numrub = 'R0110', intitrub = 'Achats de sous-traitances', type = 'L' WHERE numrub = 'R0110'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0110' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '604' and compte <= '60499999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '605' and compte <= NULL And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6084' and compte <= '60849999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6085' and compte <= '60859999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6094' and compte <= '60949999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6095' and compte <= '60959999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67204' and compte <= '67204999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67205' and compte <= '67205999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67206' and compte <= '67206999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0120'
+UPdate  centralisation  SET  numrub = 'R0120', intitrub = 'Achats non stockes de matieres et fournitures', type = 'L' WHERE numrub = 'R0120'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0120' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '606' and compte <= '60699999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0120' and compte = '606100'
+UPdate  centralisation  SET  numrub = 'R0120', intitrub = 'Achats non stockes de matieres et fournitures', compte = '606100', intitcpt = 'Fournitures', type = 'L', detail = '0', col4 = 90 WHERE numrub = 'R0120' and compte = '606100'
+SELECT * FROM centralisation WHERE numrub = 'R0120'
+UPdate  centralisation  SET  numrub = 'R0120', intitrub = 'Achats non stockes de matieres et fournitures', compte = ' ', intitcpt = NULL, type = 'L', detail = 'N', col4 = 90 WHERE numrub = 'R0120' and compte = ' '
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6086' and compte <= '60869999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6098' and compte <= '60989999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0130'
+UPdate  centralisation  SET  numrub = 'R0130', intitrub = 'Services exterieurs :', type = 'L' WHERE numrub = 'R0130'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0130' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0140'
+UPdate  centralisation  SET  numrub = 'R0140', intitrub = 'Personnel exterieur', type = 'L' WHERE numrub = 'R0140'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0140' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '621' and compte <= '62199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67221' and compte <= '67221999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0150'
+UPdate  centralisation  SET  numrub = 'R0150', intitrub = 'Loyers en credit-bail', type = 'L' WHERE numrub = 'R0150'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0150' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6122' and compte <= '61229999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6125' and compte <= '61259999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6732' and compte <= '67329999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6735' and compte <= '67359999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0160'
+UPdate  centralisation  SET  numrub = 'R0160', intitrub = 'Autres', type = 'L' WHERE numrub = 'R0160'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0160' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '611' and compte <= '61199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '613' and compte <= '61399999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '614' and compte <= '61999999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '622' and compte <= '62999999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6721' and compte <= '67219999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67228' and compte <= '67228999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0170'
+UPdate  centralisation  SET  numrub = 'R0170', intitrub = 'Impots, taxes, et versements assimiles', type = 'E' WHERE numrub = 'R0170'
+SELECT * FROM centralisation WHERE numrub = 'R0060'
+UPdate  centralisation  SET  numrub = 'R0060', intitrub = 'Consommations de l''exercice en provenance des tiers', type = 'E', col4 = 90 WHERE numrub = 'R0060'
+SELECT * FROM centralisation WHERE numrub = 'R0180'
+UPdate  centralisation  SET  numrub = 'R0180', intitrub = 'Sur remunerations', type = 'L' WHERE numrub = 'R0180'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0180' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '631' and compte <= '63199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '633' and compte <= '63399999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67231' and compte <= '67231999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0190'
+UPdate  centralisation  SET  numrub = 'R0190', intitrub = 'Autres', type = 'L' WHERE numrub = 'R0190'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0190' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '635' and compte <= '63599999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '637' and compte <= '63799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67235' and compte <= '67235999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0200'
+UPdate  centralisation  SET  numrub = 'R0200', intitrub = 'Charges de personnel', type = 'E' WHERE numrub = 'R0200'
+SELECT * FROM centralisation WHERE numrub = 'R0170'
+UPdate  centralisation  SET  numrub = 'R0170', intitrub = 'Impots, taxes, et versements assimiles', type = 'E', col4 = 0 WHERE numrub = 'R0170'
+SELECT * FROM centralisation WHERE numrub = 'R0210'
+UPdate  centralisation  SET  numrub = 'R0210', intitrub = 'Salaires et traitements', type = 'L' WHERE numrub = 'R0210'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0210' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '641' and compte <= '64199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '644' and compte <= '64499999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67241' and compte <= '67241999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0220'
+UPdate  centralisation  SET  numrub = 'R0220', intitrub = 'Charges sociales', type = 'L' WHERE numrub = 'R0220'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0220' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '645' and compte <= '64899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67245' and compte <= '67245999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0230'
+UPdate  centralisation  SET  numrub = 'R0230', intitrub = 'Dotations aux amortissements et aux provisions', type = 'E' WHERE numrub = 'R0230'
+SELECT * FROM centralisation WHERE numrub = 'R0200'
+UPdate  centralisation  SET  numrub = 'R0200', intitrub = 'Charges de personnel', type = 'E', col4 = 0 WHERE numrub = 'R0200'
+SELECT * FROM centralisation WHERE numrub = 'R0240'
+UPdate  centralisation  SET  numrub = 'R0240', intitrub = 'Sur immobilisations : Dotations aux amortissements', type = 'L' WHERE numrub = 'R0240'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0240' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6811' and compte <= '68129999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0250'
+UPdate  centralisation  SET  numrub = 'R0250', intitrub = 'Sur immobilisations : Dotations aux provisions', type = 'L' WHERE numrub = 'R0250'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0250' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6816' and compte <= '68169999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0260'
+UPdate  centralisation  SET  numrub = 'R0260', intitrub = 'Sur actif circulant : Dotations aux provisions', type = 'L' WHERE numrub = 'R0260'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0260' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6817' and compte <= '68179999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0270'
+UPdate  centralisation  SET  numrub = 'R0270', intitrub = 'Pour risques et charges : Dotations aux provisions', type = 'L' WHERE numrub = 'R0270'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0270' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6815' and compte <= '68159999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0280'
+UPdate  centralisation  SET  numrub = 'R0280', intitrub = 'Autres charges', type = 'E' WHERE numrub = 'R0280'
+SELECT * FROM centralisation WHERE numrub = 'R0230'
+UPdate  centralisation  SET  numrub = 'R0230', intitrub = 'Dotations aux amortissements et aux provisions', type = 'E', col4 = 0 WHERE numrub = 'R0230'
+SELECT * FROM centralisation WHERE numrub = 'R0290'
+UPdate  centralisation  SET  numrub = 'R0290', intitrub = NULL, type = 'L' WHERE numrub = 'R0290'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0290' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '651' and compte <= '65199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '653' and compte <= '65499999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '658' and compte <= '65899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67258' and compte <= '67258999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0300'
+UPdate  centralisation  SET  numrub = 'R0300', intitrub = 'TOTAL I', type = 'S' WHERE numrub = 'R0300'
+SELECT * FROM centralisation WHERE numrub = 'R0310'
+UPdate  centralisation  SET  numrub = 'R0310', intitrub = 'QUOTES-PARTS DE RESULTAT SUR OP FAITES EN COMMUN (II)', type = 'E' WHERE numrub = 'R0310'
+SELECT * FROM centralisation WHERE numrub = 'R0320'
+UPdate  centralisation  SET  numrub = 'R0320', intitrub = NULL, type = 'I' WHERE numrub = 'R0320'
+SELECT * FROM centralisation WHERE numrub = 'R0330'
+UPdate  centralisation  SET  numrub = 'R0330', intitrub = 'CHARGES FINANCIERES (III)', type = 'E' WHERE numrub = 'R0330'
+SELECT * FROM centralisation WHERE numrub = 'R0280'
+UPdate  centralisation  SET  numrub = 'R0280', intitrub = 'Autres charges', type = 'E', col4 = 0 WHERE numrub = 'R0280'
+SELECT * FROM centralisation WHERE numrub = 'R0340'
+UPdate  centralisation  SET  numrub = 'R0340', intitrub = 'Dotations aux amortissemnts et aux provisions', type = 'L' WHERE numrub = 'R0340'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0340' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '686' and compte <= '68699999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0350'
+UPdate  centralisation  SET  numrub = 'R0350', intitrub = 'Interets et charges assimilees', type = 'L' WHERE numrub = 'R0350'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0350' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '661' and compte <= '66199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '664' and compte <= '66599999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '668' and compte <= '66899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67261' and compte <= '67261999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0360'
+UPdate  centralisation  SET  numrub = 'R0360', intitrub = 'Differences negatives de change', type = 'L' WHERE numrub = 'R0360'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0360' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '666' and compte <= '66699999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '67266' and compte <= '67266999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0370'
+UPdate  centralisation  SET  numrub = 'R0370', intitrub = 'Charges nettes/cessions de valeurs mobilieres de placement', type = 'L' WHERE numrub = 'R0370'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0370' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '667' and compte <= '66799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0380'
+UPdate  centralisation  SET  numrub = 'R0380', intitrub = 'CHARGES EXCEPTIONNELLES (IV)', type = 'E' WHERE numrub = 'R0380'
+SELECT * FROM centralisation WHERE numrub = 'R0330'
+UPdate  centralisation  SET  numrub = 'R0330', intitrub = 'CHARGES FINANCIERES (III)', type = 'E', col4 = 0 WHERE numrub = 'R0330'
+SELECT * FROM centralisation WHERE numrub = 'R0390'
+UPdate  centralisation  SET  numrub = 'R0390', intitrub = 'Sur operations de gestion', type = 'L' WHERE numrub = 'R0390'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0390' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '671' and compte <= '67199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0400'
+UPdate  centralisation  SET  numrub = 'R0400', intitrub = 'Sur operations en capital :', type = 'L' WHERE numrub = 'R0400'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0400' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0410'
+UPdate  centralisation  SET  numrub = 'R0410', intitrub = 'Valeurs comptables des elements immob et financiers cede', type = 'L' WHERE numrub = 'R0410'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0410' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '675' and compte <= '67599999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0420'
+UPdate  centralisation  SET  numrub = 'R0420', intitrub = 'Autres', type = 'L' WHERE numrub = 'R0420'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0420' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '678' and compte <= '67899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0430'
+UPdate  centralisation  SET  numrub = 'R0430', intitrub = 'Dotations aux amortissements et aux provisions :', type = 'L' WHERE numrub = 'R0430'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0430' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0440'
+UPdate  centralisation  SET  numrub = 'R0440', intitrub = 'Dotations aux provisions reglementees', type = 'L' WHERE numrub = 'R0440'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0440' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6872' and compte <= '68769999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0450'
+UPdate  centralisation  SET  numrub = 'R0450', intitrub = 'Dotations aux amortissements et autres provisions', type = 'L' WHERE numrub = 'R0450'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0450' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6871' and compte <= '68719999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '6875' and compte <= '68769999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0460'
+UPdate  centralisation  SET  numrub = 'R0460', intitrub = 'PARTICIPATION DES SALARIES AUX FRUITS DE L''EXPANSION (V)', type = 'E' WHERE numrub = 'R0460'
+SELECT * FROM centralisation WHERE numrub = 'R0470'
+UPdate  centralisation  SET  numrub = 'R0470', intitrub = NULL, type = 'L' WHERE numrub = 'R0470'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0470' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R0480'
+UPdate  centralisation  SET  numrub = 'R0480', intitrub = 'IMPOTS SUR LES BENEFICES (VI)', type = 'E' WHERE numrub = 'R0480'
+SELECT * FROM centralisation WHERE numrub = 'R0380'
+UPdate  centralisation  SET  numrub = 'R0380', intitrub = 'CHARGES EXCEPTIONNELLES (IV)', type = 'E', col4 = 0 WHERE numrub = 'R0380'
+SELECT * FROM centralisation WHERE numrub = 'R0490'
+UPdate  centralisation  SET  numrub = 'R0490', intitrub = NULL, type = 'L' WHERE numrub = 'R0490'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R0490' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '695' and compte <= '69599999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '697' and compte <= '69799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R0700'
+UPdate  centralisation  SET  numrub = 'R0700', intitrub = 'TOTAL DES CHARGES (I+II+II+IV+V+VI)', type = 'O' WHERE numrub = 'R0700'
+SELECT * FROM centralisation WHERE numrub = 'R0480'
+UPdate  centralisation  SET  numrub = 'R0480', intitrub = 'IMPOTS SUR LES BENEFICES (VI)', type = 'E', col4 = 0 WHERE numrub = 'R0480'
+SELECT * FROM centralisation WHERE numrub = 'R0800'
+UPdate  centralisation  SET  numrub = 'R0800', intitrub = 'SOLDE CREDITEUR = Bénefice (VII)', type = 'C' WHERE numrub = 'R0800'
+SELECT * FROM centralisation WHERE numrub = 'R0900'
+UPdate  centralisation  SET  numrub = 'R0900', intitrub = 'TOTAL GENERAL (I+II+III+IV+V+VI+VII)', type = 'R' WHERE numrub = 'R0900'
+SELECT * FROM centralisation WHERE numrub = 'R1010'
+UPdate  centralisation  SET  numrub = 'R1010', intitrub = 'COMPTE DE RESULTAT - PRODUITS', type = 'T' WHERE numrub = 'R1010'
+SELECT * FROM centralisation WHERE numrub = 'R1020'
+UPdate  centralisation  SET  numrub = 'R1020', intitrub = 'PRODUITS D''EXPLOITATION :', type = 'E' WHERE numrub = 'R1020'
+SELECT * FROM centralisation WHERE numrub = 'R1030'
+UPdate  centralisation  SET  numrub = 'R1030', intitrub = 'Ventes de marchandises', type = 'E' WHERE numrub = 'R1030'
+SELECT * FROM centralisation WHERE numrub = 'R0700'
+UPdate  centralisation  SET  numrub = 'R0700', intitrub = 'TOTAL DES CHARGES (I+II+II+IV+V+VI)', type = 'O', col4 = 0 WHERE numrub = 'R0700'
+SELECT * FROM centralisation WHERE numrub = 'R1040'
+UPdate  centralisation  SET  numrub = 'R1040', intitrub = NULL, type = 'L' WHERE numrub = 'R1040'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1040' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '707' and compte <= '70799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1040' and compte = '707000'
+UPdate  centralisation  SET  numrub = 'R1040', intitrub = NULL, compte = '707000', intitcpt = 'Ventes', type = 'L', detail = '0', col4 = -300 WHERE numrub = 'R1040' and compte = '707000'
+SELECT * FROM centralisation WHERE numrub = 'R1040'
+UPdate  centralisation  SET  numrub = 'R1040', intitrub = NULL, compte = ' ', intitcpt = NULL, type = 'L', detail = 'N', col4 = -300 WHERE numrub = 'R1040' and compte = ' '
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7097' and compte <= '70979999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77207' and compte <= '77207999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1050'
+UPdate  centralisation  SET  numrub = 'R1050', intitrub = 'Production vendue', type = 'E' WHERE numrub = 'R1050'
+SELECT * FROM centralisation WHERE numrub = 'R1030'
+UPdate  centralisation  SET  numrub = 'R1030', intitrub = 'Ventes de marchandises', type = 'E', col4 = -300 WHERE numrub = 'R1030'
+SELECT * FROM centralisation WHERE numrub = 'R1060'
+UPdate  centralisation  SET  numrub = 'R1060', intitrub = 'Ventes', type = 'L' WHERE numrub = 'R1060'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1060' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '701' and compte <= '70399999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7091' and compte <= '70929999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77201' and compte <= '77201999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1070'
+UPdate  centralisation  SET  numrub = 'R1070', intitrub = 'Travaux', type = 'L' WHERE numrub = 'R1070'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1070' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '704' and compte <= '70499999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7094' and compte <= '70949999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7314' and compte <= '73149999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7394' and compte <= '73949999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77204' and compte <= '77204999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1080'
+UPdate  centralisation  SET  numrub = 'R1080', intitrub = 'Prestations de services', type = 'L' WHERE numrub = 'R1080'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1080' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '705' and compte <= '70699999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '708' and compte <= '70899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7095' and compte <= '70969999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7098' and compte <= '70989999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7315' and compte <= '73159999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7395' and compte <= '73959999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77205' and compte <= '77205999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1090'
+UPdate  centralisation  SET  numrub = 'R1090', intitrub = 'MONTANT NET DU CHIFFRE D''AFFAIRES :', type = 'S' WHERE numrub = 'R1090'
+SELECT * FROM centralisation WHERE numrub = 'R1100'
+UPdate  centralisation  SET  numrub = 'R1100', intitrub = 'Dont a l''exportation :', type = 'E' WHERE numrub = 'R1100'
+SELECT * FROM centralisation WHERE numrub = 'R1050'
+UPdate  centralisation  SET  numrub = 'R1050', intitrub = 'Production vendue', type = 'E', col4 = 0 WHERE numrub = 'R1050'
+SELECT * FROM centralisation WHERE numrub = 'R1105'
+UPdate  centralisation  SET  numrub = 'R1105', intitrub = NULL, type = 'L' WHERE numrub = 'R1105'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1105' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R1110'
+UPdate  centralisation  SET  numrub = 'R1110', intitrub = 'Production stockee', type = 'E' WHERE numrub = 'R1110'
+SELECT * FROM centralisation WHERE numrub = 'R1100'
+UPdate  centralisation  SET  numrub = 'R1100', intitrub = 'Dont a l''exportation :', type = 'E', col4 = 0 WHERE numrub = 'R1100'
+SELECT * FROM centralisation WHERE numrub = 'R1120'
+UPdate  centralisation  SET  numrub = 'R1120', intitrub = 'En cours de production de biens', type = 'L' WHERE numrub = 'R1120'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1120' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7133' and compte <= '71339999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1130'
+UPdate  centralisation  SET  numrub = 'R1130', intitrub = 'En cours de production de services', type = 'L' WHERE numrub = 'R1130'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1130' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7134' and compte <= '71349999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1140'
+UPdate  centralisation  SET  numrub = 'R1140', intitrub = 'produits', type = 'L' WHERE numrub = 'R1140'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1140' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '7135' and compte <= '71359999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1150'
+UPdate  centralisation  SET  numrub = 'R1150', intitrub = 'Production immobilisee', type = 'E' WHERE numrub = 'R1150'
+SELECT * FROM centralisation WHERE numrub = 'R1110'
+UPdate  centralisation  SET  numrub = 'R1110', intitrub = 'Production stockee', type = 'E', col4 = 0 WHERE numrub = 'R1110'
+SELECT * FROM centralisation WHERE numrub = 'R1160'
+UPdate  centralisation  SET  numrub = 'R1160', intitrub = NULL, type = 'L' WHERE numrub = 'R1160'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1160' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '72' and compte <= '72999999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1170'
+UPdate  centralisation  SET  numrub = 'R1170', intitrub = 'Subvention d''exploitation', type = 'E' WHERE numrub = 'R1170'
+SELECT * FROM centralisation WHERE numrub = 'R1150'
+UPdate  centralisation  SET  numrub = 'R1150', intitrub = 'Production immobilisee', type = 'E', col4 = 0 WHERE numrub = 'R1150'
+SELECT * FROM centralisation WHERE numrub = 'R1180'
+UPdate  centralisation  SET  numrub = 'R1180', intitrub = NULL, type = 'L' WHERE numrub = 'R1180'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1180' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '74' and compte <= '74999999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77240' and compte <= '77240999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1190'
+UPdate  centralisation  SET  numrub = 'R1190', intitrub = 'Reprises sur provisions (et amortissements)', type = 'E' WHERE numrub = 'R1190'
+SELECT * FROM centralisation WHERE numrub = 'R1170'
+UPdate  centralisation  SET  numrub = 'R1170', intitrub = 'Subvention d''exploitation', type = 'E', col4 = 0 WHERE numrub = 'R1170'
+SELECT * FROM centralisation WHERE numrub = 'R1200'
+UPdate  centralisation  SET  numrub = 'R1200', intitrub = NULL, type = 'L' WHERE numrub = 'R1200'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1200' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '781' and compte <= '78199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1210'
+UPdate  centralisation  SET  numrub = 'R1210', intitrub = 'Transferts de charges', type = 'E' WHERE numrub = 'R1210'
+SELECT * FROM centralisation WHERE numrub = 'R1190'
+UPdate  centralisation  SET  numrub = 'R1190', intitrub = 'Reprises sur provisions (et amortissements)', type = 'E', col4 = 0 WHERE numrub = 'R1190'
+SELECT * FROM centralisation WHERE numrub = 'R1220'
+UPdate  centralisation  SET  numrub = 'R1220', intitrub = NULL, type = 'L' WHERE numrub = 'R1220'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1220' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '791' and compte <= '79199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1230'
+UPdate  centralisation  SET  numrub = 'R1230', intitrub = 'Autres produits', type = 'E' WHERE numrub = 'R1230'
+SELECT * FROM centralisation WHERE numrub = 'R1210'
+UPdate  centralisation  SET  numrub = 'R1210', intitrub = 'Transferts de charges', type = 'E', col4 = 0 WHERE numrub = 'R1210'
+SELECT * FROM centralisation WHERE numrub = 'R1240'
+UPdate  centralisation  SET  numrub = 'R1240', intitrub = NULL, type = 'L' WHERE numrub = 'R1240'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1240' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '751' and compte <= '75399999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '758' and compte <= '75899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77208' and compte <= '77208999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77258' and compte <= '77258999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1250'
+UPdate  centralisation  SET  numrub = 'R1250', intitrub = 'TOTAL I', type = 'S' WHERE numrub = 'R1250'
+SELECT * FROM centralisation WHERE numrub = 'R1300'
+UPdate  centralisation  SET  numrub = 'R1300', intitrub = 'QUOTES-PARTS DE RESULTAT SUR OP. FAITES EN COMMUN (II)', type = 'E' WHERE numrub = 'R1300'
+SELECT * FROM centralisation WHERE numrub = 'R1310'
+UPdate  centralisation  SET  numrub = 'R1310', intitrub = NULL, type = 'L' WHERE numrub = 'R1310'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1310' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '755' and compte <= '75599999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1350'
+UPdate  centralisation  SET  numrub = 'R1350', intitrub = 'PRODUITS FINANCIERS (III)', type = 'E' WHERE numrub = 'R1350'
+SELECT * FROM centralisation WHERE numrub = 'R1230'
+UPdate  centralisation  SET  numrub = 'R1230', intitrub = 'Autres produits', type = 'E', col4 = 0 WHERE numrub = 'R1230'
+SELECT * FROM centralisation WHERE numrub = 'R1360'
+UPdate  centralisation  SET  numrub = 'R1360', intitrub = 'Departicipations', type = 'L' WHERE numrub = 'R1360'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1360' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '761' and compte <= '76199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77261' and compte <= '77261999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1370'
+UPdate  centralisation  SET  numrub = 'R1370', intitrub = 'D''autres valeurs mobilieres et creances de l''actif immobilier', type = 'L' WHERE numrub = 'R1370'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1370' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '762' and compte <= '76299999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77262' and compte <= '77262999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1380'
+UPdate  centralisation  SET  numrub = 'R1380', intitrub = 'Autres interets et produits assimiles', type = 'L' WHERE numrub = 'R1380'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1380' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '763' and compte <= '76599999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '768' and compte <= '76899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77263' and compte <= '77263999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1390'
+UPdate  centralisation  SET  numrub = 'R1390', intitrub = 'Reprises sur provisions et transferts de charges financiere', type = 'L' WHERE numrub = 'R1390'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1390' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '786' and compte <= '78699999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '796' and compte <= '79699999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1400'
+UPdate  centralisation  SET  numrub = 'R1400', intitrub = 'Differences positives de change', type = 'L' WHERE numrub = 'R1400'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1400' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '766' and compte <= '76699999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '77266' and compte <= '77266999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1410'
+UPdate  centralisation  SET  numrub = 'R1410', intitrub = 'Produits nets sur cessions de valeurs mobilieres de placement', type = 'L' WHERE numrub = 'R1410'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1410' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '767' and compte <= '76799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1450'
+UPdate  centralisation  SET  numrub = 'R1450', intitrub = 'PRODUITS EXCEPTIONNELS (IV)', type = 'E' WHERE numrub = 'R1450'
+SELECT * FROM centralisation WHERE numrub = 'R1350'
+UPdate  centralisation  SET  numrub = 'R1350', intitrub = 'PRODUITS FINANCIERS (III)', type = 'E', col4 = 0 WHERE numrub = 'R1350'
+SELECT * FROM centralisation WHERE numrub = 'R1460'
+UPdate  centralisation  SET  numrub = 'R1460', intitrub = 'Sur operations de gestion', type = 'L' WHERE numrub = 'R1460'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1460' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '771' and compte <= '77199999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1470'
+UPdate  centralisation  SET  numrub = 'R1470', intitrub = 'Sur operations en capital :', type = 'L' WHERE numrub = 'R1470'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1470' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'R1480'
+UPdate  centralisation  SET  numrub = 'R1480', intitrub = 'produits des cessions d''elements d''actif', type = 'L' WHERE numrub = 'R1480'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1480' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '775' and compte <= '77599999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1490'
+UPdate  centralisation  SET  numrub = 'R1490', intitrub = 'Subventions d''investissement virees aux resultats de l''exercice', type = 'L' WHERE numrub = 'R1490'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1490' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '777' and compte <= '77799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1500'
+UPdate  centralisation  SET  numrub = 'R1500', intitrub = 'Autres', type = 'L' WHERE numrub = 'R1500'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1500' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '778' and compte <= '77899999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1510'
+UPdate  centralisation  SET  numrub = 'R1510', intitrub = 'Reprises sur provisions et transferts de charges exceptionnelles', type = 'L' WHERE numrub = 'R1510'
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'R1510' order by numrub
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '787' and compte <= '78799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM Fiches_Mvt1 WHERE compte >= '797' and compte <= '79799999' And dte >= '20170101' And dte <= '20171231' And validee = 1 order by compte
+SELECT * FROM centralisation WHERE numrub = 'R1700'
+UPdate  centralisation  SET  numrub = 'R1700', intitrub = 'TOTAL DES PRODUITS (I+II+III+IV)', type = 'O' WHERE numrub = 'R1700'
+SELECT * FROM centralisation WHERE numrub = 'R1450'
+UPdate  centralisation  SET  numrub = 'R1450', intitrub = 'PRODUITS EXCEPTIONNELS (IV)', type = 'E', col4 = 0 WHERE numrub = 'R1450'
+SELECT * FROM centralisation WHERE numrub = 'R1800'
+UPdate  centralisation  SET  numrub = 'R1800', intitrub = 'SOLDE DEBITEUR = PERTE (V)', type = 'D' WHERE numrub = 'R1800'
+SELECT * FROM centralisation WHERE numrub = 'R1810'
+UPdate  centralisation  SET  numrub = 'R1810', intitrub = 'TOTAL GENERAL(I+II+III+IV+V)', type = 'G' WHERE numrub = 'R1810'
+SELECT * FROM centralisation
+UPdate  centralisation  SET col3 = 330, col4 = 90 WHERE numrub = 'R0300'
+UPdate  centralisation  SET col3 = 330, col4 = 90 WHERE numrub = 'R0700'
+UPdate  centralisation  SET col3 = -100, col4 = -300 WHERE numrub = 'R1090'
+UPdate  centralisation  SET col3 = -100, col4 = -300 WHERE numrub = 'R1250'
+UPdate  centralisation  SET col3 = -100, col4 = -300 WHERE numrub = 'R1700'
+SELECT * FROM centralisation as e inner join Fiches_Rubriques as a on a.numrub = e.numrub
+UPdate  centralisation  SET col3 = 330, col4 = 90 WHERE numrub = 'R0700'
+UPdate  centralisation  SET col3 = -100, col4 = -300 WHERE numrub = 'R1700'
+SELECT * FROM centralisation where type = 'O'
+SELECT * FROM centralisation where type = 'D'
+UPdate  centralisation  SET col3 = -230 WHERE numrub = 'R1800'
+SELECT * FROM centralisation where type = 'C'
+UPdate  centralisation  SET col4 = 210 WHERE numrub = 'R0800'
+SELECT * FROM centralisation
+UPdate  centralisation  SET col3 = 0, col4 = 0 WHERE numrub = 'R0900'
+UPdate  centralisation  SET col3 = 0, col4 = 0 WHERE numrub = 'R1810'
+SELECT * FROM centralisation Order by numrub, detail, compte
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '606100' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '613200' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '707000' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 

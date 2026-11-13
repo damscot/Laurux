@@ -75,7 +75,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ETIQART-A01 — [anomalie] Imprimante Zebra : aucun PDF n'est créé, `pdf.Open()` s'exécute sur
+- [ ] ETIQART-A01 — [anomalie] (confirmée phase 2, vague 4 : « Null object » figé par T08) Imprimante Zebra : aucun PDF n'est créé, `pdf.Open()` s'exécute sur
   `Null` (« Null object ») à la première impression ; `Connect` (code mort) et `IpZebra` jamais
   renseigné rendent la branche ZPL inatteignable. Décision commune ZEBRA-A01 (brancher ou
   supprimer `Connect` et la branche) · tests : T08 · sources : [Etiqart.class:804](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L804), [Etiqart.class:Connect](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L992-L1011), [Etiqart.class:948](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L948)
@@ -95,3 +95,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ETIQART-A06 — [anomalie] Format introuvable ou libellé sans parenthèse : `PageA` reste `Null`
   (erreur sur `PageA[1]`) ou `Scan(…)[1]` échoue ; en Dymo, les positions sautées (`Posetiq`) sont
   calculées avec `pos_Etiq` (A4) puis `pos_Etiq2` ouvre une page blanche · tests : T03, T07 · sources : [Etiqart.class:776](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L776), [Etiqart.class:793](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L793), [Etiqart.class:830](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L830)
+- [ ] ETIQART-A07 — [anomalie] `Button2_Click`, impression par plage : les requêtes ne filtrent pas `art_etiq` (l'article 005, non étiquetable, est imprimé) alors que le mode liste le refuse (phase 2, vague 4, 2026-11-13) · tests : T01 · sources : [Etiqart.class:811-823](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L811-L823), [Etiqart.class:651](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L651)
+- [ ] ETIQART-A08 — [anomalie] `Art_man` : après le refus d'un article non étiquetable, `Art` n'est pas vidé ; la frappe suivante est concaténée (`005999`) (phase 2, vague 4, 2026-11-13) · tests : T06 · sources : [Etiqart.class:677-682](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L677-L682)

@@ -1,0 +1,26 @@
+{
+ "id": "ETIGOND-T09",
+ "objet": "Dymo, position de départ 3 (caractérisation)",
+ "classe": "Etigond",
+ "description": "/Soc01/Impetiq = « 3- Dymo » ; Posetiq 3 dès la première édition : Init appelle pos_Etiq avant la création du PDF, erreur Null object figée (ETIGOND-A02), code 125.",
+ "dataset": "etigond_shared/etigond_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "3- Dymo",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

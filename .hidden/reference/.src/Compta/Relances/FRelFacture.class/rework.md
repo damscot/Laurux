@@ -52,7 +52,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FRELFACTURE-A01 — [anomalie] Date de ligne du relevé construite par `CStr` + découpage : jour
+- [ ] FRELFACTURE-A01 — [anomalie] (confirmée phase 2, vague 4 : dates de ligne du PDF `02.06.0:00` (jour décalé, heure au lieu de l'année), figées par T03 et le gb.test T06) Date de ligne du relevé construite par `CStr` + découpage : jour
   décalé (UTC) et année remplacée par l'heure (`06.03.0:00`) ; corriger par `Format$(…,
   "dd.mm.yyyy")` comme `FRelCompte` · tests : T03, T06 · sources : [FRelFacture.class:393-394](../../../../../../.src/Compta/Relances/FRelFacture.class#L393-L394), [FRelCompte.class:378](../../../../../../.src/Compta/Relances/FRelCompte.class#L378)
 - [ ] FRELFACTURE-A02 — [anomalie] Clé `(compte, numdoc, numero)` : écritures client en double
@@ -61,3 +61,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FRELFACTURE-A03 — [anomalie] Devise par défaut « Euro » (singulier) alors que
   `FEditrel`/`FPrepRel2` utilisent « Euros » ; à harmoniser avec `Numtostring.Convertir` · tests :
   T03 · sources : [FRelFacture.class:74](../../../../../../.src/Compta/Relances/FRelFacture.class#L74)
+- [ ] FRELFACTURE-A04 — [anomalie] Contrôle de période identique à FRELCOMPTE-A02 (comparaison à la date de début **initiale** `dte1`, `<=`) : période inversée acceptée sans avertissement (phase 2, vague 4, 2026-11-13) · tests : T05 · sources : [FRelFacture.class:68](../../../../../../.src/Compta/Relances/FRelFacture.class#L68), [FRelFacture.class:271](../../../../../../.src/Compta/Relances/FRelFacture.class#L271)
+- [ ] FRELFACTURE-A05 — [anomalie, à confirmer] Relevé de factures : les écritures lettrées sont exclues (`lettree = 0`) alors que `FRelCompte` les inclut : relevé 411002 à 980 (facture lettrée F104 absente) contre 1010 dans `FRelCompte` (intention à confirmer) (phase 2, vague 4, 2026-11-13) · tests : T03 · sources : [FRelFacture.class:127](../../../../../../.src/Compta/Relances/FRelFacture.class#L127), [FRelCompte.class:120](../../../../../../.src/Compta/Relances/FRelCompte.class#L120)
+- [ ] FRELFACTURE-A06 — [anomalie] `Releves` : la variable `Pays` est déclarée mais jamais affectée : le pays du tiers (Belgique) n'est pas imprimé, contrairement à `FRelCompte` (phase 2, vague 4, 2026-11-13) · tests : T03 · sources : [FRelFacture.class:318](../../../../../../.src/Compta/Relances/FRelFacture.class#L318), [FRelFacture.class:387-388](../../../../../../.src/Compta/Relances/FRelFacture.class#L387-L388), [FRelCompte.class:370-371](../../../../../../.src/Compta/Relances/FRelCompte.class#L370-L371)

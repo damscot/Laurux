@@ -60,7 +60,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] FRELCOMPTE-A01 — [anomalie] Fiche tiers et société lues sans test `Available` (erreur si un
   compte 411/401 n'a pas de fiche) · tests : T06 · sources : [FRelCompte.class:124-128](../../../../../../.src/Compta/Relances/FRelCompte.class#L124-L128), [FRelCompte.class:341-342](../../../../../../.src/Compta/Relances/FRelCompte.class#L341-L342)
-- [ ] FRELCOMPTE-A02 — [anomalie] Contrôle de période fait contre la date de début **initiale**
+- [ ] FRELCOMPTE-A02 — [anomalie] (confirmée phase 2, vague 4 : période inversée acceptée sans avertissement (T05, et FRELFACTURE-T05)) Contrôle de période fait contre la date de début **initiale**
   (`dte1`), et refuse une période d'un jour (`<=`) · tests : T05 · sources : [FRelCompte.class:64](../../../../../../.src/Compta/Relances/FRelCompte.class#L64), [FRelCompte.class:257](../../../../../../.src/Compta/Relances/FRelCompte.class#L257)
 - [ ] FRELCOMPTE-A03 — [anomalie] Fournisseurs : `INSERT` sans `Try` ni option de relevé, alors
   que les clients sont filtrés par `cli_rlvc` · tests : T02 · sources : [FRelCompte.class:125](../../../../../../.src/Compta/Relances/FRelCompte.class#L125), [FRelCompte.class:128](../../../../../../.src/Compta/Relances/FRelCompte.class#L128)

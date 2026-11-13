@@ -1,0 +1,25 @@
+{
+ "classe": "Imp_Bilan",
+ "dataset": "imp_bilan_regles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/BilanDetail.csv",
+  "tmp/BilanRub.csv",
+  "edition.txt"
+ ],
+ "id": "IMP_BILAN-T04",
+ "objet": "Règles d'exclusion actif/passif",
+ "description": "Impressions comptables (RubImp, Menu124), jeu imp_bilan_regles (matrice de comptes de tiers, banques, caisse, TVA, 58x à solde positif, nul et négatif en N 2018 et de signe différent en N-1 2017), Bilan E1, Imprimer ; Message.Info validé par Entrée ; répartition actif/passif figée par BilanRub.csv, texte du PDF (edition.txt) et centralisation col1…col4 du dump ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ }
+}

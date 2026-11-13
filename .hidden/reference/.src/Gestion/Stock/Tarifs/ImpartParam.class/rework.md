@@ -64,7 +64,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `set = posorg_30 …` · tests : T03 · sources : [ImpartParam.class:700](../../../../../../../.src/Gestion/Stock/Tarifs/ImpartParam.class#L700), [ImpartParam.class:702](../../../../../../../.src/Gestion/Stock/Tarifs/ImpartParam.class#L702)
 - [ ] IMPARTPARAM-A03 — [anomalie] Mode largeur fixe, création : l'`INSERT` n'enregistre que les
   zones 1 à 15 et aucun `posorg` (zones 16-32 perdues) · tests : T02 · sources : [ImpartParam.class:694](../../../../../../../.src/Gestion/Stock/Tarifs/ImpartParam.class#L694)
-- [ ] IMPARTPARAM-A04 — [anomalie] `Btncreer_Click` : nouveau numéro = dernier `num` d'un
+- [ ] IMPARTPARAM-A04 — [anomalie] (confirmée phase 2, vague 4 : numéro proposé 11 avec les définitions 1, 2, 10 (`MoveLast` sans `ORDER BY`), T08) `Btncreer_Click` : nouveau numéro = dernier `num` d'un
   `SELECT` sans `ORDER BY` + 1 (numéro existant possible) · tests : T08 · sources : [ImpartParam.class:925](../../../../../../../.src/Gestion/Stock/Tarifs/ImpartParam.class#L925)
 - [ ] IMPARTPARAM-A05 — [anomalie] Ergonomie : `Cmpt2_Gotfocus` colore le champ suivant (décalage
   de tag) ; `Pfic_Change` découpe l'aperçu par `";"` quel que soit le séparateur ; `Lignes` ne

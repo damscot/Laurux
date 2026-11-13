@@ -50,16 +50,17 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ETIQPROMO-A01 — [anomalie] Imprimante Zebra : aucun PDF, `pdf.Open()` sur `Null` ; `Connect`
+- [ ] ETIQPROMO-A01 — [anomalie] (confirmée phase 2, vague 4 : « Null object » figé par T06) Imprimante Zebra : aucun PDF, `pdf.Open()` sur `Null` ; `Connect`
   jamais appelée (ZEBRA-A01) · tests : T06 · sources : [EtiqPromo.class:130](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L130), [EtiqPromo.class:Connect](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L328-L347)
-- [ ] ETIQPROMO-A02 — [anomalie] `Imprime` joint `Fiches_ArtPromo` sans filtrer `code_promo` : un
+- [ ] ETIQPROMO-A02 — [anomalie] (confirmée phase 2, vague 4 : article 002 de P2 imprimé avec les prix de P1 (T03)) `Imprime` joint `Fiches_ArtPromo` sans filtrer `code_promo` : un
   article présent dans plusieurs promotions peut recevoir les prix d'une autre promotion · tests :
   T03 · sources : [EtiqPromo.class:227](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L227)
 - [ ] ETIQPROMO-A03 — [anomalie] `pos_Etiq` V5 : seuil `i2 > Nbhauteur` (une rangée de plus que la
   planche, imprimée hors page), espacement compté une fois (décalage dès la 3e colonne), format lu
   par `code` seul ; membre `Nb` jamais remis à faux entre deux impressions · tests : T04 · sources : [EtiqPromo.class:301](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L301), [EtiqPromo.class:308](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L308), [EtiqPromo.class:110](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L110)
-- [ ] ETIQPROMO-A04 — [anomalie] Lecture de l'article sans test `Available` (ligne `ArtPromo`
+- [ ] ETIQPROMO-A04 — [anomalie] (confirmée phase 2, vague 4 : article orphelin : erreur fatale (T07)) Lecture de l'article sans test `Available` (ligne `ArtPromo`
   orpheline → erreur) · tests : T07 · sources : [EtiqPromo.class:228](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L228)
 - [ ] ETIQPROMO-A05 — [anomalie] Branche Zebra (morte) : passe le TextBox `Code` (code promotion)
   comme code article à `Zebra.Gondole1` ; à corriger si ZEBRA-A01 est tranchée en faveur du
   branchement · tests : T06 · sources : [EtiqPromo.class:287](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L287)
+- [ ] ETIQPROMO-A06 — [anomalie] `Button2_Click` nomme le PDF `EtiqGond.pdf` (nom de l'écran `Etigond`) : une impression de gondole et une de promotion s'écrasent (phase 2, vague 4, 2026-11-13) · tests : T01 · sources : [EtiqPromo.class:126](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L126)

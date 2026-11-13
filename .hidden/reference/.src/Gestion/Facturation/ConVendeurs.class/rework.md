@@ -52,23 +52,23 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CONVENDEURS-A01 — [anomalie] `Fmenu.Menu193_Click` appelle `New ConVendeurs(True)` alors
+- [ ] CONVENDEURS-A01 — [anomalie] (confirmée phase 2, vague 4 : menu « Saisie des factures entretien » : erreur fatale, code 125 (T06)) `Fmenu.Menu193_Click` appelle `New ConVendeurs(True)` alors
   que `_new` n'a pas de paramètre : l'argument part au constructeur de `Form` → « Type mismatch »
   (vérifié sur projet minimal). De plus `Button1_Click` ouvre toujours `New Facture(False)` : le
   mode entretien serait perdu. Correction : `_new(Optional bEntretien As Boolean)` mémorisé et
   transmis à `Facture` · appelants : `Fmenu` (Menu42, Menu193), `Facture` (F5) · tests : T06, T01 ·
   sources : [Fmenu.class:1788](../../../../../../.src/Communs/Fmenu.class#L1788), [ConVendeurs.class:_new](../../../../../../.src/Gestion/Facturation/ConVendeurs.class#L6-L26), [ConVendeurs.class:89](../../../../../../.src/Gestion/Facturation/ConVendeurs.class#L89)
-- [ ] CONVENDEURS-A02 — [anomalie] Code vendeur `char(2)` lu par `Left$(Caissiere.Text, 1)` :
+- [ ] CONVENDEURS-A02 — [anomalie] (confirmée phase 2, vague 4 : vendeur 12 : son mot de passe refusé, celui du vendeur 1 accepté (T03)) Code vendeur `char(2)` lu par `Left$(Caissiere.Text, 1)` :
   un vendeur `12` est cherché sous le code `1` (mauvais mot de passe ou erreur) ; `Facture`
   extrait le nom par `Mid$(…, 3)` avec la même hypothèse. `Ouverture` utilise `Left$(…, 2)` ·
   tests : T03 · sources : [ConVendeurs.class:62](../../../../../../.src/Gestion/Facturation/ConVendeurs.class#L62), [Facture.class:551](../../../../../../.src/Gestion/Facturation/Facture.class#L551), [Ouverture.class:130](../../../../../../.src/Caisse/Ouverture.class#L130)
-- [ ] CONVENDEURS-A03 — [anomalie] `Button3_Click` masque l'auto-instance
+- [ ] CONVENDEURS-A03 — [anomalie] (confirmée phase 2, vague 4 : « Déconnecter » depuis Menu42 : fenêtre visible, `CodeVendeur` vidé (T04)) `Button3_Click` masque l'auto-instance
   (`ConVendeurs.Visible = False`) au lieu de `Me` : ouverte par `New ConVendeurs` (Fmenu), la
   fenêtre reste affichée après « Déconnecter » · tests : T04 · sources : [ConVendeurs.class:121](../../../../../../.src/Gestion/Facturation/ConVendeurs.class#L121)
 - [ ] CONVENDEURS-A04 — [anomalie, à confirmer] `Button1_Click` construit `New Facture(False)`
   avant tout contrôle et l'ouvre en modal après connexion : appelé depuis `Facture` (F5), il
   empile une **seconde** saisie de documents ; en cas d'échec de contrôle, une `Facture` est
   construite pour rien (cf. FMENU-A09) · tests : T05, T02 · sources : [ConVendeurs.class:89](../../../../../../.src/Gestion/Facturation/ConVendeurs.class#L89), [ConVendeurs.class:111](../../../../../../.src/Gestion/Facturation/ConVendeurs.class#L111), [Facture.class:889](../../../../../../.src/Gestion/Facturation/Facture.class#L889)
-- [ ] CONVENDEURS-A05 — [anomalie] `Caissiere_Click` lit `Rrslt!mdp` sans tester `Available` :
+- [ ] CONVENDEURS-A05 — [anomalie] (confirmée phase 2, vague 4 : entrée vide « "  " » : `Catch` puis `Message.Error` technique (l. 63-65), figée par T02) `Caissiere_Click` lit `Rrslt!mdp` sans tester `Available` :
   le choix de l'entrée vide `"  "` déclenche le `Catch` (message d'erreur technique) · tests : T02 ·
   sources : [ConVendeurs.class:62-63](../../../../../../.src/Gestion/Facturation/ConVendeurs.class#L62-L63)

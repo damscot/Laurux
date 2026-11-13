@@ -1,0 +1,141 @@
+' Gambas test file
+
+''Tests de Ligext (.hidden/reference/.src/Compta/Relances/Ligext.class/test.md, LIGEXT-T01 à T03).
+''Jeu feditrel_shared/feditrel_relances_prete (lecture/écriture de Fiches_relances) ; Ligext instancié dans une
+''fenêtre de test, comme le fait Ligcli.visext (extrait de 411001 sur une plage large, lettrage « n », tri dte asc).
+''Valeurs attendues : assets/LigextTest/expected.txt (clone de référence).
+
+Private $hWin As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Affichage", "Lignes d'extrait de 411001 : libellés affichés, case cochée si la ligne est dans Fiches_relances")
+  TestKit.Desc("T02CocheLigne", "CheckBox1 décochée puis recochée : ligne supprimée puis réinsérée dans Fiches_relances")
+  TestKit.Desc("T03Selection", "Propriété selection à False puis True : effet réel sur Fiches_relances")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "LigextTest")
+  TestKit.OuvreBase("feditrel_shared/feditrel_relances_prete")
+  $hWin = New Window
+
+End
+
+Private Function Extrait(sCompte As String) As Ligext[]
+  ''Une Ligext par ligne de l'extrait du compte (même construction que Ligcli.visext).
+
+  Dim rCli, rExt As Result
+  Dim hLst As Listextcpt
+  Dim aExt As New Ligext[]
+  Dim hExt As Ligext
+  Dim i As Integer
+
+  rCli = Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code=&1", sCompte)
+  hLst = New Listextcpt(sCompte, "01.01.2010", "31.12.2030", "n", "dte asc")
+  rExt = hLst.resext
+  If Not rExt.Available Then Return aExt
+  rExt.MoveFirst
+  For i = 0 To rExt.Max
+    hExt = New Ligext(rCli, rExt, rExt.Index, $hWin)
+    aExt.Add(hExt)
+    rExt.MoveNext
+  Next
+  Return aExt
+
+End
+
+Private Function Ligne(hExt As Ligext) As String
+
+  Dim aVal As New String[]
+  Dim sNom As String
+
+  For Each sNom In ["datef", "datee", "libelle", "document", "lot", "debit", "credit", "num", "journ"]
+    aVal.Add(sNom & "=" & Object.GetProperty(hExt.Controls[sNom], "Text"))
+  Next
+  aVal.Add("coche=" & Object.GetProperty(hExt.Controls["CheckBox1"], "Value"))
+  Return aVal.Join(",")
+
+End
+
+Private Function Relances() As String
+  ''Contenu de Fiches_relances (lind, compte, intitule, numdoc, niveau, montantd), ordre lind.
+
+  Dim r As Result
+  Dim aLig As New String[]
+
+  r = Utils.db.Exec("SELECT lind, compte, intitule, numdoc, niveau, montantd FROM Fiches_relances ORDER BY lind")
+  If Not r.Available Then Return "<vide>"
+  Repeat
+    aLig.Add(r!lind & "|" & r!compte & "|" & r!intitule & "|" & r!numdoc & "|" & r!niveau & "|" & r!montantd)
+  Until r.MoveNext()
+  Return aLig.Join(" ; ")
+
+End
+
+Private Sub Fin(aExt As Ligext[])
+
+  Dim hExt As Ligext
+
+  For Each hExt In aExt
+    Object.Lock(hExt)
+  Next
+
+End
+
+Public Sub T01Affichage()
+
+  Dim aExt As Ligext[]
+  Dim i As Integer
+
+  aExt = Extrait("411001")
+  TestKit.Check("nb_lignes_411001", aExt.Count)
+  For i = 0 To aExt.Max
+    TestKit.Check("ligne_" & i, Ligne(aExt[i]))
+  Next
+  TestKit.Check("relances", Relances())
+  Fin(aExt)
+
+End
+
+Public Sub T02CocheLigne()
+
+  Dim aExt As Ligext[]
+  Dim hExt As Ligext
+
+  aExt = Extrait("411001")
+  TestKit.Check("nb_lignes_411001", aExt.Count)
+  If aExt.Count = 0 Then Return
+  hExt = aExt[0]
+  TestKit.Check("ligne_0", Ligne(hExt))
+  TestKit.Check("relances_avant", Relances())
+  ' L'affectation de Value lève CheckBox1_Click (constaté en référence) : pas d'appel explicite.
+  Object.SetProperty(hExt.Controls["CheckBox1"], "Value", False)
+  TestKit.Check("relances_decoche", Relances())
+  Object.SetProperty(hExt.Controls["CheckBox1"], "Value", True)
+  TestKit.Check("relances_recoche", Relances())
+  Fin(aExt)
+
+End
+
+Public Sub T03Selection()
+
+  Dim aExt As Ligext[]
+  Dim hExt As Ligext
+
+  aExt = Extrait("411001")
+  TestKit.Check("nb_lignes_411001", aExt.Count)
+  If aExt.Count = 0 Then Return
+  hExt = aExt[0]
+  TestKit.Check("relances_avant", Relances())
+  hExt.selection = False
+  TestKit.Check("selection_false", hExt.selection)
+  TestKit.Check("relances_selection_false", Relances())
+  hExt.selection = True
+  TestKit.Check("selection_true", hExt.selection)
+  TestKit.Check("relances_selection_true", Relances())
+  Fin(aExt)
+
+End

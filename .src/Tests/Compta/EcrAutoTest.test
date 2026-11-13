@@ -1,0 +1,176 @@
+' Gambas test file
+
+''Tests de EcrAuto (.hidden/reference/.src/Compta/Utils/EcrAuto.class/test.md, ECRAUTO-T01, T05, T06).
+''Instanciation directe avec un VarEcr construit dans le test, base Laurux01 (Fiches_Mvt vide, numecriture = 0).
+''Valeurs attendues : assets/EcrAutoTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01EcritureSimple", "Écriture « Autre » équilibrée sur le journal OD : lignes Fiches_Mvt, soldes, numecriture")
+  TestKit.Desc("T06ModifSup", "Écriture 1 modifiée : ligne 606100 modifiée (L_modif), 512000 supprimée (L_sup), nouvelle ligne 512000 (L_ajou) ; Fiches_Mvt, Fiches_MvtM, soldes")
+  TestKit.Desc("T05Collectif", "Compte 401001 (coll_cc 401000) : ligne collective ajoutée (collectif = 1), soldes")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EcrAutoTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Ligne(sCompte As String, fDebit As Float, fCredit As Float) As VarEcr
+
+  Dim hL As New VarEcr
+
+  hL.compte = sCompte
+  hL.intitul = "Intitule " & sCompte
+  hL.libelle = "Libelle test"
+  hL.numdoc = "DOC1"
+  hL.numlot = "LOT1"
+  hL.dte = New LDate(Date(2018, 6, 15))
+  hL.montantd = fDebit
+  hL.montantc = fCredit
+  hL.type = VarEcr.Autre
+  hL.etat = VarEcr.L_ajou
+  Return hL
+
+End
+
+Private Sub Ecrit(sJournal As String, hV As VarEcr, sCle As String)
+
+  Dim hE As EcrAuto
+  Dim bRet As Boolean
+
+  hV.type = VarEcr.Autre
+  hV.etat = VarEcr.L_ajou
+  Try hE = New EcrAuto(sJournal, hV)
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try bRet = hE.ecriture()
+  If Error Then
+    TestKit.Check(sCle & "/ecriture", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(sCle & "/ecriture", bRet)
+  Endif
+  TestKit.Check(sCle & "/numecr", hE.numecr)
+
+End
+
+Private Sub Lignes(sCle As String)
+
+  Dim rResult As Result
+  Dim sRes As String
+
+  rResult = Utils.db.Exec("SELECT jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, provisoire, tresorerie, pointee, lettree, cloturee, validee, relance FROM Fiches_Mvt ORDER BY lind")
+  If Not rResult.Available Then
+    TestKit.Check(sCle & "/lignes", "<aucune>")
+    Return
+  Endif
+  TestKit.Check(sCle & "/nombre", rResult.Count)
+  Repeat
+    sRes = rResult!jour & "|" & rResult!numero & "|" & rResult!compte & "|" & rResult!collectif & "|" & rResult!intitule & "|" & Format$(rResult!dte, "yyyy-mm-dd hh:nn:ss") & "|" & rResult!numdoc & "|" & rResult!numlot & "|" & rResult!libelle & "|" & rResult!montantd & "|" & rResult!montantc & "|" & rResult!provisoire & "|" & rResult!tresorerie & "|" & rResult!pointee & "|" & rResult!lettree & "|" & rResult!cloturee & "|" & rResult!validee & "|" & rResult!relance
+    TestKit.Check(sCle & "/ligne_" & rResult.Index, sRes)
+  Until rResult.MoveNext()
+
+End
+
+Private Sub Soldes(sCle As String, aComptes As String[])
+
+  Dim rResult As Result
+  Dim sCpt As String
+
+  For Each sCpt In aComptes
+    rResult = Utils.db.Exec("SELECT solde FROM Fiches_Comptes WHERE compte_cc = &1", sCpt)
+    If rResult.Available Then
+      TestKit.Check(sCle & "/solde_" & sCpt, rResult!solde)
+    Else
+      TestKit.Check(sCle & "/solde_" & sCpt, "<absent>")
+    Endif
+  Next
+  rResult = Utils.db.Exec("SELECT numecriture FROM Fiches_Parametres")
+  If rResult.Available Then TestKit.Check(sCle & "/numecriture", rResult!numecriture)
+
+End
+
+Public Sub T01EcritureSimple()
+
+  Dim hV As New VarEcr
+
+  hV.plus(Ligne("606100", 100, 0))
+  hV.plus(Ligne("512000", 0, 100))
+  Ecrit("10", hV, "T01")
+  Lignes("T01")
+  Soldes("T01", ["606100", "512000"])
+
+End
+
+Public Sub T05Collectif()
+
+  Dim hV As New VarEcr
+
+  hV.plus(Ligne("607000", 90, 0))
+  hV.plus(Ligne("401001", 0, 90))
+  Ecrit("60", hV, "T05")
+  Lignes("T05")
+  Soldes("T05", ["607000", "401001", "401000"])
+
+End
+
+Public Sub T06ModifSup()
+  ''Une seconde écriture garde une ligne sur 512000 après la suppression : sinon EcrAuto.solde (SUM sur zéro ligne,
+  ''NULL) ouvre un Message.Error bloquant en gb.test (ECRAUTO-T06, anomalie de la dernière ligne d'un compte).
+
+  Dim hV As New VarEcr
+  Dim hA As New VarEcr
+  Dim hM As New VarEcr
+  Dim hL As VarEcr
+  Dim hE As EcrAuto
+  Dim bRet As Boolean
+  Dim rResult As Result
+
+  hV.plus(Ligne("606100", 100, 0))
+  hV.plus(Ligne("512000", 0, 100))
+  Ecrit("10", hV, "T06/creation")
+  hA.plus(Ligne("606100", 40, 0))
+  hA.plus(Ligne("512000", 0, 40))
+  Ecrit("10", hA, "T06/seconde")
+  hL = Ligne("606100", 150, 0)
+  hL.etat = VarEcr.L_modif
+  hL.lind = 1
+  hM.plus(hL)
+  hL = Ligne("512000", 0, 100)
+  hL.etat = VarEcr.L_sup
+  hL.lind = 2
+  hM.plus(hL)
+  hM.plus(Ligne("512000", 0, 150))
+  hM.numero = "1"
+  hM.type = VarEcr.Autre
+  hM.etat = VarEcr.L_modif
+  Try hE = New EcrAuto("10", hM)
+  If Error Then
+    TestKit.Check("T06/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try bRet = hE.ecriture()
+  If Error Then
+    TestKit.Check("T06/ecriture", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T06/ecriture", bRet)
+  Endif
+  Lignes("T06")
+  rResult = Utils.db.Exec("SELECT jour, numero, compte, montantd, montantc, lind2, supprimee FROM Fiches_MvtM ORDER BY lind2")
+  If rResult.Available Then
+    TestKit.Check("T06/mvtm_nombre", rResult.Count)
+    Repeat
+      TestKit.Check("T06/mvtm_" & rResult.Index, rResult!jour & "|" & rResult!numero & "|" & rResult!compte & "|" & rResult!montantd & "|" & rResult!montantc & "|" & rResult!lind2 & "|" & rResult!supprimee)
+    Until rResult.MoveNext()
+  Else
+    TestKit.Check("T06/mvtm_nombre", 0)
+  Endif
+  Soldes("T06", ["606100", "512000"])
+
+End

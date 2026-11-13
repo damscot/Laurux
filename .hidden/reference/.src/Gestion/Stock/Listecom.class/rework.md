@@ -66,3 +66,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LISTECOM-A04 — [anomalie] Les dates sont lues dans `Fiches_HistoFac`/`Fiches_Bl` seulement,
   les lignes aussi dans `Fiches_HistoFacM`/`Fiches_BlM` : un achat présent uniquement dans les
   tables « entretien » n'apparaît jamais · tests : T01 · sources : [Listecom.class:16](../../../../../../.src/Gestion/Stock/Listecom.class#L16), [Listecom.class:18](../../../../../../.src/Gestion/Stock/Listecom.class#L18)
+- [ ] LISTECOM-A05 — [anomalie] Mode client : un même article le même jour dans `Fiches_Bl` et `Fiches_BlM` (ou facture et facture d'entretien) donne deux lignes `UNION` ; la seconde écrase la première dans la grille au lieu de cumuler (phase 2, vague 4, 2026-11-13) · tests : T01 · sources : [Listecom.class:98-114](../../../../../../.src/Gestion/Stock/Listecom.class#L98-L114), [Listecom.class:126-130](../../../../../../.src/Gestion/Stock/Listecom.class#L126-L130)

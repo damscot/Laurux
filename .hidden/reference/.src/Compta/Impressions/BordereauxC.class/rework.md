@@ -70,10 +70,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] BORDEREAUXC-A01 — [anomalie] Libellé de la ligne de banque : `Bordereaux.Text` (titre vide du
+- [ ] BORDEREAUXC-A01 — [anomalie] (confirmée phase 2, vague 4 : libellé « Bordereau de chèque N° » sans numéro (T04)) Libellé de la ligne de banque : `Bordereaux.Text` (titre vide du
   formulaire de caisse `Caisse/Bordereaux`, instancié en mémoire) au lieu de `Nbordereau.Text` →
   « Bordereau de chèque N° » sans numéro · tests : T04 · sources : [BordereauxC.class:370](../../../../../../.src/Compta/Impressions/BordereauxC.class#L370)
-- [ ] BORDEREAUXC-A02 — [anomalie] `Maj_Collectif` rappelé après la ligne de banque avec le dernier
+- [ ] BORDEREAUXC-A02 — [anomalie] (confirmée phase 2, vague 4 : collectif 411000 crédité 230 pour 200 de chèques (T04)) `Maj_Collectif` rappelé après la ligne de banque avec le dernier
   client et le dernier montant : le collectif clients est crédité deux fois du dernier chèque
   (écriture déséquilibrée) · tests : T04 · sources : [BordereauxC.class:373](../../../../../../.src/Compta/Impressions/BordereauxC.class#L373)
 - [ ] BORDEREAUXC-A03 — [anomalie] `Maj_Collectif` : le solde du collectif est diminué du
@@ -83,12 +83,12 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] BORDEREAUXC-A04 — [anomalie] Numéros d'écriture réservés à chaque impression, même sans
   comptabilisation (trous de numérotation) ; aucune transaction autour des écritures, soldes,
   SHA-1 et suppressions (état partiel en cas d'erreur) · tests : T03, T04 · sources : [BordereauxC.class:240](../../../../../../.src/Compta/Impressions/BordereauxC.class#L240), [BordereauxC.class:Parametres](../../../../../../.src/Compta/Impressions/BordereauxC.class#L422-L457), [BordereauxC.class:305-380](../../../../../../.src/Compta/Impressions/BordereauxC.class#L305-L380)
-- [ ] BORDEREAUXC-A05 — [anomalie] Chèques caisse : test de lettrage avec `Nlot` vide (toujours
+- [ ] BORDEREAUXC-A05 — [anomalie] (confirmée phase 2, vague 4 : chèque du client caisse jamais lettré (T06)) Chèques caisse : test de lettrage avec `Nlot` vide (toujours
   non lettré) ; `INSERT` avec `lettree` 0 puis `UPDATE` de toutes les lignes du numéro `numr` ·
   tests : T06 · sources : [BordereauxC.class:319](../../../../../../.src/Compta/Impressions/BordereauxC.class#L319), [BordereauxC.class:331](../../../../../../.src/Compta/Impressions/BordereauxC.class#L331)
 - [ ] BORDEREAUXC-A06 — [anomalie] Message « chèque sans code client » : montant du chèque
   précédent (variable `Montant` non mise à jour) · tests : T07 · sources : [BordereauxC.class:366](../../../../../../.src/Compta/Impressions/BordereauxC.class#L366)
-- [ ] BORDEREAUXC-A07 — [anomalie] Copie du PDF par `Shell "cp …"` sans guillemets (échec
+- [ ] BORDEREAUXC-A07 — [anomalie] (confirmée phase 2, vague 4 : copie vers un chemin avec espace : échec silencieux (T09)) Copie du PDF par `Shell "cp …"` sans guillemets (échec
   silencieux si le chemin ou le n° de bordereau contient un espace) ; dossier daté par
   `DateChooser1.Value` et non par `Dateb` · tests : T09 · sources : [BordereauxC.class:297-301](../../../../../../.src/Compta/Impressions/BordereauxC.class#L297-L301)
 - [ ] BORDEREAUXC-A08 — [anomalie] Format `"dd.mm.yyy"` à l'affichage de `dateremise`, relu par

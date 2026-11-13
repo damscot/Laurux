@@ -1,0 +1,24 @@
+{
+ "id": "ETIQART-T02",
+ "objet": "Les tris 2 à 5",
+ "classe": "Etiqart",
+ "description": "Modèle Z - Test, 1 étiquette ; Générer successivement avec les tris famille, fournisseur, désignation, casier (RadioButton2..5) ; textes des 4 PDF concaténés dans edition.txt (ordre des articles).",
+ "dataset": "etiqart_shared/etiqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

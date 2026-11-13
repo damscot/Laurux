@@ -1,0 +1,21 @@
+{
+ "id": "DUP-T05",
+ "objet": "Refus et abandon",
+ "classe": "Dup",
+ "description": "Administration › Duplication (Menu150, Dup modal, Admin non activé) : liste Nbase lue par mysql dans ~/bases.txt (comparé) ; cible = Laurux01 (index 0) → Message.Error « sur elle-même » (Entrée) ; cible saisie Laurux03 → Message.Question Dup.class:75, bouton 2 « Non » (Tab + Espace) : aucune duplication ; Quitter. Lecture seule : sql.log comparé (ordered). Variante « Non » à l'écrasement d'une base existante non jouée (base Laurux02 non créable par le jeu).",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "fichiers": [
+  "bases.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

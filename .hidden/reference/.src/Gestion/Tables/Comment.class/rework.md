@@ -59,8 +59,8 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] COMMENT-A01 — [anomalie] Suppression de `colcol.Current[0]` (ligne sélectionnée) alors que
   le test porte sur le code saisi ; erreur sans sélection · tests : T04 · sources : [Comment.class:166](../../../../../../.src/Gestion/Tables/Comment.class#L166)
-- [ ] COMMENT-A02 — [anomalie] Enregistrement d'un code existant saisi sans sélection : l'UPDATE
+- [ ] COMMENT-A02 — [anomalie] (confirmée phase 2, vague 4 : `Button2_Click.189` : « #13: Null object » en modification sans sélection (T03, code 125)) Enregistrement d'un code existant saisi sans sélection : l'UPDATE
   est fait puis `Colcol.Current.Key` lève une erreur (`Null`) ; `Maj_Zones` lit le résultat sans
   test `Available` · tests : T03 · sources : [Comment.class:189](../../../../../../.src/Gestion/Tables/Comment.class#L189), [Comment.class:69](../../../../../../.src/Gestion/Tables/Comment.class#L69)
-- [ ] COMMENT-A03 — [anomalie] `Utils.ReplaceLb` altère le texte saisi (`"` → `''`, `&` → `et`)
+- [ ] COMMENT-A03 — [anomalie] (confirmée phase 2, vague 4 : `"` stocké `''` (T01)) `Utils.ReplaceLb` altère le texte saisi (`"` → `''`, `&` → `et`)
   alors que le SQL est paramétré · tests : T01 · sources : [Comment.class:181](../../../../../../.src/Gestion/Tables/Comment.class#L181)
