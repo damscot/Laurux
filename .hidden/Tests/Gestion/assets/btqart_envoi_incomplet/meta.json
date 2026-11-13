@@ -1,0 +1,29 @@
+{
+ "id": "BTQART-T05",
+ "objet": "Envoi avec paramètres incomplets",
+ "classe": "Btqart",
+ "description": "Mot de passe vide (/Soc01/Mdpadmin) : Envoyer (Button2) affiche Message.Error « Veuillez completer les zones d'identification » (bouton 1, validé par Espace) ; aucun appel wput, Quitter.",
+ "dataset": "btqart_shared/btqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Btq": true,
+  "/Soc01/Identifiant": "ident",
+  "/Soc01/Adradminart": "boutique.test/import",
+  "/Soc01/Adradminphot": "boutique.test/photos",
+  "/Soc01/Mdpadmin": ""
+ },
+ "fichiers": [
+  "Prd.csv",
+  "@ftp.trace"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

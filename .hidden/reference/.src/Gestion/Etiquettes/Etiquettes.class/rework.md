@@ -55,7 +55,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ETIQUETTES-A01 — [anomalie] Enregistrement sans contrôle du code ni du format de page :
+- [ ] ETIQUETTES-A01 — [anomalie] (précisée phase 2, vague 4 : code vide → `Left$` Null → « Column 'code' cannot be null » (l. 141/143), erreur fatale (xfail T06) ; « Y Test » enregistré avec le libellé « est ») Enregistrement sans contrôle du code ni du format de page :
   `Code_etiq` vide → ligne de code `""` ; libellé lu par `Mid$(…, 4)` (un texte saisi sans
   `"X- "` perd ses premiers caractères) ; `PageFormat` vide accepté · tests : T06 · sources : [Etiquettes.class:136](../../../../../../.src/Gestion/Etiquettes/Etiquettes.class#L136), [Etiquettes.class:141](../../../../../../.src/Gestion/Etiquettes/Etiquettes.class#L141), [Etiquettes.class:143](../../../../../../.src/Gestion/Etiquettes/Etiquettes.class#L143)
 - [ ] ETIQUETTES-A02 — [anomalie] `Code_etiq_Click` lit le format avec la page **précédemment**

@@ -56,10 +56,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] PORTABLE-A01 — [anomalie] `cpt2` n'est jamais remis à 0 : après un premier rejet, chaque import
   ouvre le rapport dans l'éditeur même sans rejet · appelants : `Etigond`, `Etiqart`, `Etiqcasier` ·
   tests : T03 · sources : [Portable.module:3](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L3), [Portable.module:Import](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L8-L79)
-- [ ] PORTABLE-A02 — [anomalie] `Code` non réinitialisé entre les lignes : une ligne sans code-barres
+- [ ] PORTABLE-A02 — [anomalie] (précisée phase 2, vague 4 : une ligne sans code-barres réécrit aussi le rejet précédent (`Codeb` et `Code` périmés)) `Code` non réinitialisé entre les lignes : une ligne sans code-barres
   (ou après un code inconnu suivi d'une ligne vide) réinsère l'article de la ligne précédente avec
   le nouveau nombre, malgré le message « rejetée » · tests : T02 · sources : [Portable.module:45](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L45),
   [Portable.module:60](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L60)
 - [ ] PORTABLE-A03 — [anomalie] `inventaire.txt` absent : sortie silencieuse (aucun message), alors
   que les écrans appelants annoncent l'import ; erreurs d'`INSERT` ignorées (`Try`) sans rapport ·
   tests : T04 · sources : [Portable.module:26](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L26), [Portable.module:63](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L63)
+- [ ] PORTABLE-A04 — [anomalie] `Import` (Etiq) : le code-barres est cherché par `Utils.Find_cbarre` dans `Fiches_CdBarre` puis comme `art_code`, jamais dans `art_cbarre` (phase 2, vague 4, 2026-11-13) · tests : T02 · sources : [Portable.module:47](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L47), [Utils.module:Find_cbarre](../../../../../../../.src/Utils/Utils.module#L613-L631)

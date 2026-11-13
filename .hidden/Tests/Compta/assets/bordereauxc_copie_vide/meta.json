@@ -1,0 +1,24 @@
+{
+ "id": "BORDEREAUXC-T09",
+ "objet": "Chemin de copie absent",
+ "classe": "BordereauxC",
+ "description": "Bordereaux de chèques (jeu bordereauxc_base), FactcheminC vide : n° 12, banque 50, Imprimer ; Message.Warning « Copie impossible » (Entrée) ; Message.Question « effacer » bouton 2 « Non » (Tab + Espace) ; Fermer ; dump (compteurs seuls).",
+ "dataset": "bordereauxc_shared/bordereauxc_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'",
+  "/Soc01/FactcheminC": ""
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

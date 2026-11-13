@@ -10,13 +10,21 @@ clone **Laurux non modifié** (caractérisation, défauts compris).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LISTECOM-T01 | replay | Mode client (sans article) | `FClient`, client avec factures, BL et BL entretien sur 12 dates ; bouton 24 | 10 dates en colonnes, une ligne par article, désignations Art/Mo/libellé ; base inchangée | `tests/listecom_client/` | à faire |
-| LISTECOM-T02 | replay | Mode article | `Facture`, client et article saisis ; Ctrl+A | lignes (code, date, qté, Px HT moyen), colonnes vides en trop figées | `tests/listecom_article/` | à faire |
-| LISTECOM-T03 | replay | Date sans ligne A/M | client dont une des 10 dates n'a que des lignes de commentaire ; Ctrl+H | comportement actuel figé (erreur ou grille partielle, à constater) | `tests/listecom_date_vide/` | à faire |
-| LISTECOM-T04 | replay | Client sans historique | client sans facture ni BL | fenêtre vide, aucune erreur | `tests/listecom_vide/` | à faire |
-| LISTECOM-T05 | replay | Base SQLite | T01 rejoué sur `Laurux01.sqlite` | résultat actuel figé (échec probable de `UNION(SELECT …)`) | `tests/listecom_sqlite/` | à faire |
+| LISTECOM-T01 | replay | Mode client (sans article) | `FClient`, client avec factures, BL et BL entretien sur 12 dates ; bouton 24 | 10 dates en colonnes, une ligne par article, désignations Art/Mo/libellé ; base inchangée | `tests/listecom_client/` | implémenté |
+| LISTECOM-T02 | replay | Mode article | `Facture`, client et article saisis ; Ctrl+A | lignes (code, date, qté, Px HT moyen), colonnes vides en trop figées | `tests/listecom_article/` | implémenté |
+| LISTECOM-T03 | replay | Date sans ligne A/M | client dont une des 10 dates n'a que des lignes de commentaire ; Ctrl+H | comportement actuel figé (erreur ou grille partielle, à constater) | `tests/listecom_date_vide/` | implémenté |
+| LISTECOM-T04 | replay | Client sans historique | client sans facture ni BL | fenêtre vide, aucune erreur | `tests/listecom_vide/` | implémenté |
+| LISTECOM-T05 | replay | Base SQLite | T01 rejoué sur `Laurux01.sqlite` | résultat actuel figé (échec probable de `UNION(SELECT …)`) | `tests/listecom_sqlite/` | à faire : le framework de test ne fournit que MariaDB (pas de base Laurux01.sqlite) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2)** : T01 à T04 en gb.test (`.src/Tests/Gestion/ListecomTest.test`) plutôt qu'en replay :
+  l'écran ne s'ouvre que depuis FClient ou Facture (écrans complexes non rejoués) et toute sa logique est dans le
+  constructeur ; `New Listecom(client, article)` sans affichage, relevé des colonnes, en-têtes de ligne et cellules
+  de GridView1. Jeu `listecom_shared/historique_client` (411003 : 12 dates, BL à totalht 0, HistoFacM/BlM, article
+  ZZZ absent ; 411004 : date à commentaires seuls). T04 sur 411001 (sans historique). Base non modifiée (lecture seule).
+  Constat : un même article présent le même jour dans Fiches_Bl et Fiches_BlM donne deux lignes UNION, la seconde
+  écrase la première (T01, 05/11/2018 : 1,000 / 15,000 au lieu du cumul).
 
 - **Données** : `Laurux01.sql` + jeu dérivé `historique_client.sql` (un client, 12 dates d'achat
   réparties entre `Fiches_HistoFac`, `Fiches_Bl`, `Fiches_BlM`, `Fiches_HistoFacM`, avec des

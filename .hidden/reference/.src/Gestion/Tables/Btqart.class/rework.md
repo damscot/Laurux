@@ -51,15 +51,15 @@
 
 ### Anomalies : changement de comportement, validation utilisateur requise
 
-- [ ] BTQART-A01 — [anomalie] `Button2_Click` transfère `Prd.csv` par un chemin **relatif** alors
+- [ ] BTQART-A01 — [anomalie] (confirmée phase 2, vague 4 : `Prd.csv` transféré par chemin relatif (T05)) `Button2_Click` transfère `Prd.csv` par un chemin **relatif** alors
   que le fichier est écrit dans `User.Home` : l'envoi échoue (ou envoie un autre fichier) si le
   répertoire courant n'est pas le répertoire personnel · tests : T05 · sources : [Btqart.class:62](../../../../../../.src/Gestion/Tables/Btqart.class#L62), [Btqart.class:182](../../../../../../.src/Gestion/Tables/Btqart.class#L182)
-- [ ] BTQART-A02 — [anomalie] Identifiant et mot de passe FTP en clair sur la ligne de commande
+- [ ] BTQART-A02 — [anomalie] (confirmée phase 2, vague 4 : chemin de photo avec espace coupé en deux arguments `wput`, identifiants en clair dans l'URL (T05)) Identifiant et mot de passe FTP en clair sur la ligne de commande
   (`ps`) et non échappés, chemins de photos non quotés (espace → échec) ; mot de passe stocké en
   clair dans `Laurux.conf` (`Prefs`) · tests : T05 · sources : [Btqart.class:182](../../../../../../.src/Gestion/Tables/Btqart.class#L182), [Btqart.class:185](../../../../../../.src/Gestion/Tables/Btqart.class#L185), [Prefs.class:652](../../../../../../.src/Communs/Prefs.class#L652)
 - [ ] BTQART-A03 — [anomalie] Code retour de `wput` ignoré : « Transfert terminé ! » s'affiche et
   la sélection est effacée même en cas d'échec · tests : T05 · sources : [Btqart.class:Button2_Click](../../../../../../.src/Gestion/Tables/Btqart.class#L172-L202)
-- [ ] BTQART-A04 — [anomalie] `Button4_Click` lit la TVA et la famille sans tester `Available` :
+- [ ] BTQART-A04 — [anomalie] (confirmée phase 2, vague 4 : `Button4_Click.159` « Result is not available » si la famille est absente (T02, code 125)) `Button4_Click` lit la TVA et la famille sans tester `Available` :
   article dont la famille ou le code TVA n'existe pas → erreur d'exécution non interceptée (le code
   est déjà inséré dans `Art_Saisis`) · tests : T02 · sources : [Btqart.class:157](../../../../../../.src/Gestion/Tables/Btqart.class#L157), [Btqart.class:158](../../../../../../.src/Gestion/Tables/Btqart.class#L158)
 - [ ] BTQART-A05 — [anomalie] Champs CSV non échappés : une désignation ou des caractéristiques

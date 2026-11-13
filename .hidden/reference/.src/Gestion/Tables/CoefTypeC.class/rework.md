@@ -60,7 +60,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] COEFTYPEC-A01 — [anomalie] `Button3_Click` enregistre même si `Quitte_Cdt`/`Quitte_Cdf`/
+- [ ] COEFTYPEC-A01 — [anomalie] (confirmée phase 2, vague 4 : saisie invalide (ZZ / abc) enregistrée avec `coeff` NULL (T03)) `Button3_Click` enregistre même si `Quitte_Cdt`/`Quitte_Cdf`/
   `Quitte_Coeff` ont signalé une erreur (type ou famille inexistants, coefficient invalide →
   `NULL`) · tests : T03 · sources : [CoefTypeC.class:311](../../../../../../.src/Gestion/Tables/CoefTypeC.class#L311), [CoefTypeC.class:314](../../../../../../.src/Gestion/Tables/CoefTypeC.class#L314)
 - [ ] COEFTYPEC-A02 — [anomalie] `Variables.OrgCoefTypeCli` n'est jamais remis à vide : après une

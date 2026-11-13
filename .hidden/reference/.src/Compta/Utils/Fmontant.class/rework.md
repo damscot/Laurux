@@ -48,14 +48,14 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FMONTANT-A01 — [anomalie, sécurité] Montant et libellé concaténés dans `LIKE '…%'` : erreur
+- [ ] FMONTANT-A01 — [anomalie, sécurité] (confirmée phase 2, vague 4 : libellé avec apostrophe → erreur SQL fatale (`Button2_Click.117`), figée par T02 (code 125)) Montant et libellé concaténés dans `LIKE '…%'` : erreur
   SQL sur apostrophe, injection possible ; passer en `&1` · tests : T01, T02 · sources : [Fmontant.class:106](../../../../../../.src/Compta/Utils/Fmontant.class#L106), [Fmontant.class:117](../../../../../../.src/Compta/Utils/Fmontant.class#L117), [Fmontant.class:132](../../../../../../.src/Compta/Utils/Fmontant.class#L132)
-- [ ] FMONTANT-A02 — [anomalie] Filtre `coll` écrasé (`=`) pour Clients/Gestion/Bilan mais
+- [ ] FMONTANT-A02 — [anomalie] (confirmée phase 2, vague 4 : filtre `coll` remplacé pour Clients/Gestion/Bilan, complété pour Fournisseurs (T01)) Filtre `coll` écrasé (`=`) pour Clients/Gestion/Bilan mais
   conservé (`&=`) pour Fournisseurs ; « Compte collectif uniquement » sans effet sauf Fournisseurs
   et Tous ; `CompteCol` ne peut plus être décoché · tests : T01 · sources : [Fmontant.class:99](../../../../../../.src/Compta/Utils/Fmontant.class#L99), [Fmontant.class:101](../../../../../../.src/Compta/Utils/Fmontant.class#L101)
-- [ ] FMONTANT-A03 — [anomalie] Saisie refusée : le `rResult` de la recherche précédente est
+- [ ] FMONTANT-A03 — [anomalie] (confirmée phase 2, vague 4 : montant vidé puis relance → avertissement puis « Traitement terminé ! » sur l'ancien résultat (T04)) Saisie refusée : le `rResult` de la recherche précédente est
   réutilisé et « Traitement terminé ! » s'affiche après l'avertissement · tests : T04 · sources : [Fmontant.class:135](../../../../../../.src/Compta/Utils/Fmontant.class#L135)
-- [ ] FMONTANT-A04 — [anomalie] `Somme_Click` lit `Somme.Item[4]` (curseur interne) au lieu de
+- [ ] FMONTANT-A04 — [anomalie] (non reproduite phase 2, vague 4 : au rejeu `Somme.Item` suit la ligne cliquée (T05) ; à confirmer en usage réel) `Somme_Click` lit `Somme.Item[4]` (curseur interne) au lieu de
   `Somme.Current[4]`, sans test `Available` (à confirmer à l'exécution) · tests : T05 · sources : [Fmontant.class:174](../../../../../../.src/Compta/Utils/Fmontant.class#L174)
 - [ ] FMONTANT-A05 — [anomalie, performance] `Necrit_Click` recalcule les soldes de **tous** les
   comptes après la modification d'une écriture ; limiter aux comptes de l'écriture (même dump

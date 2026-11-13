@@ -63,3 +63,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FPROMOART-A03 — [anomalie] Drapeau `B` positionné dans la branche TTC mais remis à 0
   seulement dans la branche HT : la validation HT suivante saute le calcul du TTC · tests : T03 ·
   sources : [FpromoArt.class:240](../../../../../../.src/Gestion/Tables/FpromoArt.class#L240), [FpromoArt.class:228](../../../../../../.src/Gestion/Tables/FpromoArt.class#L228)
+- [ ] FPROMOART-A04 — [anomalie] `Cpromo` (validation du code de promotion) n'appelle pas `Deb2`, contrairement à `Code_KeyPress` : la grille des articles de la promotion n'est pas chargée (phase 2, vague 4, 2026-11-13) · tests : à préciser (constaté au rejeu vague 4) · sources : [FpromoArt.class:Cpromo](../../../../../../.src/Gestion/Tables/FpromoArt.class#L174-L195), [FpromoArt.class:102](../../../../../../.src/Gestion/Tables/FpromoArt.class#L102)

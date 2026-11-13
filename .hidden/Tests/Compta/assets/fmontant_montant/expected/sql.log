@@ -1,0 +1,23 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2026-01-15'
+SELECT * FROM Fiches_Promo where datefin = '2026-01-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2026-01-15 10:00:01' AND dtmaj = '1'
+SELECT dte,compte,libelle,numdoc,numero,montantd,montantc,jour,tresorerie FROM Fiches_Mvt LEFT JOIN Fiches_Comptes ON compte = compte_cc WHERE (montantd like '12%' or montantc like '12%')  and coll = False
+SELECT dte,compte,libelle,numdoc,numero,montantd,montantc,jour,tresorerie FROM Fiches_Mvt LEFT JOIN Fiches_Comptes ON compte = compte_cc WHERE (montantd like '12%' or montantc like '12%')  and validee = 1 and type_cc = 'C'
+SELECT dte,compte,libelle,numdoc,numero,montantd,montantc,jour,tresorerie FROM Fiches_Mvt LEFT JOIN Fiches_Comptes ON compte = compte_cc WHERE (montantd like '12%' or montantc like '12%')  and coll = False and validee = 1 and type_cc = 'F'
+SELECT dte,compte,libelle,numdoc,numero,montantd,montantc,jour,tresorerie FROM Fiches_Mvt LEFT JOIN Fiches_Comptes ON compte = compte_cc WHERE (montantd like '12.5%' or montantc like '12.5%')  and coll =True

@@ -1,0 +1,77 @@
+' Gambas test file
+
+''Tests de Listecom (.hidden/reference/.src/Gestion/Stock/Listecom.class/test.md, LISTECOM-T01 à T04).
+''Valeurs attendues : assets/ListecomTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est construite par New Listecom(client, article) sans être affichée (ouverte en vrai depuis FClient ou
+''Facture, écrans complexes non rejoués) ; le contenu de GridView1 (colonnes, en-têtes de ligne, cellules) est relevé
+''puis la fenêtre est verrouillée. Jeu : listecom_shared/historique_client.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ModeClient", "Mode client (411003, 12 dates, LIMIT 10) : colonnes Date/Quantité/Px HT, une ligne par article")
+  TestKit.Desc("T02ModeArticle", "Mode article (411003, article 001) : code, désignation, date, quantité, Px HT moyen")
+  TestKit.Desc("T03DateSansLigne", "Mode client (411004) : une des dates n'a que des lignes de commentaire")
+  TestKit.Desc("T04ClientVide", "Mode client sans historique (411001) : grille vide, aucune erreur")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ListecomTest")
+  TestKit.OuvreBase("listecom_shared/historique_client")
+
+End
+
+Private Sub Releve(sT As String, sCli As String, sArt As String)
+
+  Dim hF As Listecom
+  Dim hG As GridView
+  Dim i, j As Integer
+  Dim s As String
+
+  Try hF = New Listecom(sCli, sArt)
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hG = hF.Controls["GridView1"]
+  TestKit.Check(sT & "/colonnes", hG.Columns.Count)
+  TestKit.Check(sT & "/lignes", hG.Rows.Count)
+  For j = 0 To hG.Columns.Count - 1
+    TestKit.Check(sT & "/entete." & j, hG.Columns[j].Text)
+  Next
+  For i = 0 To hG.Rows.Count - 1
+    s = hG.Rows[i].Text
+    For j = 0 To hG.Columns.Count - 1
+      s &= "|" & hG[i, j].Text
+    Next
+    TestKit.Check(sT & "/ligne." & i, s)
+  Next
+  Object.Lock(hF)
+
+End
+
+Public Sub T01ModeClient()
+
+  Releve("T01", "411003", "")
+
+End
+
+Public Sub T02ModeArticle()
+
+  Releve("T02", "411003", "001")
+
+End
+
+Public Sub T03DateSansLigne()
+
+  Releve("T03", "411004", "")
+
+End
+
+Public Sub T04ClientVide()
+
+  Releve("T04", "411001", "")
+
+End

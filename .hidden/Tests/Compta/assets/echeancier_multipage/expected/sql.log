@@ -1,0 +1,88 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Reglements
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT * FROM Fiches_Mvt left join  Fiches_Comptes on compte_cc = compte WHERE dateech >= '20171231' and dateech <= '20181231' and validee = 1  and lettree = 0 and left(compte,3) = '411' and tresorerie <> 1 and collectif is null order by dateech, compte, jour desc, numlot 
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000001' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000002' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000003' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000004' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000005' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000006' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000007' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000008' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000009' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000010' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000011' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000012' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000013' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000014' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000015' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000016' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000017' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000018' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000019' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000020' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000021' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000022' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000023' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000024' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000025' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000026' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000027' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000028' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000029' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000030' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000031' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000032' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000033' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000034' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000035' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000036' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000037' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000038' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000039' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000040' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000041' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000042' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000043' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000044' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000045' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000046' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000047' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000048' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000049' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000050' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000051' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000052' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000053' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000054' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000055' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000056' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000057' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000058' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000059' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000060' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000061' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000062' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000063' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000064' and tresorerie = 1 and compte = '411005' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'M000000065' and tresorerie = 1 and compte = '411005' order by numero

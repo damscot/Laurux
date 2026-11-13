@@ -64,12 +64,13 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (réparable par `Calcsolde`) · tests : T01, T02 · sources : [Trecarts.class:241](../../../../../.src/Compta/Trecarts.class#L241), [Trecarts.class:251](../../../../../.src/Compta/Trecarts.class#L251)
 - [ ] TRECARTS-A02 — [anomalie] Compteur `B` non incrémenté pour la ligne `cptrmoins` : le message
   final sous-estime le nombre d'écritures · tests : T05 · sources : [Trecarts.class:237](../../../../../.src/Compta/Trecarts.class#L237), [Trecarts.class:245-254](../../../../../.src/Compta/Trecarts.class#L245-L254)
-- [ ] TRECARTS-A03 — [anomalie] Aucun `Catch` : une erreur au milieu d'un lot laisse les tables
+- [ ] TRECARTS-A03 — [anomalie] (confirmée phase 2, vague 4 : client sans `coll_cc` : « Column 'compte' cannot be null » (`Button2_Click.266`), erreur fatale, `LOCK TABLES` resté posé (xfail T06)) Aucun `Catch` : une erreur au milieu d'un lot laisse les tables
   verrouillées (`UNLOCK` jamais exécuté, MySQL) et le lot partiellement écrit ; pas de transaction ·
   tests : aucun (injection de faute manuelle) · sources : [Trecarts.class:222](../../../../../.src/Compta/Trecarts.class#L222), [Trecarts.class:276](../../../../../.src/Compta/Trecarts.class#L276)
-- [ ] TRECARTS-A04 — [anomalie] Compte tiers sans collectif : une ligne `collectif = 1` est insérée
+- [ ] TRECARTS-A04 — [anomalie] (confirmée phase 2, vague 4 : la ligne collectif est insérée avec `compte = NULL` et échoue (voir A03), xfail T06) Compte tiers sans collectif : une ligne `collectif = 1` est insérée
   sur le compte `""` (à confirmer) · tests : T06 · sources : [Trecarts.class:256-266](../../../../../.src/Compta/Trecarts.class#L256-L266)
 - [ ] TRECARTS-A05 — [anomalie] Écritures datées du jour sans contrôle d'exercice ni de clôture, et
   `numdoc` toujours vide · tests : T01 · sources : [Trecarts.class:139](../../../../../.src/Compta/Trecarts.class#L139), [Trecarts.class:226](../../../../../.src/Compta/Trecarts.class#L226)
 - [ ] TRECARTS-A06 — [anomalie] `_New` lit `Fiches_Parametres` sans test `Available` (erreur si la
   table est vide) · tests : aucun · sources : [Trecarts.class:45-46](../../../../../.src/Compta/Trecarts.class#L45-L46)
+- [ ] TRECARTS-A07 — [anomalie] Lettrage : `UPdate … SET numlot, lettree … WHERE compte, numlot` (qui traite tout le lot) répété pour chaque ligne du lot (phase 2, vague 4, 2026-11-13) · tests : T01 · sources : [Trecarts.class:268-273](../../../../../.src/Compta/Trecarts.class#L268-L273)

@@ -1,0 +1,24 @@
+{
+ "id": "RUBIMP-T02",
+ "objet": "Compte de résultat détaillé, perte",
+ "classe": "RubImp",
+ "description": "Jeu rubimp_perte (2018 en perte, une écriture non validée) : Impd coché, E1, Imprimer, Message.Info (Entrée) ; texte du PDF (pdftotext), Resultat.csv et centralisation comparés (ordre des lignes de détail figé, A04) ; Quitter.",
+ "dataset": "rubimp_perte",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/resultat_pdf.txt'"
+ },
+ "fichiers": [
+  "resultat_pdf.txt",
+  "tmp/Resultat.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

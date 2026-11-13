@@ -1,0 +1,17 @@
+{
+ "classe": "Facturefm",
+ "dataset": "facturefm_shared/bl_juin",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "FACTUREFM-T02",
+ "objet": "Regroupement mensuel, période cohérente puis incohérente",
+ "description": "Jeu facturefm_shared/bl_juin (clients 411901 DURAND S, 411902 MARTIN S, 411903 PETIT M, divers 411001 ; BL de juin 2018). Factures fin de mois (Menu138), fin proposée 30.06.2018. Regroupement Mensuel (combregr index 3), début 01.06.2018 : BL de PETIT (BETWEEN) ; puis début 05.06.2018 : message « incohérence dans les dates de début de période » (Message.Error bouton unique, Entrée) et traitement poursuivi (A01) : tables de travail finales.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

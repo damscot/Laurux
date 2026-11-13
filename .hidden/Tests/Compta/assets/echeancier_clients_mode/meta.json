@@ -1,0 +1,24 @@
+{
+ "id": "ECHEANCIER-T03",
+ "objet": "Clients, tri par échéance, mode Chèque",
+ "classe": "Echeancier",
+ "description": "Jeu echeancier_ech : Eche = index 2 (05 | Chèque), Imprimer : seules les factures de 411001 (cli_reg 05) ; texte du PDF comparé (pdftotext) ; Quitter.",
+ "dataset": "echeancier_shared/echeancier_ech",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/echeancier_pdf.txt'"
+ },
+ "fichiers": [
+  "echeancier_pdf.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

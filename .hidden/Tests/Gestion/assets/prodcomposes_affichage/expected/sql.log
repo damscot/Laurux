@@ -1,0 +1,33 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Art where art_prdcomp = true
+SELECT * FROM Fiches_Art where art_code = 'PC1' and art_prdcomp = 1
+SELECT * FROM Fiches_PrdComp WHERE codep='PC1' ORDER BY 'codec'
+select * from Fiches_PrdComp where codep = 'PC1'
+SELECT * FROM Fiches_Mo where mo_code = '04'
+SELECT * FROM Fiches_Art where art_code = 'A1'
+SELECT * FROM Fiches_Art where art_code = 'A2'
+select * from Fiches_Art where art_code = 'PC1'
+UPdate  Fiches_Art  SET  art_pbht = 31.25, art_pauaht = 31.25, art_pmp = 31.25, art_prvt = NULL, art_coef = 0 where art_code = 'PC1'
+select * from Fiches_PrdComp where codep = 'PC1'
+SELECT * FROM Fiches_Art where art_code = '04'
+SELECT * FROM Fiches_Mo where mo_code = '04'
+SELECT * FROM Fiches_Art where art_code = 'A1'
+SELECT * FROM Fiches_Art where art_code = 'A2'

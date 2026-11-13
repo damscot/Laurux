@@ -1,0 +1,30 @@
+{
+ "id": "BTQART-T05",
+ "objet": "Envoi",
+ "classe": "Btqart",
+ "description": "Case Photo cochée, saisie de 001 (photo « /tmp/photos/img 1.jpg ») et 002 (photo /tmp/photos/img2.jpg), Envoyer (Button2) : wput factice (Prd.csv puis une ligne par photo, identifiants en clair A01/A02, chemin relatif A03) tracé dans ftp.trace ; Message.Info « Transfert terminé » (bouton 1) ; Art_Saisis recréée et fichiers tronqués ; Quitter.",
+ "dataset": "btqart_shared/btqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Btq": true,
+  "/Soc01/Identifiant": "ident",
+  "/Soc01/Adradminart": "boutique.test/import",
+  "/Soc01/Adradminphot": "boutique.test/photos",
+  "/Soc01/Mdpadmin": "secret"
+ },
+ "fichiers": [
+  "Prd.csv",
+  "Photo.csv",
+  "@ftp.trace"
+ ],
+ "ftp": "ok",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "id": "ETIGOND-T07",
+ "objet": "Mode liste et grille",
+ "classe": "Etigond",
+ "description": "Liste cochée ; 001 ; 005 (art_etiq 0) accepté (contrôle art_etiq commenté) ; 002 ; 001 : déjà saisi, bouton 1 cumuler (Espace) → 2 ; Nbtiq 3 ; 002 : Remplacer (Tab, Espace) → 3 ; 004 ; clic grille ligne 2 (004) : Supprimer (Tab, Tab, Espace) ; Générer (attente allongée de 1,5 s avant la réponse à « Traitement terminé », sans Quitter) : 001 x 2, 002 x 3, 005 x 1 (table temporaire : contenu lu par sql.log).",
+ "dataset": "etigond_shared/etigond_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 700,
+  "fenetre": 1000
+ }
+}

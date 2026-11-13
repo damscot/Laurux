@@ -63,7 +63,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sources : [Ligcli.class:58-64](../../../../../../.src/Compta/Relances/Ligcli.class#L58-L64)
 - [ ] LIGCLI-A02 — [anomalie] Solde du compte négatif imprimé sans changement de signe (colonne
   débit avec un « - »), contrairement à `FEditrel` · tests : T05 · sources : [Ligcli.class:322](../../../../../../.src/Compta/Relances/Ligcli.class#L322), [FEditrel.class:583](../../../../../../.src/Compta/Relances/FEditrel.class#L583)
-- [ ] LIGCLI-A03 — [anomalie] Le niveau écrit dans `Fiches_Mvt.relance` est celui de la première
+- [ ] LIGCLI-A03 — [anomalie] (confirmée phase 2, vague 4 : lettre de niveau 2 imprimée mais `Fiches_Mvt.relance` = 1 (valeur de `Fiches_relances.niveau`, l. 268 et 298), figée par T04) Le niveau écrit dans `Fiches_Mvt.relance` est celui de la première
   écriture (`Niv`), pas le numéro de lettre choisi dans `Combolettre` · tests : T04 · sources :
   [Ligcli.class:266](../../../../../../.src/Compta/Relances/Ligcli.class#L266), [Ligcli.class:296](../../../../../../.src/Compta/Relances/Ligcli.class#L296)
 - [ ] LIGCLI-A04 — [anomalie] Un seul `Observer` conservé sur 13 ; si les autres sont libérés, la

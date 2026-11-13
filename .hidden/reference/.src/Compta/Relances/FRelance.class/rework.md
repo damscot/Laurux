@@ -52,5 +52,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   [FRelance.class:120](../../../../../../.src/Compta/Relances/FRelance.class#L120), [FRelance.class:124-126](../../../../../../.src/Compta/Relances/FRelance.class#L124-L126)
 - [ ] FRELANCE-A02 — [anomalie] `Form_Open` : `Catch` vide, une erreur SQL (table absente) laisse
   un écran vide sans message · tests : T01 · sources : [FRelance.class:55](../../../../../../.src/Compta/Relances/FRelance.class#L55)
-- [ ] FRELANCE-A03 — [anomalie] Niveau non numérique accepté par `Button2_Click` (colonne
+- [ ] FRELANCE-A03 — [anomalie] (confirmée phase 2, vague 4 : niveau « a » accepté (`niveau` = 0, sql_mode non strict) ; texte vide enregistré NULL, figé par T05) Niveau non numérique accepté par `Button2_Click` (colonne
   `int(11)`) ; ajouter un contrôle de saisie · tests : T05 · sources : [FRelance.class:70-77](../../../../../../.src/Compta/Relances/FRelance.class#L70-L77)

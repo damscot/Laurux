@@ -1,0 +1,42 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+select * from Fiches_Mo where mo_code like  "%" order by mo_code
+select * from Fiches_Mo where mo_code = '01'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '3'
+SELECT * FROM Fiches_Mo where mo_code = '01'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Ligbl WHERE  code_ligbl = '01' and typel_ligbl = 'M'
+select * from Fiches_Mo where mo_code like  "%" order by mo_code
+select * from Fiches_Mo where mo_code = '05'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '3'
+SELECT * FROM Fiches_Ligbl WHERE  code_ligbl = '05' and typel_ligbl = 'M'
+DELETE FROM Fiches_Mo WHERE mo_code = '05'
+select * from Fiches_Mo where mo_code like  "%" order by mo_code
+select * from Fiches_Mo where mo_code = '02'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '3'
+select * from Fiches_Mo where mo_code like  "%" order by mo_code

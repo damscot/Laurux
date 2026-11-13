@@ -1,0 +1,24 @@
+{
+ "id": "ETIGOND-T01",
+ "objet": "Gondole A4, plage",
+ "classe": "Etigond",
+ "description": "Menu Gestion › Étiquettes › Gondoles ; modèle « 2 - Gondole (A4 Portrait) » (index 1) ; PV HT et PV TTC cochés ; bornes par défaut ; Générer ; texte du PDF (prix, TVA, EAN13).",
+ "dataset": "etigond_shared/etigond_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

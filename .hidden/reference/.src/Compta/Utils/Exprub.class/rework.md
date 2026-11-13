@@ -50,8 +50,8 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EXPRUB-A01 — [anomalie] Format sans échappement : un `;` (ou un saut de ligne) dans un
+- [ ] EXPRUB-A01 — [anomalie] (confirmée phase 2, vague 4 : `;` d'un intitulé non échappé (`Z0020;Achats; marchandises;L;N;P;`), figé par T03) Format sans échappement : un `;` (ou un saut de ligne) dans un
   intitulé décale les champs à l'import de `Rubresult` · tests : T03 · sources : [Exprub.class:42](../../../../../../.src/Compta/Utils/Exprub.class#L42)
-- [ ] EXPRUB-A02 — [anomalie] Le drapeau `amortissement` est écrit sous la forme de conversion
+- [ ] EXPRUB-A02 — [anomalie] (confirmée phase 2, vague 4 : amortissement écrit `T`/vide sous MySQL, figé par T03) Le drapeau `amortissement` est écrit sous la forme de conversion
   Gambas du moteur (`T`/vide sous MySQL, `1`/`0` probable sous SQLite) ; relu par `Rubresult` comme
   « chaîne non vide = vrai », un `0` devient vrai (à confirmer) · tests : T03, T04 · sources : [Exprub.class:49](../../../../../../.src/Compta/Utils/Exprub.class#L49), [Exprub.class:50](../../../../../../.src/Compta/Utils/Exprub.class#L50)

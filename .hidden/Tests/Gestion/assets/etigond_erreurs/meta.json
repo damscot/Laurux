@@ -1,0 +1,25 @@
+{
+ "id": "ETIGOND-T11",
+ "objet": "Code TVA inconnu (caractérisation)",
+ "classe": "Etigond",
+ "description": "Article 006 de code TVA 9 absent de Fiches_Tvaav ; Générer : erreur figée sur rTvav!taux_tva (ETIGOND-A05), code 125.",
+ "dataset": "etigond_tva_inconnue",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

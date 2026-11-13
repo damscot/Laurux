@@ -66,14 +66,14 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] MVTPRODCOMP-A01 — [anomalie] Ressaisie « cumuler » : stock du produit augmenté (même en
   sortie, `Maj_qte` toujours en plus) sans ligne `Fiches_Mvtexpdc` ni mise à jour des composants
   → stock et historique divergents (`Cstock` recalculera autre chose) · tests : T03 · sources : [MvtProdcomp.class:466-478](../../../../../../.src/Gestion/Stock/MvtProdcomp.class#L466-L478)
-- [ ] MVTPRODCOMP-A02 — [anomalie] Ressaisie « remplacer » : le retrait de l'ancienne quantité
+- [ ] MVTPRODCOMP-A02 — [anomalie] (confirmée phase 2, vague 4 : remplacement : 10 → 12 → 17 (T04)) Ressaisie « remplacer » : le retrait de l'ancienne quantité
   (`Artstock -= …`) est écrasé par `Maj_qte`, qui relit la base : stock compté deux fois, ni
   mouvement ni composants · tests : T04 · sources : [MvtProdcomp.class:480-490](../../../../../../.src/Gestion/Stock/MvtProdcomp.class#L480-L490)
-- [ ] MVTPRODCOMP-A03 — [anomalie] Le `Catch` de `Maj_colrcp` traite toute erreur comme un
+- [ ] MVTPRODCOMP-A03 — [anomalie] (confirmée phase 2, vague 4 : article simple : stock compté deux fois (20 → 23 → 26), T05) Le `Catch` de `Maj_colrcp` traite toute erreur comme un
   doublon ; un produit sans composant (ou un article simple) fait échouer `Maj_Composants`
   (`Repeat` sans `Available`) après l'écriture du stock et de la ligne `P` → écritures partielles
   et question trompeuse. Aucune transaction · tests : T05 · sources : [MvtProdcomp.class:Maj_colrcp](../../../../../../.src/Gestion/Stock/MvtProdcomp.class#L439-L494), [MvtProdcomp.class:511-512](../../../../../../.src/Gestion/Stock/MvtProdcomp.class#L511-L512)
-- [ ] MVTPRODCOMP-A04 — [anomalie, à confirmer] `Maj_qtec`/`Maj_qtemc` : `UPdate Fiches_Mvtexpdc
+- [ ] MVTPRODCOMP-A04 — [anomalie, à confirmer] (confirmée phase 2, vague 4 : `Maj_qtec`/`Maj_qtemc` (l. 546/567) : `UPdate` de `Fiches_Mvtexpdc` avant l'`INSERT` de la ligne composant, sans effet (T01)) `Maj_qtec`/`Maj_qtemc` : `UPdate Fiches_Mvtexpdc
   SET qtep|qtem = <stock total>` exécuté avant l'`INSERT` du mouvement ; sans effet normalement,
   mais corrompt un mouvement `(Num, Codec)` existant (lot concurrent) · tests : T01 · sources : [MvtProdcomp.class:546](../../../../../../.src/Gestion/Stock/MvtProdcomp.class#L546), [MvtProdcomp.class:567](../../../../../../.src/Gestion/Stock/MvtProdcomp.class#L567)
 - [ ] MVTPRODCOMP-A05 — [anomalie] `Num` = `MAX(mind)` lu à l'ouverture puis incrémenté

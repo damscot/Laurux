@@ -56,7 +56,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CENTRALES-A01 — [anomalie] `SELECT … WHERE code = '<code>'` par concaténation : une
+- [ ] CENTRALES-A01 — [anomalie] (confirmée phase 2, vague 4 : `Button3_Click.116` « Query failed » sur un code avec apostrophe (T04, code 125)) `SELECT … WHERE code = '<code>'` par concaténation : une
   apostrophe dans le code provoque une erreur SQL (règle AGENTS.md n° 1) ; paramétrer `&1` ·
   tests : T04 · sources : [Centrales.class:116](../../../../../../.src/Gestion/Tables/Centrales.class#L116)
 - [ ] CENTRALES-A02 — [anomalie] Suppression : le test porte sur `Cdtype.Text` mais le `DELETE`

@@ -1,0 +1,24 @@
+{
+ "id": "RUBIMP-T03",
+ "objet": "Compte de résultat des exercices N-1, N-4, N-5",
+ "classe": "RubImp",
+ "description": "Jeu extrait_shared/extrait_base : N1 puis Imprimer (Info : Entrée), N4 puis Imprimer, N5 puis Imprimer ; les trois éditions s'ajoutent à ~/resultat_pdf.txt (pdftotext via CmdVis) avec leurs périodes (couvre aussi les dates proposées de T05 pour ces exercices) ; Resultat.csv de la dernière ; Quitter.",
+ "dataset": "extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/resultat_pdf.txt'"
+ },
+ "fichiers": [
+  "resultat_pdf.txt",
+  "tmp/Resultat.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

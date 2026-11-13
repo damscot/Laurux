@@ -61,7 +61,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   fermeture de la fenêtre avant Valider/Annuler laisse la transaction ouverte sur la connexion
   partagée `Utils.db` (écritures ultérieures de la session dans cette transaction, à confirmer) ·
   tests : T04-T09 · sources : [Mreglement.class:110](../../../../../../.src/Gestion/Tables/Mreglement.class#L110), [Mreglement.class:118](../../../../../../.src/Gestion/Tables/Mreglement.class#L118), [Mreglement.class:196](../../../../../../.src/Gestion/Tables/Mreglement.class#L196)
-- [ ] MREGLEMENT-A02 — [anomalie] `bar1_modif` sans ligne sélectionnée sort sans `Edit` alors que
+- [ ] MREGLEMENT-A02 — [anomalie] (confirmée phase 2, vague 4 : `bar1_modif` sans sélection sort sans `Begin` alors que `bar1_valide` fait `Rollback` (T09)) `bar1_modif` sans ligne sélectionnée sort sans `Edit` alors que
   la barre passe en mode validation : Valider utilise un `$res` nul ou celui d'une opération
   précédente · tests : T09 · sources : [Mreglement.class:117](../../../../../../.src/Gestion/Tables/Mreglement.class#L117), [Mreglement.class:182](../../../../../../.src/Gestion/Tables/Mreglement.class#L182)
 - [ ] MREGLEMENT-A03 — [anomalie] Suppression sans contrôle d'usage (clients `cli_reg`, factures,

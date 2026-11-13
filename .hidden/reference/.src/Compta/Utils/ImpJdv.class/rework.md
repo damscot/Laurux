@@ -75,7 +75,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] IMPJDV-A01 — [anomalie] **Grave** : `Maj_Parametres` écrit `dnfac = Nfac` alors que `Nfac`
+- [ ] IMPJDV-A01 — [anomalie] (constatée phase 2, vague 4 : `dnfac` remis à NULL après import (T01)) **Grave** : `Maj_Parametres` écrit `dnfac = Nfac` alors que `Nfac`
   n'est jamais affecté : chaque écriture importée remet à vide le dernier numéro de facture, lu par
   `Moulinage` (l.2682) et `EcrAuto` (`LockIncrement`) → numérotation des factures relancée à 1
   (à confirmer sur une base de test) · tests : T01 · sources : [ImpJdv.class:573](../../../../../../.src/Compta/Utils/ImpJdv.class#L573), [ImpJdv.class:508](../../../../../../.src/Compta/Utils/ImpJdv.class#L508), [Moulinage.class:2682](../../../../../../.src/Caisse/Moulinage.class#L2682)
@@ -99,7 +99,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] IMPJDV-A08 — [anomalie] `Sauve` : supprime `Laurux_dump.sql` mais écrit
   `Laurux_dump.sql<JJMMAAAA>` ; exécuté avant la vérification des fichiers et la confirmation ; port,
   tunnel SSH et code retour ignorés ; mot de passe visible dans `ps` · tests : T07, T08 · sources : [ImpJdv.class:Sauve](../../../../../../.src/Compta/Utils/ImpJdv.class#L245-L254), [ImpJdv.class:158](../../../../../../.src/Compta/Utils/ImpJdv.class#L158)
-- [ ] IMPJDV-A09 — [anomalie] `Controle` : `UPDATE Nvcompte` par concaténation (apostrophe dans
+- [ ] IMPJDV-A09 — [anomalie] (confirmée phase 2, vague 4 : intitulé avec apostrophe → erreur SQL fatale (`ImpJdv.Controle.356` ← `Import.227`), figée par T09 (code 125)) `Controle` : `UPDATE Nvcompte` par concaténation (apostrophe dans
   l'intitulé → erreur SQL) ; à remplacer par `&1`, `&2` · tests : T09 · sources : [ImpJdv.class:356](../../../../../../.src/Compta/Utils/ImpJdv.class#L356)
 - [ ] IMPJDV-A10 — [anomalie] Fichiers non fermés (`hFile` et `hFile3` si « Non », `hFile3` dans
   tous les cas, `hFile2` de `Controle` toujours) ; `hFile3` ouvre le fichier PDF lui-même et `footer` y écrit

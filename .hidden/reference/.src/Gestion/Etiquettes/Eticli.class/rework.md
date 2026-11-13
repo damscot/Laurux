@@ -65,12 +65,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ETICLI-A01 — [anomalie] Les bornes de code postal `Cp1`/`Cp2` (option `CheckCp`) ne sont
+- [ ] ETICLI-A01 — [anomalie] (confirmée phase 2, vague 4 : filtre CP ignoré (T03)) Les bornes de code postal `Cp1`/`Cp2` (option `CheckCp`) ne sont
   utilisées dans aucune requête : seul le tri par CP est appliqué · tests : T03 · sources : [Eticli.class:778](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L778), [Eticli.class:789](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L789)
-- [ ] ETICLI-A02 — [anomalie] Bornes client comparées en texte (`cast(cli_code as char) >= &1`)
+- [ ] ETICLI-A02 — [anomalie] (confirmée phase 2, vague 4 : bornes par défaut 41100001–4119999999 incluant 41100005 et 411000050 (T04) ; en mode liste, relecture `cli_code >= code` (T05)) Bornes client comparées en texte (`cast(cli_code as char) >= &1`)
   pour la borne basse et en nombre pour la borne haute (3 requêtes sur 5) ; en mode liste
   `cli_code >= &1` sans `ORDER BY` au lieu de `=` · tests : T04, T05 · sources : [Eticli.class:777](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L777), [Eticli.class:781](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L781), [Eticli.class:805](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L805)
-- [ ] ETICLI-A03 — [anomalie] `RadioButton2` coché puis `CheckType` décoché : aucune requête,
+- [ ] ETICLI-A03 — [anomalie] (confirmée phase 2, vague 4 : type masqué : « Null object » figé par T08) `RadioButton2` coché puis `CheckType` décoché : aucune requête,
   `rCli` `Null` (ou résultat précédent) → erreur ou impression du jeu précédent ; `Imprime` lit
   `rCli` sans test `Available` · tests : T08 · sources : [Eticli.class:776](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L776), [Eticli.class:Imprime](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L834-L860)
 - [ ] ETICLI-A04 — [anomalie] `colinit` appelle toujours `AffClients` : un tri sur `Colcli2`

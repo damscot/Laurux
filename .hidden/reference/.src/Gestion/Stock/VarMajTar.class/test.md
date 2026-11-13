@@ -11,15 +11,20 @@ directement `LPrix`/`LTaxe` avec les mêmes arguments.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VARMAJTAR-T01 | replay | `LecArt` tarif général | Gestion > Achats > réception : saisie d'un article sans tarif provisoire, ouverture du panneau tarif, modification de la marge, validation | dump `Fiches_TarTemp`, `Fiches_Art` ; lignes `Exec_SQL` (requête `LecArt`) | `tests/lecart_tarif_general/` | à faire |
-| VARMAJTAR-T02 | replay | `LecArt` + `requ_cli`/`requ_typ` | article ayant des tarifs `Fiches_Tarcli` (2 clients) et `Fiches_TarTypcli` (2 types), tarif provisoire existant (`dtmaj = 1`, date future) | dump `Fiches_TarTemp` après validation ; prix affichés identiques (capture du log) | `tests/lecart_tarifs_cli_type/` | à faire |
-| VARMAJTAR-T03 | gbtest | Cascade de `constructiontableau` | `pxrev` ∈ {0 ; 1,234 ; 10 ; 99,99}, marge ∈ {0 ; 25 ; 33,333 %}, TVA ∈ {5,5 ; 20 %}, arrondi `art_cdarr` ∈ {`0,01` ; `0,05` ; `0,10`} | `PuNHT.G`, `PuNTC.G` de référence ; même jeu que GESTAR-T05 / DATETAR-T05 pour prouver l'équivalence avec `PrixVente` | `tests/cascade_prix/` | à faire |
-| VARMAJTAR-T04 | gbtest | Marge négative (A03) | `LTaxe("--5%", LTaxe.Remise)` appliquée à `LPrix(10, 1, "0,01")` | figer la valeur actuelle | `tests/marge_negative/` | à faire |
-| VARMAJTAR-T05 | replay | Drapeau `sup` (A01) | article avec tarif provisoire général `temp_sup = 1` et tarif client provisoire `temp_sup = 0` ; ouverture du panneau puis validation | dump `Fiches_TarTemp` (ligne client supprimée ou non : comportement actuel figé) | `tests/drapeau_sup/` | à faire |
-| VARMAJTAR-T06 | replay | SQLite (A02) | T01 rejoué sur une base SQLite | erreur à l'ouverture du panneau tarif (caractérisation) | `tests/lecart_sqlite/` | à faire |
-| VARMAJTAR-T07 | replay | `SauvColl` / `Delete` (appels dynamiques) | deux lignes d'achat, passage d'une ligne à l'autre (perte de focus), suppression d'une ligne | dump `Fiches_TarTemp` ; aucune erreur dans le log | `tests/sauvcoll_delete/` | à faire |
+| VARMAJTAR-T01 | replay | `LecArt` tarif général | Gestion > Achats > réception : saisie d'un article sans tarif provisoire, ouverture du panneau tarif, modification de la marge, validation | dump `Fiches_TarTemp`, `Fiches_Art` ; lignes `Exec_SQL` (requête `LecArt`) | `tests/lecart_tarif_general/` | à faire : passe par l'écran d'achat (Achat, classe complexe en attente de validation des scénarios) |
+| VARMAJTAR-T02 | replay | `LecArt` + `requ_cli`/`requ_typ` | article ayant des tarifs `Fiches_Tarcli` (2 clients) et `Fiches_TarTypcli` (2 types), tarif provisoire existant (`dtmaj = 1`, date future) | dump `Fiches_TarTemp` après validation ; prix affichés identiques (capture du log) | `tests/lecart_tarifs_cli_type/` | à faire : passe par l'écran d'achat (Achat, classe complexe en attente de validation des scénarios) |
+| VARMAJTAR-T03 | gbtest | Cascade de `constructiontableau` | `pxrev` ∈ {0 ; 1,234 ; 10 ; 99,99}, marge ∈ {0 ; 25 ; 33,333 %}, TVA ∈ {5,5 ; 20 %}, arrondi `art_cdarr` ∈ {`0,01` ; `0,05` ; `0,10`} | `PuNHT.G`, `PuNTC.G` de référence ; même jeu que GESTAR-T05 / DATETAR-T05 pour prouver l'équivalence avec `PrixVente` | `tests/cascade_prix/` | implémenté |
+| VARMAJTAR-T04 | gbtest | Marge négative (A03) | `LTaxe("--5%", LTaxe.Remise)` appliquée à `LPrix(10, 1, "0,01")` | figer la valeur actuelle | `tests/marge_negative/` | à faire : Message.Error bloquant en gb.test (Utils.FloatParse("--5") : CFloat("--5.") échoue, Catch → Message.Error, Utils.module:1582) |
+| VARMAJTAR-T05 | replay | Drapeau `sup` (A01) | article avec tarif provisoire général `temp_sup = 1` et tarif client provisoire `temp_sup = 0` ; ouverture du panneau puis validation | dump `Fiches_TarTemp` (ligne client supprimée ou non : comportement actuel figé) | `tests/drapeau_sup/` | à faire : passe par l'écran d'achat (Achat, classe complexe en attente de validation des scénarios) |
+| VARMAJTAR-T06 | replay | SQLite (A02) | T01 rejoué sur une base SQLite | erreur à l'ouverture du panneau tarif (caractérisation) | `tests/lecart_sqlite/` | à faire : le framework de test ne fournit que MariaDB (pas de base SQLite) ; passe aussi par Achat |
+| VARMAJTAR-T07 | replay | `SauvColl` / `Delete` (appels dynamiques) | deux lignes d'achat, passage d'une ligne à l'autre (perte de focus), suppression d'une ligne | dump `Fiches_TarTemp` ; aucune erreur dans le log | `tests/sauvcoll_delete/` | à faire : passe par l'écran d'achat (Achat, classe complexe en attente de validation des scénarios) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2)** : T03 en gb.test (`.src/Tests/Gestion/VarMajTarTest.test`, `T03CascadePrix`) :
+  `constructiontableau` étant Private, le test rejoue sa cascade (LPrix(pxrev, 1, art_cdarr) + LTaxe("-" &
+  Str((coef - 1) * 100) & "%", Remise) + LTaxe(tva & "%", TVA)) sur 4 × 3 × 2 × 3 combinaisons (coef 1 ; 1,25 ;
+  1,33333), sans base. T04 : la marge `--5%` déclenche un Message.Error dans Utils.FloatParse (bloquant).
 
 - **Valeurs attendues** : capturées dans le clone **Laurux non modifié** (`./Laurux -l --logfile …`
   pour les replays, sortie gb.test pour T03/T04), jamais déduites de la lecture du code.

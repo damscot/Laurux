@@ -57,7 +57,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] IDENTITE-A01 — [anomalie] `SELECT … WHERE code = '<code>'` par concaténation dans
+- [ ] IDENTITE-A01 — [anomalie] (confirmée phase 2, vague 4 : code avec apostrophe → « Query failed » fatal (DB_Connection.Exec.438), T05) `SELECT … WHERE code = '<code>'` par concaténation dans
   `Button3_Click` et `Quitte_Cdtype` : une apostrophe provoque une erreur SQL · tests : T05 ·
   sources : [Identite.class:128](../../../../../../.src/Gestion/Tables/Identite.class#L128), [Identite.class:214](../../../../../../.src/Gestion/Tables/Identite.class#L214)
 - [ ] IDENTITE-A02 — [anomalie] L'aide (bouton et F1) ouvre la page `Familles` au lieu d'une page

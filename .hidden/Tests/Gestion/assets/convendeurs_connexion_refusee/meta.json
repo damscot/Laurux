@@ -1,0 +1,25 @@
+{
+ "classe": "ConVendeurs",
+ "dataset": "convendeurs_shared/vendeurs",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Vendeurs": "1",
+  "/Soc01/CodeVendeur": ""
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ],
+ "id": "CONVENDEURS-T02",
+ "objet": "Connexion refusée (vendeur vide, mdp vide, mdp erroné)",
+ "description": "Jeu convendeurs_shared/vendeurs. Choix de l'entrée vide → message d'erreur du Catch de Caissiere_Click (requête sans ligne) ; Connecter sans vendeur → « Veuillez saisir votre code vendeur » ; vendeur 1 sans mot de passe → « Veuillez saisir votre mot de passe » ; mot de passe « xx » → « Mot de passe erroné » (Message.Error à bouton unique, Entrée) ; fermeture : CodeVendeur reste vide.",
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

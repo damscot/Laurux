@@ -1,0 +1,263 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM  Fiches_Parametres
+DROP TABLE if exists Fiches_RelFacture
+CREATE TABLE Fiches_RelFacture (compte Char(8) NOT NULL,rs char(10) ,intitule char(30) ,adr1 char(30) ,adr2 char(30) ,cp char(10) ,ville char(35) ,dte datetime ,numdoc char(10) NOT NULL,numlot char(10) ,libelle char(30) ,montantd Decimal(12,2) ,montantc Decimal(12,2) ,numero char(8) ,journal char(2) ,PRIMARY KEY (compte,numdoc,numero)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt where left(compte,3) = '411' and dte >= '20180601' and dte <= '20180615' and tresorerie = 0 and collectif is null and lettree = 0 order by compte 
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411001'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411001','SARL', 'A Divers ', '1 rue des Lilas', NULL, '75001', 'Paris', '2018-06-03 00:00:00', 'F101', NULL, 'Facture F101', '120.00', '0.00', 1, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411001'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411001','SARL', 'A Divers ', '1 rue des Lilas', NULL, '75001', 'Paris', '2018-06-13 00:00:00', 'F105', NULL, 'Facture F105 ligne 1', '40.00', '0.00', 9, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411001'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411001','SARL', 'A Divers ', '1 rue des Lilas', NULL, '75001', 'Paris', '2018-06-13 00:00:00', 'F105', NULL, 'Facture F105 ligne 2', '5.00', '0.00', 9, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-12 00:00:00', 'G225', NULL, 'Facture G225', '35.00', '0.00', 125, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-11 00:00:00', 'G224', NULL, 'Facture G224', '34.00', '0.00', 124, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-10 00:00:00', 'G223', NULL, 'Facture G223', '33.00', '0.00', 123, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-09 00:00:00', 'G222', NULL, 'Facture G222', '32.00', '0.00', 122, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-08 00:00:00', 'G221', NULL, 'Facture G221', '31.00', '0.00', 121, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-07 00:00:00', 'G220', NULL, 'Facture G220', '30.00', '0.00', 120, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-06 00:00:00', 'G219', NULL, 'Facture G219', '29.00', '0.00', 119, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-13 00:00:00', 'G226', NULL, 'Facture G226', '36.00', '0.00', 126, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-14 00:00:00', 'G227', NULL, 'Facture G227', '37.00', '0.00', 127, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-01 00:00:00', 'G228', NULL, 'Facture G228', '38.00', '0.00', 128, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-02 00:00:00', 'G229', NULL, 'Facture G229', '39.00', '0.00', 129, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-03 00:00:00', 'G230', NULL, 'Facture G230', '40.00', '0.00', 130, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-04 00:00:00', 'G231', NULL, 'Facture G231', '41.00', '0.00', 131, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-05 00:00:00', 'G232', NULL, 'Facture G232', '42.00', '0.00', 132, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-06 00:00:00', 'G233', NULL, 'Facture G233', '43.00', '0.00', 133, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-07 00:00:00', 'G234', NULL, 'Facture G234', '44.00', '0.00', 134, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-05 00:00:00', 'G218', NULL, 'Facture G218', '28.00', '0.00', 118, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-04 00:00:00', 'G217', NULL, 'Facture G217', '27.00', '0.00', 117, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-03 00:00:00', 'G216', NULL, 'Facture G216', '26.00', '0.00', 116, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-02 00:00:00', 'G201', NULL, 'Facture G201', '11.00', '0.00', 101, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-03 00:00:00', 'G202', NULL, 'Facture G202', '12.00', '0.00', 102, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-04 00:00:00', 'G203', NULL, 'Facture G203', '13.00', '0.00', 103, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-05 00:00:00', 'G204', NULL, 'Facture G204', '14.00', '0.00', 104, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-06 00:00:00', 'G205', NULL, 'Facture G205', '15.00', '0.00', 105, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-07 00:00:00', 'G206', NULL, 'Facture G206', '16.00', '0.00', 106, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-08 00:00:00', 'G207', NULL, 'Facture G207', '17.00', '0.00', 107, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-09 00:00:00', 'G208', NULL, 'Facture G208', '18.00', '0.00', 108, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-10 00:00:00', 'G209', NULL, 'Facture G209', '19.00', '0.00', 109, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-11 00:00:00', 'G210', NULL, 'Facture G210', '20.00', '0.00', 110, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-12 00:00:00', 'G211', NULL, 'Facture G211', '21.00', '0.00', 111, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-13 00:00:00', 'G212', NULL, 'Facture G212', '22.00', '0.00', 112, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-14 00:00:00', 'G213', NULL, 'Facture G213', '23.00', '0.00', 113, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-01 00:00:00', 'G214', NULL, 'Facture G214', '24.00', '0.00', 114, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-02 00:00:00', 'G215', NULL, 'Facture G215', '25.00', '0.00', 115, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-08 00:00:00', 'G235', NULL, 'Facture G235', '45.00', '0.00', 135, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411003'
+SELECT * FROM Fiches_RelFacture order by compte 
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_RelFacture  where compte = '411001' order by dte
+SELECT * FROM Fiches_RelFacture  where compte = '411002' order by dte
+DROP TABLE if exists Fiches_RelFacture
+CREATE TABLE Fiches_RelFacture (compte Char(8) NOT NULL,rs char(10) ,intitule char(30) ,adr1 char(30) ,adr2 char(30) ,cp char(10) ,ville char(35) ,dte datetime ,numdoc char(10) NOT NULL,numlot char(10) ,libelle char(30) ,montantd Decimal(12,2) ,montantc Decimal(12,2) ,numero char(8) ,journal char(2) ,PRIMARY KEY (compte,numdoc,numero)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt where left(compte,3) = '411' and dte >= '20180601' and dte <= '20180615' and tresorerie = 0 and collectif is null and lettree = 0 order by compte 
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411001'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411001','SARL', 'A Divers ', '1 rue des Lilas', NULL, '75001', 'Paris', '2018-06-03 00:00:00', 'F101', NULL, 'Facture F101', '120.00', '0.00', 1, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411001'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411001','SARL', 'A Divers ', '1 rue des Lilas', NULL, '75001', 'Paris', '2018-06-13 00:00:00', 'F105', NULL, 'Facture F105 ligne 1', '40.00', '0.00', 9, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411001'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411001','SARL', 'A Divers ', '1 rue des Lilas', NULL, '75001', 'Paris', '2018-06-13 00:00:00', 'F105', NULL, 'Facture F105 ligne 2', '5.00', '0.00', 9, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-12 00:00:00', 'G225', NULL, 'Facture G225', '35.00', '0.00', 125, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-11 00:00:00', 'G224', NULL, 'Facture G224', '34.00', '0.00', 124, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-10 00:00:00', 'G223', NULL, 'Facture G223', '33.00', '0.00', 123, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-09 00:00:00', 'G222', NULL, 'Facture G222', '32.00', '0.00', 122, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-08 00:00:00', 'G221', NULL, 'Facture G221', '31.00', '0.00', 121, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-07 00:00:00', 'G220', NULL, 'Facture G220', '30.00', '0.00', 120, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-06 00:00:00', 'G219', NULL, 'Facture G219', '29.00', '0.00', 119, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-13 00:00:00', 'G226', NULL, 'Facture G226', '36.00', '0.00', 126, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-14 00:00:00', 'G227', NULL, 'Facture G227', '37.00', '0.00', 127, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-01 00:00:00', 'G228', NULL, 'Facture G228', '38.00', '0.00', 128, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-02 00:00:00', 'G229', NULL, 'Facture G229', '39.00', '0.00', 129, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-03 00:00:00', 'G230', NULL, 'Facture G230', '40.00', '0.00', 130, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-04 00:00:00', 'G231', NULL, 'Facture G231', '41.00', '0.00', 131, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-05 00:00:00', 'G232', NULL, 'Facture G232', '42.00', '0.00', 132, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-06 00:00:00', 'G233', NULL, 'Facture G233', '43.00', '0.00', 133, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-07 00:00:00', 'G234', NULL, 'Facture G234', '44.00', '0.00', 134, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-05 00:00:00', 'G218', NULL, 'Facture G218', '28.00', '0.00', 118, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-04 00:00:00', 'G217', NULL, 'Facture G217', '27.00', '0.00', 117, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-03 00:00:00', 'G216', NULL, 'Facture G216', '26.00', '0.00', 116, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-02 00:00:00', 'G201', NULL, 'Facture G201', '11.00', '0.00', 101, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-03 00:00:00', 'G202', NULL, 'Facture G202', '12.00', '0.00', 102, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-04 00:00:00', 'G203', NULL, 'Facture G203', '13.00', '0.00', 103, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-05 00:00:00', 'G204', NULL, 'Facture G204', '14.00', '0.00', 104, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-06 00:00:00', 'G205', NULL, 'Facture G205', '15.00', '0.00', 105, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-07 00:00:00', 'G206', NULL, 'Facture G206', '16.00', '0.00', 106, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-08 00:00:00', 'G207', NULL, 'Facture G207', '17.00', '0.00', 107, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-09 00:00:00', 'G208', NULL, 'Facture G208', '18.00', '0.00', 108, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-10 00:00:00', 'G209', NULL, 'Facture G209', '19.00', '0.00', 109, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-11 00:00:00', 'G210', NULL, 'Facture G210', '20.00', '0.00', 110, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-12 00:00:00', 'G211', NULL, 'Facture G211', '21.00', '0.00', 111, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-13 00:00:00', 'G212', NULL, 'Facture G212', '22.00', '0.00', 112, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-14 00:00:00', 'G213', NULL, 'Facture G213', '23.00', '0.00', 113, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-01 00:00:00', 'G214', NULL, 'Facture G214', '24.00', '0.00', 114, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-02 00:00:00', 'G215', NULL, 'Facture G215', '25.00', '0.00', 115, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411002'
+INSERT INTO Fiches_RelFacture (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal) VALUES ('411002','SA', 'B Divers ', '2 place du Marche', NULL, '69002', 'Lyon', '2018-06-08 00:00:00', 'G235', NULL, 'Facture G235', '45.00', '0.00', 135, '70')
+SELECT * FROM Fiches_Journaux where  code_jo = '70'
+SELECT * FROM Fiches_Cli where  cli_code = '411003'
+SELECT * FROM Fiches_RelFacture order by compte 

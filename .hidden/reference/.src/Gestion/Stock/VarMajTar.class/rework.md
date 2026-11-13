@@ -69,6 +69,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   cassé sous SQLite (DB_CONNECTION-A05) ; le panneau tarif des achats échoue. La correction se
   fait dans `DB_Connection.Execute` ; ce fichier doit seulement être retesté · tests : T06 ·
   sources : [VarMajTar.class:79](../../../../../../.src/Gestion/Stock/VarMajTar.class#L79), [VarMajTar.class:82](../../../../../../.src/Gestion/Stock/VarMajTar.class#L82), [DB_Connection.class:Execute](../../../../../../.src/Utils/DB_Connection.class#L508-L519)
-- [ ] VARMAJTAR-A03 — [anomalie] Marge négative (`coef < 1`) : la remise passée à `LTaxe` vaut
+- [ ] VARMAJTAR-A03 — [anomalie] (confirmée phase 2, vague 4 : `Utils.FloatParse("--5")` → `Message.Error` du `Catch` (Utils.module:1582) : marge négative bloquante (T04)) Marge négative (`coef < 1`) : la remise passée à `LTaxe` vaut
   `"-" & "-5%"` = `"--5%"` ; résultat à confirmer par T04 (valeur nulle ou erreur probable) ·
   tests : T04 · sources : [VarMajTar.class:124](../../../../../../.src/Gestion/Stock/VarMajTar.class#L124), [VarMajTar.class:132](../../../../../../.src/Gestion/Stock/VarMajTar.class#L132)

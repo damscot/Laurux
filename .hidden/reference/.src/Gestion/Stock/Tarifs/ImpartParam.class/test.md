@@ -9,16 +9,20 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| IMPARTPARAM-T01 | replay | Création d'une définition séparée | `Btncreer`, nom, fournisseur, famille, fichier `.csv`, onglet 2, ajout de 5 zones (code article, intitulé, prix de base, remise, code-barre) | dump des deux tables | `tests/creation_sep/` | à faire |
-| IMPARTPARAM-T02 | replay | Création d'une définition largeur fixe (A03) | idem en mode `Cfix`, 17 zones | dump (fige : zones 16-17 et `posorg` absents) | `tests/creation_fixe/` | à faire |
-| IMPARTPARAM-T03 | replay | Déplacement `+`/`-` en mode séparé (A02) | définition de T01, touche `+` puis `-` sur la 2e zone | dump ; erreur SQL éventuelle (caractérisation) | `tests/deplacement_sep/` | à faire |
-| IMPARTPARAM-T04 | replay | Déplacement en largeur fixe (A01) | définition de T02, touche `+` | erreur « Out of bounds » (caractérisation), dump | `tests/deplacement_fixe/` | à faire |
-| IMPARTPARAM-T05 | replay | Retrait et édition de zone | Suppr sur une zone ; double-clic (`Champs_Activate`) puis ré-enregistrement | dump | `tests/retrait_zone/` | à faire |
-| IMPARTPARAM-T06 | replay | Sélection d'une définition existante | liste `TgleBtnFDef` → `DefList_Click` ; saisie directe du n° dans `Cdef` | champs affichés, aucune écriture | `tests/selection/` | à faire |
-| IMPARTPARAM-T07 | replay | Suppression d'une définition | `BtnSupprime` + confirmation ; `BtnEffacerList` | dump | `tests/suppression/` | à faire |
-| IMPARTPARAM-T08 | replay | Numérotation (A04) | `Btncreer` avec définitions 1, 2, 10 existantes, MySQL puis SQLite | numéro proposé | `tests/numerotation/` | à faire |
+| IMPARTPARAM-T01 | replay | Création d'une définition séparée | `Btncreer`, nom, fournisseur, famille, fichier `.csv`, onglet 2, ajout de 5 zones (code article, intitulé, prix de base, remise, code-barre) | dump des deux tables | `tests/creation_sep/` | à faire : non commencé (vague 4, temps écoulé) |
+| IMPARTPARAM-T02 | replay | Création d'une définition largeur fixe (A03) | idem en mode `Cfix`, 17 zones | dump (fige : zones 16-17 et `posorg` absents) | `tests/creation_fixe/` | à faire : non commencé (vague 4, temps écoulé) |
+| IMPARTPARAM-T03 | replay | Déplacement `+`/`-` en mode séparé (A02) | définition de T01, touche `+` puis `-` sur la 2e zone | dump ; erreur SQL éventuelle (caractérisation) | `tests/deplacement_sep/` | à faire : non commencé (vague 4, temps écoulé) |
+| IMPARTPARAM-T04 | replay | Déplacement en largeur fixe (A01) | définition de T02, touche `+` | erreur « Out of bounds » (caractérisation), dump | `tests/deplacement_fixe/` | à faire : non commencé (vague 4, temps écoulé) |
+| IMPARTPARAM-T05 | replay | Retrait et édition de zone | Suppr sur une zone ; double-clic (`Champs_Activate`) puis ré-enregistrement | dump | `tests/retrait_zone/` | à faire : non commencé (vague 4, temps écoulé) |
+| IMPARTPARAM-T06 | replay | Sélection d'une définition existante | liste `TgleBtnFDef` → `DefList_Click` ; saisie directe du n° dans `Cdef` | champs affichés, aucune écriture | `tests/selection/` | à faire : non commencé (vague 4, temps écoulé) |
+| IMPARTPARAM-T07 | replay | Suppression d'une définition | `BtnSupprime` + confirmation ; `BtnEffacerList` | dump | `tests/suppression/` | à faire : non commencé (vague 4, temps écoulé) |
+| IMPARTPARAM-T08 | replay | Numérotation (A04) | `Btncreer` avec définitions 1, 2, 10 existantes, MySQL puis SQLite | numéro proposé | `tests/numerotation/` | implémenté (MySQL ; partie SQLite à faire : pas de base SQLite dans le framework) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2)** : T08 en gb.test (`.src/Tests/Gestion/ImpartParamTest.test`, `T08Numerotation`) : jeu
+  `impartparam_shared/definitions_1_2_10`, fenêtre non affichée, `Btncreer_Click` → Cdef (11 sur MySQL, puis 1 sur
+  table vidée).
 
 - **Valeurs attendues** : capturées dans le clone **Laurux non modifié** ; les erreurs (A01, A02)
   sont figées telles quelles (message ou arrêt).

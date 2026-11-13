@@ -1,0 +1,38 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Typec
+SELECT * FROM Fiches_Commerciaux
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),adr1 Char(35),adr2 Char(35),ville Char(35),totf Char(12),tottc Char(12),gestbl Decimal(6,2),PRIMARY KEY (code, nom))  ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),nom Char(35),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num))  ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where (type = 'B' or type='F') and totalht <> 0 and  cli_div = -1 and imp <> 1 and cli_div = -1 AND datebl<='20180630' AND cli_regr='S' order by cdclibl, numbl
+SELECT * FROM Facturefm WHERE code = '411001' and nom = 'CLIENT X'
+INSERT INTO Facturefm (code, nom, adr1, adr2, cp, ville, totf, tottc, gestbl) Values ('411001', 'CLIENT X', NULL,NULL,'44000', 'NANTES', '10,00', '12,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00007' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00007', '411001', 'CLIENT X', '2018-06-12 00:00:00', '10,00', '12,00')
+SELECT * FROM Facturefm WHERE code = '411001' and nom = 'CLIENT Y'
+INSERT INTO Facturefm (code, nom, adr1, adr2, cp, ville, totf, tottc, gestbl) Values ('411001', 'CLIENT Y', NULL,NULL,'35000', 'RENNES', '15,00', '18,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00008' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00008', '411001', 'CLIENT Y', '2018-06-13 00:00:00', '15,00', '18,00')
+SELECT * FROM Facturefm order by nom
+SELECT * FROM Bl where code = '411001' and nom = 'CLIENT X' order by num

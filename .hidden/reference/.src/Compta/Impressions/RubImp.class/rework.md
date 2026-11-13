@@ -71,20 +71,20 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RUBIMP-A01 — [anomalie] Quitter ne supprime jamais le PDF : `Btn_Click` teste la variable de
+- [ ] RUBIMP-A01 — [anomalie] (relue phase 2, vague 4 : à la relecture, non figée par un test) Quitter ne supprime jamais le PDF : `Btn_Click` teste la variable de
   classe `Filename`, jamais affectée (`Button2_Click` utilise une locale `filename`) · tests : T07 ·
   sources : [RubImp.class:275](../../../../../../.src/Compta/Impressions/RubImp.class#L275), [RubImp.class:492](../../../../../../.src/Compta/Impressions/RubImp.class#L492)
 - [ ] RUBIMP-A02 — [anomalie] Contrôle des dates saisies : comparaison avec `dte` (chaîne brute
   `mm/dd/yyyy` recomposée en `aaaajjmm`) qui contient la clôture de l'exercice **précédent** :
   avertissements et remises à l'exercice en cours intempestifs ou absents (à confirmer) · tests :
   T06 · sources : [RubImp.class:302](../../../../../../.src/Compta/Impressions/RubImp.class#L302), [RubImp.class:323](../../../../../../.src/Compta/Impressions/RubImp.class#L323)
-- [ ] RUBIMP-A03 — [anomalie] En-tête « Exercice N -1 du … au … » : la fin affichée est la clôture
+- [ ] RUBIMP-A03 — [anomalie] (confirmée phase 2, vague 4 : N-5 : période N-1 « du 31.12.2013 au » sans date de fin (T05)) En-tête « Exercice N -1 du … au … » : la fin affichée est la clôture
   N-1 **+ 1 jour** et les dates affichées (`Recup_Dtes`) diffèrent de celles du calcul (`DteN0`/
   `DteN1` − 1 an) pour une période partielle · tests : T05 · sources : [RubImp.class:78](../../../../../../.src/Compta/Impressions/RubImp.class#L78), [RubImp.class:706-709](../../../../../../.src/Compta/Impressions/RubImp.class#L706-L709)
 - [ ] RUBIMP-A04 — [anomalie] En N-1, le détail des comptes reçoit `detail = "0"` (zéro) au lieu de
   `"O"` : le tri `numrub, detail, compte` place ces comptes avant la ligne de synthèse et les autres
   après (édition détaillée) · tests : T02 · sources : [RubImp.class:742](../../../../../../.src/Compta/Impressions/RubImp.class#L742)
-- [ ] RUBIMP-A05 — [anomalie] `Resultat.csv` : chaque écriture est écrite deux fois (la première
+- [ ] RUBIMP-A05 — [anomalie] (confirmée phase 2, vague 4 : chaque ligne de `Resultat.csv` écrite deux fois, avec et sans `;` final (T01)) `Resultat.csv` : chaque écriture est écrite deux fois (la première
   avec une ligne vide supplémentaire) · tests : T01 · sources : [RubImp.class:630](../../../../../../.src/Compta/Impressions/RubImp.class#L630), [RubImp.class:631](../../../../../../.src/Compta/Impressions/RubImp.class#L631)
 - [ ] RUBIMP-A06 — [anomalie] Requêtes sans `ORDER BY` dont l'ordre conditionne les cumuls
   (`SELECT * FROM centralisation`, jointure des totaux, lecture des deux `O` dont la première est
@@ -93,3 +93,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] RUBIMP-A07 — [anomalie] Bilan et SIG : la table `centralisation` du compte de résultat est
   créée puis détruite par `Imp_Bilan`/`Imp_Sig`, `Resultat.csv` est vidé et le message « traitement
   long » s'affiche ; `Impd` reste transmis bien que désactivé · tests : T04 · sources : [RubImp.class:494-498](../../../../../../.src/Compta/Impressions/RubImp.class#L494-L498), [RubImp.class:552-566](../../../../../../.src/Compta/Impressions/RubImp.class#L552-L566)
+- [ ] RUBIMP-A08 — [anomalie] `Resultat.csv` : date écrite par conversion implicite de `Tab5Rslt!dte` (`mm/dd/yyyy 22:00:00`, veille de la date réelle : fuseau horaire, même défaut qu'IMP_BILAN-A10) (phase 2, vague 4, 2026-11-13) · tests : T01 · sources : [RubImp.class:630-631](../../../../../../.src/Compta/Impressions/RubImp.class#L630-L631)
+- [ ] RUBIMP-A09 — [anomalie, à confirmer] « TOTAL GENERAL » imprimé à 0 (cause non analysée ; cumul des lignes `O` par `Etot5`/`Etot6`, voir A06) (phase 2, vague 4, 2026-11-13) · tests : T01 · sources : [RubImp.class:883-894](../../../../../../.src/Compta/Impressions/RubImp.class#L883-L894), [RubImp.class:898-916](../../../../../../.src/Compta/Impressions/RubImp.class#L898-L916)

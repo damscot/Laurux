@@ -64,15 +64,15 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ECHEANCIER-A01 — [anomalie] Règlements : signe inversé par `"-" & montant` sans test du
+- [ ] ECHEANCIER-A01 — [anomalie] (confirmée phase 2, vague 4 : règlement au débit négatif (-30) : « Total échéance » 130 au lieu de 100 (T07)) Règlements : signe inversé par `"-" & montant` sans test du
   signe (« --x » pour un montant négatif : erreur de conversion probable, à confirmer) ; seuls les
   règlements dans le sens attendu sont cumulés, les autres sont imprimés mais ignorés dans le
   total · tests : T07 · sources : [Echeancier.class:216-228](../../../../../../.src/Compta/Impressions/Echeancier.class#L216-L228)
-- [ ] ECHEANCIER-A02 — [anomalie] `dateedition` n'est jamais renseigné : l'en-tête imprime
+- [ ] ECHEANCIER-A02 — [anomalie] (confirmée phase 2, vague 4 : `dateedition` jamais renseignée) `dateedition` n'est jamais renseigné : l'en-tête imprime
   « Sélection » sans la période choisie · tests : T02 · sources : [Echeancier.class:117](../../../../../../.src/Compta/Impressions/Echeancier.class#L117), [Echeancier.class:138](../../../../../../.src/Compta/Impressions/Echeancier.class#L138)
 - [ ] ECHEANCIER-A03 — [anomalie] Le filtre « Mode de règlement » est ignoré pour les
   fournisseurs et pour le tri par compte, sans avertissement · tests : T04, T05 · sources : [Echeancier.class:150](../../../../../../.src/Compta/Impressions/Echeancier.class#L150), [Echeancier.class:156](../../../../../../.src/Compta/Impressions/Echeancier.class#L156)
-- [ ] ECHEANCIER-A04 — [anomalie] Pas de saut de page dans la boucle des règlements : les lignes
+- [ ] ECHEANCIER-A04 — [anomalie] (confirmée phase 2, vague 4 : multipage : 6 pages dont 3 vides, pied de page sur la dernière seulement, 10 règlements du lot 22 débordent la page 1 (T06)) Pas de saut de page dans la boucle des règlements : les lignes
   peuvent déborder du bas de page (à confirmer selon le saut automatique de `PdfWriter`) ; pied de
   page sur la dernière page seulement · tests : T06 · sources : [Echeancier.class:213-237](../../../../../../.src/Compta/Impressions/Echeancier.class#L213-L237), [Echeancier.class:274](../../../../../../.src/Compta/Impressions/Echeancier.class#L274)
 - [ ] ECHEANCIER-A05 — [anomalie] Borne « Du » par défaut = date de clôture N-1 elle-même (le

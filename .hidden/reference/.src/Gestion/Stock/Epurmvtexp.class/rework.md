@@ -50,12 +50,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EPURMVTEXP-A01 — [anomalie] **CRITIQUE** : `DELETE FROM Fiches_Mvtexp WHERE mind` sans
+- [ ] EPURMVTEXP-A01 — [anomalie] (confirmée phase 2, vague 4 : purge de toute `Fiches_Mvtexp` (`WHERE mind` sans `&1`, l. 150)) **CRITIQUE** : `DELETE FROM Fiches_Mvtexp WHERE mind` sans
   `= &1` → dès le premier mouvement ≤ `date2`, **toute** la table est vidée (mouvements
   postérieurs compris), ce qui fausse le recalcul de stock (`Cstock`) et l'historique
   (`Stockmvt`). Correction : `WHERE mind = &1`, ou un seul `DELETE … WHERE daterecpt <= &1` ·
   tests : T01, T02 · sources : [Epurmvtexp.class:150](../../../../../../.src/Gestion/Stock/Epurmvtexp.class#L150)
-- [ ] EPURMVTEXP-A02 — [anomalie] Les contrôles de date (`date1_LostFocus`, `date2_LostFocus`)
+- [ ] EPURMVTEXP-A02 — [anomalie] (confirmée phase 2, vague 4 : date invalide « 32.13.2025 » acceptée, figée par T05) Les contrôles de date (`date1_LostFocus`, `date2_LostFocus`)
   ne sont jamais exécutés (groupe `Cmpt` sans handler) : date invalide ou `date2 < date1`
   acceptées. Correction : handler `Cmpt_LostFocus` aiguillant sur `Last` (alternative à la
   suppression EPURMVTEXP-002, décision utilisateur) · tests : T05 · sources : [Epurmvtexp.class:date1_LostFocus](../../../../../../.src/Gestion/Stock/Epurmvtexp.class#L83-L97), [Epurmvtexp.class:date2_LostFocus](../../../../../../.src/Gestion/Stock/Epurmvtexp.class#L102-L125)

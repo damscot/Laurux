@@ -1,0 +1,17 @@
+{
+ "classe": "Facturefm",
+ "dataset": "facturefm_shared/bl_juin",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "FACTUREFM-T08",
+ "objet": "Retraits d'un client et d'un BL",
+ "description": "Jeu facturefm_shared/bl_juin (clients 411901 DURAND S, 411902 MARTIN S, 411903 PETIT M, divers 411001 ; BL de juin 2018). Factures fin de mois (Menu138), fin proposée 30.06.2018. Traitement, clic MARTIN puis Suppr sur Colbl : MARTIN retiré de Facturefm/Bl ; clic DURAND (clé « 411901 » : affclient reconstruit Colbl avec le code seul pour clé, recup_bl avec code + nom), clic BL B00002 puis Suppr sur Coldetail : B00002 retiré de Bl (dump des tables de travail).",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

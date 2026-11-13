@@ -11,24 +11,31 @@ modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| ETIQART-T01 | replay | Plage, tri par code, A4 | menu Articles ; modèle `Z- Test (A4 Portrait)` (3 × 8) ; bornes par défaut ; 2 étiquettes ; Imprimer | PDF : pages, positions, textes, EAN13 | `tests/etiqart_plage_code/` | à faire |
-| ETIQART-T02 | replay | Les 5 tris | T01 avec `Radiobutton2..5` | ordre des articles dans le PDF | `tests/etiqart_tris/` | à faire |
-| ETIQART-T03 | replay | Position de départ et saut de page | `Posetiq` = 5, 30 articles | positions sautées, nouvelles pages (V1) | `tests/etiqart_position/` | à faire |
-| ETIQART-T04 | replay | Nombre = stock | `EtiqStk` ; articles stockés (qté 0, 0,5, 3) et non stocké | nombre d'étiquettes figé (A05) | `tests/etiqart_stock/` | à faire |
-| ETIQART-T05 | replay | Mode liste : ajout, cumul, remplacement, suppression | `Liste` ; saisie de 3 codes dont `*<code-barre>` ; ressaisie (Cumuler, Remplacer) ; clic grille (Supprimer) ; Imprimer | table `Etiquettes` (dump avant impression), grille (log), PDF | `tests/etiqart_liste/` | à faire |
-| ETIQART-T06 | replay | Article sans `art_etiq` / inexistant | `Liste` ; codes refusés | messages, table inchangée | `tests/etiqart_refus/` | à faire |
-| ETIQART-T07 | replay | Dymo | `/Soc01/Impetiq = "3- Dymo"` ; 3 articles | une étiquette par page `dymog` | `tests/etiqart_dymo/` | à faire |
-| ETIQART-T08 | replay | Zebra (caractérisation) | `Impetiq = "2- Zebra"` ; Imprimer | erreur `Null object` figée (A01) | `tests/etiqart_zebra/` | à faire |
-| ETIQART-T09 | replay | Import portable | `~/Portable/inventaire.txt` fourni (codes valides, inconnus, vides) ; bouton Import | table `Etiquettes`, PDF, fichier ouvert par l'éditeur (A02), `~/tmp/ImpT.txt` | `tests/etiqart_portable/` | à faire |
-| ETIQART-T10 | replay | Ouverture depuis la fiche article | `Articles` ; Étiquette › 1- Article | bornes = code courant, PDF d'un article | `tests/etiqart_depuis_article/` | à faire |
-| ETIQART-T11 | replay | Article supprimé en mode liste | liste contenant un code absent de `Fiches_Art` (orphelin type ARTICLES-A05) | erreur figée (A03) | `tests/etiqart_orphelin/` | à faire |
-| ETIQART-T12 | gbtest | Calcul de position (après ETIQART-010) | `PlancheEtiquettes` variante V1, formats 1 × 1, 3 × 8, `Posetiq` 1..25 | suites (X, Y, page) identiques à celles relevées en T03 | `tests/planche_v1/` | à faire |
+| ETIQART-T01 | replay | Plage, tri par code, A4 | menu Articles ; modèle `Z- Test (A4 Portrait)` (3 × 8) ; bornes par défaut ; 2 étiquettes ; Imprimer | PDF : pages, positions, textes, EAN13 | `tests/etiqart_plage_code/` | implémenté |
+| ETIQART-T02 | replay | Les 5 tris | T01 avec `Radiobutton2..5` | ordre des articles dans le PDF | `tests/etiqart_tris/` | implémenté |
+| ETIQART-T03 | replay | Position de départ et saut de page | `Posetiq` = 5, 30 articles | positions sautées, nouvelles pages (V1) | `tests/etiqart_position/` | implémenté |
+| ETIQART-T04 | replay | Nombre = stock | `EtiqStk` ; articles stockés (qté 0, 0,5, 3) et non stocké | nombre d'étiquettes figé (A05) | `tests/etiqart_stock/` | implémenté |
+| ETIQART-T05 | replay | Mode liste : ajout, cumul, remplacement, suppression | `Liste` ; saisie de 3 codes dont `*<code-barre>` ; ressaisie (Cumuler, Remplacer) ; clic grille (Supprimer) ; Imprimer | table `Etiquettes` (dump avant impression), grille (log), PDF | `tests/etiqart_liste/` | implémenté |
+| ETIQART-T06 | replay | Article sans `art_etiq` / inexistant | `Liste` ; codes refusés | messages, table inchangée | `tests/etiqart_refus/` | implémenté |
+| ETIQART-T07 | replay | Dymo | `/Soc01/Impetiq = "3- Dymo"` ; 3 articles | une étiquette par page `dymog` | `tests/etiqart_dymo/` | implémenté |
+| ETIQART-T08 | replay | Zebra (caractérisation) | `Impetiq = "2- Zebra"` ; Imprimer | erreur `Null object` figée (A01) | `tests/etiqart_zebra/` | implémenté |
+| ETIQART-T09 | replay | Import portable | `~/Portable/inventaire.txt` fourni (codes valides, inconnus, vides) ; bouton Import | table `Etiquettes`, PDF, fichier ouvert par l'éditeur (A02), `~/tmp/ImpT.txt` | `tests/etiqart_portable/` | implémenté |
+| ETIQART-T10 | replay | Ouverture depuis la fiche article | `Articles` ; Étiquette › 1- Article | bornes = code courant, PDF d'un article | `tests/etiqart_depuis_article/` | à faire : passe par la fiche article (Articles, écran complexe) |
+| ETIQART-T11 | replay | Article supprimé en mode liste | liste contenant un code absent de `Fiches_Art` (orphelin type ARTICLES-A05) | erreur figée (A03) | `tests/etiqart_orphelin/` | à faire : orphelin inatteignable par l'écran seul (suppression d'article entre saisie et impression, passe par Articles) |
+| ETIQART-T12 | gbtest | Calcul de position (après ETIQART-010) | `PlancheEtiquettes` variante V1, formats 1 × 1, 3 × 8, `Posetiq` 1..25 | suites (X, Y, page) identiques à celles relevées en T03 | `tests/planche_v1/` | à faire : après extraction ETIQART-010 (PlancheEtiquettes) |
 
 ## Détail des tests
 
 - **Données** : `Laurux01.sql` + jeu dérivé `etiquettes_base` (≈ 30 articles sur 3 familles et 2
   fournisseurs, avec/sans code-barres de 13 caractères, `art_etiq` 0/1, stockés ou non, une ligne
   `Fiches_CdBarre`), format `Z- Test` de ETIQUETTES-T01, paramètres `/Soc01/Impetiq`.
+- **Implémentation (vague 4)** : assets `.hidden/Tests/Gestion/assets/etiqart_{plage_code,tris,position,stock,liste,refus,dymo,zebra,portable}/`,
+  jeu `etiqart_shared/etiqart_base.sql` (format `Z`, 001 stocké qté 0, 002 stocké qté 0,5, 003 non stocké, 004 stocké qté 3
+  avec 2e libellé et code-barre, 005 `art_etiq` 0) ; `/Soc01/Impetiq` par `"conf"` ; texte du PDF comparé par
+  `pdftotext` (CmdVis en ajout `>>` : T02 concatène les 4 éditions des tris 2 à 5). T08 : `code_sortie` 125
+  (`Etiqart.Button2_Click.804: Null object`). T09 : `inventaire.txt` déposé par `"entrees"`, `~/tmp/ImpT.txt` comparé ;
+  l'ouverture par l'éditeur (`Desktop.Open`) n'est pas tracée. T06 : Art n'est pas vidé après le refus de 005
+  (code lu ensuite : `005999`).
 - **Comparaison PDF** : `PdfWriter` écrit une date de création ; le script `check_output.py`
   retire les métadonnées variables avant le diff, ou compare l'extraction `pdftotext -bbox`.
 - **Rejeu** : `Utils.Observers(Me)` est appelé **deux fois** dans `Form_Open` (l. 93 et 97) : les
