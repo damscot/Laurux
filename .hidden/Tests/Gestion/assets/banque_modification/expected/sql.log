@@ -1,0 +1,24 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Banques where banques_code like  "%" order by banques_code
+select * from Fiches_Banques where banques_code = '1'
+SELECT * FROM Fiches_Banques where banques_code = '1' 
+UPdate  Fiches_Banques  SET  banques_code = '1' , banques_nom = 'BANQUE ALPHA' , banques_dmln = 'AGENCE CENTRE' , banques_nume = '123456', banques_codeb = '10001', banques_codeg = '00011', banques_numcpt = '12345678901', banques_numsiren = '12345', banques_adr = '1', banques_txt = 'Entete alpha', banques_fenrg = NULL, banques_mail = 'neuf.banque.test', banques_ref = 'REMALPHA', banques_entete = 'Objet alpha', banques_corps = 'Corps alpha', banques_reftireur = 'TIRALPHA' where banques_code = '1'
+select * from Fiches_Banques where banques_code like  "%" order by banques_code

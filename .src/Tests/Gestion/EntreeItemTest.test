@@ -1,0 +1,47 @@
+' Gambas test file
+
+''Tests de EntreeItem (.hidden/reference/.src/Gestion/Lcr/EntreeItem.module/test.md, ENTREEITEM-T01 et T02).
+''Valeurs attendues : assets/EntreeItemTest/expected.txt, produites dans le clone de référence. Pas de base de données.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Libelles", "Libellés des codes d'entrée 1 à 5")
+  TestKit.Desc("T02HorsPlage", "Codes hors plage 0, vide, 6, x : libellé ou erreur")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EntreeItemTest")
+
+End
+
+Private Sub Item(sCle As String, sEntree As String)
+
+  Dim s As String
+
+  Try s = EntreeItem.item(sEntree)
+  If Error Then s = "ERREUR: " & Error.Text
+  TestKit.Check(sCle, s)
+
+End
+
+Public Sub T01Libelles()
+
+  Dim i As Integer
+
+  For i = 1 To 5
+    Item("T01/" & i, CStr(i))
+  Next
+
+End
+
+Public Sub T02HorsPlage()
+
+  Item("T02/0", "0")
+  Item("T02/vide", "")
+  Item("T02/6", "6")
+  Item("T02/x", "x")
+
+End

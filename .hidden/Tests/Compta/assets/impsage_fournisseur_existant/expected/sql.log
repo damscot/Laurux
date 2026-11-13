@@ -1,0 +1,27 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Corsage where acode = 'G403         '
+insert into Corsage (acode, ncode) values ( 'G403         ','401026')
+SELECT * FROM Fiches_Cli where cli_code = '401026'
+SELECT dnf FROM Fiches_Parametres
+INSERT INTO Fiches_Four (fo_code,fo_rs_soc,fo_nom,fo_pnm,fo_adr1,fo_adr2,fo_cd_ptl,fo_ville,fo_email,fo_tel_std,fo_tel_bur,fo_tel_post,fo_pble,fo_fx1,fo_fx2,fo_obs,fo_cd_bq,fo_cd_gch,fo_num_cpt,fo_cle_rib,fo_dom,fo_id_tva,fo_cd_cli,fo_collectif, fo_site, fo_cdech, fo_pays, fo_franco, fo_centrale, fo_ccentrale, fo_copie) VALUES ('401026',NULL,'Fournisseur 403         ',NULL,'9 rue G                 ','                        ','75001   ','Paris',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'G403         ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'401000',NULL, NULL, NULL, 0, 0, NULL, 0)

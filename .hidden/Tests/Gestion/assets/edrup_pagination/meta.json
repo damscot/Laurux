@@ -1,0 +1,23 @@
+{
+ "id": "EDRUP-T09",
+ "objet": "Pagination",
+ "classe": "EdRup",
+ "description": "Jeu edrup_pagination (80 articles stockes en rupture commandes chez 401001) : Menu253, Imprimer : 80 lignes, saut de page avec en-tete repete.",
+ "dataset": "edrup_pagination",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

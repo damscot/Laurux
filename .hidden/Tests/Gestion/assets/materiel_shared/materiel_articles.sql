@@ -1,0 +1,8 @@
+-- Jeu MATERIEL (articles) : matériels de materiel_base et articles 001 matériel, 002 non stocké, 003 non matériel.
+INSERT INTO Fiches_Materiels (mat_serie, mat_code, mat_design, mat_fam, mat_four, mat_cequ, mat_paht, mat_frais, mat_prvt, mat_coef, mat_pvht, mat_tva, mat_pvttc, mat_cdarr, mat_dec, mat_nbd, mat_pmp, mat_vendu, mat_marque, mat_type, mat_cli, mat_matdiv, mat_chkgarantie) VALUES ('SN001', '001', 'Tondeuse un', '01', '401001', 'EQ1', 100, 10, 110, 1.5, 165, 20, 198, '0,01', '0', '2', 0, 0, 'Stihl', 'Tondeuse', '', 0, 0);
+INSERT INTO Fiches_Materiels (mat_serie, mat_code, mat_design, mat_fam, mat_four, mat_cequ, mat_paht, mat_frais, mat_prvt, mat_coef, mat_pvht, mat_tva, mat_pvttc, mat_cdarr, mat_dec, mat_nbd, mat_pmp, mat_vendu, mat_marque, mat_type, mat_cli, mat_matdiv, mat_chkgarantie) VALUES ('SN002', '001', 'Tondeuse deux', '01', '401001', 'EQ2', 100, 10, 110, 1.5, 165, 20, 198, '0,01', '0', '2', 0, 1, 'Stihl', 'Tondeuse', '', 0, 0);
+INSERT INTO Fiches_Materiels (mat_serie, mat_code, mat_design, mat_fam, mat_four, mat_cequ, mat_paht, mat_frais, mat_prvt, mat_coef, mat_pvht, mat_tva, mat_pvttc, mat_cdarr, mat_dec, mat_nbd, mat_pmp, mat_vendu, mat_marque, mat_type, mat_cli, mat_matdiv, mat_chkgarantie) VALUES ('SN010', '002', 'Debroussailleuse', '01', '401001', 'EQ3', 200, 20, 250, 2, 400, 20, 480, '0,01', '0', '2', 99, 0, 'Stihl', 'Debroussailleuse', '', 0, 0);
+-- Articles : 001 matériel stocké (marque Stihl), 002 non stocké, 003 stocké non matériel.
+UPDATE Fiches_Art SET art_stocke = 1, art_mat = 1, art_marque = 'Stihl' WHERE art_code = '001';
+UPDATE Fiches_Art SET art_stocke = 0, art_mat = 1 WHERE art_code = '002';
+UPDATE Fiches_Art SET art_stocke = 1, art_mat = 0 WHERE art_code = '003';

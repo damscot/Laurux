@@ -1,0 +1,76 @@
+' Gambas test file
+
+''Tests de Ticpe (.hidden/reference/.src/Gestion/option/ticpe.class/test.md, TICPE-T01 à T03).
+''Valeurs attendues : assets/TicpeTest/expected.txt, produites dans le clone de référence.
+''Jeu : modfichier_shared/options_bois_pp (colonnes TIPP de Fiches_Cli et Fiches_AdrlivC) ; client 411001 de Laurux01.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Construction", "New Ticpe : code client existant, inexistant, Result Fiches_Cli, Result Fiches_AdrlivC, Null")
+  TestKit.Desc("T02Fabrique", "Fabrique _call : Ticpe(\"411001\") et Ticpe(Null)")
+  TestKit.Desc("T03Proprietes", "Propriétés categorie, date, NumAgri, NumCarb, region d'un objet construit")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "TicpeTest")
+  TestKit.OuvreBase("modfichier_shared/options_bois_pp")
+
+End
+
+Private Sub Construit(sT As String, vClient As Variant)
+
+  Dim hT As Ticpe
+
+  Try hT = New Ticpe(vClient)
+  If Error Then
+    TestKit.Check(sT, "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(sT, Object.IsValid(hT))
+  Endif
+
+End
+
+Public Sub T01Construction()
+
+  Construit("T01/code_existant", "411001")
+  Construit("T01/code_inexistant", "999999")
+  Construit("T01/result_cli", Utils.db.Exec("SELECT * FROM Fiches_Cli WHERE cli_code = &1", "411001"))
+  Construit("T01/result_adrliv", Utils.db.Exec("SELECT * FROM Fiches_AdrlivC"))
+  Construit("T01/null", Null)
+
+End
+
+Public Sub T02Fabrique()
+
+  Dim hT As Ticpe
+
+  Try hT = Ticpe("411001")
+  If Error Then
+    TestKit.Check("T02/code", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/code", Object.IsValid(hT))
+  Endif
+  Try hT = Ticpe(Null)
+  If Error Then
+    TestKit.Check("T02/null", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/null", Object.IsValid(hT))
+  Endif
+
+End
+
+Public Sub T03Proprietes()
+
+  Dim hT As Ticpe
+
+  hT = New Ticpe("411001")
+  TestKit.Check("T03/categorie", hT.categorie.Join("|"))
+  TestKit.Check("T03/date_null", IsNull(hT.date))
+  TestKit.Check("T03/NumAgri", hT.NumAgri)
+  TestKit.Check("T03/NumCarb", hT.NumCarb)
+  TestKit.Check("T03/region", hT.region)
+
+End

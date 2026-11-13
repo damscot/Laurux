@@ -1,0 +1,24 @@
+{
+ "id": "ETIQCASIER-T04",
+ "objet": "Mode liste : ajout, refus, cumul",
+ "classe": "Etiqcasier",
+ "description": "Liste cochée (table de travail Etiquettes) ; 004 (casier C1) ajouté ; 005 (art_etiq 0) : Message.Warning « Vous ne pouvez pas imprimer » (Espace) ; 004 de nouveau : Message.Warning « déjà saisit » bouton 1 « cumuler » (Espace, boîte ouverte par Entrée) → 2 ; Générer : PDF 004 x 2 ; « Traitement terminé » (Entrée).",
+ "dataset": "etiqart_shared/etiqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

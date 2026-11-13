@@ -1,0 +1,18 @@
+{
+ "id": "EDDOCS-T06",
+ "objet": "Détail des lignes",
+ "classe": "EdDocs",
+ "description": "RadioButton7 (détail Oui), RadioButton2 (commandes), Imprimer : lignes article et commentaire YY sur 2 lignes ; RadioButton3 (BL), Imprimer : lignes article seules.",
+ "dataset": "eddocs_shared/documents",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

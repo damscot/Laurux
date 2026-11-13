@@ -1,0 +1,26 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Identite 
+select code, rs_soc, nom, pnm, adr1, cd_ptl, ville from Fiches_Carte where code like  "%%" order by code
+SELECT code FROM Fiches_Carte order by code
+INSERT INTO Fiches_Carte (code,rs_soc,nom,pnm,adr1,adr2,cd_ptl,ville,email,tel_bur,tel_dom,tel_poste,pble,fx1,fx2, datec, datef, rem, promo, tp1, tp2, tg1, tg2, obs, cb, divers) VALUES ('000004', NULL, 'DUPONT', 'JEAN', NULL, NULL, '44000', 'NANTES', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '20180615', '20380615', 0, 0, '0', '0', '0', '0', NULL, '2999990000047', 0)
+SELECT * FROM Fiches_Cpostaux WHERE cp = '44000' and burdist = 'NANTES'
+INSERT INTO Fiches_Cpostaux(cp,burdist) VALUES ('44000', 'NANTES')
+select code, rs_soc, nom, pnm, adr1, cd_ptl, ville from Fiches_Carte where code like  "%%" order by code

@@ -1,0 +1,144 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+drop Table IF exists Paiements
+CREATE  TABLE Paiements(numero Char(10),type Char(15),montant Char(15),lind INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (lind)) ENGINE = InnoDB
+SELECT * FROM Fiches_Bl WHERE dtefac = '20180615'  Union SELECT * FROM Fiches_BlM WHERE dtefac = '20180615'  order by reg, numfac
+INSERT INTO Paiements (numero, type, montant) Values ('S00001', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00002', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00003', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00004', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00005', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00006', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00007', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00008', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00009', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00010', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00011', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00012', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00013', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00014', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00015', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00016', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00017', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00018', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00019', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00020', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00021', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00022', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00023', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00024', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00025', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00026', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00027', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00028', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00029', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00030', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00031', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00032', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00033', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00034', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00035', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00036', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00037', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00038', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00039', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00040', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00041', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00042', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00043', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00044', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00045', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00046', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00047', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00048', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00049', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00050', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00051', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00052', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00053', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00054', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00055', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00056', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00057', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00058', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00059', 'Cheque', '12')
+INSERT INTO Paiements (numero, type, montant) Values ('S00060', 'Cheque', '12')
+SELECT * FROM Paiements order by type, numero
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00001'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00001'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00002'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00002'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00003'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00003'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00004'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00004'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00005'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00005'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00006'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00006'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00007'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00007'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00008'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00008'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00009'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00009'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00010'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00010'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00011'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00011'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00012'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00012'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00013'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00013'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00014'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00014'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00015'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00015'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00016'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00016'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00017'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00017'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00018'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00018'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00019'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00019'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00020'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00020'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00021'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00021'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00022'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00022'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00023'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00023'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00024'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00024'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00025'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00025'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00026'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00026'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00027'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00027'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00028'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00028'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00029'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00029'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00030'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00030'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00031'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00031'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00032'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00032'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00033'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00033'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00034'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00034'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00035'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00035'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00036'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00036'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00037'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00037'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00038'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00038'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00039'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00039'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00040'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00040'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00041'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00041'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00042'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00042'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00043'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00043'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00044'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00044'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00045'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00045'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00046'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00046'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00047'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00047'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00048'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00048'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00049'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00049'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00050'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00050'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00051'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00051'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00052'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00052'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00053'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00053'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00054'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00054'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00055'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00055'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00056'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00056'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00057'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00057'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00058'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00058'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00059'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00059'
+SELECT * FROM Fiches_Bl WHERE numbl = 'S00060'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'S00060'

@@ -1,0 +1,23 @@
+{
+ "id": "EDPAIEMENT-T05",
+ "objet": "Aucune facture",
+ "classe": "Edpaiement",
+ "description": "Laurux01 sans facture : date du jour 15.06.2018, Imprimer : message « Aucun mouvement pour cette demande » (Entrée), pas de PDF ; table de travail Paiements recréée vide.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,30 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+select * from Fiches_Materiels where mat_code like  "%" order by cast(mat_code as char), cast(mat_serie as char)
+SELECT * FROM Fiches_Docactif where doc_type = 'Reception' and doc_num = NULL
+SELECT * FROM Fiches_Materiels where mat_serie = 'SN010' and mat_code = '002'
+SELECT * FROM Fiches_Fam WHERE code_fam = '01'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '1'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445710'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Art where art_code = '002'
+SELECT * FROM Fiches_Materiels where mat_code = '002' and mat_serie = 'SN010' 
+Update Fiches_Materiels set mat_serie = 'SN010', mat_code = '002',mat_design = 'Debroussailleuse',mat_design2 = NULL, mat_fam = '01',mat_four = '401001',mat_cequ = '401001',mat_cbarre = NULL,mat_cfour = NULL,mat_paht = 150,mat_frais = 15,mat_prvt = 165,mat_coef = 2.3743, mat_pvht = 391.77, mat_pvttc = 400,mat_eco = NULL,mat_cdarr = '0,01',mat_nbd = '2', mat_pmp = 200, mat_qte = '0', mat_vendu = 0, mat_marque = 'Stihl', mat_type = 'Debroussailleus', mat_matdiv = 0, mat_cli = NULL, mat_crst = NULL where mat_code = '002' and mat_serie = 'SN010'
+select * from Fiches_Materiels where mat_code like  "%" order by cast(mat_code as char), cast(mat_serie as char)

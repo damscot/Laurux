@@ -1,0 +1,24 @@
+{
+ "id": "EDART1-T02",
+ "objet": "Les 3 autres tris",
+ "classe": "EdArt1",
+ "description": "RadioButton2 (famille), Imprimer ; RadioButton3 (fournisseur), Imprimer ; RadioButton4 (désignation), Imprimer : les 3 textes PDF concaténés dans edition.txt.",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

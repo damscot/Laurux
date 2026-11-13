@@ -1,0 +1,100 @@
+#!/bin/sh
+# Faux curl (tests Laurux, phase 2). Laurux lit la sortie de curl (crédit et envoi de SMS Spot-Hit / Hosteur, adresse
+# WAN de Monip, type MIME d'un document GED distant) : ce faux programme ne fait aucun accès réseau, trace l'appel
+# dans $LAURUX_FACTICE_TRACE (défaut ~/tmp/outils.trace, format des faux binaires « curl [arg1] [arg2] ») et rend
+# une réponse fixe choisie d'après l'URL demandée :
+#   spot-hit.fr/api/credits        {"resultat":1,"premium":"10","lowcost":"20","mobile":"0"}
+#                                  clé (key=) contenant « refus » : {"resultat":0,"erreurs":"1"} (clé API refusée)
+#                                  clé contenant « zero »  : crédits premium et lowcost à 0
+#   spot-hit.fr/api/envoyer/sms    {"resultat":1,"id":"1"} ; clé contenant « refus » : {"resultat":0,"erreurs":"2"}
+#   sms.hosteur.com/api.php        OK ; login contenant « refus » : KO
+#   ifconfig.me                    203.0.113.10 (adresse de documentation, RFC 5737)
+#   http(s)://laurux_ged_test.fr/mime_file_test.{html,txt,pdf}
+#                                  document GED de test : fichier de ../ged/ (corps, ou fichier -o) ; -w
+#                                  %{content_type} : son type ; autre nom sur cet hôte : 404 (corps vide, type
+#                                  text/html, code 22 si -f)
+#   autre http(s)://…              -w avec %{content_type} (LGed, en-têtes seuls) : type déduit de l'extension de
+#                                  l'URL (pdf, png, jpg, gif, txt, csv, html ; sinon application/octet-stream) ;
+#                                  sans -w : page vide
+#   hôte contenant « absent »      code 6 « Could not resolve host » (serveur injoignable)
+# Les options de curl sont ignorées, sauf -w (format de sortie), -o (fichier du corps), -I (en-têtes seuls) et -f.
+trace="${LAURUX_FACTICE_TRACE:-$HOME/tmp/outils.trace}"
+mkdir -p "$(dirname "$trace")"
+{ printf 'curl'; for a in "$@"; do printf ' [%s]' "$a"; done; echo; } >> "$trace"
+
+url="" ; format="" ; sortie="" ; entetes="" ; echec=""
+ged="$(cd "$(dirname "$0")/../ged" 2>/dev/null && pwd)"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -w|--write-out) format="$2"; shift ;;
+    -o|--output) sortie="$2"; shift ;;
+    -I|--head) entetes=1 ;;
+    -f|--fail) echec=1 ;;
+    -*f*) case "$1" in --*) ;; *) echec=1 ;; esac ;;
+    -*) ;;
+    *) url="$1" ;;
+  esac
+  shift
+done
+
+hote="${url#*://}" ; hote="${hote%%/*}"
+case "$hote" in
+  *absent*) echo "curl: (6) Could not resolve host: $hote" >&2; exit 6 ;;
+esac
+
+corps="" ; fichier="" ; introuvable=""
+case "$url" in
+  http://laurux_ged_test.fr/*|https://laurux_ged_test.fr/*)
+    nom="${url##*/}"
+    case "$nom" in
+      mime_file_test.html|mime_file_test.txt|mime_file_test.pdf) fichier="$ged/$nom" ;;
+      *) introuvable=1 ;;
+    esac ;;
+esac
+case "$url" in
+  *spot-hit.fr/api/credits*)
+    case "$url" in
+      *key=*refus*) corps='{"resultat":0,"erreurs":"1"}' ;;
+      *key=*zero*)  corps='{"resultat":1,"premium":"0","lowcost":"0","mobile":"0"}' ;;
+      *)            corps='{"resultat":1,"premium":"10","lowcost":"20","mobile":"0"}' ;;
+    esac ;;
+  *spot-hit.fr/api/envoyer/sms*)
+    case "$url" in
+      *key=*refus*) corps='{"resultat":0,"erreurs":"2"}' ;;
+      *)            corps='{"resultat":1,"id":"1"}' ;;
+    esac ;;
+  *sms.hosteur.com/api.php*)
+    case "$url" in
+      *login=*refus*) corps='KO' ;;
+      *)              corps='OK' ;;
+    esac ;;
+  *ifconfig.me*) corps='203.0.113.10' ;;
+esac
+
+if [ -n "$introuvable" ] && [ -n "$echec" ]; then
+  echo "curl: (22) The requested URL returned error: 404" >&2; exit 22
+fi
+if [ -n "$fichier" ] && [ -z "$entetes" ]; then
+  if [ -n "$sortie" ]; then [ "$sortie" = "/dev/null" ] || cat "$fichier" > "$sortie"; else cat "$fichier"; fi
+elif [ -n "$sortie" ]; then
+  [ "$sortie" = "/dev/null" ] || printf '%s\n' "$corps" > "$sortie"
+elif [ -n "$corps" ]; then
+  printf '%s\n' "$corps"
+fi
+
+if [ -n "$format" ]; then
+  case "$url" in
+    *laurux_ged_test.fr/*) case "$fichier" in *.pdf) type="application/pdf" ;; *.txt) type="text/plain" ;; *) type="text/html" ;; esac ;;
+    *.pdf|*.PDF) type="application/pdf" ;;
+    *.png|*.PNG) type="image/png" ;;
+    *.jpg|*.jpeg|*.JPG|*.JPEG) type="image/jpeg" ;;
+    *.gif|*.GIF) type="image/gif" ;;
+    *.txt|*.TXT) type="text/plain" ;;
+    *.csv|*.CSV) type="text/csv" ;;
+    *.html|*.htm|*/) type="text/html" ;;
+    *) type="application/octet-stream" ;;
+  esac
+  # %{content_type} et \n (seules séquences employées par Laurux)
+  printf '%s' "$format" | sed "s#%{content_type}#$type#g; s#\\\\n#\n#g"
+fi
+exit 0

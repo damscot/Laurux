@@ -1,0 +1,25 @@
+{
+ "classe": "Imp_Bilan",
+ "dataset": "imp_bilan_perf",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/BilanDetail.csv",
+  "tmp/BilanRub.csv",
+  "edition.txt"
+ ],
+ "id": "IMP_BILAN-T10",
+ "objet": "Performance (bilan E1, ~1 000 écritures)",
+ "description": "Jeu imp_bilan_perf (1 000 lignes d'écritures 2018 dans Fiches_Mvt, 200 lignes 2017 dans Fiches_Mvt1, comptes de bilan de Laurux01, une écriture non validée sur 97, généré par gen_imp_bilan_perf.py dans ce répertoire) : Impressions comptables (RubImp, Menu124), Bilan, E1, Imprimer, Message.Info (Entrée) ; texte du PDF (edition.txt), BilanDetail.csv, BilanRub.csv et tables centralisation/Comptes comparés ; durée mesurée (code Gambas et format des requêtes, pas MariaDB) ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ }
+}

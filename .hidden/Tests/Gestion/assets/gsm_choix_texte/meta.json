@@ -1,0 +1,25 @@
+{
+ "id": "GSM-T02",
+ "objet": "Choix d'un texte prédéfini",
+ "classe": "Gsm",
+ "description": "Menu319 (SMS, envoi unique, New Gsm(\"\")), jeu sms_shared/sms_textes : bouton liste (ToggleButton4), clic sur 02 (Colcol_Click : Comcode et Intitule remplis), Quitter. Lecture seule.",
+ "dataset": "sms_shared/sms_textes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/Sms": 1,
+  "/Soc01/Support": "1- Gammu",
+  "/Smtp": "smtp.test",
+  "/Port": "25",
+  "/Adrmail": "test@test.fr"
+ },
+ "compare_sql_log": "ordered"
+}

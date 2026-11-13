@@ -1,0 +1,18 @@
+{
+ "id": "EDFAM-T01",
+ "objet": "Plage par défaut",
+ "classe": "EdFam",
+ "description": "Gestion > Impression des tables > Familles ; plage 00000 à ZZZZZ, Imprimer : texte de ~/tmp/Familles.pdf (5 familles de Laurux01).",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

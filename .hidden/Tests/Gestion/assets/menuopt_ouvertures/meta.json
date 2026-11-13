@@ -1,0 +1,22 @@
+{
+ "id": "MENUOPT-T02",
+ "objet": "Ouverture des écrans des menus d'option",
+ "classe": "menuopt",
+ "description": "Options bois et pp actives (conf), jeu modfichier_shared/options_bois_pp : menus dynamiques Fichiers > Constantes > Régie (Tregie), Tipp régionale (Tregion), Consignes (Tconsigne) ouverts puis fermés ; aucune écriture, lectures comparées (sql.log ordonné). Non couverts : Tarif fioul (Ttarfioul lit ses couleurs dans Settings, vide sous le harnais), entrées de stock (Caleditcmat modal, Saisiedecons, Edconsigne, atribvignette, édition TIPP).",
+ "dataset": "modfichier_shared/options_bois_pp",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/bois": -1,
+  "/Soc01/pp": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

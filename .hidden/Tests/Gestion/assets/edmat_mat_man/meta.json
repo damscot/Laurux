@@ -1,0 +1,25 @@
+{
+ "id": "EDMAT-T08",
+ "objet": "Saisie manuelle du materiel",
+ "classe": "EdMat",
+ "description": "Jeu edmat_base : Menu289, Mat vide puis M0003 + Entree (trouve par mat_code, focus Mat2), Imprimer (plage M0003-ZZZZZ) ; puis Mat = XX + Entree : code inconnu, 4e requete sur mat_refcentrale (colonne inexistante, EDMAT-A02 figee). Erreur non interceptee DB_Connection.Exec (Unknown column mat_refcentrale) : code de sortie 125 fige.",
+ "dataset": "edmat_shared/edmat_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

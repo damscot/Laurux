@@ -1,0 +1,17 @@
+{
+ "id": "EDRUP-T07",
+ "objet": "Fournisseur inconnu",
+ "classe": "EdRup",
+ "description": "Jeu edrup_base : Menu253, Four = Four2 = 40100099 (code absent de Fiches_Four) saisis + Entree : aucun message (EDRUP-A02 figee) ; Imprimer : filtre four = 40100099, message Aucun article pour cette demande (Entree). (TriCpt annule non rejoue : grille TriGen.)",
+ "dataset": "edrup_shared/edrup_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

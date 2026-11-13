@@ -1,0 +1,77 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Corsage where acode = 'G403         '
+insert into Corsage (acode, ncode) values ( 'G403         ','401027')
+SELECT * FROM Fiches_Cli where cli_code = '401027'
+SELECT dnf FROM Fiches_Parametres
+INSERT INTO Fiches_Four (fo_code,fo_rs_soc,fo_nom,fo_pnm,fo_adr1,fo_adr2,fo_cd_ptl,fo_ville,fo_email,fo_tel_std,fo_tel_bur,fo_tel_post,fo_pble,fo_fx1,fo_fx2,fo_obs,fo_cd_bq,fo_cd_gch,fo_num_cpt,fo_cle_rib,fo_dom,fo_id_tva,fo_cd_cli,fo_collectif, fo_site, fo_cdech, fo_pays, fo_franco, fo_centrale, fo_ccentrale, fo_copie) VALUES ('401027',NULL,'Fournisseur 403         ',NULL,'9 rue G                 ','                        ','75001   ','Paris',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'G403         ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'401000',NULL, NULL, NULL, 0, 0, NULL, 0)
+insert into Fiches_Comptes (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep) values ( '401027','Fournisseur 403         ','F',0,'401000',0,0,0,0,0,0)
+Update Fiches_Parametres set dnf = '401027'
+SELECT * FROM Corsage where acode = 'G401         '
+insert into Corsage (acode, ncode) values ( 'G401         ','401028')
+SELECT * FROM Fiches_Cli where cli_code = '401028'
+SELECT dnf FROM Fiches_Parametres
+INSERT INTO Fiches_Four (fo_code,fo_rs_soc,fo_nom,fo_pnm,fo_adr1,fo_adr2,fo_cd_ptl,fo_ville,fo_email,fo_tel_std,fo_tel_bur,fo_tel_post,fo_pble,fo_fx1,fo_fx2,fo_obs,fo_cd_bq,fo_cd_gch,fo_num_cpt,fo_cle_rib,fo_dom,fo_id_tva,fo_cd_cli,fo_collectif, fo_site, fo_cdech, fo_pays, fo_franco, fo_centrale, fo_ccentrale, fo_copie) VALUES ('401028',NULL,'Fournisseur 401         ',NULL,'10 rue G                ','                        ','69001   ','Lyon',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'G401         ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'401000',NULL, NULL, NULL, 0, 0, NULL, 0)
+insert into Fiches_Comptes (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep) values ( '401028','Fournisseur 401         ','F',0,'401000',0,0,0,0,0,0)
+Update Fiches_Parametres set dnf = '401028'
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Nvcompte
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+SELECT * FROM Fiches_Comptes Where compte_cc = '403000  '
+INSERT INTO Fiches_Comptes(compte_cc, intitule_cc, type_cc, coll, cent_cc, comptr_cc, gen_tv, gen_ta, solde, soldep) VALUES ('403000  ', ' ', 'B', 0, 0, '0', 0, 0, 0, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+SELECT * FROM Nvcompte
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+UPdate Fiches_Parametres set numecriture = 1
+SELECT * FROM Fiches_Mvt Where compte = '606100  ' and numdoc = '2101' and jour = '60' and libelle = 'Achat G403                1'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('60', 1, '606100  ', NULL, '20180312', '2101', '2101', 'Achat G403                1', '               70.00', '0', 1, 0, 0, 0, 0, 1, 0, '20180312')
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+UPdate Fiches_Comptes set solde = 70 Where compte_cc = '606100  '
+SELECT * FROM Corsage Where acode = 'G403    '
+SELECT * FROM Fiches_Mvt Where compte = '401027' and numdoc = '2101' and jour = '60' and libelle = 'Achat G403                2'
+SELECT * FROM Fiches_Comptes Where compte_cc = '401027'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('60', 1, '401000', '1', NULL, '20180312', '2101', '2', 'Achat G403                2', '0', '               70.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '401000'
+UPdate Fiches_Comptes set solde = -70 Where compte_cc = '401000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('60', 1, '401027', NULL, '20180312', '2101', '2101', 'Achat G403                2', '0', '               70.00', 1, 0, 0, 0, 0, 1, 0, '20180312')
+SELECT * FROM Fiches_Comptes Where compte_cc = '401027'
+UPdate Fiches_Comptes set solde = -70 Where compte_cc = '401027'
+UPdate Fiches_Parametres set numecriture = 2
+SELECT * FROM Fiches_Mvt Where compte = '606100  ' and numdoc = '2102' and jour = '60' and libelle = 'Achat G401                3'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('60', 2, '606100  ', NULL, '20180313', '2102', '2102', 'Achat G401                3', '               80.00', '0', 1, 0, 0, 0, 0, 1, 0, '20180313')
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+UPdate Fiches_Comptes set solde = 150 Where compte_cc = '606100  '
+SELECT * FROM Corsage Where acode = 'G401    '
+SELECT * FROM Fiches_Mvt Where compte = '401028' and numdoc = '2102' and jour = '60' and libelle = 'Achat G401                4'
+SELECT * FROM Fiches_Comptes Where compte_cc = '401028'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('60', 2, '401000', '1', NULL, '20180313', '2102', '4', 'Achat G401                4', '0', '               80.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '401000'
+UPdate Fiches_Comptes set solde = -150 Where compte_cc = '401000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('60', 2, '401028', NULL, '20180313', '2102', '2102', 'Achat G401                4', '0', '               80.00', 1, 0, 0, 0, 0, 1, 0, '20180313')
+SELECT * FROM Fiches_Comptes Where compte_cc = '401028'
+UPdate Fiches_Comptes set solde = -80 Where compte_cc = '401028'

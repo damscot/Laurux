@@ -1,0 +1,111 @@
+' Gambas test file
+
+''Tests de Portable (.hidden/reference/.src/Gestion/Lcr/Portables/Portable.module/test.md, PORTABLE-T01 à T05).
+''HOME de test : ~/Portable/inventaire.txt écrit par le test, ~/tmp créé ; table de travail Etiquettes créée comme
+''dans Etiqart.liste_Click (code Char(15) clé primaire, nombre integer).
+''T04 sans ~/tmp reste à faire : le Message.Error du Catch bloque gb.test.
+''Valeurs attendues : assets/PortableTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ImportNominal", "Import étiquettes : 3 lignes connues (code-barres et code article)")
+  TestKit.Desc("T02Rejets", "Code-barres inconnu et ligne ;5 sans code-barres après une ligne valide")
+  TestKit.Desc("T03CumulCpt2", "Trois imports successifs (rejet, rejet, sans rejet) : cumul de cpt2")
+  TestKit.Desc("T04FichierAbsent", "Pas de inventaire.txt (~/tmp présent) : aucun effet")
+  TestKit.Desc("T05OrgCasier", "Org = Casier : ImpT.txt vidé, base inchangée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "PortableTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Prepare(sContenu As String)
+
+  Try Mkdir User.Home &/ "Portable"
+  Try Mkdir User.Home &/ "tmp"
+  Try Kill User.Home &/ "Portable/inventaire.txt"
+  If sContenu <> "-" Then File.Save(User.Home &/ "Portable/inventaire.txt", sContenu)
+  Utils.db.Exec("drop Table IF exists Etiquettes")
+  Utils.db.Exec("CREATE TABLE Etiquettes (code Char(15) NOT NULL, nombre integer, PRIMARY KEY (code))" & Utils.db.Engine())
+
+End
+
+Private Sub Import(sCle As String, sOrg As String)
+
+  Try Portable.Import(sOrg)
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+
+End
+
+Private Sub Etat(sCle As String)
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT code, nombre FROM Etiquettes ORDER BY code")
+  If r.Available Then
+    Repeat
+      s &= r!code & "=" & r!nombre & " "
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/etiquettes", Trim(s))
+  TestKit.Check(sCle & "/cpt2", Portable.cpt2)
+  If Exist(User.Home &/ "tmp/ImpT.txt") Then
+    TestKit.Check(sCle & "/ImpT", Replace(File.Load(User.Home &/ "tmp/ImpT.txt"), "\n", "|"))
+  Else
+    TestKit.Check(sCle & "/ImpT", "<fichier absent>")
+  Endif
+
+End
+
+Public Sub T01ImportNominal()
+
+  Prepare("2148413200001;2\n2640636100002;3\n003;1\n")
+  Import("T01", "Etiq")
+  Etat("T01")
+
+End
+
+Public Sub T02Rejets()
+
+  Prepare("2148413200001;2\n9999999999999;4\n;5\n")
+  Import("T02", "Etiq")
+  Etat("T02")
+
+End
+
+Public Sub T03CumulCpt2()
+
+  Prepare("9999999999999;1\n")
+  Import("T03/1", "Etiq")
+  Etat("T03/1")
+  Prepare("8888888888888;1\n")
+  Import("T03/2", "Etiq")
+  Etat("T03/2")
+  Prepare("2148413200001;2\n")
+  Import("T03/3", "Etiq")
+  Etat("T03/3")
+
+End
+
+Public Sub T04FichierAbsent()
+
+  Prepare("-")
+  Import("T04", "Etiq")
+  Etat("T04")
+
+End
+
+Public Sub T05OrgCasier()
+
+  Prepare("2148413200001;2\n")
+  File.Save(User.Home &/ "tmp/ImpT.txt", "ancien contenu\n")
+  Import("T05", "Casier")
+  Etat("T05")
+
+End

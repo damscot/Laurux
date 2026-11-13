@@ -1,0 +1,23 @@
+{
+ "id": "EDMO-T01",
+ "objet": "Liste complète par code",
+ "classe": "Edmo",
+ "description": "Bornes par défaut (00000 à ZZZZZ), tri par code, Imprimer : texte du PDF (HT = mo_valeurht ou mo_txht x mo_montant, TTC recalculé avec le taux de Fiches_Tvaav, code TVA 9 inconnu).",
+ "dataset": "edmo_shared/edmo_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

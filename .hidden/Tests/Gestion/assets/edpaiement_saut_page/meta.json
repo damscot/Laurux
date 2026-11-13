@@ -1,0 +1,23 @@
+{
+ "id": "EDPAIEMENT-T07",
+ "objet": "Saut de page",
+ "classe": "Edpaiement",
+ "description": "60 règlements par chèque le 15/06/2018 : pages successives, en-tête répété (texte du PDF).",
+ "dataset": "edpaiement_soixante",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

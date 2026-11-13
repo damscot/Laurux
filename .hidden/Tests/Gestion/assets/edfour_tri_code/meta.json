@@ -1,0 +1,18 @@
+{
+ "id": "EDFOUR-T01",
+ "objet": "Tri par code",
+ "classe": "EdFour",
+ "description": "Gestion > Impression des tables > Fournisseurs (fenêtre EDfour) ; plage par défaut, Imprimer : texte de ~/tmp/Fours.pdf, tri par fo_code.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

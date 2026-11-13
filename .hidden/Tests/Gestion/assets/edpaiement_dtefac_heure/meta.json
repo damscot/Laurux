@@ -1,0 +1,23 @@
+{
+ "id": "EDPAIEMENT-T06",
+ "objet": "dtefac avec heure",
+ "classe": "Edpaiement",
+ "description": "Facture de caisse F00103 (dtefac 15/06/2018 10:30) absente de l'édition (égalité stricte sur la date à minuit, A01 figée) ; seule F00101 imprimée.",
+ "dataset": "edpaiement_heure",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

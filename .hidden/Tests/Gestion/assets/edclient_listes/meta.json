@@ -1,0 +1,18 @@
+{
+ "id": "EDCLIENT-T05",
+ "objet": "Listes de sélection",
+ "classe": "EdClient",
+ "description": "ToggleButton1 → Colcli 411102 ; ToggleButton2 → 411110 ; ToggleButton3 → statut P2 ; ToggleButton4 → P2 ; ToggleButton5 → type 01 ; ToggleButton6 → 01 ; Imprimer : clients 411102 à 411110 de statut P2 et type 01.",
+ "dataset": "edclient_shared/clients",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

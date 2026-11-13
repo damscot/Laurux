@@ -1,0 +1,22 @@
+{
+ "id": "EDART1-T07",
+ "objet": "Saisie manuelle d'article",
+ "classe": "EdArt1",
+ "description": "Art = 110 (Entrée) : code existant, focus Art2 ; Art2 = QQQ (Entrée) : contrôle fait sur Art.Text (anomalie EDART1-A02 figée), pas de message ; Art = QQQ (Entrée) : 4 SELECT (code, art_cfour, art_cbarre, art_refcentrale) puis Message.Warning « Cette référence n'existe pas » (Entrée).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

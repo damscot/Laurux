@@ -1,0 +1,16 @@
+{
+ "id": "EDART1-T06",
+ "objet": "Aucun article",
+ "classe": "EdArt1",
+ "description": "Art = ZZZZY (sans Entrée), Art2 = ZZZZZ par défaut, Imprimer : message « Aucun article pour cette demande » (bouton OK, Entrée), pas de PDF ; sql.log comparé.",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [],
+ "compare_sql_log": "ordered"
+}

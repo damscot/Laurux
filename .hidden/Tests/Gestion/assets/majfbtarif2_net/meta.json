@@ -1,0 +1,17 @@
+{
+ "id": "MAJFBTARIF2-T03",
+ "objet": "Mise à jour en mode prix net",
+ "classe": "MajFbtarif2",
+ "description": "Tnet ; 002 avec taux de conversion 1,5 et frais 0,40 ; Val sans cpoint sur un décimal (« 1.5 », « 0.4 ») : Prix_achat lève une erreur pour chaque article (Catch, message.Error acquitté par Entrée), prix NULL ou partiels figés ; boîtes : verrouillage, 3 erreurs, « Traitement terminé » (5 × Entrée).",
+ "dataset": "majfbtarif2_shared/majfbtarif2_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "id": "EDART3-T01",
+ "objet": "Tarif d'un type client avec coefficients",
+ "classe": "EdArt3",
+ "description": "Tarif > Type client ; Cdt = 01 (Entrée : libellé Macon, coefficients présents), Art2 = 120 (1 page), Imprimer : titre « Type = 01 Macon » ; coefficient 1,250/1,400 pour les familles 01/02, art_coef pour 03 ; PV HT = art_pvht (A01 figée) ; une requête Fiches_CoeffTypec par article.",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

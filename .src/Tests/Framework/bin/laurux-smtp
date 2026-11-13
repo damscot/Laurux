@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+"""Faux serveur SMTP des tests Laurux (phase 2) : valide l'usage du courrier par Laurux (adresse d'origine,
+destinataires, objet, texte, pièces jointes), sans serveur de messagerie réel. SmtpClient (gb.net.smtp) s'exécute
+dans le processus Gambas et ne peut pas être remplacé par un faux programme du PATH : ce script écoute donc sur
+127.0.0.1 (port libre), comme laurux-ftp. Les identifiants (AUTH) sont acceptés sans contrôle et ne sont pas tracés.
+Pas de chiffrement : la configuration de test utilise /Secumail = "Sans".
+
+Usage : laurux-smtp --dir DIR --trace FICHIER --port-file FICHIER [--mode ok|refus] [--duree S]
+  --dir        messages reçus, tels quels : DIR/1.eml, DIR/2.eml…
+  --trace      résumé stable de chaque message (comparable d'un rejeu à l'autre : ni date, ni Message-ID, ni
+               séparateur MIME) : enveloppe (MAIL FROM, RCPT TO, donc aussi les copies cachées), en-têtes From, To,
+               Cc, Reply-To, Subject (décodés), parties texte, pièces jointes (nom, type, taille, md5)
+  --port-file  port d'écoute, écrit une fois le serveur prêt
+  --mode       ok (défaut) ; refus : authentification refusée (535) et envoi refusé (530)
+  --duree      arrêt automatique après S secondes (défaut 120 ; garde-fou si l'appelant ne l'arrête pas)
+"""
+import argparse
+import email
+import email.header
+import email.policy
+import hashlib
+import os
+import socketserver
+import threading
+
+p = argparse.ArgumentParser()
+p.add_argument("--dir", required=True)
+p.add_argument("--trace", required=True)
+p.add_argument("--port-file", required=True)
+p.add_argument("--mode", default="ok", choices=("ok", "refus"))
+p.add_argument("--duree", type=float, default=120)
+A = p.parse_args()
+VERROU = threading.Lock()
+NUMERO = [0]
+
+
+def trace(lignes):
+    with VERROU, open(A.trace, "a", encoding="utf-8") as f:
+        f.write("\n".join(lignes) + "\n")
+
+
+def decode(valeur):
+    if valeur is None:
+        return ""
+    return str(email.header.make_header(email.header.decode_header(str(valeur)))).replace("\r", "").replace("\n", " ")
+
+
+def resume(numero, expediteur, destinataires, brut):
+    msg = email.message_from_bytes(brut, policy=email.policy.compat32)
+    lignes = [f"--- message {numero} ({numero}.eml)",
+              f"enveloppe : de <{expediteur}> à " + ", ".join(f"<{d}>" for d in destinataires)]
+    for cle, nom in (("From", "De"), ("To", "À"), ("Cc", "Cc"), ("Reply-To", "Répondre à"), ("Subject", "Objet")):
+        if msg.get(cle) is not None:
+            lignes.append(f"{nom} : {decode(msg.get(cle))}")
+    for partie in msg.walk():
+        if partie.is_multipart():
+            continue
+        contenu = partie.get_payload(decode=True) or b""
+        nom = partie.get_filename()
+        type_ = partie.get_content_type()
+        if nom or not type_.startswith("text/"):
+            lignes.append(f"pièce jointe : {decode(nom) or '(sans nom)'} ({type_}, {len(contenu)} octets, "
+                          f"md5 {hashlib.md5(contenu).hexdigest()})")
+        else:
+            texte = contenu.decode(partie.get_content_charset() or "utf-8", "replace").replace("\r\n", "\n")
+            lignes.append(f"partie {type_} :")
+            lignes += ["  " + l for l in texte.rstrip("\n").split("\n")]
+    return lignes
+
+
+class Session(socketserver.StreamRequestHandler):
+    def repond(self, texte):
+        self.wfile.write((texte + "\r\n").encode("utf-8"))
+
+    def ligne(self):
+        brut = self.rfile.readline()
+        return None if not brut else brut.decode("utf-8", "replace").rstrip("\r\n")
+
+    def handle(self):
+        expediteur, destinataires, autorise = None, [], A.mode == "ok"
+        self.repond("220 laurux-smtp pret")
+        while True:
+            ligne = self.ligne()
+            if ligne is None:
+                return
+            cmd, _, arg = ligne.partition(" ")
+            cmd = cmd.upper()
+            if cmd == "EHLO":
+                self.repond("250-laurux-smtp")
+                self.repond("250-AUTH PLAIN LOGIN")
+                self.repond("250-8BITMIME")
+                self.repond("250 SIZE 52428800")
+            elif cmd == "HELO":
+                self.repond("250 laurux-smtp")
+            elif cmd == "AUTH":
+                mecanisme = arg.split(" ")[0].upper()
+                if mecanisme == "LOGIN":
+                    self.repond("334 VXNlcm5hbWU6")
+                    self.ligne()
+                    self.repond("334 UGFzc3dvcmQ6")
+                    self.ligne()
+                elif mecanisme == "PLAIN" and " " not in arg:
+                    self.repond("334 ")
+                    self.ligne()
+                if A.mode == "refus":
+                    trace([f"AUTH {mecanisme} refusée"])
+                    self.repond("535 authentification refusee")
+                else:
+                    self.repond("235 authentifie")
+            elif cmd == "MAIL":
+                if not autorise:
+                    trace(["MAIL refusé (mode refus)"])
+                    self.repond("530 authentification requise")
+                    continue
+                expediteur, destinataires = arg.partition(":")[2].strip().split(" ")[0].strip("<>"), []
+                self.repond("250 ok")
+            elif cmd == "RCPT":
+                destinataires.append(arg.partition(":")[2].strip().split(" ")[0].strip("<>"))
+                self.repond("250 ok")
+            elif cmd == "DATA":
+                self.repond("354 fin par <CRLF>.<CRLF>")
+                corps = []
+                while True:
+                    l = self.rfile.readline()
+                    if not l or l in (b".\r\n", b".\n"):
+                        break
+                    corps.append(l[1:] if l.startswith(b"..") else l)
+                brut = b"".join(corps)
+                with VERROU:
+                    NUMERO[0] += 1
+                    numero = NUMERO[0]
+                with open(os.path.join(A.dir, f"{numero}.eml"), "wb") as f:
+                    f.write(brut)
+                trace(resume(numero, expediteur, destinataires, brut))
+                self.repond("250 ok message recu")
+            elif cmd in ("RSET", "NOOP"):
+                self.repond("250 ok")
+            elif cmd == "QUIT":
+                self.repond("221 au revoir")
+                return
+            else:
+                self.repond("502 commande non geree")
+
+
+class Serveur(socketserver.ThreadingTCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+os.makedirs(A.dir, exist_ok=True)
+srv = Serveur(("127.0.0.1", 0), Session)
+threading.Timer(A.duree, srv.shutdown).start()
+with open(A.port_file + ".tmp", "w") as f:
+    f.write(str(srv.server_address[1]))
+os.replace(A.port_file + ".tmp", A.port_file)
+srv.serve_forever()

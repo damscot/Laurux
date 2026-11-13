@@ -1,0 +1,23 @@
+{
+ "id": "EDRUP-T06",
+ "objet": "Aucune donnee",
+ "classe": "EdRup",
+ "description": "Base Laurux01 (aucune commande fournisseur ni client) : Menu253, Imprimer : tables Rupture/RuptureC vides, message Aucun article pour cette demande (OK, Entree), pas de PDF. Avec le jeu edrup_base et une plage fournisseur sans commande, les commandes clients remplissent quand meme Rupture et un PDF sans ligne est produit (pas de message).",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 2500,
+  "fenetre": 1000
+ }
+}

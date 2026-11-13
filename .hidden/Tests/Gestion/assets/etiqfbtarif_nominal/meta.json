@@ -1,0 +1,24 @@
+{
+ "id": "ETIQFBTARIF-T01",
+ "objet": "Impression nominale, tri fournisseur, prix brut",
+ "classe": "Etiqfbtarif",
+ "description": "Menu Gestion › Étiquettes › Futures bases tarif (Menu242) ; date 15.06.2018 ; modèle 2 - Gondole (index 1) ; tri fournisseur, prix brut, prix TTC au kg/l (défauts) ; Générer ; « Traitement terminé » (Entrée) ; texte du PDF (prix recalculés, arrondis 0,05 / 0,10 / 0,50 / 1,00 / vide : couvre aussi T03). L'article 012 (autre date) est exclu.",
+ "dataset": "etiqfbtarif_shared/etiqfbtarif_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

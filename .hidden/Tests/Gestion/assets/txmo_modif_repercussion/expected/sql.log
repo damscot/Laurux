@@ -1,0 +1,32 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Txtmo order by code_txtmo
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = '706100'
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = '706100'
+SELECT * FROM Fiches_Txtmo WHERE code_txtmo = '1'
+UPdate  Fiches_Txtmo  SET  code_txtmo = '1' , libell_txtmo = 'Mecanique T1' , compt_txtmo = '706100', tx_txtmo = 30, prvt_txtmo = 15 WHERE code_txtmo = '1'
+SELECT * FROM Fiches_Mo WHERE mo_txcd = '1'
+select * from Fiches_Mo where mo_code = '01'
+UPdate  Fiches_Mo  SET  mo_txht = 30, mo_prvt = 15, mo_marge = 15 where mo_code = '01'
+select * from Fiches_Mo where mo_code = '04'
+UPdate  Fiches_Mo  SET  mo_txht = 30, mo_prvt = 15, mo_marge = 17.5 where mo_code = '04'
+select * from Fiches_Mo where mo_code = '05'
+UPdate  Fiches_Mo  SET  mo_txht = 30, mo_prvt = 15, mo_marge = 18 where mo_code = '05'
+SELECT * FROM Fiches_Txtmo order by code_txtmo

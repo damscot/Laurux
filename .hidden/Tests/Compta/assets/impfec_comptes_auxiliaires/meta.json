@@ -1,0 +1,14 @@
+{
+ "id": "IMPFEC-T05",
+ "objet": "Comptes auxiliaires et correspondances",
+ "classe": "impfec",
+ "description": "Import fichier FEC (Menuimpfec) ; fichier produit par impfec_shared/gen_fec.py, déposé en ~/fec.txt par entrees ; sélection dans FileChooser1 par Focus puis frappe « fec.txt » et Entrée ; fec_aux (CompAuxNum 1 court, 123456 trop long, AB1 non numérique sur journal VT), jeu impfec_shared/impfec_corresp (Ciel_Lrx : 123456 → 411002, AB1 → 411003 ; Ciel_Lrx_Jo : VT → 70) ; Comptes tiers nb caractères : Focus, BackSpace, 3, Entrée (Textcrt) ; Traitement : contrôle en échec constaté dans ref (Calcsolde non ouvert, rien importé ; message de TextArea1 non comparé, cause à confirmer) ; Quitter.",
+ "dataset": "impfec_shared/impfec_corresp",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "entrees": {
+  "impfec_shared/fec_aux.txt": "~/fec.txt"
+ }
+}

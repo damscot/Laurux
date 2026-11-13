@@ -1,0 +1,18 @@
+{
+ "id": "CONSULTART-T03",
+ "objet": "Fiche résumée : familles en défaut",
+ "classe": "ConsultArt",
+ "description": "Jeu consultart_familles : clic ligne 3 (006, famille F8 dont le code TVA 8 n'existe pas : message « Cette famille n'existe pas », A04 figée) puis ligne 4 (007, famille F9 dont le compte de TVA 445799 n'existe pas : message « compte de tva »), chaque Message.Warning validé par Entrée. Lecture seule (sql.log ordonné).",
+ "dataset": "consultart_familles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

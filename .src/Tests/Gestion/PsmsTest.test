@@ -1,0 +1,40 @@
+' Gambas test file
+
+''Tests de Psms (.hidden/reference/.src/Gestion/SMS/Psms.class/test.md, PSMS-T01).
+''Valeurs attendues : assets/PsmsTest/expected.txt, produites dans le clone de référence.
+''Psms n'est ouvert par aucun écran (recherche statique faite lors de l'écriture du test) ; sa table Fiches_Psms
+''n'existe pas dans Laurux01 : Form_Open n'est pas appelé (DB_Connection.Exec afficherait un Message.Error).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PsmsMort", "Formulaire inaccessible : table Fiches_Psms absente de Laurux01, fenêtre instanciable sans affichage")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "PsmsTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T01PsmsMort()
+
+  Dim rResult As Result
+  Dim hF As Psms
+
+  rResult = Utils.db.Exec("SHOW TABLES LIKE 'Fiches_Psms'")
+  TestKit.Check("T01/table_Fiches_Psms", rResult.Count)
+  rResult = Utils.db.Exec("SHOW TABLES LIKE 'Fiches_Sms'")
+  TestKit.Check("T01/table_Fiches_Sms", rResult.Count)
+  Try hF = New Psms
+  If Error Then
+    TestKit.Check("T01/instanciation", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T01/instanciation", Object.Type(hF))
+    TestKit.Check("T01/support", Object.GetProperty(hF.Controls["Support"], "Text"))
+    Object.Lock(hF)
+  Endif
+
+End

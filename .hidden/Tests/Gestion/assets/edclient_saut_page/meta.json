@@ -1,0 +1,18 @@
+{
+ "id": "EDCLIENT-T06",
+ "objet": "Saut de page avec mode de règlement",
+ "classe": "EdClient",
+ "description": "Mreg = Chèque : 23 clients (> 21), Imprimer : page 2 titrée « Liste des clients » sans le mode (A03 figée).",
+ "dataset": "edclient_shared/clients",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

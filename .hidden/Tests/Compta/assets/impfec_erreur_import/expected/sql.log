@@ -1,0 +1,71 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+CREATE TABLE Ciel_Lrx (Cciel Char(15),Intitule Char(30), Clrx Char(10), PRIMARY KEY (Cciel)) ENGINE = InnoDB
+CREATE TABLE Ciel_Lrx_Jo (Cciel Char(10),Intitule Char(30), Clrx Char(2), PRIMARY KEY (Cciel)) ENGINE = InnoDB
+SELECT imp_ciel FROM Fiches_Parametres
+ALTER TABLE Fiches_Parametres ADD (imp_ciel char(1))
+SELECT imp_ciel FROM Fiches_Parametres
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='70'
+SELECT * FROM Fiches_Journaux WHERE code_jo='70'
+SELECT * FROM Ciel_Lrx where Cciel='707000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc='707000'
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='70'
+SELECT * FROM Fiches_Journaux WHERE code_jo='70'
+SELECT * FROM Ciel_Lrx where Cciel='445710'
+SELECT * FROM Fiches_Comptes WHERE compte_cc='445710'
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='70'
+SELECT * FROM Fiches_Journaux WHERE code_jo='70'
+SELECT * FROM Ciel_Lrx where Cciel='411001'
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411001'
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='60'
+SELECT * FROM Fiches_Journaux WHERE code_jo='60'
+SELECT * FROM Ciel_Lrx where Cciel='606100'
+SELECT * FROM Fiches_Comptes WHERE compte_cc='606100'
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='60'
+SELECT * FROM Fiches_Journaux WHERE code_jo='60'
+SELECT * FROM Ciel_Lrx where Cciel='401001'
+SELECT * FROM Fiches_Comptes WHERE compte_cc='401001'
+LOCK TABLES Fiches_Mvt WRITE, Fiches_Comptes WRITE, Fiches_Parametres WRITE
+Create Fiches_Mvt
+SELECT numecriture FROM Fiches_Parametres
+UPDATE Fiches_Parametres SET numecriture=1
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='70'
+SELECT * FROM Ciel_Lrx WHERE Cciel='707000'
+SELECT coll_cc FROM Fiches_Comptes WHERE compte_cc='707000'
+Create Fiches_Mvt
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='70'
+SELECT * FROM Ciel_Lrx WHERE Cciel='445710'
+SELECT coll_cc FROM Fiches_Comptes WHERE compte_cc='445710'
+Create Fiches_Mvt
+SELECT * FROM Ciel_Lrx_Jo WHERE Cciel='70'
+SELECT * FROM Ciel_Lrx WHERE Cciel='411001'
+SELECT coll_cc FROM Fiches_Comptes WHERE compte_cc='411001'
+Create Fiches_Mvt
+Create Fiches_Mvt
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt set  control = '0fvexDCRN2T9IzjC5wKoQcpwg8E=' where lind = 1
+update Fiches_Mvt set  control = 'DWOt6PoiL+vPzHdPF/A1RRMUOB0=' where lind = 2
+update Fiches_Mvt set  control = 'iDk9d8s8fGHtAAerw3avIie8HSk=' where lind = 3
+update Fiches_Mvt set  control = 'JdBGJgn0BzqUMQKYOUVQ439ffpU=' where lind = 4
+SELECT numecriture FROM Fiches_Parametres
+UPDATE Fiches_Parametres SET numecriture=2

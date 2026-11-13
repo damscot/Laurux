@@ -1,0 +1,23 @@
+{
+ "id": "EDMO-T03",
+ "objet": "Pagination",
+ "classe": "Edmo",
+ "description": "65 mains d'oeuvre (jeu edmo_soixante), Imprimer : saut de page à 280 mm, en-tête répété (texte du PDF).",
+ "dataset": "edmo_soixante",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

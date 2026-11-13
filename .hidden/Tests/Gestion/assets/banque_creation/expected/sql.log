@@ -1,0 +1,24 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Banques where banques_code like  "%" order by banques_code
+SELECT * FROM Fiches_Banques where banques_code = '3'
+SELECT * FROM Fiches_Banques where banques_code = '3' 
+INSERT INTO Fiches_Banques (banques_code, banques_nom, banques_dmln, banques_nume, banques_codeb, banques_codeg, banques_numcpt, banques_numsiren, banques_adr, banques_txt, banques_fenrg, banques_mail, banques_ref, banques_entete, banques_corps, banques_reftireur) VALUES ('3', 'BANQUE TEST', 'AGENCE SUD', '111222', '30003', '00033', '11122233344', '11122', NULL, NULL, NULL, 'test.banque.test', 'REMTEST', NULL, NULL, 'TIRTEST')
+select * from Fiches_Banques where banques_code like  "%" order by banques_code

@@ -1,0 +1,18 @@
+{
+ "id": "EDCLIENT-T02",
+ "objet": "Statut et type, tri par nom",
+ "classe": "EdClient",
+ "description": "Stat1 = Stat2 = P1, Type1 = Type2 = 01, RadioButton2 (tri par nom), Imprimer : filtres combinés dans le SQL (&1 à &6).",
+ "dataset": "edclient_shared/clients",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

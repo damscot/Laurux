@@ -1,0 +1,24 @@
+{
+ "id": "EDRUP-T05",
+ "objet": "Ventes en caisse",
+ "classe": "EdRup",
+ "description": "Jeu edrup_base : Menu253, CheckBox3 coche (ventes en caisse des 7 derniers jours, valeur par defaut de Jours), Imprimer : requete des tickets (comportement reel fige, A03). Erreur non interceptee DB_Connection.Exec : Column 'date' in WHERE is ambiguous (Fiches_HisLigTck et Fiches_HisEntTck) : code de sortie 125 fige (EDRUP-A03).",
+ "dataset": "edrup_shared/edrup_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

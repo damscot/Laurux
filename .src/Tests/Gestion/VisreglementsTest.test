@@ -1,0 +1,53 @@
+' Gambas test file
+
+''Tests de Visreglements (.hidden/reference/.src/Gestion/Reglements/Visreglements.class/test.md, VISREGLEMENTS-T05).
+''Valeurs attendues : assets/VisreglementsTest/expected.txt, produites dans le clone de référence.
+''L'écran n'a aucun point d'entrée : la fenêtre est construite par New Visreglements sans être affichée (Form_Open
+''non appelé), Calc_solde est appelé puis le solde relu dans Fiches_Comptes. Jeu : visreglements_shared/visreglements_solde.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05CalcSolde", "Calc_solde : 411001 (3 écritures validées, 1 non validée) et 411002 sans écriture")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "VisreglementsTest")
+  TestKit.OuvreBase("visreglements_shared/visreglements_solde")
+
+End
+
+Private Sub Solde(sT As String, hF As Visreglements, sCompte As String)
+
+  Dim r As Result
+
+  Try hF.Calc_solde(sCompte)
+  If Error Then
+    TestKit.Check(sT & "/" & sCompte & "/calc", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  r = Utils.db.Exec("SELECT solde FROM " & Cbase.Table("TabComptes") & " WHERE compte_cc = &1", sCompte)
+  If Not r.Available Then
+    TestKit.Check(sT & "/" & sCompte & "/solde", "<absent>")
+    Return
+  Endif
+  TestKit.Check(sT & "/" & sCompte & "/solde", r!solde)
+
+End
+
+Public Sub T05CalcSolde()
+
+  Dim hF As Visreglements
+
+  Try hF = New Visreglements
+  If Error Then
+    TestKit.Check("T05/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Solde("T05", hF, "411001")
+  Solde("T05", hF, "411002")
+  Object.Lock(hF)
+
+End

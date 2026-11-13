@@ -1,0 +1,24 @@
+{
+ "id": "EDRUP-T08",
+ "objet": "Memorisation des options",
+ "classe": "EdRup",
+ "description": "Jeu edrup_base : Menu253, cocher CheckBox1 et CheckBox2, Fermer (Button3) : cles /Soc01/Edrupt/Nstock et /Rclient ecrites (Laurux.conf) ; rouvrir Menu253 et Imprimer : options relues (Level13R, non stockes).",
+ "dataset": "edrup_shared/edrup_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt",
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

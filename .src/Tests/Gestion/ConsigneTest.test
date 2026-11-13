@@ -1,0 +1,157 @@
+' Gambas test file
+
+''Tests de Consigne (.hidden/reference/.src/Gestion/option/Consigne.class/test.md, CONSIGNE-T01 à T05).
+''Valeurs attendues : assets/ConsigneTest/expected.txt, produites dans le clone de référence.
+''Jeu consigne_shared/consigne_base : tables Fiches_consigne et Fiches_ligcons de l'option boisson (absentes de
+''Laurux01), consignes P1 (10,00), C1 (1,50), B1 (0,20) ; lignes BLOC1/003 : 2 palettes P1, 5 colis C1.
+''Aucune régie passée (dra = "") : calculdroit1.LecDra n'est pas appelé.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Montant", "consigne_montant : code existant × 0, 1, 12 ; code absent ; code vide")
+  TestKit.Desc("T02QteFloat", "consigne_montant avec une quantité Float 2,5 (conversion Integer figée)")
+  TestKit.Desc("T03Recup", "recuppalette / recupcol : ligne Integer 3, String \"003\", ligne absente, bloc absent")
+  TestKit.Desc("T04Total", "Propriété consigne : New Consigne(10, 24) avec palettes, colis, unités et codes vides")
+  TestKit.Desc("T05Constructeur", "Constructeur à 13 arguments (comme Achat) : propriétés lues")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ConsigneTest")
+  TestKit.OuvreBase("consigne_shared/consigne_base")
+
+End
+
+Private Function MntTaxe(lt As LTaxe) As Variant
+  ''Mnt est privé dans LTaxe : montant lu par Montant(HT nul, quantité ignorée), comme consigne_Read.
+
+  Dim lp As LPrix
+
+  lp = New LPrix(0)
+  Return lt.Montant(lp, True).TotNHT.G
+
+End
+
+Private Sub CheckTaxe(Cle As String, hC As Consigne, Code As String, Qte As Integer)
+
+  Dim lt As LTaxe
+
+  Try lt = hC.consigne_montant(Code, Qte)
+  If Error Then
+    TestKit.Check(Cle, "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(Cle & "/type", lt.Ttx)
+    TestKit.Check(Cle & "/mnt", MntTaxe(lt))
+  Endif
+
+End
+
+Public Sub T01Montant()
+
+  Dim hC As Consigne
+
+  hC = New Consigne
+  CheckTaxe("T01/C1x0", hC, "C1", 0)
+  CheckTaxe("T01/C1x1", hC, "C1", 1)
+  CheckTaxe("T01/C1x12", hC, "C1", 12)
+  CheckTaxe("T01/absent", hC, "ZZ", 3)
+  CheckTaxe("T01/vide", hC, "", 3)
+  TestKit.Check("T01/LTaxe.Consigne", LTaxe.Consigne)
+
+End
+
+Public Sub T02QteFloat()
+
+  Dim hC As Consigne
+  Dim lt As LTaxe
+  Dim f As Float = 2.5
+
+  hC = New Consigne
+  Try lt = hC.consigne_montant("C1", f)
+  If Error Then
+    TestKit.Check("T02/C1x2.5", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/C1x2.5/mnt", MntTaxe(lt))
+  Endif
+
+End
+
+Public Sub T03Recup()
+
+  Dim hC As Consigne
+
+  hC = New Consigne
+  TestKit.Check("T03/pal_int3", hC.recuppalette("BLOC1", 3))
+  TestKit.Check("T03/nbpal_int3", hC.nbpal)
+  TestKit.Check("T03/col_int3", hC.recupcol("BLOC1", 3))
+  TestKit.Check("T03/nbcol_int3", hC.nbcol)
+  TestKit.Check("T03/pal_str003", hC.recuppalette("BLOC1", "003"))
+  TestKit.Check("T03/col_str003", hC.recupcol("BLOC1", "003"))
+  TestKit.Check("T03/pal_ligne_absente", hC.recuppalette("BLOC1", 4))
+  TestKit.Check("T03/nbpal_ligne_absente", hC.nbpal)
+  TestKit.Check("T03/col_bloc_absent", hC.recupcol("BLOC2", "003"))
+  TestKit.Check("T03/nbcol_bloc_absent", hC.nbcol)
+
+End
+
+Private Sub CheckTotal(Cle As String, hC As Consigne)
+
+  Dim lp As LPrix
+
+  Try lp = hC.consigne
+  If Error Then
+    TestKit.Check(Cle, "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(Cle & "/TotNHT", lp.TotNHT.G)
+  Endif
+
+End
+
+Public Sub T04Total()
+
+  Dim hC As Consigne
+
+  hC = New Consigne(10, 24)
+  hC.cdepal = "P1"
+  hC.nbpal = 2
+  hC.cdecol = "C1"
+  hC.nbcol = 4
+  hC.cdeunit = "B1"
+  CheckTotal("T04/pal_col_unit", hC)
+  hC.cdeunit = ""
+  CheckTotal("T04/pal_col", hC)
+  hC.cdepal = ""
+  hC.cdecol = ""
+  hC.cdeunit = "B1"
+  CheckTotal("T04/unit", hC)
+  hC.cdeunit = ""
+  CheckTotal("T04/codes_vides", hC)
+
+End
+
+Public Sub T05Constructeur()
+
+  Dim hC As Consigne
+
+  Try hC = New Consigne(12.5, 6, LPrix.Arr_0001, "", "", 0.75, 12.5, "", "P1", 1, "C1", 3, "B1")
+  If Error Then
+    TestKit.Check("T05/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T05/Mnt", hC.Mnt)
+  TestKit.Check("T05/Qte", hC.Qte)
+  TestKit.Check("T05/code", hC.code)
+  TestKit.Check("T05/volume", hC.volume)
+  TestKit.Check("T05/degre", hC.degre)
+  TestKit.Check("T05/famille", hC.famille)
+  TestKit.Check("T05/cdepal", hC.cdepal)
+  TestKit.Check("T05/nbpal", hC.nbpal)
+  TestKit.Check("T05/cdecol", hC.cdecol)
+  TestKit.Check("T05/nbcol", hC.nbcol)
+  TestKit.Check("T05/cdeunit", hC.cdeunit)
+  TestKit.Check("T05/opt", hC.opt)
+  CheckTotal("T05/consigne", hC)
+
+End

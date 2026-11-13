@@ -20,6 +20,7 @@ Public Sub _Desc()
   TestKit.Desc("T07DefaultURL", "`Default_URL` / `Get_Default_Extension`")
   TestKit.Desc("T08Mime", "`Get_Mime`")
   TestKit.Desc("T09Supprime", "`Supprime`")
+  TestKit.Desc("T15MimeUrl", "`Get_Mime` sur URL http(s) synthétiques laurux_ged_test.fr (faux curl) et file:/// d'un document de test")
 
 End
 
@@ -331,5 +332,37 @@ Public Sub T09Supprime()
   hG = New LGed(Null, 0)
   hG.Supprime()
   TestKit.Check("T09/non_enregistre/etat", Etat())
+
+End
+
+Public Sub T15MimeUrl()
+  ''Documents GED distants : le faux curl de .src/Tests/Framework/bin (placé en tête du PATH, aucun accès réseau)
+  ''sert les documents de test de .src/Tests/Framework/ged pour l'hôte synthétique laurux_ged_test.fr ; file:///
+  ''sur une copie locale de ces documents (vrai xdg-mime).
+
+  Dim hG As LGed
+  Dim sBin As String = Application.Path &/ ".src/Tests/Framework/bin"
+  Dim sGed As String = Application.Path &/ ".src/Tests/Framework/ged"
+  Dim sDir As String = Application.Env["HOME"] &/ "tmp/ged_url"
+  Dim sExt As String
+
+  If Application.Env["LAURUX_TEST_ROOT"] Then
+    sBin = Application.Env["LAURUX_TEST_ROOT"] &/ ".src/Tests/Framework/bin"
+    sGed = Application.Env["LAURUX_TEST_ROOT"] &/ ".src/Tests/Framework/ged"
+  Endif
+  If InStr(Application.Env["PATH"], "Framework/bin") = 0 Then Application.Env["PATH"] = sBin & ":" & Application.Env["PATH"]
+  Application.Env["LAURUX_FACTICE_TRACE"] = Temp$() & ".trace"
+  Mkdir sDir
+  hG = New LGed(Null, 0)
+  For Each sExt In ["pdf", "txt", "html"]
+    Copy sGed &/ "mime_file_test." & sExt To sDir &/ "mime_file_test." & sExt
+    TestKit.Check("T15/http_" & sExt, hG.Get_Mime("http://laurux_ged_test.fr/mime_file_test." & sExt))
+    TestKit.Check("T15/https_" & sExt, hG.Get_Mime("https://laurux_ged_test.fr/mime_file_test." & sExt))
+    TestKit.Check("T15/file_" & sExt, hG.Get_Mime("file://" & sDir &/ "mime_file_test." & sExt))
+  Next
+  TestKit.Check("T15/http_inconnu", hG.Get_Mime("https://laurux_ged_test.fr/inconnu.pdf"))
+  TestKit.Check("T15/hote_absent", hG.Get_Mime("https://serveur-absent.fr/doc.pdf"))
+  ' file://<hôte>/… (non file:///) : forme non reconnue par Get_Mime
+  TestKit.Check("T15/file_hote", hG.Get_Mime("file://laurux_ged_test.fr/mime_file_test.pdf"))
 
 End

@@ -1,0 +1,25 @@
+{
+ "id": "IMPSAGE-T02",
+ "objet": "Code Sage connu suivi d'un nouveau (A01)",
+ "classe": "ImpSage",
+ "description": "Import écritures Sage (Menu286), Chemin-import = HOME de test, fichiers produits par impsage_shared/gen_impsage.py déposés par entrees (clients.pnc, ecritures.pnm) ; jeu compteur : K001 déjà associé à 411005 dans Corsage (dataset impsage_shared/impsage_corsage) puis N001 inconnu ; Importer (Button3), Message.Question bouton 1 « Oui » (Entrée), message de contrôle des clients (Entrée), message de fin de ComptaS (Entrée) ; dump (Corsage, Fiches_Cli, Fiches_Four, Fiches_Comptes, Fiches_Mvt, Fiches_Parametres, Nvcompte), rejets.txt, Nvcomptes.txt, @ouvrir.trace et texte de Edclients.pdf (edition.txt) comparés.",
+ "dataset": "impsage_shared/impsage_corsage",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-import": "{home}",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "rejets.txt",
+  "Nvcomptes.txt",
+  "@ouvrir.trace",
+  "edition.txt"
+ ],
+ "entrees": {
+  "impsage_shared/compteur_clients.pnc": "~/clients.pnc",
+  "impsage_shared/compteur_ecritures.pnm": "~/ecritures.pnm"
+ }
+}

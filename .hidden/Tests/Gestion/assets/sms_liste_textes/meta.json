@@ -1,0 +1,21 @@
+{
+ "id": "SMS-T01",
+ "objet": "Ouverture et liste",
+ "classe": "Sms",
+ "description": "Menu315 (Textes SMS, /Soc01/Sms = 1), jeu sms_shared/sms_textes : ouverture (Form_Open lit Fiches_Sms, 3 lignes, première ligne de l'intitulé), Quitter (Button3). Lecture seule.",
+ "dataset": "sms_shared/sms_textes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/Sms": 1
+ },
+ "compare_sql_log": "ordered"
+}

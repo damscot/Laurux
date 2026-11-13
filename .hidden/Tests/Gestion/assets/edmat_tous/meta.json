@@ -1,0 +1,24 @@
+{
+ "id": "EDMAT-T01",
+ "objet": "Tous les materiels",
+ "classe": "EdMat",
+ "description": "Jeu edmat_shared/edmat_base : Gestion > ... > Materiels (Menu289), defauts (Vendus, Vendus2 coches, tri n de serie), Imprimer (Button2) : titre tous les materiels, vendus des clients 41100001-41199999 + materiels sans client ; PDF ~/tmp/Tarif2.pdf converti par pdftotext (CmdVis) dans ~/edition.txt, compare.",
+ "dataset": "edmat_shared/edmat_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

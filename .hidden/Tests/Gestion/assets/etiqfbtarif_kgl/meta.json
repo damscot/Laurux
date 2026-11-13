@@ -1,0 +1,24 @@
+{
+ "id": "ETIQFBTARIF-T05",
+ "objet": "Prix au kg/l HT puis TTC",
+ "classe": "Etiqfbtarif",
+ "description": "Prix HT du kg/l (RadioButton5) : Générer ; puis prix TTC du kg/l (RadioButton6) : Générer ; articles avec poids (001, 002, 010) et sans (003, 011).",
+ "dataset": "etiqfbtarif_shared/etiqfbtarif_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "id": "EDREGULPRDC-T02",
+ "objet": "Purge",
+ "classe": "Edregulprdc",
+ "description": "Effmvts cochée, Imprimer, question « Oui » (Entrée), « effacés » (Entrée) : les lignes du composant 001 de la fabrication 3 (hors période) sont aussi supprimées (DELETE par code, A01 figée).",
+ "dataset": "edregulprdc_shared/edregulprdc_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

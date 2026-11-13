@@ -1,0 +1,65 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Corsage where acode = 'K001         '
+SELECT * FROM Corsage where acode = 'N001         '
+insert into Corsage (acode, ncode) values ( 'N001         ','411005')
+SELECT * FROM Fiches_Cli where cli_code = '411005'
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Nvcompte
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000  '
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000  '
+SELECT * FROM Nvcompte
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+UPdate Fiches_Parametres set numecriture = 1
+SELECT * FROM Corsage Where acode = 'K001    '
+SELECT * FROM Fiches_Mvt Where compte = '411005' and numdoc = '1101' and jour = '70' and libelle = 'Facture K001              1'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411005'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 1, '411000', '1', NULL, '20180310', '1101', '1', 'Facture K001              1', '               30.00', '0', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPdate Fiches_Comptes set solde = 30 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('70', 1, '411005', NULL, '20180310', '1101', '1101', 'Facture K001              1', '               30.00', '0', 1, 0, 0, 0, 0, 1, 0, '20180310')
+SELECT * FROM Fiches_Comptes Where compte_cc = '411005'
+UPdate Fiches_Comptes set solde = 30 Where compte_cc = '411005'
+SELECT * FROM Fiches_Mvt Where compte = '707000  ' and numdoc = '1101' and jour = '70' and libelle = 'Facture K001              2'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('70', 1, '707000  ', NULL, '20180310', '1101', '1101', 'Facture K001              2', '0', '               30.00', 1, 0, 0, 0, 0, 1, 0, '20180310')
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000  '
+UPdate Fiches_Comptes set solde = -30 Where compte_cc = '707000  '
+UPdate Fiches_Parametres set numecriture = 2
+SELECT * FROM Corsage Where acode = 'N001    '
+SELECT * FROM Fiches_Mvt Where compte = '411005' and numdoc = '1102' and jour = '70' and libelle = 'Facture N001              3'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411005'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 2, '411000', '1', NULL, '20180311', '1102', '3', 'Facture N001              3', '               40.00', '0', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPdate Fiches_Comptes set solde = 70 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('70', 2, '411005', NULL, '20180311', '1102', '1102', 'Facture N001              3', '               40.00', '0', 1, 0, 0, 0, 0, 1, 0, '20180311')
+SELECT * FROM Fiches_Comptes Where compte_cc = '411005'
+UPdate Fiches_Comptes set solde = 70 Where compte_cc = '411005'
+SELECT * FROM Fiches_Mvt Where compte = '707000  ' and numdoc = '1102' and jour = '70' and libelle = 'Facture N001              4'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('70', 2, '707000  ', NULL, '20180311', '1102', '1102', 'Facture N001              4', '0', '               40.00', 1, 0, 0, 0, 0, 1, 0, '20180311')
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000  '
+UPdate Fiches_Comptes set solde = -70 Where compte_cc = '707000  '

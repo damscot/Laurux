@@ -1,0 +1,23 @@
+{
+ "id": "EDRUP-T02",
+ "objet": "Non stockes",
+ "classe": "EdRup",
+ "description": "Jeu edrup_base : Menu253, CheckBox1 coche (non stockes inclus), Imprimer.",
+ "dataset": "edrup_shared/edrup_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "id": "EDREGUL-T02",
+ "objet": "Purge",
+ "classe": "Edregul",
+ "description": "Effmvts cochée, Imprimer, question bouton 1 « Oui » (Entrée), « Les mouvements ont été effacés » (Entrée) : dump Fiches_Mvtexp, le mouvement hors période de l'article 001 est aussi supprimé (DELETE par code, A01 figée).",
+ "dataset": "edregul_shared/edregul_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

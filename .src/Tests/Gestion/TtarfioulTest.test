@@ -1,0 +1,138 @@
+' Gambas test file
+
+''Tests de Ttarfioul (.hidden/reference/.src/Gestion/option/Ttarfioul.class/test.md, TTARFIOUL-T01 à T04).
+''Valeurs attendues : assets/TtarfioulTest/expected.txt, produites dans le clone de référence.
+''Jeu : modfichier_shared/options_bois_pp, complété dans _Setup : article 001 en M3 avec un barème (2 tranches),
+''article 002 en L sans barème. Fenêtre instanciée sans être affichée (New Ttarfioul(Null, code) : chemin de artopt, 1er argument = parent de la fenêtre) ;
+''les cellules de TableView sont écrites directement (l'éditeur de cellule n'est pas rejouable).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Affichage", "Article 001 (M3) avec barème : grilles affichées (bornes x 1000), marges, prix")
+  TestKit.Desc("T02SaisieCalcul", "Article 002 sans barème : 3 tranches, marges, Calcul (Button2), Enregistrer (Button3) : tables")
+  TestKit.Desc("T03EnregSansCalcul", "Article 001 : prix modifié dans TableView2 puis Enregistrer sans recalcul : tables")
+  TestKit.Desc("T04DepuisArtopt", "New Ttarfioul(\"001\") : code en lecture seule, bouton de recherche désactivé")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "TtarfioulTest")
+  TestKit.OuvreBase("modfichier_shared/options_bois_pp")
+  ' Ttarfioul._new lit les couleurs dans Settings (fichier de configuration par défaut de Gambas) et non dans
+  ' Start.LocalSettings : vide dans le HOME de test, Utils.FColr échoue (« wanted Integer, got Null ») : valeurs posées ici.
+  Settings["/Coul/Znss"] = "Background: &HFAFAFA&; "
+  Settings["/Coul/Focus"] = "Background: &HF9FFC7&; "
+  Utils.db.Exec("UPDATE Fiches_Art SET art_vol = 'M3' WHERE art_code = '001'")
+  Utils.db.Exec("UPDATE Fiches_Art SET art_vol = 'L' WHERE art_code = '002'")
+  Utils.db.Exec("INSERT INTO Fiches_tarpp VALUES ('001', 15, 8)")
+  Utils.db.Exec("INSERT INTO Fiches_ligtarpp VALUES ('001', 0, 0, 0.5, 40, 66.5, 74.5), ('001', 1, 0.5, 2, 30, 56.5, 64.5)")
+
+End
+
+Private Sub Grilles(sT As String, hF As Ttarfioul)
+
+  Dim hG As Object
+  Dim sNom As String
+  Dim r, c As Integer
+
+  For Each sNom In ["TableView1", "TableView2"]
+    hG = hF.Controls[sNom]
+    TestKit.Check(sT & "/" & sNom & "/lignes", hG.Rows.Count)
+    For r = 0 To hG.Rows.Count - 1
+      For c = 0 To hG.Columns.Count - 1
+        TestKit.Check(sT & "/" & sNom & "/" & r & "x" & c, hG[r, c].Text)
+      Next
+    Next
+  Next
+  For Each sNom In ["Textcode", "Textlib", "Textmz", "Textsup", "Textrev"]
+    TestKit.Check(sT & "/" & sNom, Object.GetProperty(hF.Controls[sNom], "Text"))
+  Next
+
+End
+
+Private Sub Tables(sT As String)
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT * FROM Fiches_tarpp ORDER BY code")
+  If r.Available Then
+    Repeat
+      TestKit.Check(sT & "/tarpp/" & r!code, r!margez & "|" & r!supqs)
+    Until r.MoveNext()
+  Endif
+  r = Utils.db.Exec("SELECT * FROM Fiches_ligtarpp ORDER BY code, ligne")
+  If r.Available Then
+    Repeat
+      TestKit.Check(sT & "/ligtarpp/" & r!code & "/" & r!ligne, r!binf & "|" & r!bsup & "|" & r!marht & "|" & r!normht & "|" & r!supht)
+    Until r.MoveNext()
+  Endif
+
+End
+
+Public Sub T01Affichage()
+
+  Dim hF As Ttarfioul
+
+  hF = New Ttarfioul(Null, "001")
+  Grilles("T01", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T02SaisieCalcul()
+
+  Dim hF As Ttarfioul
+  Dim hG As Object
+
+  hF = New Ttarfioul(Null, "002")
+  hG = hF.Controls["TableView1"]
+  hG.Rows.Count = 4
+  hG[0, 0].Text = "0"
+  hG[0, 1].Text = "500"
+  hG[0, 2].Text = "40"
+  hG[1, 0].Text = "500"
+  hG[1, 1].Text = "1000"
+  hG[1, 2].Text = "30"
+  hG[2, 0].Text = "1000"
+  hG[2, 1].Text = "3000"
+  hG[2, 2].Text = "20"
+  Object.SetProperty(hF.Controls["Textmz"], "Text", "15,00")
+  Object.SetProperty(hF.Controls["Textsup"], "Text", "8,00")
+  Try hF.Button2_Click()
+  If Error Then TestKit.Check("T02/calcul", "ERREUR: " & Error.Text)
+  Grilles("T02", hF)
+  Try hF.Button3_Click()
+  If Error Then TestKit.Check("T02/enregistrer", "ERREUR: " & Error.Text)
+  Tables("T02")
+  Object.Lock(hF)
+
+End
+
+Public Sub T03EnregSansCalcul()
+
+  Dim hF As Ttarfioul
+  Dim hG As Object
+
+  hF = New Ttarfioul(Null, "001")
+  hG = hF.Controls["TableView2"]
+  hG[0, 1].Text = "70,00"
+  Try hF.Button3_Click()
+  If Error Then TestKit.Check("T03/enregistrer", "ERREUR: " & Error.Text)
+  Tables("T03")
+  Object.Lock(hF)
+
+End
+
+Public Sub T04DepuisArtopt()
+
+  Dim hF As Ttarfioul
+
+  hF = New Ttarfioul(Null, "001")
+  TestKit.Check("T04/ReadOnly", Object.GetProperty(hF.Controls["Textcode"], "ReadOnly"))
+  TestKit.Check("T04/Button1.Enabled", Object.GetProperty(hF.Controls["Button1"], "Enabled"))
+  TestKit.Check("T04/Textcode", Object.GetProperty(hF.Controls["Textcode"], "Text"))
+  Object.Lock(hF)
+
+End

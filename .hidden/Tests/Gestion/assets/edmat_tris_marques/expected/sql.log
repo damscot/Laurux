@@ -1,0 +1,24 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Materiels WHERE (mat_code >= '00000'  and mat_code <= 'ZZZZZ' and mat_cli >= '41100001' and mat_cli <= '41199999'  and mat_marque >= 'AAAAAAAA' and mat_marque <= 'ZZZZZZZZ') or (mat_code >= '00000'  and mat_code <= 'ZZZZZ' and mat_cli is null  and mat_marque >= 'AAAAAAAA' and mat_marque <= 'ZZZZZZZZ')  order by lpad(mat_code,15,' ')
+SELECT * FROM Fiches_Materiels WHERE (mat_code >= '00000'  and mat_code <= 'ZZZZZ' and mat_cli >= '41100001' and mat_cli <= '41199999'  and mat_marque >= 'AAAAAAAA' and mat_marque <= 'ZZZZZZZZ') or (mat_code >= '00000'  and mat_code <= 'ZZZZZ' and mat_cli is null  and mat_marque >= 'AAAAAAAA' and mat_marque <= 'ZZZZZZZZ')  order by mat_cli, lpad(mat_code,15,' ')
+SELECT * FROM Fiches_Marques order by code
+SELECT * FROM Fiches_Marques order by code
+SELECT * FROM Fiches_Materiels WHERE (mat_code >= '00000'  and mat_code <= 'ZZZZZ' and mat_cli >= '41100001' and mat_cli <= '41199999'  and mat_marque >= 'DEWALT' and mat_marque <= 'MAKITA') or (mat_code >= '00000'  and mat_code <= 'ZZZZZ' and mat_cli is null  and mat_marque >= 'DEWALT' and mat_marque <= 'MAKITA')  order by mat_marque, lpad(mat_code,15,' ')

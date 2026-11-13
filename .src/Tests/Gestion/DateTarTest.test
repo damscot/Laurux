@@ -1,0 +1,231 @@
+' Gambas test file
+
+''Tests de DateTar (.hidden/reference/.src/Gestion/Entrées/DateTar.class/test.md, DATETAR-T01, T02, T04, T05, T06, T08).
+''Écran instancié sans affichage (New DateTar(fournisseur)), contrôles lus par Controls ; jeu datetar_shared/tarifs_temp
+''(articles 001-003 du fournisseur 401001, A4 du fournisseur 401002, tarifs temporaires planifiés au 01.12.2026 ou non).
+''Valeurs attendues : assets/DateTarTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ListeSelection", "Listes du fournisseur 401001 puis sans fournisseur ; sélection multiple, activation, désélection")
+  TestKit.Desc("T02Planification", "2 articles à droite, date 01.12.2026, Enregistrer : Fiches_TarTemp et erreur d'indice (A01)")
+  TestKit.Desc("T04OrdreSelection", "Articles passés à droite dans l'ordre inverse de la liste, Enregistrer : articles modifiés (A02)")
+  TestKit.Desc("T05Demarrage", "EnrTouTar sur les tarifs échus de 001 (général + client) et 003 (général + type supprimé) : Fiches_Art, Fiches_Tarcli, Fiches_TarTypcli, Fiches_TarTemp")
+  TestKit.Desc("T06DemarrageSansGeneral", "EnrTouTar sur A4 avec seulement un tarif client échu : art_pvht/art_pvttc (A04)")
+  TestKit.Desc("T08RechercheDate", "Date 01.12.2026, Recherche : articles planifiés à cette date passés à droite")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "DateTarTest")
+  TestKit.OuvreBase("datetar_shared/tarifs_temp")
+
+End
+
+Private Sub Liste(sCle As String, hForm As Object, sNom As String)
+
+  Dim hList As ListBox
+  Dim i As Integer
+  Dim sRes As String
+
+  hList = hForm.Controls[sNom]
+  For i = 0 To hList.Count - 1
+    sRes &= "[" & hList[i].Text & "]"
+  Next
+  TestKit.Check(sCle & "/" & sNom, sRes)
+
+End
+
+Private Sub Listes(sCle As String, hForm As Object)
+
+  Liste(sCle, hForm, "ListFour")
+  Liste(sCle, hForm, "ListArt")
+
+End
+
+Private Sub Selectionne(hForm As Object, aInd As Integer[])
+
+  Dim hList As ListBox
+  Dim i As Integer
+
+  hList = hForm.Controls["ListFour"]
+  For Each i In aInd
+    hList[i].Selected = True
+  Next
+
+End
+
+Private Sub TarTemp(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT art, temp_type, code, dtmaj, date FROM Fiches_TarTemp ORDER BY art, temp_type, code")
+  If Not rResult.Available Then
+    TestKit.Check(sCle & "/tartemp", "<aucune>")
+    Return
+  Endif
+  Repeat
+    TestKit.Check(sCle & "/tartemp_" & rResult.Index, rResult!art & "|" & rResult!temp_type & "|" & rResult!code & "|" & rResult!dtmaj & "|" & rResult!date)
+  Until rResult.MoveNext()
+
+End
+
+Private Sub FixeDate(hForm As Object, dDate As Date)
+
+  Dim hDte As LDate
+
+  hDte = Object.GetProperty(hForm.Controls["date"], "dte")
+  hDte.G = dDate
+
+End
+
+Public Sub T01ListeSelection()
+
+  Dim hForm As DateTar
+  Dim hFour As Object
+  Dim hList As ListBox
+
+  hForm = New DateTar(Null, "401001")
+  Listes("T01/ouverture", hForm)
+  Selectionne(hForm, [0, 2])
+  hForm.selec_Click()
+  Listes("T01/selection", hForm)
+  hList = hForm.Controls["ListFour"]
+  hList.Index = 0
+  hForm.ListFour_Activate()
+  Listes("T01/activation", hForm)
+  hList = hForm.Controls["ListArt"]
+  hList[0].Selected = True
+  hForm.deselec_Click()
+  Listes("T01/deselection", hForm)
+  hFour = hForm.Controls["fournisseur"]
+  hFour.Text = ""
+  hForm.fournisseur_LostFocus()
+  Listes("T01/sans_fournisseur", hForm)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T02Planification()
+
+  Dim hForm As DateTar
+
+  hForm = New DateTar(Null, "401001")
+  Selectionne(hForm, [0, 2])
+  hForm.selec_Click()
+  FixeDate(hForm, Date(2026, 12, 1))
+  Try hForm.Enr_Click()
+  If Error Then
+    TestKit.Check("T02/enregistrer", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/enregistrer", "ok")
+  Endif
+  Listes("T02/apres", hForm)
+  TarTemp("T02")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T04OrdreSelection()
+
+  Dim hForm As DateTar
+  Dim hList As ListBox
+
+  hForm = New DateTar(Null, "401001")
+  hList = hForm.Controls["ListFour"]
+  hList.Index = hList.Count - 1
+  hForm.ListFour_Activate()
+  hList.Index = 0
+  hForm.ListFour_Activate()
+  Listes("T04/selection", hForm)
+  FixeDate(hForm, Date(2026, 11, 20))
+  Try hForm.Enr_Click()
+  If Error Then
+    TestKit.Check("T04/enregistrer", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T04/enregistrer", "ok")
+  Endif
+  TarTemp("T04")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T08RechercheDate()
+
+  Dim hForm As DateTar
+
+  hForm = New DateTar(Null, "")
+  Listes("T08/ouverture", hForm)
+  FixeDate(hForm, Date(2026, 12, 1))
+  hForm.Rech_Click()
+  Listes("T08/recherche", hForm)
+  Object.Lock(hForm)
+
+End
+
+Private Sub Tables(sCle As String, sArts As String[])
+
+  Dim rResult As Result
+  Dim sArt As String
+
+  For Each sArt In sArts
+    rResult = Utils.db.Exec("SELECT art_code, art_prvt, art_pauaht, art_pvht, art_pvttc, art_frais, art_pbht, art_paht, art_txconv, art_tr, art_coef FROM Fiches_Art WHERE art_code = &1", sArt)
+    If rResult.Available Then TestKit.Check(sCle & "/art_" & sArt, rResult!art_prvt & "|" & rResult!art_pauaht & "|" & rResult!art_pvht & "|" & rResult!art_pvttc & "|" & rResult!art_frais & "|" & rResult!art_pbht & "|" & rResult!art_paht & "|" & rResult!art_txconv & "|" & rResult!art_tr & "|" & rResult!art_coef)
+  Next
+  rResult = Utils.db.Exec("SELECT ccli, cart, coef FROM Fiches_Tarcli ORDER BY ccli, cart")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check(sCle & "/tarcli_" & rResult.Index, rResult!ccli & "|" & rResult!cart & "|" & rResult!coef)
+    Until rResult.MoveNext()
+  Else
+    TestKit.Check(sCle & "/tarcli", "<aucune>")
+  Endif
+  rResult = Utils.db.Exec("SELECT type, cart, coef FROM Fiches_TarTypcli ORDER BY type, cart")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check(sCle & "/tartypcli_" & rResult.Index, rResult!type & "|" & rResult!cart & "|" & rResult!coef)
+    Until rResult.MoveNext()
+  Else
+    TestKit.Check(sCle & "/tartypcli", "<aucune>")
+  Endif
+  TarTemp(sCle)
+
+End
+
+Private Sub Demarrage(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_TarTemp WHERE date <= &1 AND dtmaj = &2 ORDER BY art, temp_type, code", "2018-06-15 00:00:00", True)
+  TestKit.Check(sCle & "/echus", rResult.Count)
+  If Not rResult.Available Then Return
+  Try DateTar.EnrTouTar(rResult)
+  If Error Then
+    TestKit.Check(sCle & "/enrtoutar", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(sCle & "/enrtoutar", "ok")
+  Endif
+
+End
+
+Public Sub T05Demarrage()
+
+  Utils.db.Exec("UPDATE Fiches_TarTemp SET dtmaj = 1, date = &1 WHERE art IN ('001', '003')", "2018-01-01 00:00:00")
+  Utils.db.Exec("INSERT INTO Fiches_TarTypcli (type, cart, coef) VALUES ('1', '003', 1.2)")
+  Tables("T05/avant", ["001", "003"])
+  Demarrage("T05")
+  Tables("T05/apres", ["001", "003"])
+
+End
+
+Public Sub T06DemarrageSansGeneral()
+
+  Utils.db.Exec("DELETE FROM Fiches_TarTemp WHERE art = 'A4'")
+  Utils.db.Exec("INSERT INTO Fiches_TarTemp (art, dtmaj, date, pbht, rm, paht, frais, pxrev, txconv, temp_type, code, temp_coef, temp_sup) VALUES ('A4', 1, '2018-01-01 00:00:00', 8, 0, 8, 0, 8, 1, 2, '411002', 1.7, 0)")
+  Tables("T06/avant", ["A4"])
+  Demarrage("T06")
+  Tables("T06/apres", ["A4"])
+
+End

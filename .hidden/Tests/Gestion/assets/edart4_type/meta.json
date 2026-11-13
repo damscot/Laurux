@@ -1,0 +1,19 @@
+{
+ "id": "EDART4-T02",
+ "objet": "Tarif par type client",
+ "classe": "Edart4",
+ "description": "Tarif > Client ; Buttypc (liste ColumnView1), clic 01 : Textyp = 01 ; Imprimer (Butimp) : un TarArt par article, prix du type (coefficients Fiches_CoeffTypec des familles 01 et 02).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt",
+  "tmp/tarif.pdf"
+ ],
+ "compare_sql_log": "ordered"
+}

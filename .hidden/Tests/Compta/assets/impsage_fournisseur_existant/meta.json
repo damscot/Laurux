@@ -1,0 +1,26 @@
+{
+ "id": "IMPSAGE-T06",
+ "objet": "Fournisseur dont le code existe déjà dans Fiches_Four (A02)",
+ "classe": "ImpSage",
+ "description": "Import écritures Sage (Menu286), Chemin-import = HOME de test, fichiers produits par impsage_shared/gen_impsage.py déposés par entrees (clients.pnc, ecritures.pnm) ; jeu fournisseurs, dnf = 401025 (dataset impsage_shared/impsage_dnf_401025) : prochain code 401026 déjà dans Fiches_Four, existence testée dans Fiches_Cli ; Importer, Message.Question bouton 1 « Oui » (Entrée) ; INSERT INTO Fiches_Four sans Try ; dump (Corsage, Fiches_Cli, Fiches_Four, Fiches_Comptes, Fiches_Mvt, Fiches_Parametres, Nvcompte), rejets.txt, Nvcomptes.txt, @ouvrir.trace et texte de Edclients.pdf (edition.txt) comparés. Erreur « Duplicate entry » (ImpSage.Creation_Fournisseur.294) : code de sortie 125 ; Corsage G403 → 401026 inséré.",
+ "dataset": "impsage_shared/impsage_dnf_401025",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-import": "{home}",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "rejets.txt",
+  "Nvcomptes.txt",
+  "@ouvrir.trace",
+  "edition.txt"
+ ],
+ "entrees": {
+  "impsage_shared/fournisseurs_clients.pnc": "~/clients.pnc",
+  "impsage_shared/fournisseurs_ecritures.pnm": "~/ecritures.pnm"
+ },
+ "code_sortie": 125
+}

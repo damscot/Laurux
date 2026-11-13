@@ -1,0 +1,23 @@
+{
+ "id": "EDCOM-T01",
+ "objet": "Choix à la souris",
+ "classe": "Edcom",
+ "description": "Liste (ToggleButton1), clic sur la 1re commande 401001/C1, Imprimer (Button2) : texte du PDF par pdftotext ; date = celle de la dernière commande listée (401002/C2, 02.06.2018 : A02 figée).",
+ "dataset": "edcom_shared/edcom_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,235 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),ville Char(35),totf Char(12),tottc Char(12),PRIMARY KEY (code)) ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(numbl Char(12) NOT NULL,code Char(10),date date,ht Char(12),ttc Char(12),PRIMARY KEY (numbl)) ENGINE = InnoDB
+SELECT * FROM Fiches_Bl where type = 'B' and datebl <= '20180630' and numtick is Null or type = 'F' and datebl <= '20180630' and imp <> 1  order by cdclibl
+SELECT * FROM Facturefm WHERE code = '411001'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411001', 'CLIENT X', '44000','NANTES','10,00', '12,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00007' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00007', '411001', '2018-06-12 00:00:00', 10, 12)
+SELECT * FROM Facturefm WHERE code = '411001'
+UPdate Facturefm SET totf = '25,00', tottc = '30,00' WHERE code = '411001'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00008' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00008', '411001', '2018-06-13 00:00:00', 15, 18)
+SELECT * FROM Facturefm WHERE code = '411901'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411901', 'DURAND', '75001','PARIS','100,00', '120,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00001' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00001', '411901', '2018-06-05 00:00:00', 100, 120)
+SELECT * FROM Facturefm WHERE code = '411901'
+UPdate Facturefm SET totf = '155,00', tottc = '186,00' WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00002' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00002', '411901', '2018-06-20 00:00:00', 55, 66)
+SELECT * FROM Facturefm WHERE code = '411901'
+UPdate Facturefm SET totf = '190,00', tottc = '228,00' WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00003' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00003', '411901', '2018-06-25 00:00:00', 35, 42)
+SELECT * FROM Facturefm WHERE code = '411902'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411902', 'MARTIN', '69001','LYON','200,00', '240,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00004' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00004', '411902', '2018-06-10 00:00:00', 200, 240)
+SELECT * FROM Facturefm WHERE code = '411903'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411903', 'PETIT', '13001','MARSEILLE','80,00', '96,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00005' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00005', '411903', '2018-06-01 00:00:00', 80, 96)
+SELECT * FROM Facturefm WHERE code = '411903'
+UPdate Facturefm SET totf = '100,00', tottc = '120,00' WHERE code = '411903'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00006' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00006', '411903', '2018-06-16 00:00:00', 20, 24)
+SELECT * FROM Facturefm order by nom
+SELECT * FROM Bl where code = '411001'
+SELECT * FROM Bl where code = '411901'
+SELECT * FROM Bl where code = '411902'
+SELECT * FROM Bl where code = '411903'
+LOCK TABLES Fiches_Parametres WRITE, Fiches_Bl WRITE, Fiches_Ligbl WRITE, Bl WRITE, Fiches_Cli WRITE, Fiches_Tvaav WRITE
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Bl where code = '411001' order by numbl
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+INSERT INTO Fiches_Bl(numbl,datebl,cdclibl,cvclibl, nmclibl, rmobl, rartbl, pnmclibl, adr1bl, adr2bl, cpbl, villebl, Exobl, remmobl, remartbl, htbl, reg, ech, numfac, acpt, mreg, marge_art, marge_mo, totalttc, type, imp) VALUES ('000002','2018-06-30 00:00:00','411001',NULL,'A Divers ',0,0,NULL,NULL,NULL,NULL,NULL,0,'0','0',NULL,NULL,NULL, NULL, 0, NULL, NULL, NULL, NULL, 'B', 0)
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000002'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', '000002', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00007'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00007', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Bl where numbl = 'B00007'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00007' and (typel_ligbl = 'A' or typel_ligbl = 'C')
+INSERT INTO Fiches_Ligbl(num_ligbl, numlig_ligbl, typel_ligbl, com_ligbl, block_ligbl, dte_ligbl) VALUES ('000002','0001','C','Regroupement BL n° B00007','0001','2018-06-12 00:00:00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000002' and code_ligbl = 'ART1' and typel_ligbl = 'A' and rem_ligbl = NULL and pu_ligbl = '10'
+INSERT INTO Fiches_Ligbl(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES ('000002','0002','ART1','Article',NULL,'10','1',NULL,NULL,'10','1',NULL,'A',NULL,NULL,'0002',NULL,NULL,NULL,NULL)
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00007'
+DELETE FROM Fiches_Bl where numbl = 'B00007'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00007'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00007'
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00008'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00008', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Bl where numbl = 'B00008'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00008' and (typel_ligbl = 'A' or typel_ligbl = 'C')
+INSERT INTO Fiches_Ligbl(num_ligbl, numlig_ligbl, typel_ligbl, com_ligbl, block_ligbl, dte_ligbl) VALUES ('000002','0003','C','Regroupement BL n° B00008','0003','2018-06-13 00:00:00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000002' and code_ligbl = 'ART1' and typel_ligbl = 'A' and rem_ligbl = NULL and pu_ligbl = '15'
+INSERT INTO Fiches_Ligbl(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES ('000002','0004','ART1','Article',NULL,'15','1',NULL,NULL,'15','1',NULL,'A',NULL,NULL,'0004',NULL,NULL,NULL,NULL)
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00008'
+DELETE FROM Fiches_Bl where numbl = 'B00008'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00008'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00008'
+UNLOCK TABLES
+UPdate Fiches_Bl SET totalht = '25', totalttc = '30' where numbl = '000002'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000002'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000002'
+UNLOCK TABLES
+SELECT * FROM Bl where code = '411901' order by numbl
+SELECT * FROM Fiches_Cli where cli_code = '411901'
+INSERT INTO Fiches_Bl(numbl,datebl,cdclibl,cvclibl, nmclibl, rmobl, rartbl, pnmclibl, adr1bl, adr2bl, cpbl, villebl, Exobl, remmobl, remartbl, htbl, reg, ech, numfac, acpt, mreg, marge_art, marge_mo, totalttc, type, imp) VALUES ('000003','2018-06-30 00:00:00','411901',NULL,'DURAND',0,0,NULL,NULL,NULL,'75001','PARIS',0,'0','0',NULL,NULL,NULL, NULL, 0, NULL, NULL, NULL, NULL, 'B', 0)
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000003'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', '000003', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00001'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00001', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Bl where numbl = 'B00001'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00001' and (typel_ligbl = 'A' or typel_ligbl = 'C')
+INSERT INTO Fiches_Ligbl(num_ligbl, numlig_ligbl, typel_ligbl, com_ligbl, block_ligbl, dte_ligbl) VALUES ('000003','0001','C','Regroupement BL n° B00001','0001','2018-06-05 00:00:00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000003' and code_ligbl = 'ART1' and typel_ligbl = 'A' and rem_ligbl = NULL and pu_ligbl = '100'
+INSERT INTO Fiches_Ligbl(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES ('000003','0002','ART1','Article',NULL,'100','1',NULL,NULL,'100','1',NULL,'A',NULL,NULL,'0002',NULL,NULL,NULL,NULL)
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00001'
+DELETE FROM Fiches_Bl where numbl = 'B00001'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00001'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00001'
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00002'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00002', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Bl where numbl = 'B00002'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00002' and (typel_ligbl = 'A' or typel_ligbl = 'C')
+INSERT INTO Fiches_Ligbl(num_ligbl, numlig_ligbl, typel_ligbl, com_ligbl, block_ligbl, dte_ligbl) VALUES ('000003','0003','C','Regroupement BL n° B00002','0003','2018-06-20 00:00:00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000003' and code_ligbl = 'ART1' and typel_ligbl = 'A' and rem_ligbl = NULL and pu_ligbl = '50'
+INSERT INTO Fiches_Ligbl(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES ('000003','0004','ART1','Article',NULL,'50','1',NULL,NULL,'50','1',NULL,'A',NULL,NULL,'0004',NULL,NULL,NULL,NULL)
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00002'
+DELETE FROM Fiches_Bl where numbl = 'B00002'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00002'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00002'
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00003'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00003', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Bl where numbl = 'B00003'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00003' and (typel_ligbl = 'A' or typel_ligbl = 'C')
+INSERT INTO Fiches_Ligbl(num_ligbl, numlig_ligbl, typel_ligbl, com_ligbl, block_ligbl, dte_ligbl) VALUES ('000003','0005','C','Regroupement BL n° B00003','0005','2018-06-25 00:00:00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000003' and code_ligbl = 'ART1' and typel_ligbl = 'A' and rem_ligbl = NULL and pu_ligbl = '30'
+INSERT INTO Fiches_Ligbl(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES ('000003','0006','ART1','Article',NULL,'30','1',NULL,NULL,'30','1',NULL,'A',NULL,NULL,'0006',NULL,NULL,NULL,NULL)
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00003'
+DELETE FROM Fiches_Bl where numbl = 'B00003'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00003'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00003'
+UNLOCK TABLES
+UPdate Fiches_Bl SET totalht = '190', totalttc = '228' where numbl = '000003'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000003'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000003'
+UNLOCK TABLES
+SELECT * FROM Bl where code = '411903' order by numbl
+SELECT * FROM Fiches_Cli where cli_code = '411903'
+INSERT INTO Fiches_Bl(numbl,datebl,cdclibl,cvclibl, nmclibl, rmobl, rartbl, pnmclibl, adr1bl, adr2bl, cpbl, villebl, Exobl, remmobl, remartbl, htbl, reg, ech, numfac, acpt, mreg, marge_art, marge_mo, totalttc, type, imp) VALUES ('000004','2018-06-30 00:00:00','411903',NULL,'PETIT',0,0,NULL,NULL,NULL,'13001','MARSEILLE',0,'0','0',NULL,NULL,NULL, NULL, 0, NULL, NULL, NULL, NULL, 'B', 0)
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000004'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', '000004', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00005'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00005', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Bl where numbl = 'B00005'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00005' and (typel_ligbl = 'A' or typel_ligbl = 'C')
+INSERT INTO Fiches_Ligbl(num_ligbl, numlig_ligbl, typel_ligbl, com_ligbl, block_ligbl, dte_ligbl) VALUES ('000004','0001','C','Regroupement BL n° B00005','0001','2018-06-01 00:00:00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000004' and code_ligbl = 'ART1' and typel_ligbl = 'A' and rem_ligbl = NULL and pu_ligbl = '80'
+INSERT INTO Fiches_Ligbl(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES ('000004','0002','ART1','Article',NULL,'80','1',NULL,NULL,'80','1',NULL,'A',NULL,NULL,'0002',NULL,NULL,NULL,NULL)
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00005'
+DELETE FROM Fiches_Bl where numbl = 'B00005'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00005'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00005'
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00006'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00006', 'laurux', 97, '734e3c61922441158719b21e28cd8250', 'd4a637bd5ee5(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT * FROM Fiches_Bl where numbl = 'B00006'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00006' and (typel_ligbl = 'A' or typel_ligbl = 'C')
+INSERT INTO Fiches_Ligbl(num_ligbl, numlig_ligbl, typel_ligbl, com_ligbl, block_ligbl, dte_ligbl) VALUES ('000004','0003','C','Regroupement BL n° B00006','0003','2018-06-16 00:00:00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000004' and code_ligbl = 'ART1' and typel_ligbl = 'A' and rem_ligbl = NULL and pu_ligbl = '20'
+INSERT INTO Fiches_Ligbl(num_ligbl,numlig_ligbl,code_ligbl,libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, nettc_ligbl, typel_ligbl, tm_ligbl, com_ligbl, block_ligbl, mtx_ligfac, dte_ligbl,mrgart_ligbl,mrgmo_ligbl) VALUES ('000004','0004','ART1','Article',NULL,'20','1',NULL,NULL,'20','1',NULL,'A',NULL,NULL,'0004',NULL,NULL,NULL,NULL)
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00006'
+DELETE FROM Fiches_Bl where numbl = 'B00006'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00006'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00006'
+UNLOCK TABLES
+UPdate Fiches_Bl SET totalht = '100', totalttc = '120' where numbl = '000004'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000004'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = '000004'
+UNLOCK TABLES
+UPDATE  Fiches_Parametres  SET  dnbon = '000004'
+UNLOCK TABLES
+SELECT * FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),ville Char(35),totf Char(12),tottc Char(12),PRIMARY KEY (code)) ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(numbl Char(12) NOT NULL,code Char(10),date date,ht Char(12),ttc Char(12),PRIMARY KEY (numbl)) ENGINE = InnoDB
+SELECT * FROM Fiches_Bl where type = 'B' and datebl <= '20180630' and numtick is Null or type = 'F' and datebl <= '20180630' and imp <> 1  order by cdclibl
+SELECT * FROM Facturefm WHERE code = '411001'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411001', 'A Divers ', NULL,NULL,'25,00', '30,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000002' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('000002', '411001', '2018-06-30 00:00:00', 25, 30)
+SELECT * FROM Facturefm WHERE code = '411901'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411901', 'DURAND', '75001','PARIS','190,00', '228,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000003' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('000003', '411901', '2018-06-30 00:00:00', 190, 228)
+SELECT * FROM Facturefm WHERE code = '411902'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411902', 'MARTIN', '69001','LYON','200,00', '240,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00004' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('B00004', '411902', '2018-06-10 00:00:00', 200, 240)
+SELECT * FROM Facturefm WHERE code = '411903'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411903', 'PETIT', '13001','MARSEILLE','100,00', '120,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = '000004' order by num_ligbl
+INSERT INTO Bl (numbl, code, date, ht, ttc) Values ('000004', '411903', '2018-06-30 00:00:00', 100, 120)
+SELECT * FROM Facturefm order by nom
+SELECT * FROM Bl where code = '411001'
+SELECT * FROM Bl where code = '411901'
+SELECT * FROM Bl where code = '411902'
+SELECT * FROM Bl where code = '411903'

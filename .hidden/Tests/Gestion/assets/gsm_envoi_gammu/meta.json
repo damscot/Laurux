@@ -1,0 +1,27 @@
+{
+ "id": "GSM-T03",
+ "objet": "Envoi support 1 (gammu)",
+ "classe": "Gsm",
+ "description": "Menu319, /Soc01/Support = « 1- Gammu » : numéro « 06 12 34 56 78 », texte sur deux lignes, Envoyer SMS (Button2) : appel du faux gammu (sendsms TEXT 0612345678 -text …) tracé dans outils.trace, message « Le message a été envoyé. » (Entrée) ; Quitter.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/Sms": 1,
+  "/Soc01/Support": "1- Gammu",
+  "/Smtp": "smtp.test",
+  "/Port": "25",
+  "/Adrmail": "test@test.fr"
+ },
+ "fichiers": [
+  "@outils.trace"
+ ]
+}

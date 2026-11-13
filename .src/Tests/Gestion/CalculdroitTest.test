@@ -1,0 +1,122 @@
+' Gambas test file
+
+''Tests de Calculdroit (.hidden/reference/.src/Gestion/option/calculdroit.class/test.md, CALCULDROIT-T01 à T06).
+''Valeurs attendues : assets/CalculdroitTest/expected.txt, produites dans le clone de référence.
+''Jeu : modfichier_shared/options_bois_pp (régie 01 : volume, tauxa 1,8, degres 0 ; régie 02 : alcool pur,
+''tauxa 1800, degres 18, tauxss 590 ; TVA 3 = 20 % ; Fiches_Parametres.tvass = 3).
+''T07 (régie ou TVA absente) ouvre Message.Error : non testable en gb.test.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DroitVolume", "Régie 01 (ap faux) : vol 75, deg 12,5, qte 6 : vol, volap, droit, tvadroit")
+  TestKit.Desc("T02DroitAlcoolPur", "Régie 02 (ap vrai) : vol 70, deg 40, qte 12 : vol, volap, droit")
+  TestKit.Desc("T03SecuSeuil", "Régie 02 seuil 18 : deg 15 / 18 / 40, et régie sans degres (NULL) : secu, volumess, tvasec, tva")
+  TestKit.Desc("T04QuantiteVariant", "qte 6, \"6\", \"1,5\", \"1.5\", 1.5 : vol obtenu")
+  TestKit.Desc("T05Accesseurs", "Accesseurs de la régie 02 et objet construit avec dra vide")
+  TestKit.Desc("T06Ecritures", "Écriture de droit, secu, tauxtvadr, tauxtvass : tvadroit, tvasec, tva recalculés")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "CalculdroitTest")
+  TestKit.OuvreBase("modfichier_shared/options_bois_pp")
+
+End
+
+Private Sub Montants(sT As String, hD As Calculdroit)
+
+  TestKit.Check(sT & "/vol", hD.vol)
+  TestKit.Check(sT & "/volap", hD.volap)
+  TestKit.Check(sT & "/droit", hD.droit)
+  TestKit.Check(sT & "/secu", hD.secu)
+  TestKit.Check(sT & "/volumess", hD.volumess)
+  TestKit.Check(sT & "/tvadroit", hD.tvadroit)
+  TestKit.Check(sT & "/tvasec", hD.tvasec)
+  TestKit.Check(sT & "/tva", hD.tva)
+  TestKit.Check(sT & "/tauxtvadr", hD.tauxtvadr)
+  TestKit.Check(sT & "/tauxtvass", hD.tauxtvass)
+
+End
+
+Private Sub Calcule(sT As String, sDra As String, fVol As Float, fDeg As Float, vQte As Variant)
+
+  Dim hD As Calculdroit
+
+  Try hD = New Calculdroit(sDra, fVol, fDeg, vQte)
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Montants(sT, hD)
+
+End
+
+Public Sub T01DroitVolume()
+
+  Calcule("T01/r01", "01", 75, 12.5, 6)
+
+End
+
+Public Sub T02DroitAlcoolPur()
+
+  Calcule("T02/r02", "02", 70, 40, 12)
+
+End
+
+Public Sub T03SecuSeuil()
+
+  Calcule("T03/deg15", "02", 70, 15, 1)
+  Calcule("T03/deg18", "02", 70, 18, 1)
+  Calcule("T03/deg40", "02", 70, 40, 1)
+  Utils.db.Exec("INSERT INTO Fiches_regie VALUES ('03', 'Sans seuil', 1800, NULL, 590, 'A', 0, 1, 0, 445710, '3')")
+  Calcule("T03/degnull", "03", 70, 40, 1)
+
+End
+
+Public Sub T04QuantiteVariant()
+
+  Calcule("T04/entier6", "02", 70, 40, 6)
+  Calcule("T04/chaine6", "02", 70, 40, "6")
+  Calcule("T04/chaine1virgule5", "02", 70, 40, "1,5")
+  Calcule("T04/chaine1point5", "02", 70, 40, "1.5")
+  Calcule("T04/float1.5", "02", 70, 40, 1.5)
+
+End
+
+Public Sub T05Accesseurs()
+
+  Dim hD As Calculdroit
+  Dim sT As String
+
+  For Each sT In ["02", ""]
+    hD = New Calculdroit(sT, 70, 40, 1, "FAM")
+    TestKit.Check("T05/" & sT & "/lib", hD.lib)
+    TestKit.Check("T05/" & sT & "/type", hD.type)
+    TestKit.Check("T05/" & sT & "/cptreg", hD.cptreg)
+    TestKit.Check("T05/" & sT & "/codetva", hD.codetva)
+    TestKit.Check("T05/" & sT & "/suspendu", hD.suspendu)
+    TestKit.Check("T05/" & sT & "/drsurfac", hD.drsurfac)
+    TestKit.Check("T05/" & sT & "/famille", hD.famille)
+    TestKit.Check("T05/" & sT & "/droit", hD.droit)
+    TestKit.Check("T05/" & sT & "/tva", hD.tva)
+  Next
+
+End
+
+Public Sub T06Ecritures()
+
+  Dim hD As Calculdroit
+
+  hD = New Calculdroit("02", 70, 40, 1)
+  hD.droit = 10
+  Montants("T06/droit10", hD)
+  hD.secu = 10
+  Montants("T06/secu10", hD)
+  hD.tauxtvadr = "0.055"
+  Montants("T06/tauxtvadr0.055", hD)
+  hD.tauxtvass = "0.055"
+  Montants("T06/tauxtvass0.055", hD)
+
+End
