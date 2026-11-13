@@ -1,0 +1,23 @@
+{
+ "id": "MVTEX-T01",
+ "objet": "Entrée simple",
+ "classe": "Mvtex",
+ "description": "Régularisation : Entrée, A1 qté 3, commentaire Correction, Enregistrer (Entrée sur Button1), Valider (Button2 → Enrgbl) ; 1 ligne Fiches_Mvtexp qtep 3, art_qte +3 ; PDF ~/tmp/mvtex.pdf passé à pdftotext (CmdVis) dans ~/mvtex_pdf.txt.",
+ "dataset": "mvtex_shared/stock_mvtex",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "mvtex_pdf.txt"
+ ],
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/mvtex_pdf.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

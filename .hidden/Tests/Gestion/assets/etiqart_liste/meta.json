@@ -1,0 +1,24 @@
+{
+ "id": "ETIQART-T05",
+ "objet": "Mode liste : ajout, cumul, remplacement, suppression",
+ "classe": "Etiqart",
+ "description": "Liste cochée (table de travail Etiquettes) ; 001 et 002 (1 étiquette) ; *2148413200001 (code-barre de 001) : « déjà saisi », bouton 1 Cumuler (Espace, boîte ouverte par Entrée) → 001 = 2 ; Nbtiq 3 ; 002 : bouton 2 Remplacer (Tab, Espace) → 002 = 3 ; 004 (3) ; clic grille ligne 2 (004) : Message.Question bouton 3 Supprimer (Tab, Tab, Espace) ; Générer : PDF 001 x 2, 002 x 3 ; table vidée par fin_impression.",
+ "dataset": "etiqart_shared/etiqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

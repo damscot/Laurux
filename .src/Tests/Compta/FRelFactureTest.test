@@ -1,0 +1,44 @@
+' Gambas test file
+
+''Tests de FRelFacture (.hidden/reference/.src/Compta/Relances/FRelFacture.class/test.md, FRELFACTURE-T06).
+''La conversion de date de ligne de Releves (FRelFacture.class:393-394, CStr + découpage) n'est pas publique :
+''l'expression est reproduite à l'identique sur des dates lues en base (minuit, heure d'été et d'hiver).
+''Caractérisation de FRELFACTURE-A01, obsolète après correction. Valeurs attendues :
+''assets/FRelFactureTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06DateLigne", "Date de ligne CStr + découpage (A01) : dates à 00:00 en été et en hiver lues en base")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "FRelFactureTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function DateLigne(sDate As String) As String
+
+  Dim rResult As Result
+  Dim dte As String
+
+  rResult = Utils.db.Exec("SELECT CAST(&1 AS DATETIME) AS dte", sDate)
+  If Not rResult.Available Then Return "<indisponible>"
+  ' Expression de FRelFacture.Releves (lignes 393-394)
+  dte = CStr(rResult!dte)
+  dte = Mid$(dte, 4, 2) & "." & Left$(dte, 2) & "." & Right$(dte, 4)
+  Return dte
+
+End
+
+Public Sub T06DateLigne()
+
+  TestKit.Check("T06/ete_2018-06-03", DateLigne("2018-06-03 00:00:00"))
+  TestKit.Check("T06/hiver_2018-01-15", DateLigne("2018-01-15 00:00:00"))
+  TestKit.Check("T06/ete_midi_2018-06-03", DateLigne("2018-06-03 12:00:00"))
+  TestKit.Check("T06/premier_janvier_2018", DateLigne("2018-01-01 00:00:00"))
+
+End

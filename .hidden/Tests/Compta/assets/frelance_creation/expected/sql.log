@@ -1,0 +1,25 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Txt_Relances order by niveau
+SELECT * FROM Fiches_Txt_Relances WHERE niveau = '1'
+SELECT * FROM Fiches_Txt_Relances WHERE niveau = '4'
+SELECT * FROM Fiches_Txt_Relances WHERE niveau = '4'
+INSERT INTO Fiches_Txt_Relances(niveau,libell1, libell2) VALUES ('4', 'Niveau quatre debut', 'Niveau quatre fin')
+SELECT * FROM Fiches_Txt_Relances WHERE niveau = '4'

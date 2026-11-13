@@ -1,0 +1,30 @@
+{
+ "id": "IMPJDV-T09",
+ "objet": "Apostrophe dans un compte manquant",
+ "classe": "ImpJdv",
+ "description": "Import du JDV Laurux (Menu134), compte absent 658999 « L'atelier » sur deux lignes : Oui, message clients, puis UPdate Nvcompte non échappé en erreur SQL (A09) figée. Pile : DB_Connection.Exec ← ImpJdv.Controle.356 ← ImpJdv.Import.227 (code 125). Le dump reste comparé (état intermédiaire figé).",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-import": "{home}"
+ },
+ "entrees": {
+  "impjdv_shared/clients.txt": "~/clients.txt",
+  "impjdv_shared/ecritures70_apostrophe.csv": "~/ecritures70.csv"
+ },
+ "fichiers": [
+  "rejets.txt",
+  "Nvcomptes.txt",
+  "@ouvrir.trace"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

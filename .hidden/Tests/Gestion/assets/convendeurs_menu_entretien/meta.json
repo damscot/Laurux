@@ -1,0 +1,23 @@
+{
+ "id": "CONVENDEURS-T06",
+ "classe": "ConVendeurs",
+ "objet": "Menu « Saisie des factures entretien » (A01)",
+ "description": "Jeu convendeurs_shared/vendeurs, /Vendeurs=1 sans CodeVendeur. Saisie des factures entretien (Menu193) : « New ConVendeurs(True) » alors que ConVendeurs._new n'a pas de paramètre → erreur fatale (Fmenu.Menu193_Click), figée par code 125 (CONVENDEURS-A01).",
+ "dataset": "convendeurs_shared/vendeurs",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Vendeurs": "1",
+  "/Soc01/CodeVendeur": ""
+ },
+ "code_sortie": 125,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

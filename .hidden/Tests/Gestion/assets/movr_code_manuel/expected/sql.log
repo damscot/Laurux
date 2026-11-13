@@ -1,0 +1,31 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+select * from Fiches_Mo where mo_code like  "%" order by mo_code
+SELECT * FROM Fiches_Mo where mo_code = '04'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Txtmo WHERE code_txtmo = '1'
+SELECT * FROM Fiches_Txtmo WHERE code_txtmo = '1'
+SELECT * FROM Fiches_Mo where mo_code = '04' 
+UPdate  Fiches_Mo  SET  mo_code = '04' , mo_design = 'Forfait changement poulie' , mo_fam = '10' , mo_four = '401001', mo_txcd = '1', mo_txht = '28.00', mo_tva = '3', mo_tempmont = '1', mo_montant = '0.00', mo_valeurht = '0.00', mo_valeurttc = '0.00', mo_cdarr = '0,01', mo_prvt = '0.00', mo_marge = '0.00', mo_crst = NULL, mo_impcar = 0 where mo_code = '04'
+select * from Fiches_Mo where mo_code like  "%" order by mo_code

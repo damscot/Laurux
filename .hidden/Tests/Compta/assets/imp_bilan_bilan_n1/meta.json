@@ -1,0 +1,25 @@
+{
+ "classe": "Imp_Bilan",
+ "dataset": "extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/BilanDetail.csv",
+  "tmp/BilanRub.csv",
+  "edition.txt"
+ ],
+ "id": "IMP_BILAN-T02",
+ "objet": "Bilan de l'exercice antérieur (N1)",
+ "description": "Impressions comptables (RubImp, Menu124), jeu extrait_base (écritures 2017 dans Fiches_Mvt1), Bilan, exercice N1 (tables Fiches_Mvt1/Fiches_Mvt2), Imprimer ; Message.Info validé par Entrée ; BilanDetail.csv et BilanRub.csv comparés, dump ; texte du PDF comparé (pdftotext, edition.txt) ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ }
+}

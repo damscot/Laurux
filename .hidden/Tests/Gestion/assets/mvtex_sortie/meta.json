@@ -1,0 +1,23 @@
+{
+ "id": "MVTEX-T02",
+ "objet": "Sortie de plusieurs articles",
+ "classe": "Mvtex",
+ "description": "Gestion › Stock › Régularisation : Sortie (défaut), A1 qté 2 Enregistrer, A2 qté 1,5 Enregistrer, Valider (Button2 → Enrgbl) ; 2 lignes qtem, art_qte décrémentés ; PDF ~/tmp/mvtex.pdf converti par pdftotext (CmdVis) dans ~/mvtex_pdf.txt.",
+ "dataset": "mvtex_shared/stock_mvtex",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "mvtex_pdf.txt"
+ ],
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/mvtex_pdf.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

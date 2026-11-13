@@ -1,0 +1,23 @@
+{
+ "id": "ETICLI-T02",
+ "objet": "Filtre et tri par type client",
+ "classe": "Eticli",
+ "description": "CheckType coché ; types A à B ; tri par type (RadioButton2) ; Générer : clients A puis B.",
+ "dataset": "eticli_shared/eticli_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

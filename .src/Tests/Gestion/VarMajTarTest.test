@@ -1,0 +1,63 @@
+' Gambas test file
+
+''Tests de VarMajTar (.hidden/reference/.src/Gestion/Stock/VarMajTar.class/test.md, VARMAJTAR-T03).
+''VARMAJTAR-T04 reste à faire : LTaxe("--5%", Remise) ne rend pas la main en gb.test (délai de 20 s dépassé).
+''Valeurs attendues : assets/VarMajTarTest/expected.txt, produites dans le clone de référence.
+''constructiontableau est Private : T03 rejoue sa cascade de calcul telle que décrite dans le test.md (LPrix(Px_Rev, 1,
+''art_cdarr) + LTaxe("-" & marge, Remise) + LTaxe(taux_tva & "%", TVA), marge écrite Str((coef - 1) * 100) & "%").
+''Pas de base de données.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03CascadePrix", "Cascade LPrix + remise négative (marge) + TVA : PuNHT.G et PuNTC.G sur la grille pxrev × marge × TVA × arrondi")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "VarMajTarTest")
+
+End
+
+Private Sub Cascade(sCle As String, fRev As Float, fCoef As Float, sTva As String, sArr As String)
+
+  Dim lp As LPrix
+  Dim lt As LTaxe
+
+  Try lp = New LPrix(fRev, 1, sArr)
+  If Error Then
+    TestKit.Check(sCle, "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try lt = New LTaxe("-" & Str((fCoef - 1) * 100) & "%", LTaxe.Remise)
+  Try lp.Add_taxe(lt)
+  If Error Then TestKit.Check(sCle & "/remise", "ERREUR: " & Error.Text)
+  Try lt = New LTaxe(sTva & "%", LTaxe.TVA)
+  Try lp.Add_taxe(lt)
+  If Error Then TestKit.Check(sCle & "/tva", "ERREUR: " & Error.Text)
+  TestKit.Check(sCle & "/PuNHT", lp.PuNHT.G)
+  TestKit.Check(sCle & "/PuNTC", lp.PuNTC.G)
+
+End
+
+Public Sub T03CascadePrix()
+
+  Dim aRev As Float[] = [0, 1.234, 10, 99.99]
+  Dim aCoef As Float[] = [1, 1.25, 1.33333]
+  Dim aTva As String[] = ["5.5", "20"]
+  Dim aArr As String[] = ["0,01", "0,05", "0,10"]
+  Dim fRev, fCoef As Float
+  Dim sTva, sArr As String
+
+  For Each fRev In aRev
+    For Each fCoef In aCoef
+      For Each sTva In aTva
+        For Each sArr In aArr
+          Cascade("T03/" & Str(fRev) & "_" & Str(fCoef) & "_" & sTva & "_" & sArr, fRev, fCoef, sTva, sArr)
+        Next
+      Next
+    Next
+  Next
+
+End

@@ -1,0 +1,24 @@
+{
+ "classe": "ConVendeurs",
+ "dataset": "convendeurs_shared/vendeurs",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Vendeurs": "1",
+  "/Soc01/CodeVendeur": ""
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ],
+ "id": "CONVENDEURS-T03",
+ "objet": "Code vendeur sur 2 caractères (A02)",
+ "description": "Jeu convendeurs_shared/vendeurs. Vendeur « 12 MARTIN » (index 2) : son mot de passe « martin » est refusé (recherche sur Left$(code,1) = « 1 », CONVENDEURS-A02) ; le mot de passe « secret » du vendeur 1 est accepté : CodeVendeur = « 12 MARTIN » (comportement actuel figé), Facture ouverte puis fermée.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

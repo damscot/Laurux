@@ -1,0 +1,29 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+DROP TABLE if exists Fiches_Relcomptes
+CREATE TABLE Fiches_Relcomptes (compte Char(8) NOT NULL,rs char(10) ,intitule char(30) ,adr1 char(35) ,adr2 char(35) ,cp char(10) ,ville char(35) ,pays char(40) ,dte datetime ,numdoc char(10) NOT NULL,numlot char(10) ,libelle char(30) ,montantd Decimal(12,2) ,montantc Decimal(12,2) ,numero char(8) NOT NULL,journal char(2) ,lind INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (lind)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt where left(compte,3) = '401' and dte >= '20180601' and dte <= '20180615'  and collectif is null order by compte 
+SELECT * FROM Fiches_Four where  fo_code = '401001'
+INSERT INTO Fiches_Relcomptes (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal, pays, lind) VALUES ('401001', 'SAS', 'A Divers ', '3 quai Nord', NULL, '44000', 'Nantes', '2018-06-04 00:00:00', 'A101', NULL, 'Achat A101', '0.00', '360.00', 6, '60', NULL, 12)
+SELECT * FROM Fiches_Four where  fo_code = '401001'
+INSERT INTO Fiches_Relcomptes (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal, pays, lind) VALUES ('401001', 'SAS', 'A Divers ', '3 quai Nord', NULL, '44000', 'Nantes', '2018-06-12 00:00:00', 'VIR1', NULL, 'Reglement A101', '360.00', '0.00', 7, '50', NULL, 14)
+SELECT * FROM Fiches_Four where  fo_code = '401002'
+INSERT INTO Fiches_Relcomptes (compte,Rs, intitule,adr1,adr2,cp,ville,dte,numdoc,numlot,libelle,montantd,montantc,numero,journal, pays, lind) VALUES ('401002', NULL, 'B Divers ', NULL, NULL, NULL, NULL, '2018-06-14 00:00:00', 'A102', NULL, 'Achat A102', '0.00', '90.00', 8, '60', NULL, 16)
+SELECT * FROM Fiches_Relcomptes order by compte 

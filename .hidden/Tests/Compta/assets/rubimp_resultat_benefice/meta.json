@@ -1,0 +1,24 @@
+{
+ "id": "RUBIMP-T01",
+ "objet": "Compte de résultat non détaillé, bénéfice",
+ "classe": "RubImp",
+ "description": "Jeu Compta extrait_shared/extrait_base (2018 bénéficiaire) : Compte de résultat (défaut), E1, Imprimer (Button2), Message.Info « traitement long » (Entrée) ; ~/tmp/Resultat.pdf converti par pdftotext (CmdVis) dans ~/resultat_pdf.txt, ~/tmp/Resultat.csv et table centralisation (dump) comparés ; Quitter.",
+ "dataset": "extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/resultat_pdf.txt'"
+ },
+ "fichiers": [
+  "resultat_pdf.txt",
+  "tmp/Resultat.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

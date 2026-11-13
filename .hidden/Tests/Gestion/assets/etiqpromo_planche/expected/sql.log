@@ -1,0 +1,32 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Etiquettes 
+SELECT * FROM Fiches_Promo order by code
+SELECT * FROM Fiches_Etiquettes WHERE code = 'Z'
+select * FROM Fiches_ArtPromo WHERE code_promo = 'P5'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '001'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '002'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '003'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '007'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '008'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '009'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '010'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '011'
+SELECT * FROM Fiches_Art left join Fiches_ArtPromo on code = art_code WHERE art_code = '012'

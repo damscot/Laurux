@@ -1,0 +1,103 @@
+' Gambas test file
+
+''Tests du module ArtPromo (.hidden/reference/.src/Gestion/Tables/ArtPromo.module/test.md, ARTPROMO-T01 à T04).
+''Jeu artpromo_promo : P1 (ART1 qte 7, ART2 qte Null), P2 (ART3), ART9 hors promotion.
+''Valeurs attendues : assets/ArtPromoTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Appartenance", "art_Promo : article dans P1, hors promotion, promotion inconnue, chaînes vides")
+  TestKit.Desc("T02PrixPromo", "Prix_Promo et Prix_Promottc : mêmes cas")
+  TestKit.Desc("T03Intitule", "Intitule_Promo : mêmes cas")
+  TestKit.Desc("T04Quantites", "Maj_qteplus +3 puis Maj_qtemoins -1 (qte renseignée, Null, hors promotion) : dump Fiches_ArtPromo")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ArtPromoTest")
+  TestKit.OuvreBase("artpromo_promo")
+
+End
+
+Private Function Cas() As String[][]
+  ''Couples (article, promotion) testés.
+
+  Return [["ART1", "P1"], ["ART2", "P1"], ["ART3", "P1"], ["ART3", "P2"], ["ART9", "P1"], ["ART1", "PX"], ["", ""]]
+
+End
+
+Private Function Dump() As String
+  ''Contenu trié de Fiches_ArtPromo.
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabArtPromo") & " ORDER BY code_promo, code")
+  If Not r.Available Then Return "<aucune ligne>"
+  Repeat
+    s &= r!code_promo & "/" & r!code & "/" & r!libelle & "/" & r!pht & "/" & r!pttc & "/" & r!qte & " | "
+  Until r.MoveNext()
+  Return s
+
+End
+
+Public Sub T01Appartenance()
+
+  Dim aC As String[]
+  Dim s As String
+  Dim b As Boolean
+
+  For Each aC In Cas()
+    s = ArtPromo.art_Promo(aC[0], aC[1])
+    TestKit.Check("T01/" & aC[0] & "-" & aC[1] & "/chaine", s)
+    Try b = CBool(s)
+    If Error Then
+      TestKit.Check("T01/" & aC[0] & "-" & aC[1] & "/booleen", "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T01/" & aC[0] & "-" & aC[1] & "/booleen", b)
+    Endif
+  Next
+
+End
+
+Public Sub T02PrixPromo()
+
+  Dim aC As String[]
+
+  For Each aC In Cas()
+    TestKit.Check("T02/" & aC[0] & "-" & aC[1] & "/pht", ArtPromo.Prix_Promo(aC[0], aC[1]))
+    TestKit.Check("T02/" & aC[0] & "-" & aC[1] & "/pttc", ArtPromo.Prix_Promottc(aC[0], aC[1]))
+  Next
+
+End
+
+Public Sub T03Intitule()
+
+  Dim aC As String[]
+
+  For Each aC In Cas()
+    TestKit.Check("T03/" & aC[0] & "-" & aC[1] & "/libelle", ArtPromo.Intitule_Promo(aC[0], aC[1]))
+  Next
+
+End
+
+Public Sub T04Quantites()
+
+  TestKit.Check("T04/initial", Dump())
+  ArtPromo.Maj_qteplus("ART1", "P1", 3)
+  TestKit.Check("T04/ART1/plus3", Dump())
+  ArtPromo.Maj_qtemoins("ART1", "P1", 1)
+  TestKit.Check("T04/ART1/moins1", Dump())
+  ArtPromo.Maj_qteplus("ART2", "P1", 3)
+  TestKit.Check("T04/ART2null/plus3", Dump())
+  ArtPromo.Maj_qtemoins("ART2", "P1", 1)
+  TestKit.Check("T04/ART2null/moins1", Dump())
+  ArtPromo.Maj_qtemoins("ART2", "P2", 1)
+  ArtPromo.Maj_qteplus("ART9", "P1", 3)
+  TestKit.Check("T04/horspromo", Dump())
+  ArtPromo.Maj_qteplus("ART1", "P1", 0.5)
+  TestKit.Check("T04/ART1/decimal", Dump())
+
+End

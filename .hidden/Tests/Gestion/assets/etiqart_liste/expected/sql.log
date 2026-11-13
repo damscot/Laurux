@@ -1,0 +1,63 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Etiquettes 
+drop Table IF exists Etiquettes
+CREATE TABLE Etiquettes(code Char(15) NOT NULL,nombre integer,PRIMARY KEY (code)) ENGINE = InnoDB
+SELECT * FROM Fiches_Art where art_code = '001'
+INSERT INTO Etiquettes (code, nombre) Values ('001', 1)
+SELECT * FROM Etiquettes order by code
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Art where art_code = '002'
+INSERT INTO Etiquettes (code, nombre) Values ('002', 1)
+SELECT * FROM Etiquettes order by code
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Art where art_code = '002'
+SELECT * FROM Fiches_CdBarre where codeb = '2148413200001'
+SELECT * FROM Fiches_Art where art_code = '001'
+INSERT INTO Etiquettes (code, nombre) Values ('001', 1)
+SELECT * FROM Etiquettes where code = '001'
+UPdate  Etiquettes  SET  code = '001' , nombre = 2 WHERE code = '001'
+SELECT * FROM Etiquettes order by code
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Art where art_code = '002'
+SELECT * FROM Fiches_Art where art_code = '002'
+INSERT INTO Etiquettes (code, nombre) Values ('002', 3)
+SELECT * FROM Etiquettes where code = '002'
+UPdate  Etiquettes  SET  code = '002' , nombre = 3 WHERE code = '002'
+SELECT * FROM Etiquettes order by code
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Art where art_code = '002'
+SELECT * FROM Fiches_Art where art_code = '004'
+INSERT INTO Etiquettes (code, nombre) Values ('004', 3)
+SELECT * FROM Etiquettes order by code
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Art where art_code = '002'
+SELECT * FROM Fiches_Art where art_code = '004'
+SELECT * FROM Etiquettes where code = '004'
+Delete From Etiquettes  where  code = '004'
+SELECT * FROM Etiquettes order by code
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Art where art_code = '002'
+SELECT * FROM Fiches_Etiquettes WHERE code = 'Z' and page = 'A4 Portrait'
+SELECT * FROM Etiquettes
+SELECT * FROM Fiches_Art WHERE art_code = '001'
+SELECT * FROM Fiches_Art WHERE art_code = '002'
+drop Table IF exists Etiquettes
+CREATE TABLE Etiquettes(code Char(15) NOT NULL,nombre integer,PRIMARY KEY (code)) ENGINE = InnoDB

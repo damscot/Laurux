@@ -1,0 +1,76 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Journaux where  type_jo = 'TR'order by code_jo
+select * from Fiches_BordereauxC order by dateremise
+SELECT numecriture FROM Fiches_Parametres 
+SELECT numecriture2 FROM Fiches_Parametres 
+UPDATE Fiches_Parametres set numecriture = '1',numecriture2 = '1' 
+SELECT * FROM Fiches_ClientCaisse
+SELECT compte_cc FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+select * from Fiches_ClientCaisse
+select * from Fiches_Journaux where  code_jo = '50'
+ select  sum(replace(montantd, ',', '.')) as tmtd, sum(replace(montantc, ',', '.')) as tmtc from Fiches_Mvt where numlot = 'F001' and compte = '411001'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES ('50', '1', '411001', 'A Divers', '20180615', 'F001', 'F001', 'A Divers ''B12', 0, 120, 1, 0, 1, '0', 1, '20180615', '1')
+SELECT * FROM Fiches_Mvt WHERE compte = '411001'  and validee = 1  order by dte 
+UPdate Fiches_Comptes  SET solde = '-120' where compte_cc = '411001'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411001'
+SELECT * FROM Fiches_Mvt Where compte = '411000' and numero = '1' and numerodef = '1'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef, numdoc, numlot) VALUES ('50', '1', '411000', 1, 'A Divers', '20180615', 'Chèque A Divers15.06.2018', 0, 120, 1, 0, 1, 0, NULL, 1, 0, '1', '15062018', '15062018')
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPDATE Fiches_Comptes set solde = -120 Where compte_cc = '411000'
+ select  sum(replace(montantd, ',', '.')) as tmtd, sum(replace(montantc, ',', '.')) as tmtc from Fiches_Mvt where numlot = 'F002' and compte = '411001'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES ('50', '1', '411001', 'A Divers', '20180615', 'F002', 'F002', 'A Divers ''B12', 0, 60, 1, 0, 1, '0', 1, '20180615', '1')
+SELECT * FROM Fiches_Mvt WHERE compte = '411001'  and validee = 1  order by dte 
+UPdate Fiches_Comptes  SET solde = '-180' where compte_cc = '411001'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411001'
+SELECT * FROM Fiches_Mvt Where compte = '411000' and numero = '1' and numerodef = '1'
+UPDATE Fiches_Mvt set montantc = 180, lettree = NULL Where compte = '411000' and numero = '1' and numerodef = '1'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPDATE Fiches_Comptes set solde = -300 Where compte_cc = '411000'
+ select  sum(replace(montantd, ',', '.')) as tmtd, sum(replace(montantc, ',', '.')) as tmtc from Fiches_Mvt where numlot = 'F003' and compte = '411002'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES ('50', '1', '411002', 'B Divers', '20180615', 'F003', 'F003', 'B Divers ''B12', 0, 30, 1, 0, 1, '0', 1, '20180615', '1')
+SELECT * FROM Fiches_Mvt WHERE compte = '411002'  and validee = 1  order by dte 
+UPdate Fiches_Comptes  SET solde = '-30' where compte_cc = '411002'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411002'
+SELECT * FROM Fiches_Mvt Where compte = '411000' and numero = '1' and numerodef = '1'
+UPDATE Fiches_Mvt set montantc = 210, lettree = NULL Where compte = '411000' and numero = '1' and numerodef = '1'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPDATE Fiches_Comptes set solde = -510 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour,numero,compte,intitule,dte,numdoc, numlot, libelle, montantd, montantc,validee, provisoire,tresorerie,lettree,Cloturee, datee, numerodef) VALUES ('50', '1', '512000', 'Bordereau de chèque N° ', '20180615', 'F003', 'F003', 'Bordereau de chèque N° ', 210, 0, 1, 0, 1, 0, 1, '20180615', '1')
+SELECT * FROM Fiches_Mvt WHERE compte = '512000'  and validee = 1  order by dte 
+UPdate Fiches_Comptes  SET solde = '210' where compte_cc = '512000'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411002'
+SELECT * FROM Fiches_Mvt Where compte = '411000' and numero = '1' and numerodef = '1'
+UPDATE Fiches_Mvt set montantc = 240, lettree = NULL Where compte = '411000' and numero = '1' and numerodef = '1'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPDATE Fiches_Comptes set solde = -750 Where compte_cc = '411000'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt set  control = 'EDBwMwr4UsFRUKp8jK3+S+UW6vY=' where lind = 1
+update Fiches_Mvt set  control = '6VyjSP/82k+cgqGz9xwIG3F5XJg=' where lind = 2
+update Fiches_Mvt set  control = 'sSzB1rep+rj6nJLicaH0BPDs56E=' where lind = 3
+update Fiches_Mvt set  control = 'c+m93fA7Nj/3oKaMMGx65BnrNqg=' where lind = 4
+update Fiches_Mvt set  control = 'uC0bbFRk7OFhtkfWfFC3r1PFEX0=' where lind = 5
+DELETE FROM  Fiches_BordereauxC  WHERE lind = '1'
+DELETE FROM  Fiches_BordereauxC  WHERE lind = '2'
+DELETE FROM  Fiches_BordereauxC  WHERE lind = '3'
+select * from Fiches_BordereauxC order by dateremise

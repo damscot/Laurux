@@ -1,0 +1,33 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+select * from Fiches_Depots order by code
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Fam where code_fam = '02'
+SELECT * FROM Fiches_FamDep  where fam = '02' and depot = NULL
+SELECT * FROM Fiches_FamDep  where fam = '02' and depot = '02'
+SELECT * FROM Fiches_Tvaav where code_tva = '2'
+SELECT * FROM Fiches_Fam WHERE code_fam = '02'
+UPdate  Fiches_Fam  SET  code_fam = '02' , libell_fam = 'Produits 7.00' , compt_fam = '707020', coef_fam = '2.000', cdtva_fam = '2', txtva_fam = '7.00', cptrem_fam = '709000' , ect_fam = 0 , rem_fam = '0.000', qte1 = NULL, qte2 = NULL, rem1 = NULL, qte3 = NULL, qte4 = NULL, rem2 = NULL, compt2_fam = '707010', compt3_fam = NULL, compt4_fam = NULL , compt5_fam = '707010' WHERE code_fam = '02'
+UPdate  Fiches_Fam  SET  qte5 = NULL, qte6 = NULL, rem3 = NULL, qte7 = NULL, qte8 = NULL, rem4 = NULL, qte9 = NULL, qte10 = NULL, rem5 = NULL, qte11 = NULL, qte12=  NULL, rem6 = NULL  WHERE code_fam = '02'
+SELECT * FROM Fiches_FamDep WHERE fam = '02' and depot = '02'
+INSERT INTO Fiches_FamDep (fam,compte, depot) VALUES('02', '707020', '02')
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = '707020'

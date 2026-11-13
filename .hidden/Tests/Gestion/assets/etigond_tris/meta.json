@@ -1,0 +1,24 @@
+{
+ "id": "ETIGOND-T05",
+ "objet": "Les tris 2 à 5",
+ "classe": "Etigond",
+ "description": "Modèle Gondole ; Générer avec les tris famille, fournisseur, désignation, casier (RadioButton2, 3, 4, 7) ; textes des 4 PDF concaténés.",
+ "dataset": "etigond_shared/etigond_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

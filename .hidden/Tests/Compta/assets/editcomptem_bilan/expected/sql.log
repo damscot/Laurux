@@ -1,0 +1,158 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT  compte_cc, intitule_cc, cent_cc, cprincipal, type_cc  FROM Fiches_Comptes WHERE cast(compte_cc AS char) >= '10000'  and cast(compte_cc AS char) <= '99999999'  and type_cc = 'B' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_SousComptes WHERE code = '101000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '101000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '106800' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '106800'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '108000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '108000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '110000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '110000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '119000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '119000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '120000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '120000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '129000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '129000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '168800' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '168800'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '211000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '211000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '213000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '213000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '213500' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '213500'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '218200' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '218200'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '218300' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '218300'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '218400' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '218400'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '218820' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '218820'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '231000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '231000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '231500' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '231500'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '261000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '261000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '266000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '266000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '275000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '275000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '281300' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '281300'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '281400' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '281400'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '281500' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '281500'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '281600' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '281600'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '281700' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '281700'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '335000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '335000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '370000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '370000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '397000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '397000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '401000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '401000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '408000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '408000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '408100' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '408100'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '409600' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '409600'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '409700' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '409700'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '411000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '411000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '416000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '416000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '419100' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '419100'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '419700' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '419700'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '421000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '421000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '428200' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '428200'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '437100' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '437100'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '437200' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '437200'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '444000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '444000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445510' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445510'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445620' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445620'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445660' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445660'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445670' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445670'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445680' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445680'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445710' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445710'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445720' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445720'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '445730' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '445730'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+drop Table IF exists Ctrln
+CREATE TABLE IF NOT EXISTS Ctrln(compte Char(8) NOT NULL,intitule Char(30),jour Char(2),Mois Char(6) NOT NULL,libelle Char(30) ,dte Char(10) ,montantd Decimal(12,2),montantc Decimal(12,2),PRIMARY KEY (compte, Mois)) ENGINE = InnoDB
+SELECT * FROM Ctrln WHERE compte = '445730' and Mois = '201802'
+INSERT INTO Ctrln(compte,intitule,dte,libelle, montantd, montantc, jour, Mois) VALUES ('445730', NULL, '20180228', 'Centralisation', 0, 20, '70', '201802')
+SELECT * FROM Ctrln WHERE compte = '445730' and Mois = '201804'
+INSERT INTO Ctrln(compte,intitule,dte,libelle, montantd, montantc, jour, Mois) VALUES ('445730', NULL, '20180430', 'Centralisation', 0, 10, '70', '201804')
+SELECT * FROM Ctrln WHERE compte = '445730' and Mois = '201804'
+Update Ctrln set montantd = 0, montantc = 15, dte = '20180430' Where compte = '445730' and Mois = '201804'
+SELECT * FROM Ctrln WHERE compte = '445730' Order by Mois
+SELECT * FROM Fiches_SousComptes WHERE code = '468700' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '468700'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '471000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '471000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '491000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '491000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '512000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '512000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+drop Table IF exists Ctrln
+CREATE TABLE IF NOT EXISTS Ctrln(compte Char(8) NOT NULL,intitule Char(30),jour Char(2),Mois Char(6) NOT NULL,libelle Char(30) ,dte Char(10) ,montantd Decimal(12,2),montantc Decimal(12,2),PRIMARY KEY (compte, Mois)) ENGINE = InnoDB
+SELECT * FROM Fiches_SousComptes WHERE code = '512001' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '512001'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '518600' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '518600'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '530000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '530000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '580000' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '580000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '580001' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '580001'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '580002' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '580002'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_SousComptes WHERE code = '580003' order by code_vtl 
+SELECT * FROM Fiches_Mvt WHERE compte = '580003'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 

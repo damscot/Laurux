@@ -1,0 +1,25 @@
+{
+ "classe": "Imp_Bilan",
+ "dataset": "imp_bilan_shared/imp_bilan_amort",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/BilanDetail.csv",
+  "tmp/BilanRub.csv",
+  "edition.txt"
+ ],
+ "id": "IMP_BILAN-T03",
+ "objet": "Bilan de l'exercice N5 (pas de N-1)",
+ "description": "Impressions comptables (RubImp, Menu124), jeu imp_bilan_shared/imp_bilan_amort (écritures 2013 dans Fiches_Mvt5), Bilan, exercice N5 (Fiches_Mvt5, pas de table N-1), Imprimer ; Message.Info « traitement long » validé par Entrée ; BilanDetail.csv, BilanRub.csv et texte de Bilan.pdf (pdftotext, edition.txt) comparés ; dump (centralisation, Comptes : solde2 attendu à 0) ; Quitter (Button3).",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ }
+}

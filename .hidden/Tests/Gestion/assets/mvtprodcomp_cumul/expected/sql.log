@@ -1,0 +1,38 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT mind FROM Fiches_Mvtexpdc Order by mind desc limit 1
+SELECT * FROM Fiches_Art where art_code = 'PC1'
+SELECT * FROM Fiches_Art where art_code = 'PC1'
+UPdate  Fiches_Art  SET art_qte = '12' WHERE art_code = 'PC1'
+INSERT INTO Fiches_Mvtexpdc(mind,code,daterecpt,qtep,qtem,com, type) VALUES (42, 'PC1', '20180615', '2,00', '0', 'Entrée produit composé', 'P')
+SELECT * FROM Fiches_PrdComp where codep = 'PC1'
+SELECT * FROM Fiches_PrdComp where codec = 'CP1' and codep = 'PC1'
+SELECT * FROM Fiches_Art where art_code = 'CP1'
+UPdate  Fiches_Art  SET art_qte = '96' WHERE art_code = 'CP1'
+SELECT * FROM Fiches_Mvtexpdc where code = 'CP1'
+INSERT INTO Fiches_Mvtexpdc(mind,code,daterecpt,qtep,qtem,com, type) VALUES (42, 'CP1', '20180615', '0', 4, 'Sortie composant', 'C')
+SELECT * FROM Fiches_PrdComp where codec = 'CP2' and codep = 'PC1'
+SELECT * FROM Fiches_Art where art_code = 'CP2'
+UPdate  Fiches_Art  SET art_qte = '49' WHERE art_code = 'CP2'
+SELECT * FROM Fiches_Mvtexpdc where code = 'CP2'
+INSERT INTO Fiches_Mvtexpdc(mind,code,daterecpt,qtep,qtem,com, type) VALUES (42, 'CP2', '20180615', '0', 1, 'Sortie composant', 'C')
+SELECT * FROM Fiches_Art where art_code = 'PC1'
+SELECT * FROM Fiches_Art where art_code = 'PC1'
+UPdate  Fiches_Art  SET art_qte = '13' WHERE art_code = 'PC1'

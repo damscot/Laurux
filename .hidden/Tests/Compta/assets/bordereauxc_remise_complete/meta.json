@@ -1,0 +1,24 @@
+{
+ "id": "BORDEREAUXC-T04",
+ "objet": "Remise complète",
+ "classe": "BordereauxC",
+ "description": "Bordereaux de chèques (jeu bordereauxc_base, 3 chèques) : n° 12, banque 50, Imprimer ; texte du PDF (edition.txt) ; Message.Question « effacer » bouton 1 « Oui » (Entrée) ; Message.Info « Traitement terminé » (Entrée) ; Fermer ; dump : écritures Fiches_Mvt (clients, banque, collectif), soldes Fiches_Comptes, SHA-1, chèques supprimés (A01, A02, A03 figées).",
+ "dataset": "bordereauxc_shared/bordereauxc_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'",
+  "/Soc01/FactcheminC": "{home}/pdfc"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

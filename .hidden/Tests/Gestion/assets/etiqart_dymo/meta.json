@@ -1,0 +1,24 @@
+{
+ "id": "ETIQART-T07",
+ "objet": "Imprimante Dymo",
+ "classe": "Etiqart",
+ "description": "/Soc01/Impetiq = « 3- Dymo » ; modèle Z - Test, 1 étiquette ; Générer : une étiquette par page dymog (texte du PDF).",
+ "dataset": "etiqart_shared/etiqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "3- Dymo",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

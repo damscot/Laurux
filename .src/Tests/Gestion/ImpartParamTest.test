@@ -1,0 +1,36 @@
+' Gambas test file
+
+''Tests de ImpartParam (.hidden/reference/.src/Gestion/Stock/Tarifs/ImpartParam.class/test.md, IMPARTPARAM-T08).
+''Valeurs attendues : assets/ImpartParamTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est instanciée sans être affichée et Btncreer_Click (public) est appelé directement (MySQL seulement :
+''le framework ne fournit pas de base SQLite). Jeu : impartparam_shared/definitions_1_2_10.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T08Numerotation", "Btncreer avec les définitions 1, 2 et 10 : numéro proposé dans Cdef (A04), et sur table vide")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ImpartParamTest")
+  TestKit.OuvreBase("impartparam_shared/definitions_1_2_10")
+
+End
+
+Public Sub T08Numerotation()
+
+  Dim hF As ImpartParam
+
+  hF = New ImpartParam
+  Try hF.Btncreer_Click()
+  If Error Then TestKit.Check("T08/Btncreer", "ERREUR: " & Error.Text)
+  TestKit.Check("T08/cdef_1_2_10", Object.GetProperty(hF.Controls["Cdef"], "Text"))
+  Utils.db.Exec("DELETE FROM Fiches_ImpArtDef")
+  Try hF.Btncreer_Click()
+  If Error Then TestKit.Check("T08/Btncreer_vide", "ERREUR: " & Error.Text)
+  TestKit.Check("T08/cdef_vide", Object.GetProperty(hF.Controls["Cdef"], "Text"))
+  Object.Lock(hF)
+
+End

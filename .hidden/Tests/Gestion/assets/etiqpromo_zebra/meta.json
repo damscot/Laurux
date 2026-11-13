@@ -1,0 +1,26 @@
+{
+ "id": "ETIQPROMO-T06",
+ "objet": "Zebra (caractérisation)",
+ "classe": "EtiqPromo",
+ "description": "/Soc01/Impetiq = « 2- Zebra » ; Générer : aucun PDF, Null object figé (ETIQPROMO-A01), code 125.",
+ "dataset": "etiqpromo_shared/etiqpromo_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "2- Zebra",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

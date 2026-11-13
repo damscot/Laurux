@@ -1,0 +1,28 @@
+{
+ "id": "ETIGOND-T12",
+ "objet": "Import portable",
+ "classe": "Etigond",
+ "description": "Comme ETIQART-T09 : ~/Portable/inventaire.txt ; Importer ; Message.Question (Entrée) ; Générer ; « Traitement terminé » (Entrée) ; ~/tmp/ImpT.txt comparé.",
+ "dataset": "etigond_shared/etigond_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt",
+  "tmp/ImpT.txt"
+ ],
+ "entrees": {
+  "inventaire.txt": "~/Portable/inventaire.txt"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}
