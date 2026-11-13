@@ -10,7 +10,7 @@ menu, ce qui est interdit. Le seul contrôle utile est celui qui accompagne la s
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| MAJFBTARIF1-T01 | replay | Non-régression après suppression (A01) | `grep -rn MajFbtarif1 .src` vide, `gbc3 -agt` sans erreur, replay du menu « Future base tarif » (`MajFbtarif2`, `Etiqfbtarif`) | build vert, replays MAJFBTARIF2-T01 et Etiqfbtarif inchangés | `tests/suppression/` | à faire |
+| MAJFBTARIF1-T01 | replay | Non-régression après suppression (A01) | `grep -rn MajFbtarif1 .src` vide, `gbc3 -agt` sans erreur, replay du menu « Future base tarif » (`MajFbtarif2`, `Etiqfbtarif`) | build vert, replays MAJFBTARIF2-T01 et Etiqfbtarif inchangés | `tests/suppression/` | à faire : test de non-régression après suppression (A01) ; écran inaccessible aujourd'hui (aucun appelant). Les replays de référence existent : majfbtarif2_* et etiqfbtarif_* |
 
 ## Détail des tests
 

@@ -1,0 +1,18 @@
+{
+ "id": "EDART3-T02",
+ "objet": "Saut de page",
+ "classe": "EdArt3",
+ "description": "Cdt = 01 (Entrée), plage complète (2 pages), Imprimer : la page 2 est titrée « tarif interne » (A02 figée).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

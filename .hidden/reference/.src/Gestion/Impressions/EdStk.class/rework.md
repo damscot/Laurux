@@ -57,7 +57,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDSTK-A01 — [anomalie] Cumuls `Totpa`/`Totpmp` reformatés à 2 décimales à chaque ligne alors
   que les lignes peuvent avoir 3 décimales : total ≠ somme des lignes imprimées · tests : T06 ·
   sources : [EdStk.class:533](../../../../../../.src/Gestion/Impressions/EdStk.class#L533), [EdStk.class:535](../../../../../../.src/Gestion/Impressions/EdStk.class#L535)
-- [ ] EDSTK-A02 — [anomalie] Aucun pied de page (`Footer` jamais appelé alors qu'`AliasNbPages` est
+- [ ] EDSTK-A02 — [anomalie] (confirmée phase 2, vague 5 : seconde page sans pied de page (T05)) Aucun pied de page (`Footer` jamais appelé alors qu'`AliasNbPages` est
   posé) : pas de numéro de page · tests : T05 · sources : [EdStk.class:544](../../../../../../.src/Gestion/Impressions/EdStk.class#L544)
 - [ ] EDSTK-A03 — [anomalie] `Pbht` garde la valeur de l'article précédent si `Format$` échoue
   (membre de classe) · tests : T06 · sources : [EdStk.class:515](../../../../../../.src/Gestion/Impressions/EdStk.class#L515)

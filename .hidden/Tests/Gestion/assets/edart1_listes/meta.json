@@ -1,0 +1,24 @@
+{
+ "id": "EDART1-T08",
+ "objet": "Listes familles / fournisseurs puis impression",
+ "classe": "EdArt1",
+ "description": "ToggleButton3 (liste Colfam), clic 02 ; ToggleButton4 (Colfam2), clic 02 ; ToggleButton5 (Colfour), clic 401002 ; ToggleButton6 (Colfour2), clic 401002 ; Imprimer : seuls les articles famille 02 et fournisseur 401002. F2/Échap non rejoués.",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

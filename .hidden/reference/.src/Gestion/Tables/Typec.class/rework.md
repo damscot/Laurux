@@ -54,7 +54,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TYPEC-A01 — [anomalie] `SELECT … WHERE code = '<code>'` concaténé (apostrophe → erreur SQL) ·
+- [ ] TYPEC-A01 — [anomalie] (confirmée phase 2, vague 5 : apostrophe → « Query failed » (`Button3_Click`, l. 125), T04 (code 125)) `SELECT … WHERE code = '<code>'` concaténé (apostrophe → erreur SQL) ·
   tests : T04 · sources : [Typec.class:125](../../../../../../.src/Gestion/Tables/Typec.class#L125)
 - [ ] TYPEC-A02 — [anomalie] Suppression de `Coltype.Current[0]` au lieu du code saisi (erreur sans
   sélection) et sans contrôle d'usage (remises/coefficients par type, fiches clients) : données

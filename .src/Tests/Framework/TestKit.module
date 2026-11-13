@@ -22,6 +22,7 @@ Private $cValeurs As Collection
 Private $aCles As String[]
 Private $bRecord As Boolean
 Private $hFtp As Process ' faux serveur FTP (FtpFactice), arrêté par FinFtp
+Private $hSmtp As Process ' faux serveur SMTP (SmtpFactice), arrêté par FinSmtp
 
 Public Descriptions As New Collection ' {Méthode : description} remplie par le _Desc() d'un module de test
 
@@ -198,6 +199,54 @@ Public Sub FinFtp()
   If $hFtp Then
     Try $hFtp.Kill()
     $hFtp = Null
+  Endif
+
+End
+
+Public Function SmtpFactice(Optional Mode As String = "ok", Optional Dossier As String) As String
+  ''Faux serveur SMTP pour valider l'envoi de courrier par Laurux (adresse d'origine, destinataires, objet, texte,
+  ''pièces jointes), sans serveur de messagerie réel : SmtpClient (gb.net.smtp, dans le processus) ne peut pas être
+  ''remplacé par un faux programme du PATH, d'où .src/Tests/Framework/bin/laurux-smtp, lancé sur 127.0.0.1 (port
+  ''libre). Identifiants acceptés sans contrôle. Mode : « ok » (envoi accepté), « refus » (authentification et envoi
+  ''refusés), « absent » (aucun serveur : port 1, connexion refusée). Messages reçus tels quels sous Dossier (1.eml…),
+  ''résumé stable dans Dossier/../smtp.trace (variables LAURUX_SMTP_DIR, LAURUX_SMTP_TRACE, LAURUX_SMTP_PORT transmises
+  ''aux processus fils). Renvoie le port, à placer dans la configuration (/Smtp = 127.0.0.1, /Port, /Secumail = Sans).
+  ''Arrêt par FinSmtp (sinon arrêt automatique après 120 s).
+
+  Dim sPortFic, sPort As String
+  Dim i As Integer
+  Dim sBin As String = Racine() &/ ".src/Tests/Framework/bin"
+
+  FinSmtp()
+  If Not Dossier Then Dossier = Temp$("smtp")
+  Shell "mkdir -p " & Shell$(Dossier) Wait
+  Application.Env["LAURUX_SMTP_DIR"] = Dossier
+  Application.Env["LAURUX_SMTP_TRACE"] = File.Dir(Dossier) &/ "smtp.trace"
+  If Mode = "absent" Then
+    sPort = "1"
+  Else
+    sPortFic = File.Dir(Dossier) &/ "smtp.port"
+    Try Kill sPortFic
+    ' exec : le processus suivi est le serveur lui-même (Kill l'atteint) ; sorties détachées (voir FtpFactice)
+    $hSmtp = Shell "exec " & Shell$(sBin &/ "laurux-smtp") & " --dir " & Shell$(Dossier) & " --trace " & Shell$(Application.Env["LAURUX_SMTP_TRACE"]) & " --port-file " & Shell$(sPortFic) & " --mode " & Shell$(Mode) & " < /dev/null > /dev/null 2>&1"
+    For i = 1 To 100
+      If Exist(sPortFic) Then Break
+      Sleep 0.05
+    Next
+    If Not Exist(sPortFic) Then Error.Raise("Faux serveur SMTP (laurux-smtp) non démarré")
+    sPort = Trim(File.Load(sPortFic))
+  Endif
+  Application.Env["LAURUX_SMTP_PORT"] = sPort
+  Return sPort
+
+End
+
+Public Sub FinSmtp()
+  ''Arrête le faux serveur SMTP lancé par SmtpFactice (à appeler dans _Teardown d'un gb.test).
+
+  If $hSmtp Then
+    Try $hSmtp.Kill()
+    $hSmtp = Null
   Endif
 
 End

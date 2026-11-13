@@ -49,7 +49,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TCONSIGNE-A01 — [anomalie] `form_Close` appelle `bar1_valide` sans ses deux arguments
+- [ ] TCONSIGNE-A01 — [anomalie] (confirmée phase 2, vague 5 : « Not enough arguments » (`form_Close.158`), figée par T06 (code 125)) `form_Close` appelle `bar1_valide` sans ses deux arguments
   obligatoires : « Not enough arguments » (vérifié `gbs3`) quand l'utilisateur répond « Oui » à
   l'enregistrement avant fermeture · tests : T06 · sources : [Tconsigne.class:158](../../../../../../.src/Gestion/option/Tconsigne.class#L158)
 - [ ] TCONSIGNE-A02 — [anomalie] Transaction ouverte pendant toute la saisie ; fermeture avec
@@ -61,3 +61,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   création : la fiche affichée après validation n'est pas celle qui vient d'être saisie ;
   `rech_trouver` boucle sans test de fin ; `bar1_suivant` sans test `Available` · tests : T04, T05 ·
   sources : [Tconsigne.class:bar1_modif](../../../../../../.src/Gestion/option/Tconsigne.class#L68-L73), [Tconsigne.class:118](../../../../../../.src/Gestion/option/Tconsigne.class#L118), [Tconsigne.class:rech_trouver](../../../../../../.src/Gestion/option/Tconsigne.class#L145-L153), [Tconsigne.class:bar1_suivant](../../../../../../.src/Gestion/option/Tconsigne.class#L93-L99)
+- [ ] TCONSIGNE-A05 — [anomalie] Entrée dans `Textcode` valide la création : `butval` (Valider) est le bouton par défaut de `barselection` et `bar1_valide` ne contrôle que le code : consigne créée avec un libellé vide et un prix 0 (phase 2, vague 5, 2026-11-13) · tests : constat de rejeu (T02, T03) · sources : [barselection.class:144](../../../../../../.src/Gestion/option/barselection.class#L144), [Tconsigne.class:bar1_valide](../../../../../../.src/Gestion/option/Tconsigne.class#L101-L122)

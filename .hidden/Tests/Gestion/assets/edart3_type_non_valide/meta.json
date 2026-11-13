@@ -1,0 +1,18 @@
+{
+ "id": "EDART3-T07",
+ "objet": "Type non validé",
+ "classe": "EdArt3",
+ "description": "Cdt = 99 tapé sans Entrée, Art2 = 105, Imprimer : impression lancée (titre « Type = 99 ») avec art_coef partout (A03 figée).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

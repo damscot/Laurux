@@ -1,0 +1,24 @@
+{
+ "id": "TRAITES-T03",
+ "objet": "Option LCR active",
+ "classe": "Traites",
+ "description": "/Soc01/Lcr = -1 ; Imprimer : PDF sans question de purge ; dump inchangé.",
+ "dataset": "traites_shared/traites_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'",
+  "/Soc01/Lcr": -1
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

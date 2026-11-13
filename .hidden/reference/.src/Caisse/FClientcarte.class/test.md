@@ -13,16 +13,16 @@ cartes (dont un `suppr = 1`), quelques `Fiches_Cpostaux`. Comparaison : dump nor
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FCLIENTCARTE-T01 | replay | Création | Créer, nom/prénom/adresse/CP/ville/téléphones, points `1,50`/`10`, Enregistrer | ligne `Fiches_Carte` (code = dernier + 1, `cb = 299999…` + clé, fin +20 ans, `tp1` tronqué : A03 figée), couple CP ajouté à `Fiches_Cpostaux` | `tests/creation/` | à faire |
-| FCLIENTCARTE-T02 | replay | Modification | clic sur une carte, téléphone domicile `01…` et bureau `02…`, Enregistrer | `Fiches_Carte` mise à jour avec téléphones **inversés** (A01 figée), points via `cpoint` | `tests/modification/` | à faire |
-| FCLIENTCARTE-T03 | replay | Suppression | clic sur une carte avec historique, Supprimer, « Oui » puis une autre avec « Non » | 1 ligne supprimée, tickets inchangés (A07), aucune suppression sur « Non » | `tests/suppression/` | à faire |
-| FCLIENTCARTE-T04 | replay | Contrôle du code-barres | `CB` : 7 caractères ; 13 caractères clé fausse ; code d'une autre carte ; `*` + code valide | messages de longueur / de clé / bulle « déjà attribué », focus rendu ; `*` retiré | `tests/code_barre/` | à faire |
-| FCLIENTCARTE-T05 | replay | Dates | boutons date d'émission et de fin, choix dans `DateChooser1` | `datec`/`datef` enregistrées après Enregistrer | `tests/dates/` | à faire |
-| FCLIENTCARTE-T06 | replay | Liste : tri et filtre | focus sur chaque en-tête, saisie `DU`, Retour arrière, double-clic (tri inverse) | contenu de la liste (ordre) et requêtes `Exec_SQL` de référence ; pas de saisie de `"` (A05) | `tests/liste_tri_filtre/` | à faire |
-| FCLIENTCARTE-T07 | replay | Code postal | Entrée dans le code postal (`Cpman`) puis choix d'un CP ; bouton `ToggleButton5` puis choix | figer : CP non repris (A02), erreur « Unknown symbol » au second chemin (capturée dans le log) | `tests/code_postal/` | à faire |
-| FCLIENTCARTE-T08 | replay | Historique | carte avec tickets : cocher « Historique des ventes » puis « Historique des points » | lignes affichées (log `Exec_SQL`, N+1 requêtes), cumul de points ; ticket `suppr = 1` absent ; aucun clic dans `Histo` | `tests/historique/` | à faire |
-| FCLIENTCARTE-T09 | replay | Navigation clavier | Entrée sur chaque zone du groupe `Cmpt`, Entrée sur le nom sans code | ordre de focus de référence, message « cliquer sur Créer » | `tests/navigation/` | à faire |
-| FCLIENTCARTE-T10 | gbtest | Code-barres interne (après FCLIENTCARTE-010) | codes `000001`, `123456`, `999999` | `299999` + code + clé `Utils.Calcode` (valeurs du clone non modifié) | `tests/code_barre_calc/` | à faire |
+| FCLIENTCARTE-T01 | replay | Création | Créer, nom/prénom/adresse/CP/ville/téléphones, points `1,50`/`10`, Enregistrer | ligne `Fiches_Carte` (code = dernier + 1, `cb = 299999…` + clé, fin +20 ans, `tp1` tronqué : A03 figée), couple CP ajouté à `Fiches_Cpostaux` | `tests/creation/` | implémenté (scénario `fclientcarte_creation` : nom, prénom, CP, ville ; code 000004, cb 2999990000047, champs non saisis à NULL) |
+| FCLIENTCARTE-T02 | replay | Modification | clic sur une carte, téléphone domicile `01…` et bureau `02…`, Enregistrer | `Fiches_Carte` mise à jour avec téléphones **inversés** (A01 figée), points via `cpoint` | `tests/modification/` | à faire : non commencé (temps, vague 5) |
+| FCLIENTCARTE-T03 | replay | Suppression | clic sur une carte avec historique, Supprimer, « Oui » puis une autre avec « Non » | 1 ligne supprimée, tickets inchangés (A07), aucune suppression sur « Non » | `tests/suppression/` | implémenté (scénario `fclientcarte_suppression` : « Oui » sur 000002 puis « Non » sur 000001 ; sans tickets dans le jeu, A07 non vérifiée) |
+| FCLIENTCARTE-T04 | replay | Contrôle du code-barres | `CB` : 7 caractères ; 13 caractères clé fausse ; code d'une autre carte ; `*` + code valide | messages de longueur / de clé / bulle « déjà attribué », focus rendu ; `*` retiré | `tests/code_barre/` | à faire : non commencé (temps, vague 5) |
+| FCLIENTCARTE-T05 | replay | Dates | boutons date d'émission et de fin, choix dans `DateChooser1` | `datec`/`datef` enregistrées après Enregistrer | `tests/dates/` | à faire : DateChooser non rejouable |
+| FCLIENTCARTE-T06 | replay | Liste : tri et filtre | focus sur chaque en-tête, saisie `DU`, Retour arrière, double-clic (tri inverse) | contenu de la liste (ordre) et requêtes `Exec_SQL` de référence ; pas de saisie de `"` (A05) | `tests/liste_tri_filtre/` | à faire : double-clic d'en-tête non rejouable ; non commencé (temps) |
+| FCLIENTCARTE-T07 | replay | Code postal | Entrée dans le code postal (`Cpman`) puis choix d'un CP ; bouton `ToggleButton5` puis choix | figer : CP non repris (A02), erreur « Unknown symbol » au second chemin (capturée dans le log) | `tests/code_postal/` | à faire : non commencé (temps, vague 5) |
+| FCLIENTCARTE-T08 | replay | Historique | carte avec tickets : cocher « Historique des ventes » puis « Historique des points » | lignes affichées (log `Exec_SQL`, N+1 requêtes), cumul de points ; ticket `suppr = 1` absent ; aucun clic dans `Histo` | `tests/historique/` | à faire : non commencé (temps, vague 5) |
+| FCLIENTCARTE-T09 | replay | Navigation clavier | Entrée sur chaque zone du groupe `Cmpt`, Entrée sur le nom sans code | ordre de focus de référence, message « cliquer sur Créer » | `tests/navigation/` | implémenté partiellement (scénario `fclientcarte_navigation` : message « cliquer sur Créer » ; ordre de focus non relevé) |
+| FCLIENTCARTE-T10 | gbtest | Code-barres interne (après FCLIENTCARTE-010) | codes `000001`, `123456`, `999999` | `299999` + code + clé `Utils.Calcode` (valeurs du clone non modifié) | `tests/code_barre_calc/` | à faire : extraction FCLIENTCARTE-010 requise |
 
 ## Détail des tests
 
@@ -39,3 +39,7 @@ cartes (dont un `suppr = 1`), quelques `Fiches_Cpostaux`. Comparaison : dump nor
   colonnes `datec`/`datef`.
 - **SQLite** : rejouer T01, T02 et T08 sur la base SQLite (`CAST(… AS unsigned)`, texte `"1,50"` stocké
   tel quel par l'INSERT).
+- **Phase 2, vague 5** : lot `.hidden/Tests/Caisse/assets/`, jeu partagé `fclientcarte_shared/cartes_base.sql` (3 cartes
+  000001-000003 dont une `divers = -1`, `conf` `Caisse=-1` pour rendre le menu Caisse visible). Saisie par `Focus` puis
+  frappes, sans Entrée (Entrée sur les zones `Cmpt` enchaîne les focus et le CP ouvre `Cpman`). Ligne de la liste :
+  `Click=<ligne>x0@Colcli#FClientcarte#Colcli#` (`colcli_Click`).

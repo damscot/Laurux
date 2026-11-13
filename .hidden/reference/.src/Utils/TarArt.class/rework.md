@@ -54,7 +54,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TARART-A01 — [anomalie] `_new:27` lit `art_prvt` avant le test `Available` : article inconnu →
   erreur levée chez l'appelant ; retours anticipés sans arrondi de `prixht` ni configuration de la
   grille · tests : T09 · sources : [TarArt.class:27-28](../../../../../.src/Utils/TarArt.class#L27-L28), [TarArt.class:42](../../../../../.src/Utils/TarArt.class#L42)
-- [ ] TARART-A02 — [anomalie] Bloc `Fiches_CoeffTypec` : `rescli` peut être `Null` (ni client ni
+- [ ] TARART-A02 — [anomalie] (précisée phase 2, vague 5 : sans client ni type, `rescli!libelle` (l. 77) → « Null object » dès que la famille a des coefficients `Fiches_CoeffTypec` (via Edart4 → Imprimer ; EDART4-T01 laissé à faire)) Bloc `Fiches_CoeffTypec` : `rescli` peut être `Null` (ni client ni
   type) et toutes les lignes portent le libellé du type courant au lieu de celui de `res!coder`
   · tests : T03, T09 · sources : [TarArt.class:75](../../../../../.src/Utils/TarArt.class#L75), [TarArt.class:80](../../../../../.src/Utils/TarArt.class#L80)
 - [ ] TARART-A03 — [anomalie] Promotion en options B/T : `pxprom` (brut) comparé à `prixht` (déjà

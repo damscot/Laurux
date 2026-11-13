@@ -31,7 +31,7 @@ neutralisé (visualiseur de test qui ne fait rien, réglage de `Laurux.conf` à 
 | IMP_BILAN-T07 | replay | Rien à imprimer | jeu sans rubrique `B` (`Fiches_Rubriques` filtrée) | `Message.Info`, pas de PDF ; tables de travail vides | `tests/rien_a_imprimer/` | implémenté |
 | IMP_BILAN-T08 | gbtest | Règles d'exclusion (après IMP_BILAN-005) | `Exclu(rub, cpt, solde, règles N/N-1)` sur la matrice de T04 | booléens identiques au comportement figé par T04 | `tests/exclu/` | à faire : extraction IMP_BILAN-005 requise |
 | IMP_BILAN-T09 | gbtest | Choix des tables par exercice (après IMP_BILAN-003) | `E1`, `N1`…`N5`, code inconnu | couples de tables de la référence ; `""` pour un code inconnu | `tests/tables_exercice/` | à faire : extraction IMP_BILAN-003 requise |
-| IMP_BILAN-T10 | replay | Performance | jeu dérivé de 2 000 comptes, 50 000 écritures | durée de référence (`gbx3 -p`) | `tests/perf/` | à faire : performance hors délai de 20 s |
+| IMP_BILAN-T10 | replay | Performance | jeu `imp_bilan_perf` : ~1 000 lignes d'écritures 2018 et 200 de 2017 sur les comptes de bilan de Laurux01, Bilan E1 (décision utilisateur 2026-11-13 : ~1 000 écritures suffisent, on mesure le code Gambas et le format des requêtes, pas MariaDB) | PDF (texte), 2 CSV, `centralisation`/`Comptes` identiques à ref ; durée mesurée 10,8 s (rework, machine chargée par 10 agents) | `tests/perf/` | implémenté (scénario `imp_bilan_performance` ; jeu `imp_bilan_perf.sql` produit par `gen_imp_bilan_perf.py`) |
 
 ## Détail des tests
 
@@ -61,3 +61,10 @@ neutralisé (visualiseur de test qui ne fait rien, réglage de `Laurux.conf` à 
   constaté sur les attendus). Le PDF est comparé par son texte : `CmdVis` remplacé par `pdftotext -layout` →
   `edition.txt` (`"conf"` + `"fichiers"`), avec `tmp/BilanDetail.csv` et `tmp/BilanRub.csv`. `sql.log` n'est plus
   comparé (ordre non déterministe des requêtes `Comptes`).
+- **Implémentation (phase 2, vague 5)** : T10 → `.hidden/Tests/Compta/assets/imp_bilan_performance/`, sur le modèle de
+  `rubimp_performance` : jeu `imp_bilan_perf.sql` produit par le générateur déterministe `gen_imp_bilan_perf.py` du même
+  répertoire (500 écritures 2018 dans `Fiches_Mvt`, 100 écritures 2017 dans `Fiches_Mvt1`, clients 411001-411027,
+  fournisseurs 401001-401026, banques 512000/512001/530000, immobilisations 211/213/218x, TVA 445660/445710, une écriture
+  non validée sur 97). Régénération : `python3 .hidden/Tests/Compta/assets/imp_bilan_performance/gen_imp_bilan_perf.py >
+  .hidden/Tests/Compta/assets/imp_bilan_performance/imp_bilan_perf.sql`, puis `harness apply`, `replay --expected`,
+  `compare`. Durée : 10,7 à 10,8 s (rework, 2 `compare`, machine chargée).

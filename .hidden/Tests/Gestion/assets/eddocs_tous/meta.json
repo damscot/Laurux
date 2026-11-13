@@ -1,0 +1,18 @@
+{
+ "id": "EDDOCS-T01",
+ "objet": "Tous les documents",
+ "classe": "EdDocs",
+ "description": "Gestion > Liste des documents en cours ; défauts (Tous, tri par numéro), Imprimer : texte de ~/tmp/ListeDocs.pdf, total général ; facture imprimée F00001 avec FA0001.",
+ "dataset": "eddocs_shared/documents",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

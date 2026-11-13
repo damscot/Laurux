@@ -79,15 +79,15 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   n'est jamais affecté : chaque écriture importée remet à vide le dernier numéro de facture, lu par
   `Moulinage` (l.2682) et `EcrAuto` (`LockIncrement`) → numérotation des factures relancée à 1
   (à confirmer sur une base de test) · tests : T01 · sources : [ImpJdv.class:573](../../../../../../.src/Compta/Utils/ImpJdv.class#L573), [ImpJdv.class:508](../../../../../../.src/Compta/Utils/ImpJdv.class#L508), [Moulinage.class:2682](../../../../../../.src/Caisse/Moulinage.class#L2682)
-- [ ] IMPJDV-A02 — [anomalie] `Creation_Client` : arguments décalés dans l'`INSERT` (`cli_dmln` ←
+- [ ] IMPJDV-A02 — [anomalie] (confirmée phase 2, vague 5 : 411901 inséré avec les champs décalés (`cli_obs` = code, `cli_dmln` ← domiciliation…), figée par T02) `Creation_Client` : arguments décalés dans l'`INSERT` (`cli_dmln` ←
   clé RIB, `cli_cle_rib` ← n° de compte, `cli_num_cpt` ← domiciliation) et `cli_obs` ← code client
   au lieu des observations · tests : T02 · sources : [ImpJdv.class:277](../../../../../../.src/Compta/Utils/ImpJdv.class#L277)
 - [ ] IMPJDV-A03 — [anomalie] `Maj_Client` inverse `cli_tel_dom` et `cli_tel_bur` par rapport à la
   création et à l'export · tests : T01 · sources : [ImpJdv.class:305](../../../../../../.src/Compta/Utils/ImpJdv.class#L305)
-- [ ] IMPJDV-A04 — [anomalie] `pdf.Level2` appelé avec 12 arguments alors que
+- [ ] IMPJDV-A04 — [anomalie] (confirmée phase 2, vague 5 : `pdf.Level2` à 12 arguments → « Not enough arguments » (`ImpJdv.Import.205`) après l'insertion du premier client, figée par T02 (code 125)) `pdf.Level2` appelé avec 12 arguments alors que
   `Cclients.Level2` en exige 13 (paramètre `reglt` non optionnel) : erreur d'exécution attendue à
   la première création de client, avant l'import des écritures (à confirmer) · tests : T02 · sources : [ImpJdv.class:205](../../../../../../.src/Compta/Utils/ImpJdv.class#L205), [Cclients.class:Level2](../../../../../../.src/Reports/Cclients.class#L64-L83)
-- [ ] IMPJDV-A05 — [anomalie] Incompatibilité avec ExportJdv : la 1re ligne de `clients.txt` et
+- [ ] IMPJDV-A05 — [anomalie] (confirmée phase 2, vague 5 : aller-retour avec ExportJdv : « Out of bounds » sur `Lig2[1]` (`ImpJdv.Import.169`), figée par T06 (code 125)) Incompatibilité avec ExportJdv : la 1re ligne de `clients.txt` et
   de `ecritures<JJ>.csv` produits est l'intitulé de la société ; les lectures `Lig2[1..30]` sans
   protection lèvent une erreur d'indice (ligne courte ou vide) · tests : T06 · sources : [ImpJdv.class:167-198](../../../../../../.src/Compta/Utils/ImpJdv.class#L167-L198), [ImpJdv.class:346-348](../../../../../../.src/Compta/Utils/ImpJdv.class#L346-L348), [ExportJdv.class:588-589](../../../../../../.src/Compta/Utils/ExportJdv.class#L588-L589)
 - [ ] IMPJDV-A06 — [anomalie] `Nbe2` (écritures rejetées) n'est jamais incrémenté : le message

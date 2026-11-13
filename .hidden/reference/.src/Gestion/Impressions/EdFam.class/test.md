@@ -9,13 +9,15 @@ produites dans le clone **Laurux non modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDFAM-T01 | replay | Plage par défaut | Imprimer | texte du PDF : toutes les familles | `tests/plage_defaut/` | à faire |
-| EDFAM-T02 | replay | Sélection par liste | `ToggleButton1`, clic sur une ligne de `Colfam` ; `ToggleButton2`, Entrée dans `Colfam2` ; Imprimer | `Fam`/`Fam2` remplis, PDF limité à la plage | `tests/selection_liste/` | à faire |
-| EDFAM-T03 | replay | Plage vide | `Fam` > `Fam2` | message « Aucune Famille » | `tests/plage_vide/` | à faire |
-| EDFAM-T04 | replay | Saut de page | jeu > 52 familles | 2 pages | `tests/saut_page/` | à faire |
-| EDFAM-T05 | replay | Clavier | Échap/F2 dans la liste, Entrée/Tab dans les champs | focus et visibilité des listes (log des contrôles) | `tests/clavier/` | à faire |
+| EDFAM-T01 | replay | Plage par défaut | Imprimer | texte du PDF : toutes les familles | `tests/plage_defaut/` | implémenté (`Gestion/edfam_plage_defaut`) |
+| EDFAM-T02 | replay | Sélection par liste | `ToggleButton1`, clic sur une ligne de `Colfam` ; `ToggleButton2`, Entrée dans `Colfam2` ; Imprimer | `Fam`/`Fam2` remplis, PDF limité à la plage | `tests/selection_liste/` | implémenté (`Gestion/edfam_selection_liste` : clics ; Entrée dans `Colfam2` non rejouée) |
+| EDFAM-T03 | replay | Plage vide | `Fam` > `Fam2` | message « Aucune Famille » | `tests/plage_vide/` | implémenté (`Gestion/edfam_plage_vide`) |
+| EDFAM-T04 | replay | Saut de page | jeu > 52 familles | 2 pages | `tests/saut_page/` | implémenté (`Gestion/edfam_saut_page`) |
+| EDFAM-T05 | replay | Clavier | Échap/F2 dans la liste, Entrée/Tab dans les champs | focus et visibilité des listes (log des contrôles) | `tests/clavier/` | à faire : Échap/F2 non rejoués (Entrée/Tab dans les champs couverts par T03) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2, vague 5)** : scénarios `.hidden/Tests/Gestion/assets/edfam_*` (Laurux01 seul, sauf T04 : jeu `edfam_shared/familles.sql`, 50 familles F00 à F49) ; texte du PDF par `/Soc01/caisse/CmdVis` → `edition.txt`.
 
 - **Données** : `Laurux01.sql` (une famille) puis jeu `editions_gestion` (voir
   [Edbr](../Edbr.module/test.md)) pour T02 et T04.

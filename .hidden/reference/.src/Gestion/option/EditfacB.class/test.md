@@ -9,10 +9,10 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDITFACB-T01 | replay | Sans option ou document non boisson | option `N` ; option `B` avec un BL sans alcool ni consigne | PDF identique à `Editfac` (portrait) | `tests/etat_standard/` | à faire |
-| EDITFACB-T02 | replay | BL non chiffré boisson | option `B`, `blchif` faux, articles consignés | colonnes « Colis »/« Pal » et valeurs | `tests/etat_bl_non_chiffre/` | à faire |
-| EDITFACB-T03 | replay | Facture boisson | option `B`, consignes P/C/B, régies A/V/B, déconsignes, frais de gestion | paysage ; colonnes, bandeau des frais, totaux, lignes de déconsigne | `tests/etat_facture_boisson/` | à faire |
-| EDITFACB-T04 | replay | Lignes de déconsigne et volumes (A01) | facture éditée avec `Fiches_ligregie` et déconsignes | valeurs V.E/A.P des lignes de déconsigne (figées) | `tests/etat_deconsignes/` | à faire |
+| EDITFACB-T01 | replay | Sans option ou document non boisson | option `N` ; option `B` avec un BL sans alcool ni consigne | PDF identique à `Editfac` (portrait) | `tests/etat_standard/` | à faire : passe par la facturation (ObjFacB/Facture, écrans complexes) |
+| EDITFACB-T02 | replay | BL non chiffré boisson | option `B`, `blchif` faux, articles consignés | colonnes « Colis »/« Pal » et valeurs | `tests/etat_bl_non_chiffre/` | à faire : passe par la facturation (ObjFacB/Facture, écrans complexes) |
+| EDITFACB-T03 | replay | Facture boisson | option `B`, consignes P/C/B, régies A/V/B, déconsignes, frais de gestion | paysage ; colonnes, bandeau des frais, totaux, lignes de déconsigne | `tests/etat_facture_boisson/` | à faire : passe par la facturation (ObjFacB/Facture, écrans complexes) |
+| EDITFACB-T04 | replay | Lignes de déconsigne et volumes (A01) | facture éditée avec `Fiches_ligregie` et déconsignes | valeurs V.E/A.P des lignes de déconsigne (figées) | `tests/etat_deconsignes/` | à faire : passe par la facturation (ObjFacB/Facture, écrans complexes) |
 
 ## Détail des tests
 

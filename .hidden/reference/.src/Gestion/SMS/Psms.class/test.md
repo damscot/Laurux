@@ -9,7 +9,7 @@ PSMS-A01.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| PSMS-T01 | gbtest | Formulaire inaccessible et table absente | recherche statique (`grep -rnw Psms .src`), `SHOW TABLES LIKE 'Fiches_Psms'` sur `Laurux01.sql` importée | aucune référence hors du couple ; table absente | `tests/psms_mort/` | à faire |
+| PSMS-T01 | gbtest | Formulaire inaccessible et table absente | recherche statique (`grep -rnw Psms .src`), `SHOW TABLES LIKE 'Fiches_Psms'` sur `Laurux01.sql` importée | aucune référence hors du couple ; table absente | `tests/psms_mort/` | implémenté |
 
 ## Détail des tests
 
@@ -19,3 +19,5 @@ PSMS-A01.
   ne sont pas atteignables par le rejeu ; un test direct échouerait faute de table
   `Fiches_Psms`. L'API Spot-Hit réelle n'est jamais appelée dans les tests (faux `curl` en tête du
   `PATH` si un test ultérieur est ajouté).
+- **Implémentation (phase 2)** : `.src/Tests/Gestion/PsmsTest.test` (T01PsmsMort : SHOW TABLES, instanciation sans
+  affichage) ; la recherche statique (`grep -rnw Psms .src`) a été faite à l'écriture et n'est pas rejouée.

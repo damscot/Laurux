@@ -1,0 +1,24 @@
+{
+ "id": "ETIQCASIER-T01",
+ "objet": "Plage A4, tri par casier",
+ "classe": "Etiqcasier",
+ "description": "Menu Gestion › Étiquettes › Casiers (Menu302) ; tri casier (RadioButton5) ; modèle « Z - Test (A4 Portrait) » (index 5) ; bornes par défaut, 1 étiquette ; Générer ; « Traitement terminé » (Entrée) ; texte du PDF (casier, code, stock, intitulé).",
+ "dataset": "etiqart_shared/etiqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

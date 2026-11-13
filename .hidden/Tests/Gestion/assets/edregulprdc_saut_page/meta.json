@@ -1,0 +1,23 @@
+{
+ "id": "EDREGULPRDC-T05",
+ "objet": "Saut de page",
+ "classe": "Edregulprdc",
+ "description": "30 fabrications, 60 lignes dans la période par défaut : 2 pages (texte du PDF).",
+ "dataset": "edregulprdc_soixante",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -9,16 +9,18 @@ non modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CALCULDROIT-T01 | gbtest | Volumes et droit, assiette volume | régie `ap` faux ; vol 75, deg 12,5, qte 6 | `vol`, `volap` = 0, `droit`, `tvadroit` | `tests/droit_volume/` | à faire |
-| CALCULDROIT-T02 | gbtest | Volumes et droit, assiette alcool pur | régie `ap` vrai ; vol 70, deg 40, qte 12 | `vol`, `volap`, `droit` | `tests/droit_alcool_pur/` | à faire |
-| CALCULDROIT-T03 | gbtest | Seuil sécurité sociale | `degres` 18 ; deg 15 / 18 / 40 ; `degres` NULL | `secu`, `volumess`, `tvasec`, `tva` | `tests/secu_seuil/` | à faire |
-| CALCULDROIT-T04 | gbtest | Quantité `Variant` | `qte` = 6, `"6"`, `"1,5"`, `"1.5"`, `1.5` | même `vol` pour les formes équivalentes | `tests/quantite_variant/` | à faire |
-| CALCULDROIT-T05 | gbtest | Accesseurs de la régie | régie complète ; `dra` vide | `lib`, `type`, `cptreg`, `codetva`, `code`, `suspendu`, `drsurfac`, `famille` ; zéros si `dra` vide | `tests/accesseurs/` | à faire |
-| CALCULDROIT-T06 | gbtest | Écritures `droit`, `secu`, `tauxtvadr`, `tauxtvass` | valeurs 10 ; `"0.055"` | `tvadroit`, `tvasec`, `tva` recalculés ; `tauxtvadr` lu `"0,06"` (à figer) | `tests/ecritures/` | à faire |
-| CALCULDROIT-T07 | gbtest | Régie ou TVA absente | code inconnu ; TVA de régie inconnue ; `tvass` absente | valeurs à 0 ; `Message.Error` (exécution sous Xvfb ou après CALCULDROIT-003) | `tests/erreurs_regie/` | à faire |
-| CALCULDROIT-T08 | replay | Intégration facture boissons | facture `facopt`/`ObjFacB` d'articles à droits (option T) | dump `Fiches_ligregie`, lignes de facture | `tests/facture_droits/` | à faire |
+| CALCULDROIT-T01 | gbtest | Volumes et droit, assiette volume | régie `ap` faux ; vol 75, deg 12,5, qte 6 | `vol`, `volap` = 0, `droit`, `tvadroit` | `tests/droit_volume/` | implémenté |
+| CALCULDROIT-T02 | gbtest | Volumes et droit, assiette alcool pur | régie `ap` vrai ; vol 70, deg 40, qte 12 | `vol`, `volap`, `droit` | `tests/droit_alcool_pur/` | implémenté |
+| CALCULDROIT-T03 | gbtest | Seuil sécurité sociale | `degres` 18 ; deg 15 / 18 / 40 ; `degres` NULL | `secu`, `volumess`, `tvasec`, `tva` | `tests/secu_seuil/` | implémenté |
+| CALCULDROIT-T04 | gbtest | Quantité `Variant` | `qte` = 6, `"6"`, `"1,5"`, `"1.5"`, `1.5` | même `vol` pour les formes équivalentes | `tests/quantite_variant/` | implémenté |
+| CALCULDROIT-T05 | gbtest | Accesseurs de la régie | régie complète ; `dra` vide | `lib`, `type`, `cptreg`, `codetva`, `code`, `suspendu`, `drsurfac`, `famille` ; zéros si `dra` vide | `tests/accesseurs/` | implémenté (propriété `code` non déclarée : inaccessible) |
+| CALCULDROIT-T06 | gbtest | Écritures `droit`, `secu`, `tauxtvadr`, `tauxtvass` | valeurs 10 ; `"0.055"` | `tvadroit`, `tvasec`, `tva` recalculés ; `tauxtvadr` lu `"0,06"` (à figer) | `tests/ecritures/` | implémenté |
+| CALCULDROIT-T07 | gbtest | Régie ou TVA absente | code inconnu ; TVA de régie inconnue ; `tvass` absente | valeurs à 0 ; `Message.Error` (exécution sous Xvfb ou après CALCULDROIT-003) | `tests/erreurs_regie/` | à faire : Message.Error bloquant en gb.test (après CALCULDROIT-003) |
+| CALCULDROIT-T08 | replay | Intégration facture boissons | facture `facopt`/`ObjFacB` d'articles à droits (option T) | dump `Fiches_ligregie`, lignes de facture | `tests/facture_droits/` | à faire : passe par la facturation (ObjFacB, écran complexe) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2)** : module `.src/Tests/Gestion/CalculdroitTest.test`, jeu `modfichier_shared/options_bois_pp` (régie 01 en volume, régie 02 en alcool pur seuil 18, TVA 3 = 20 %) ; la régie à `degres` NULL est insérée dans T03.
 
 - **Données** : jeu `option_boisson` ; régies `ap` vrai/faux, seuil `degres` 18, TVA 20 % et 5,5 %.
 - **Locale** : `fr_FR.UTF-8` imposée (conversion `Val(Replace(…, ".", ","))`).

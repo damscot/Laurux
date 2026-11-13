@@ -1,0 +1,169 @@
+' Gambas test file
+
+''Tests de CLcr (.hidden/reference/.src/Gestion/Lcr/CLcr.class/test.md, CLCR-T01 à T06).
+''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
+''(une clé par ligne non vide, espaces de fin retirés). La date du jour et User.Name sont remplacés par
+''<date> et <utilisateur> avant comparaison. T06 compare les opérateurs de tracé de ligne du flux PDF.
+''Valeurs attendues : assets/CLcrTest/expected.txt, produites dans le clone de référence. Pas de base de données.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01EnteteBasPage", "Entete + BasPage sur 2 pages : titres, Page 1/2 et 2/2")
+  TestKit.Desc("T02ListeLcr", "Level1 + Level2 : adresse complète, partielle (sadr2 vide), sans adresse")
+  TestKit.Desc("T03ListeLcrBanque", "Level1A + Level2A : adresses \" \" et vides, banque renseignée ou vide")
+  TestKit.Desc("T04Bordereau", "Bordereau Level1B à Level4B : en-tête banque, 2 lignes, total 1234,5")
+  TestKit.Desc("T05Montants", "Montants 12,50 / 12.50 / vide dans Level2 et Level2A : erreur éventuelle et texte")
+  TestKit.Desc("T06Lines", "Lines et Level5A : tracés de ligne du flux PDF")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "CLcrTest")
+
+End
+
+Private Function Nouveau() As CLcr
+
+  Dim pdf As CLcr
+
+  pdf = New CLcr("Portrait", "mm", "A4")
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, en extrait le texte et vérifie chaque ligne non vide.
+Private Sub Verifie(sCle As String, pdf As CLcr)
+
+  Dim sFic As String = Temp$("clcr") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, Format$(Now, "dd.mm.yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+Public Sub T01EnteteBasPage()
+
+  Dim pdf As CLcr = Nouveau()
+
+  pdf.Entete("Liste des LCR échues")
+  pdf.BasPage()
+  pdf.Entete("Liste des LCR échues")
+  pdf.BasPage()
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02ListeLcr()
+
+  Dim pdf As CLcr = Nouveau()
+
+  pdf.Entete("LCR acceptées")
+  pdf.Level0("Liste du", "15/06/2018", "SOCIETE TEST")
+  pdf.Level1()
+  pdf.Level2("F0001", "01/06/2018", "CLIENT COMPLET", "1 rue des Lilas", "Batiment B", "75001 PARIS", "30/06/2018", "100,5", "N", "1", 40)
+  pdf.Level2("F0002", "02/06/2018", "CLIENT PARTIEL", "2 rue des Roses", "", "69001 LYON", "30/06/2018", "200", "O", "2", 70)
+  pdf.Level2("F0003", "03/06/2018", "CLIENT SANS ADRESSE", "", "", "", "30/06/2018", "300,25", "N", "0", 100)
+  pdf.BasPage()
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03ListeLcrBanque()
+
+  Dim pdf As CLcr = Nouveau()
+
+  pdf.Entete("LCR attribuées")
+  pdf.Level1A()
+  pdf.Level2A("F0001", "01/06/2018", "CLIENT ESPACES", " ", " ", " ", "30/06/2018", "10", "N", "1", "1", 40)
+  pdf.Level2A("F0002", "02/06/2018", "CLIENT VIDES", "", "", "", "30/06/2018", "20", "N", "1", "", 55)
+  pdf.Level2A("F0003", "03/06/2018", "CLIENT MIXTE", "3 rue du Port", " ", "44000 NANTES", "30/06/2018", "30", "O", "2", "2", 70)
+  pdf.BasPage()
+  Verifie("T03", pdf)
+
+End
+
+Public Sub T04Bordereau()
+
+  Dim pdf As CLcr = Nouveau()
+
+  pdf.Entete("Bordereau de remise")
+  pdf.Level1B("BANQUE ALPHA", "AGENCE CENTRE", "123456", "10001", "00011", "12345678901", "REMALPHA", "1- Escompte", 20)
+  pdf.Level2B(60)
+  pdf.Level3B("F0001", "01/06/2018", "CLIENT UN", "30/06/2018", "1000,00", 75)
+  pdf.Level3B("F0002", "02/06/2018", "CLIENT DEUX", "30/06/2018", "234,50", 80)
+  pdf.Level4B("2", "1234,5", 95)
+  pdf.BasPage()
+  Verifie("T04", pdf)
+
+End
+
+Public Sub T05Montants()
+
+  Dim pdf As CLcr = Nouveau()
+  Dim sMt As String
+  Dim n As Integer
+
+  pdf.Entete("Montants")
+  pdf.Level1()
+  For Each sMt In ["12,50", "12.50", ""]
+    Inc n
+    Try pdf.Level2("L" & n, "", "MONTANT " & n, "", "", "", "", sMt, "", "", 35 + n * 5)
+    TestKit.Check("T05/Level2/" & n & "/erreur", IIf(Error, Error.Text, ""))
+  Next
+  pdf.Level1A()
+  For Each sMt In ["12,50", "12.50", ""]
+    Inc n
+    Try pdf.Level2A("A" & n, "", "MONTANT " & n, "", "", "", "", sMt, "", "", "", 50 + n * 5)
+    TestKit.Check("T05/Level2A/" & n & "/erreur", IIf(Error, Error.Text, ""))
+  Next
+  Verifie("T05", pdf)
+
+End
+
+Public Sub T06Lines()
+
+  Dim pdf As CLcr = Nouveau()
+  Dim sBuf As String
+  Dim sLig As String
+  Dim n As Integer
+
+  pdf.SetCompression(False)
+  pdf.AddPage()
+  pdf.Lines("50")
+  pdf.Level5A("3", "45,6", 100)
+  Try sBuf = pdf.Output("", "S")
+  If Error Then
+    TestKit.Check("T06/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  For Each sLig In Split(sBuf, "\n")
+    If sLig Like "* m * l S" Or If sLig Like "* w" Or If sLig Like "BT *" Then
+      Inc n
+      TestKit.Check("T06/op" & Format$(n, "00"), sLig)
+    Endif
+  Next
+  TestKit.Check("T06/ops", n)
+
+End

@@ -86,7 +86,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] MATERIEL-A01 — [anomalie] `Maj_Zones` charge `mat_four` dans `Cequ` et `mat_paht` dans
+- [ ] MATERIEL-A01 — [anomalie] (précisée phase 2, vague 5 : effets de bord constatés au dump de T02 : `mat_type` tronqué à 15 caractères, `mat_cli` mis à NULL (cause non tracée)) `Maj_Zones` charge `mat_four` dans `Cequ` et `mat_paht` dans
   `Prvt`, et ne charge pas `Pmp` (rempli par `Calc_Marge` avec `Prvt`) : ouvrir puis enregistrer
   une fiche écrase `mat_cequ`, `mat_prvt` (frais perdus) et `mat_pmp` · tests : T02 · sources : [Materiel.class:515](../../../../../../.src/Gestion/Tables/Materiel.class#L515), [Materiel.class:524](../../../../../../.src/Gestion/Tables/Materiel.class#L524), [Materiel.class:1325](../../../../../../.src/Gestion/Tables/Materiel.class#L1325), [Materiel.class:1922](../../../../../../.src/Gestion/Tables/Materiel.class#L1922), [Materiel.class:1924](../../../../../../.src/Gestion/Tables/Materiel.class#L1924)
 - [ ] MATERIEL-A02 — [anomalie, à confirmer] Enregistrer (clic) pose `B2 = 1` puis donne le focus à
@@ -126,3 +126,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] MATERIEL-A12 — [anomalie, à confirmer] `EnrgMat` en création d'un matériel divers (`Matdiv`)
   dont le couple (code, série) existe déjà : aucun enregistrement ni message (simple
   `Form_Open`) · tests : T04 · sources : [Materiel.class:1929-1936](../../../../../../.src/Gestion/Tables/Materiel.class#L1929-L1936)
+- [ ] MATERIEL-A13 — [anomalie] `Colachat_click` : `Format$(Val(Ligrcpt!pbht), nbdec)` sur un décimal lu en base (`Val` sans `Utils.cpoint` en locale fr) → « Type mismatch: wanted Float, got Null » (l. 2454, même forme l. 2457 et 2459) : le détail d'une réception de l'historique des achats est inutilisable ; motif transverse « `Val()` sur un décimal lu en base ou formaté en locale fr renvoie `Null` → Type mismatch fatal » : voir aussi [Edcom](../../Impressions/Edcom.class/rework.md), [Edbr](../../Impressions/Edbr.module/rework.md), [CLcr](../../Lcr/CLcr.class/rework.md), [MajFbtarif2](../../Stock/Tarifs/MajFbtarif2.class/rework.md) (phase 2, vague 5, 2026-11-13) · tests : T07 (xfail, code 125) · sources : [Materiel.class:2454](../../../../../../.src/Gestion/Tables/Materiel.class#L2454), [Materiel.class:2457](../../../../../../.src/Gestion/Tables/Materiel.class#L2457), [Materiel.class:2459](../../../../../../.src/Gestion/Tables/Materiel.class#L2459), [Materiel.class:Colachat_click](../../../../../../.src/Gestion/Tables/Materiel.class#L2402-L2468)

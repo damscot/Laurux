@@ -1,0 +1,22 @@
+{
+ "id": "IMPSAGE-T08",
+ "objet": "Fichiers absents",
+ "classe": "ImpSage",
+ "description": "Import écritures Sage (Menu286), Chemin-import = HOME de test, fichiers produits par impsage_shared/gen_impsage.py non déposés (répertoire sans fichier Sage) ; Importer, message « Le fichier client ou écritures n'existe pas » (Entrée) ; base inchangée ; dump (Corsage, Fiches_Cli, Fiches_Four, Fiches_Comptes, Fiches_Mvt, Fiches_Parametres, Nvcompte), rejets.txt, Nvcomptes.txt, @ouvrir.trace et texte de Edclients.pdf (edition.txt) comparés.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-import": "{home}",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "rejets.txt",
+  "Nvcomptes.txt",
+  "@ouvrir.trace",
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

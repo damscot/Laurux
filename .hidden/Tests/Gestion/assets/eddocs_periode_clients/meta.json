@@ -1,0 +1,18 @@
+{
+ "id": "EDDOCS-T05",
+ "objet": "Période et clients",
+ "classe": "EdDocs",
+ "description": "ToggleButton1 → Colcli 411802 ; ToggleButton2 → Colcli 411803 ; Datej = 05/06/2018, Datej2 = 15/06/2018 tapés (calendrier non rejoué) ; Imprimer : bornes dans le SQL (20180605 / 20180615) ; C00002 du 15/06 10:30 exclu.",
+ "dataset": "eddocs_shared/documents",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

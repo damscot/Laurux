@@ -1,0 +1,23 @@
+{
+ "id": "EDART4-T04",
+ "objet": "Options négociés, saut de page, logo",
+ "classe": "Edart4",
+ "description": "Type 01 par la liste ; Checkneg, Checksdp, Checlogo cochés ; Imprimer : seules les lignes négociées (familles 01 et 02), saut de page par famille, logo. Logo : /Soc01/Logo = ~/logo.png (déposé par entrees ; sans logo configuré, Image.Load échoue dans entete:394, erreur fatale).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'",
+  "/Soc01/Logo": "{home}/logo.png"
+ },
+ "fichiers": [
+  "edition.txt",
+  "tmp/tarif.pdf"
+ ],
+ "compare_sql_log": "ordered",
+ "entrees": {
+  "logo.png": "~/logo.png"
+ }
+}

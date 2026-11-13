@@ -1,0 +1,21 @@
+{
+ "id": "TCONSIGNE-T01",
+ "objet": "Navigation",
+ "classe": "Tconsigne",
+ "description": "Option boisson (/Soc01/bois, menu dynamique « Consignes » de menuopt), jeu consigne_shared/consigne_base (3 consignes) : premier (1er bouton « bout » de Barselection), suivant ×2, précédent, dernier (focus sur le 1er bouton, Tab × n, Espace) ; fermeture. Lecture seule.",
+ "dataset": "consigne_shared/consigne_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/bois": true
+ },
+ "compare_sql_log": "ordered"
+}

@@ -73,14 +73,14 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] IMPSAGE-A01 — [anomalie] **Grave** : pour un code Sage déjà présent dans `Corsage`,
+- [ ] IMPSAGE-A01 — [anomalie] (confirmée phase 2, vague 5 : 411005 (code de K001 dans `Corsage`) réutilisé pour le tiers suivant, figée par T02) **Grave** : pour un code Sage déjà présent dans `Corsage`,
   `num = Sageresult!ncode` écrase le compteur du prochain client ; le tiers inconnu suivant reçoit
   ce code déjà utilisé (aucune création, `Corsage` pointe vers un autre client) et ses écritures
   sont imputées à ce client · tests : T02 · sources : [ImpSage.class:235](../../../../../../.src/Compta/Utils/ImpSage.class#L235)
 - [ ] IMPSAGE-A02 — [anomalie] Fournisseurs : existence testée dans `Fiches_Cli` au lieu de
   `Fiches_Four` ; `INSERT INTO Fiches_Four` sans `Try` (erreur si le code existe) ; `Nbc` compté
   pour tout nouveau code, même hors `411/401/403` · tests : T06 · sources : [ImpSage.class:209](../../../../../../.src/Compta/Utils/ImpSage.class#L209), [ImpSage.class:218](../../../../../../.src/Compta/Utils/ImpSage.class#L218), [ImpSage.class:294](../../../../../../.src/Compta/Utils/ImpSage.class#L294), [ImpSage.class:225](../../../../../../.src/Compta/Utils/ImpSage.class#L225)
-- [ ] IMPSAGE-A03 — [anomalie] `ComptaS` : la ligne d'un tiers dont le code Laurux ne commence pas
+- [ ] IMPSAGE-A03 — [anomalie] (confirmée phase 2, vague 5 : lignes des tiers 4111000/4111001 insérées en double, figée par T05) `ComptaS` : la ligne d'un tiers dont le code Laurux ne commence pas
   par `4110`/`4010` est insérée deux fois (branche tiers puis branche générale) et son solde mis à
   jour deux fois : c'est le cas de **tous** les codes générés au-delà de `411099` / `401099`
   (`411100`…, `4111000`…), seuls `411001`-`411099` y échappent (à confirmer par T05) · tests : T05 · sources : [ImpSage.class:633-656](../../../../../../.src/Compta/Utils/ImpSage.class#L633-L656), [ImpSage.class:657-665](../../../../../../.src/Compta/Utils/ImpSage.class#L657-L665)
@@ -101,3 +101,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] IMPSAGE-A08 — [anomalie] `Sauve` : mêmes défauts qu'`ImpJdv.Sauve` (fichier supprimé ≠
   fichier produit, port/tunnel ignorés, dump avant confirmation) ; fichiers `hFile3`, `hFile2` non
   fermés ; vestige Kugar écrit dans le PDF · tests : T08 · sources : [ImpSage.class:Sauve](../../../../../../.src/Compta/Utils/ImpSage.class#L273-L282), [ImpSage.class:183](../../../../../../.src/Compta/Utils/ImpSage.class#L183), [ImpSage.class:footer](../../../../../../.src/Compta/Utils/ImpSage.class#L808-L812)
+- [ ] IMPSAGE-A09 — [anomalie] `ComptaS` (et `ControleS`) : le compte général est lu par `Mid$(Lig, 12, 8)` sans `Trim` : `Fiches_Mvt.compte` est écrit avec les espaces de fin du champ Sage (`707000  `) (phase 2, vague 5, 2026-11-13) · tests : T01 · sources : [ImpSage.class:595](../../../../../../.src/Compta/Utils/ImpSage.class#L595), [ImpSage.class:614](../../../../../../.src/Compta/Utils/ImpSage.class#L614), [ImpSage.class:648](../../../../../../.src/Compta/Utils/ImpSage.class#L648), [ImpSage.class:467](../../../../../../.src/Compta/Utils/ImpSage.class#L467)
+- [ ] IMPSAGE-A10 — [anomalie] Liste PDF des tiers créés : `pdf.Level2S` est appelé **après** `Creation_Client`/`Creation_Fournisseur`, qui font `Inc num`/`Inc numf` : le code imprimé est le suivant (`411029` pour C001 associé à `411028`) (phase 2, vague 5, 2026-11-13) · tests : T01 · sources : [ImpSage.class:203](../../../../../../.src/Compta/Utils/ImpSage.class#L203), [ImpSage.class:212](../../../../../../.src/Compta/Utils/ImpSage.class#L212), [ImpSage.class:221](../../../../../../.src/Compta/Utils/ImpSage.class#L221), [ImpSage.class:319](../../../../../../.src/Compta/Utils/ImpSage.class#L319), [ImpSage.class:299](../../../../../../.src/Compta/Utils/ImpSage.class#L299)
+- [ ] IMPSAGE-A11 — [anomalie, à confirmer] Case « Clôturer les écritures » cochée par défaut (`Value = CheckBox.True`) : un import sans décocher écrit `cloturee = 1` sur toutes les écritures importées (intention à confirmer) (phase 2, vague 5, 2026-11-13) · tests : T01 · sources : [ImpSage.form:44](../../../../../../.src/Compta/Utils/ImpSage.form#L44), [ImpSage.class:556-560](../../../../../../.src/Compta/Utils/ImpSage.class#L556-L560)
+- [ ] IMPSAGE-A12 — [anomalie, à confirmer] `ControleS` : un collectif `403` absent de `Fiches_Comptes` est créé comme compte ordinaire `403000` de type `B` (`coll = 0`, intitulé « » ), comme tout compte de classe 4 inconnu (intention à confirmer) (phase 2, vague 5, 2026-11-13) · tests : T06 · sources : [ImpSage.class:478](../../../../../../.src/Compta/Utils/ImpSage.class#L478), [ImpSage.class:480](../../../../../../.src/Compta/Utils/ImpSage.class#L480)

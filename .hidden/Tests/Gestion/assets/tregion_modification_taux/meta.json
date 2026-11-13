@@ -1,0 +1,22 @@
+{
+ "id": "TREGION-T04",
+ "objet": "Modification d'un taux (A03)",
+ "description": "Menu Fichiers > Constantes > Tipp régionale (menu dynamique « tipp » de menuopt), jeu options_bois_pp (R1 : intitulé + articles 001, 002 ; R2 : intitulé) ; barre Barselection « bout » (Focus 1er bouton, Tab x (n-1), Espace) ; Suivant x2 (ligne R1/002) ; Modification ; taux 9 ; Valider. Fige la ligne réellement modifiée (Edit sur code = R1 seul, A03). Comportement figé : Edit(\"code=R1\") renvoie la première ligne de R1 (cart 0) ; affectedonne y recopie cart 002 et l'Update échoue « Duplicate entry 'R1-002' for key 'PRIMARY' » (erreur fatale, code 125, Tregion.bar1_valide.135) : aucune ligne modifiée (TREGION-A03).",
+ "classe": "Tregion",
+ "dataset": "modfichier_shared/options_bois_pp",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/bois": -1,
+  "/Soc01/pp": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

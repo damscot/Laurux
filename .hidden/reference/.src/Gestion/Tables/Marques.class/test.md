@@ -7,11 +7,11 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| MARQUES-T01 | replay | Création | menu Marques ; `100`, `Stihl` ; Enregistrer | INSERT | `tests/creation/` | à faire |
-| MARQUES-T02 | replay | Modification | clic `100` ; `Stihl SA` ; Enregistrer | UPDATE de l'intitulé | `tests/modification/` | à faire |
-| MARQUES-T03 | replay | Code alphabétique | frappe `ABC` dans le code | caractères refusés (A02 figée) | `tests/code_alpha/` | à faire |
-| MARQUES-T04 | replay | Filtre et tri | en-tête Intitulé, frappe `St`, double-clic | filtre et tri décroissant (log) | `tests/filtre_tri/` | à faire |
-| MARQUES-T05 | replay | Suppression | sélection `100` ; Supprimer, Oui | ligne supprimée | `tests/suppression/` | à faire |
+| MARQUES-T01 | replay | Création | menu Marques ; `100`, `Stihl` ; Enregistrer | INSERT | `tests/creation/` | implémenté (Gestion/marques_creation) |
+| MARQUES-T02 | replay | Modification | clic `100` ; `Stihl SA` ; Enregistrer | UPDATE de l'intitulé | `tests/modification/` | implémenté (Gestion/marques_modification, jeu marques_shared/marques_base) |
+| MARQUES-T03 | replay | Code alphabétique | frappe `ABC` dans le code | caractères refusés (A02 figée) | `tests/code_alpha/` | implémenté (Gestion/marques_code_alpha : lettres bloquées, code 1 enregistré) |
+| MARQUES-T04 | replay | Filtre et tri | en-tête Intitulé, frappe `St`, double-clic | filtre et tri décroissant (log) | `tests/filtre_tri/` | implémenté partiel (Gestion/marques_filtre_tri : filtre St% ; double clic d'en-tête non rejouable) |
+| MARQUES-T05 | replay | Suppression | sélection `100` ; Supprimer, Oui | ligne supprimée | `tests/suppression/` | implémenté (Gestion/marques_suppression) |
 
 ## Détail des tests
 

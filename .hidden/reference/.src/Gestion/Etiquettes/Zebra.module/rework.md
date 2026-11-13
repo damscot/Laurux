@@ -49,7 +49,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (voir les anomalies des écrans). Décision utilisateur : brancher la connexion (lecture de
   `IpZebra`, `Connect` au clic Imprimer) **ou** supprimer `Zebra.module`, les quatre `Connect` et
   les branches `ConnZbr` · tests : ZEBRA-T01, replays « Zebra » des écrans · sources : [Zebra.module:Gondole1](../../../../../../.src/Gestion/Etiquettes/Zebra.module#L4-L24), [Etiqart.class:Connect](../../../../../../.src/Gestion/Etiquettes/Etiqart.class#L992-L1011), [Etigond.class:Connect](../../../../../../.src/Gestion/Etiquettes/Etigond.class#L1031-L1050), [Etiqcasier.class:Connect](../../../../../../.src/Gestion/Etiquettes/Etiqcasier.class#L969-L988), [EtiqPromo.class:Connect](../../../../../../.src/Gestion/Etiquettes/EtiqPromo.class#L328-L347)
-- [ ] ZEBRA-A02 — [anomalie] Données non échappées sous `^FH` (`_`, `^`, `~`) et jeu de caractères
+- [ ] ZEBRA-A02 — [anomalie] (confirmée phase 2, vague 5 : un `^FS` dans l'intitulé termine le champ (T02)) Données non échappées sous `^FH` (`_`, `^`, `~`) et jeu de caractères
   `^CI0` avec des intitulés UTF-8 (accents) ; `>63` après le code-barres (caractère `3`
   vraisemblablement imprimé) ; `^JUS` sauvegarde la configuration à chaque étiquette. À confirmer
   sur matériel · tests : ZEBRA-T02 · sources : [Zebra.module:10](../../../../../../.src/Gestion/Etiquettes/Zebra.module#L10), [Zebra.module:6](../../../../../../.src/Gestion/Etiquettes/Zebra.module#L6), [Zebra.module:19](../../../../../../.src/Gestion/Etiquettes/Zebra.module#L19)

@@ -1,0 +1,25 @@
+{
+ "id": "EDART1-T04",
+ "objet": "Prix consommateur",
+ "classe": "EdArt1",
+ "description": "/Soc01/Pvcons vrai ; articles avec art_pvcons nul et non nul ; Imprimer : ligne Level10 seulement pour art_pvcons <> 0.",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'",
+  "/Soc01/Pvcons": "-1"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

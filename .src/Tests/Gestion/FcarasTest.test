@@ -1,0 +1,48 @@
+' Gambas test file
+
+''Tests de Fcaras (.hidden/reference/.src/Gestion/Facturation/Fcaras.class/test.md, FCARAS-T01, T02).
+''Valeurs attendues : assets/FcarasTest/expected.txt, produites dans le clone de référence.
+''L'écran ne s'ouvre que depuis Facture (écran complexe, non rejoué) : la fenêtre est construite par
+''New Fcaras(photo, caractéristiques) sans être affichée, Crst et Photos sont relevés puis la fenêtre verrouillée.
+''Le rendu de l'image n'est pas comparé.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PhotoValide", "Photo PNG existante (Icones/3.png) : caractéristiques dans Crst, zone image visible")
+  TestKit.Desc("T02PhotoAbsente", "Chemin de photo inexistant : caractéristiques dans Crst, aucune erreur")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "FcarasTest")
+
+End
+
+Private Sub Releve(sT As String, sPhoto As String, sCrst As String)
+
+  Dim hF As Fcaras
+
+  Try hF = New Fcaras(sPhoto, sCrst)
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check(sT & "/crst", Object.GetProperty(hF.Controls["Crst"], "Text"))
+  TestKit.Check(sT & "/photos.visible", Object.GetProperty(hF.Controls["Photos"], "Visible"))
+  Object.Lock(hF)
+
+End
+
+Public Sub T01PhotoValide()
+
+  Releve("T01", Application.Path &/ "Icones/3.png", "Moteur 2 temps\nPuissance 3 kW")
+
+End
+
+Public Sub T02PhotoAbsente()
+
+  Releve("T02", "/chemin/inexistant/photo.png", "Sans photo")
+
+End

@@ -53,7 +53,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] EDMO-A01 — [anomalie] Une valeur invalide arrête l'impression par `Return` : curseur laissé
   en attente, aucun PDF · tests : T04 · sources : [Edmo.class:464](../../../../../../.src/Gestion/Impressions/Edmo.class#L464), [Edmo.class:473](../../../../../../.src/Gestion/Impressions/Edmo.class#L473)
-- [ ] EDMO-A02 — [anomalie] `Draw.End` sans `Draw.Begin` après le message « Aucune Mo » (erreur
+- [ ] EDMO-A02 — [anomalie] (confirmée phase 2, vague 5 : `Draw.End` dans `Button2_Click` (l. 493), T05 (code 125)) `Draw.End` sans `Draw.Begin` après le message « Aucune Mo » (erreur
   d'exécution probable) · tests : T05 · sources : [Edmo.class:493](../../../../../../.src/Gestion/Impressions/Edmo.class#L493)
 - [ ] EDMO-A03 — [anomalie] Navigation : `ColMo2_Click` et `Cmpt_KeyPress` tag 4 renvoient le focus
   sur `Mo` ; Échap dans `Colfam2` donne le focus à `fam` et sélectionne `fam2` · tests : T06 ·

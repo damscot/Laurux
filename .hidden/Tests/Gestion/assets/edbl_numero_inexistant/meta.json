@@ -1,0 +1,18 @@
+{
+ "id": "EDBL-T02",
+ "objet": "Numero inexistant",
+ "classe": "Edbl",
+ "description": "Jeu edbl_receptions : Menu90, Nbl = R999 + Entree : Message.Warning Ce numero de bon n'existe pas (OK, Entree).",
+ "dataset": "edbl_shared/edbl_receptions",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

@@ -9,12 +9,12 @@ non modifié** (tests de caractérisation).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CONSIGNE-T01 | gbtest | `consigne_montant` | code existant (prix 1,50) × 0, 1, 12 ; code absent ; code `""` | `LTaxe` type `Consigne`, `Mnt` 0 / 1,50 / 18 / 0 / 0 | `tests/consigne_montant/` | à faire |
-| CONSIGNE-T02 | gbtest | `consigne_montant` quantité non entière | `qte` passé en Float 2,5 (comme `Achat.EnrConsigne`) | figer la valeur actuelle (conversion Integer) | `tests/consigne_qte_float/` | à faire |
-| CONSIGNE-T03 | gbtest | `recuppalette` / `recupcol` | `nlge` = `3` (Integer) et `"003"` (String) ; ligne absente ; bloc absent | nombre lu, `nbpal`/`nbcol` affectés, 0 si absent | `tests/recup_palette_colis/` | à faire |
-| CONSIGNE-T04 | gbtest | Propriété `consigne` | `New Consigne(10, 24)` puis `cdepal`/`nbpal`, `cdecol`/`nbcol`, `cdeunit` (3 combinaisons, codes vides) | `consigne.TotNHT.G` de référence | `tests/consigne_total/` | à faire |
-| CONSIGNE-T05 | gbtest | Constructeur à 13 arguments | arguments d'`Achat.class:214` (prix, qte, `Arr_0001`, `""`, régie, volume, degré, `""`, 3 codes + 2 nombres) | `Mnt`, `Qte`, `code`, `volume`, `degre`, `cdepal`, `nbpal`… | `tests/constructeur_achat/` | à faire |
-| CONSIGNE-T06 | replay | Réception d'articles consignés (option B ou T) | `Achat` : réception de 2 articles boissons avec palettes/colis ; enregistrement ; validation `ValidBR1` avec comptabilisation | dump `Fiches_ligcons`, `Fiches_ligregie`, `Fiches_Mvt*` (ligne `consfou`) | `tests/reception_consignes/` | à faire |
+| CONSIGNE-T01 | gbtest | `consigne_montant` | code existant (prix 1,50) × 0, 1, 12 ; code absent ; code `""` | `LTaxe` type `Consigne`, `Mnt` 0 / 1,50 / 18 / 0 / 0 | `tests/consigne_montant/` | implémenté |
+| CONSIGNE-T02 | gbtest | `consigne_montant` quantité non entière | `qte` passé en Float 2,5 (comme `Achat.EnrConsigne`) | figer la valeur actuelle (conversion Integer) | `tests/consigne_qte_float/` | implémenté |
+| CONSIGNE-T03 | gbtest | `recuppalette` / `recupcol` | `nlge` = `3` (Integer) et `"003"` (String) ; ligne absente ; bloc absent | nombre lu, `nbpal`/`nbcol` affectés, 0 si absent | `tests/recup_palette_colis/` | implémenté |
+| CONSIGNE-T04 | gbtest | Propriété `consigne` | `New Consigne(10, 24)` puis `cdepal`/`nbpal`, `cdecol`/`nbcol`, `cdeunit` (3 combinaisons, codes vides) | `consigne.TotNHT.G` de référence | `tests/consigne_total/` | implémenté |
+| CONSIGNE-T05 | gbtest | Constructeur à 13 arguments | arguments d'`Achat.class:214` (prix, qte, `Arr_0001`, `""`, régie, volume, degré, `""`, 3 codes + 2 nombres) | `Mnt`, `Qte`, `code`, `volume`, `degre`, `cdepal`, `nbpal`… | `tests/constructeur_achat/` | implémenté |
+| CONSIGNE-T06 | replay | Réception d'articles consignés (option B ou T) | `Achat` : réception de 2 articles boissons avec palettes/colis ; enregistrement ; validation `ValidBR1` avec comptabilisation | dump `Fiches_ligcons`, `Fiches_ligregie`, `Fiches_Mvt*` (ligne `consfou`) | `tests/reception_consignes/` | à faire : passe par Achat (écran complexe) |
 
 ## Détail des tests
 
@@ -29,3 +29,8 @@ non modifié** (tests de caractérisation).
 - **Comparaison** : T01-T05 comparent `Mnt` avec une tolérance de 1e-9 ; T06 compare le dump
   normalisé (les identifiants `Fiches_ligcons.code` auto-incrémentés sont exclus du diff).
 - **Non testable isolément** : l'alimentation de `AutresObj` par `Achat` (couverte par T06).
+- **Implémentation (phase 2)** : `.src/Tests/Gestion/ConsigneTest.test` (T01Montant … T05Constructeur), jeu
+  `consigne_shared/consigne_base` (tables `Fiches_consigne`/`Fiches_ligcons` créées en SQL, structure de
+  `modfichier.fichierboisson` ; consignes P1 10,00, C1 1,50, B1 0,20 ; lignes BLOC1/003). `LTaxe.Mnt` étant privé,
+  le montant est lu par `Montant(LPrix(0), True).TotNHT.G`. Aucune régie (dra vide) ; conf par défaut (option
+  boisson inactive : `opt` = True, figé).

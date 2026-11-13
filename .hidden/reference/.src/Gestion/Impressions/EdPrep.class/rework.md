@@ -59,11 +59,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDPREP-A01 — [anomalie] Bon de préparation : `Burdis2 = Left$(Burdis, 30)` imprime le code
+- [ ] EDPREP-A01 — [anomalie] (confirmée phase 2, vague 5 : « 75001 PARIS » sous « DUPONT LIVRAISON » (T01, couvre T03)) Bon de préparation : `Burdis2 = Left$(Burdis, 30)` imprime le code
   postal et la ville de **facturation** dans le bloc de livraison (au lieu de `Burdis2`) · tests :
   T03 · sources : [EdPrep.class:225](../../../../../../.src/Gestion/Impressions/EdPrep.class#L225), [EdPrep.class:238](../../../../../../.src/Gestion/Impressions/EdPrep.class#L238)
-- [ ] EDPREP-A02 — [anomalie] Saut de page des bons : date de commande brute (format Gambas) au lieu
+- [ ] EDPREP-A02 — [anomalie] (confirmée phase 2, vague 5 : pages suivantes « du 06/09/2018 22:00:00 » (date brute UTC, format US), T05) Saut de page des bons : date de commande brute (format Gambas) au lieu
   de `dd.mm.yyyy`, et en-tête société absent quand le saut survient dans les commentaires · tests :
   T05 · sources : [EdPrep.class:214](../../../../../../.src/Gestion/Impressions/EdPrep.class#L214), [EdPrep.class:267](../../../../../../.src/Gestion/Impressions/EdPrep.class#L267), [EdPrep.class:285](../../../../../../.src/Gestion/Impressions/EdPrep.class#L285)
 - [ ] EDPREP-A03 — [anomalie] Export sans commande : `Expedition.csv` ouvert avant la requête et
   jamais fermé (descripteur ouvert jusqu'à la fermeture de l'écran) · tests : T07 · sources : [EdPrep.class:328](../../../../../../.src/Gestion/Impressions/EdPrep.class#L328), [EdPrep.class:360](../../../../../../.src/Gestion/Impressions/EdPrep.class#L360)
+- [ ] EDPREP-A04 — [anomalie] Export CSV : bloc véhicule incomplet (`Vehicule` de moins de 4 lignes) → le `Try Donnees1` échoue et la ligne de repli est écrite sans véhicule **ni** « Reliquat » (C00002) (phase 2, vague 5, 2026-11-13) · tests : T06 · sources : [EdPrep.class:352-353](../../../../../../.src/Gestion/Impressions/EdPrep.class#L352-L353), [EdPrep.class:Button3_Click](../../../../../../.src/Gestion/Impressions/EdPrep.class#L319-L373)

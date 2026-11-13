@@ -1,0 +1,25 @@
+{
+ "id": "TREGIE-T03",
+ "objet": "Modification suspendu, prix de vente",
+ "description": "menu Fichiers > Constantes > Régie ; Suivant (6e « bout ») vers la régie 02 (2 articles 001, 002 avec art_dra = 02) ; Modification (4e « bout ») ; bouton radio « droit suspendu » ; Valider ; Message.Question bouton 1 « Modifier le prix de vente » (Entrée). Attendu : UPDATE Fiches_regie (suspendu = 1) et recalcul de Fiches_Art (pbht, paht, prvt, pvht, pvttc, montdr, montss, frais) ; édition droit.pdf comparée par pdftotext.",
+ "dataset": "modfichier_shared/options_bois_pp",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/bois": -1,
+  "/Soc01/pp": 0,
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "classe": "Tregie",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

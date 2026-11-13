@@ -1,0 +1,23 @@
+{
+ "id": "ETIQRECPT-T05",
+ "objet": "Ligne de file sur une référence fournisseur",
+ "classe": "EtiqRecpt",
+ "description": "File produits : code REF002 = art_cfour de l'article 002 ; type produits, modèle 1 - Article ; Imprimer : l'article 002 est retrouvé par repli sur art_cfour (texte du PDF) ; effacement accepté.",
+ "dataset": "etiqrecpt_cfour",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

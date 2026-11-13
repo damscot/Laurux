@@ -115,7 +115,8 @@ vont dans `output/tests/`, non versionné.
                                        chemin relatif au HOME de test, ou « @<nom> » pour un fichier des
                                        sorties de -T (@Laurux.conf : configuration finale ; @ouvrir.trace :
                                        appels Desktop.Open ; @outils.trace : outils externes factices ;
-                                       @ftp.trace : commandes FTP reçues) ; « <fichier absent> » s'il
+                                       @ftp.trace : commandes FTP reçues ; @smtp.trace : résumé des courriers
+                                       reçus, @smtp/<n>.eml : message brut) ; « <fichier absent> » s'il
                                        n'existe pas
                                        entrees : fichiers d'entrée à déposer avant le rejeu,
                                        {"<fichier des assets>": "<destination>"} ; source : fichier du
@@ -125,6 +126,9 @@ vont dans `output/tests/`, non versionné.
                                        ftp : faux serveur FTP lancé pour le rejeu, "ok" | "refus" | "absent"
                                        (voir « Outils externes factices ») ; « {ftp} » dans une valeur de
                                        conf est remplacé par son URL (ex. {"/Soc01/Adrbase": "{ftp}/sauve"})
+                                       smtp : faux serveur SMTP lancé pour le rejeu, "ok" | "refus" | "absent" ;
+                                       « {smtp} » (hôte) et « {smtp_port} » (port) dans les valeurs de conf
+                                       (ex. {"/Smtp": "{smtp}", "/Port": "{smtp_port}", "/Secumail": "Sans"})
                                        « {home} » (HOME de test du Laurux testé) et « {out} » (répertoire de
                                        sortie de -T, comparable par « @… ») : chemins portables entre poste
                                        et conteneur (normalisés en <home> à la comparaison)
@@ -136,7 +140,7 @@ vont dans `output/tests/`, non versionné.
     Laurux-test.conf                   configuration Laurux de test ([dbase] → base de test, Maj=0, son=0…)
     bin/                               enveloppes mysql, mysqldump, mariadb, mariadb-dump (port de test), faux
                                        programmes laurux-ouvrir (Desktop.Open), laurux-factice (+ liens),
-                                       gammu, wput, et faux serveur FTP laurux-ftp
+                                       gammu, wput, curl, et faux serveurs laurux-ftp (FTP), laurux-smtp (SMTP)
     dump_mask.json                     colonnes volatiles masquées dans dump.sql
     TestKit.module, runner.py, sandbox.py, harness.patch, harness_files.txt
 ```
@@ -494,10 +498,12 @@ l'outil lui-même.
 | `thunderbird`, `icedove`, `evolution`, `kmail`, `xdg-email`, `xdg-open`, `pico2wave`, `aplay`, `evince` | lien vers `laurux-factice` | EnvMail, Fmenu, LGed, FClientcarte, Prefs, Syntheses | trace, code 0 |
 | `gammu` | `gammu` | Gsm (SMS) | trace, affiche la réponse d'un envoi réussi (« …OK… », lue par Gsm) ; `LAURUX_GAMMU_ECHEC=1` : réponse d'échec |
 | `wput` | `wput` | Btqart (catalogue FTP) | trace dans `ftp.trace`, copie du fichier sous `ftp/wput/` |
+| `curl` | `curl` | Gsm, Emailing, Prefs, Psms (SMS Spot-Hit / Hosteur), Monip, LGed (type MIME d'un document distant) | trace ; réponse fixe selon l'URL, sans réseau (voir ci-dessous) |
 | `FtpClient` (gb.net.curl) | serveur `laurux-ftp` | SauvesAuto, FacturefmA | voir ci-dessous |
+| `SmtpClient` (gb.net.smtp) | serveur `laurux-smtp` | EnvMail (Emailing, EmailingCarte, Caisse, ObjFacB) | voir ci-dessous |
 
 Ne sont **pas** remplacés les outils dont Laurux exploite la sortie ou l'effet (`mysql`, `mysqldump` : enveloppes
-vers la base de test ; `curl`, `wget`, `ps`, `lpstat`, `lpc`, `ssh`, `gksu`, `hostname`…) : un faux programme y
+vers la base de test ; `wget`, `ps`, `lpstat`, `lpc`, `ssh`, `gksu`, `hostname`…) : un faux programme y
 changerait le comportement testé. Pour en ajouter un : lien symbolique `bin/<outil> -> laurux-factice` si la sortie
 n'est pas lue, sinon un faux programme dédié qui reproduit la réponse attendue (modèle : `gammu`).
 
@@ -521,6 +527,30 @@ données de test) ; il renvoie l'URL `ftp://127.0.0.1:<port>`. Modes : `ok`, `re
 Rejeu : `"ftp": "ok"` dans `meta.json`, URL injectée par `{ftp}` dans `"conf"`, trace comparée par
 `"fichiers": ["@ftp.trace"]` (le port est masqué à la comparaison). gb.test : `FtpFactice` dans `_Setup`, URL posée
 dans `Start.LocalSettings`, `FinFtp` dans `_Teardown`.
+
+**curl.** Laurux lit la sortie de `curl` : le faux `bin/curl` ne fait aucun accès réseau et rend une réponse fixe
+choisie d'après l'URL (tracée dans `outils.trace`). Spot-Hit, crédits (`/api/credits`) : 10 premium, 20 lowcost ;
+envoi (`/api/envoyer/sms`) : `{"resultat":1,…}` ; une clé d'API (`/Soc01/Api`) contenant « refus » donne la réponse
+d'erreur (clé refusée), « zero » des crédits épuisés. Hosteur : `OK` (login contenant « refus » : `KO`). `ifconfig.me`
+(Monip) : `203.0.113.10`. Autre URL avec `-w '%{content_type}'` (LGed, document GED distant) : type déduit de
+l'extension (`.pdf` → `application/pdf`…). Hôte contenant « absent » : code 6 (hôte introuvable).
+Documents GED distants de test : l'hôte synthétique `laurux_ged_test.fr` sert les fichiers de
+`.src/Tests/Framework/ged/` (`{http,https}://laurux_ged_test.fr/mime_file_test.{pdf,txt,html}` : contenu et type ;
+autre nom : 404, type `text/html`) ; pour `file:///`, copier ces documents dans le HOME de test (modèle :
+`LGedTest.T15MimeUrl`). Un gb.test qui appelle `curl` place lui-même `Framework/bin` en tête du PATH (le harnais ne
+le fait que pour les rejeux et le runner).
+
+**SMTP.** `SmtpClient` (gb.net.smtp, dans le processus Gambas) ne passe par aucun programme externe.
+`TestKit.SmtpFactice(Mode, Dossier)` lance donc `bin/laurux-smtp`, petit serveur SMTP en Python (bibliothèque
+standard) sur `127.0.0.1` (port libre, renvoyé par la fonction) : il accepte les identifiants sans contrôle (AUTH
+PLAIN/LOGIN, ni vérifiés ni tracés), sans chiffrement (`/Secumail = Sans`), conserve chaque message tel quel
+(`Dossier/<n>.eml`) et en écrit un **résumé stable** dans `smtp.trace` : enveloppe (expéditeur et destinataires
+réels, copies cachées comprises), en-têtes De, À, Cc, Objet décodés, parties texte, pièces jointes (nom, type,
+taille, md5) ; ni date, ni Message-ID, ni séparateur MIME. Modes : `ok`, `refus` (authentification et envoi refusés),
+`absent` (port 1). `TestKit.FinSmtp()` l'arrête (sinon arrêt automatique après 120 s). Rejeu : `"smtp": "ok"`,
+`"conf": {"/Smtp": "{smtp}", "/Port": "{smtp_port}", "/Secumail": "Sans"}`, `"fichiers": ["@smtp.trace"]`.
+gb.test : modèle `EnvMailTest.T02SmtpSimple` (`SmtpFactice` puis `Start.LocalSettings`, résumé relevé ligne à ligne,
+`FinSmtp`). Le port étant variable, ne pas comparer `@Laurux.conf` dans un scénario qui pose `/Port`.
 
 Autres fichiers de test : `.src/Tests/TriTest.class` (banc d'essai manuel de `TriGen`, à enrichir : TRITEST-002),
 `.src/Utils/CTestTVA.class` (validation TVA), `.src/Caisse/TestCaisses.module` (`TestCai()`, contrôle des
@@ -620,9 +650,14 @@ Les actions enregistrées sont : `Click`, `Keypress` (uniquement si le contrôle
 
   ```bash
   python3 $R retime Utils/<nom> --set traitement=1500     # écrit la cadence dans meta.json et recadence
+  python3 $R harness apply                                # APRÈS retime : recopie le scénario recadencé dans ref
   python3 $R replay Utils/<nom> --expected                # attendus dans ref
   python3 $R compare Utils/<nom>                          # → IDENTIQUE
   ```
+  L'ordre compte : un `harness apply` lancé avant `retime` laisse dans ref l'ancien `scenario.log`, que ref rejoue
+  avec l'ancienne cadence (« Next event in 0 ms ») sans aucun message ; les attendus produits sont alors faux.
+  Un `scenario.log` régénéré par script perd sa cadence : relancer `retime` ensuite. Ses horodatages doivent rester
+  valides (secondes < 60, point décimal : générer avec Python plutôt qu'avec `printf` en locale française).
 - `faketime` fixe l'heure de départ du rejeu, mais l'horloge avance ensuite : un horodatage issu de `Now` dépend de
   la durée du rejeu (et de la vitesse de ref et de rework). Les horodatages ne sont **pas masqués** (un masquage
   cacherait une régression, ex. 9:59:59.99 contre 10:00:00.00, ou un changement de jour à minuit) : `compare`

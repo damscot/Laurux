@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| SITE-T01 | gbtest | Compilation sans le module | suppression de `Site.module` | `gbc3 -agt` sans erreur ; `Fsoc` compile toujours (contrôle `Site` du formulaire) | `tests/suppression/` | à faire |
-| SITE-T02 | replay | Écran Société, champ « Site » | `Fsoc` : ouvrir une société, naviguer jusqu'au champ `Site` (touche qui déclenche `Case 17`), saisir une URL, enregistrer | dump de `Fiches_Societes` identique au clone de référence | `tests/fsoc_champ_site/` | à faire |
+| SITE-T01 | gbtest | Compilation sans le module | suppression de `Site.module` | `gbc3 -agt` sans erreur ; `Fsoc` compile toujours (contrôle `Site` du formulaire) | `tests/suppression/` | à faire : contrôle de compilation après suppression du module (rework), pas un test d'exécution |
+| SITE-T02 | replay | Écran Société, champ « Site » | `Fsoc` : ouvrir une société, naviguer jusqu'au champ `Site` (touche qui déclenche `Case 17`), saisir une URL, enregistrer | dump de `Fiches_Societes` identique au clone de référence | `tests/fsoc_champ_site/` | implémenté (Gestion/site_fsoc_champ_site, jeu Communs/fsoc_shared/fsoc_deux_bases) |
 
 ## Détail des tests
 

@@ -9,7 +9,7 @@ d'appelant, à repasser avant la suppression éventuelle (TCHAUFFEUR-A01).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TCHAUFFEUR-T01 | gbtest | Absence d'appelant (contrôle statique) | `grep -rn -i 'Tchauffeur' .src/ --include=*.class --include=*.module` hors du fichier lui-même | aucune ligne | `tests/absence_appelant/` | à faire |
+| TCHAUFFEUR-T01 | gbtest | Absence d'appelant (contrôle statique) | `grep -rn -i 'Tchauffeur' .src/ --include=*.class --include=*.module` hors du fichier lui-même | aucune ligne | `tests/absence_appelant/` | à faire : contrôle statique (grep des sources), sans objet en gb.test ; classe sans .form appelant |
 
 ## Détail des tests
 

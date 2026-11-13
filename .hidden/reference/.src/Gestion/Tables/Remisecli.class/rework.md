@@ -61,7 +61,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `Cdf_Dblclick`, `Cdf_KeyPress` visent la zone de saisie `Cdf` (groupe `rem`, jamais levés) au
   lieu de l'en-tête `FA`, qui n'a aucun handler. Correction : les renommer `FA_GotFocus`,
   `FA_Dblclick`, `FA_KeyPress` (nouveau comportement visible) · tests : T06 · sources : [Remisecli.class:Cdf_GotFocus](../../../../../../.src/Gestion/Tables/Remisecli.class#L440-L450), [Remisecli.class:Cdf_Dblclick](../../../../../../.src/Gestion/Tables/Remisecli.class#L452-L461), [Remisecli.class:Cdf_KeyPress](../../../../../../.src/Gestion/Tables/Remisecli.class#L463-L475)
-- [ ] REMISECLI-A02 — [anomalie] `Deb2`/`Deb3` concatènent le filtre saisi dans le SQL entre
+- [ ] REMISECLI-A02 — [anomalie] (confirmée phase 2, vague 5 : guillemet dans le filtre → « Query failed » (T07, code 125)) `Deb2`/`Deb3` concatènent le filtre saisi dans le SQL entre
   guillemets doubles (`"` casse la requête ; sous SQLite, chaîne interprétée comme identifiant si
   une colonne porte ce nom). Correction : `like &1` paramétré · tests : T05, T07 · sources : [Remisecli.class:70](../../../../../../.src/Gestion/Tables/Remisecli.class#L70), [Remisecli.class:76](../../../../../../.src/Gestion/Tables/Remisecli.class#L76)
 - [ ] REMISECLI-A03 — [anomalie] `Button3_Click` enregistre même si `Quitte_*` ont signalé un client

@@ -1,0 +1,68 @@
+' Gambas test file
+
+''Tests de Dymo (.hidden/reference/.src/Gestion/Etiquettes/Dymo.module/test.md, DYMO-T01).
+''Valeurs attendues : assets/DymoTest/expected.txt, produites dans le clone de référence.
+''Montage commun avec ZebraTest : écouteur TCP local (assets/ZebraTest/ecoute.py), un flux par procédure.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Equivalence", "Dymo.Gondole1 et Zebra.Gondole1 : flux reçus identiques pour le jeu nominal de ZEBRA-T01")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "DymoTest")
+
+End
+
+Private Function Flux(bDymo As Boolean, Args As Variant[]) As String
+
+  Dim sOut As String = Temp$()
+  Dim sPort As String = Temp$()
+  Dim hProc As Process
+  Dim hSock As Socket
+  Dim i As Integer
+
+  hProc = Exec ["python3", Application.Path &/ ".hidden/Tests/Gestion/assets/ZebraTest/ecoute.py", sOut, sPort]
+  For i = 1 To 200
+    If Exist(sPort) Then Break
+    Wait 0.05
+  Next
+  If Not Exist(sPort) Then Return "ERREUR: écouteur absent"
+  hSock = New Socket
+  hSock.Connect("127.0.0.1", CInt(Trim(File.Load(sPort))))
+  For i = 1 To 200
+    If hSock.Status = Net.Connected Then Break
+    Wait 0.05
+  Next
+  If bDymo Then
+    Try Dymo.Gondole1(hSock, Args[0], Args[1], Args[2], Args[3], Args[4], Args[5], Args[6], Args[7])
+  Else
+    Try Zebra.Gondole1(hSock, Args[0], Args[1], Args[2], Args[3], Args[4], Args[5], Args[6], Args[7])
+  Endif
+  If Error Then Return "ERREUR: " & Error.Text
+  hSock.Close
+  For i = 1 To 200
+    If Exist(sOut & ".ok") Then Break
+    Wait 0.05
+  Next
+  If Not Exist(sOut & ".ok") Then Return "ERREUR: flux non reçu"
+  Return File.Load(sOut)
+
+End
+
+Public Sub T01Equivalence()
+
+  Dim aArgs As Variant[] = ["3270190207924", "12,50 ", "Râteau \"pro\" & co", "ART001", "TTC", "A12", "2,50 Kg/l", "REF-9"]
+  Dim sDymo As String
+  Dim sZebra As String
+
+  sDymo = Flux(True, aArgs)
+  sZebra = Flux(False, aArgs)
+  TestKit.Check("T01/longueur_dymo", Len(sDymo))
+  TestKit.Check("T01/longueur_zebra", Len(sZebra))
+  TestKit.Check("T01/identiques", sDymo = sZebra)
+
+End

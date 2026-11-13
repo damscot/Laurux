@@ -11,12 +11,14 @@ clone Laurux non modifié.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RECHTOUR-T01 | replay | Choix d'une tournée depuis la fiche client | jeu `tournees_base` (3 tournées insérées dans un ordre non trié) ; FClient → bouton tournée → double-clic sur la 2e ligne → enregistrer | `Fiches_Cli` : tournée du client = code choisi ; ligne `Exec_SQL` `SELECT * FROM Fiches_tourne` | `tests/choix_tournee_client/` | à faire |
-| RECHTOUR-T02 | replay | Effacement par Suppr | même écran, touche Suppr dans la grille → enregistrer | tournée du client = valeur produite par `butto1_trouve(" ")` (à figer) | `tests/effacement_tournee/` | à faire |
-| RECHTOUR-T03 | replay | Ordre d'affichage (caractérisation de A01) | jeu `tournees_base` | ordre des lignes = ordre physique de la table (capture d'écran ou log) | `tests/ordre_liste/` | à faire |
-| RECHTOUR-T04 | replay | Table vide | `Laurux01.sql` (aucune tournée) ; ouverture puis Échap | aucune erreur, aucun événement | `tests/table_vide/` | à faire |
+| RECHTOUR-T01 | replay | Choix d'une tournée depuis la fiche client | jeu `tournees_base` (3 tournées insérées dans un ordre non trié) ; FClient → bouton tournée → double-clic sur la 2e ligne → enregistrer | `Fiches_Cli` : tournée du client = code choisi ; ligne `Exec_SQL` `SELECT * FROM Fiches_tourne` | `tests/choix_tournee_client/` | à faire : passe par FClient (écran complexe) |
+| RECHTOUR-T02 | replay | Effacement par Suppr | même écran, touche Suppr dans la grille → enregistrer | tournée du client = valeur produite par `butto1_trouve(" ")` (à figer) | `tests/effacement_tournee/` | à faire : passe par FClient (écran complexe) |
+| RECHTOUR-T03 | replay | Ordre d'affichage (caractérisation de A01) | jeu `tournees_base` | ordre des lignes = ordre physique de la table (capture d'écran ou log) | `tests/ordre_liste/` | implémenté (gb.test, ordre physique de la table) |
+| RECHTOUR-T04 | replay | Table vide | `Laurux01.sql` (aucune tournée) ; ouverture puis Échap | aucune erreur, aucun événement | `tests/table_vide/` | implémenté (gb.test : grille vide, Échap non testé) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2)** : module `.src/Tests/Gestion/RechtourTest.test` (jeu `ttourne_shared/tournees_base`) ; T03 vérifie aussi l'activation de la 2e ligne (événement `trouve`).
 
 - **Jeu `tournees_base`** : `Laurux01.sql` + 3 lignes `Fiches_tourne` insérées dans l'ordre
   `T3`, `T1`, `T2` ; partagé avec [Ttourne](../Ttourne.class/test.md).

@@ -8,11 +8,11 @@ le clone **Laurux non modifié** (anomalies figées).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| REMISEC-T01 | replay | Création | type `01` (liste `Coltype`), famille `F1` (liste `Colfam`), remise `7,5` ; Entrée sur le bouton | ligne `Fiches_RemTypec` (`remise = 7.5`) ; grille rafraîchie, ligne sélectionnée ensuite (A03 figée) | `tests/creation/` | à faire |
-| REMISEC-T02 | replay | Modification | sélection d'une ligne de la grille, remise `10` ; Enregistrer | `remise` mise à jour | `tests/modification/` | à faire |
-| REMISEC-T03 | replay | Saisie invalide | type et famille inexistants, remise `abc` | bulles ; ligne enregistrée quand même (REMISEC-A01 figée) | `tests/saisie_invalide/` | à faire |
-| REMISEC-T04 | replay | Suppression | sélection, Supprimer, Oui | ligne supprimée | `tests/suppression/` | à faire |
-| REMISEC-T05 | replay | Affichage de la grille | remises `7,5`, `12,345`, `0` ; tri par clic sur l'en-tête ; recherche (clic droit) | textes affichés dans la colonne « Remise » (format dégradé, A02 figée) ; ordre des lignes | `tests/affichage_grille/` | à faire |
+| REMISEC-T01 | replay | Création | type `01` (liste `Coltype`), famille `F1` (liste `Colfam`), remise `7,5` ; Entrée sur le bouton | ligne `Fiches_RemTypec` (`remise = 7.5`) ; grille rafraîchie, ligne sélectionnée ensuite (A03 figée) | `tests/creation/` | implémenté partiel (Gestion/remisec_creation : saisie directe des codes ; listes Coltype/Colfam et sélection après rafraîchissement non couvertes) |
+| REMISEC-T02 | replay | Modification | sélection d'une ligne de la grille, remise `10` ; Enregistrer | `remise` mise à jour | `tests/modification/` | à faire : sélection dans Tabtypec (RichDataGrid, pas de Tabtypec_Click) non rejouable |
+| REMISEC-T03 | replay | Saisie invalide | type et famille inexistants, remise `abc` | bulles ; ligne enregistrée quand même (REMISEC-A01 figée) | `tests/saisie_invalide/` | implémenté (Gestion/remisec_saisie_invalide : remise NULL enregistrée, A01 figée) |
+| REMISEC-T04 | replay | Suppression | sélection, Supprimer, Oui | ligne supprimée | `tests/suppression/` | à faire : sélection dans Tabtypec (RichDataGrid, pas de Tabtypec_Click) non rejouable |
+| REMISEC-T05 | replay | Affichage de la grille | remises `7,5`, `12,345`, `0` ; tri par clic sur l'en-tête ; recherche (clic droit) | textes affichés dans la colonne « Remise » (format dégradé, A02 figée) ; ordre des lignes | `tests/affichage_grille/` | à faire : textes de la grille RichDataGrid non relevés (requêtes hors sql.log), tri par en-tête et clic droit non rejouables |
 
 ## Détail des tests
 

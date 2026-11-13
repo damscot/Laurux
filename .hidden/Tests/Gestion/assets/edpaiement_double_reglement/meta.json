@@ -1,0 +1,23 @@
+{
+ "id": "EDPAIEMENT-T04",
+ "objet": "Double règlement",
+ "classe": "Edpaiement",
+ "description": "Facture F00105 réglée Especes 30 + Cheque 20 : une ligne dans chaque groupe de mode.",
+ "dataset": "edpaiement_double",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -10,12 +10,12 @@ Module de traitement pur SQL, sans GUI : tests gb.test exécutés sur la base Ma
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| MAJEQU-T01 | gbtest | `Maj` sur table vide | `Maj("A", "B")` | dump `Fiches_Cequ` (attendu : `(A,A)`, `(A,B)`, `(B,A)`, `(B,B)`) et `art_cequ` de `A` | `tests/maj_simple/` | à faire |
-| MAJEQU-T02 | gbtest | Fermeture transitive | `Maj("A","B")`, `Maj("C","D")`, puis `Maj("B","C")` ; variante `Maj("C","B")` | dump `Fiches_Cequ` de référence (figer : groupe complet ou non) | `tests/maj_chaine/` | à faire |
-| MAJEQU-T03 | gbtest | Idempotence | `Maj("A","B")` deux fois | dump identique au premier appel | `tests/maj_idempotent/` | à faire |
-| MAJEQU-T04 | gbtest | `Recup` | table contenant seulement `(A,B)`, `(B,C)` ; puis table vide (A01) | dump de référence ; table vide : erreur levée (caractérisation) | `tests/recup/` | à faire |
-| MAJEQU-T05 | replay | Export serveur | Articles : saisie d'un code équivalent avec `Sprix`, `Sexport`, `SMajArt` actifs | contenu de `EQ_Serveur.txt` | `tests/export_eq/` | à faire |
-| MAJEQU-T06 | replay | Doublons avec backtrace (A02) | `/dbase/backtrace` actif, Articles : code équivalent déjà présent | nombre de boîtes d'erreur (log GUI) ; dump `Fiches_Cequ` | `tests/doublon_backtrace/` | à faire |
+| MAJEQU-T01 | gbtest | `Maj` sur table vide | `Maj("A", "B")` | dump `Fiches_Cequ` (attendu : `(A,A)`, `(A,B)`, `(B,A)`, `(B,B)`) et `art_cequ` de `A` | `tests/maj_simple/` | implémenté |
+| MAJEQU-T02 | gbtest | Fermeture transitive | `Maj("A","B")`, `Maj("C","D")`, puis `Maj("B","C")` ; variante `Maj("C","B")` | dump `Fiches_Cequ` de référence (figer : groupe complet ou non) | `tests/maj_chaine/` | implémenté |
+| MAJEQU-T03 | gbtest | Idempotence | `Maj("A","B")` deux fois | dump identique au premier appel | `tests/maj_idempotent/` | implémenté |
+| MAJEQU-T04 | gbtest | `Recup` | table contenant seulement `(A,B)`, `(B,C)` ; puis table vide (A01) | dump de référence ; table vide : erreur levée (caractérisation) | `tests/recup/` | implémenté |
+| MAJEQU-T05 | replay | Export serveur | Articles : saisie d'un code équivalent avec `Sprix`, `Sexport`, `SMajArt` actifs | contenu de `EQ_Serveur.txt` | `tests/export_eq/` | à faire : passe par Articles (écran complexe) |
+| MAJEQU-T06 | replay | Doublons avec backtrace (A02) | `/dbase/backtrace` actif, Articles : code équivalent déjà présent | nombre de boîtes d'erreur (log GUI) ; dump `Fiches_Cequ` | `tests/doublon_backtrace/` | à faire : passe par Articles (écran complexe) |
 
 ## Détail des tests
 
@@ -26,3 +26,7 @@ Module de traitement pur SQL, sans GUI : tests gb.test exécutés sur la base Ma
 - **SQLite** : T01 à T04 rejoués aussi sur la base SQLite de référence (pas de syntaxe MySQL
   spécifique dans le module).
 - **Couverture** : 100 % des lignes de `Maj` et `Recup` avec T01 à T05.
+
+### Implémentation (phase 2)
+- gb.test `.src/Tests/Gestion/MajEquTest.test`, jeu `.hidden/Tests/Gestion/assets/majequ_shared/majequ_base.sql`
+  (articles A à D, Fiches_Cequ vide). T04 sur table vide : « Result is not available » (A01).

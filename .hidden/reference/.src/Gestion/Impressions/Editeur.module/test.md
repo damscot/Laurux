@@ -8,10 +8,10 @@ attendues sont produites dans le clone **Laurux non modifié** (anomalie A01 fig
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDITEUR-T01 | gbtest | `Prog_Editeur` avec `/CmdEditor0` | clé = script de capture qui écrit ses arguments ; fichier `~/tmp/a.txt` | arguments reçus par le script (`~/tmp/a.txt`) | `tests/cmd_editor/` | à faire |
-| EDITEUR-T02 | gbtest | Chemin avec espace | `/CmdEditor0` = script de capture ; fichier `~/tmp/a b.txt` | arguments découpés (`…/a`, `b.txt`) : A01 figée | `tests/chemin_espace/` | à faire |
-| EDITEUR-T03 | gbtest | Repli `Desktop.Open` | clé absente ; `xdg-open` remplacé par un script de capture dans le `PATH` | `xdg-open` appelé avec le chemin | `tests/desktop_open/` | à faire |
-| EDITEUR-T04 | gbtest | Type explicite | `Prog_Editeur(f, FILE_TYPE_PDF)` avec `/CmdEditor1` seule renseignée | commande `/CmdEditor1` lancée | `tests/type_pdf/` | à faire |
+| EDITEUR-T01 | gbtest | `Prog_Editeur` avec `/CmdEditor0` | clé = script de capture qui écrit ses arguments ; fichier `~/tmp/a.txt` | arguments reçus par le script (`~/tmp/a.txt`) | `tests/cmd_editor/` | implémenté |
+| EDITEUR-T02 | gbtest | Chemin avec espace | `/CmdEditor0` = script de capture ; fichier `~/tmp/a b.txt` | arguments découpés (`…/a`, `b.txt`) : A01 figée | `tests/chemin_espace/` | implémenté |
+| EDITEUR-T03 | gbtest | Repli `Desktop.Open` | clé absente ; `xdg-open` remplacé par un script de capture dans le `PATH` | `xdg-open` appelé avec le chemin | `tests/desktop_open/` | implémenté |
+| EDITEUR-T04 | gbtest | Type explicite | `Prog_Editeur(f, FILE_TYPE_PDF)` avec `/CmdEditor1` seule renseignée | commande `/CmdEditor1` lancée | `tests/type_pdf/` | implémenté |
 
 ## Détail des tests
 
@@ -20,3 +20,6 @@ attendues sont produites dans le clone **Laurux non modifié** (anomalie A01 fig
   faudrait seulement vérifier qu'il renvoie `""` sans effet de bord autre que les appels `which`.
 - Les replays des écrans appelants (exports, inventaires…) neutralisent l'ouverture du fichier en
   positionnant `/CmdEditor0` sur un script de capture : ce module en est le point d'interception.
+- **Implémentation (vague 5)** : module `.src/Tests/Gestion/EditeurTest.test` (T01CmdEditor, T02CheminEspace,
+  T03DesktopOpen, T04TypePdf). T03 : sans portail, `Desktop.Open` lance l'application associée au type MIME
+  (faux programme `laurux-ouvrir` de `TestKit.OuvertureFactice`), pas `xdg-open`.

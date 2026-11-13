@@ -57,15 +57,16 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDREGUL-A01 — [anomalie] **Perte de données** : la purge exécute `DELETE … WHERE code = &1`
+- [ ] EDREGUL-A01 — [anomalie] (confirmée phase 2, vague 5 : le mouvement 001 du 20/06/2018 (hors période) est aussi supprimé (T02)) **Perte de données** : la purge exécute `DELETE … WHERE code = &1`
   pour chaque ligne de la période, ce qui supprime **toutes** les régularisations de l'article, y
   compris hors période (correction : `DELETE … WHERE mind = &1` ou filtre sur la période) · tests :
   T02 · sources : [Edregul.class:201](../../../../../../.src/Gestion/Impressions/Edregul.class#L201)
 - [ ] EDREGUL-A02 — [anomalie] Purge proposée et message « Les mouvements ont été effacés »
   affiché même quand la période ne contient aucun mouvement · tests : T04 · sources : [Edregul.class:194](../../../../../../.src/Gestion/Impressions/Edregul.class#L194), [Edregul.class:205](../../../../../../.src/Gestion/Impressions/Edregul.class#L205)
-- [ ] EDREGUL-A03 — [anomalie, à confirmer en replay] Une date quittée à la souris n'est pas
+- [ ] EDREGUL-A03 — [anomalie, à confirmer en replay] (confirmée phase 2, vague 5 : « 0101 » quitté par clic → `daterecpt >= '0101101'` (T06)) Une date quittée à la souris n'est pas
   normalisée (`date*_LostFocus` jamais levés pour un contrôle groupé) : saisie abrégée transmise
   telle quelle à `Cdate_Dbase` · tests : T06 · sources : [Edregul.class:date1_LostFocus](../../../../../../.src/Gestion/Impressions/Edregul.class#L91-L103), [Edregul.class:164](../../../../../../.src/Gestion/Impressions/Edregul.class#L164)
 - [ ] EDREGUL-A04 — [anomalie] `Button3_Click` supprime `~/Regul.pdf` au lieu de
   `~/tmp/Regul.pdf` : le PDF temporaire n'est jamais effacé · tests : aucun (vérification du
   fichier) · sources : [Edregul.class:214](../../../../../../.src/Gestion/Impressions/Edregul.class#L214), [Edregul.class:154](../../../../../../.src/Gestion/Impressions/Edregul.class#L154)
+- [ ] EDREGUL-A05 — [anomalie] Saisie abrégée « 1.1.17 » + Entrée dans `Date2` non normalisée par `Utils.Cdate_calc` : la requête reçoit `daterecpt <= '....'` (l'avertissement fin < début s'affiche quand même) (phase 2, vague 5, 2026-11-13) · tests : T05 · sources : [Edregul.class:date2_LostFocus](../../../../../../.src/Gestion/Impressions/Edregul.class#L111-L130), [Utils.module:Cdate_calc](../../../../../../.src/Utils/Utils.module#L450)

@@ -1,0 +1,117 @@
+' Gambas test file
+
+''Tests de Editeur (.hidden/reference/.src/Gestion/Impressions/Editeur.module/test.md, EDITEUR-T01 à T04).
+''/CmdEditor<n> est remplacé par un script factice qui journalise ses arguments (Shell asynchrone : attente bornée
+''de la trace) ; Desktop.Open lance le faux programme laurux-ouvrir (TestKit.OuvertureFactice). Valeurs attendues :
+''assets/EditeurTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CmdEditor", "Prog_Editeur avec /CmdEditor0 : commande lancée avec le fichier")
+  TestKit.Desc("T02CheminEspace", "Prog_Editeur, chemin avec espace : arguments découpés (A01 figée)")
+  TestKit.Desc("T03DesktopOpen", "Prog_Editeur sans /CmdEditor0 : repli sur Desktop.Open")
+  TestKit.Desc("T04TypePdf", "Prog_Editeur(f, FILE_TYPE_PDF) : commande /CmdEditor1")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EditeurTest")
+
+End
+
+'--------------------------------------------------------------------------------- faux binaires
+
+Private $sDir As String ' répertoire du test : bin/ (faux binaires) et trace des appels
+
+Private Sub FauxBinaires(aNoms As String[])
+  ''Crée des scripts factices qui journalisent leur nom et leurs arguments (un « [arg] » par argument) dans
+  ''<tmp>/trace, et les place en tête du PATH du processus (hérité par Shell/Exec).
+
+  Dim sNom As String
+
+  $sDir = Temp$()
+  Mkdir $sDir
+  Mkdir $sDir &/ "bin"
+  For Each sNom In aNoms
+    File.Save($sDir &/ "bin" &/ sNom, "#!/bin/sh\n{ printf '%s' \"$(basename \"$0\")\"; for a in \"$@\"; do printf ' [%s]' \"$a\"; done; echo; } >> '" & $sDir &/ "trace'\n")
+    Chmod $sDir &/ "bin" &/ sNom To "rwxr-xr-x"
+  Next
+  Application.Env["PATH"] = $sDir &/ "bin" & ":" & Application.Env["PATH"]
+
+End
+
+Private Sub Trace(Optional Attendues As Integer = 0) As String[]
+  ''Lignes de la trace (chemins temporaires remplacés par « <tmp> ») ; attend au plus 2 s qu'il y en ait
+  ''« Attendues » (Shell asynchrone), puis vide la trace.
+
+  Dim aRes As String[] = New String[]
+  Dim sLigne As String
+  Dim fFin As Float = Timer + 2
+  Dim sTrace As String = $sDir &/ "trace"
+
+  Repeat
+    If Exist(sTrace) Then
+      If Split(File.Load(sTrace), "\n", "", True).Count >= Attendues Then Break
+    Endif
+    Wait 0.05
+  Until Timer > fFin
+  If Not Exist(sTrace) Then Return aRes
+  For Each sLigne In Split(File.Load(sTrace), "\n", "", True)
+    aRes.Add(Replace(sLigne, $sDir, "<tmp>"))
+  Next
+  Kill sTrace
+  Return aRes
+
+End
+
+'---------------------------------------------------------------------------------------------- tests
+
+Public Sub T01CmdEditor()
+
+  TestKit.Init()
+  FauxBinaires(["edit"])
+  Start.LocalSettings["/CmdEditor0"] = "edit --option"
+  Start.LocalSettings["/CmdEditor1"] = Null
+  Editeur.Prog_Editeur($sDir &/ "a.txt")
+  TestKit.Check("T01/arguments", Trace(1))
+
+End
+
+Public Sub T02CheminEspace()
+
+  TestKit.Init()
+  FauxBinaires(["edit"])
+  Start.LocalSettings["/CmdEditor0"] = "edit"
+  Editeur.Prog_Editeur($sDir &/ "a b.txt")
+  TestKit.Check("T02/arguments", Trace(1))
+
+End
+
+Public Sub T03DesktopOpen()
+
+  TestKit.Init()
+  FauxBinaires(["xdg-open"])
+  Start.LocalSettings["/CmdEditor0"] = Null
+  File.Save($sDir &/ "a.txt", "texte\n") ' Desktop.Open exige un fichier existant
+  TestKit.OuvertureFactice($sDir &/ "trace")
+  Try Editeur.Prog_Editeur($sDir &/ "a.txt")
+  If Error Then
+    TestKit.Check("T03/ouverture", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T03/ouverture", Trace(1))
+  Endif
+
+End
+
+Public Sub T04TypePdf()
+
+  TestKit.Init()
+  FauxBinaires(["edit0", "pdfvue"])
+  Start.LocalSettings["/CmdEditor0"] = Null
+  Start.LocalSettings["/CmdEditor1"] = "pdfvue"
+  Editeur.Prog_Editeur($sDir &/ "doc.pdf", Editeur.FILE_TYPE_PDF)
+  TestKit.Check("T04/arguments", Trace(1))
+
+End

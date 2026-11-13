@@ -8,7 +8,7 @@ test utile est un contrôle statique de l'absence d'appelant, qui protège la d�
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDART2-T01 | gbtest | Absence d'appelant (contrôle statique) | `grep -rniw edart2 .src` hors `EdArt2.*` | aucune occurrence (sinon réévaluer A01) | `tests/edart2_mort/` | à faire |
+| EDART2-T01 | gbtest | Absence d'appelant (contrôle statique) | `grep -rniw edart2 .src` hors `EdArt2.*` | aucune occurrence (sinon réévaluer A01) | `tests/edart2_mort/` | à faire : classe morte, contrôle statique (grep + build après suppression) à porter par la validation de phase 4 |
 
 ## Détail des tests
 

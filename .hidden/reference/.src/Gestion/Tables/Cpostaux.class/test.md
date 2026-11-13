@@ -7,12 +7,12 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CPOSTAUX-T01 | replay | Création | menu Codes postaux ; `75001`, `PARIS` ; Enregistrer | INSERT | `tests/creation/` | à faire |
-| CPOSTAUX-T02 | replay | « Modification » du bureau | clic `75001 PARIS` ; bureau `PARIS 1` ; Enregistrer | nouvelle ligne, ancienne conservée (A01 figée) | `tests/modification/` | à faire |
-| CPOSTAUX-T03 | replay | Code à plusieurs bureaux | jeu dérivé `44000` × 2 ; saisie `44000`, Entrée ; choix dans la liste | liste `Colcp` affichée, bureau recopié | `tests/choix_bureau/` | à faire |
-| CPOSTAUX-T04 | replay | Filtre et tri | clic en-tête CP, frappe `75`, double-clic | lignes filtrées `75%`, tri décroissant (log de rejeu) | `tests/filtre_tri/` | à faire |
-| CPOSTAUX-T05 | replay | Suppression | sélection d'une ligne ; Supprimer, Oui | ligne `lind` supprimée | `tests/suppression/` | à faire |
-| CPOSTAUX-T06 | replay | Saisie non numérique | lettres dans le code | caractères bloqués (`ChkCp`) | `tests/saisie_numerique/` | à faire |
+| CPOSTAUX-T01 | replay | Création | menu Codes postaux ; `75001`, `PARIS` ; Enregistrer | INSERT | `tests/creation/` | implémenté (Gestion/cpostaux_creation) |
+| CPOSTAUX-T02 | replay | « Modification » du bureau | clic `75001 PARIS` ; bureau `PARIS 1` ; Enregistrer | nouvelle ligne, ancienne conservée (A01 figée) | `tests/modification/` | implémenté (Gestion/cpostaux_modification, jeu cpostaux_shared/cpostaux_base) |
+| CPOSTAUX-T03 | replay | Code à plusieurs bureaux | jeu dérivé `44000` × 2 ; saisie `44000`, Entrée ; choix dans la liste | liste `Colcp` affichée, bureau recopié | `tests/choix_bureau/` | implémenté (Gestion/cpostaux_choix_bureau ; UPdate WHERE cp = bureau, A01 figée) |
+| CPOSTAUX-T04 | replay | Filtre et tri | clic en-tête CP, frappe `75`, double-clic | lignes filtrées `75%`, tri décroissant (log de rejeu) | `tests/filtre_tri/` | implémenté partiel (Gestion/cpostaux_filtre_tri : frappe 75 ; double clic d'en-tête non rejouable) |
+| CPOSTAUX-T05 | replay | Suppression | sélection d'une ligne ; Supprimer, Oui | ligne `lind` supprimée | `tests/suppression/` | implémenté (Gestion/cpostaux_suppression) |
+| CPOSTAUX-T06 | replay | Saisie non numérique | lettres dans le code | caractères bloqués (`ChkCp`) | `tests/saisie_numerique/` | implémenté (Gestion/cpostaux_saisie_numerique) |
 
 ## Détail des tests
 

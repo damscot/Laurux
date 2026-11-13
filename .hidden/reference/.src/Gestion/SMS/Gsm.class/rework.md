@@ -58,7 +58,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] GSM-A01 — [anomalie] [sécurité] Injection de commande : texte (via `Quote`, dont le `"`
+- [ ] GSM-A01 — [anomalie] (confirmée phase 2, vague 5 : `$(touch $HOME/pwned)` dans le texte exécuté par le `Shell` gammu, figée par T06 (`gsm_injection`, HOME de test)) [sécurité] Injection de commande : texte (via `Quote`, dont le `"`
   ferme la chaîne du `Shell`) et numéro insérés sans échappement dans des commandes `Shell` ;
   `$(…)` ou `` ` `` dans un texte prédéfini ou saisi est exécuté. Correction : `Exec` avec
   tableau d'arguments et encodage d'URL (`curl --data-urlencode`) · tests : T06 ·
@@ -75,10 +75,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `&`, `#`, `?`, `%` et les accents tronquent ou altèrent le message ; `\n` littéral remplacé
   mais pas les vrais sauts de ligne de `Quote` (à confirmer) · tests : T04, T06 ·
   sources : [Gsm.class:192-195](../../../../../../.src/Gestion/SMS/Gsm.class#L192-L195)
-- [ ] GSM-A05 — [anomalie] `TextLabel1_GotFocus` : déclenché par le focus d'un `TextLabel` (probablement
+- [ ] GSM-A05 — [anomalie] (précisée phase 2, vague 5 : `TextLabel1_GotFocus` est bien levé (focus donné par `Form_Show`) : la configuration mail (`/Smtp`, `Port`, `/Adrmail`) est exigée dès l'ouverture, même pour l'envoi gammu, boîte d'erreur à l'ouverture (l. 33-45)) `TextLabel1_GotFocus` : déclenché par le focus d'un `TextLabel` (probablement
   jamais) ; exige la configuration **mail** pour envoyer un SMS ; contrôle de crédit fait
   uniquement pour Spot-Hit · tests : T01 · sources : [Gsm.class:Form_Show](../../../../../../.src/Gestion/SMS/Gsm.class#L33-L37), [Gsm.class:42](../../../../../../.src/Gestion/SMS/Gsm.class#L42)
-- [ ] GSM-A06 — [anomalie] Condition d'envoi sur `TextLabel1.Text` (libellé statique, toujours
+- [ ] GSM-A06 — [anomalie] (confirmée phase 2, vague 5 : SMS vide envoyé avec le texte « . » (T07)) Condition d'envoi sur `TextLabel1.Text` (libellé statique, toujours
   rempli) au lieu du texte : SMS vide envoyé ; `Colcol_Click` sans test `Available` ; saisie
   d'un code dans `Comcode` sans effet (groupe `Com` sans handler) · tests : T02, T07 ·
   sources : [Gsm.class:200](../../../../../../.src/Gestion/SMS/Gsm.class#L200), [Gsm.class:Colcol_Click](../../../../../../.src/Gestion/SMS/Gsm.class#L137-L148)

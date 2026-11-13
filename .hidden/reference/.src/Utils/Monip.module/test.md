@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| MONIP-T01 | replay | Fenêtre « Mon IP » | `Fmenu`, menu correspondant ; `curl` factice dans le `PATH` renvoyant `203.0.113.7` ; répertoire courant = `$HOME` | texte du label capturé | `tests/replay_monip/` | à faire : curl factice et répertoire courant = HOME impossibles dans l'environnement du rejeu (PATH et cwd fixés par le runner) ; sans eux curl interroge le réseau et écrit « monip » dans le clone |
+| MONIP-T01 | replay | Fenêtre « Mon IP » | `Fmenu`, menu correspondant ; `curl` factice dans le `PATH` renvoyant `203.0.113.7` ; répertoire courant = `$HOME` | texte du label capturé | `tests/replay_monip/` | à faire : faux `curl` disponible depuis le 2026-11-14 (`ifconfig.me` → 203.0.113.10) ; reste le répertoire courant : Monip écrit « monip » dans le répertoire courant (`Shell "cd"` sans effet sur le Shell suivant) |
 | MONIP-T02 | replay | `curl` absent | `PATH` sans `curl`, `$HOME/monip` absent | `Message.Warning` capturé | `tests/replay_monip_sans_curl/` | à faire : même besoin d'outillage (PATH sans curl par scénario) |
 
 ## Détail des tests

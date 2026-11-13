@@ -10,12 +10,12 @@ modifié, avec l'horloge figée (`faketime`) pour la date d'édition.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDITSTKDEPART-T01 | replay | Stock de fin (`fin`) | jeu `cmat_base` (2 régies, 3 degrés, 6 articles) ; Caleditcmat → « Stock » | texte PDF : en-têtes de régie, sous-totaux par degré, totaux, sauts de page | `tests/stock_fin/` | à faire |
-| EDITSTKDEPART-T02 | replay | Stock de départ (`depart`) | même jeu, `art_stkdep` renseigné ; « Stock de départ » | texte PDF de référence | `tests/stock_depart/` | à faire |
-| EDITSTKDEPART-T03 | replay | Inventaire fin d'année (`inventaire`) | jeu + `Fiches_Inv` | texte PDF de référence | `tests/inventaire/` | à faire |
-| EDITSTKDEPART-T04 | replay | Inventaire tournant (`tournant`) | jeu + `Fiches_InvT` | texte PDF de référence | `tests/inventaire_tournant/` | à faire |
-| EDITSTKDEPART-T05 | replay | Article avec `art_dra = ''` (A01) | un article à code régie vide | figer : article imprimé sous une régie sans libellé | `tests/regie_vide/` | à faire |
-| EDITSTKDEPART-T06 | replay | Aucun article soumis à régie | `cmat_base` sans `art_dra` | PDF vide (en-tête seul) ; `Busy` revenu à 0 | `tests/aucun_article/` | à faire |
+| EDITSTKDEPART-T01 | replay | Stock de fin (`fin`) | jeu `cmat_base` (2 régies, 3 degrés, 6 articles) ; Caleditcmat → « Stock » | texte PDF : en-têtes de régie, sous-totaux par degré, totaux, sauts de page | `tests/stock_fin/` | implémenté (gb.test : textes des ReportLabel, pas de PDF) |
+| EDITSTKDEPART-T02 | replay | Stock de départ (`depart`) | même jeu, `art_stkdep` renseigné ; « Stock de départ » | texte PDF de référence | `tests/stock_depart/` | implémenté (gb.test : textes des ReportLabel, pas de PDF) |
+| EDITSTKDEPART-T03 | replay | Inventaire fin d'année (`inventaire`) | jeu + `Fiches_Inv` | texte PDF de référence | `tests/inventaire/` | implémenté (gb.test : textes des ReportLabel, pas de PDF) |
+| EDITSTKDEPART-T04 | replay | Inventaire tournant (`tournant`) | jeu + `Fiches_InvT` | texte PDF de référence | `tests/inventaire_tournant/` | implémenté (gb.test : textes des ReportLabel, pas de PDF) |
+| EDITSTKDEPART-T05 | replay | Article avec `art_dra = ''` (A01) | un article à code régie vide | figer : article imprimé sous une régie sans libellé | `tests/regie_vide/` | implémenté (gb.test : textes des ReportLabel, pas de PDF) |
+| EDITSTKDEPART-T06 | replay | Aucun article soumis à régie | `cmat_base` sans `art_dra` | PDF vide (en-tête seul) ; `Busy` revenu à 0 | `tests/aucun_article/` | implémenté (gb.test : textes des ReportLabel, pas de PDF) |
 
 ## Détail des tests
 
@@ -25,3 +25,8 @@ modifié, avec l'horloge figée (`faketime`) pour la date d'édition.
   les montants dépendent de `Calculdroit` (taux de la régie, TVA) : toute différence doit être
   analysée avec les tests de [calculdroit](../calculdroit.class/test.md).
 - **Rendu de police** (A02) : non comparable par le texte ; vérification visuelle seulement.
+- **Implémentation (phase 2)** : `.src/Tests/Gestion/EditStkDepartTest.test` (T01 à T06), jeu
+  `editstkdepart_shared/cmat_base` (régies A1/B1, colonnes `art_dra`/`art_volm`/`art_deg`, `tvass`, tables
+  `Fiches_Inv`/`Fiches_InvT` minimales). Le rapport est construit (`New EditStkDepart(choix)`) sans impression ; les
+  textes des ReportLabel sont relevés dans l'ordre de l'arbre (la date du jour est remplacée par `<date du jour>`),
+  avec `Application.Busy`. T05 et T06 modifient `art_dra` dans le test. Sauts de page et rendu non vérifiés.

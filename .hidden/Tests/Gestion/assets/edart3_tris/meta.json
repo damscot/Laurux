@@ -1,0 +1,19 @@
+{
+ "id": "EDART3-T04",
+ "objet": "Les 3 autres tris et le prix consommateur",
+ "classe": "EdArt3",
+ "description": "/Soc01/Pvcons vrai ; Cdt = 01, Art2 = 115 ; RadioButton2, Imprimer ; RadioButton3, Imprimer ; RadioButton4, Imprimer : ordres famille, fournisseur, désignation et lignes Level10.",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'",
+  "/Soc01/Pvcons": "-1"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

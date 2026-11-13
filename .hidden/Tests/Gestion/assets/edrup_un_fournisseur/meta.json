@@ -1,0 +1,23 @@
+{
+ "id": "EDRUP-T04",
+ "objet": "Un seul fournisseur",
+ "classe": "EdRup",
+ "description": "Jeu edrup_base : Menu253, Four = Four2 = 401002 (saisie + Entree), Imprimer : filtre four = 401002.",
+ "dataset": "edrup_shared/edrup_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "id": "EDREGULPRDC-T01",
+ "objet": "Impression",
+ "classe": "Edregulprdc",
+ "description": "Période par défaut, fabrications 1 et 2 (composant 001 commun), Imprimer : texte du PDF avec séparateur entre mind ; dump inchangé.",
+ "dataset": "edregulprdc_shared/edregulprdc_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

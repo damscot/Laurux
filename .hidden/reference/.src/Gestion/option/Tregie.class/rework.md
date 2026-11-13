@@ -58,7 +58,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TREGIE-A01 — [anomalie] `form_Close` appelle `bar1_valide` sans argument : « Not enough
+- [ ] TREGIE-A01 — [anomalie] (confirmée phase 2, vague 5 : « Not enough arguments » en répondant Oui à la fermeture (T06, code 125)) `form_Close` appelle `bar1_valide` sans argument : « Not enough
   arguments » (vérifié `gbs3`) ; sur « Non », transaction laissée ouverte · tests : T06 · sources : [Tregie.class:406](../../../../../../.src/Gestion/option/Tregie.class#L406), [Tregie.class:form_Close](../../../../../../.src/Gestion/option/Tregie.class#L403-L410)
 - [ ] TREGIE-A02 — [anomalie, à confirmer] `bar1_modif` : `Edit(…, "code=&1 FOR UPDATE")` non
   supporté par SQLite ; lecture de `resregie!code` sans test `Available` · tests : T03 · sources : [Tregie.class:356](../../../../../../.src/Gestion/option/Tregie.class#L356), [Tregie.class:358](../../../../../../.src/Gestion/option/Tregie.class#L358)
@@ -71,3 +71,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   premier caractère du code TVA (`ttva char(2)`) ; `Bsel` non remis à `False` avant `TriCpt` ;
   `$ind` non mis à jour par `bar1_modif` (même défaut que TCONSIGNE-A04) · tests : T01, T03 ·
   sources : [Tregie.class:448](../../../../../../.src/Gestion/option/Tregie.class#L448), [Tregie.class:Buttccomp_Click](../../../../../../.src/Gestion/option/Tregie.class#L412-L422), [Tregie.class:bar1_modif](../../../../../../.src/Gestion/option/Tregie.class#L352-L360)
+- [ ] TREGIE-A06 — [anomalie] `mablanc` ne réinitialise pas `Combotype`, et `Radiosusp.Value = False` reste sans effet : la régie créée reprend le type « V » et `suspendu = 1` de la fiche affichée (phase 2, vague 5, 2026-11-13) · tests : T01 (`tregie_creation`) · sources : [Tregie.class:mablanc](../../../../../../.src/Gestion/option/Tregie.class#L146-L158), [Tregie.class:141-142](../../../../../../.src/Gestion/option/Tregie.class#L141-L142)

@@ -1,0 +1,22 @@
+{
+ "id": "TREGIE-T02",
+ "objet": "Contrôles de saisie",
+ "classe": "Tregie",
+ "description": "Création (3e bouton « bout ») puis Valider (Focus « butval », Tab, Espace) avec : libellé vide ; puis libellé Biere et droits « abc » (non numérique) ; Annuler (1er « butval », Espace) et fermeture. Ballons non comparés : absence d'écriture (dump) et requêtes (sql.log). Le cas « degré sans taux SS » n'est pas rejoué : Textss_LostFocus et Texttxss_LostFocus reprennent le focus (SetFocus) et détournent les frappes suivantes. Suite : tregie_controles_comptes.",
+ "dataset": "modfichier_shared/options_bois_pp",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/bois": -1,
+  "/Soc01/pp": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

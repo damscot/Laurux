@@ -58,17 +58,17 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] DATETAR-A01 — [anomalie] `Enr_Click` et `Sup_Click` bouclent `For i = 0 To ListArt.Count`
+- [ ] DATETAR-A01 — [anomalie] (non reproduite phase 2, vague 5 : aucune erreur d'indice au rejeu de T02 (planification de 2 articles)) `Enr_Click` et `Sup_Click` bouclent `For i = 0 To ListArt.Count`
   (une itération de trop) : erreur d'indice probable après les mises à jour ; dans `Sup_Click`
   la transaction n'est ni validée ni annulée · tests : T02, T03 · sources : [DateTar.class:73](../../../../../../.src/Gestion/Entrées/DateTar.class#L73), [DateTar.class:104](../../../../../../.src/Gestion/Entrées/DateTar.class#L104)
-- [ ] DATETAR-A02 — [anomalie] Recherche de l'article dans `$restar` : elle reprend au curseur
+- [ ] DATETAR-A02 — [anomalie] (confirmée phase 2, vague 5 : figée par T04 (articles passés dans l'ordre inverse)) Recherche de l'article dans `$restar` : elle reprend au curseur
   courant et `j` n'est pas réinitialisé → article non trouvé ou sélectionné dans un autre ordre
   que la liste : l'article précédent (ou le premier) est modifié / supprimé · tests : T04 ·
   sources : [DateTar.class:74](../../../../../../.src/Gestion/Entrées/DateTar.class#L74), [DateTar.class:82](../../../../../../.src/Gestion/Entrées/DateTar.class#L82), [DateTar.class:105](../../../../../../.src/Gestion/Entrées/DateTar.class#L105), [DateTar.class:113](../../../../../../.src/Gestion/Entrées/DateTar.class#L113)
 - [ ] DATETAR-A03 — [anomalie] `Sup_Click` : `Return` après `Utils.db.Begin` si `$restar` est vide
   (transaction ouverte) ; `affiche` ne vide pas les listes quand le résultat est vide ·
   tests : T01, T03 · sources : [DateTar.class:72](../../../../../../.src/Gestion/Entrées/DateTar.class#L72), [DateTar.class:19](../../../../../../.src/Gestion/Entrées/DateTar.class#L19)
-- [ ] DATETAR-A04 — [anomalie] `EnrTouTar` : au changement d'article, `art_pvht`/`art_pvttc` sont
+- [ ] DATETAR-A04 — [anomalie] (confirmée phase 2, vague 5 : figée par T06 (A4 avec seulement un tarif client échu)) `EnrTouTar` : au changement d'article, `art_pvht`/`art_pvttc` sont
   calculés avec le coefficient de la première ligne lue, même s'il s'agit d'un tarif client ou
   type ; sans tarif général, le prix public prend un coefficient client · tests : T06 ·
   sources : [DateTar.class:191](../../../../../../.src/Gestion/Entrées/DateTar.class#L191), [DateTar.class:198](../../../../../../.src/Gestion/Entrées/DateTar.class#L198)
@@ -78,3 +78,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] DATETAR-A06 — [anomalie] `EnrTouTar` lit `restva!taux_tva` sans tester `Available` : un code
   TVA inexistant annule l'application de **tous** les tarifs échus (rollback global) ·
   tests : T07 · sources : [DateTar.class:190](../../../../../../.src/Gestion/Entrées/DateTar.class#L190), [DateTar.class:194](../../../../../../.src/Gestion/Entrées/DateTar.class#L194)
+- [ ] DATETAR-A07 — [anomalie] `Enr_Click` : `UPDATE Fiches_TarTemp … WHERE art = &3` met à jour toutes les lignes de tarif temporaire de l'article (tous `temp_type`/`code`), y compris les lignes `temp_sup` (phase 2, vague 5, 2026-11-13) · tests : T02 · sources : [DateTar.class:116](../../../../../../.src/Gestion/Entrées/DateTar.class#L116), [DateTar.class:Enr_Click](../../../../../../.src/Gestion/Entrées/DateTar.class#L99-L121)

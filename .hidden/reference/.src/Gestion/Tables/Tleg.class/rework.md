@@ -50,7 +50,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TLEG-A01 — [anomalie] Lecture de la première ligne sans `WHERE` mais écriture sur `lind = 1` :
+- [ ] TLEG-A01 — [anomalie] (confirmée phase 2, vague 5 : insertion d'une nouvelle ligne à `lind` automatique (9), T03) Lecture de la première ligne sans `WHERE` mais écriture sur `lind = 1` :
   si cette ligne n'existe pas, chaque enregistrement insère une ligne invisible (écran et
   factures inchangés) · tests : T03 · sources : [Tleg.class:39](../../../../../../.src/Gestion/Tables/Tleg.class#L39), [Tleg.class:115](../../../../../../.src/Gestion/Tables/Tleg.class#L115)
 - [ ] TLEG-A02 — [anomalie] Impossible d'enregistrer un texte vide (la mention ne peut pas être

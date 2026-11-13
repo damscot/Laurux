@@ -55,10 +55,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] SMS-A01 — [anomalie] Suppression de `colcol.Current[0]` (ligne sélectionnée) et non du code
+- [ ] SMS-A01 — [anomalie] (confirmée phase 2, vague 5 : « Null object » sur `colcol.Current` (`Button1_Click.162`) après rafraîchissement, figée par T04) Suppression de `colcol.Current[0]` (ligne sélectionnée) et non du code
   saisi, erreur `Null` sans sélection (même défaut que COMMAIL-A01) · tests : T04 ·
   sources : [Sms.class:162](../../../../../../.src/Gestion/SMS/Sms.class#L162)
-- [ ] SMS-A02 — [anomalie] Code existant saisi sans sélection : `Colcol.Current.Key` lève une
+- [ ] SMS-A02 — [anomalie] (confirmée phase 2, vague 5 : « Null object » sur `Colcol.Current` (`Button2_Click.183`), figée par T03) Code existant saisi sans sélection : `Colcol.Current.Key` lève une
   erreur après l'UPDATE ; `Maj_Zones` lit le résultat sans test `Available` (même défaut que
   COMMAIL-A02) · tests : T03 · sources : [Sms.class:183](../../../../../../.src/Gestion/SMS/Sms.class#L183), [Sms.class:76](../../../../../../.src/Gestion/SMS/Sms.class#L76)
 - [ ] SMS-A03 — [anomalie] `Btn_KeyPress` : toute touche sur le bouton Enregistrer enregistre ·

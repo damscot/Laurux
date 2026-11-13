@@ -76,11 +76,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ENVMAIL-A03 — [anomalie] [sécurité] `SmtpClient.Debug = True` en production : dialogue SMTP
   (dont la ligne `AUTH`, identifiant et mot de passe en base64, à confirmer) écrit sur la sortie
   d'erreur ; à désactiver ou à lier à `Start.Arg_Debug` · tests : T02 · sources : [EnvMail.module:15](../../../../../../.src/Gestion/Mails/EnvMail.module#L15)
-- [ ] ENVMAIL-A04 — [anomalie] [sécurité] Lignes de commande `Shell` construites sans échappement
+- [ ] ENVMAIL-A04 — [anomalie] (précisée phase 2, vague 5 : Icedove : sujet et corps non protégés, découpés par le shell (T08) ; un guillemet dans le corps casse la commande `sh` : client jamais lancé, rien signalé (T11)) [sécurité] Lignes de commande `Shell` construites sans échappement
   (adresse, sujet, corps, chemins) : un `"`, `$(…)` ou `` ` `` dans une fiche tiers ou un texte de
   courriel casse la commande ou exécute une commande. Correction : `Exec` avec tableau
   d'arguments (comme pour Evolution) · tests : T07, T08, T11 · sources : [EnvMail.module:Envoi2](../../../../../../.src/Gestion/Mails/EnvMail.module#L155-L206), [EnvMail.module:Envoi3](../../../../../../.src/Gestion/Mails/EnvMail.module#L87-L122)
-- [ ] ENVMAIL-A05 — [anomalie] `Extension` : « Out of bounds » pour un nom sans point ou à
+- [ ] ENVMAIL-A05 — [anomalie] (confirmée phase 2, vague 5 : `a.b.c.pdf` → chaîne vide, `son.wav` → `video/wav`, `x.rtf` → `application/msword`, « Out of bounds » pour `doc` et `a.docx` (T01)) `Extension` : « Out of bounds » pour un nom sans point ou à
   extension unique inconnue (`.docx`, `.xlsx`, `.odg`…), segment testé au lieu de la dernière
   extension, `rtf` → `msword`, `wav` → `video/wav` : la pièce jointe d'un mailing est refusée ·
   tests : T01 · sources : [EnvMail.module:Extension](../../../../../../.src/Gestion/Mails/EnvMail.module#L208-L276)

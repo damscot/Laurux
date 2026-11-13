@@ -25,6 +25,7 @@ temporaire dans le `Laurux.conf` du test).
 | LGED-T12 | replay | Fiche : date modifiée (anomalie A01) | Éditer → changer la date → Enregistrer | `Docs_Ged.date` **inchangée** (figé) | `tests/replay_date/` | à faire : parcours GedR › Éditer non synthétisé dans ce lot |
 | LGED-T13 | replay | Archivage depuis la saisie comptable | `Saisecrit` : écriture 401 + 445 + 6xx, fiche GED ouverte, Enregistrer | document Comptabilité, montants TTC/HT, tags des comptes | `tests/replay_saisecrit/` | à faire : scénario Saisecrit complet non synthétisé dans ce lot |
 | LGED-T14 | replay | Suppression depuis la fiche | Éditer → Supprimer → Oui | lignes supprimées, fichier conservé | `tests/replay_suppression/` | à faire : parcours GedR › Éditer › Supprimer non synthétisé dans ce lot |
+| LGED-T15 | gbtest | `Get_Mime` sur URL distante | `{http,https}://laurux_ged_test.fr/mime_file_test.{pdf,txt,html}` (faux `curl`, aucun réseau), nom inconnu sur cet hôte, hôte injoignable, `file:///` d'une copie locale, `file://<hôte>/…` | type MIME par URL ; `Null` pour la forme `file://<hôte>/` | `assets/LGedTest` | implémenté (2026-11-14 ; documents de test dans `.src/Tests/Framework/ged/`) |
 
 ## Détail des tests
 

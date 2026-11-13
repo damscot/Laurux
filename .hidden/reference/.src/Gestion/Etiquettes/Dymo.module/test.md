@@ -7,7 +7,7 @@ Module mort, copie de `Zebra.module`. Un seul test, qui prouve l'équivalence av
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| DYMO-T01 | gbtest | Équivalence `Dymo.Gondole1` = `Zebra.Gondole1` | jeu d'entrées de ZEBRA-T01 envoyé aux deux procédures sur deux sockets locales | flux reçus identiques octet par octet | `tests/dymo_equivalence/` | à faire |
+| DYMO-T01 | gbtest | Équivalence `Dymo.Gondole1` = `Zebra.Gondole1` | jeu d'entrées de ZEBRA-T01 envoyé aux deux procédures sur deux sockets locales | flux reçus identiques octet par octet | `tests/dymo_equivalence/` | implémenté |
 
 ## Détail des tests
 
@@ -17,3 +17,6 @@ Module mort, copie de `Zebra.module`. Un seul test, qui prouve l'équivalence av
   replays des écrans d'étiquettes (ETIQART, ETIGOND, ETIQCASIER, ETIQPROMO, ETIQRECPT, ETIQFBTARIF :
   choix « Imprimante Dymo ») restent à repasser, pour vérifier que `Dymo.Value` vise toujours le
   contrôle.
+
+### Implémentation (phase 2)
+- gb.test `.src/Tests/Gestion/DymoTest.test` (même écouteur que ZebraTest) : flux de 432 octets identiques.

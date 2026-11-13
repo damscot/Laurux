@@ -1,0 +1,11 @@
+-- Jeu EDFOUR : 10 fournisseurs 401901 à 401910 avec adresse et téléphones (plus de 27 fournisseurs au total).
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401901, 'Fournisseur 00', 'Contact0', '1 avenue du Port', '', '44000', 'Ville0', '0203040500', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401902, 'Fournisseur 01', 'Contact1', '2 avenue du Port', '', '44001', 'Ville1', '0203040501', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401903, 'Fournisseur 02', 'Contact2', '3 avenue du Port', '', '44002', 'Ville2', '0203040502', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401904, 'Fournisseur 03', 'Contact3', '4 avenue du Port', '', '44003', 'Ville3', '0203040503', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401905, 'Fournisseur 04', 'Contact4', '5 avenue du Port', '', '44004', 'Ville4', '0203040504', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401906, 'Fournisseur 05', 'Contact5', '6 avenue du Port', '', '44005', 'Ville5', '0203040505', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401907, 'Fournisseur 06', 'Contact6', '7 avenue du Port', '', '44006', 'Ville6', '0203040506', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401908, 'Fournisseur 07', 'Contact7', '8 avenue du Port', '', '44007', 'Ville7', '0203040507', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401909, 'Fournisseur 08', 'Contact8', '9 avenue du Port', '', '44008', 'Ville8', '0203040508', '');
+INSERT INTO Fiches_Four (fo_code, fo_nom, fo_pnm, fo_adr1, fo_adr2, fo_cd_ptl, fo_ville, fo_tel_bur, fo_pble) VALUES (401910, 'Fournisseur 09', 'Contact9', '10 avenue du Port', '', '44009', 'Ville9', '0203040509', '');

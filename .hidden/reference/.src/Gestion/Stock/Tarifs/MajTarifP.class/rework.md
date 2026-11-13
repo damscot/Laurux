@@ -62,10 +62,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] MAJTARIFP-A01 — [anomalie] `arr` n'est jamais affecté : `PvTTC_arrondi` n'applique pas
   l'arrondi `art_cdarr` (même défaut que MAJFBTARIF2-A03) · tests : T02 · sources : [MajTarifP.class:PvTTC_arrondi](../../../../../../../.src/Gestion/Stock/Tarifs/MajTarifP.class#L394-L431)
-- [ ] MAJTARIFP-A02 — [anomalie] `Button2_KeyPress` lance la mise à jour pour toute touche, y
+- [ ] MAJTARIFP-A02 — [anomalie] (confirmée phase 2, vague 5 : Tab sur `Button2` lance la mise à jour (T04)) `Button2_KeyPress` lance la mise à jour pour toute touche, y
   compris Tab ou Échap, sans confirmation · tests : T04 · sources : [MajTarifP.class:Button2_KeyPress](../../../../../../../.src/Gestion/Stock/Tarifs/MajTarifP.class#L81-L85)
 - [ ] MAJTARIFP-A03 — [anomalie] `Button2_Click` sans `Catch` : une erreur SQL pendant la boucle
   laisse `LOCK TABLES` actif ; fournisseur vide accepté (articles sans fournisseur) · tests : T05 ·
   sources : [MajTarifP.class:189](../../../../../../../.src/Gestion/Stock/Tarifs/MajTarifP.class#L189), [MajTarifP.class:192](../../../../../../../.src/Gestion/Stock/Tarifs/MajTarifP.class#L192)
 - [ ] MAJTARIFP-A04 — [anomalie] `Button4_Click` lit `Rfour` sans tester `Available` : erreur si
   aucun fournisseur · tests : T03 · sources : [MajTarifP.class:Button4_Click](../../../../../../../.src/Gestion/Stock/Tarifs/MajTarifP.class#L127-L152)
+- [ ] MAJTARIFP-A05 — [anomalie] `ChkPrx` refuse le caractère « - » : « -3 » devient +3 %, une baisse de prix est impossible (phase 2, vague 5, 2026-11-13) · tests : T02 · sources : [MajTarifP.class:ChkPrx](../../../../../../../.src/Gestion/Stock/Tarifs/MajTarifP.class#L87-L95)

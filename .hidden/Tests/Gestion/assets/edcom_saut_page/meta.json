@@ -1,0 +1,23 @@
+{
+ "id": "EDCOM-T05",
+ "objet": "Saut de page",
+ "classe": "Edcom",
+ "description": "Commande 401001/C3 de 40 lignes : Imprimer ; en-têtes répétés sur la page suivante (texte pdftotext).",
+ "dataset": "edcom_shared/edcom_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

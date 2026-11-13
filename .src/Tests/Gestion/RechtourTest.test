@@ -1,0 +1,71 @@
+' Gambas test file
+
+''Tests de Rechtour (.hidden/reference/.src/Gestion/option/rechtour.class/test.md, RECHTOUR-T03 et T04).
+''Valeurs attendues : assets/RechtourTest/expected.txt, produites dans le clone de référence.
+''Jeu : ttourne_shared/tournees_base (T3, T1, T2 insérés dans cet ordre). Fenêtre instanciée sans être affichée,
+''cellules remplies par l'appel direct de GridView1_Data. T01/T02 passent par FClient (écran complexe).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03Ordre", "Ordre des lignes (SELECT sans ORDER BY) puis activation de la 2e ligne : événement trouve")
+  TestKit.Desc("T04TableVide", "Laurux01 sans tournée : grille vide, aucune erreur")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "RechtourTest")
+
+End
+
+Public Sub T03Ordre()
+
+  Dim hF As Rechtour
+  Dim hG As GridView
+  Dim hObs As Object
+  Dim r, c As Integer
+
+  TestKit.OuvreBase("ttourne_shared/tournees_base")
+  hF = New Rechtour
+  hG = hF.Controls["GridView1"]
+  TestKit.Check("T03/lignes", hG.Rows.Count)
+  For r = 0 To hG.Rows.Count - 1
+    For c = 0 To 1
+      Try hF.GridView1_Data(r, c)
+      If Error Then
+        TestKit.Check("T03/" & r & "x" & c, "ERREUR: " & Error.Text)
+      Else
+        TestKit.Check("T03/" & r & "x" & c, hG[r, c].Text)
+      Endif
+    Next
+  Next
+  hObs = hF
+  Object.Attach(hObs, Me, "_Rech")
+  hG.Row = 1
+  Try hF.GridView1_Activate()
+  If Error Then TestKit.Check("T03/activate", "ERREUR: " & Error.Text)
+  TestKit.Check("T03/fin", "ok")
+
+End
+
+Public Sub _Rech_trouve(cle As String)
+
+  TestKit.Check("T03/trouve", cle)
+
+End
+
+Public Sub T04TableVide()
+
+  Dim hF As Rechtour
+
+  TestKit.OuvreBase()
+  Try hF = New Rechtour
+  If Error Then
+    TestKit.Check("T04/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T04/lignes", Object.GetProperty(hF.Controls["GridView1"], "Rows").Count)
+  Object.Lock(hF)
+
+End

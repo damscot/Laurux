@@ -65,18 +65,18 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] MAJFBTARIF2-A01 — [anomalie] **Date vide** : `art_datefbt = ''` sélectionne les articles
+- [ ] MAJFBTARIF2-A01 — [anomalie] (non reproduite phase 2, vague 5 : date vide substituée en `NULL` : `WHERE art_datefbt = NULL` ne sélectionne rien et « Aucune mise à jour » s'affiche (T04 ; le test.md supposait une remise à zéro)) **Date vide** : `art_datefbt = ''` sélectionne les articles
   déjà traités (date et prix futurs remis à `''` par un passage précédent, soit `0000-00-00`/`0`
   en MySQL non strict, `''` en SQLite) et recalcule leurs prix à partir d'un prix de base nul.
   Correction : refuser une date vide et remettre `art_pbfbt`/`art_datefbt` à `NULL` · tests : T04 ·
   sources : [MajFbtarif2.class:44](../../../../../../../.src/Gestion/Stock/Tarifs/MajFbtarif2.class#L44), [MajFbtarif2.class:68](../../../../../../../.src/Gestion/Stock/Tarifs/MajFbtarif2.class#L68)
-- [ ] MAJFBTARIF2-A02 — [anomalie] `LOCK TABLES` ne verrouille pas `Fiches_EtiProd` /
+- [ ] MAJFBTARIF2-A02 — [anomalie] (confirmée phase 2, vague 5 : `Maj_Etiqp` écrit dans `Fiches_EtiProd` hors `LOCK TABLES` → erreur fatale (l. 300), 003 non traité (T02, code 125)) `LOCK TABLES` ne verrouille pas `Fiches_EtiProd` /
   `Fiches_EtiGond` : sous MySQL, `Maj_Etiqp`/`Maj_Etiqg` échouent dès le premier article à
   étiqueter, le traitement s'arrête sans `UNLOCK TABLES` (à confirmer par T02 ; `MajTarifP`
   verrouille ces tables) · tests : T02 · sources : [MajFbtarif2.class:47](../../../../../../../.src/Gestion/Stock/Tarifs/MajFbtarif2.class#L47), [MajFbtarif2.class:Maj_Etiqp](../../../../../../../.src/Gestion/Stock/Tarifs/MajFbtarif2.class#L294-L309)
 - [ ] MAJFBTARIF2-A03 — [anomalie] `arr` n'est jamais affecté : `PvTTC_arrondi` n'applique pas
   l'arrondi `art_cdarr` de l'article ; le PV TTC enregistré n'est pas arrondi comme dans la fiche
   article · tests : T01 · sources : [MajFbtarif2.class:PvTTC_arrondi](../../../../../../../.src/Gestion/Stock/Tarifs/MajFbtarif2.class#L236-L273)
-- [ ] MAJFBTARIF2-A04 — [anomalie] `Prix_achat` utilise `Val(Txconv)`, `Val(Frais)`,
+- [ ] MAJFBTARIF2-A04 — [anomalie] (confirmée phase 2, vague 5 : `Val` sans `cpoint` sur « 1.5 », « 0.4 », « 1.8 » : une erreur par article (3 boîtes du `Catch`), 001 enregistré avec `art_pvht`, `art_pvttc`, `art_prvt`, `art_paht`, `art_coef` NULL (T03, l. 170-172) ; motif transverse « `Val()` sur un décimal lu en base ou formaté en locale fr renvoie `Null` → Type mismatch fatal » : voir aussi [Edcom](../../../Impressions/Edcom.class/rework.md), [Materiel](../../../Tables/Materiel.class/rework.md), [Edbr](../../../Impressions/Edbr.module/rework.md), [CLcr](../../../Lcr/CLcr.class/rework.md)) `Prix_achat` utilise `Val(Txconv)`, `Val(Frais)`,
   `Val(Coeff)` sans `Utils.cpoint` sur des valeurs relues en base : résultat dépendant de la
   locale (à confirmer par T03) · tests : T03 · sources : [MajFbtarif2.class:Prix_achat](../../../../../../../.src/Gestion/Stock/Tarifs/MajFbtarif2.class#L162-L185)

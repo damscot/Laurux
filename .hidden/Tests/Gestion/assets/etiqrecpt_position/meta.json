@@ -1,0 +1,23 @@
+{
+ "id": "ETIQRECPT-T07",
+ "objet": "Position de départ 2 : aucune position sautée",
+ "classe": "EtiqRecpt",
+ "description": "Posetiq = 2, type produits, modèle 1 - Article : la boucle de saut (1 To Posetiq-2) est vide, impression normale (texte du PDF) ; effacement refusé (« Non »).",
+ "dataset": "etiqrecpt_shared/etiqrecpt_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -57,14 +57,15 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ETIQRECPT-A01 — [anomalie] Saut de positions (`Posetiq`) exécuté **avant** la création du PDF
+- [ ] ETIQRECPT-A01 — [anomalie] (confirmée phase 2, vague 5 : « Null object » figé par T07 (code 125)) Saut de positions (`Posetiq`) exécuté **avant** la création du PDF
   avec `pdf.Code` : « Null object » au premier passage, écriture dans l'ancien PDF ensuite ; et
   `Posetiq - 2` itérations (une position de moins que les autres écrans) · tests : T07 · sources : [EtiqRecpt.class:173](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L173), [EtiqRecpt.class:176](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L176)
-- [ ] ETIQRECPT-A02 — [anomalie] Lectures sans test `Available` : ligne de file orpheline (article
+- [ ] ETIQRECPT-A02 — [anomalie] (confirmée phase 2, vague 5 : erreur l. 221 figée par T06 (code 125)) Lectures sans test `Available` : ligne de file orpheline (article
   supprimé, ARTICLES-A05) → erreur à `rarts!art_code`, impression interrompue et file non vidée ;
   code TVA absent → erreur · tests : T06 · sources : [EtiqRecpt.class:220](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L220), [EtiqRecpt.class:221](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L221), [EtiqRecpt.class:235](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L235)
-- [ ] ETIQRECPT-A03 — [anomalie] Imprimante Zebra non gérée (pas de PDF, `pdf.Open()` sur `Null`) ;
+- [ ] ETIQRECPT-A03 — [anomalie] (confirmée phase 2, vague 5 : `pdf.Open()` sur `Null` l. 205 figé par T08 (code 125)) Imprimante Zebra non gérée (pas de PDF, `pdf.Open()` sur `Null`) ;
   format lu par `code` seul (page ignorée) · tests : T08 · sources : [EtiqRecpt.class:205](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L205), [EtiqRecpt.class:157](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L157)
 - [ ] ETIQRECPT-A04 — [anomalie] Type casier : l'effacement proposé vide `Fiches_EtiProd`, donc aussi
   les étiquettes **produit** en attente (et inversement) ; effacement ligne à ligne sans transaction
   · tests : T04 · sources : [EtiqRecpt.class:357](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L357), [EtiqRecpt.class:366](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L366)
+- [ ] ETIQRECPT-A05 — [anomalie] `Utils.PageFormatSupported` propose « A4 Paysage »/« A5 Paysage » mais `New CEtiquettes(PageA[1], …)` passe « Paysage » à `PdfWriter._new`, qui n'accepte que `P`/`portrait`/`L`/`landscape` : « Incorrect orientation: Paysage », erreur fatale (même défaut qu'ETIQCASIER, non rejoué ici) (phase 2, vague 5, 2026-11-13) · tests : aucun · sources : [EtiqRecpt.class:168-184](../../../../../../.src/Gestion/Etiquettes/EtiqRecpt.class#L168-L184), [PdfWriter.class:303](../../../../../../.src/Reports/PdfWriter.class#L303)

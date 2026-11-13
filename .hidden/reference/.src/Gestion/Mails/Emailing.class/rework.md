@@ -83,13 +83,13 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EMAILING-A03 — [anomalie] Mode liste : `rcli2` lu sans test `Available` (liste vide →
   erreur `Catch`), `rCli!cli_email` lu même si le `Try` a échoué · tests : T04 ·
   sources : [Emailing.class:838-849](../../../../../../.src/Gestion/Mails/Emailing.class#L838-L849)
-- [ ] EMAILING-A04 — [anomalie] `Btn_KeyPress` : toute touche (Tab, flèche…) sur le bouton
+- [ ] EMAILING-A04 — [anomalie] (confirmée phase 2, vague 5 : Tab sur « Envoyer » déclenche l'envoi (T10)) `Btn_KeyPress` : toute touche (Tab, flèche…) sur le bouton
   Envoyer lance le mailing ; Espace déclenche probablement `KeyPress` puis `Click`, soit un
   double envoi (à confirmer par T10) · tests : T10 · sources : [Emailing.class:Btn_KeyPress](../../../../../../.src/Gestion/Mails/Emailing.class#L633-L640)
 - [ ] EMAILING-A05 — [anomalie] La plage de codes postaux `Cp1`…`Cp2` n'est jamais utilisée dans
   le SQL : `CheckCp` ne fait que trier par `cli_cd_ptl` (contrairement à `EmailingCarte`) ·
   tests : T02 · sources : [Emailing.class:Button2_Click](../../../../../../.src/Gestion/Mails/Emailing.class#L797-L900)
-- [ ] EMAILING-A06 — [anomalie] Bouton radio masqué resté sélectionné (`RadioButton2` après
+- [ ] EMAILING-A06 — [anomalie] (confirmée phase 2, vague 5 : `RadioButton2` masqué mais sélectionné : aucune requête, erreur prise par le `Catch` (T11)) Bouton radio masqué resté sélectionné (`RadioButton2` après
   décochage de `CheckType`, `RadioButton3` après `CheckCp`) : aucune requête ne correspond,
   `rCli` vaut `Null` (erreur) ou la sélection précédente est renvoyée · tests : T11 ·
   sources : [Emailing.class:804-811](../../../../../../.src/Gestion/Mails/Emailing.class#L804-L811), [Emailing.class:CheckType_Click](../../../../../../.src/Gestion/Mails/Emailing.class#L159-L170)

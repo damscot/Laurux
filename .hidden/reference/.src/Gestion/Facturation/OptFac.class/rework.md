@@ -62,7 +62,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   joint aux factures) au lieu de l'indicateur d'archivage `sauvpdf` : `"T"` est envoyé à
   l'impression, ou la jonction du PDF est supprimée ; `/ImpPDF` est en outre persisté mais jamais
   relu · tests : T08, T03 · sources : [OptFac.class:ImpPDF_Click](../../../../../../.src/Gestion/Facturation/OptFac.class#L315-L319), [ObjFac.class:242](../../../../../../.src/Gestion/Facturation/ObjFac.class#L242), [OptFac.class:133](../../../../../../.src/Gestion/Facturation/OptFac.class#L133)
-- [ ] OPTFAC-A03 — [anomalie, à confirmer] `form_Close` lit `$vfac.adrliv.nom` alors que
+- [ ] OPTFAC-A03 — [anomalie, à confirmer] (confirmée phase 2, vague 5 : « Null object » (`form_Close.142`) à la fermeture depuis Facturefm (T07, code 125) ; `@Laurux.conf` écrit malgré tout (`Save` l. 140, avant l'erreur)) `form_Close` lit `$vfac.adrliv.nom` alors que
   `adrliv` reste `Null` tant que la fiche client n'a pas été lue (fin de mois ouvert avec
   `num = ""` et fermé sans édition) → « Null object » probable (une structure Gambas non
   instanciée vaut `Null`, vérifié) · tests : T07 · sources : [OptFac.class:140](../../../../../../.src/Gestion/Facturation/OptFac.class#L140), [ObjFac.class:331-332](../../../../../../.src/Gestion/Facturation/ObjFac.class#L331-L332)

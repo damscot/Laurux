@@ -1,0 +1,18 @@
+{
+ "id": "EDART3-T06",
+ "objet": "Liste des types",
+ "classe": "EdArt3",
+ "description": "ToggleButton7 (Coltype, SELECT sans ORDER BY), clic sur 01 : Cdt/LibelType remplis ; Art2 = 105, Imprimer : titre « Type = 01 Macon ».",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

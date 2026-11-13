@@ -63,7 +63,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TARTYPECLI-A01 — [anomalie] `ColTri_KeyPress` en mode type : `DELETE FROM Fiches_Tarcli
   WHERE type = …` (mauvaise table, colonne inexistante) → erreur SQL, le tarif par type n'est
   jamais supprimé par Suppr · tests : T05 · sources : [TarTypeCli.class:469](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L469)
-- [ ] TARTYPECLI-A02 — [anomalie] `ColTri_MajSel` filtre seulement sur `art_code` : le coefficient
+- [ ] TARTYPECLI-A02 — [anomalie] (confirmée phase 2, vague 5 : requête de `ColTri_MajSel` sans filtre client (sql.log de T04)) `ColTri_MajSel` filtre seulement sur `art_code` : le coefficient
   affiché peut être celui d'un autre client / type (et `Button6_Click` l'enregistre alors pour
   le client courant) · tests : T04 · sources : [TarTypeCli.class:241](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L241), [TarTypeCli.class:243](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L243)
 - [ ] TARTYPECLI-A03 — [anomalie] `Aff_Tarart` : la requête `LIMIT 1` de lecture des champs n'a pas
@@ -74,3 +74,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TARTYPECLI-A05 — [anomalie] `Tpvht_LostFocus`, `Remise_LostFocus`, `TpvTTc_LostFocus` testent
   `IsNull($resart)` mais pas `Available` : après un article introuvable, sortir de ces zones
   provoque une erreur · tests : T08 · sources : [TarTypeCli.class:485](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L485), [TarTypeCli.class:496](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L496), [TarTypeCli.class:513](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L513)
+- [ ] TARTYPECLI-A06 — [anomalie] `Art_man` : le préfixe `*` n'est retiré que pour la recherche par `art_code` ; les recherches par `art_cequ` puis `art_refcentrale` reçoivent le texte brut (phase 2, vague 5, 2026-11-13) · tests : T08 · sources : [TarTypeCli.class:316-317](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L316-L317), [TarTypeCli.class:322](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L322), [TarTypeCli.class:325](../../../../../../.src/Gestion/Tables/TarTypeCli.class#L325)

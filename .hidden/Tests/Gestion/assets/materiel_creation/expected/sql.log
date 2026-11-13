@@ -1,0 +1,37 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_Materiels where mat_code like  "%" order by cast(mat_code as char), cast(mat_serie as char)
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Fam WHERE code_fam = '01'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '1'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445710'
+SELECT * FROM Fiches_Tvaav where code_tva = '1'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT * FROM Fiches_Fam WHERE code_fam = '01'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '1'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445710'
+SELECT * FROM Fiches_Tvaav where code_tva = '1'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Materiels where mat_serie = 'SN100' and mat_code = '001'
+SELECT * FROM Fiches_Materiels where mat_serie = 'SN100' and mat_code = '001'
+SELECT * FROM Fiches_Materiels where mat_code = '001' and mat_serie = 'SN100' 
+INSERT INTO Fiches_Materiels(mat_serie,mat_code,mat_design,mat_design2, mat_fam,mat_four,mat_cequ,mat_cbarre,mat_cfour,mat_paht,mat_frais,mat_prvt,mat_coef, mat_pvht, mat_pvttc,mat_eco,mat_cdarr,mat_nbd, mat_pmp, mat_qte, mat_vendu, mat_marque, mat_type, mat_matdiv, mat_cli, mat_crst) VALUES ('SN100', '001', 'Produit 2.10', NULL, '01', '401001', NULL, '2148413200001', NULL, 10, 0, 10, 2.2, 22, 22.46, 0, '0,01', '2', NULL, 0, 0, 'Stihl', NULL, 0, NULL, NULL)
+select * from Fiches_Materiels where mat_code like  "%" order by cast(mat_code as char), cast(mat_serie as char)

@@ -47,10 +47,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDITTIPP-A01 — [anomalie, à confirmer] Jointure `Fiches_region` sur l'article seul (clé
+- [ ] EDITTIPP-A01 — [anomalie, à confirmer] (confirmée phase 2, vague 5 : mars 2018 : 6 lignes au lieu de 2 (jointure `Fiches_region` sur `cart` seul), figée par T03) Jointure `Fiches_region` sur l'article seul (clé
   `(code, cart)`) : une ligne par région de l'article ; le code région de la ligne
   (`tipp_ligbl`) n'est pas utilisé dans la jointure · tests : T03 · sources : [Edittipp.class:9](../../../../../../.src/Gestion/option/Edittipp.class#L9), [Edittipp.class:10](../../../../../../.src/Gestion/option/Edittipp.class#L10)
-- [ ] EDITTIPP-A02 — [anomalie, à confirmer] Double comptage possible d'une ligne de BL facturé
+- [ ] EDITTIPP-A02 — [anomalie, à confirmer] (confirmée phase 2, vague 5 : BL facturé F0001 compté par `Fiches_Ligbl` et `Fiches_HistoLigfac` (`UNION ALL`), figée par T03) Double comptage possible d'une ligne de BL facturé
   (présente dans `Fiches_Ligbl` et dans `Fiches_HistoLigfac`) · tests : T03 · sources : [Edittipp.class:9](../../../../../../.src/Gestion/option/Edittipp.class#L9)
 - [ ] EDITTIPP-A03 — [anomalie] Raison sociale et adresse du déclarant en dur dans
   `Edittipp.report` (une société précise) : correction hors périmètre (`.report` intouchable),

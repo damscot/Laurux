@@ -47,5 +47,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] RECHTIPP-A01 — [anomalie] Fenêtre non journalisée (`Utils.Observers(Me)` absent) · tests :
   T04 · sources : [rechtipp.class:_new](../../../../../../.src/Gestion/option/rechtipp.class#L8-L38)
-- [ ] RECHTIPP-A02 — [anomalie] `GridView1_Data` lit `res!art_design` sans test `Available` (article
+- [ ] RECHTIPP-A02 — [anomalie] (confirmée phase 2, vague 5 : région dont l'article est absent de `Fiches_Art` → « Result is not available » dans `GridView1_Data` (T02)) `GridView1_Data` lit `res!art_design` sans test `Available` (article
   supprimé → erreur, mode `"T"` inutilisé à ce jour) · tests : T02 · sources : [rechtipp.class:54](../../../../../../.src/Gestion/option/rechtipp.class#L54)

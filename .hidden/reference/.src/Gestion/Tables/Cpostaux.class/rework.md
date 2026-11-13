@@ -58,7 +58,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CPOSTAUX-A01 — [anomalie] UPDATE `WHERE cp = &2` (bureau comparé au code postal) : la
+- [ ] CPOSTAUX-A01 — [anomalie] (confirmée phase 2, vague 5 : `UPdate … WHERE cp = &2` (l. 225) compare le code postal au bureau : aucune ligne mise à jour (T03)) UPDATE `WHERE cp = &2` (bureau comparé au code postal) : la
   modification d'un bureau crée un doublon au lieu de remplacer la ligne · tests : T02 · sources : [Cpostaux.class:225](../../../../../../.src/Gestion/Tables/Cpostaux.class#L225)
 - [ ] CPOSTAUX-A02 — [anomalie] Filtres `Deb2`/`Deb3` par concaténation de la frappe (`"` casse la
   requête) · tests : T04 · sources : [Cpostaux.class:92](../../../../../../.src/Gestion/Tables/Cpostaux.class#L92), [Cpostaux.class:99](../../../../../../.src/Gestion/Tables/Cpostaux.class#L99)

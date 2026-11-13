@@ -1,0 +1,21 @@
+{
+ "id": "TCONSIGNE-T06",
+ "objet": "Fermeture pendant une saisie",
+ "classe": "Tconsigne",
+ "description": "Option boisson, jeu consigne_shared/consigne_base : Création, code PY, fermeture de la fenêtre, « Oui » à « Voullez-vous enregister… » : form_Close appelle bar1_valide sans argument, erreur « Not enough arguments » (figé, TCONSIGNE-A01, code de sortie 125) ; transaction non validée.",
+ "dataset": "consigne_shared/consigne_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/bois": true
+ },
+ "code_sortie": 125
+}

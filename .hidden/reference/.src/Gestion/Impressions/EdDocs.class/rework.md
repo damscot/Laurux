@@ -56,10 +56,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDDOCS-A01 — [anomalie] Titres inversés : « Commandes » (`TypeD = "C"`) imprime « Liste des
   devis en cours » et « Devis » (`TypeD = "D"`) « Liste des commandes en cours » · tests : T02 ·
   sources : [EdDocs.class:86](../../../../../../.src/Gestion/Impressions/EdDocs.class#L86), [EdDocs.class:87](../../../../../../.src/Gestion/Impressions/EdDocs.class#L87)
-- [ ] EDDOCS-A02 — [anomalie] « Par commentaire » (`RadioButton12`) : `Ordre` vide → `order by `
+- [ ] EDDOCS-A02 — [anomalie] (confirmée phase 2, vague 5 : erreur SQL (T03, code 125)) « Par commentaire » (`RadioButton12`) : `Ordre` vide → `order by `
   (erreur SQL puis `Result` nul) et filtre de type forcé à `C` · tests : T03 · sources : [EdDocs.class:94](../../../../../../.src/Gestion/Impressions/EdDocs.class#L94), [EdDocs.class:RadioButton12_Click](../../../../../../.src/Gestion/Impressions/EdDocs.class#L255-L259)
 - [ ] EDDOCS-A03 — [anomalie] Tri par compte : le total du dernier client n'est jamais imprimé ·
   tests : T04 · sources : [EdDocs.class:140](../../../../../../.src/Gestion/Impressions/EdDocs.class#L140), [EdDocs.class:203](../../../../../../.src/Gestion/Impressions/EdDocs.class#L203)
 - [ ] EDDOCS-A04 — [anomalie, à confirmer] Filtre de dates par chaînes `aaaammjj` sur un `datetime` :
   documents du dernier jour avec heure exclus (MySQL) ; comparaison texte erronée sous SQLite ·
   tests : T05 · sources : [EdDocs.class:75](../../../../../../.src/Gestion/Impressions/EdDocs.class#L75), [EdDocs.class:76](../../../../../../.src/Gestion/Impressions/EdDocs.class#L76), [EdDocs.class:104](../../../../../../.src/Gestion/Impressions/EdDocs.class#L104)
+- [ ] EDDOCS-A05 — [anomalie] `Button1_Click` : `rResult!imp = 1` compare un `tinyint` lu en Booléen (`True` = -1) à 1, toujours faux : une facture imprimée garde le numéro et la date du BL (phase 2, vague 5, 2026-11-13) · tests : T07 (xfail) · sources : [EdDocs.class:152](../../../../../../.src/Gestion/Impressions/EdDocs.class#L152)

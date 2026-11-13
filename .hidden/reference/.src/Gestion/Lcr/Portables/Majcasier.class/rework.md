@@ -53,10 +53,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] MAJCASIER-A01 — [anomalie] `Code` non réinitialisé : une ligne sans code-barres remet à jour
   l'article précédent ; la première ligne vide déclenche une requête avec un code vide · tests : T02 ·
   sources : [Majcasier.class:76](../../../../../../../.src/Gestion/Lcr/Portables/Majcasier.class#L76), [Majcasier.class:84](../../../../../../../.src/Gestion/Lcr/Portables/Majcasier.class#L84)
-- [ ] MAJCASIER-A02 — [anomalie] Rapport inexploitable : `Codeb` n'est jamais affecté, le code-barres
+- [ ] MAJCASIER-A02 — [anomalie] (confirmée phase 2, vague 5 : `Casier.txt` : ligne blanche à la place du code rejeté (`Codeb` jamais affecté), T02 et T05) Rapport inexploitable : `Codeb` n'est jamais affecté, le code-barres
   rejeté n'apparaît pas dans `~/tmp/Casier.txt` (seulement le code résolu, vide) ; aucun bilan du
   nombre d'articles mis à jour ; erreurs d'`UPDATE` ignorées · tests : T02 ·
   sources : [Majcasier.class:89](../../../../../../../.src/Gestion/Lcr/Portables/Majcasier.class#L89), [Majcasier.class:86](../../../../../../../.src/Gestion/Lcr/Portables/Majcasier.class#L86)
 - [ ] MAJCASIER-A03 — [anomalie] Appel `Portable.Import("Casier")` sans traitement utile, qui vide
   `~/tmp/ImpT.txt` (rapport des imports d'étiquettes) : suppression à valider (effet de bord sur un
   fichier temporaire) · tests : T04 · sources : [Majcasier.class:59](../../../../../../../.src/Gestion/Lcr/Portables/Majcasier.class#L59)
+- [ ] MAJCASIER-A04 — [anomalie] `Button2_Click` (Quitter) supprime `~/tmp/Casier.txt` même après son ouverture dans l'éditeur : le rapport des rejets est perdu à la fermeture (phase 2, vague 5, 2026-11-13) · tests : T02, T05 · sources : [Majcasier.class:Button2_Click](../../../../../../../.src/Gestion/Lcr/Portables/Majcasier.class#L104-L109), [Majcasier.class:97](../../../../../../../.src/Gestion/Lcr/Portables/Majcasier.class#L97)

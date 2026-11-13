@@ -1,0 +1,27 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+select * from Fiches_Depots order by code
+SELECT * FROM Fiches_Depots WHERE code = '03'
+INSERT INTO Fiches_Depots(code, libelle, adr1, adr2, cp, ville) VALUES ('03', 'Depot 3', '1 rue B', NULL, '44000', 'NANTES')
+SELECT art_code FROM Fiches_Art
+insert into Fiches_StkDepots (coded,codea, qte) values ('03', '001', 0)
+insert into Fiches_StkDepots (coded,codea, qte) values ('03', '002', 0)
+insert into Fiches_StkDepots (coded,codea, qte) values ('03', '003', 0)
+select * from Fiches_Depots order by code

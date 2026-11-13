@@ -10,12 +10,12 @@ et une variable `USER` fixe, ou masqués par `check_output.py`.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CLCR-T01 | gbtest | `Entete` + `BasPage` sur 2 pages | titre accentué, 2 appels `Entete` | texte des 2 pages, « Page 1/2 », « Page 2/2 » | `tests/entete_baspage/` | à faire |
-| CLCR-T02 | gbtest | `Level1` + `Level2` | 3 lignes : adresse complète, adresse partielle (`sadr2` nul), sans adresse | texte et ordre des lignes | `tests/liste_lcr/` | à faire |
-| CLCR-T03 | gbtest | `Level1A` + `Level2A` | adresses `" "` et nulles, banque renseignée ou vide | lignes d'adresse ignorées pour `" "` | `tests/liste_lcr_banque/` | à faire |
-| CLCR-T04 | gbtest | Bordereau `Level1B`…`Level4B` | en-tête banque, 2 lignes, total `"1234,5"` | texte du bordereau, total `1234,50` (locale fr) ; date de remise = date figée | `tests/bordereau/` | à faire |
-| CLCR-T05 | gbtest | Formatage des montants (caractérisation A01) | `smontant` = `"12,50"`, `"12.50"`, `""` dans `Level2`/`Level2A` | valeur imprimée ou erreur observée, par locale (`fr_FR`, `C`) | `tests/montants/` | à faire |
-| CLCR-T06 | gbtest | `Lines` | `PosY` entier | PDF identique avant/après passage du paramètre en `Integer` | `tests/lines/` | à faire |
+| CLCR-T01 | gbtest | `Entete` + `BasPage` sur 2 pages | titre accentué, 2 appels `Entete` | texte des 2 pages, « Page 1/2 », « Page 2/2 » | `tests/entete_baspage/` | implémenté |
+| CLCR-T02 | gbtest | `Level1` + `Level2` | 3 lignes : adresse complète, adresse partielle (`sadr2` nul), sans adresse | texte et ordre des lignes | `tests/liste_lcr/` | implémenté |
+| CLCR-T03 | gbtest | `Level1A` + `Level2A` | adresses `" "` et nulles, banque renseignée ou vide | lignes d'adresse ignorées pour `" "` | `tests/liste_lcr_banque/` | implémenté |
+| CLCR-T04 | gbtest | Bordereau `Level1B`…`Level4B` | en-tête banque, 2 lignes, total `"1234,5"` | texte du bordereau, total `1234,50` (locale fr) ; date de remise = date figée | `tests/bordereau/` | implémenté |
+| CLCR-T05 | gbtest | Formatage des montants (caractérisation A01) | `smontant` = `"12,50"`, `"12.50"`, `""` dans `Level2`/`Level2A` | valeur imprimée ou erreur observée, par locale (`fr_FR`, `C`) | `tests/montants/` | implémenté (locale fr seule : la locale du runner n'est pas réglable par test) |
+| CLCR-T06 | gbtest | `Lines` | `PosY` entier | PDF identique avant/après passage du paramètre en `Integer` | `tests/lines/` | implémenté (opérateurs de tracé du flux PDF non compressé) |
 
 ## Détail des tests
 
@@ -27,3 +27,11 @@ et une variable `USER` fixe, ou masqués par `check_output.py`.
   `Preparation` et `Bordrx` (PDF comparés de la même façon).
 - Non testable automatiquement : rendu graphique fin (couleurs, épaisseurs) ; `pdftotext` ne
   compare que le texte.
+
+### Implémentation (phase 2, vague 5)
+- Module `.src/Tests/Gestion/CLcrTest.test` (T01 à T06) : PDF écrit par `Output(fichier, False)` dans un fichier
+  temporaire, texte extrait par `pdftotext -layout` (une clé par ligne non vide) ; date du jour et `User.Name`
+  remplacés par `<date>` et `<utilisateur>`. T06 lit le flux par `Output("", "S")` après `SetCompression(False)`.
+- Observé (T05, caractérisation A01) : en locale française, un montant `"12.50"` ou vide fait échouer `Level2` et
+  `Level2A` (`Type mismatch: wanted Float, got Null`, `Format$(Val(smontant))`) ; la ligne n'est imprimée que
+  jusqu'au nom. Seul `"12,50"` est imprimé (`12,50`).

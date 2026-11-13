@@ -1,0 +1,21 @@
+{
+ "id": "MATERIEL-T07",
+ "objet": "Historique des achats",
+ "classe": "Materiel",
+ "description": "Jeu materiel_achats (SN010 reçu par R0001) : clic ligne 2 (002 / SN010), onglet 2 de TabStrip1, bouton historique achats (Button1, tag 5 : Histo_Achat remplit Colachat), clic sur la réception R00014010011 (Colachat_click : Colrcp2), Quitter. Lecture seule (sql.log ordonné). Le clic sur la réception lève « Type mismatch: wanted Float, got Null » (Materiel.Colachat_click.2454 : Val() d'un décimal lu en base) : erreur fatale figée (code 125).",
+ "dataset": "materiel_achats",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125,
+ "xfail": "Colachat_click.2454 : Val(Ligrcpt!pbht) renvoie Null (type mismatch), Colrcp2 et total non affichés",
+ "xfail_attendu": "contenu de Colachat, Colrcp2 et total de la réception"
+}

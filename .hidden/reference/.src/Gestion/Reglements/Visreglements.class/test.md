@@ -5,11 +5,11 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VISREGLEMENTS-T01 | gbtest | Compilation sans le couple | suppression de `Visreglements.class` + `.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire |
-| VISREGLEMENTS-T02 | replay | Ouverture et liste des clients | écran ouvert par un scénario dédié (`Visreglements.Show` depuis un harnais, aucun menu) ; jeu dérivé : 2 clients avec règlements en journaux `jrnal2`/`jrnal3` | contenu de `Facturefm`/`Detail` et lignes de `Colbl` identiques à la référence | `tests/ouverture/` | à faire |
-| VISREGLEMENTS-T03 | replay | Détail d'un client | clic sur un client de `Colbl` | lignes de `Coldetail` ; fige l'erreur d'indice éventuelle de la l. 178 | `tests/detail_client/` | à faire |
-| VISREGLEMENTS-T04 | replay | Suppression d'un règlement | Suppr sur une ligne de `Coldetail` → Oui | dump de `Fiches_Mvt` (ligne supprimée, `lettree`), `Fiches_Comptes.solde`, `Detail` identique | `tests/suppression_reglement/` | à faire |
-| VISREGLEMENTS-T05 | gbtest | `Calc_solde` | compte avec 3 écritures validées et 1 non validée ; compte sans écriture | `solde` = Σ(débit − crédit) validées ; `0` sinon | `tests/calc_solde/` | à faire |
+| VISREGLEMENTS-T01 | gbtest | Compilation sans le couple | suppression de `Visreglements.class` + `.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : test de compilation après suppression (VISREGLEMENTS-A01, phase 4) |
+| VISREGLEMENTS-T02 | replay | Ouverture et liste des clients | écran ouvert par un scénario dédié (`Visreglements.Show` depuis un harnais, aucun menu) ; jeu dérivé : 2 clients avec règlements en journaux `jrnal2`/`jrnal3` | contenu de `Facturefm`/`Detail` et lignes de `Colbl` identiques à la référence | `tests/ouverture/` | à faire : écran sans point d’entrée (aucun menu) ; pas de lanceur dédié dans le framework de rejeu |
+| VISREGLEMENTS-T03 | replay | Détail d'un client | clic sur un client de `Colbl` | lignes de `Coldetail` ; fige l'erreur d'indice éventuelle de la l. 178 | `tests/detail_client/` | à faire : écran sans point d’entrée (aucun menu) |
+| VISREGLEMENTS-T04 | replay | Suppression d'un règlement | Suppr sur une ligne de `Coldetail` → Oui | dump de `Fiches_Mvt` (ligne supprimée, `lettree`), `Fiches_Comptes.solde`, `Detail` identique | `tests/suppression_reglement/` | à faire : écran sans point d’entrée (aucun menu) ; Suppr sur Coldetail |
+| VISREGLEMENTS-T05 | gbtest | `Calc_solde` | compte avec 3 écritures validées et 1 non validée ; compte sans écriture | `solde` = Σ(débit − crédit) validées ; `0` sinon | `tests/calc_solde/` | implémenté (gb.test VisreglementsTest, jeu visreglements_shared/visreglements_solde) |
 
 ## Détail des tests
 
@@ -20,3 +20,4 @@
   écriture : utiliser le jeu dérivé commun des éditions comptables
   (`Compta/Impressions/Balance.class/test.md`) enrichi de règlements clients.
 - T05 nécessite une base (SQL) : gb.test avec connexion MariaDB Docker.
+

@@ -64,3 +64,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDPAIEMENT-A02 — [anomalie, à confirmer] En mode `Fact`, la relecture par `numbl` fait
   l'`UNION` des deux tables : un numéro présent dans `Fiches_Bl` et `Fiches_BlM` imprime les deux
   documents sous chaque règlement · tests : T01 · sources : [Edpaiement.class:165](../../../../../../.src/Gestion/Impressions/Edpaiement.class#L165)
+- [ ] EDPAIEMENT-A03 — [anomalie, à confirmer] Date saisie dans `Date1` (« 16.06.2018 » + Entrée) puis Imprimer : la boîte « Aucun mouvement » attendue ne s'ouvre pas au rejeu (code 3, fenêtre active Edpaiement) ; défaut de l'écran ou limite du rejeu, cause non établie (phase 2, vague 5, 2026-11-13) · tests : T05 (contourné : date du jour) · sources : [Edpaiement.class:date1_LostFocus](../../../../../../.src/Gestion/Impressions/Edpaiement.class#L81-L93), [Edpaiement.class:Button2_Click](../../../../../../.src/Gestion/Impressions/Edpaiement.class#L102)

@@ -1,0 +1,46 @@
+T01/doc.pdf	application/pdf
+T01/IMG.JPG	image/jpeg
+T01/a.tar.gz	application/x-tar
+T01/facture.2024.pdf	application/pdf
+T01/x.rtf	application/msword
+T01/son.wav	video/wav
+T01/a.b.c.pdf	<Null>
+T01/doc	ERREUR: Out of bounds
+T01/a.docx	ERREUR: Out of bounds
+T05/retour	False
+T07/une_piece	thunderbird [-compose] [to=client@exemple.test,subject=Facture F0001,body=Bonjour%2C%0ACi-joint {facture}%2C l avoir.%0ACordialement,attachment=/tmp/f1.pdf]
+T07/deux_pieces	thunderbird [-compose] [to=client@exemple.test,subject=Facture F0001,body=Bonjour%2C%0ACi-joint {facture}%2C l avoir.%0ACordialement,attachment='/tmp/f1.pdf,/tmp/cgv.pdf']
+T08/Icedove	icedove [-compose] [to=client@exemple.test,subject=Facture] [F0001] [,attachment=/tmp/f1.pdf,body=Bonjour%2C] [{ci-joint}]
+T08/Evolution	evolution [mailto:client@exemple.test?subject=Facture F0001\&body=Bonjour, (ci-joint)\&attach=/tmp/f1.pdf]
+T08/Kmail	kmail [-s] [Facture F0001] [--attach] [/tmp/f1.pdf] [--body] [Bonjour, (ci-joint)] [client@exemple.test]
+T09/Thunderbird	thunderbird [-compose] [to=client@exemple.test,subject=Ticket,body=Bonjour%2C merci,attachment='/tmp/Ticket.pdf,/tmp/cgv.pdf']
+T09/Icedove	icedove [-compose] [to=client@exemple.test,subject=Ticket,body=Bonjour%2C merci,attachment='/tmp/Ticket.pdf,/tmp/cgv.pdf']
+T11/commande	<aucun appel>
+T02/retour	False
+T02/smtp_00	--- message 1 (1.eml)
+T02/smtp_01	enveloppe : de <societe@laurux-test.fr> à <client@laurux-test.fr>, <copie@laurux-test.fr>
+T02/smtp_02	De : <societe@laurux-test.fr>
+T02/smtp_03	À : client@laurux-test.fr
+T02/smtp_04	Objet : Objet T02 éè
+T02/smtp_05	partie text/plain :
+T02/smtp_06	  Bonjour,
+T02/smtp_07	  ligne 2 ; virgule, apostrophe '
+T03/retour1	False
+T03/retour2	False
+T03/smtp_00	--- message 1 (1.eml)
+T03/smtp_01	enveloppe : de <societe@laurux-test.fr> à <client@laurux-test.fr>, <copie@laurux-test.fr>
+T03/smtp_02	De : <societe@laurux-test.fr>
+T03/smtp_03	À : client@laurux-test.fr
+T03/smtp_04	Objet : Une pièce
+T03/smtp_05	partie text/plain :
+T03/smtp_06	  Corps 1
+T03/smtp_07	pièce jointe : Ticket.pdf (application/pdf, 23 octets, md5 c6d6796a3737982b0a838d8b9b0cb8bf)
+T03/smtp_08	--- message 2 (2.eml)
+T03/smtp_09	enveloppe : de <societe@laurux-test.fr> à <client@laurux-test.fr>, <copie@laurux-test.fr>
+T03/smtp_10	De : <societe@laurux-test.fr>
+T03/smtp_11	À : client@laurux-test.fr
+T03/smtp_12	Objet : Deux pièces
+T03/smtp_13	partie text/plain :
+T03/smtp_14	  Corps 2
+T03/smtp_15	pièce jointe : Ticket.pdf (application/pdf, 23 octets, md5 c6d6796a3737982b0a838d8b9b0cb8bf)
+T03/smtp_16	pièce jointe : Conditions.pdf (application/pdf, 28 octets, md5 352da82e872fe4b69de610f551357f6d)

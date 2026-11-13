@@ -1,0 +1,32 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Typec
+SELECT art_code, art_design, art_prvt, art_nbd, art_prvt, art_pvht, art_tva, coef, type,  (art_prvt * coef)  AS pxht,  (art_prvt * coef) *(1+(taux_tva/100))  AS pxttc, ((art_pvht -  (art_prvt * coef) ) / art_pvht) AS remise, (( (art_prvt * coef) - art_prvt)/  (art_prvt * coef)  ) AS marge FROM Fiches_TarTypcli LEFT JOIN Fiches_Art ON  art_code=cart JOIN Fiches_Tvaav ON code_tva = art_tva LIMIT 1
+SELECT art_code, art_design, art_prvt, art_nbd, art_prvt, art_pvht, art_tva, coef, type,  (art_prvt * coef)  AS pxht,  (art_prvt * coef) *(1+(taux_tva/100))  AS pxttc, ((art_pvht -  (art_prvt * coef) ) / art_pvht) AS remise, (( (art_prvt * coef) - art_prvt)/  (art_prvt * coef)  ) AS marge FROM Fiches_TarTypcli LEFT JOIN Fiches_Art ON  art_code=cart JOIN Fiches_Tvaav ON code_tva = art_tva        order by Fiches_Art.art_code limit 0, 18
+SELECT art_code, art_design, art_prvt, art_nbd, art_prvt, art_pvht, art_tva, coef, type,  (art_prvt * coef)  AS pxht,  (art_prvt * coef) *(1+(taux_tva/100))  AS pxttc, ((art_pvht -  (art_prvt * coef) ) / art_pvht) AS remise, (( (art_prvt * coef) - art_prvt)/  (art_prvt * coef)  ) AS marge FROM Fiches_TarTypcli LEFT JOIN Fiches_Art ON  art_code=cart JOIN Fiches_Tvaav ON code_tva = art_tva  where type='01'       order by Fiches_Art.art_code limit 0, 18
+SELECT * FROM Fiches_TarTypcli WHERE type='01' AND cart='*002'
+SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva where art_code = '002'
+SELECT * FROM Fiches_TarTypcli WHERE type='01' AND cart='EQ2'
+SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva where art_code = 'EQ2'
+SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva where art_cequ = 'EQ2'
+SELECT * FROM Fiches_TarTypcli WHERE type='01' AND cart='RC3'
+SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva where art_code = 'RC3'
+SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva where art_cequ = 'RC3'
+SELECT * FROM Fiches_Art JOIN Fiches_Tvaav ON art_tva=code_tva where art_refcentrale = 'RC3'

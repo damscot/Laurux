@@ -9,12 +9,12 @@ devient testable en `gbtest` après la séparation traitement/GUI (TXMO-004).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TXMO-T01 | replay | Création d'un taux | code `4`, libellé `Mecanique T4`, taux `40`, compte `706100`, prix de revient `20` (Entrée de zone en zone, Enregistrer) | ligne ajoutée dans `Fiches_Txtmo` ; `Fiches_Mo` inchangée | `tests/creation/` | à faire |
-| TXMO-T02 | replay | Modification du taux avec répercussion | clic sur le code `1`, taux `28` → `30`, prix de revient `14` → `15`, Enregistrer | `Fiches_Txtmo` modifiée ; `mo_txht`, `mo_prvt`, `mo_marge` des MO `01` (temps) et `04` (forfait) recalculés | `tests/modif_repercussion/` | à faire |
-| TXMO-T03 | replay | Contrôles de saisie | compte `999999` inexistant ; code vide avec compte valide ; taux non numérique | message compte inexistant et retour sur la zone ; message « champs obligatoires » **suivi** de `MajMo`/`Refresh` (A01 figée) ; dump identique hors effets figés | `tests/controles/` | à faire |
-| TXMO-T04 | replay | Suppression | suppression du code `1` (utilisé par la MO `01`) puis d'un code créé non utilisé ; suppression avec ligne sélectionnée ≠ code saisi | refus avec message ; suppression effective ; A02 figée (ligne sélectionnée supprimée) | `tests/suppression/` | à faire |
-| TXMO-T05 | replay | Liste des comptes | bouton liste et F2 sur le compte ; sélection Entrée et clic ; Échap | contenu de `Colcompt` (comptes 7 triés) ; compte recopié | `tests/liste_comptes/` | à faire |
-| TXMO-T06 | gbtest | `MargeMo` (après TXMO-004) | temps : montant `1`, taux `28`, prvt `14` ; forfait : valeur HT `35`, taux `28`, prvt `14` ; taux `0` ; MO absente | `14`, `17,5`, `0`, `0` attendus (à confirmer dans le clone de référence) | `tests/marge_mo/` | à faire |
+| TXMO-T01 | replay | Création d'un taux | code `4`, libellé `Mecanique T4`, taux `40`, compte `706100`, prix de revient `20` (Entrée de zone en zone, Enregistrer) | ligne ajoutée dans `Fiches_Txtmo` ; `Fiches_Mo` inchangée | `tests/creation/` | implémenté |
+| TXMO-T02 | replay | Modification du taux avec répercussion | clic sur le code `1`, taux `28` → `30`, prix de revient `14` → `15`, Enregistrer | `Fiches_Txtmo` modifiée ; `mo_txht`, `mo_prvt`, `mo_marge` des MO `01` (temps) et `04` (forfait) recalculés | `tests/modif_repercussion/` | implémenté |
+| TXMO-T03 | replay | Contrôles de saisie | compte `999999` inexistant ; code vide avec compte valide ; taux non numérique | message compte inexistant et retour sur la zone ; message « champs obligatoires » **suivi** de `MajMo`/`Refresh` (A01 figée) ; dump identique hors effets figés | `tests/controles/` | à faire : compte inexistant validé par Entrée ouvre Message.Warning puis le LostFocus de Codecompt en rouvre une seconde (compteGman appelé deux fois) : non rejoué dans le temps imparti |
+| TXMO-T04 | replay | Suppression | suppression du code `1` (utilisé par la MO `01`) puis d'un code créé non utilisé ; suppression avec ligne sélectionnée ≠ code saisi | refus avec message ; suppression effective ; A02 figée (ligne sélectionnée supprimée) | `tests/suppression/` | implémenté (refus code 1, suppression code 9 du jeu txmo_libre ; A02 non rejouée) |
+| TXMO-T05 | replay | Liste des comptes | bouton liste et F2 sur le compte ; sélection Entrée et clic ; Échap | contenu de `Colcompt` (comptes 7 triés) ; compte recopié | `tests/liste_comptes/` | implémenté (bouton liste et clic ; F2, Entrée dans la liste et Échap non rejouables) |
+| TXMO-T06 | gbtest | `MargeMo` (après TXMO-004) | temps : montant `1`, taux `28`, prvt `14` ; forfait : valeur HT `35`, taux `28`, prvt `14` ; taux `0` ; MO absente | `14`, `17,5`, `0`, `0` attendus (à confirmer dans le clone de référence) | `tests/marge_mo/` | à faire : après TXMO-004 (extraction de MargeMo) |
 
 ## Détail des tests
 
@@ -26,3 +26,6 @@ devient testable en `gbtest` après la séparation traitement/GUI (TXMO-004).
 - **Locale** : `fr_FR.UTF-8` imposée (le taux est stocké en chaîne et formaté avec virgule).
 - **Non testable automatiquement** : son, couleurs de focus ; sortie de zone à la souris sans
   validation (A03), sauf replay dédié avec clic.
+
+- **Assets (phase 2)** : jeu `.hidden/Tests/Gestion/assets/txmo_shared/txmo_libre.sql` (taux 9 non utilisé, T04) ;
+  scénarios `txmo_creation`, `txmo_modif_repercussion`, `txmo_suppression`, `txmo_liste_comptes`.

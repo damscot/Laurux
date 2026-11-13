@@ -1,0 +1,18 @@
+{
+ "id": "EDCLIENT-T01",
+ "objet": "Plage de codes par défaut",
+ "classe": "EdClient",
+ "description": "Gestion > Impression des tables > Clients ; bornes par défaut (00000 à 4199999), tri par code, Imprimer : texte de ~/tmp/Clients.pdf ; SQL CAST(cli_code AS CHAR) BETWEEN.",
+ "dataset": "edclient_shared/clients",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

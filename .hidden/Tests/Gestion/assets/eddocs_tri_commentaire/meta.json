@@ -1,0 +1,17 @@
+{
+ "id": "EDDOCS-T03",
+ "objet": "Tri par commentaire",
+ "classe": "EdDocs",
+ "description": "RadioButton12 (Par commentaire), Imprimer : Ordre vide, requête « order by » invalide : erreur fatale Query failed (A02 figée, code 125).",
+ "dataset": "eddocs_shared/documents",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [],
+ "compare_sql_log": "ordered",
+ "code_sortie": 125
+}

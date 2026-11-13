@@ -67,7 +67,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] BANQUE-A02 — [anomalie] Suppression d'une banque sans contrôle des LCR et bordereaux qui la
   référencent (`Fiches_Lcr.banque`, `Fiches_Bordereaux.banque`) : bordereaux sans coordonnées
   bancaires dans `Bordrx` · tests : T05 · sources : [Banque.class:Button3_Click](../../../../../../.src/Gestion/Lcr/Banque.class#L414-L427)
-- [ ] BANQUE-A03 — [anomalie] Filtre clavier concaténé dans le SQL (`like "<sel>%"`) : une saisie
+- [ ] BANQUE-A03 — [anomalie] (confirmée phase 2, vague 5 : guillemet dans le filtre → « Query failed », figée par T08 (code 125)) Filtre clavier concaténé dans le SQL (`like "<sel>%"`) : une saisie
   avec guillemet produit une erreur SQL ; passer par `&1` · tests : T08 · sources :
   [Banque.class:Deb2](../../../../../../.src/Gestion/Lcr/Banque.class#L100-L104), [Banque.class:Deb3](../../../../../../.src/Gestion/Lcr/Banque.class#L106-L110)
 - [ ] BANQUE-A04 — [anomalie] Écran non instrumenté (`Utils.Observers(Me)` absent) : ni journal ni
@@ -77,3 +77,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   saisie d'un code existant ne charge plus la fiche, et `Dsg_GotFocus`/`Btn_keyPress` peuvent
   déclencher un double enregistrement (à confirmer en phase 2) · tests : T03, T07 ·
   sources : [Banque.class:Cmpt_Lostfocus](../../../../../../.src/Gestion/Lcr/Banque.class#L239-L260), [Banque.class:Dsg_GotFocus](../../../../../../.src/Gestion/Lcr/Banque.class#L204-L212), [Banque.class:Btn_keyPress](../../../../../../.src/Gestion/Lcr/Banque.class#L185-L202)
+- [ ] BANQUE-A06 — [anomalie] Zone `siren` limitée à 5 caractères (`Editor.MaxLength = 5`) alors que `banques_numsiren` est en `varchar(15)` : une modification tronque le SIREN existant à 5 caractères (phase 2, vague 5, 2026-11-13) · tests : T04 · sources : [Banque.form:163](../../../../../../.src/Gestion/Lcr/Banque.form#L156-L164), [Banque.class:459](../../../../../../.src/Gestion/Lcr/Banque.class#L459)

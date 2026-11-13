@@ -5,13 +5,13 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| SUPPRART-T01 | replay | Mode sélection (familles, fournisseurs, date) | jeu dérivé : articles de familles et fournisseurs variés (dont les bornes exactes), un article vendu après `Dte1`, un article en BL en cours, un article stocké avec stock ≠ 0 ; Supprimer → Supprimer | dump de `Fiches_Art` et des tables du tableau d'architecture identique ; contenu de `~/tmp/Artsuppr.txt` (fige A01, A02, A03) | `tests/mode_selection/` | à faire |
-| SUPPRART-T02 | replay | Mode suspendus | mêmes données, `art_suspendu = 1` sur une partie | idem T01 | `tests/mode_suspendus/` | à faire |
-| SUPPRART-T03 | replay | Liste manuelle | création de la liste, saisie par code, code fournisseur, code-barre, doublon, code inconnu ; Supprimer | table `Artsup` (contenu après traitement, A04), dump des tables articles, messages | `tests/liste_manuelle/` | à faire |
-| SUPPRART-T04 | replay | Liste existante : compléter / remplacer | `Artsup` non vide à l'ouverture du mode liste ; choix 1 puis choix 2 | `Artsup` vidée ou complétée | `tests/liste_existante/` | à faire |
-| SUPPRART-T05 | replay | Fichier texte | fichier de 4 codes (dont un inconnu et une ligne vide) | dump identique ; rapport | `tests/mode_fichier/` | à faire |
-| SUPPRART-T06 | replay | Annulation | Supprimer → Sortir | aucune modification de la base ; `~/tmp/Artsuppr.txt` tronqué (comportement actuel) | `tests/annulation/` | à faire |
-| SUPPRART-T07 | replay | Orphelins après suppression | article présent dans `Fiches_PrdComp`, `Fiches_Tarcli`, `Fiches_CdFour`, `Fiches_Rpl1.coderpl1`, `Fiches_Mvtexpdc` | fige A05 : lignes orphelines conservées | `tests/orphelins/` | à faire |
+| SUPPRART-T01 | replay | Mode sélection (familles, fournisseurs, date) | jeu dérivé : articles de familles et fournisseurs variés (dont les bornes exactes), un article vendu après `Dte1`, un article en BL en cours, un article stocké avec stock ≠ 0 ; Supprimer → Supprimer | dump de `Fiches_Art` et des tables du tableau d'architecture identique ; contenu de `~/tmp/Artsuppr.txt` (fige A01, A02, A03) | `tests/mode_selection/` | à faire : passe par Articles.art_Suppr (classe complexe) |
+| SUPPRART-T02 | replay | Mode suspendus | mêmes données, `art_suspendu = 1` sur une partie | idem T01 | `tests/mode_suspendus/` | à faire : passe par Articles.art_Suppr (classe complexe) |
+| SUPPRART-T03 | replay | Liste manuelle | création de la liste, saisie par code, code fournisseur, code-barre, doublon, code inconnu ; Supprimer | table `Artsup` (contenu après traitement, A04), dump des tables articles, messages | `tests/liste_manuelle/` | implémenté partiel (Gestion/supprart_liste_manuelle : construction de Artsup, doublon, code inconnu ; la suppression passe par Articles.art_Suppr, classe complexe) |
+| SUPPRART-T04 | replay | Liste existante : compléter / remplacer | `Artsup` non vide à l'ouverture du mode liste ; choix 1 puis choix 2 | `Artsup` vidée ou complétée | `tests/liste_existante/` | implémenté (Gestion/supprart_liste_existante et supprart_liste_existante_supprimer, jeu supprart_shared/supprart_liste) |
+| SUPPRART-T05 | replay | Fichier texte | fichier de 4 codes (dont un inconnu et une ligne vide) | dump identique ; rapport | `tests/mode_fichier/` | à faire : passe par Articles.art_Suppr (classe complexe) |
+| SUPPRART-T06 | replay | Annulation | Supprimer → Sortir | aucune modification de la base ; `~/tmp/Artsuppr.txt` tronqué (comportement actuel) | `tests/annulation/` | implémenté (Gestion/supprart_annulation : ~/tmp/Artsuppr.txt vide comparé) |
+| SUPPRART-T07 | replay | Orphelins après suppression | article présent dans `Fiches_PrdComp`, `Fiches_Tarcli`, `Fiches_CdFour`, `Fiches_Rpl1.coderpl1`, `Fiches_Mvtexpdc` | fige A05 : lignes orphelines conservées | `tests/orphelins/` | à faire : passe par Articles.art_Suppr (classe complexe) |
 
 ## Détail des tests
 

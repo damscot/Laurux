@@ -54,11 +54,12 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] EDMAT-A01 — [anomalie] `SelectionProp` recopie `CClient` (jamais renseigné) au lieu de `Bval` :
   la sélection d'un propriétaire vide le champ · tests : T06 · sources : [EdMat.class:76](../../../../../../.src/Gestion/Impressions/EdMat.class#L76), [EdMat.class:80](../../../../../../.src/Gestion/Impressions/EdMat.class#L80)
-- [ ] EDMAT-A02 — [anomalie] `Mat_man` interroge `mat_refcentrale`, colonne absente de
+- [ ] EDMAT-A02 — [anomalie] (confirmée phase 2, vague 5 : colonne `mat_refcentrale` inexistante, erreur fatale (T08, code 125)) `Mat_man` interroge `mat_refcentrale`, colonne absente de
   `Fiches_Materiels` : erreur SQL non interceptée pour tout code inconnu · tests : T08 · sources : [EdMat.class:176](../../../../../../.src/Gestion/Impressions/EdMat.class#L176)
 - [ ] EDMAT-A03 — [anomalie] Filtre par type (`Type`/`Type2`) affiché mais non implémenté
   (`ToggleButton7`/`8` sans handler, champs absents du SQL) · tests : T01 · sources : [EdMat.class:Cmpt_KeyPress](../../../../../../.src/Gestion/Impressions/EdMat.class#L293-L370), [EdMat.class:Button2_Click](../../../../../../.src/Gestion/Impressions/EdMat.class#L383-L491)
-- [ ] EDMAT-A04 — [anomalie] Titre des pages suivantes « Liste des marériels » (faute, titre
+- [ ] EDMAT-A04 — [anomalie] (confirmée phase 2, vague 5 : titre « Liste des marériels » (T05)) Titre des pages suivantes « Liste des marériels » (faute, titre
   différent) ; fichier `Tarif2.pdf` mal nommé · tests : T05 · sources : [EdMat.class:471](../../../../../../.src/Gestion/Impressions/EdMat.class#L471), [EdMat.class:423](../../../../../../.src/Gestion/Impressions/EdMat.class#L423)
 - [ ] EDMAT-A05 — [anomalie] Tag 2 (`Mat2`) contrôle `Mat.Text` ; impression sur toute touche
   (`Btn_KeyPress`) · tests : T08 · sources : [EdMat.class:310](../../../../../../.src/Gestion/Impressions/EdMat.class#L310), [EdMat.class:Btn_KeyPress](../../../../../../.src/Gestion/Impressions/EdMat.class#L284-L291)
+- [ ] EDMAT-A06 — [anomalie] Bornes de marque par défaut `AAAAAAAAAAAA`/`ZZZZZZZZZZZZ` tronquées à 8 caractères par le champ (`MaxLength = 8`) : la requête reçoit `'ZZZZZZZZ'`, une marque plus longue commençant par `ZZZZZZZZ` est exclue (phase 2, vague 5, 2026-11-13) · tests : T01 · sources : [EdMat.class:34-35](../../../../../../.src/Gestion/Impressions/EdMat.class#L34-L35), [EdMat.form:148](../../../../../../.src/Gestion/Impressions/EdMat.form#L148), [EdMat.form:166](../../../../../../.src/Gestion/Impressions/EdMat.form#L166)

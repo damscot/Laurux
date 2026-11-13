@@ -8,12 +8,14 @@ complète) et `Mreglement` (barre réduite), à mutualiser avec leurs propres te
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| BARSELECTION-T01 | replay | Navigation | `Tconsigne` : premier, suivant, précédent, dernier, recherche, sortie | fiche affichée à chaque étape (log) | `tests/navigation/` | à faire |
-| BARSELECTION-T02 | replay | Création | création puis Valider ; création puis Annuler | `Fiches_consigne` (dump) ; barre reconstruite | `tests/creation/` | à faire |
-| BARSELECTION-T03 | replay | Modification et suppression | modification validée ; suppression validée et annulée | dump ; `estcreer`/`estmodif` (log) | `tests/modif_suppression/` | à faire |
-| BARSELECTION-T04 | replay | Refus de l'appelant (A01) | `Mreglement` : Modification sans ligne sélectionnée ; Valider avec code vide (`Stop Event`) | barre restée en mode validation (figé) | `tests/refus_appelant/` | à faire |
+| BARSELECTION-T01 | replay | Navigation | `Tconsigne` : premier, suivant, précédent, dernier, recherche, sortie | fiche affichée à chaque étape (log) | `tests/navigation/` | implémenté (couvert par ttourne_navigation et tregion_navigation, au lieu de Tconsigne) |
+| BARSELECTION-T02 | replay | Création | création puis Valider ; création puis Annuler | `Fiches_consigne` (dump) ; barre reconstruite | `tests/creation/` | implémenté (couvert par tregie_creation, ttourne_creation, ttourne_annulation, tregion_annulation) |
+| BARSELECTION-T03 | replay | Modification et suppression | modification validée ; suppression validée et annulée | dump ; `estcreer`/`estmodif` (log) | `tests/modif_suppression/` | implémenté (couvert par tregie_modif_*, ttourne_modification, ttourne_suppression, tregion_suppression) |
+| BARSELECTION-T04 | replay | Refus de l'appelant (A01) | `Mreglement` : Modification sans ligne sélectionnée ; Valider avec code vide (`Stop Event`) | barre restée en mode validation (figé) | `tests/refus_appelant/` | à faire : Mreglement hors liste de cette vague |
 
 ## Détail des tests
+
+- **Implémentation (phase 2)** : pas de scénario propre : la barre est exercée par les scénarios Tregie, Tregion et Ttourne (`Gestion/assets/tregie_*`, `tregion_*`, `ttourne_*`). Boutons homonymes `bout` : Focus sur le 1er, Tab x (n-1), Espace ; `butval` : Focus (Annuler), Tab, Espace (Valider).
 
 - **Données** : schéma boisson (`modfichier`) pour `Tconsigne` ; `Laurux01.sql` pour `Mreglement`.
 - **Rejeu** : les boutons sont créés par code sans nom ; vérifier en phase 2 que `ReplayObserver`

@@ -1,0 +1,23 @@
+{
+ "id": "ETIQCASIER-T02",
+ "objet": "Même code de modèle sur deux pages",
+ "classe": "Etiqcasier",
+ "description": "Fiches_Etiquettes : Z en A4 Portrait (3 x 8) et en A4 Paysage (4 x 5) ; choix de la ligne Portrait (index 6, liste dans l'ordre de la clé code, page) ; la requête WHERE code = 'Z' prend la première ligne trouvée, Paysage (A02) ; « A4 Paysage » (proposé par Utils.PageFormatSupported) est refusé par PdfWriter._new : « Incorrect orientation: Paysage », code de sortie 125.",
+ "dataset": "etiqcasier_page",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

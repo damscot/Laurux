@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| ENTREEITEM-T01 | gbtest | Libellés des codes 1 à 5 | `"1"` … `"5"` | les 5 libellés exacts (`"1- Escompte"` …) | `tests/libelles/` | à faire |
-| ENTREEITEM-T02 | gbtest | Codes hors plage | `"0"`, `""`, `"6"`, `"x"` | `""` ; pour `"x"` figer le résultat ou l'erreur observée | `tests/hors_plage/` | à faire |
+| ENTREEITEM-T01 | gbtest | Libellés des codes 1 à 5 | `"1"` … `"5"` | les 5 libellés exacts (`"1- Escompte"` …) | `tests/libelles/` | implémenté |
+| ENTREEITEM-T02 | gbtest | Codes hors plage | `"0"`, `""`, `"6"`, `"x"` | `""` ; pour `"x"` figer le résultat ou l'erreur observée | `tests/hors_plage/` | implémenté (« x » rend une chaîne vide, sans erreur) |
 
 ## Détail des tests
 
@@ -15,3 +15,6 @@
 - Couverture visée : 100 % des lignes.
 - Le comportement de `Preparation.Maj_Zones` (affichage du libellé dans `Entree2`) est couvert par
   les replays de [`Preparation`](../Preparation.class/test.md).
+
+### Implémentation (phase 2, vague 5)
+- Module `.src/Tests/Gestion/EntreeItemTest.test` (T01, T02) ; valeurs dans `assets/EntreeItemTest/expected.txt`.

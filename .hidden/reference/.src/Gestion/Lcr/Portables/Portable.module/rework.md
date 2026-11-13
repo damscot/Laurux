@@ -53,10 +53,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] PORTABLE-A01 — [anomalie] `cpt2` n'est jamais remis à 0 : après un premier rejet, chaque import
+- [ ] PORTABLE-A01 — [anomalie] (confirmée phase 2, vague 5 : `cpt2` cumulé d'un import à l'autre, figée par T03) `cpt2` n'est jamais remis à 0 : après un premier rejet, chaque import
   ouvre le rapport dans l'éditeur même sans rejet · appelants : `Etigond`, `Etiqart`, `Etiqcasier` ·
   tests : T03 · sources : [Portable.module:3](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L3), [Portable.module:Import](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L8-L79)
-- [ ] PORTABLE-A02 — [anomalie] (précisée phase 2, vague 4 : une ligne sans code-barres réécrit aussi le rejet précédent (`Codeb` et `Code` périmés)) `Code` non réinitialisé entre les lignes : une ligne sans code-barres
+- [ ] PORTABLE-A02 — [anomalie] (confirmée phase 2, vague 5 : ligne `;5` sans code-barres : deux messages pour la même ligne et `cpt2` = 3 pour 2 rejets (T02 ; remonté sous l'ID A01 par l'agent)) (précisée phase 2, vague 4 : une ligne sans code-barres réécrit aussi le rejet précédent (`Codeb` et `Code` périmés)) `Code` non réinitialisé entre les lignes : une ligne sans code-barres
   (ou après un code inconnu suivi d'une ligne vide) réinsère l'article de la ligne précédente avec
   le nouveau nombre, malgré le message « rejetée » · tests : T02 · sources : [Portable.module:45](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L45),
   [Portable.module:60](../../../../../../../.src/Gestion/Lcr/Portables/Portable.module#L60)

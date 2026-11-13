@@ -50,11 +50,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TTARFIOUL-A01 — [anomalie, à confirmer] `Button3_Click` : `While i < tableview2.Rows.Max`
+- [ ] TTARFIOUL-A01 — [anomalie, à confirmer] (confirmée phase 2, vague 5 : dernière tranche non enregistrée, figée par T02) `Button3_Click` : `While i < tableview2.Rows.Max`
   n'enregistre pas la dernière ligne de `TableView2` (dernière tranche perdue après « calcul ») ;
   boucle `Repeat` sur `TableView1` sans garde si elle est vide · tests : T02, T03 · sources : [Ttarfioul.class:309](../../../../../../.src/Gestion/option/Ttarfioul.class#L309), [Ttarfioul.class:319](../../../../../../.src/Gestion/option/Ttarfioul.class#L319)
 - [ ] TTARFIOUL-A02 — [anomalie] `button1_Click` remet `Variables.Bsel` à `False` au lieu de
   `Me.Bsel` : une recherche annulée réutilise la sélection précédente · tests : T02 · sources : [Ttarfioul.class:199](../../../../../../.src/Gestion/option/Ttarfioul.class#L199)
-- [ ] TTARFIOUL-A03 — [anomalie, à confirmer] Couleurs lues dans `Settings` au lieu de
+- [ ] TTARFIOUL-A03 — [anomalie, à confirmer] (précisée phase 2, vague 5 : sous le harnais (configuration `-c`), `Settings["/Coul/Znss"]` est vide : « Type mismatch: wanted Integer, got Null » (`_new.24`)) Couleurs lues dans `Settings` au lieu de
   `Start.LocalSettings` (fichier de configuration `-c` ignoré) ; `affiche` sans `ORDER BY ligne` ·
   tests : T01 · sources : [Ttarfioul.class:23](../../../../../../.src/Gestion/option/Ttarfioul.class#L23), [Ttarfioul.class:215](../../../../../../.src/Gestion/option/Ttarfioul.class#L215)
+- [ ] TTARFIOUL-A04 — [anomalie] Borne de tranche 1000 L enregistrée 999.999 : `bsup` est en `decimal(6,3)` (`modfichier`), la valeur `Val(brn[1]) / $icoef` est tronquée au maximum de la colonne (phase 2, vague 5, 2026-11-13) · tests : T02 · sources : [Ttarfioul.class:315](../../../../../../.src/Gestion/option/Ttarfioul.class#L315), [modfichier.module:124](../../../../../../.src/Gestion/option/modfichier.module#L124)

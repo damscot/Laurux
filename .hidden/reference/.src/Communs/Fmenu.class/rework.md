@@ -124,7 +124,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   **sans** le contrôle de réplication appliqué par `Menu138`/`Menu147` · tests : T13, T16 · sources : [Fmenu.class:lblFacfm_MouseDown](../../../../../.src/Communs/Fmenu.class#L1545-L1550), [Fmenu.class:lblClm_MouseDown](../../../../../.src/Communs/Fmenu.class#L1552-L1557)
 - [ ] FMENU-A11 — [anomalie] `Menu331` (icône « stop » de la barre de menus) n'a aucun handler :
   clic sans effet (intention probable : quitter comme `ToolButton1`) · tests : T07 · sources : [Fmenu.class:ToolButton1_Click](../../../../../.src/Communs/Fmenu.class#L751-L757)
-- [ ] FMENU-A12 — [anomalie][code mort] Supprimer les 6 handlers inatteignables `Menu104_Click`,
+- [ ] FMENU-A12 — [anomalie][code mort] (précisée phase 2, vague 5 : `Menu104_Click` n'est pas inatteignable : Gestion › Statistiques (`Menu104`, menu parent) ouvre `EDfour` (impression des fournisseurs), comme `Menu108` (constat de rejeu, lot Impressions A)) Supprimer les 6 handlers inatteignables `Menu104_Click`,
   `Menu106_Click`, `Menu121_Click`, `Menu141_Click`, `Menu156_Click`, `Menu201_Click` (menus
   parents ou séparateurs) ; à coordonner avec CARCH-A02 (seul accès à `Carch`) · tests : T07-T11 ·
   sources : [Fmenu.class:Menu104_Click](../../../../../.src/Communs/Fmenu.class#L1139-L1143), [Fmenu.class:Menu106_Click](../../../../../.src/Communs/Fmenu.class#L1145-L1149), [Fmenu.class:Menu121_Click](../../../../../.src/Communs/Fmenu.class#L1217-L1221), [Fmenu.class:Menu141_Click](../../../../../.src/Communs/Fmenu.class#L1348-L1352), [Fmenu.class:Menu156_Click](../../../../../.src/Communs/Fmenu.class#L1415-L1419), [Fmenu.class:Menu201_Click](../../../../../.src/Communs/Fmenu.class#L1198-L1202)

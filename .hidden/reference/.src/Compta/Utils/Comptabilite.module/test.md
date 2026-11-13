@@ -7,8 +7,8 @@ Module sans fonction : il n'est testable qu'à travers le protocole de sélectio
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| COMPTABILITE-T01 | replay | Sélection d'écriture depuis `Saisecrit` | Saisie d'écritures, recherche d'écriture (F-touche / bouton), choix d'une ligne dans `TriEcritures` ; puis abandon | écriture chargée dans `Saisecrit` ; rien sur abandon | `tests/comptabilite_saisecrit/` | à faire |
-| COMPTABILITE-T02 | replay | Sélection d'écriture depuis `Tresor` | idem depuis l'écran Trésorerie | numéro, libellé et journal repris | `tests/comptabilite_tresor/` | à faire |
+| COMPTABILITE-T01 | replay | Sélection d'écriture depuis `Saisecrit` | Saisie d'écritures, recherche d'écriture (F-touche / bouton), choix d'une ligne dans `TriEcritures` ; puis abandon | écriture chargée dans `Saisecrit` ; rien sur abandon | `tests/comptabilite_saisecrit/` | à faire : passe par Saisecrit (écran complexe) |
+| COMPTABILITE-T02 | replay | Sélection d'écriture depuis `Tresor` | idem depuis l'écran Trésorerie | numéro, libellé et journal repris | `tests/comptabilite_tresor/` | à faire : atteignable depuis l'écran Trésorerie (`Tresor.ToggleButton6_Click` ouvre la liste `Choix1` ; `Choix1_Click` appelle `Ecritnv`/`Ecritv`, Tresor.class:1366-1368) ; correction du 2026-11-13 (l'affirmation « aucun appelant » de la vague 5 était fausse) ; à reprendre dans une vague suivante |
 
 ## Détail des tests
 
@@ -17,3 +17,7 @@ Module sans fonction : il n'est testable qu'à travers le protocole de sélectio
 - Ces scénarios recoupent ceux de `SAISECRIT` et `TRESOR` ; ils seront fusionnés lors de la
   phase 2 si les mêmes enregistrements suffisent.
 - `TresorFac`/`TriEcritures2` (apparemment morts) ne sont pas testés.
+- **Phase 2, vague 5** : aucun test implémentable. `Comptabilite.Bsel` n'est mis à `True` que par `TriEcritures.Ecrit_Click`,
+  ouvert par `Saisecrit.ecritnv/ecritv` (classe complexe) ou par les méthodes homonymes de `Tresor` (lignes 782-812),
+  appelées par `Tresor.Choix1_Click` (l. 1366-1368) depuis la liste ouverte par `ToggleButton6_Click` : T02 est donc
+  atteignable par l'écran Trésorerie (correction du 2026-11-13 : ce ne sont pas du code mort).

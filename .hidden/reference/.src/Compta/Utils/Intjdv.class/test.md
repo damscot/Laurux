@@ -8,7 +8,7 @@ réaliser **que si l'anomalie INTJDV-A01 (suppression) est refusée**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| INTJDV-T01 | gbtest | Saisie et traitement sous Xvfb | `New Intjdv`, journal `VE` de `Laurux01.sql`, fichier texte à positions fixes de 3 lignes dont l'en-tête société | table `centralisation` recréée vide ; aucune autre table modifiée (dump identique) ; réglages `/Rep_Jdv`, `/Jdv` | `tests/integration_inoperante/` | à faire (conditionnel) |
+| INTJDV-T01 | gbtest | Saisie et traitement sous Xvfb | `New Intjdv`, journal `VE` de `Laurux01.sql`, fichier texte à positions fixes de 3 lignes dont l'en-tête société | table `centralisation` recréée vide ; aucune autre table modifiée (dump identique) ; réglages `/Rep_Jdv`, `/Jdv` | `tests/integration_inoperante/` | à faire (conditionnel : seulement si INTJDV-A01, suppression, est refusée ; aucun point d'entrée) |
 
 ## Détail des tests
 

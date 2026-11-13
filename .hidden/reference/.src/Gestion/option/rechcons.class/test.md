@@ -10,12 +10,14 @@ modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RECHCONS-T01 | gbtest | Chargement par type | `New Rechcons("T")`, `"P"`, `"C"`, `"B"`, `"X"` (Xvfb) | `GridView1.Rows.Count` et contenu des cellules | `tests/chargement/` | à faire |
-| RECHCONS-T02 | gbtest | Filtres | `Textcode.Text = "P"`, puis `Texlib.Text = "pal"` en mode `"T"` et `"C"` | nombre de lignes de référence | `tests/filtres/` | à faire |
-| RECHCONS-T03 | gbtest | Sélection | `GridView1.Row = 1` ; `GridView1_Activate` | événement `trouver` reçu avec le code ; fenêtre fermée | `tests/selection/` | à faire |
-| RECHCONS-T04 | replay | Recherche depuis `Tconsigne` | voir TCONSIGNE-T05 | fiche affichée | `tests/depuis_tconsigne/` | à faire |
+| RECHCONS-T01 | gbtest | Chargement par type | `New Rechcons("T")`, `"P"`, `"C"`, `"B"`, `"X"` (Xvfb) | `GridView1.Rows.Count` et contenu des cellules | `tests/chargement/` | implémenté |
+| RECHCONS-T02 | gbtest | Filtres | `Textcode.Text = "P"`, puis `Texlib.Text = "pal"` en mode `"T"` et `"C"` | nombre de lignes de référence | `tests/filtres/` | implémenté |
+| RECHCONS-T03 | gbtest | Sélection | `GridView1.Row = 1` ; `GridView1_Activate` | événement `trouver` reçu avec le code ; fenêtre fermée | `tests/selection/` | implémenté |
+| RECHCONS-T04 | replay | Recherche depuis `Tconsigne` | voir TCONSIGNE-T05 | fiche affichée | `tests/depuis_tconsigne/` | à faire : couvert par TCONSIGNE-T05 (hors liste) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2)** : module `.src/Tests/Gestion/RechconsTest.test`, jeu `modfichier_shared/options_bois_pp` + 3 consignes insérées dans `_Setup`.
 
 - **Données** : jeu `option_boisson` (3 consignes de types différents + 1 de type inconnu).
 - **gbtest** : la classe est un `Form` ; exécution sous Xvfb ; la grille est lue par

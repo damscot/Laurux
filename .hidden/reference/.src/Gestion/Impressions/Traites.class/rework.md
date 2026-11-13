@@ -52,7 +52,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TRAITES-A01 — [anomalie] Purge par `DROP TABLE` + `Try CREATE TABLE` codé en dur : la table
+- [ ] TRAITES-A01 — [anomalie] (confirmée phase 2, vague 5 : table recréée sans `imp`, colonnes réordonnées, `acceptee`/`ecartee` en `tinyint(4)` au lieu de `int(1)` (T02)) Purge par `DROP TABLE` + `Try CREATE TABLE` codé en dur : la table
   recréée perd la colonne `imp` et change le type de `acceptee`/`ecartee` (écart `db_control.csv`,
   signalé par `DB_Sanity`) ; un `CREATE` en échec laisse la base sans `Fiches_Traites`
   (`EcrAuto` en erreur). Correction : `DELETE FROM Fiches_Traites` (aussi valable sous SQLite,

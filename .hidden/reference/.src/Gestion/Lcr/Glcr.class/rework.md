@@ -62,16 +62,16 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] GLCR-A01 — [anomalie] `Form_Open` lit `Cbase.Table("TabBanques")`, clé absente (CBASE-A01) :
+- [ ] GLCR-A01 — [anomalie] (confirmée phase 2, vague 5 : « attribuées » : `banque = NULL` (T03)) `Form_Open` lit `Cbase.Table("TabBanques")`, clé absente (CBASE-A01) :
   liste des banques toujours vide, filtre « attribuées » par banque inutilisable. Correction :
   `Fiches_Banques` (clé `Cbase` à ajouter ou nom en dur comme ailleurs dans le lot) · tests : T01,
   T03 · sources : [Glcr.class:40](../../../../../../.src/Gestion/Lcr/Glcr.class#L40)
-- [ ] GLCR-A02 — [anomalie] SQL `andand` (non attribuées, avec ou sans échéance) : erreur SQL au
+- [ ] GLCR-A02 — [anomalie] (confirmée phase 2, vague 5 : `andand` (T04)) SQL `andand` (non attribuées, avec ou sans échéance) : erreur SQL au
   lieu de la liste · tests : T04, T05 · sources : [Glcr.class:101](../../../../../../.src/Gestion/Lcr/Glcr.class#L101), [Glcr.class:121](../../../../../../.src/Gestion/Lcr/Glcr.class#L121),
   [Glcr.class:125](../../../../../../.src/Gestion/Lcr/Glcr.class#L125)
-- [ ] GLCR-A03 — [anomalie] `",1")` placé dans la chaîne SQL et `&1` non substitué : erreur SQL
+- [ ] GLCR-A03 — [anomalie] (confirmée phase 2, vague 5 : `&1`/`,1` restés dans le SQL avec dates → erreur (T05)) `",1")` placé dans la chaîne SQL et `&1` non substitué : erreur SQL
   pour les filtres avec échéance · tests : T05 · sources : [Glcr.class:111](../../../../../../.src/Gestion/Lcr/Glcr.class#L111), [Glcr.class:120](../../../../../../.src/Gestion/Lcr/Glcr.class#L120)
-- [ ] GLCR-A04 — [anomalie] Dates d'échéance concaténées sans guillemets ni paramètre
+- [ ] GLCR-A04 — [anomalie] (confirmée phase 2, vague 5 : `datech >= 2018-06-01` sans guillemets (T05)) Dates d'échéance concaténées sans guillemets ni paramètre
   (`datech >= 2026-10-25`) : filtre par échéance faux ; passer par `&N` · tests : T05 ·
   sources : [Glcr.class:113](../../../../../../.src/Gestion/Lcr/Glcr.class#L113), [Glcr.class:124](../../../../../../.src/Gestion/Lcr/Glcr.class#L124)
 - [ ] GLCR-A05 — [anomalie] Impression : arguments de `Level2A` décalés (banque sous « Code acpt »,
@@ -80,7 +80,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] GLCR-A06 — [anomalie] Impression : nombre et total des LCR calculés (`iLcr`, `mTotal`) mais
   jamais imprimés (`CLcr.Level5A` prévue et inutilisée) · tests : T06 · sources :
   [Glcr.class:Button9_Click](../../../../../../.src/Gestion/Lcr/Glcr.class#L221-L281), [CLcr.class:Level5A](../../../../../../.src/Gestion/Lcr/CLcr.class#L221-L235)
-- [ ] GLCR-A07 — [anomalie] Filtre `bordereau <> 1` partout : la colonne contient le numéro de
+- [ ] GLCR-A07 — [anomalie] (confirmée phase 2, vague 5 : la suppression efface la LCR écartée 4 rattachée au bordereau 2 (T07) ; `ColLcr.Item[9]` ne lève pas d'erreur (A08)) Filtre `bordereau <> 1` partout : la colonne contient le numéro de
   bordereau, seules les LCR du bordereau n° 1 sont masquées ; la suppression peut toucher des LCR
   rattachées à d'autres bordereaux (intention à confirmer : `bordereau = 0` ?) · tests : T01, T07 ·
   sources : [Glcr.class:93](../../../../../../.src/Gestion/Lcr/Glcr.class#L93), [Glcr.class:Button2_Click](../../../../../../.src/Gestion/Lcr/Glcr.class#L353-L372)

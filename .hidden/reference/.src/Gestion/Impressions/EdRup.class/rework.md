@@ -58,9 +58,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDRUP-A01 — [anomalie] `SELECT`/`UPdate RuptureC` avec `codec`, `intitulea`, `numcom` jamais
   affectés : la mise à jour de `qtecom` est sans effet (supprimer ou corriger change le SQL et
   peut changer `RuptureC`) · tests : T03 · sources : [EdRup.class:430](../../../../../../.src/Gestion/Impressions/EdRup.class#L430), [EdRup.class:432](../../../../../../.src/Gestion/Impressions/EdRup.class#L432)
-- [ ] EDRUP-A02 — [anomalie] `fourman` : le message « fournisseur inexistant » est dans le `Catch`,
+- [ ] EDRUP-A02 — [anomalie] (confirmée phase 2, vague 5 : fournisseur inconnu saisi : aucun message (T07)) `fourman` : le message « fournisseur inexistant » est dans le `Catch`,
   donc jamais affiché pour un code inconnu · tests : T07 · sources : [EdRup.class:fourman](../../../../../../.src/Gestion/Impressions/EdRup.class#L115-L127)
-- [ ] EDRUP-A03 — [anomalie] Section ventes : colonne `date` ambiguë (présente dans
+- [ ] EDRUP-A03 — [anomalie] (confirmée phase 2, vague 5 : « Column 'date' in WHERE is ambiguous » avec ventes en caisse (T05, code 125)) Section ventes : colonne `date` ambiguë (présente dans
   `Fiches_HisLigTickets` et `Fiches_HisEntTickets`) et `SELECT *` avec `GROUP BY` partiel : erreur
   SQL probable, sans `Catch` (curseur bloqué) · tests : T05 · sources : [EdRup.class:542](../../../../../../.src/Gestion/Impressions/EdRup.class#L542)
 - [ ] EDRUP-A04 — [anomalie] Titre des pages de ventes incohérent (« sur les N derniers jours » /
@@ -72,3 +72,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDRUP-A06 — [anomalie] Tables de travail globales `Rupture`/`RuptureC` : deux impressions
   simultanées s'écrasent (même défaut que CRUPT-A05 ; correction = changement de schéma) · tests :
   aucun · sources : [EdRup.class:335](../../../../../../.src/Gestion/Impressions/EdRup.class#L335)
+- [ ] EDRUP-A07 — [anomalie, à confirmer] Plage de fournisseurs sans commande : `Rupture` est remplie par les commandes clients et un PDF sans ligne est produit sans message (mécanisme dans `Crupt.Rupture` non tracé) (phase 2, vague 5, 2026-11-13) · tests : T06 · sources : [EdRup.class:335](../../../../../../.src/Gestion/Impressions/EdRup.class#L335), [Crupt.module:Rupture](../../../../../../.src/Utils/Crupt.module#L6)
+- [ ] EDRUP-A08 — [anomalie] `Format$(rarts!art_paht, nbdec)` sans contrôle : un article sans `art_paht` → « Type mismatch: wanted Float, got Null », erreur fatale (phase 2, vague 5, 2026-11-13) · tests : jeu de T01 (complété pour l'éviter) · sources : [EdRup.class:414](../../../../../../.src/Gestion/Impressions/EdRup.class#L414)

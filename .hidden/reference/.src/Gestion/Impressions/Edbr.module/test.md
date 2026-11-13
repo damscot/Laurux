@@ -11,14 +11,18 @@ modifié**, horloge figée (noms de fichiers GED horodatés `LDate(Now).FT`).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDBR-T01 | replay | BR simple via `Edbl` | BR de 2 lignes, fournisseur `fo_copie = 0` | texte du PDF ; copie `~/Impressions/BonReception-401001.pdf` ; dump inchangé | `tests/br_simple/` | à faire |
-| EDBR-T02 | replay | Archivage GED | même BR, `fo_copie = 1`, `tag_def` renseigné | `Docs_Ged`, `Docs_Tag`, `Fiches_Tag` (dump) ; fichier GED créé | `tests/archivage_ged/` | à faire |
-| EDBR-T03 | replay | Validation multiple via `ValidBR` | 2 BR du même fournisseur validés ensemble ; TVA 20 % et 5,5 % | PDF : 2 BR + pied TVA (`Totalisation`) ; GED au numéro du dernier BR (A01 figée) | `tests/validation_multiple/` | à faire |
-| EDBR-T04 | replay | Saut de page | BR de 50 lignes | 2 pages, date de l'en-tête de page 2 = `dater` (A02 figée) | `tests/saut_page/` | à faire |
-| EDBR-T05 | replay | Auto-entrepreneur | `/Soc01/AutoEnt` = 1, via `ValidBR` | pas de ligne de TVA, totaux présents | `tests/auto_entrepreneur/` | à faire |
-| EDBR-T06 | replay | Prix sans décimale | `/Soc01/Prxdec` = 1, via `ValidBR` | totaux et code TVA en entiers | `tests/prix_sans_decimale/` | à faire |
-| EDBR-T07 | replay | BR sans ligne | numéro de BR d'un autre fournisseur (via `ValidBR` multi-fournisseur ou donnée forgée) | message « Aucun mouvement », page vide dans le PDF (A04 figée) | `tests/br_vide/` | à faire |
+| EDBR-T01 | replay | BR simple via `Edbl` | BR de 2 lignes, fournisseur `fo_copie = 0` | texte du PDF ; copie `~/Impressions/BonReception-401001.pdf` ; dump inchangé | `tests/br_simple/` | à faire : bloqué par l erreur fatale Edbr.Ed.190 (Val(paht) Null, voir Edbl edbl_numero_entree) |
+| EDBR-T02 | replay | Archivage GED | même BR, `fo_copie = 1`, `tag_def` renseigné | `Docs_Ged`, `Docs_Tag`, `Fiches_Tag` (dump) ; fichier GED créé | `tests/archivage_ged/` | à faire : bloqué par l erreur fatale Edbr.Ed.190 (Val(paht) Null, voir Edbl edbl_numero_entree) |
+| EDBR-T03 | replay | Validation multiple via `ValidBR` | 2 BR du même fournisseur validés ensemble ; TVA 20 % et 5,5 % | PDF : 2 BR + pied TVA (`Totalisation`) ; GED au numéro du dernier BR (A01 figée) | `tests/validation_multiple/` | à faire : bloqué par l erreur fatale Edbr.Ed.190 (Val(paht) Null, voir Edbl edbl_numero_entree) ; passe aussi par ValidBR |
+| EDBR-T04 | replay | Saut de page | BR de 50 lignes | 2 pages, date de l'en-tête de page 2 = `dater` (A02 figée) | `tests/saut_page/` | à faire : bloqué par l erreur fatale Edbr.Ed.190 (Val(paht) Null, voir Edbl edbl_numero_entree) |
+| EDBR-T05 | replay | Auto-entrepreneur | `/Soc01/AutoEnt` = 1, via `ValidBR` | pas de ligne de TVA, totaux présents | `tests/auto_entrepreneur/` | à faire : bloqué par l erreur fatale Edbr.Ed.190 (Val(paht) Null, voir Edbl edbl_numero_entree) ; passe aussi par ValidBR |
+| EDBR-T06 | replay | Prix sans décimale | `/Soc01/Prxdec` = 1, via `ValidBR` | totaux et code TVA en entiers | `tests/prix_sans_decimale/` | à faire : bloqué par l erreur fatale Edbr.Ed.190 (Val(paht) Null, voir Edbl edbl_numero_entree) ; passe aussi par ValidBR |
+| EDBR-T07 | replay | BR sans ligne | numéro de BR d'un autre fournisseur (via `ValidBR` multi-fournisseur ou donnée forgée) | message « Aucun mouvement », page vide dans le PDF (A04 figée) | `tests/br_vide/` | implémenté (scénario Gestion/edbr_br_vide via Edbl, jeu edbr_br_vide : R003 sans ligne) |
 
+- **Constat (vague 5)** : toute édition d'un BR (`Edbr.Ed`) s'arrête ligne 190 dans le bac de test : `paht` est
+  formaté « 10,00 » puis suivi d'une espace (ligne 189) et `Val(paht)` renvoie Null → « Type mismatch: wanted Number,
+  got Null » (erreur fatale). Les scénarios `edbl_numero_entree`, `edbl_choix_liste`, `edbl_numero_partage` le figent
+  (code 125, xfail). Jeu disponible : `Gestion/edbl_shared/edbl_receptions.sql`.
 ## Détail des tests
 
 - **Jeu `editions_gestion`** (partagé par les éditions de `Gestion/Impressions` : `Edbr`, `Edbl`,

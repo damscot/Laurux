@@ -1,0 +1,18 @@
+{
+ "id": "EDBR-T07",
+ "objet": "BR sans ligne",
+ "classe": "Edbr",
+ "description": "Jeu edbr_br_vide (R003/401001 sans ligne) : Gestion > Impression des BR (Edbl, Menu90), liste ToggleButton1, clic R003/401001, Imprimer : Edbr.Ed, message Aucun mouvement pour cette demande (Entree), puis PDF d'une page vide visualise et copie ~/Impressions (A04 figee).",
+ "dataset": "edbr_br_vide",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

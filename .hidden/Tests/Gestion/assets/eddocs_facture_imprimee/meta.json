@@ -1,0 +1,20 @@
+{
+ "id": "EDDOCS-T07",
+ "objet": "Facture imprimée",
+ "classe": "EdDocs",
+ "description": "RadioButton5 (factures), RadioButton9 (tri par date : dtefac), Imprimer : F00001 (imp = 1) devrait être affichée avec FA0001 et le 08/06/2018 ; obtenu : F00001 et 07.06.2018 (xfail).",
+ "dataset": "eddocs_shared/documents",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "xfail": "imp est un tinyint(1) lu comme Booléen : rResult!imp = 1 compare True (-1) à 1, toujours faux ; la facture imprimée garde son numéro et sa date de BL (EdDocs.Button1_Click:160)",
+ "xfail_attendu": "ligne F00001 affichée avec le numéro FA0001 et la date 08.06.2018"
+}

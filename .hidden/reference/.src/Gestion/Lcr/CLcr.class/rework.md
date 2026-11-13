@@ -54,7 +54,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CLCR-A01 — [anomalie] `Level2`/`Level2A` formatent le montant par `Val(smontant)` sans
+- [ ] CLCR-A01 — [anomalie] (confirmée phase 2, vague 5 : en locale fr, « 12.50 » ou un montant vide → « Type mismatch: wanted Float, got Null » (`Format$(Val(smontant))`), figée par T05 ; motif transverse « `Val()` sur un décimal lu en base ou formaté en locale fr renvoie `Null` → Type mismatch fatal » : voir aussi [Edcom](../../Impressions/Edcom.class/rework.md), [Materiel](../../Tables/Materiel.class/rework.md), [Edbr](../../Impressions/Edbr.module/rework.md), [MajFbtarif2](../../Stock/Tarifs/MajFbtarif2.class/rework.md)) `Level2`/`Level2A` formatent le montant par `Val(smontant)` sans
   `Utils.cpoint` : en locale française, un montant stocké avec un point (`"12.50"`) donne `Null`
   puis une erreur ou un montant vide ; `Level4B`/`Level5A` utilisent `cpoint`. Aligner sur
   `Val(Utils.cpoint(…))` (à confirmer selon le format réellement stocké dans `Fiches_Lcr.montant`) ·

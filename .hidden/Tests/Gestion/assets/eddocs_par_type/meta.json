@@ -1,0 +1,18 @@
+{
+ "id": "EDDOCS-T02",
+ "objet": "Par type",
+ "classe": "EdDocs",
+ "description": "RadioButton2 (« Commandes », TypeD C, titre devis : A01 figée), Imprimer ; RadioButton4 (D), Imprimer ; RadioButton3 (B), Imprimer ; RadioButton5 (F, tri numfac), Imprimer.",
+ "dataset": "eddocs_shared/documents",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

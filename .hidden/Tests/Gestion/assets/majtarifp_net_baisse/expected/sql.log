@@ -1,0 +1,31 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Art WHERE art_four = '401001'
+LOCK TABLES Fiches_Art WRITE, Fiches_Tvaav Write, Fiches_EtiProd Write, Fiches_EtiGond Write
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '1'
+UPdate  Fiches_Art  SET  art_pvht = 22.66, art_pvttc = 23.14, art_prvt = NULL, art_coef = 2.266, art_ddatefbt = '20180615' WHERE art_code = '001'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '2'
+SELECT * FROM Fiches_EtiProd where code = '002'
+INSERT INTO Fiches_EtiProd(code,nombre) VALUES ('002', 3)
+SELECT * FROM Fiches_EtiGond where code = '002'
+INSERT INTO Fiches_EtiGond(code,nombre) VALUES ('002', 1)
+UPdate  Fiches_Art  SET  art_pvht = 20.6, art_pvttc = 22.04, art_prvt = NULL, art_coef = 2.06, art_ddatefbt = '20180615' WHERE art_code = '002'
+UNLOCK TABLES

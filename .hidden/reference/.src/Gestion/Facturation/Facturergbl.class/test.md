@@ -11,13 +11,13 @@ tables de travail, journal de rejeu.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FACTURERGBL-T01 | replay | Sélection | date fin de mois, `Traiter` | `Facturefm`/`Bl` ; seuls les clients à plusieurs BL listés | `tests/selection/` | à faire |
-| FACTURERGBL-T02 | replay | Regroupement d'un client sans fusion | `RadioButton2`, clic client, `Regrouper`, Oui | nouveau BL `dnbon + 1`, lignes `A`/`C` recopiées avec commentaires « Regroupement BL n° », BL sources supprimés, `dnbon` mis à jour | `tests/regroupement_client/` | à faire |
-| FACTURERGBL-T03 | replay | Regroupement de tous les clients | `RadioButton1`, `Regrouper` | un BL par client ; numérotation à partir de `dnbon + 2` (A04 figée) | `tests/regroupement_tous/` | à faire |
-| FACTURERGBL-T04 | replay | Fusion des articles | `Fusion_art` coché, deux lignes identiques | figer l'erreur « champ inconnu `mrgart_ligbl` » (A02) | `tests/fusion_articles/` | à faire |
-| FACTURERGBL-T05 | replay | Retraits | Suppr client, Suppr BL | tables de travail ; colonne Ville modifiée (A05 figée) | `tests/retraits/` | à faire |
-| FACTURERGBL-T06 | replay | Aucun client sélectionné | `RadioButton2` sans clic, `Regrouper` | aucun BL créé ; `dnbon` incrémenté (A04 figée) | `tests/sans_selection/` | à faire |
-| FACTURERGBL-T07 | replay | `Ent_Bl` depuis la caisse | moulinage d'un ticket réglant 2 BL (scénario de `Moulinage`) | BL regroupé avec la ligne « Règlement en Caisse par le Ticket n° … » ; entête (`htbl`, `ech`, marges) figée (A05) | `tests/ent_bl_caisse/` | à faire |
+| FACTURERGBL-T01 | replay | Sélection | date fin de mois, `Traiter` | `Facturefm`/`Bl` ; seuls les clients à plusieurs BL listés | `tests/selection/` | implémenté (tables de travail Facturefm/Bl comparées par le dump) |
+| FACTURERGBL-T02 | replay | Regroupement d'un client sans fusion | `RadioButton2`, clic client, `Regrouper`, Oui | nouveau BL `dnbon + 1`, lignes `A`/`C` recopiées avec commentaires « Regroupement BL n° », BL sources supprimés, `dnbon` mis à jour | `tests/regroupement_client/` | implémenté |
+| FACTURERGBL-T03 | replay | Regroupement de tous les clients | `RadioButton1`, `Regrouper` | un BL par client ; numérotation à partir de `dnbon + 2` (A04 figée) | `tests/regroupement_tous/` | implémenté (numérotation à partir de 000002, A04) |
+| FACTURERGBL-T04 | replay | Fusion des articles | `Fusion_art` coché, deux lignes identiques | figer l'erreur « champ inconnu `mrgart_ligbl` » (A02) | `tests/fusion_articles/` | implémenté (fusion jamais réalisée : recherche « rem_ligbl = NULL » toujours fausse quand la remise est NULL ; lignes recopiées séparément) |
+| FACTURERGBL-T05 | replay | Retraits | Suppr client, Suppr BL | tables de travail ; colonne Ville modifiée (A05 figée) | `tests/retraits/` | à faire : touche Suppr sur les ColumnView Colbl/Coldetail (Colbl_Keypress, Coldetail_Keypress) non rejouée |
+| FACTURERGBL-T06 | replay | Aucun client sélectionné | `RadioButton2` sans clic, `Regrouper` | aucun BL créé ; `dnbon` incrémenté (A04 figée) | `tests/sans_selection/` | implémenté |
+| FACTURERGBL-T07 | replay | `Ent_Bl` depuis la caisse | moulinage d'un ticket réglant 2 BL (scénario de `Moulinage`) | BL regroupé avec la ligne « Règlement en Caisse par le Ticket n° … » ; entête (`htbl`, `ech`, marges) figée (A05) | `tests/ent_bl_caisse/` | à faire : passe par le moulinage de caisse (scénario Moulinage, lot Caisse) |
 
 ## Détail des tests
 
@@ -29,3 +29,8 @@ tables de travail, journal de rejeu.
 - La chaîne d'édition (`Button14_Click`) étant inatteignable depuis l'interface, elle n'est pas
   testée ; si elle était réactivée (A01), ses tests seraient à écrire.
 - `lpc` doit être présent (ou simulé) sur le poste de test : `_New` l'exécute.
+
+- **Assets (phase 2)** : jeu partagé `Gestion/facturefm_shared/bl_juin` (lecture seule) ; jeu
+  `.hidden/Tests/Gestion/assets/facturergbl_fusion_articles/facturergbl_fusion.sql` (T04) ; scénarios
+  `facturergbl_selection`, `facturergbl_regroupement_client`, `facturergbl_regroupement_tous`,
+  `facturergbl_fusion_articles`, `facturergbl_sans_selection`.

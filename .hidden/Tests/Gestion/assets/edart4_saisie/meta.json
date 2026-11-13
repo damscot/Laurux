@@ -1,0 +1,16 @@
+{
+ "id": "EDART4-T07",
+ "objet": "Saisie clavier annulée",
+ "classe": "Edart4",
+ "description": "Frappe de 105 dans Art2 puis Entrée : la frappe est annulée par saisie_keypress (Stop Event, A01 figée), Art2 reste ZZZZZ ; type 02 par la liste ; Imprimer : la requête porte sur art_code BETWEEN '00000' AND 'ZZZZZ' (sql.log ordonné).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [],
+ "compare_sql_log": "ordered"
+}

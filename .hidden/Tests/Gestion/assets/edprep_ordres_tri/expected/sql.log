@@ -1,0 +1,91 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Bl left join Fiches_Cli on cli_code = cdclibl where type = 'C' order by datebl, numbl
+SELECT * FROM Fiches_AdrlivC where code = 411002
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00002'
+SELECT * FROM Fiches_AdrlivC where code = 411001
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00001'
+SELECT * FROM Fiches_AdrlivC where code = 411003
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00003'
+SELECT * FROM Fiches_Bl left join Fiches_Cli on cli_code = cdclibl where type = 'C' order by datebl, numbl
+SELECT * FROM Fiches_AdrlivC where code = 411002
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00002'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00002' or num_ligbl = 'C00002' and code_ligbl = 'YY'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401001'
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT * FROM Fiches_AdrlivC where code = 411001
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00001'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00001' or num_ligbl = 'C00001' and code_ligbl = 'YY'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401001'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401002'
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT * FROM Fiches_AdrlivC where code = 411003
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00003'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00003' or num_ligbl = 'C00003' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Bl left join Fiches_Cli on cli_code = cdclibl where type = 'C' order by cdclibl, nmclibl, type, datebl, numbl
+SELECT * FROM Fiches_AdrlivC where code = 411001
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00001'
+SELECT * FROM Fiches_AdrlivC where code = 411002
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00002'
+SELECT * FROM Fiches_AdrlivC where code = 411003
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00003'
+SELECT * FROM Fiches_Bl left join Fiches_Cli on cli_code = cdclibl where type = 'C' order by cdclibl, nmclibl, type, datebl, numbl
+SELECT * FROM Fiches_AdrlivC where code = 411001
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00001'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00001' or num_ligbl = 'C00001' and code_ligbl = 'YY'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401001'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401002'
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT * FROM Fiches_AdrlivC where code = 411002
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00002'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00002' or num_ligbl = 'C00002' and code_ligbl = 'YY'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401001'
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT * FROM Fiches_AdrlivC where code = 411003
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00003'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00003' or num_ligbl = 'C00003' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Bl left join Fiches_Cli on cli_code = cdclibl where type = 'C' order by livraison, cdclibl, type, datebl, numbl
+SELECT * FROM Fiches_AdrlivC where code = 411001
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00001'
+SELECT * FROM Fiches_AdrlivC where code = 411003
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00003'
+SELECT * FROM Fiches_AdrlivC where code = 411002
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00002'
+SELECT * FROM Fiches_Bl left join Fiches_Cli on cli_code = cdclibl where type = 'C' order by livraison, cdclibl, type, datebl, numbl
+SELECT * FROM Fiches_AdrlivC where code = 411001
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00001'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00001' or num_ligbl = 'C00001' and code_ligbl = 'YY'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401001'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401002'
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT * FROM Fiches_AdrlivC where code = 411003
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00003'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00003' or num_ligbl = 'C00003' and code_ligbl = 'YY'
+SELECT * FROM Fiches_AdrlivC where code = 411002
+SELECT * FROM Fiches_AdrlivBL where numbl = 'C00002'
+SELECT * FROM Fiches_Ligbl left join Fiches_Art on art_code = code_ligbl where num_ligbl = 'C00002' or num_ligbl = 'C00002' and code_ligbl = 'YY'
+SELECT fo_nom FROM Fiches_Four where fo_code = '401001'
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL
+SELECT fo_nom FROM Fiches_Four where fo_code = NULL

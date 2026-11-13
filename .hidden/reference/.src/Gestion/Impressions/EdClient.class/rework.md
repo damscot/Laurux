@@ -55,7 +55,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] EDCLIENT-A01 — [anomalie] `req = " AND cli_reg = &7"` (au lieu de `&=`) : le choix d'un mode
   de règlement annule les filtres de codes, statuts et types · tests : T03 · sources : [EdClient.class:387](../../../../../../.src/Gestion/Impressions/EdClient.class#L387)
-- [ ] EDCLIENT-A02 — [anomalie] Tous les filtres vides → `SELECT … WHERE  ORDER BY …` (erreur SQL
+- [ ] EDCLIENT-A02 — [anomalie] (confirmée phase 2, vague 5 : erreur SQL (T04, code 125)) Tous les filtres vides → `SELECT … WHERE  ORDER BY …` (erreur SQL
   affichée par `DB_Connection`, aucun PDF) ; correction : `WHERE 1 = 1` ou absence de `WHERE` ·
   tests : T04 · sources : [EdClient.class:388](../../../../../../.src/Gestion/Impressions/EdClient.class#L388), [EdClient.class:389](../../../../../../.src/Gestion/Impressions/EdClient.class#L389)
 - [ ] EDCLIENT-A03 — [anomalie] Saut de page : le titre des pages suivantes omet le mode de

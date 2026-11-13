@@ -1,0 +1,24 @@
+{
+ "id": "EDART1-T05",
+ "objet": "Plages article et fournisseur restreintes",
+ "classe": "EdArt1",
+ "description": "Art 110 (Entrée), Art2 130 (Entrée), Four 401002, Four2 401002 (Entrée), Imprimer : seuls les articles 110 à 130 du fournisseur 401002 ; SQL avec les 6 paramètres. Plage famille non saisie (textfamille) : voir EDART1-T08.",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -58,7 +58,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TTOURNE-A01 — [anomalie] `form_Close` appelle `bar1_valide` sans argument (signature à
+- [ ] TTOURNE-A01 — [anomalie] (confirmée phase 2, vague 5 : « Not enough arguments » en répondant Oui à la fermeture (T08, code 125)) `form_Close` appelle `bar1_valide` sans argument (signature à
   deux `Boolean`) : « Not enough arguments » quand l'utilisateur répond « Oui » à
   l'enregistrement avant fermeture (vérifié avec `gbs3`) ; correction :
   `bar1_valide($bs.estcreer, $bs.estmodif)` · tests : T08 · sources : [Ttourne.class:192](../../../../../../.src/Gestion/option/Ttourne.class#L192)
@@ -66,7 +66,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   avec « Non » sans `Rollback` : la transaction reste ouverte sur la connexion partagée (même
   défaut que MREGLEMENT-A01) · tests : T07 · sources : [Ttourne.class:78](../../../../../../.src/Gestion/option/Ttourne.class#L78), [Ttourne.class:97](../../../../../../.src/Gestion/option/Ttourne.class#L97),
   [Ttourne.class:form_Close](../../../../../../.src/Gestion/option/Ttourne.class#L189-L196)
-- [ ] TTOURNE-A03 — [anomalie] Table vide à l'ouverture : `$grv` n'est pas créé, et la première
+- [ ] TTOURNE-A03 — [anomalie] (confirmée phase 2, vague 5 : première tournée sur table vide créée puis « Null object » dans `affichedonne.203` (T09, code 125)) Table vide à l'ouverture : `$grv` n'est pas créé, et la première
   validation appelle `affichedonne` → `$grv.code` sur `Null` (erreur « Null object ») · tests : T09 ·
   sources : [Ttourne.class:15](../../../../../../.src/Gestion/option/Ttourne.class#L15), [Ttourne.class:203](../../../../../../.src/Gestion/option/Ttourne.class#L203)
 - [ ] TTOURNE-A04 — [anomalie] Bouton Suppression affiché (`"111111111"`) mais `bar1_suprimer`

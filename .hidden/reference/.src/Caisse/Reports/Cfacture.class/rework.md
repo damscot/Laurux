@@ -55,9 +55,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (`Level4`). Effet de bord : lecture qui crée l'auto-instance du formulaire `Caisse`, aussi depuis
   `Moulinage.Livre_caisse`. Correction proposée : rapport A4 déduit de `GetFormat()` dans `_new`
   (à valider : change le rendu des tickets A4) · tests : T02, T04, T06, T08 · sources : [Cfacture.class:121](../../../../../../.src/Caisse/Reports/Cfacture.class#L121), [Cfacture.class:138](../../../../../../.src/Caisse/Reports/Cfacture.class#L138), [Cfacture.class:233](../../../../../../.src/Caisse/Reports/Cfacture.class#L233), [Cfacture.class:275](../../../../../../.src/Caisse/Reports/Cfacture.class#L275), [Caisse.class:140](../../../../../../.src/Caisse/Caisse.class#L140), [Cmenu.class:253](../../../../../../.src/Caisse/Cmenu.class#L253)
-- [ ] CFACTURE-A02 — [anomalie] `Error.Raise("Unsupported Facture page format: " & form)` :
+- [ ] CFACTURE-A02 — [anomalie] (confirmée phase 2, vague 5 : `New Cfacture("P", "mm", "dymoc")` → « Type mismatch: wanted String, got Class » (T01)) `Error.Raise("Unsupported Facture page format: " & form)` :
   `form` non déclaré (résolu en la classe `Form`), le message prévu n'est pas produit pour un format
   non géré (`dymoc`, `dymog`) ; branche aujourd'hui inatteignable par les appelants · tests : T01 · sources : [Cfacture.class:44](../../../../../../.src/Caisse/Reports/Cfacture.class#L44)
-- [ ] CFACTURE-A03 — [anomalie] `Logo2` : un logo absent ou d'un type autre que JPG/PNG fait
+- [ ] CFACTURE-A03 — [anomalie] (confirmée phase 2, vague 5 : logo activé, fichier absent → « File or directory does not exist » dans `Logo2` (T07)) `Logo2` : un logo absent ou d'un type autre que JPG/PNG fait
   lever `PdfWriter.Image`, non intercepté (`Caisse.Defaut_Tk` sans `Catch`) : l'impression du
   ticket s'arrête ; les coordonnées du logo ne suivent pas `$xratio`/`$yratio` · tests : T07 · sources : [Cfacture.class:Logo2](../../../../../../.src/Caisse/Reports/Cfacture.class#L286-L307), [PdfWriter.class:1355](../../../../../../.src/Reports/PdfWriter.class#L1355), [PdfWriter.class:1364](../../../../../../.src/Reports/PdfWriter.class#L1364)
+- [ ] CFACTURE-A04 — [anomalie, à confirmer] Une page ne contenant que la ligne `Entete` ne contient aucun texte extractible (`pdftotext` vide), quel que soit le format ; piste : `SetFont` en style normal appelé en premier, police non écrite dans la page (à analyser) (phase 2, vague 5, 2026-11-13) · tests : T01 · sources : [Cfacture.class:Entete](../../../../../../.src/Caisse/Reports/Cfacture.class#L60-L70)

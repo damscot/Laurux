@@ -845,7 +845,9 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   ''   {"/section/clé": valeur} appliquées par-dessus, « {ftp} » y étant remplacé par l'URL du faux serveur FTP
   ''   lancé si meta.json porte « ftp » : "ok" | "refus" | "absent", voir TestKit.FtpFactice ; « {home} » et
   ''   « {out} » y sont remplacés par le HOME de test du fils et le répertoire de sortie ; fichiers reçus dans
-  ''   ftp/, commandes dans ftp.trace), copie les fichiers d'entrée du
+  ''   ftp/, commandes dans ftp.trace ; « {smtp} » et « {smtp_port} » : hôte et port du faux serveur SMTP lancé si
+  ''   meta.json porte « smtp » : "ok" | "refus" | "absent", voir TestKit.SmtpFactice ; messages reçus dans smtp/,
+  ''   résumé dans smtp.trace), copie les fichiers d'entrée du
   ''   scénario dans /tmp/laurux-test/ (même chemin sur le poste et dans le conteneur) et ceux de « entrees »
   ''   ({"fichier": "~/chemin"} : HOME de test, {out}/, /tmp/laurux-test/) à leur destination, place les enveloppes
   ''   mysql/mysqldump de Framework/bin en tête du PATH, dirige Desktop.Open vers laurux-ouvrir
@@ -872,7 +874,7 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   Dim vArg As Variant
   Dim iTimeout, iCode, iAttendu, iPos, iChamp As Integer
   Dim hConf As Settings
-  Dim sSrc, sDst, sFtp As String
+  Dim sSrc, sDst, sFtp, sSmtp As String
 
   cMeta = JSON.Decode(File.Load(sDir &/ "meta.json"))
   sOut = Application.Env["LAURUX_TEST_OUT"]
@@ -925,11 +927,16 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
     Try Shell "rm -rf " & Shell$(sOut &/ "ftp") & " " & Shell$(sOut &/ "ftp.trace") Wait
     sFtp = TestKit.FtpFactice(CStr(cMeta["ftp"]), sOut &/ "ftp")
   Endif
+  If cMeta.Exist("smtp") And If cMeta["smtp"] Then ' faux serveur SMTP (SmtpClient de gb.net.smtp)
+    Try Shell "rm -rf " & Shell$(sOut &/ "smtp") & " " & Shell$(sOut &/ "smtp.trace") Wait
+    sSmtp = TestKit.SmtpFactice(CStr(cMeta["smtp"]), sOut &/ "smtp")
+  Endif
   If cMeta.Exist("conf") And If cMeta["conf"] Then ' surcharge propre au scénario : {"/section/clé": valeur}
     hConf = New Settings(sConf)
     For Each vArg In cMeta["conf"]
       If TypeOf(vArg) = gb.String Then ' marqueurs : {ftp} URL du faux serveur, {home} HOME de test, {out} sorties
         If sFtp Then vArg = Replace(vArg, "{ftp}", sFtp)
+        If sSmtp Then vArg = Replace(Replace(vArg, "{smtp_port}", sSmtp), "{smtp}", "127.0.0.1")
         vArg = Replace(Replace(vArg, "{home}", sHome), "{out}", sOut)
       Endif
       hConf[cMeta["conf"].Key] = vArg
@@ -970,6 +977,7 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
       If Not Exist(sSrc) Then
         Print "Rejeu " & sSpec & " : entrée introuvable « " & sSrc & " »"
         TestKit.FinFtp()
+        TestKit.FinSmtp()
         Fin_Home(sHome) ' suppression gardée du HOME de test créé plus haut (voir Fin_Home)
         Return False
       Endif
@@ -1015,6 +1023,7 @@ Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As 
   iCode = Lance_Surveille(sCmd, sOut, "rejeu", "-E '\\.[A-Za-z_][A-Za-z0-9_:]*\\.[0-9]+: '", 125, "erreur fatale : boîte d'erreur Gambas, rejeu arrêté")
   If iCode = 130 Then Test_Interrompu = True ' Ctrl+C pendant le rejeu (trap du script)
   TestKit.FinFtp()
+  TestKit.FinSmtp()
   File.Save(sOut &/ "exit_code", CStr(iCode) & "\n")
   ' 4. sorties : requêtes Exec_SQL du journal rejoué, dump brut de la base
   sJournal = sOut &/ "replay.log.out"

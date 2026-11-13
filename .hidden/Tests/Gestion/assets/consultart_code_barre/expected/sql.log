@@ -1,0 +1,30 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+select art_code, art_design, art_four, art_cequ, art_cbarre, art_cfour, art_fam, art_qte, art_stocke, art_qte, art_suspendu from Fiches_Art where art_code like  "%" and art_stocke = 0 or art_code like  "%" and art_stocke = 1 order by lpad(art_code,15,' ')
+SELECT * FROM Fiches_Art where art_code = '003'
+SELECT * FROM Fiches_Ligcom WHERE code = '003'
+SELECT * FROM Fiches_Fam WHERE code_fam = '03'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '3'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '445730'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '3'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_CdBarre where codeb = '3000000000004'
+SELECT art_code FROM Fiches_Art where art_code = '3000000000004'
+SELECT * FROM Fiches_Art where art_code = NULL

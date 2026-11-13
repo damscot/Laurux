@@ -70,7 +70,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `$rescli` lu sans test `Available` · tests : T08 · sources : [Edart4.class:96](../../../../../../.src/Gestion/Impressions/Edart4.class#L96), [Edart4.class:98](../../../../../../.src/Gestion/Impressions/Edart4.class#L98)
 - [ ] EDART4-A04 — [anomalie] En-tête société lu sans filtre `cd_sc = Start.Societe` (1ʳᵉ ligne de
   `Fiches_Societes`) · tests : T01 · sources : [Edart4.class:365](../../../../../../.src/Gestion/Impressions/Edart4.class#L365)
-- [ ] EDART4-A05 — [anomalie] `Image.Load` sans `Try` (photo d'article, logo) : une image absente
+- [ ] EDART4-A05 — [anomalie] (précisée phase 2, vague 5 : « Logo » coché sans `/Soc01/Logo` configuré : `Image.Load` d'un chemin vide (`entete:394`), erreur fatale (T04 : le scénario fournit un logo)) `Image.Load` sans `Try` (photo d'article, logo) : une image absente
   interrompt l'édition ; chemin de photo sans préfixe `/Soc<XX>/Photart`, contrairement à
   `EdArt1`/`EdArt3` (à confirmer) · tests : T04 · sources : [Edart4.class:306](../../../../../../.src/Gestion/Impressions/Edart4.class#L306), [Edart4.class:394](../../../../../../.src/Gestion/Impressions/Edart4.class#L394)
 - [ ] EDART4-A06 — [anomalie] Une fenêtre `TarArt` cachée créée par article et jamais détruite

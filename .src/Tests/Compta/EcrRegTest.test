@@ -1,0 +1,139 @@
+' Gambas test file
+
+''Tests de EcrReg (.hidden/reference/.src/Compta/Utils/EcrReg.class/test.md, ECRREG-T01 à T06).
+''Instanciation directe New EcrReg(mode, journal, VarEcr) sur Laurux01 (modes 05/10 avec cptint 580002/580001,
+''mode 20 sans cptint, journal 50 de banque 512000) ; lecture des lignes de Vecr, aucune écriture en base.
+''Valeurs attendues : assets/EcrRegTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Ajout", "L_ajou : règlement client 100 €, mode 05 (cptint 580002) puis mode 20 (banque 512000) : lignes de Vecr")
+  TestKit.Desc("T02Modification", "L_modif : écriture client 411001 + banque 512000, nouveau montant 150 : montants recopiés ou inversés")
+  TestKit.Desc("T03Validation", "L_valide : 3 règlements d'un bordereau, mode 05 : comptes remplacés par cptint, ligne de banque du total")
+  TestKit.Desc("T04Suppression", "L_sup : écriture client + banque : toutes les lignes en L_sup, racine ajoutée")
+  TestKit.Desc("T05Caisse", "L_caisse : 2 encaissements, mode 10 (cptint 580001), journal 53 : lignes Treso, ligne du total arrondi")
+  TestKit.Desc("T06ReglementInconnu", "Mode de règlement ZZ inexistant : erreur levée, message figé")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EcrRegTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Ligne(sCompte As String, fDebit As Float, fCredit As Float, iEtat As Integer) As VarEcr
+
+  Dim hL As New VarEcr
+
+  hL.compte = sCompte
+  hL.intitul = "Intitule " & sCompte
+  hL.libelle = "Libelle " & sCompte
+  hL.numdoc = "DOC1"
+  hL.numlot = "LOT1"
+  hL.numero = "7"
+  hL.journal = "50"
+  hL.dte = New LDate(Date(2018, 6, 15))
+  hL.dtee = New LDate(Date(2018, 6, 14))
+  hL.dteech = New LDate(Date(2018, 7, 15))
+  hL.montantd = fDebit
+  hL.montantc = fCredit
+  hL.type = VarEcr.Autre
+  hL.etat = iEtat
+  Return hL
+
+End
+
+Private Sub Reg(sCle As String, sMode As String, sJournal As String, hV As VarEcr)
+
+  Dim hE As EcrReg
+  Dim hL As VarEcr
+  Dim i As Integer
+  Dim sDte As String
+
+  Try hE = New EcrReg(sMode, sJournal, hV)
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  i = 0
+  For Each hL In hE.Vecr
+    sDte = ""
+    If hL.dte Then sDte = hL.dte.L
+    TestKit.Check(sCle & "/ligne_" & i, hL.compte & "|" & hL.montantd & "|" & hL.montantc & "|etat=" & hL.etat & "|type=" & hL.type & "|" & hL.intitul & "|" & hL.libelle & "|" & hL.numdoc & "|" & hL.numlot & "|" & hL.numero & "|" & sDte & "|racine=" & (hL = hV))
+    Inc i
+  Next
+  TestKit.Check(sCle & "/nombre", i)
+
+End
+
+Public Sub T01Ajout()
+
+  Reg("T01/cptint", "05", "50", Ligne("411001", 0, 100, VarEcr.L_ajou))
+  Reg("T01/banque", "20", "50", Ligne("411001", 0, 100, VarEcr.L_ajou))
+
+End
+
+Public Sub T02Modification()
+
+  Dim hV As VarEcr
+
+  hV = Ligne("411001", 0, 150, VarEcr.L_modif)
+  hV.numdoc = "DOC2"
+  hV.libelle = "Nouveau libelle"
+  hV.plus(Ligne("411001", 0, 100, VarEcr.L_sans))
+  hV.plus(Ligne("512000", 100, 0, VarEcr.L_sans))
+  Reg("T02", "20", "50", hV)
+
+End
+
+Public Sub T03Validation()
+
+  Dim hV As VarEcr
+
+  hV = Ligne("411001", 0, 0, VarEcr.L_valide)
+  hV.plus(Ligne("411001", 0, 100, VarEcr.L_ajou))
+  hV.plus(Ligne("411002", 0, 50.5, VarEcr.L_ajou))
+  hV.plus(Ligne("411003", 0, 25.25, VarEcr.L_ajou))
+  Reg("T03/cptint", "05", "50", hV)
+
+  hV = Ligne("411001", 0, 0, VarEcr.L_valide)
+  hV.plus(Ligne("411001", 0, 100, VarEcr.L_ajou))
+  hV.plus(Ligne("411002", 30, 0, VarEcr.L_ajou))
+  Reg("T03/banque", "20", "50", hV)
+
+End
+
+Public Sub T04Suppression()
+
+  Dim hV As VarEcr
+
+  hV = Ligne("411001", 0, 100, VarEcr.L_sup)
+  hV.plus(Ligne("411001", 0, 100, VarEcr.L_sans))
+  hV.plus(Ligne("512000", 100, 0, VarEcr.L_sans))
+  Reg("T04", "20", "50", hV)
+
+End
+
+Public Sub T05Caisse()
+
+  Dim hV As VarEcr
+
+  hV = Ligne("530000", 0, 0, VarEcr.L_caisse)
+  hV.plus(Ligne("707000", 10.555, 0, VarEcr.L_caisse))
+  hV.plus(Ligne("707000", 20.333, 0, VarEcr.L_caisse))
+  Reg("T05/cptint", "10", "53", hV)
+
+  hV = Ligne("530000", 0, 0, VarEcr.L_caisse)
+  hV.plus(Ligne("707000", 0, 12.345, VarEcr.L_caisse))
+  Reg("T05/banque", "01", "53", hV)
+
+End
+
+Public Sub T06ReglementInconnu()
+
+  Reg("T06", "ZZ", "50", Ligne("411001", 0, 100, VarEcr.L_ajou))
+
+End

@@ -1,0 +1,75 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+drop Table IF exists Rupture
+drop Table IF exists RuptureC
+CREATE TABLE Rupture(codea Char(15) NOT NULL,intitulea Char(50),four Char(8),qtecli FLOAT,qtefour FLOAT,qtecom FLOAT,codec Char(8) NOT NULL,intitulec Char(50),numcom Char(50),PRIMARY KEY (codea, codec, intitulea, four)) ENGINE = InnoDB
+CREATE TABLE RuptureC(codea Char(15) NOT NULL,intitulea Char(50),four Char(8),qtecom FLOAT,qte FLOAT,codec Char(8),intitulec Char(50),numcom Char(50),PRIMARY KEY (codea, codec, numcom, intitulea, four)) ENGINE = InnoDB
+SELECT * FROM Fiches_Ligcom left join Fiches_Art on art_code = code WHERE code >= '0000000000000' and code <= 'ZZZZZZZZZZZZZ' and four >= '40100001' and four <= '40199999'
+SELECT four FROM Fiches_Entcom WHERE numcom = 'C1' and four = '401001'
+SELECT * FROM Rupture WHERE codea = 'A10' and four = '401001'
+INSERT INTO Rupture(codea, intitulea, four, qtefour, codec, qtecli) VALUES ('A10','Article stocke A10','401001', 4, '0', 0)
+SELECT four FROM Fiches_Entcom WHERE numcom = 'C1' and four = '401001'
+SELECT * FROM Rupture WHERE codea = 'A12' and four = '401001'
+INSERT INTO Rupture(codea, intitulea, four, qtefour, codec, qtecli) VALUES ('A12','Article non stocke A12','401001', 2, '0', 0)
+SELECT four FROM Fiches_Entcom WHERE numcom = 'C2' and four = '401002'
+SELECT * FROM Rupture WHERE codea = 'A11' and four = '401002'
+INSERT INTO Rupture(codea, intitulea, four, qtefour, codec, qtecli) VALUES ('A11','Article stocke A11','401002', 6, '0', 0)
+SELECT four FROM Fiches_Entcom WHERE numcom = 'C2' and four = '401001'
+SELECT * FROM Fiches_Ligbl left join Fiches_Bl  on numbl = num_ligbl where type = 'C' and typel_ligbl = 'A' and code_ligbl >= '0000000000000' and code_ligbl <= 'ZZZZZZZZZZZZZ' and (four_ligbl is null or (four_ligbl >= '40100001' and four_ligbl <= '40199999')) order by cdclibl
+SELECT art_four, art_stocke, art_design FROM Fiches_Art  WHERE art_code = 'A10'
+SELECT * FROM Rupture WHERE codea = 'A10' and codec = '0' and four = '401001'
+UPdate  Rupture  SET qtecli = 5 where codea = 'A10' and codec = '0' and intitulea = 'Article stocke A10' and four = '401001'
+INSERT INTO RuptureC(codea, intitulea, four, qtecom, qte, codec, intitulec, numcom) VALUES ('A10','Article stocke A10','401001', 5, 5, '411001', 'M. Dupont Jean', 'B00001')
+SELECT art_four, art_stocke, art_design FROM Fiches_Art  WHERE art_code = 'A12'
+SELECT * FROM Rupture WHERE codea = 'A12' and codec = '0' and four = '401001'
+UPdate  Rupture  SET qtecli = 3 where codea = 'A12' and codec = '0' and intitulea = 'Article non stocke A12' and four = '401001'
+INSERT INTO RuptureC(codea, intitulea, four, qtecom, qte, codec, intitulec, numcom) VALUES ('A12','Article non stocke A12','401001', 3, 3, '411001', 'M. Dupont Jean', 'B00001')
+SELECT art_four, art_stocke, art_design FROM Fiches_Art  WHERE art_code = 'A10'
+SELECT * FROM Rupture WHERE codea = 'A10' and codec = '0' and four = '401001'
+UPdate  Rupture  SET qtecli = 6 where codea = 'A10' and codec = '0' and intitulea = 'Article stocke A10' and four = '401001'
+INSERT INTO RuptureC(codea, intitulea, four, qtecom, qte, codec, intitulec, numcom) VALUES ('A10','Article stocke A10','401001', 6, 6, '411001', 'M. Dupont Jean', 'B00003')
+SELECT art_four, art_stocke, art_design FROM Fiches_Art  WHERE art_code = 'A10'
+SELECT * FROM Rupture WHERE codea = 'A10' and codec = '0' and four = '401002'
+INSERT INTO Rupture(codea, intitulea, four, qtecli, codec, qtefour) VALUES ('A10','Article stocke A10','401002', 2, '0', 0)
+INSERT INTO RuptureC(codea, intitulea, four, qtecom, qte, codec, intitulec, numcom) VALUES ('A10','Article stocke A10','401002', 2, 2, '411002', 'Mme Martin Anne', 'B00002')
+SELECT art_four, art_stocke, art_design FROM Fiches_Art  WHERE art_code = 'A11'
+SELECT * FROM Rupture WHERE codea = 'A11' and codec = '0' and four = '401002'
+UPdate  Rupture  SET qtecli = 4 where codea = 'A11' and codec = '0' and intitulea = 'Article stocke A11' and four = '401002'
+INSERT INTO RuptureC(codea, intitulea, four, qtecom, qte, codec, intitulec, numcom) VALUES ('A11','Article stocke A11','401002', 4, 4, '411002', 'Mme Martin Anne', 'B00002')
+SELECT * FROM Fiches_Art WHERE art_code >= '0000000000000' and art_code <= 'ZZZZZZZZZZZZZ' and art_four >= '40100001' and art_four <= '40199999' order by art_code
+SELECT * FROM Rupture WHERE codea = '001'
+SELECT * FROM Rupture WHERE codea = '002'
+SELECT * FROM Rupture WHERE codea = '003'
+SELECT * FROM Rupture WHERE codea = 'A10'
+delete from Rupture WHERE codea = 'A10'
+SELECT * FROM Rupture WHERE codea = 'A10'
+INSERT INTO Rupture(codea, intitulea, four, qtecom, codec) VALUES ('A10','Article stocke A10','401001', 22, '0')
+SELECT * FROM Rupture WHERE codea = 'A11'
+SELECT * FROM Rupture WHERE codea = 'A11'
+UPdate  Rupture  SET  qtecom = 0 where codea = 'A11'
+SELECT * FROM Rupture WHERE codea = 'A12'
+UPdate  Rupture  SET  qtecom = 0 where codea = 'A12'
+SELECT * FROM Rupture left join Fiches_Art on art_code = codea WHERE qtecli is not null and qtefour is not null
+UPdate  Rupture  SET  qtecom = -2 where codea = 'A11' and intitulea = 'Article stocke A11' and four = '401002'
+UPdate  Rupture  SET  qtecom = 1 where codea = 'A12' and intitulea = 'Article non stocke A12' and four = '401001'
+SELECT * FROM Rupture left join Fiches_Art on art_code = codea order by codec, four, codea
+SELECT * FROM RuptureC where codea = 'A10' and codec = NULL and intitulea = NULL
+SELECT * FROM RuptureC where codea = 'A12' and codec = NULL and intitulea = NULL
+SELECT * FROM RuptureC  left join Fiches_Art on art_code = codea  order by codec, four, codea

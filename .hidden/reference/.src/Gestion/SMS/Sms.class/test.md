@@ -10,12 +10,12 @@ le menu visible. Aucun envoi de SMS dans cet écran.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| SMS-T01 | replay | Ouverture et liste | Fmenu › Textes SMS | 3 lignes, première ligne de l'intitulé seulement | `tests/liste_textes/` | à faire |
-| SMS-T02 | replay | Création et modification | code `04` + texte, Enregistrer ; clic sur `01`, modification, Enregistrer | dump `Fiches_Sms` de référence (texte passé par `Utils.ReplaceLb`) | `tests/creation_modif/` | à faire |
-| SMS-T03 | replay | Code existant saisi sans sélection | saisie `02` au clavier sans clic, Enregistrer | UPDATE exécuté puis erreur `Current.Key` (figé, A02) | `tests/maj_sans_selection/` | à faire |
-| SMS-T04 | replay | Suppression | clic sur `03`, Supprimer, Oui ; puis saisie d'un code sans sélection, Supprimer | ligne `03` supprimée ; erreur ou suppression de la ligne sélectionnée (figé, A01) | `tests/suppression/` | à faire |
-| SMS-T05 | replay | Table absente | base sans `Fiches_Sms` | message « La table des textes SMS n'existe pas... » et fermeture | `tests/table_absente/` | à faire |
-| SMS-T06 | replay | Touche sur Enregistrer | focus sur `Button2`, touche Tab | enregistrement déclenché (figé, A03) | `tests/btn_keypress/` | à faire |
+| SMS-T01 | replay | Ouverture et liste | Fmenu › Textes SMS | 3 lignes, première ligne de l'intitulé seulement | `tests/liste_textes/` | implémenté |
+| SMS-T02 | replay | Création et modification | code `04` + texte, Enregistrer ; clic sur `01`, modification, Enregistrer | dump `Fiches_Sms` de référence (texte passé par `Utils.ReplaceLb`) | `tests/creation_modif/` | implémenté |
+| SMS-T03 | replay | Code existant saisi sans sélection | saisie `02` au clavier sans clic, Enregistrer | UPDATE exécuté puis erreur `Current.Key` (figé, A02) | `tests/maj_sans_selection/` | implémenté |
+| SMS-T04 | replay | Suppression | clic sur `03`, Supprimer, Oui ; puis saisie d'un code sans sélection, Supprimer | ligne `03` supprimée ; erreur ou suppression de la ligne sélectionnée (figé, A01) | `tests/suppression/` | implémenté |
+| SMS-T05 | replay | Table absente | base sans `Fiches_Sms` | message « La table des textes SMS n'existe pas... » et fermeture | `tests/table_absente/` | implémenté |
+| SMS-T06 | replay | Touche sur Enregistrer | focus sur `Button2`, touche Tab | enregistrement déclenché (figé, A03) | `tests/btn_keypress/` | implémenté |
 
 ## Détail des tests
 
@@ -24,3 +24,8 @@ le menu visible. Aucun envoi de SMS dans cet écran.
 - **Rejeu** : `colcol_Click` existe (pas de `replay_missing`) ; `Utils.Observers(Me)` appelé une
   seule fois dans `_New`, mais `Refresh` rappelle `Form_Open` (pas d'observateur ajouté).
 - Jeu de données commun possible avec COMMAIL-T01-T05 (même structure de table).
+- **Implémentation (phase 2)** : scénarios `.hidden/Tests/Gestion/assets/sms_liste_textes/` (T01),
+  `sms_creation_modif/` (T02), `sms_maj_sans_selection/` (T03, `code_sortie` 125 : `Sms.Button2_Click.183: Null
+  object`), `sms_suppression/` (T04, `code_sortie` 125 : `Sms.Button1_Click.162: Null object` à la 2e suppression),
+  `sms_table_absente/` (T05), `sms_btn_keypress/` (T06, touche Tab sur Button2). Conf `/Soc01/Sms = 1` (Menu315
+  masqué sinon). Jeux `sms_shared/sms_textes` (3 textes) et `sms_shared/sms_sans_table` (DROP TABLE).

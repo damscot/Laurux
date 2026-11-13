@@ -54,13 +54,13 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TREGION-A01 — [anomalie] `form_Close` appelle `bar1_valide` sans argument : « Not enough
+- [ ] TREGION-A01 — [anomalie] (confirmée phase 2, vague 5 : « Not enough arguments » en répondant Oui à la fermeture (T07, code 125)) `form_Close` appelle `bar1_valide` sans argument : « Not enough
   arguments » sur « Oui » (vérifié avec `gbs3`) ; correction : `bar1_valide(bs.estcreer,
   bs.estmodif)` · tests : T07 · sources : [Tregion.class:161](../../../../../../.src/Gestion/option/Tregion.class#L161)
 - [ ] TREGION-A02 — [anomalie] Transaction ouverte pendant la saisie et laissée ouverte sur
   « Non » à la fermeture (même défaut que MREGLEMENT-A01, TTOURNE-A02) · tests : T07 · sources :
   [Tregion.class:56](../../../../../../.src/Gestion/option/Tregion.class#L56), [Tregion.class:76](../../../../../../.src/Gestion/option/Tregion.class#L76), [Tregion.class:form_Close](../../../../../../.src/Gestion/option/Tregion.class#L158-L165)
-- [ ] TREGION-A03 — [anomalie] `bar1_modif` édite par `code=&1` seul alors que la clé est
+- [ ] TREGION-A03 — [anomalie] (confirmée phase 2, vague 5 : modifier la 2e ligne de R1 : `Edit("code=R1")` renvoie la 1re ligne → « Duplicate entry 'R1-002' » (`bar1_valide.135`), T04 (code 125)) `bar1_modif` édite par `code=&1` seul alors que la clé est
   `(code, cart)` : la modification d'un taux s'applique à la première ligne de la région, pas à
   celle affichée (à confirmer par T04) ; correction : `code=&1 AND cart=&2` · tests : T04 ·
   sources : [Tregion.class:77](../../../../../../.src/Gestion/option/Tregion.class#L77)

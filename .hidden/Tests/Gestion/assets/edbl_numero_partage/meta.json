@@ -1,0 +1,21 @@
+{
+ "id": "EDBL-T07",
+ "objet": "Numero partage",
+ "classe": "Edbl",
+ "description": "Jeu edbl_receptions : Menu90, Nbl = R001 (401001 et 401002) + Entree : BR du premier fournisseur renvoye par la requete (EDBL-A02 figee). Comportement actuel fige : Edbr.Ed.190 Type mismatch (Val(paht) sur \"10,00 \" avec l'espace ajoute ligne 189 -> Null), erreur fatale avant le PDF : code de sortie 125 (candidat anomalie Edbr).",
+ "dataset": "edbl_shared/edbl_receptions",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125,
+ "xfail": "Edbr.Ed.190 : Val(paht) sur une valeur formatee suivie d'une espace renvoie Null, Type mismatch fatal avant le PDF",
+ "xfail_attendu": "PDF BonReception.pdf du BR produit et visualise (test.md)"
+}

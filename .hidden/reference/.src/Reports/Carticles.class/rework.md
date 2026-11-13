@@ -66,7 +66,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CARTICLES-A01 — [anomalie] `Level6bis` choisit la police « Hel8vetica » : `PdfWriter.SetFont`
+- [ ] CARTICLES-A01 — [anomalie] (confirmée phase 2, vague 5 : « Undefined font: hel8vetica » (`Level6bis:202`), mode photo d'EdArt3 en erreur fatale (EDART3-T03, code 125)) `Level6bis` choisit la police « Hel8vetica » : `PdfWriter.SetFont`
   lève « Undefined font: hel8vetica » (vérifié avec `gbx3`) → le tarif interne en mode photo
   s'arrête sur une erreur non interceptée au premier article (`EdArt3`, case `Phot` visible ;
   `EdArt1`, case invisible). Correction : « Helvetica » · tests : T03, EDART3-T03 · sources : [Carticles.class:202](../../../../../.src/Reports/Carticles.class#L202), [EdArt3.class:715](../../../../../.src/Gestion/Impressions/EdArt3.class#L715), [EdArt3.class:727](../../../../../.src/Gestion/Impressions/EdArt3.class#L727), [EdArt1.class:648](../../../../../.src/Gestion/Impressions/EdArt1.class#L648)

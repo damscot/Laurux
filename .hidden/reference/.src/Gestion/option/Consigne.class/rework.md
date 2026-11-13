@@ -56,7 +56,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CONSIGNE-A01 — [anomalie, à confirmer] `consigne_montant(code, qte As Integer)` : la quantité
+- [ ] CONSIGNE-A01 — [anomalie, à confirmer] (confirmée phase 2, vague 5 : quantité 2,5 tronquée à 2 : montant 3,00 pour un prix de 1,50, figée par T02) `consigne_montant(code, qte As Integer)` : la quantité
   `Float` transmise par `Achat.EnrConsigne` (`nb As Float`) et par `consigne_Read` (`Me.Qte`) est
   convertie en entier : une quantité fractionnaire de bouteilles fausse le montant consigné ·
   tests : T02 · sources : [Consigne.class:30](../../../../../../.src/Gestion/option/Consigne.class#L30), [Consigne.class:85](../../../../../../.src/Gestion/option/Consigne.class#L85), [Achat.class:994](../../../../../../.src/Gestion/Entrées/Achat.class#L994)

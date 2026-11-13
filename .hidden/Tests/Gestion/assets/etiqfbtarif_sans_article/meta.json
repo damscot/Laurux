@@ -1,0 +1,25 @@
+{
+ "id": "ETIQFBTARIF-T06",
+ "objet": "Date sans article : ni PDF ni message (A02)",
+ "classe": "Etiqfbtarif",
+ "description": "Date 01.01.2017 (aucun article) ; Générer : aucun PDF, aucun message (A02) ; edition.txt absent, base inchangée.",
+ "dataset": "etiqfbtarif_shared/etiqfbtarif_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered"
+}

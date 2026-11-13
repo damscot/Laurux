@@ -63,3 +63,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   vide car `$slib` n'est affecté qu'en l. 86 (explication possible de FACOPT-A04 ; vérifié : `lib_Read`
   renvoie bien `$slib` = `Fiches_regie.nom` dans le cas nominal, FACOPT-A04 n'est donc pas un défaut
   général de `lib_Read`) · tests : T05, T07 · sources : [calculdroit.class:55](../../../../../../.src/Gestion/option/calculdroit.class#L55), [calculdroit.class:80](../../../../../../.src/Gestion/option/calculdroit.class#L80)
+- [ ] CALCULDROIT-A03 — [anomalie] `code_Read` est défini sans `Property Read code` déclarée : la propriété `code` est inaccessible depuis l'extérieur de la classe (phase 2, vague 5, 2026-11-13) · tests : T05 · sources : [calculdroit.class:code_Read](../../../../../../.src/Gestion/option/calculdroit.class#L228-L232), [calculdroit.class:24-40](../../../../../../.src/Gestion/option/calculdroit.class#L24-L40)

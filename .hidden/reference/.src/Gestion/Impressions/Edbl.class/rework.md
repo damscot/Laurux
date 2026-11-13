@@ -52,7 +52,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDBL-A01 — [anomalie] `codef`/`dater` mémorisés : après une impression, un autre numéro tapé
   dans `Nbl` est imprimé avec le fournisseur précédent ; `Colbl_KeyPress` déclare une locale
   `codef` qui masque le membre (Entrée dans la liste ne met rien à jour) · tests : T04 · sources : [Edbl.class:145](../../../../../../.src/Gestion/Impressions/Edbl.class#L145), [Edbl.class:285](../../../../../../.src/Gestion/Impressions/Edbl.class#L285), [Edbl.class:299](../../../../../../.src/Gestion/Impressions/Edbl.class#L299)
-- [ ] EDBL-A02 — [anomalie] Recherche par `numrecpt` seul : avec un même numéro chez deux
+- [ ] EDBL-A02 — [anomalie] (confirmée phase 2, vague 5 : n° de réception partagé par deux fournisseurs : 401001 retenu (sql.log de T07, xfail Edbr)) Recherche par `numrecpt` seul : avec un même numéro chez deux
   fournisseurs, le premier trouvé est imprimé · tests : T07 · sources : [Edbl.class:58](../../../../../../.src/Gestion/Impressions/Edbl.class#L58), [Edbl.class:286](../../../../../../.src/Gestion/Impressions/Edbl.class#L286)
 - [ ] EDBL-A03 — [anomalie] `cache_bl` ne masque pas l'en-tête `Mt` (montant) · tests : T06 ·
   sources : [Edbl.class:cache_bl](../../../../../../.src/Gestion/Impressions/Edbl.class#L163-L172)

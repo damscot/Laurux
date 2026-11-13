@@ -8,8 +8,8 @@ servent à prouver que sa suppression (TRICLIENTSD-A01) ne change rien.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRICLIENTSD-T01 | replay | Non-régression de la caisse sans TriclientsD | caisse (`./Laurux -p`) : vente simple, Ctrl+N (liste `Tricartes(-1)`), F8 (cartes), validation du ticket | dump et lignes `Exec_SQL` identiques entre clone non modifié et clone sans la classe | `tests/caisse_sans_triclientsd/` | à faire |
-| TRICLIENTSD-T02 | replay | Purge `Fiches_Clid` inchangée | Archivages › `RazClientd`, date limite, validation | dump de `Fiches_Clid` identique (table seulement purgée) | `tests/raz_clientd/` | à faire |
+| TRICLIENTSD-T01 | replay | Non-régression de la caisse sans TriclientsD | caisse (`./Laurux -p`) : vente simple, Ctrl+N (liste `Tricartes(-1)`), F8 (cartes), validation du ticket | dump et lignes `Exec_SQL` identiques entre clone non modifié et clone sans la classe | `tests/caisse_sans_triclientsd/` | à faire : passe par l'écran Caisse (complexe) ; Ctrl+N et F8 non rejoués |
+| TRICLIENTSD-T02 | replay | Purge `Fiches_Clid` inchangée | Archivages › `RazClientd`, date limite, validation | dump de `Fiches_Clid` identique (table seulement purgée) | `tests/raz_clientd/` | à faire : relève de RazClientd (hors liste) ; écran TriclientsD ouvert par aucun chemin |
 
 ## Détail des tests
 

@@ -1,0 +1,25 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT cli_nom as libelle FROM Fiches_Cli WHERE cli_code='411002'
+SELECT art_code, art_design, art_prvt, art_nbd, art_prvt, art_pvht, art_tva, coef, ccli,  (art_prvt * coef)  AS pxht,  (art_prvt * coef) *(1+(taux_tva/100))  AS pxttc, ((art_pvht -  (art_prvt * coef) ) / art_pvht) AS remise, (( (art_prvt * coef) - art_prvt)/  (art_prvt * coef)  ) AS marge FROM Fiches_Tarcli LEFT JOIN Fiches_Art ON  art_code=cart JOIN Fiches_Tvaav ON code_tva = art_tva LIMIT 1
+SELECT art_code, art_design, art_prvt, art_nbd, art_prvt, art_pvht, art_tva, coef, ccli,  (art_prvt * coef)  AS pxht,  (art_prvt * coef) *(1+(taux_tva/100))  AS pxttc, ((art_pvht -  (art_prvt * coef) ) / art_pvht) AS remise, (( (art_prvt * coef) - art_prvt)/  (art_prvt * coef)  ) AS marge FROM Fiches_Tarcli LEFT JOIN Fiches_Art ON  art_code=cart JOIN Fiches_Tvaav ON code_tva = art_tva        order by Fiches_Art.art_code limit 0, 18
+SELECT art_code, art_design, art_prvt, art_nbd, art_prvt, art_pvht, art_tva, coef, ccli,  (art_prvt * coef)  AS pxht,  (art_prvt * coef) *(1+(taux_tva/100))  AS pxttc, ((art_pvht -  (art_prvt * coef) ) / art_pvht) AS remise, (( (art_prvt * coef) - art_prvt)/  (art_prvt * coef)  ) AS marge FROM Fiches_Tarcli LEFT JOIN Fiches_Art ON  art_code=cart JOIN Fiches_Tvaav ON code_tva = art_tva  where ccli='411002'       order by Fiches_Art.art_code limit 0, 18
+SELECT * FROM Fiches_Tarcli WHERE ccli='411002' AND cart='001'
+SELECT art_code,art_design,art_nbd,art_prvt,art_pvht,art_coef, art_pvttc,art_tva, coef,ccli,art_cdarr,taux_tva FROM Fiches_Tarcli  JOIN Fiches_Art ON  art_code=cart JOIN Fiches_Tvaav ON art_tva=code_tva WHERE art_code='001'

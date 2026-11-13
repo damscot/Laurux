@@ -1,0 +1,18 @@
+{
+ "id": "EDART3-T08",
+ "objet": "Saisie manuelle et listes",
+ "classe": "EdArt3",
+ "description": "Art = 110 (Entrée), Art2 = QQQ (Entrée, contrôle sur Art), Art = QQQ (Entrée) : Message.Warning (Entrée) ; Art = 110 ; listes famille 02 (ToggleButton3/4) et fournisseur 401002 (ToggleButton5/6) ; Cdt = 01 ; Imprimer. Fermeture (Quitter) non incluse : écran ouvert par ShowModal, le rejeu ne se termine pas après sa fermeture (code 124).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

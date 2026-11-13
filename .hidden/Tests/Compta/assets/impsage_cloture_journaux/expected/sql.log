@@ -1,0 +1,64 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Comptes where coll = '1' order by cast(compte_cc AS char)
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Nvcompte
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+SELECT * FROM Fiches_Comptes Where compte_cc = '512000  '
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+SELECT * FROM Fiches_Comptes Where compte_cc = '530000  '
+SELECT * FROM Fiches_Comptes Where compte_cc = '512000  '
+SELECT * FROM Fiches_Comptes Where compte_cc = '101000  '
+SELECT * FROM Nvcompte
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+UPdate Fiches_Parametres set numecriture = 1
+SELECT * FROM Fiches_Mvt Where compte = '606100  ' and numdoc = '6001' and jour = NULL and libelle = 'Journal inconnu           1'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES (NULL, 1, '606100  ', NULL, '20180310', '6001', '6001', 'Journal inconnu           1', '                3.00', '0', 1, 0, 0, 0, 0, 0, 0, '20180310')
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+UPdate Fiches_Comptes set solde = 3 Where compte_cc = '606100  '
+SELECT * FROM Fiches_Mvt Where compte = '512000  ' and numdoc = '6001' and jour = NULL and libelle = 'Journal inconnu           2'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES (NULL, 1, '512000  ', NULL, '20180310', '6001', '6001', 'Journal inconnu           2', '0', '                3.00', 1, 0, 0, 0, 0, 0, 0, '20180310')
+SELECT * FROM Fiches_Comptes Where compte_cc = '512000  '
+UPdate Fiches_Comptes set solde = -3 Where compte_cc = '512000  '
+UPdate Fiches_Parametres set numecriture = 2
+SELECT * FROM Fiches_Mvt Where compte = '606100  ' and numdoc = '6002' and jour = '53' and libelle = 'Caisse                    3'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('53', 2, '606100  ', NULL, '20180311', '6002', '6002', 'Caisse                    3', '                4.00', '0', 1, 0, 0, 0, 0, 0, 0, '20180311')
+SELECT * FROM Fiches_Comptes Where compte_cc = '606100  '
+UPdate Fiches_Comptes set solde = 7 Where compte_cc = '606100  '
+SELECT * FROM Fiches_Mvt Where compte = '530000  ' and numdoc = '6002' and jour = '53' and libelle = 'Caisse                    4'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('53', 2, '530000  ', NULL, '20180311', '6002', '6002', 'Caisse                    4', '0', '                4.00', 1, 0, 0, 0, 0, 0, 0, '20180311')
+SELECT * FROM Fiches_Comptes Where compte_cc = '530000  '
+UPdate Fiches_Comptes set solde = -4 Where compte_cc = '530000  '
+UPdate Fiches_Parametres set numecriture = 3
+SELECT * FROM Fiches_Mvt Where compte = '512000  ' and numdoc = '6003' and jour = '90' and libelle = 'A nouveau                 5'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('90', 3, '512000  ', NULL, '20180101', '6003', '6003', 'A nouveau                 5', '                5.00', '0', 1, 0, 0, 0, 0, 0, 0, '20180101')
+SELECT * FROM Fiches_Comptes Where compte_cc = '512000  '
+UPdate Fiches_Comptes set solde = 2 Where compte_cc = '512000  '
+SELECT * FROM Fiches_Mvt Where compte = '101000  ' and numdoc = '6003' and jour = '90' and libelle = 'A nouveau                 6'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, dateech) VALUES ('90', 3, '101000  ', NULL, '20180101', '6003', '6003', 'A nouveau                 6', '0', '                5.00', 1, 0, 0, 0, 0, 0, 0, '20180101')
+SELECT * FROM Fiches_Comptes Where compte_cc = '101000  '
+UPdate Fiches_Comptes set solde = -5 Where compte_cc = '101000  '

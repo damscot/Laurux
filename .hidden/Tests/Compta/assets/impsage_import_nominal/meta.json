@@ -1,0 +1,25 @@
+{
+ "id": "IMPSAGE-T01",
+ "objet": "Import Sage nominal",
+ "classe": "ImpSage",
+ "description": "Import écritures Sage (Menu286), Chemin-import = HOME de test, clients.pnc (C001, C002 en 411, F001 en 401, inconnus) et ecritures.pnm (VTE, ACH, BQ1, OD sur comptes existants) produits par impsage_shared/gen_impsage.py (jeu nominal), déposés par entrees : Importer (Button3), Message.Question bouton 1 « Oui » (Entrée), message de contrôle des clients (Entrée), « Traitement terminé ! » (Entrée) ; dump (Corsage, Fiches_Cli, Fiches_Four, Fiches_Comptes, Fiches_Mvt, Fiches_Parametres, Nvcompte), rejets.txt, Nvcomptes.txt, ouvertures (@ouvrir.trace) et texte de Edclients.pdf (edition.txt) comparés.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-import": "{home}",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "entrees": {
+  "impsage_shared/nominal_clients.pnc": "~/clients.pnc",
+  "impsage_shared/nominal_ecritures.pnm": "~/ecritures.pnm"
+ },
+ "fichiers": [
+  "rejets.txt",
+  "Nvcomptes.txt",
+  "@ouvrir.trace",
+  "edition.txt"
+ ]
+}

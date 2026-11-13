@@ -1,0 +1,21 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT CAST(nb * -1 AS CHAR) AS nb,Fiches_ligcons.montant * -1 AS montant, Fiches_ligcons.code AS code, Fiches_consigne.libelle AS libelle,daterecpt AS dte FROM Fiches_consigne, Fiches_ligcons, Fiches_Ligrecpt, Fiches_Entrecpt WHERE Fiches_consigne.code = Fiches_ligcons.code And Fiches_ligcons.num = Fiches_Ligrecpt.numrecpt And Fiches_Entrecpt.numrecpt = Fiches_Ligrecpt.numrecpt And Fiches_ligcons.type = 'E' AND ddate BETWEEN '2018-01-01 00:00:00' AND '2018-06-15 00:00:00' AND Fiches_consigne.code>= '00' AND Fiches_consigne.code<= 'ZZ'  UNION SELECT CAST(nb * -1 AS CHAR) AS nb,Fiches_ligcons.montant * -1 AS montant, Fiches_ligcons.code AS code, Fiches_consigne.libelle AS libelle, dte_ligbl AS dte FROM Fiches_consigne, Fiches_ligcons, Fiches_Bl, Fiches_Ligbl WHERE Fiches_consigne.code = Fiches_ligcons.code AND (Fiches_ligcons.num = num_ligbl Or Fiches_ligcons.num = numfac) AND Fiches_Bl.numbl = Fiches_Ligbl.num_ligbl AND Fiches_ligcons.type <> 'E' AND dte_ligbl BETWEEN '2018-01-01 00:00:00' And '2018-06-15 00:00:00' And Fiches_consigne.code >= '00' And Fiches_consigne.code <= 'ZZ'  UNION SELECT CAST(nb * -1 AS CHAR) As nb, Fiches_ligcons.montant * -1 As Montant, Fiches_ligcons.code As Code, Fiches_consigne.libelle As Libelle, dtligbl_ligfac As Dte FROM Fiches_consigne, Fiches_ligcons, Fiches_HistoLigfac, Fiches_HistoFac WHERE Fiches_consigne.code = Fiches_ligcons.code AND Fiches_ligcons.num = num_ligfac AND num_ligfac=numfac AND Fiches_ligcons.type <> 'E' AND dtligbl_ligfac BETWEEN '2018-01-01 00:00:00' AND '2018-06-15 00:00:00' AND Fiches_consigne.code >= '00' AND Fiches_consigne.code <= 'ZZ' 

@@ -1,0 +1,208 @@
+' Gambas test file
+
+''Tests de EnvMail (.hidden/reference/.src/Gestion/Mails/EnvMail.module/test.md).
+''Clients de messagerie remplacés par les faux programmes de .src/Tests/Framework/bin (en tête du PATH) : chaque
+''appel est tracé dans un fichier temporaire (LAURUX_FACTICE_TRACE) au format « nom [arg1] [arg2] ». Shell étant
+''asynchrone, le test attend la ligne de trace (3 s au plus).
+''Envoi SMTP (T02, T03) : faux serveur TestKit.SmtpFactice (bin/laurux-smtp, 127.0.0.1, identifiants ignorés) ; le
+''résumé stable de chaque message (enveloppe, en-têtes, texte, pièces jointes) est comparé. T04 et T06 restent à faire.
+''Valeurs attendues : assets/EnvMailTest/expected.txt, produites dans le clone de référence. Pas de base de données.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ExtensionMime", "Extension : type MIME ou erreur par nom de fichier")
+  TestKit.Desc("T02SmtpSimple", "Envoi SMTP sans pièce jointe : enveloppe (From, To, Bcc de Settings), objet, corps ; retour False")
+  TestKit.Desc("T03SmtpPieces", "Envoi SMTP avec Ticket.pdf, puis avec Ticket.pdf et /Soc01/Pdfchemin : 1 puis 2 pièces jointes")
+  TestKit.Desc("T05SmtpVide", "Envoi avec Email vide : aucun envoi, retour False")
+  TestKit.Desc("T07ComposeThunderbird", "Envoi2 Thunderbird, 1 et 2 pièces, corps avec , ; ( ) ' et sauts de ligne")
+  TestKit.Desc("T08ComposeAutres", "Envoi2 Icedove, Evolution, Kmail : ligne de commande")
+  TestKit.Desc("T09ComposeEnvoi3", "Envoi3 Thunderbird et Icedove avec Pdfchemin renseigné")
+  TestKit.Desc("T11ComposeInjection", "Envoi2 Thunderbird, corps avec guillemet, $(…) et accent grave")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EnvMailTest")
+
+End
+
+Private Function Trace() As String
+
+  Dim sTrace As String = Temp$() & ".trace"
+
+  If InStr(Application.Env["PATH"], "Framework/bin") = 0 Then Application.Env["PATH"] = Application.Path &/ ".src/Tests/Framework/bin" & ":" & Application.Env["PATH"]
+  Application.Env["LAURUX_FACTICE_TRACE"] = sTrace
+  Return sTrace
+
+End
+
+' Attend la trace d'un appel (Shell asynchrone) et la vérifie.
+Private Sub Lit(sCle As String, sTrace As String)
+
+  Dim i As Integer
+
+  For i = 1 To 30
+    If Exist(sTrace) Then
+      If InStr(File.Load(sTrace), "\n") > 0 Then Break
+    Endif
+    Sleep 0.1
+  Next
+  If Exist(sTrace) Then
+    TestKit.Check(sCle, RTrim(File.Load(sTrace)))
+    Kill sTrace
+  Else
+    TestKit.Check(sCle, "<aucun appel>")
+  Endif
+
+End
+
+Public Sub T01ExtensionMime()
+
+  Dim sFic As String
+  Dim s As String
+
+  For Each sFic In ["doc.pdf", "IMG.JPG", "a.tar.gz", "facture.2024.pdf", "x.rtf", "son.wav", "a.b.c.pdf", "doc", "a.docx"]
+    Try s = EnvMail.Extension(sFic)
+    If Error Then s = "ERREUR: " & Error.Text
+    TestKit.Check("T01/" & sFic, s)
+  Next
+
+End
+
+' Prépare la configuration SMTP vers le faux serveur et renvoie le fichier de résumé (smtp.trace).
+Private Function Smtp() As String
+
+  Dim sDossier As String = Temp$("smtp")
+
+  Start.LocalSettings["/Smtp"] = "127.0.0.1"
+  Start.LocalSettings["/Port"] = TestKit.SmtpFactice("ok", sDossier)
+  Start.LocalSettings["/Adrmail"] = "societe@laurux-test.fr"
+  Start.LocalSettings["/Utilisateur"] = "laurux"
+  Start.LocalSettings["/MdpStmp"] = ""
+  Start.LocalSettings["/Secumail"] = "Sans"
+  Settings["/Adrmail"] = "copie@laurux-test.fr" ' Bcc lu dans Settings (HOME de test), voir ENVMAIL-A02
+  Return File.Dir(sDossier) &/ "smtp.trace"
+
+End
+
+' Relève le résumé des messages reçus (une clé par ligne) puis arrête le faux serveur.
+Private Sub Recus(sCle As String, sTrace As String)
+
+  Dim aLignes As String[]
+  Dim i As Integer
+
+  TestKit.FinSmtp()
+  If Not Exist(sTrace) Then
+    TestKit.Check(sCle & "/messages", "<aucun>")
+    Return
+  Endif
+  aLignes = Split(RTrim(File.Load(sTrace)), "\n")
+  For i = 0 To aLignes.Max
+    TestKit.Check(sCle & "/smtp_" & Format(i, "00"), aLignes[i])
+  Next
+
+End
+
+Public Sub T02SmtpSimple()
+
+  Dim sTrace As String = Smtp()
+  Dim b As Boolean
+
+  Try b = EnvMail.Envoi("client@laurux-test.fr", "Objet T02 éè", "Bonjour,\nligne 2 ; virgule, apostrophe '", False, "", "", "")
+  If Error Then
+    TestKit.Check("T02/retour", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T02/retour", b)
+  Endif
+  Recus("T02", sTrace)
+
+End
+
+Public Sub T03SmtpPieces()
+
+  Dim sTrace As String = Smtp()
+  Dim sDir As String = Temp$("pieces")
+  Dim b As Boolean
+
+  Mkdir sDir
+  File.Save(sDir &/ "Ticket.pdf", "%PDF-1.4 ticket de test")
+  File.Save(sDir &/ "Conditions.pdf", "%PDF-1.4 conditions de vente")
+  Start.LocalSettings["/Soc" & Start.Societe & "/Pdfchemin"] = ""
+  Try b = EnvMail.Envoi("client@laurux-test.fr", "Une pièce", "Corps 1", True, sDir & "/", "application/pdf", "Ticket.pdf")
+  If Error Then TestKit.Check("T03/retour1", "ERREUR: " & Error.Text) Else TestKit.Check("T03/retour1", b)
+  Start.LocalSettings["/Soc" & Start.Societe & "/Pdfchemin"] = sDir &/ "Conditions.pdf"
+  Try b = EnvMail.Envoi("client@laurux-test.fr", "Deux pièces", "Corps 2", True, sDir & "/", "application/pdf", "Ticket.pdf")
+  If Error Then TestKit.Check("T03/retour2", "ERREUR: " & Error.Text) Else TestKit.Check("T03/retour2", b)
+  Recus("T03", sTrace)
+
+End
+
+Public Sub T05SmtpVide()
+
+  Dim b As Boolean
+
+  Try b = EnvMail.Envoi("", "Sujet", "Corps", False, "", "", "")
+  If Error Then
+    TestKit.Check("T05/retour", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T05/retour", b)
+  Endif
+
+End
+
+Public Sub T07ComposeThunderbird()
+
+  Dim sT As String
+  Dim sCorps As String = "Bonjour,\nCi-joint (facture); l'avoir.\nCordialement"
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Prgmail"] = "Thunderbird"
+  sT = Trace()
+  EnvMail.Envoi2("client@exemple.test", "Facture F0001", sCorps, "/tmp/f1.pdf")
+  Lit("T07/une_piece", sT)
+  sT = Trace()
+  EnvMail.Envoi2("client@exemple.test", "Facture F0001", sCorps, "/tmp/f1.pdf", "/tmp/cgv.pdf")
+  Lit("T07/deux_pieces", sT)
+
+End
+
+Public Sub T08ComposeAutres()
+
+  Dim sT As String
+  Dim sProg As String
+
+  For Each sProg In ["Icedove", "Evolution", "Kmail"]
+    Start.LocalSettings["/Soc" & Start.Societe & "/Prgmail"] = sProg
+    sT = Trace()
+    EnvMail.Envoi2("client@exemple.test", "Facture F0001", "Bonjour, (ci-joint)", "/tmp/f1.pdf", "/tmp/cgv.pdf")
+    Lit("T08/" & sProg, sT)
+  Next
+
+End
+
+Public Sub T09ComposeEnvoi3()
+
+  Dim sT As String
+  Dim sProg As String
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Pdfchemin"] = "/tmp/cgv.pdf"
+  For Each sProg In ["Thunderbird", "Icedove"]
+    Start.LocalSettings["/Soc" & Start.Societe & "/Prgmail"] = sProg
+    sT = Trace()
+    EnvMail.Envoi3("client@exemple.test", "Ticket", "Bonjour; merci", "/tmp/Ticket.pdf")
+    Lit("T09/" & sProg, sT)
+  Next
+
+End
+
+Public Sub T11ComposeInjection()
+
+  Dim sT As String
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Prgmail"] = "Thunderbird"
+  sT = Trace()
+  EnvMail.Envoi2("client@exemple.test", "Sujet", "Texte \"cite\" $(echo INJECTION) `echo ACCENT`", "/tmp/f1.pdf")
+  Lit("T11/commande", sT)
+
+End

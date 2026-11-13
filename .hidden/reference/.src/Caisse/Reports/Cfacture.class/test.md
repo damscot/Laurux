@@ -11,15 +11,15 @@ Ils nécessitent l'affichage (Xvfb) car `Caisse.Ba4` crée l'auto-instance d'un 
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CFACTURE-T01 | gbtest | `_new` : formats | `a3`, `80mm`, `a4`, `a5`, `letter`, `legal`, puis `dymoc` | PDF d'une ligne `Entete` par format ; `dymoc` → texte d'erreur figé (A02) | `tests/cfacture_formats/` | à faire |
-| CFACTURE-T02 | gbtest | Ticket A4 | séquence de `Defaut_Tk` : `Entete2`/`Entete`, `Entete3`, `Com`, `Level2T`, `Level1` (`Typel` `""`, `"K"`, `"TA"`, intitulé de 60 caractères) | PDF normalisé de référence | `tests/cfacture_ticket_a4/` | à faire |
-| CFACTURE-T03 | gbtest | Ticket 80 mm | même séquence en `80mm` | PDF normalisé de référence | `tests/cfacture_ticket_80/` | à faire |
-| CFACTURE-T04 | gbtest | Facture de caisse | `Lines`, `Entete2`, `Level2F`, `Lines2`, `Level4` en A4 et 80 mm | PDF normalisé de référence (troncature 28/40) | `tests/cfacture_facture/` | à faire |
-| CFACTURE-T05 | gbtest | Livre de caisse | `Level3`, `Level2E`, `Level2`, `Lines2`, `BasPage` sur 2 pages | PDF normalisé (pied de page masqué) | `tests/cfacture_livre/` | à faire |
-| CFACTURE-T06 | gbtest | Couplage `Caisse.Ba4` (A01) | `Level1`/`Level4` en A4 avec `Caisse.Ba4` laissé à `False`, puis forcé à `True` sur l'auto-instance | deux PDF distincts ; le premier est le comportement de production | `tests/cfacture_ba4/` | à faire |
-| CFACTURE-T07 | gbtest | `Logo2` | `/caisse/logo` faux ; vrai + PNG existant (`fac`/`tk`, A4/80) ; vrai + fichier absent ; vrai + `.gif` | PDF de référence ; erreurs `PdfWriter.Image` figées (A03) | `tests/cfacture_logo2/` | à faire |
-| CFACTURE-T08 | replay | Impression ticket depuis la caisse | `./Laurux -p`, vente de 2 articles, imprimante « DéfautA4 » puis « Défaut80 » | `~/Ticket.pdf` normalisé identique ; dump des tables de ticket identique | `tests/cfacture_replay_ticket/` | à faire |
-| CFACTURE-T09 | replay | Livre de caisse | écran Moulinage, date du jeu de test, bouton livre de caisse | PDF `~/Caisse/Livre_caisse*.pdf` normalisé | `tests/cfacture_replay_livre/` | à faire |
+| CFACTURE-T01 | gbtest | `_new` : formats | `a3`, `80mm`, `a4`, `a5`, `letter`, `legal`, puis `dymoc` | PDF d'une ligne `Entete` par format ; `dymoc` → texte d'erreur figé (A02) | `tests/cfacture_formats/` | implémenté (texte de l'Entete absent du PDF, figé ; dymoc : erreur figée) |
+| CFACTURE-T02 | gbtest | Ticket A4 | séquence de `Defaut_Tk` : `Entete2`/`Entete`, `Entete3`, `Com`, `Level2T`, `Level1` (`Typel` `""`, `"K"`, `"TA"`, intitulé de 60 caractères) | PDF normalisé de référence | `tests/cfacture_ticket_a4/` | à faire : lit Caisse.Ba4 (auto-instance de l'écran Caisse, classe complexe exclue) |
+| CFACTURE-T03 | gbtest | Ticket 80 mm | même séquence en `80mm` | PDF normalisé de référence | `tests/cfacture_ticket_80/` | à faire : lit Caisse.Ba4 (auto-instance de l'écran Caisse, classe complexe exclue) |
+| CFACTURE-T04 | gbtest | Facture de caisse | `Lines`, `Entete2`, `Level2F`, `Lines2`, `Level4` en A4 et 80 mm | PDF normalisé de référence (troncature 28/40) | `tests/cfacture_facture/` | à faire : lit Caisse.Ba4 (auto-instance de l'écran Caisse, classe complexe exclue) |
+| CFACTURE-T05 | gbtest | Livre de caisse | `Level3`, `Level2E`, `Level2`, `Lines2`, `BasPage` sur 2 pages | PDF normalisé (pied de page masqué) | `tests/cfacture_livre/` | implémenté |
+| CFACTURE-T06 | gbtest | Couplage `Caisse.Ba4` (A01) | `Level1`/`Level4` en A4 avec `Caisse.Ba4` laissé à `False`, puis forcé à `True` sur l'auto-instance | deux PDF distincts ; le premier est le comportement de production | `tests/cfacture_ba4/` | à faire : lit Caisse.Ba4 (auto-instance de l'écran Caisse, classe complexe exclue) |
+| CFACTURE-T07 | gbtest | `Logo2` | `/caisse/logo` faux ; vrai + PNG existant (`fac`/`tk`, A4/80) ; vrai + fichier absent ; vrai + `.gif` | PDF de référence ; erreurs `PdfWriter.Image` figées (A03) | `tests/cfacture_logo2/` | implémenté partiellement (logo désactivé, fichier absent) ; PNG existant et .gif à faire |
+| CFACTURE-T08 | replay | Impression ticket depuis la caisse | `./Laurux -p`, vente de 2 articles, imprimante « DéfautA4 » puis « Défaut80 » | `~/Ticket.pdf` normalisé identique ; dump des tables de ticket identique | `tests/cfacture_replay_ticket/` | à faire : passe par l'écran Caisse (complexe) et l'imprimante ticket (matériel) |
+| CFACTURE-T09 | replay | Livre de caisse | écran Moulinage, date du jeu de test, bouton livre de caisse | PDF `~/Caisse/Livre_caisse*.pdf` normalisé | `tests/cfacture_replay_livre/` | à faire : passe par Moulinage/caisse, non traité en vague 5 |
 
 ## Détail des tests
 
@@ -35,3 +35,10 @@ Ils nécessitent l'affichage (Xvfb) car `Caisse.Ba4` crée l'auto-instance d'un 
 - **Non testable automatiquement** : l'impression physique (`Impression.Ticket`), le rendu visuel
   (seul le flux PDF est comparé).
 - Couverture visée : 100 % des lignes après suppression de `Logo`/`Level1T` (CFACTURE-002).
+
+### Implémentation (phase 2, vague 5)
+- Module `.src/Tests/Caisse/CfactureTest.test` (T01, T05, T07) : texte du PDF par `pdftotext -layout`, pied de page
+  réduit à « Page n/m ». Pas de base.
+- Observé : T01, une page avec la seule ligne `Entete` ne contient aucun texte extractible, quel que soit le format
+  (à analyser : police non émise sur la page ?) ; `New Cfacture("P", "mm", "dymoc")` lève « Type mismatch: wanted
+  String, got Class instead » (A02). T07, `Logo2` avec un fichier absent lève « File or directory does not exist » (A03).

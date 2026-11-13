@@ -1,0 +1,18 @@
+{
+ "id": "EDFOUR-T05",
+ "objet": "Saut de page",
+ "classe": "EdFour",
+ "description": "Jeu de 10 fournisseurs supplémentaires (plus de 27 au total), Imprimer : 2 pages.",
+ "dataset": "edfour_shared/fournisseurs",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

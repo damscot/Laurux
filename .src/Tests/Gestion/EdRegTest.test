@@ -1,0 +1,139 @@
+' Gambas test file
+
+''Tests de EdReg (.hidden/reference/.src/Gestion/Impressions/EdReg.class/test.md, EDREG-T01, T04).
+''Valeurs attendues : assets/EdRegTest/expected.txt, produites dans le clone de référence.
+''L'état gb.report est construit directement (sans SaiReg, écran complexe exclu) avec une liste VarEcr et le
+''règlement 05 (Chèque) de Laurux01 ; on lit les libellés de l'état (Children) et les données des lignes
+''(dte_Data, cde_Data, nom_Data, montant_Data). Le mode « tous » (InputBox modale) n'est pas testable ici.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01EditionAjout", "Mode ajout : seules les écritures L_ajou, nombre, total, société, règlement, lignes")
+  TestKit.Desc("T04MultiSociete", "Deux sociétés, société courante 02 : raison sociale de la première ligne (A01 figée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EdRegTest")
+
+End
+
+Private Function Ligne(sCompte As String, sNom As String, fDebit As Float, fCredit As Float, iEtat As Integer) As VarEcr
+
+  Dim hL As New VarEcr
+
+  hL.compte = sCompte
+  hL.intitul = sNom
+  hL.montantd = fDebit
+  hL.montantc = fCredit
+  hL.etat = iEtat
+  hL.dte = New LDate("2018-06-15")
+  Return hL
+
+End
+
+Private Sub Libelles(hCont As Object, aL As Object[])
+  ''Libellés de l'état dans l'ordre du .report (ReportControl n'a pas de propriété Name).
+
+  Dim hC As Object
+
+  For Each hC In Object.GetProperty(hCont, "Children")
+    If Object.Type(hC) = "ReportLabel" Then
+      aL.Add(hC)
+    Else
+      Libelles(hC, aL)
+    Endif
+  Next
+
+End
+
+Private Sub Textes(sPre As String, hEd As EdReg)
+
+  Dim aL As New Object[]
+  Dim i As Integer
+  Dim s As String
+
+  Libelles(hEd, aL)
+  TestKit.Check(sPre & "/nb_libelles", aL.Count)
+  For i = 0 To aL.Max
+    s = Object.GetProperty(aL[i], "Text")
+    ' date du jour (LDate(Now).L) : remplacée par un repère stable
+    If s = "Le, " & LDate(Now).L Then s = "Le, <date du jour>"
+    If s = User.Name Then s = "<utilisateur>"
+    TestKit.Check(sPre & "/libelle" & Format(i, "00"), s)
+  Next
+
+End
+
+Private Sub Lignes(sPre As String, hEd As EdReg, iNb As Integer)
+
+  Dim hLigne As Object
+  Dim aL As New Object[]
+  Dim i, j As Integer
+  Dim v As Variant
+
+  hLigne = Object.GetProperty(hEd, "Children")[3]
+  Libelles(hLigne, aL)
+  For i = 0 To iNb - 1
+    Try hEd.dte_Data(i)
+    Try hEd.cde_Data(i)
+    Try hEd.nom_Data(i)
+    Try hEd.montant_Data(i)
+    For j = 0 To aL.Max
+      v = Null
+      Try v = Object.GetProperty(aL[j], "Data")
+      If Error Then v = "ERREUR: " & Error.Text
+      TestKit.Check(sPre & "/ligne" & i & "/col" & j, v)
+    Next
+  Next
+
+End
+
+Private Function Liste() As VarEcr
+
+  Dim hL As New VarEcr
+
+  hL.plus(Ligne("411001", "A Divers", 0, 50.5, VarEcr.L_ajou))
+  hL.plus(Ligne("411002", "B Divers", 0, 30, VarEcr.L_valide))
+  hL.plus(Ligne("411003", "C Divers", 0, 19.25, VarEcr.L_ajou))
+  hL.plus(Ligne("512000", "Banque", 69.75, 0, VarEcr.L_sup))
+  Return hL
+
+End
+
+Public Sub T01EditionAjout()
+
+  Dim hEd As EdReg
+  Dim r As Result
+
+  TestKit.OuvreBase()
+  r = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code = &1", "05")
+  Try hEd = New EdReg(Liste(), EdReg.ajout, r)
+  If Error Then
+    TestKit.Check("T01/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Textes("T01", hEd)
+  Lignes("T01", hEd, 3)
+
+End
+
+Public Sub T04MultiSociete()
+
+  Dim hEd As EdReg
+  Dim r As Result
+
+  TestKit.OuvreBase("edreg_shared/edreg_deux_societes")
+  Start.Societe = "02"
+  r = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code = &1", "05")
+  Try hEd = New EdReg(Liste(), EdReg.ajout, r)
+  If Error Then
+    TestKit.Check("T04/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T04/societe_courante", Start.Societe)
+  Textes("T04", hEd)
+
+End

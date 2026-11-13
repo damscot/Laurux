@@ -1,0 +1,25 @@
+{
+ "id": "TREGIE-T04",
+ "objet": "Modification acquitté, coefficient",
+ "description": "menu Fichiers > Constantes > Régie ; Suivant (6e « bout ») vers la régie 02 (2 articles 001, 002 avec art_dra = 02) ; Modification (4e « bout ») ; bouton radio « droit acquitté » ; Valider ; Message.Question bouton 2 « Modifier le coeff » (Tab, Espace). Attendu : Fiches_Art.art_coef recalculé, art_pbht corrigé des anciens droits ; édition comparée par pdftotext.",
+ "dataset": "modfichier_shared/options_bois_pp",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/bois": -1,
+  "/Soc01/pp": 0,
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "classe": "Tregie",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

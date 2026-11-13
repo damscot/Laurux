@@ -1,0 +1,18 @@
+{
+ "id": "EDDOCS-T04",
+ "objet": "Tri par compte",
+ "classe": "EdDocs",
+ "description": "RadioButton10 (Par numéro de compte), Imprimer : totaux par client pour 411801 et 411802, total du dernier client (411803) absent (A03 figée).",
+ "dataset": "eddocs_shared/documents",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

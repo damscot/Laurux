@@ -1,0 +1,18 @@
+{
+ "id": "EDFAM-T02",
+ "objet": "Sélection par liste",
+ "classe": "EdFam",
+ "description": "ToggleButton1, clic 02 dans Colfam ; ToggleButton2, clic 10 dans Colfam2 (Entrée dans la liste non rejouée) ; Imprimer : familles 02 à 10.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

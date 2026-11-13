@@ -1,0 +1,22 @@
+{
+ "id": "TREGIE-T02",
+ "objet": "Contrôles compte et TVA",
+ "classe": "Tregie",
+ "description": "Création ; code 08, libellé Biere, droits 12, compte vide, TVA 9 ; Valider → compte inconnu ; compte 445710 ; Valider → TVA inconnue ; Annuler et fermeture. Absence d'écriture (dump) et requêtes de contrôle Fiches_Comptes / Fiches_Tvaav (sql.log). Suite de tregie_controles (TREGIE-T02).",
+ "dataset": "modfichier_shared/options_bois_pp",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/bois": -1,
+  "/Soc01/pp": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -12,11 +12,11 @@ ainsi que les fichiers produits `rejets.txt` et `Nvcomptes.txt`.
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | IMPJDV-T01 | replay | Import nominal, clients existants | `clients.txt` (31 champs, clients déjà en base), `ecritures70.csv` : 3 factures (411 + 707 + 44571) | `Maj_Client` appliquée, écritures et lignes collectif, soldes, `numecriture` ; `dnfac` remis à vide (A01 figée) | `tests/import_nominal/` | implémenté |
-| IMPJDV-T02 | replay | Création de clients (caractérisation A02/A04) | 2 clients absents de la base | état figé : erreur `Level2` ou fiches créées avec champs décalés (`cli_dmln`, `cli_obs`…) | `tests/creation_clients/` | à faire : non commencé (temps) |
+| IMPJDV-T02 | replay | Création de clients (caractérisation A02/A04) | 2 clients absents de la base | état figé : erreur `Level2` ou fiches créées avec champs décalés (`cli_dmln`, `cli_obs`…) | `tests/creation_clients/` | implémenté (scénario `impjdv_creation_clients`, `code_sortie` 125 : `ImpJdv.Import.205` « Not enough arguments », A04 ; 411901 créé avec champs décalés, A02) |
 | IMPJDV-T03 | replay | Comptes manquants | écriture sur un compte 6xx/7xx absent de `Fiches_Comptes` | `Nvcompte` et `Nvcomptes.txt` remplis, aucune écriture importée | `tests/comptes_manquants/` | implémenté |
 | IMPJDV-T04 | replay | Ré-import du même fichier (A06/A07) | T01 rejoué deux fois | `rejets.txt` (lignes 411), message « 0 écriture(s) rejetée(s) », aucune ligne en double | `tests/reimport/` | implémenté (scénario `impjdv_reimport` ; 31,3 s mesurées : pas de boîte modale bloquante, second import lent ; délai de 35 s accordé par l'utilisateur le 2026-11-13) |
 | IMPJDV-T05 | replay | Option « Clôturer les écritures » | T01 avec la case cochée | `cloturee = 1` sur toutes les lignes importées | `tests/cloture/` | implémenté |
-| IMPJDV-T06 | replay | Aller-retour avec ExportJdv (caractérisation A05) | fichiers produits par EXPORTJDV-T01 (en-tête société en 1re ligne) | comportement figé (erreur d'indice attendue, à confirmer) | `tests/aller_retour_export/` | à faire : non commencé (temps ; fichiers de EXPORTJDV-T01 à reprendre en entrees) |
+| IMPJDV-T06 | replay | Aller-retour avec ExportJdv (caractérisation A05) | fichiers produits par EXPORTJDV-T01 (en-tête société en 1re ligne) | comportement figé (erreur d'indice attendue, à confirmer) | `tests/aller_retour_export/` | implémenté (scénario `impjdv_aller_retour_export`, `code_sortie` 125 : `ImpJdv.Import.169` « Out of bounds », A05) |
 | IMPJDV-T07 | replay | Fichiers absents | répertoire vide | message « Le fichier client ou écritures n'existe pas » ; dump `Laurux_dump.sql<date>` tout de même produit | `tests/fichiers_absents/` | implémenté |
 | IMPJDV-T08 | replay | Réponse « Non » à la confirmation | fichiers valides | base inchangée ; fichiers `~/tmp/Edclients.pdf` (vide) et dump présents | `tests/confirmation_non/` | implémenté |
 | IMPJDV-T09 | replay | Intitulé avec apostrophe dans un compte manquant (A09) | compte absent, intitulé `L'atelier`, ligne en double | erreur SQL figée sur l'`UPDATE Nvcompte` | `tests/apostrophe_nvcompte/` | implémenté |
@@ -47,3 +47,11 @@ ainsi que les fichiers produits `rejets.txt` et `Nvcomptes.txt`.
   `impjdv_comptes_manquants` (T03), `impjdv_cloture` (T05), `impjdv_confirmation_non` (T08, bouton 2 par Tab +
   Espace), `impjdv_apostrophe_nvcompte` (T09, `code_sortie` 125 : `ImpJdv.Controle.356`).
 - `~/tmp/Edclients.pdf` n'est pas contrôlé (aucun client créé dans ces scénarios, `Visualiseur.Prog` non appelé).
+- **Implémentation (phase 2, vague 5)** : T02 → `.hidden/Tests/Compta/assets/impjdv_creation_clients/` (`clients.txt` :
+  411901 complet, 411902 presque vide, absents de la base ; `ecritures70.csv` sur ces deux clients) : le premier client est
+  inséré (`Fiches_Cli` avec `cli_obs` = code, `cli_dmln` ← domiciliation… : A02 figée ; `Fiches_Comptes` ; `dnc` = 411901)
+  puis `pdf.Level2` (12 arguments pour 13) lève « Not enough arguments » (`ImpJdv.Import.205`, A04) : code 125, aucune
+  écriture importée, `Edclients.pdf` jamais visualisé. T06 → `impjdv_aller_retour_export/` : `clients.txt` et
+  `ecritures70.csv` recopiés des attendus de `exportjdv_format1_texte` (EXPORTJDV-T01, 1re ligne « Laurux ») ;
+  « Out of bounds » sur `Lig2[1]` (`ImpJdv.Import.169`, A05) : code 125, base inchangée. Ces deux scénarios seront à
+  mettre à jour avec les corrections A02/A04/A05.

@@ -1,0 +1,23 @@
+{
+ "id": "EDMO-T02",
+ "objet": "Tri par famille et plages",
+ "classe": "Edmo",
+ "description": "RadioButton2 (tri famille puis code), Mo de 02 à 09 (09, famille 10, imprimée avant 06-08, famille 11), familles 10 à 11 saisies au clavier (Entrée de champ en champ), Imprimer : ordre et filtrage dans le texte du PDF.",
+ "dataset": "edmo_shared/edmo_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 600,
+  "fenetre": 1000
+ }
+}

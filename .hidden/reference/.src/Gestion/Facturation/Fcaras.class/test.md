@@ -8,8 +8,8 @@ Fenêtre d'affichage sans accès à la base : tests `replay` depuis la saisie de
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FCARAS-T01 | replay | Ouverture avec photo valide | Saisie document, article avec photo PNG existante et texte | fenêtre ouverte, `Crst.Text` = caractéristiques, fermeture par `Fermer` ; dump BDD inchangé | `tests/photo_valide/` | à faire |
-| FCARAS-T02 | replay | Photo absente ou illisible | article dont le chemin photo n'existe pas | zone image vide, aucun message ; fermeture par `Échap` dans `Crst` | `tests/photo_absente/` | à faire |
+| FCARAS-T01 | replay | Ouverture avec photo valide | Saisie document, article avec photo PNG existante et texte | fenêtre ouverte, `Crst.Text` = caractéristiques, fermeture par `Fermer` ; dump BDD inchangé | `tests/photo_valide/` | implémenté (gb.test FcarasTest, Icones/3.png ; écran ouvert seulement depuis Facture : rejeu et fermeture non testés, rendu non comparé) |
+| FCARAS-T02 | replay | Photo absente ou illisible | article dont le chemin photo n'existe pas | zone image vide, aucun message ; fermeture par `Échap` dans `Crst` | `tests/photo_absente/` | implémenté (gb.test FcarasTest ; fermeture par Échap non rejouable) |
 
 ## Détail des tests
 
@@ -20,3 +20,4 @@ Fenêtre d'affichage sans accès à la base : tests `replay` depuis la saisie de
   chemin inexistant.
 - **Non testable automatiquement** : le rendu de l'image (pas de capture d'écran comparée) ;
   `Tnom_Photo` n'a pas d'effet observable, sa suppression est couverte par T01/T02.
+

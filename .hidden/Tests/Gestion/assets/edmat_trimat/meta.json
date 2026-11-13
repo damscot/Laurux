@@ -1,0 +1,24 @@
+{
+ "id": "EDMAT-T07",
+ "objet": "Selection de materiel par TriMat",
+ "classe": "EdMat",
+ "description": "Jeu edmat_base : Menu289, ToggleButton1 (TriMat trie par intitule a l'ouverture, ligne 1 Meuleuse -> Mat = M0003), ToggleButton2 (ligne 4 Ponceuse -> Mat2 = M0006), Imprimer : M0003, M0004, M0006 (M0005 hors plage clients).",
+ "dataset": "edmat_shared/edmat_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

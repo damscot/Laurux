@@ -1,0 +1,34 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Etiquettes 
+drop Table IF exists Etiquettes
+CREATE TABLE Etiquettes(code Char(15) NOT NULL,nombre integer,PRIMARY KEY (code)) ENGINE = InnoDB
+SELECT * FROM Fiches_Art where art_code = '004'
+INSERT INTO Etiquettes (code, nombre) Values ('004', 1)
+SELECT * FROM Fiches_Art where art_code = '005'
+SELECT * FROM Fiches_Art where art_code = '004'
+INSERT INTO Etiquettes (code, nombre) Values ('004', 1)
+SELECT * FROM Etiquettes where code = '004'
+UPdate  Etiquettes  SET  code = '004' , nombre = 2 WHERE code = '004'
+SELECT * FROM Fiches_Etiquettes WHERE code = 'Z'
+SELECT * FROM Etiquettes
+SELECT * FROM Fiches_Art WHERE art_code = '004'
+drop Table IF exists Etiquettes
+CREATE TABLE Etiquettes(code Char(15) NOT NULL,nombre integer,PRIMARY KEY (code)) ENGINE = InnoDB

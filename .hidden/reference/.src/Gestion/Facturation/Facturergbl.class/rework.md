@@ -71,7 +71,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   libérés par ceux de `DocActif.Get_Lock`/`Free_Lock` appelés dans `Ent_Bl` : le regroupement
   (numérotation `dnbon` comprise) n'est plus protégé contre un autre poste · tests : à définir
   (deux connexions) · sources : [Facturergbl.class:1346](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1346), [Facturergbl.class:1267](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1267), [DocActif.class:101](../../../../../../.src/Communs/DocActif.class#L101)
-- [ ] FACTURERGBL-A04 — [anomalie] Numérotation : en mode « tous les clients », `Selbl`
+- [ ] FACTURERGBL-A04 — [anomalie] (confirmée phase 2, vague 5 : numérotation à partir de 000002 (T03)) Numérotation : en mode « tous les clients », `Selbl`
   incrémente `Nbon` avant le premier regroupement (le numéro `dnbon + 1` est perdu) ; sans client
   sélectionné, `dnbon` est quand même incrémenté sans BL créé · tests : T03, T06 · sources : [Facturergbl.class:1226](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1226), [Facturergbl.class:1349](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1349)
 - [ ] FACTURERGBL-A05 — [anomalie, à confirmer] `Ent_Bl` renseigne l'entête du nouveau BL avec
@@ -83,3 +83,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   recopiées (`typel_ligbl = 'A' OR 'C'`) avant suppression des BL : lignes de main-d'œuvre `M`,
   deuxièmes lignes `T`, composants `O`, écotaxes `E`/`P` et lignes `R` sont perdues · tests :
   T02 · sources : [Facturergbl.class:1276](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1276), [Facturergbl.class:1308-1309](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1308-L1309)
+- [ ] FACTURERGBL-A07 — [anomalie] `Ent_Bl` : la recherche de la ligne à fusionner compare `rem_ligbl = &4` (et l'`UPdate` `rem_ligbl = &9`) : avec une remise NULL, `rem_ligbl = NULL` est toujours faux, les articles identiques sont recopiés séparément (phase 2, vague 5, 2026-11-13) · tests : T02 · sources : [Facturergbl.class:1288](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1288), [Facturergbl.class:1298](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1298)
+- [ ] FACTURERGBL-A08 — [anomalie] Regroupement de tous les clients : les BL du client divers 411001 aux noms différents (CLIENT X, CLIENT Y) sont fusionnés en un seul BL au nom de la fiche client (« A Divers ») (phase 2, vague 5, 2026-11-13) · tests : T03 · sources : [Facturergbl.class:Selbl](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1219), [Facturergbl.class:1266](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L1266)

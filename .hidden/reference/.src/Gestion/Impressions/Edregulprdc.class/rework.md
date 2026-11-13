@@ -52,7 +52,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDREGULPRDC-A01 — [anomalie] **Perte de données** : `DELETE … WHERE code = &1` supprime tous
+- [ ] EDREGULPRDC-A01 — [anomalie] (confirmée phase 2, vague 5 : la table est vidée, y compris la fabrication 3 hors période (T02)) **Perte de données** : `DELETE … WHERE code = &1` supprime tous
   les mouvements du code (autres fabrications `mind`, hors période) ; correction : `DELETE … WHERE
   id = &1` ou filtre `mind` + période · tests : T02 · sources : [Edregulprdc.class:206](../../../../../../.src/Gestion/Impressions/Edregulprdc.class#L206)
 - [ ] EDREGULPRDC-A02 — [anomalie] Purge proposée et succès annoncé sur une période vide · tests :

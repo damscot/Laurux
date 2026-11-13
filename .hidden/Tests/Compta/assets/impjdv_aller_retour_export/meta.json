@@ -1,0 +1,24 @@
+{
+ "id": "IMPJDV-T06",
+ "objet": "Aller-retour avec ExportJdv (A05)",
+ "classe": "ImpJdv",
+ "description": "Import du JDV Laurux (Menu134), Chemin-import = HOME de test, clients.txt et ecritures70.csv produits par EXPORTJDV-T01 (copie de exportjdv_format1_texte/expected/fichiers, 1re ligne = intitulé société « Laurux ») déposés par entrees : Importer, Message.Question bouton 1 « Oui » (Entrée, ImpJdv.class:163) ; comportement figé (IMPJDV-A05) ; dump, rejets.txt, Nvcomptes.txt comparés. Erreur d'indice « Out of bounds » sur Lig2[1] de la 1re ligne de clients.txt (ImpJdv.Import.169) : code de sortie 125, base inchangée (aucun client ni écriture).",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-import": "{home}"
+ },
+ "entrees": {
+  "impjdv_aller_retour_export/clients.txt": "~/clients.txt",
+  "impjdv_aller_retour_export/ecritures70.csv": "~/ecritures70.csv"
+ },
+ "fichiers": [
+  "rejets.txt",
+  "Nvcomptes.txt",
+  "@ouvrir.trace"
+ ],
+ "code_sortie": 125
+}

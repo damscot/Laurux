@@ -1,0 +1,16 @@
+{
+ "id": "EDART3-T05",
+ "objet": "Contrôle du type client",
+ "classe": "EdArt3",
+ "description": "Cdt = 99 (Entrée) : Balloon (non modal) ; Cdt = 02 (Entrée) : Message.Warning « Aucun tarif… » (Entrée), Cdt/LibelType vidés ; Imprimer avec Cdt vide : Message.Warning « Veuillez saisir un type client SVP ! » (Entrée).",
+ "dataset": "edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [],
+ "compare_sql_log": "ordered"
+}

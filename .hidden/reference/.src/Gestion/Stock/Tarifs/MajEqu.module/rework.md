@@ -50,10 +50,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] MAJEQU-A01 — [anomalie] `Recup` sur une table `Fiches_Cequ` vide : lecture de
+- [ ] MAJEQU-A01 — [anomalie] (confirmée phase 2, vague 5 : `Recup` sur table vide → « Result is not available » (T04)) `Recup` sur une table `Fiches_Cequ` vide : lecture de
   `requ2!codequ` sans test `Available`, hors `Try` → erreur non interceptée · tests : T04 ·
   sources : [MajEqu.module:51](../../../../../../../.src/Gestion/Stock/Tarifs/MajEqu.module#L51)
 - [ ] MAJEQU-A02 — [anomalie] Doublons ignorés par `Try` : avec `/dbase/backtrace` actif,
   `DB_Connection.Exec` ouvre une boîte d'erreur par doublon avant de propager (à confirmer par T06) ;
   correction possible par un test d'existence préalable ou un `INSERT` ignorant les doublons ·
   tests : T06 · sources : [MajEqu.module:Maj](../../../../../../../.src/Gestion/Stock/Tarifs/MajEqu.module#L3-L43), [DB_Connection.class:Exec](../../../../../../../.src/Utils/DB_Connection.class#L317-L450)
+- [ ] MAJEQU-A03 — [anomalie, à confirmer] `Maj` : seul `art_cequ` de l'article saisi est mis à jour, avec la dernière équivalence saisie ; les autres articles du groupe (fermeture transitive de `Fiches_Cequ`) ne sont pas mis à jour (phase 2, vague 5, 2026-11-13) · tests : T02 · sources : [MajEqu.module:11](../../../../../../../.src/Gestion/Stock/Tarifs/MajEqu.module#L11), [MajEqu.module:Maj](../../../../../../../.src/Gestion/Stock/Tarifs/MajEqu.module#L3-L43)

@@ -14,12 +14,12 @@ attendues sont produites à partir du fichier du clone **Laurux non modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| NUMTOSTRING_CAISSE-T01 | gbtest | Collision de compilation | `gbc3 -agt` puis `strings .gambas/NUMTOSTRING` dans le clone | le binaire contient `Num2Text`, pas `nbtostring` (constat figé ; échoue dès que A01 est corrigée) | `tests/collision_compilation/` | à faire |
-| NUMTOSTRING_CAISSE-T02 | gbtest | `nbtostring` 1 et 2 chiffres (projet minimal) | 0 à 99, `"00"`, `"01"`, `"05"` | chaînes de référence (« vingt un », « soixante onze », `""` pour `"0"`/`"01"`) | `tests/nombres_0_99/` | à faire |
-| NUMTOSTRING_CAISSE-T03 | gbtest | Centaines et milliers (projet minimal) | 100, 101, 180, 200, 999, 1000, 1001, 2000, 12345, 80000, 200000, 999999 | chaînes de référence (« deux cents mille » figé) | `tests/centaines_milliers/` | à faire |
-| NUMTOSTRING_CAISSE-T04 | gbtest | Bornes et entrées invalides (projet minimal) | 7 à 10 chiffres, `""`, `"12,5"`, `"abc"` | `""` ou erreur de conversion figée | `tests/bornes/` | à faire |
-| NUMTOSTRING_CAISSE-T05 | gbtest | Dépendance à la locale (projet minimal) | T03 rejoué en locale `C` | sorties figées (différentes de T03, à confirmer) | `tests/locale_c/` | à faire |
-| NUMTOSTRING_CAISSE-T06 | replay | Impression de chèque en caisse | caisse `-p`, règlement par chèque de 123,45, « Oui » à l'impression du chèque (imprimante simulée) | erreur « Unknown symbol » figée (scénario partagé avec les tests de `Caisse`) | `tests/impression_cheque_caisse/` | à faire |
+| NUMTOSTRING_CAISSE-T01 | gbtest | Collision de compilation | `gbc3 -agt` puis `strings .gambas/NUMTOSTRING` dans le clone | le binaire contient `Num2Text`, pas `nbtostring` (constat figé ; échoue dès que A01 est corrigée) | `tests/collision_compilation/` | à faire : vérification du binaire compilé hors du runner (pas de type de test prévu) |
+| NUMTOSTRING_CAISSE-T02 | gbtest | `nbtostring` 1 et 2 chiffres (projet minimal) | 0 à 99, `"00"`, `"01"`, `"05"` | chaînes de référence (« vingt un », « soixante onze », `""` pour `"0"`/`"01"`) | `tests/nombres_0_99/` | à faire : exige un projet Gambas minimal, non pris en charge par le runner (besoin d'outillage) |
+| NUMTOSTRING_CAISSE-T03 | gbtest | Centaines et milliers (projet minimal) | 100, 101, 180, 200, 999, 1000, 1001, 2000, 12345, 80000, 200000, 999999 | chaînes de référence (« deux cents mille » figé) | `tests/centaines_milliers/` | à faire : projet minimal non pris en charge par le runner |
+| NUMTOSTRING_CAISSE-T04 | gbtest | Bornes et entrées invalides (projet minimal) | 7 à 10 chiffres, `""`, `"12,5"`, `"abc"` | `""` ou erreur de conversion figée | `tests/bornes/` | à faire : projet minimal non pris en charge par le runner |
+| NUMTOSTRING_CAISSE-T05 | gbtest | Dépendance à la locale (projet minimal) | T03 rejoué en locale `C` | sorties figées (différentes de T03, à confirmer) | `tests/locale_c/` | à faire : projet minimal et locale C non pris en charge par le runner |
+| NUMTOSTRING_CAISSE-T06 | replay | Impression de chèque en caisse | caisse `-p`, règlement par chèque de 123,45, « Oui » à l'impression du chèque (imprimante simulée) | erreur « Unknown symbol » figée (scénario partagé avec les tests de `Caisse`) | `tests/impression_cheque_caisse/` | à faire : passe par l'écran Caisse (complexe) et l'imprimante (matériel) |
 
 ## Détail des tests
 

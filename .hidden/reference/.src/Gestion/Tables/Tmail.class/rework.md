@@ -49,7 +49,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TMAIL-A01 — [anomalie] Lecture de la première ligne mais écriture sur `lind = 1` (insertions
+- [ ] TMAIL-A01 — [anomalie] (confirmée phase 2, vague 5 : insertion d'une nouvelle ligne à `lind` automatique (6), T03) Lecture de la première ligne mais écriture sur `lind = 1` (insertions
   invisibles si absente) ; le `Try` transforme une erreur SQL en `INSERT` · tests : T03 · sources : [Tmail.class:39](../../../../../../.src/Gestion/Tables/Tmail.class#L39), [Tmail.class:115](../../../../../../.src/Gestion/Tables/Tmail.class#L115)
-- [ ] TMAIL-A02 — [anomalie] Texte vide non enregistrable ; `ReplaceLb` altère `"` et `&` ·
+- [ ] TMAIL-A02 — [anomalie] (confirmée phase 2, vague 5 : `"` stocké `A''B` (T02)) Texte vide non enregistrable ; `ReplaceLb` altère `"` et `&` ·
   tests : T02 · sources : [Tmail.class:113](../../../../../../.src/Gestion/Tables/Tmail.class#L113)

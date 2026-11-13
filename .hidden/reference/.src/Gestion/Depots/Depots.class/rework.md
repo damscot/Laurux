@@ -63,3 +63,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] DEPOTS-A03 — [anomalie] `Cleanchamps` vide l'en-tête filtre `CP` au lieu de la zone `Cp2`
   (insensibilité à la casse) : le code postal reste affiché et l'en-tête disparaît · tests : T04 ·
   sources : [Depots.class:123](../../../../../../.src/Gestion/Depots/Depots.class#L123)
+- [ ] DEPOTS-A04 — [anomalie] `Button1_Click` : les champs laissés vides (`adr1`, `adr2`, `cp`) sont substitués en `NULL` dans l'`UPdate`/`INSERT` au lieu de chaînes vides (phase 2, vague 5, 2026-11-13) · tests : T02 · sources : [Depots.class:228](../../../../../../.src/Gestion/Depots/Depots.class#L228), [Depots.class:230](../../../../../../.src/Gestion/Depots/Depots.class#L230)

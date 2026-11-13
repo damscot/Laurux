@@ -50,7 +50,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDREG-A01 — [anomalie] `SELECT * FROM Fiches_Societes` sans filtre : en multi-société, le
+- [ ] EDREG-A01 — [anomalie] (confirmée phase 2, vague 5 : société courante 02, raison sociale « SARL Premiere » (première ligne) affichée (T04)) `SELECT * FROM Fiches_Societes` sans filtre : en multi-société, le
   bordereau porte la raison sociale de la première société (correction : `WHERE cd_sc = &1`,
   `Start.Societe`, comme `Edcom`) · tests : T04 · sources : [EdReg.class:16](../../../../../../.src/Gestion/Impressions/EdReg.class#L16), [Edcom.class:211](../../../../../../.src/Gestion/Impressions/Edcom.class#L211)
 - [ ] EDREG-A02 — [anomalie] Couleur de fond `Hex(Start.R) & Hex(Start.G) & Hex(Start.B)` sans

@@ -12,7 +12,7 @@ clone **Laurux non modifié** ; `gbtest` du texte SQL après EDCONSIGNE-002.
 | EDCONSIGNE-T02 | replay | Par code, cumul | idem, « Détail » décoché | texte du PDF | `tests/code_cumul/` | à faire |
 | EDCONSIGNE-T03 | replay | Par client | bornes clients, détail puis cumul | texte du PDF (ruptures par client) | `tests/par_client/` | à faire |
 | EDCONSIGNE-T04 | replay | Par fournisseur | bornes fournisseurs, détail puis cumul | texte du PDF | `tests/par_fournisseur/` | à faire |
-| EDCONSIGNE-T05 | replay | Sélection vide / date vide | période sans mouvement ; date effacée | aucun PDF ; ballon « Date invalide » | `tests/vide/` | à faire |
+| EDCONSIGNE-T05 | replay | Sélection vide / date vide | période sans mouvement ; date effacée | aucun PDF ; ballon « Date invalide » | `tests/vide/` | implémenté (sélection vide ; date effacée : à faire, ballon sur LostFocus) |
 | EDCONSIGNE-T06 | gbtest | Texte SQL | 3 modes × détail/cumul (après EDCONSIGNE-002) | 6 requêtes identiques au code initial | `tests/requetes/` | à faire |
 
 ## Détail des tests
@@ -24,3 +24,7 @@ clone **Laurux non modifié** ; `gbtest` du texte SQL après EDCONSIGNE-002.
 - **Comparaison** : texte du PDF sans la date d'édition (`Format(Now)`), base inchangée (dump
   identique).
 - **Non testable** : boutons de recherche sans gestionnaire (aucun effet).
+- **Implémentation (phase 2)** : `.hidden/Tests/Gestion/assets/edconsigne_vide/` (T05, partie « période sans
+  mouvement » : menu dynamique `suivcons` sous Menu66 › Menu77, conf `/Soc01/bois = True`, jeu
+  `consigne_shared/consigne_base`, `compare_sql_log` ordered, `~/tmp/consigne.pdf` absent). T01-T04 : édition gb.report
+  (pdftotext rend un texte vide) et jeu de réceptions consignées à construire : non commencés.

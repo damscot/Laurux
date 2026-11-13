@@ -42,6 +42,6 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TICPE-A01 — [anomalie, décision utilisateur] Classe-ébauche sans appelant : achever (paramètre
+- [ ] TICPE-A01 — [anomalie, décision utilisateur] (précisée phase 2, vague 5 : `Ticpe("411001")` par la fabrique `_call` → « Not enough arguments » (`Create Static` : l'auto-instance est créée par `_new(client)` sans argument), T02) Classe-ébauche sans appelant : achever (paramètre
   `client` optionnel pour l'auto-instance, propriétés alimentées, usage par `Parametre`) ou
   supprimer · tests : T01-T03 · sources : [ticpe.class:_new](../../../../../../.src/Gestion/option/ticpe.class#L19-L35), [Parametre.class:630](../../../../../../.src/Communs/Parametre.class#L630)

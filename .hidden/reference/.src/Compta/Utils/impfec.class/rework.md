@@ -66,7 +66,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   transaction libère les verrous (verrou inopérant) et aucun `UNLOCK TABLES` n'est émis ; si le
   verrou était effectif, les `SELECT` sur `Ciel_Lrx*` (non verrouillées) échoueraient (à confirmer
   sur MariaDB) · tests : T01, T02 · sources : [impfec.class:216-224](../../../../../../.src/Compta/Utils/impfec.class#L216-L224)
-- [ ] IMPFEC-A02 — [anomalie] Aucune gestion d'erreur dans `trat`/`Buttontra_Click` : une erreur
+- [ ] IMPFEC-A02 — [anomalie] (confirmée phase 2, vague 5 : date `20231399` → erreur non interceptée `trat.259` après les 3 premières lignes, fenêtre bloquée, figée par T08 (code 125)) Aucune gestion d'erreur dans `trat`/`Buttontra_Click` : une erreur
   (date invalide, colonne vide) laisse la transaction ouverte sans `Rollback` et `Buttonquit`
   désactivé, donc `Form_Close` bloque la fermeture de la fenêtre · tests : T08 · sources : [impfec.class:Buttontra_Click](../../../../../../.src/Compta/Utils/impfec.class#L28-L64), [impfec.class:Form_Close](../../../../../../.src/Compta/Utils/impfec.class#L20-L26), [impfec.class:259](../../../../../../.src/Compta/Utils/impfec.class#L259)
 - [ ] IMPFEC-A03 — [anomalie] Ligne collectif : `intitule = Trim(CompteLib)` non tronqué à 40
@@ -74,8 +74,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   strict (à confirmer) · tests : T01 · sources : [impfec.class:317](../../../../../../.src/Compta/Utils/impfec.class#L317), [impfec.class:258](../../../../../../.src/Compta/Utils/impfec.class#L258)
 - [ ] IMPFEC-A04 — [anomalie] `$hfile` n'est jamais fermé (ni après `ctrl`, ni après `trat`, ni
   sur sortie anticipée) ; le fichier est réouvert dans le même membre · tests : T01, T03 · sources : [impfec.class:123](../../../../../../.src/Compta/Utils/impfec.class#L123), [impfec.class:137](../../../../../../.src/Compta/Utils/impfec.class#L137), [impfec.class:222](../../../../../../.src/Compta/Utils/impfec.class#L222)
-- [ ] IMPFEC-A05 — [anomalie] `EndOfLine = gb.Windows` impose CRLF : un FEC à fin de ligne Unix
+- [ ] IMPFEC-A05 — [anomalie] (précisée phase 2, vague 5 : autre forme : le FEC en LF est lu comme une seule ligne, sautée comme en-tête : le contrôle passe et « succès » est affiché sans rien importer (T07)) `EndOfLine = gb.Windows` impose CRLF : un FEC à fin de ligne Unix
   (LF) est lu comme une seule ligne et rejeté (« problème soit sur le séparateur… ») · tests : T07 · sources : [impfec.class:124](../../../../../../.src/Compta/Utils/impfec.class#L124), [impfec.class:223](../../../../../../.src/Compta/Utils/impfec.class#L223)
 - [ ] IMPFEC-A06 — [anomalie] Montants lus par `Val(Trim(Debit/Credit))` : dépend de la locale
   pour le séparateur décimal (FEC usuel « 1234,56 ») ; un FEC au format « Montant + Sens » (variante
   légale, même nombre de colonnes) est mal interprété (à confirmer) · tests : T01 · sources : [impfec.class:268-269](../../../../../../.src/Compta/Utils/impfec.class#L268-L269)
+- [ ] IMPFEC-A07 — [anomalie, à confirmer] T05 (comptes auxiliaires et correspondances Ciel, `Textcrt` = 3) : dans la référence, le contrôle échoue et rien n'est importé ; cause non visible sans le texte de `TextArea1` (correspondance `Ciel_Lrx` ou complément du compte auxiliaire, à analyser) (phase 2, vague 5, 2026-11-13) · tests : T05 (implémenté partiellement) · sources : [impfec.class:ctrl](../../../../../../.src/Compta/Utils/impfec.class#L91-L204), [impfec.class:163-193](../../../../../../.src/Compta/Utils/impfec.class#L163-L193)

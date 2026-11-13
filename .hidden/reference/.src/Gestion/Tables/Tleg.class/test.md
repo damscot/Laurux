@@ -7,13 +7,16 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TLEG-T01 | replay | Modification du texte | menu Réserve de propriété ; texte modifié avec `&` ; Enregistrer | UPDATE de `lind = 1`, `&` → `et` | `tests/modification/` | à faire |
-| TLEG-T02 | replay | Texte vide | texte effacé ; Enregistrer | aucune écriture | `tests/texte_vide/` | à faire |
-| TLEG-T03 | replay | Table sans ligne `lind = 1` | jeu dérivé avec une seule ligne `lind = 2` ; modification ; Enregistrer | nouvelle ligne insérée, affichage inchangé (A01 figée) | `tests/lind_absent/` | à faire |
-| TLEG-T04 | replay | Lecture en facturation | facture imprimée après T01 | texte modifié repris sur le PDF (via `ObjFac`) | `tests/lecture_facture/` | à faire |
+| TLEG-T01 | replay | Modification du texte | menu Réserve de propriété ; texte modifié avec `&` ; Enregistrer | UPDATE de `lind = 1`, `&` → `et` | `tests/modification/` | implémenté (jeu tleg_court) |
+| TLEG-T02 | replay | Texte vide | texte effacé ; Enregistrer | aucune écriture | `tests/texte_vide/` | implémenté |
+| TLEG-T03 | replay | Table sans ligne `lind = 1` | jeu dérivé avec une seule ligne `lind = 2` ; modification ; Enregistrer | nouvelle ligne insérée, affichage inchangé (A01 figée) | `tests/lind_absent/` | implémenté (lind auto = 9 : compteur AUTO_INCREMENT de Laurux01) |
+| TLEG-T04 | replay | Lecture en facturation | facture imprimée après T01 | texte modifié repris sur le PDF (via `ObjFac`) | `tests/lecture_facture/` | à faire : passe par la facturation (ObjFac, écran complexe) |
 
 ## Détail des tests
 
 - **Données** : `Laurux01.sql` (une ligne `lind = 1`) ; jeu dérivé pour T03.
 - **Comparaison** : dump normalisé de `Fiches_Tleg` ; T04 compare le texte extrait du PDF (à
   mutualiser avec les scénarios du lot Facturation).
+
+- **Assets (phase 2)** : jeux `.hidden/Tests/Gestion/assets/tleg_shared/tleg_court.sql` (texte ABC) et `tleg_lind2.sql`
+  (T03) ; scénarios `tleg_modification`, `tleg_texte_vide`, `tleg_lind_absent`.

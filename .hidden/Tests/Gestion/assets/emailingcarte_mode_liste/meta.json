@@ -1,0 +1,16 @@
+{
+ "id": "EMAILINGCARTE-T03",
+ "objet": "Mode liste",
+ "classe": "EmailingCarte",
+ "description": "Configuration SMTP posée par conf (aucun envoi : cartes sans courriel). Liste cochée (CREATE TABLE Cli_Mailing), carte 1001 + Entrée (INSERT), 1001 de nouveau → Message.Error « déjà saisi » (Entrée), 1999 inexistante → Message.Warning « compte existant » (Entrée), sujet et texte, Envoyer → Message.Info « Traitement terminé » (Entrée). Dump : Cli_Mailing (1001).",
+ "dataset": "emailingcarte_shared/cartes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Smtp": "127.0.0.1",
+  "/Port": "1025",
+  "/Adrmail": "laurux.test.example"
+ }
+}

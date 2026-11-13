@@ -12,19 +12,21 @@ attendues sont produites dans le clone **Laurux non modifié** (anomalies compri
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDART1-T01 | replay | Tarif interne, tri par code | plages par défaut, `RadioButton1`, **Imprimer** | texte PDF (`Level7`/`Level6`, 2 pages au moins) ; 1 `SELECT … order by lpad(art_code…)` | `tests/edart1_tri_code/` | à faire |
-| EDART1-T02 | replay | Les 3 autres tris | `RadioButton2`, `3`, `4` successivement | ordre des lignes par famille, fournisseur, désignation | `tests/edart1_tris/` | à faire |
-| EDART1-T03 | replay | Option marge | `Mg` coché, tri par code | colonnes `Level7M`/`Level6M`, marge = PV HT − PMP par article | `tests/edart1_marge/` | à faire |
-| EDART1-T04 | replay | Prix consommateur | `/Soc01/Pvcons` vrai, articles avec et sans `art_pvcons` | ligne `Level10` seulement pour `art_pvcons <> 0` | `tests/edart1_pvcons/` | à faire |
-| EDART1-T05 | replay | Plages restreintes | `Art`–`Art2`, une famille, un fournisseur | seuls les articles des 3 plages ; SQL avec les 6 paramètres | `tests/edart1_plages/` | à faire |
-| EDART1-T06 | replay | Aucun article | plage article vide (`ZZZZY`–`ZZZZZ`) | message « Aucun article pour cette demande », pas de PDF | `tests/edart1_vide/` | à faire |
-| EDART1-T07 | replay | Saisie manuelle d'article | `Art` = code existant, puis code fournisseur, puis code inconnu (Entrée) ; même chose dans `Art2` | focus suivant / `Message.Warning` ; `Art2` contrôle `Art.Text` (anomalie EDART1-A02 figée) | `tests/edart1_art_man/` | à faire |
-| EDART1-T08 | replay | Listes familles / fournisseurs | F2 (ou bouton) sur `Fam`, `Fam2`, `Four`, `Four2`, clic sur une ligne ; Échap sur une liste | champ rempli, liste fermée, focus (anomalie de focus `Colfam2`/`Colfour2` figée) | `tests/edart1_listes/` | à faire |
-| EDART1-T09 | replay | Sélection par `TriArticles` | `ToggleButton1`, choix d'un article ; puis `ToggleButton2`, annulation | `Art` rempli ; `Art2` reçoit l'ancien `Bval` (EDART1-A03 figée) | `tests/edart1_triarticles/` | à faire |
-| EDART1-T10 | replay | Fermeture | **Fermer** après une impression | `~/tmp/Tarif1.pdf` supprimé | `tests/edart1_fermeture/` | à faire |
-| EDART1-T11 | gbtest | Formatage d'une ligne de tarif (après EDART1-005) | enregistrements de `editions_articles` avec `art_nbd` 0, 2, 3 | tableau de chaînes identique au texte imprimé par T01/T03 | `tests/edart1_ligne_tarif/` | à faire |
+| EDART1-T01 | replay | Tarif interne, tri par code | plages par défaut, `RadioButton1`, **Imprimer** | texte PDF (`Level7`/`Level6`, 2 pages au moins) ; 1 `SELECT … order by lpad(art_code…)` | `tests/edart1_tri_code/` | implémenté (`Gestion/edart1_tri_code`) |
+| EDART1-T02 | replay | Les 3 autres tris | `RadioButton2`, `3`, `4` successivement | ordre des lignes par famille, fournisseur, désignation | `tests/edart1_tris/` | implémenté (`Gestion/edart1_tris`) |
+| EDART1-T03 | replay | Option marge | `Mg` coché, tri par code | colonnes `Level7M`/`Level6M`, marge = PV HT − PMP par article | `tests/edart1_marge/` | implémenté (`Gestion/edart1_marge`) |
+| EDART1-T04 | replay | Prix consommateur | `/Soc01/Pvcons` vrai, articles avec et sans `art_pvcons` | ligne `Level10` seulement pour `art_pvcons <> 0` | `tests/edart1_pvcons/` | implémenté (`Gestion/edart1_pvcons`) |
+| EDART1-T05 | replay | Plages restreintes | `Art`–`Art2`, une famille, un fournisseur | seuls les articles des 3 plages ; SQL avec les 6 paramètres | `tests/edart1_plages/` | implémenté (`Gestion/edart1_plages` : plages article et fournisseur ; plage famille par liste dans T08) |
+| EDART1-T06 | replay | Aucun article | plage article vide (`ZZZZY`–`ZZZZZ`) | message « Aucun article pour cette demande », pas de PDF | `tests/edart1_vide/` | implémenté (`Gestion/edart1_vide`) |
+| EDART1-T07 | replay | Saisie manuelle d'article | `Art` = code existant, puis code fournisseur, puis code inconnu (Entrée) ; même chose dans `Art2` | focus suivant / `Message.Warning` ; `Art2` contrôle `Art.Text` (anomalie EDART1-A02 figée) | `tests/edart1_art_man/` | implémenté (`Gestion/edart1_art_man` : code existant, contrôle d'`Art2` sur `Art` (A02 figée), code inconnu ; jeu sans `art_cfour`) |
+| EDART1-T08 | replay | Listes familles / fournisseurs | F2 (ou bouton) sur `Fam`, `Fam2`, `Four`, `Four2`, clic sur une ligne ; Échap sur une liste | champ rempli, liste fermée, focus (anomalie de focus `Colfam2`/`Colfour2` figée) | `tests/edart1_listes/` | implémenté (`Gestion/edart1_listes` : boutons et clics des 4 listes, impression) ; F2/Échap non rejoués |
+| EDART1-T09 | replay | Sélection par `TriArticles` | `ToggleButton1`, choix d'un article ; puis `ToggleButton2`, annulation | `Art` rempli ; `Art2` reçoit l'ancien `Bval` (EDART1-A03 figée) | `tests/edart1_triarticles/` | à faire : sélection dans `TriArticles` (grille modale) non synthétisée dans cette vague |
+| EDART1-T10 | replay | Fermeture | **Fermer** après une impression | `~/tmp/Tarif1.pdf` supprimé | `tests/edart1_fermeture/` | implémenté (`Gestion/edart1_fermeture` : `tmp/Tarif1.pdf` absent après Quitter) |
+| EDART1-T11 | gbtest | Formatage d'une ligne de tarif (après EDART1-005) | enregistrements de `editions_articles` avec `art_nbd` 0, 2, 3 | tableau de chaînes identique au texte imprimé par T01/T03 | `tests/edart1_ligne_tarif/` | à faire : après extraction EDART1-005 |
 
 ## Détail des tests
+
+- **Implémentation (phase 2, vague 5)** : jeu `.hidden/Tests/Gestion/assets/edart1_shared/editions_articles.sql` (57 articles 100 à 156, 2 pages ; sous-ensemble du jeu décrit ci-dessous : ni types client, ni commandes, ni matériels) ; scénarios `.hidden/Tests/Gestion/assets/edart1_*` ; texte du PDF par `/Soc01/caisse/CmdVis` → `edition.txt` ; `compare_sql_log: ordered`.
 
 - **Jeu de données `editions_articles`** (commun aux éditions d'articles et de stock : `EdArt1`,
   `EdArt3`, `Edart4`, `EdStk`, `EdRup`, `EdMat`, `Edmo`) : `Laurux01.sql` ne contient qu'**un**

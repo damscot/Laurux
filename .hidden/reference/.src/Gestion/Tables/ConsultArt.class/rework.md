@@ -69,7 +69,7 @@
 
 ### Anomalies : changement de comportement, validation utilisateur requise
 
-- [ ] CONSULTART-A01 — [anomalie] Recherche incrémentale par concaténation de `sel` entre
+- [ ] CONSULTART-A01 — [anomalie] (confirmée phase 2, vague 5 : `"` → `like ""%"`, requête invalide (T05)) Recherche incrémentale par concaténation de `sel` entre
   guillemets doubles : un `"` saisi provoque une erreur SQL, `%` et `_` agissent comme jokers ;
   correction par paramètre `&1` (et échappement des jokers) · tests : T05 · sources : [ConsultArt.class:243](../../../../../../.src/Gestion/Tables/ConsultArt.class#L243), [ConsultArt.class:284](../../../../../../.src/Gestion/Tables/ConsultArt.class#L284), [ConsultArt.class:321](../../../../../../.src/Gestion/Tables/ConsultArt.class#L321)
 - [ ] CONSULTART-A02 — [anomalie] Recherche par code-barre (`Code_KeyPress`) sans `CleanChamps` :
@@ -77,9 +77,11 @@
   stock affiche 0 si l'article précédent n'était pas stocké · tests : T04 · sources : [ConsultArt.class:Code_KeyPress](../../../../../../.src/Gestion/Tables/ConsultArt.class#L594-L606), [ConsultArt.class:429-443](../../../../../../.src/Gestion/Tables/ConsultArt.class#L429-L443)
 - [ ] CONSULTART-A03 — [anomalie] Tri descendant des articles suspendus : `Deb3` sélectionne
   `art_pvttc` au lieu de `art_fam` ; la colonne « Famille » reste vide · tests : T02 · sources : [ConsultArt.class:291](../../../../../../.src/Gestion/Tables/ConsultArt.class#L291)
-- [ ] CONSULTART-A04 — [anomalie] `Fam2` lit famille et TVA sans test `Available` : un code TVA
+- [ ] CONSULTART-A04 — [anomalie] (confirmée phase 2, vague 5 : code TVA inexistant → « Cette famille n'existe pas » (T03)) `Fam2` lit famille et TVA sans test `Available` : un code TVA
   absent affiche « Cette famille n'existe pas ! » (message trompeur) · tests : T03 · sources : [ConsultArt.class:Fam2](../../../../../../.src/Gestion/Tables/ConsultArt.class#L485-L518)
 - [ ] CONSULTART-A05 — [anomalie] La grille lit `Utils.rs1`, résultat global partagé avec tous les
   écrans qui appellent `Utils.Base` : l'écran étant non modal, ouvrir un autre écran utilisant
   `Utils.Base` remplace les données affichées (lignes d'une autre requête ou erreurs ; à confirmer
   par T06) · tests : T06 · sources : [ConsultArt.class:155-156](../../../../../../.src/Gestion/Tables/ConsultArt.class#L155-L156), [Utils.module:Base](../../../../../../.src/Utils/Utils.module#L39-L49)
+- [ ] CONSULTART-A06 — [anomalie, à confirmer] Recherche par code-barre (`*` + code) : `Utils.Find_cbarre` cherche dans `Fiches_CdBarre` puis comme `art_code`, jamais dans `art_cbarre` ; code absent → `Maj_Zones` sur `art_code = NULL` (même défaut que PORTABLE-A04) (phase 2, vague 5, 2026-11-13) · tests : T04 · sources : [ConsultArt.class:Code_KeyPress](../../../../../../.src/Gestion/Tables/ConsultArt.class#L594-L606), [Utils.module:Find_cbarre](../../../../../../.src/Utils/Utils.module#L613-L631)
+- [ ] CONSULTART-A07 — [anomalie, à confirmer] Radios de filtre : « Articles non stockés » (`RadioButton2`) porte le tag 3 comme « Tous les articles » ; dans `Rb_Click` les tags 3, 4 et 5 donnent le même `Stk`/`Stk2` ; au rejeu, « Articles en stock » (tag 4) émet `art_stocke = 0` puis `= 1` (à vérifier) (phase 2, vague 5, 2026-11-13) · tests : T02 · sources : [ConsultArt.form:35](../../../../../../.src/Gestion/Tables/ConsultArt.form#L32-L36), [ConsultArt.class:Rb_Click](../../../../../../.src/Gestion/Tables/ConsultArt.class#L608-L645), [ConsultArt.class:Deb2](../../../../../../.src/Gestion/Tables/ConsultArt.class#L220-L256)

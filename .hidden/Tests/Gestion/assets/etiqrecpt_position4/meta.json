@@ -1,0 +1,22 @@
+{
+ "id": "ETIQRECPT-T07",
+ "objet": "Position de départ 4 au premier passage : Null object (A01)",
+ "classe": "EtiqRecpt",
+ "description": "Posetiq = 4 au premier passage : pdf.Code appelé avant la création du PDF (ETIQRECPT-A01) → « Null object », code de sortie 125.",
+ "dataset": "etiqrecpt_shared/etiqrecpt_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

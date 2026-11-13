@@ -5,8 +5,8 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRESORFAC-T01 | gbtest | Compilation sans le couple | suppression de `TresorFac.class` + `.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire |
-| TRESORFAC-T02 | replay | Saisie et validation d'un règlement | lanceur dédié (`TresorFac.Show`, aucun menu) ; mode « Especes », date dans la période, compte `411…` existant, montant, n° de document, Valider ligne puis Valider | dump de `Fiches_Mvt` (3 lignes : client, trésorerie, collectif), `Fiches_Comptes.solde`, `Fiches_Parametres.numecriture` identique ; fige l'erreur d'indice `Ecrit1.Item[6]` | `tests/saisie_reglement/` | à faire |
+| TRESORFAC-T01 | gbtest | Compilation sans le couple | suppression de `TresorFac.class` + `.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : test de compilation après suppression (TRESORFAC-A01, phase 4) ; aucune assertion gb.test possible aujourd’hui |
+| TRESORFAC-T02 | replay | Saisie et validation d'un règlement | lanceur dédié (`TresorFac.Show`, aucun menu) ; mode « Especes », date dans la période, compte `411…` existant, montant, n° de document, Valider ligne puis Valider | dump de `Fiches_Mvt` (3 lignes : client, trésorerie, collectif), `Fiches_Comptes.solde`, `Fiches_Parametres.numecriture` identique ; fige l'erreur d'indice `Ecrit1.Item[6]` | `tests/saisie_reglement/` | à faire : écran inatteignable (aucun menu ni appelant) ; le rejeu part de Fmenu et le framework n’a pas de lanceur dédié |
 
 ## Détail des tests
 
@@ -16,3 +16,4 @@
   avec un client, son collectif et les journaux `jrnal2`/`jrnal3` renseignés (`cde_banque`).
 - Non testable : recherche de compte F2 (`TriCpt` + `Comptabilite.Bsel`, erreur attendue), rappel
   d'écriture `Ecrit3_Click` (liste jamais remplie).
+

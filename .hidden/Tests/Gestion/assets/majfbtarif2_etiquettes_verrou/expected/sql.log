@@ -1,0 +1,26 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Art WHERE art_datefbt = '20180615'
+LOCK TABLES Fiches_Art WRITE, Fiches_Tvaav Write
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '3'
+UPdate  Fiches_Art  SET  art_pbht = 10, art_tr = 10, art_pauaht =9, art_pvht = 14.25, art_pvttc = 17.1, art_prvt = 9.5, art_paht = 9, art_coef = 1.5, art_pbfbt = NULL, art_datefbt = NULL,  art_ddatefbt = '20180615' WHERE art_code = '001'
+SELECT * FROM Fiches_Tvaav WHERE code_tva = '1'
+UPdate  Fiches_Art  SET  art_pbht = 20, art_tr = 0, art_pauaht =20, art_pvht = 40, art_pvttc = 40.84, art_prvt = 20, art_paht = 20, art_coef = 2, art_pbfbt = NULL, art_datefbt = NULL,  art_ddatefbt = '20180615' WHERE art_code = '002'
+SELECT * FROM Fiches_EtiProd where code = '002'
