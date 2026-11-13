@@ -1,0 +1,23 @@
+{
+ "id": "EDITCOMPTEM-T01",
+ "objet": "Grand livre client",
+ "classe": "EditcompteM",
+ "description": "Grands livres (Menu38), jeu extrait_shared/extrait_base (écritures 2018 : clients 411001/411002 dont un solde revenant à 0, fournisseur 401001, 707000 centralisé, 445730, 512000, 606100), bouton Client, plage par défaut, Imprimer (Button1) ; texte du PDF comparé (CmdVis → pdftotext, edition.txt) ; dump (Ctrln) ; Fermer (Button6).",
+ "dataset": "extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

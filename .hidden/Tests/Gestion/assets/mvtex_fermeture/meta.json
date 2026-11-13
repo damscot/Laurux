@@ -1,0 +1,23 @@
+{
+ "id": "MVTEX-T05",
+ "objet": "Fermeture avec saisie en cours",
+ "classe": "Mvtex",
+ "description": "Sortie A1 qté 1 Enregistrer, puis Quitter (Button3) : bouton 1 \"Oui\" de Message.Question (Mvtex.class:212) → Enrgbl ; mouvement enregistré.",
+ "dataset": "mvtex_shared/stock_mvtex",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "mvtex_pdf.txt"
+ ],
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/mvtex_pdf.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -67,6 +67,7 @@ End
 
 Public Sub Begin(Lot As String, Nom As String)
 
+  GardeHome() ' avant tout : aucun test ne s'exécute avec le HOME réel de l'utilisateur
   Init()
   ChargeConf() ' réglages d'origine (type mysql, hôte, préfixe…) même si un test précédent les a modifiés
   If Lot = $sLot And If Nom = $sNom Then Return
@@ -77,6 +78,24 @@ Public Sub Begin(Lot As String, Nom As String)
   $cValeurs = New Collection
   $aCles = New String[]
   If Exist($sFile) Then Charge() ' en enregistrement : fusion (un test = un processus, chacun ajoute ses clés)
+
+End
+
+Private Sub GardeHome()
+  ''Refuse d'exécuter un test gb.test hors d'un HOME de test (créé par Start.Home_Test, marqueur
+  ''.laurux-test-home) : lancé directement par « gbx3 -T » ou depuis l'IDE, un test écrirait sinon dans le HOME
+  ''réel de l'utilisateur (incident de MmysqlTest : faux sudo installé dans ~/bin). HOME (Application.Env) et
+  ''User.Home (redirigé par libhome) doivent tous deux porter le marqueur. Erreur levée dans _Setup :
+  ''« Bail out! », aucun test du module n'est exécuté.
+
+  Dim sHome As String = Application.Env["HOME"]
+
+  If Not sHome Or If Not Exist(sHome &/ ".laurux-test-home") Then
+    Error.Raise("HOME de test absent (" & sHome & " sans .laurux-test-home) : lancer les tests par ./Laurux -T ou le runner, jamais par gbx3 -T directement")
+  Endif
+  If Not Exist(User.Home &/ ".laurux-test-home") Then
+    Error.Raise("User.Home (" & User.Home & ") n'est pas le HOME de test : bibliothèque libhome non chargée (voir TESTING.md)")
+  Endif
 
 End
 

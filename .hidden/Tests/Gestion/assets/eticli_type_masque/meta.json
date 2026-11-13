@@ -1,0 +1,25 @@
+{
+ "id": "ETICLI-T08",
+ "objet": "Tri par type sans filtre (caractérisation)",
+ "classe": "Eticli",
+ "description": "CheckType coché, RadioButton2, CheckType décoché ; Générer : aucune requête (ni RadioButton1 ni 3), erreur Null object figée (ETICLI-A03), code 125.",
+ "dataset": "eticli_shared/eticli_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,29 @@
+{
+ "id": "BTQART-T02",
+ "objet": "Saisie d'un article à famille absente",
+ "classe": "Btqart",
+ "description": "Saisie de 901 (famille ZZ absente de Fiches_Fam, jeu btqart_base) puis Enregistrer : erreur d'exécution (Rfam!libell_fam sans enregistrement, A04 figée), code de sortie 125.",
+ "dataset": "btqart_shared/btqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Btq": true,
+  "/Soc01/Identifiant": "ident",
+  "/Soc01/Adradminart": "boutique.test/import",
+  "/Soc01/Adradminphot": "boutique.test/photos",
+  "/Soc01/Mdpadmin": "secret"
+ },
+ "fichiers": [
+  "Prd.csv",
+  "Photo.csv"
+ ],
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

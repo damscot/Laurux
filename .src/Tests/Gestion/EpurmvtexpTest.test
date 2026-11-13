@@ -1,0 +1,33 @@
+' Gambas test file
+
+''Tests de Epurmvtexp (.hidden/reference/.src/Gestion/Stock/Epurmvtexp.class/test.md, EPURMVTEXP-T04).
+''Valeurs attendues : assets/EpurmvtexpTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est instanciée sans être affichée et Form_Open (public) est appelé directement sur Laurux01.sql
+''(dteclec1 = 2017-12-31, mois de décembre ; dteclec = 2018-12-31) ; en fin de test, ses événements sont verrouillés.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04DatesProposees", "Form_Open : dates proposées date1 (mois suivant dteclec1, décembre) et date2 (dteclec)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EpurmvtexpTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T04DatesProposees()
+
+  Dim hF As Epurmvtexp
+
+  hF = New Epurmvtexp
+  Try hF.Form_Open()
+  If Error Then TestKit.Check("Form_Open", "ERREUR: " & Error.Text)
+  TestKit.Check("date1", Object.GetProperty(hF.Controls["Date1"], "Text"))
+  TestKit.Check("date2", Object.GetProperty(hF.Controls["Date2"], "Text"))
+  Object.Lock(hF)
+
+End

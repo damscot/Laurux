@@ -1,0 +1,28 @@
+{
+ "id": "BTQART-T01",
+ "objet": "Ouverture",
+ "classe": "Btqart",
+ "description": "Menu184 (Maj boutique, /Soc01/Btq), paramètres de connexion en conf, puis Quitter (Button3). Art_Saisis (ligne périmée du jeu btqart_base) recréée vide ; Prd.csv et Photo.csv créés vides dans le HOME.",
+ "dataset": "btqart_shared/btqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Btq": true,
+  "/Soc01/Identifiant": "ident",
+  "/Soc01/Adradminart": "boutique.test/import",
+  "/Soc01/Adradminphot": "boutique.test/photos",
+  "/Soc01/Mdpadmin": "secret"
+ },
+ "fichiers": [
+  "Prd.csv",
+  "Photo.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

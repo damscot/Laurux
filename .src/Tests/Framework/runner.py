@@ -438,6 +438,9 @@ def test_env(home, extra=None):
             env[k] = os.environ[k]
     env.update(extra or {})
     (home / "run").mkdir(mode=0o700, parents=True, exist_ok=True)
+    # marqueur du HOME de test, exigé par TestKit.Begin (GardeHome) : home est ici un répertoire de dossier_temp ou
+    # le /home/laurux du conteneur ; Start.Fin_Home ne supprime que /tmp/laurux-test/home-* (garde-fou inchangé)
+    (home / ".laurux-test-home").touch()
     desktop_open_env(home)
     (home / "tmp").mkdir(parents=True, exist_ok=True)
     conf = home / ".config" / "gambas3" / "Laurux.conf"

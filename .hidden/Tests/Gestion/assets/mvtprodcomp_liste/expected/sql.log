@@ -1,0 +1,31 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT mind FROM Fiches_Mvtexpdc Order by mind desc limit 1
+SELECT * FROM Fiches_Art where art_prdcomp = 1 order by CAST(art_code AS char)
+SELECT * FROM Fiches_Art where art_code = 'PC2'
+SELECT * FROM Fiches_Art where art_code = 'PC2'
+UPdate  Fiches_Art  SET art_qte = '7' WHERE art_code = 'PC2'
+INSERT INTO Fiches_Mvtexpdc(mind,code,daterecpt,qtep,qtem,com, type) VALUES (42, 'PC2', '20180615', '2,00', '0', 'Entrée produit composé', 'P')
+SELECT * FROM Fiches_PrdComp where codep = 'PC2'
+SELECT * FROM Fiches_PrdComp where codec = 'CP1' and codep = 'PC2'
+SELECT * FROM Fiches_Art where art_code = 'CP1'
+UPdate  Fiches_Art  SET art_qte = '98' WHERE art_code = 'CP1'
+SELECT * FROM Fiches_Mvtexpdc where code = 'CP1'
+INSERT INTO Fiches_Mvtexpdc(mind,code,daterecpt,qtep,qtem,com, type) VALUES (42, 'CP1', '20180615', '0', 2, 'Sortie composant', 'C')

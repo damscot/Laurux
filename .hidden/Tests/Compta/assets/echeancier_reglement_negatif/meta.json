@@ -1,0 +1,24 @@
+{
+ "id": "ECHEANCIER-T07",
+ "objet": "Règlement client au débit négatif",
+ "classe": "Echeancier",
+ "description": "Jeu echeancier_neg : facture 411006 de 150 avec un règlement au débit -30 et un règlement au crédit 20 ; Imprimer (clients, tri échéance) : comportement actuel figé (A01) ; texte du PDF comparé ; Quitter.",
+ "dataset": "echeancier_neg",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/echeancier_pdf.txt'"
+ },
+ "fichiers": [
+  "echeancier_pdf.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

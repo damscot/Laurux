@@ -1,0 +1,18 @@
+{
+ "id": "FMONTANT-T01",
+ "objet": "Recherche par montant",
+ "classe": "Fmontant",
+ "description": "Compta > Recherche d'un montant (Menu40) sur le jeu fmontant_mvt : montant 12 avec Tous (défaut, coll = False), Clients, Fournisseurs, puis Compte collectif + Tous avec 12,5 ; chaque recherche suivie du Message.Info « Traitement terminé ! » (Entrée). Requêtes comparées (sql.log ordonné) : filtre coll remplacé pour Clients, complété pour Fournisseurs (A02 figée).",
+ "dataset": "fmontant_shared/fmontant_mvt",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,25 @@
+{
+ "classe": "Imp_Bilan",
+ "dataset": "extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/BilanDetail.csv",
+  "tmp/BilanRub.csv",
+  "edition.txt"
+ ],
+ "id": "IMP_BILAN-T06",
+ "objet": "Deux éditions successives (E1 puis N1)",
+ "description": "Impressions comptables (RubImp, Menu124), jeu extrait_base, Bilan E1 Imprimer (Message.Info validé par Entrée) puis N1 Imprimer (Message.Info validé par Entrée) dans la même session ; edition.txt (texte du second PDF), CSV et dump à comparer avec ceux d'IMP_BILAN-T02 joué seul ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ }
+}

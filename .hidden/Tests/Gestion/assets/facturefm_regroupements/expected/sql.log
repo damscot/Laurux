@@ -1,0 +1,50 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Typec
+SELECT * FROM Fiches_Commerciaux
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),adr1 Char(35),adr2 Char(35),ville Char(35),totf Char(12),tottc Char(12),gestbl Decimal(6,2),PRIMARY KEY (code, nom))  ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),nom Char(35),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num))  ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where (type = 'B' or type='F') and totalht <> 0 and  cli_div = 0 and imp <> 1 and cli_div = 0 AND (datebl BETWEEN '20180601' AND '20180630') AND cli_regr='M' order by cdclibl, numbl
+SELECT * FROM Facturefm WHERE code = '411903'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc,gestbl) Values ('411903', 'PETIT', '13001','MARSEILLE','80,00', '96,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00005' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00005', '411903', 'PETIT', '2018-06-01 00:00:00', '80,00', '96,00')
+SELECT * FROM Facturefm WHERE code = '411903'
+UPdate Facturefm SET totf = '100,00', tottc = '120,00', gestbl=0 WHERE code = '411903'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00006' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00006', '411903', 'PETIT', '2018-06-16 00:00:00', '20,00', '24,00')
+SELECT * FROM Facturefm order by nom
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),adr1 Char(35),adr2 Char(35),ville Char(35),totf Char(12),tottc Char(12),gestbl Decimal(6,2),PRIMARY KEY (code, nom))  ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),nom Char(35),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num))  ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where (type = 'B' or type='F') and totalht <> 0 and  cli_div = 0 and imp <> 1 and cli_div = 0 AND (datebl BETWEEN '20180605' AND '20180630') AND cli_regr='M' order by cdclibl, numbl
+SELECT * FROM Facturefm WHERE code = '411903'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc,gestbl) Values ('411903', 'PETIT', '13001','MARSEILLE','20,00', '24,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00006' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00006', '411903', 'PETIT', '2018-06-16 00:00:00', '20,00', '24,00')
+SELECT * FROM Facturefm order by nom

@@ -1,0 +1,23 @@
+{
+ "id": "ETICLI-T03",
+ "objet": "Code postal (caractérisation)",
+ "classe": "Eticli",
+ "description": "CheckCp coché ; CP 44000 à 44999 ; tri par CP (RadioButton3) ; Générer : PDF trié par CP mais non filtré (ETICLI-A01 figée).",
+ "dataset": "eticli_shared/eticli_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

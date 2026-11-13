@@ -1,0 +1,28 @@
+{
+ "id": "ETIQART-T09",
+ "objet": "Import portable",
+ "classe": "Etiqart",
+ "description": "~/Portable/inventaire.txt (code-barre valide x 2, code-barre inconnu, ligne sans code-barre, 3000000000004 x 1) ; bouton Importer ; Message.Question (Entrée) ; liste cochée, import, Générer, « Traitement terminé » (Entrée) ; rejets dans ~/tmp/ImpT.txt (ouverture par Desktop.Open non tracée). 3000000000004 absent de Fiches_CdBarre : rejeté.",
+ "dataset": "etiqart_shared/etiqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt",
+  "tmp/ImpT.txt"
+ ],
+ "entrees": {
+  "inventaire.txt": "~/Portable/inventaire.txt"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

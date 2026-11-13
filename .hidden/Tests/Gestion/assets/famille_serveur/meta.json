@@ -1,0 +1,26 @@
+{
+ "id": "FAMILLE-T09",
+ "objet": "Synchronisation serveur",
+ "classe": "Famille",
+ "description": "Préférences /Soc01/Sprix, Sexport, SMajArt actives et /Soc01/Schmprix = ~/tmp (conf) : création de la famille SV (libellé Serveur, coef 1,2, TVA 3, comptes 707020 et 709000, navigation par Entrée, Enregistrer) puis sélection de SV, coefficient remplacé par 1,4 et Enregistrer : fichier tmp/Fam_Serveur.txt comparé (ligne C puis ligne M, Serveur.Pass(\"Fam\", ...)).",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Sprix": "1",
+  "/Soc01/Sexport": "1",
+  "/Soc01/SMajArt": "1",
+  "/Soc01/Schmprix": "~/tmp"
+ },
+ "fichiers": [
+  "tmp/Fam_Serveur.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "id": "RUBIMP-T10",
+ "objet": "Performance (compte de résultat détaillé, ~1 000 écritures)",
+ "classe": "RubImp",
+ "description": "Jeu rubimp_perf (90 comptes de gestion, 1 000 lignes d'écritures 2018 dans Fiches_Mvt, 200 lignes 2017 dans Fiches_Mvt1, généré par gen_rubimp_perf.py, dans ce répertoire) : Impd coché, E1, Imprimer, Message.Info (Entrée) ; texte du PDF (pdftotext), Resultat.csv et centralisation comparés ; durée mesurée (exécution du code Gambas et format des requêtes, pas MariaDB) ; Quitter.",
+ "dataset": "rubimp_perf",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/resultat_pdf.txt'"
+ },
+ "fichiers": [
+  "resultat_pdf.txt",
+  "tmp/Resultat.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

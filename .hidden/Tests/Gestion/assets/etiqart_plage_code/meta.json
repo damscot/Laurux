@@ -1,0 +1,24 @@
+{
+ "id": "ETIQART-T01",
+ "objet": "Plage, tri par code, A4",
+ "classe": "Etiqart",
+ "description": "Menu Gestion › Étiquettes › Articles ; modèle « Z - Test(A4 Portrait) » (index 5, 3 x 8) ; bornes par défaut ; 2 étiquettes ; Générer ; boîte « Traitement terminé » (Entrée) ; texte du PDF par pdftotext.",
+ "dataset": "etiqart_shared/etiqart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Impetiq": "1- A4",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "id": "RUBIMP-T04",
+ "objet": "Aiguillage vers le bilan et les SIG",
+ "classe": "RubImp",
+ "description": "Jeu extrait_shared/extrait_base : Impd coché, Bilan, Imprimer (Info : Entrée) → Imp_Bilan.Lancement ; SIG, Imprimer (Info : Entrée) → Imp_Sig.Lancement ; Resultat.csv vide comparé, table centralisation au format SIG (dump) ; Quitter. Les PDF Bilan/SIG ne passent pas par ce scénario (couverts par IMP_BILAN/IMP_SIG).",
+ "dataset": "extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/Resultat.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

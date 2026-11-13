@@ -1,0 +1,85 @@
+' Gambas test file
+
+''Tests de Mreglement (.hidden/reference/.src/Gestion/Tables/Mreglement.class/test.md, MREGLEMENT-T01 à T03).
+''Valeurs attendues : assets/MreglementTest/expected.txt, produites dans le clone de référence.
+''Le référentiel (CodeCais, RegMode2CodeCaisse, CodeCaisse2RegMode, Laision_Reg) est porté par des membres
+''d'instance du formulaire : la fenêtre est instanciée sans être affichée, puis ses événements sont verrouillés.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01RegModeCodeCaisse", "RegMode2CodeCaisse : modes 0 à 10 (Null aux bornes)")
+  TestKit.Desc("T02CodeCaisseRegMode", "CodeCaisse2RegMode : N, 1, Z et chaîne vide")
+  TestKit.Desc("T03LiaisonReg", "Laision_Reg : mode 4 sans liaison (Laurux01) puis avec liaisons (jeu mreglement_liaisons)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "MreglementTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Lit(v As Variant) As String
+  ''Valeur Null rendue lisible.
+
+  If IsNull(v) Then Return "<Null>"
+  Return CStr(v)
+
+End
+
+Public Sub T01RegModeCodeCaisse()
+
+  Dim hF As Mreglement
+  Dim i As Integer
+  Dim s As String
+
+  hF = New Mreglement
+  For i = 0 To 10
+    Try s = Lit(hF.RegMode2CodeCaisse(i))
+    If Error Then s = "ERREUR: " & Error.Text
+    TestKit.Check("mode" & Format$(i, "00"), s)
+  Next
+  Object.Lock(hF)
+
+End
+
+Public Sub T02CodeCaisseRegMode()
+
+  Dim hF As Mreglement
+  Dim sCode As String
+  Dim s As String
+
+  hF = New Mreglement
+  For Each sCode In ["N", "1", "Z", ""]
+    Try s = CStr(hF.CodeCaisse2RegMode(sCode))
+    If Error Then s = "ERREUR: " & Error.Text
+    TestKit.Check("code[" & sCode & "]", s)
+  Next
+  Object.Lock(hF)
+
+End
+
+Public Sub T03LiaisonReg()
+
+  Dim hF As Mreglement
+  Dim s As String
+  Dim i As Integer
+
+  hF = New Mreglement
+  Try s = Lit(hF.Laision_Reg(4))
+  If Error Then s = "ERREUR: " & Error.Text
+  TestKit.Check("laurux01.mode4", s)
+  Object.Lock(hF)
+
+  TestKit.OuvreBase("mreglement_shared/mreglement_liaisons")
+  hF = New Mreglement
+  For Each i In [3, 4, 5]
+    Try s = Lit(hF.Laision_Reg(i))
+    If Error Then s = "ERREUR: " & Error.Text
+    TestKit.Check("liaisons.mode" & CStr(i), s)
+  Next
+  Object.Lock(hF)
+
+End

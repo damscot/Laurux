@@ -1,0 +1,25 @@
+{
+ "classe": "ConVendeurs",
+ "dataset": "convendeurs_shared/vendeurs",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Vendeurs": "1",
+  "/Soc01/CodeVendeur": ""
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ],
+ "id": "CONVENDEURS-T04",
+ "objet": "Déconnexion depuis Menu42",
+ "description": "Jeu convendeurs_shared/vendeurs. Saisie des documents (Menu42) : ConVendeurs, Déconnecter (Button3) : CodeVendeur vidé dans Laurux.conf (sauvegardé par la fermeture de Fmenu en fin de scénario) ; Button3 masque l'auto-instance et non la fenêtre ouverte (A03) : la fenêtre reste ouverte et se ferme ensuite par Close (le rejeu échouerait si elle était masquée). Partie F5 de Facture non rejouable.",
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

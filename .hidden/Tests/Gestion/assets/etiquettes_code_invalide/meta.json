@@ -1,0 +1,20 @@
+{
+ "id": "ETIQUETTES-T06",
+ "objet": "Libellé mal formé / code vide",
+ "classe": "Etiquettes",
+ "description": "Caractérisation (ETIQUETTES-A01) : « Y Test », page A4 Portrait, zones à 1 ; Enregistrer : ligne Y de libellé « est » ; puis Code_etiq vide (combo réinitialisée), page A4 Portrait, zones à 1 ; Enregistrer : erreur fatale Query failed (code 125).",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "code_sortie": 125,
+ "xfail": "code vide : Left$(,1) vaut Null, INSERT refusé (Column 'code' cannot be null, Etiquettes.Button3_Click.143), erreur fatale au lieu d'une ligne de code ''",
+ "xfail_attendu": "ligne de code '' enregistrée (ETIQUETTES-A01)",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 400,
+  "fenetre": 300
+ }
+}

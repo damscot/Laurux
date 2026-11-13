@@ -1,0 +1,98 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+UPdate  Fiches_Cli  SET  cli_code = '411001', cli_rs_soc= NULL, cli_nom = 'A Divers', cli_pnm = 'Jean', cli_adr1 = '1 rue A', cli_adr2 = NULL, cli_cd_ptl = '75001', cli_ville = 'Paris', cli_email = 'a@exemple.fr', cli_tel_dom = '0102030405', cli_tel_bur = NULL, cli_tel_poste = NULL, cli_pble = NULL, cli_fx1 = NULL, cli_fx2 = NULL, cli_plaf_ecrs = '0', cli_cd_bq = NULL, cli_cd_gch = NULL, cli_cle_rib = NULL, cli_num_cpt = NULL, cli_dmln = NULL , cli_cd_ent = '0', cli_cd_acc = '0',cli_ref_tir = '0', cli_id_tva = NULL, cli_rlvc = '0', cli_rlvf = '0', cli_obs = 'import', cli_collectif = '411000' WHERE cli_code = '411001'
+Update Fiches_Cli set cli_rmo = '0', cli_rart = '0' where cli_code = '411001'
+UPdate Fiches_Comptes SET compte_cc = '411001', intitule_cc = 'A Divers', type_cc = 'C', coll = 0, coll_cc = '411000', cent_cc = 0, comptr_cc = 0, gen_tv = 0, gen_ta = 0 WHERE compte_cc = '411001'
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+UPdate  Fiches_Cli  SET  cli_code = '411002', cli_rs_soc= NULL, cli_nom = 'B Divers', cli_pnm = 'Paul', cli_adr1 = '2 rue B', cli_adr2 = NULL, cli_cd_ptl = '69001', cli_ville = 'Lyon', cli_email = NULL, cli_tel_dom = NULL, cli_tel_bur = NULL, cli_tel_poste = NULL, cli_pble = NULL, cli_fx1 = NULL, cli_fx2 = NULL, cli_plaf_ecrs = '0', cli_cd_bq = NULL, cli_cd_gch = NULL, cli_cle_rib = NULL, cli_num_cpt = NULL, cli_dmln = NULL , cli_cd_ent = '0', cli_cd_acc = '0',cli_ref_tir = '0', cli_id_tva = NULL, cli_rlvc = '0', cli_rlvf = '0', cli_obs = NULL, cli_collectif = '411000' WHERE cli_code = '411002'
+Update Fiches_Cli set cli_rmo = '0', cli_rart = '0' where cli_code = '411002'
+UPdate Fiches_Comptes SET compte_cc = '411002', intitule_cc = 'B Divers', type_cc = 'C', coll = 0, coll_cc = '411000', cent_cc = 0, comptr_cc = 0, gen_tv = 0, gen_ta = 0 WHERE compte_cc = '411002'
+drop Table IF exists Nvcompte
+CREATE  TABLE IF NOT EXISTS Nvcompte(cd Char(8) NOT NULL,intitule Char(25),PRIMARY KEY (cd)) ENGINE = InnoDB
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000'
+SELECT * FROM Fiches_Comptes Where compte_cc = '445730'
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000'
+SELECT * FROM Fiches_Comptes Where compte_cc = '445730'
+SELECT * FROM Nvcompte
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+SELECT * FROM Fiches_Mvt Where compte = '411001' and numdoc = 'FJ001'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411001'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 1, '411000', '1', 'A Divers', '20180310', 'FJ001', 'FJ001', 'Facture FJ001', '120.00', '0.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPdate Fiches_Comptes set solde = 120 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 1, '411001', 'A Divers', '20180310', 'FJ001', 'FJ001', 'Facture FJ001', '120.00', '0.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411001'
+UPdate Fiches_Comptes set solde = 120 Where compte_cc = '411001'
+UPdate Fiches_Parametres set numecriture = 1
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  dnfac = NULL
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+SELECT * FROM Fiches_Mvt Where compte = '707000' and numdoc = 'FJ001'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 1, '707000', 'Ventes', '20180310', 'FJ001', 'FJ001', 'Facture FJ001', '0.00', '100.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000'
+UPdate Fiches_Comptes set solde = -100 Where compte_cc = '707000'
+UPdate Fiches_Parametres set numecriture = 1
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  dnfac = NULL
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+SELECT * FROM Fiches_Mvt Where compte = '445730' and numdoc = 'FJ001'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 1, '445730', 'Tva', '20180310', 'FJ001', 'FJ001', 'Facture FJ001', '0.00', '20.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '445730'
+UPdate Fiches_Comptes set solde = -20 Where compte_cc = '445730'
+UPdate Fiches_Parametres set numecriture = 1
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  dnfac = NULL
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+SELECT * FROM Fiches_Mvt Where compte = '411002' and numdoc = 'FJ002'
+SELECT * FROM Fiches_Comptes Where compte_cc = '411002'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 2, '411000', '1', 'B Divers', '20180312', 'FJ002', 'FJ002', 'Facture FJ002', '60.00', '0.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPdate Fiches_Comptes set solde = 180 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 2, '411002', 'B Divers', '20180312', 'FJ002', 'FJ002', 'Facture FJ002', '60.00', '0.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411002'
+UPdate Fiches_Comptes set solde = 60 Where compte_cc = '411002'
+UPdate Fiches_Parametres set numecriture = 2
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  dnfac = NULL
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+SELECT * FROM Fiches_Mvt Where compte = '707000' and numdoc = 'FJ002'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 2, '707000', 'Ventes', '20180312', 'FJ002', 'FJ002', 'Facture FJ002', '0.00', '50.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '707000'
+UPdate Fiches_Comptes set solde = -150 Where compte_cc = '707000'
+UPdate Fiches_Parametres set numecriture = 2
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  dnfac = NULL
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+SELECT * FROM Fiches_Mvt Where compte = '445730' and numdoc = 'FJ002'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance) VALUES ('70', 2, '445730', 'Tva', '20180312', 'FJ002', 'FJ002', 'Facture FJ002', '0.00', '10.00', 1, 0, 0, 0, 0, 1, 0)
+SELECT * FROM Fiches_Comptes Where compte_cc = '445730'
+UPdate Fiches_Comptes set solde = -30 Where compte_cc = '445730'
+UPdate Fiches_Parametres set numecriture = 2
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  dnfac = NULL

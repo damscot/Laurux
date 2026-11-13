@@ -1,0 +1,25 @@
+{
+ "classe": "Imp_Bilan",
+ "dataset": "imp_bilan_shared/imp_bilan_amort",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/BilanDetail.csv",
+  "tmp/BilanRub.csv",
+  "edition.txt"
+ ],
+ "id": "IMP_BILAN-T05",
+ "objet": "Amortissements et compte 129",
+ "description": "Impressions comptables (RubImp, Menu124), jeu imp_bilan_shared/imp_bilan_amort (immobilisations 211/213, amortissements 2813/2815 sur plages amortissement = 1, compte 129, résultat en perte, une écriture non validée), Bilan E1, Imprimer ; Message.Info validé par Entrée ; colonne Amortissements et signe du résultat figés par le texte du PDF (edition.txt), BilanRub.csv et le dump ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ }
+}

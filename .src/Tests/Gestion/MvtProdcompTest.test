@@ -1,0 +1,129 @@
+' Gambas test file
+
+''Tests de MvtProdcomp (.hidden/reference/.src/Gestion/Stock/MvtProdcomp.class/test.md, MVTPRODCOMP-T01, T02, T07, T08).
+''Valeurs attendues : assets/MvtProdcompTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est instanciée sans être affichée ; la saisie est simulée par les méthodes publiques (art_man,
+''qterecue_LF, Maj_colrcp, Sortie_Click) et le texte des champs (Datej, Cart, Qterecue). Jeu : mvtprodcomp_shared/prodcomp.
+''Les chemins qui ouvrent une boîte Message (ressaisie, article non stocké ou inexistant) sont rejoués (replay).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Entree", "Entrée de 3 PC1 : stock PC1 +3, CP1 -6, CP2 -1,5, 3 lignes Mvtexpdc de même mind")
+  TestKit.Desc("T02Sortie", "Sortie (démontage) de 1 PC1 : stock PC1 -1, composants +qté, qtep/qtem inversés")
+  TestKit.Desc("T07Bascule", "Saisie puis clic Sortie : grille vidée, base inchangée par la bascule")
+  TestKit.Desc("T08Numerotation", "Mvtexpdc contenant mind 41 : deux saisies (PC1 puis PC2) numérotées 42 et 43")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "MvtProdcompTest")
+  TestKit.OuvreBase("mvtprodcomp_shared/prodcomp")
+
+End
+
+Private Function Ouvre() As MvtProdcomp
+
+  Dim hF As MvtProdcomp
+
+  hF = New MvtProdcomp
+  Object.SetProperty(hF.Controls["Datej"], "Text", "15.06.2018")
+  Return hF
+
+End
+
+Private Sub Saisit(sT As String, hF As MvtProdcomp, sCode As String, sQte As String)
+
+  Object.SetProperty(hF.Controls["Cart"], "Text", sCode)
+  Try hF.art_man()
+  If Error Then TestKit.Check(sT & "/art_man." & sCode, "ERREUR: " & Error.Text)
+  TestKit.Check(sT & "/stock_affiche." & sCode, Object.GetProperty(hF.Controls["Artstock"], "Text"))
+  Object.SetProperty(hF.Controls["Qterecue"], "Text", sQte)
+  Try hF.qterecue_LF()
+  Try hF.Maj_colrcp()
+  If Error Then TestKit.Check(sT & "/Maj_colrcp." & sCode, "ERREUR: " & Error.Text)
+  Try hF.CleanChamps()
+
+End
+
+Private Sub Etat(sT As String, hF As MvtProdcomp)
+
+  Dim r As Result
+  Dim hC As ColumnView
+  Dim i As Integer
+
+  r = Utils.db.Exec("SELECT art_code, art_qte FROM " & Cbase.Table("TabArt") & " WHERE art_code IN ('PC1', 'PC2', 'CP1', 'CP2') ORDER BY art_code")
+  If r.Available Then
+    Repeat
+      TestKit.Check(sT & "/art_qte." & r!art_code, r!art_qte)
+    Until r.MoveNext()
+  Endif
+  r = Utils.db.Exec("SELECT mind, code, daterecpt, qtep, qtem, com, type FROM " & Cbase.Table("TabMvtexpdc") & " ORDER BY id")
+  TestKit.Check(sT & "/mvtexpdc.nb", r.Count)
+  i = 0
+  If r.Available Then
+    Repeat
+      TestKit.Check(sT & "/mvtexpdc." & i, r!mind & "|" & r!code & "|" & Format(r!daterecpt, "yyyy-mm-dd") & "|" & r!qtep & "|" & r!qtem & "|" & r!com & "|" & r!type)
+      Inc i
+    Until r.MoveNext()
+  Endif
+  hC = hF.Controls["Colrcp"]
+  TestKit.Check(sT & "/grille.nb", hC.Count)
+  If hC.MoveFirst() = False Then
+    Repeat
+      TestKit.Check(sT & "/grille." & hC.Item[0], hC.Item[1] & "|" & hC.Item[2])
+    Until hC.MoveNext()
+  Endif
+
+End
+
+Public Sub T01Entree()
+
+  Dim hF As MvtProdcomp
+
+  hF = Ouvre()
+  Saisit("T01", hF, "PC1", "3")
+  Etat("T01", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T02Sortie()
+
+  Dim hF As MvtProdcomp
+
+  hF = Ouvre()
+  Object.SetProperty(hF.Controls["Sortie"], "Value", True)
+  Saisit("T02", hF, "PC1", "1")
+  Etat("T02", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T07Bascule()
+
+  Dim hF As MvtProdcomp
+
+  hF = Ouvre()
+  Saisit("T07", hF, "PC1", "1")
+  TestKit.Check("T07/grille_avant", Object.GetProperty(hF.Controls["Colrcp"], "Count"))
+  Object.SetProperty(hF.Controls["Sortie"], "Value", True)
+  Try hF.Sortie_Click()
+  If Error Then TestKit.Check("T07/Sortie_Click", "ERREUR: " & Error.Text)
+  Etat("T07", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T08Numerotation()
+
+  Dim hF As MvtProdcomp
+
+  hF = Ouvre()
+  Saisit("T08", hF, "PC1", "1")
+  Saisit("T08", hF, "PC2", "4")
+  Etat("T08", hF)
+  Object.Lock(hF)
+
+End

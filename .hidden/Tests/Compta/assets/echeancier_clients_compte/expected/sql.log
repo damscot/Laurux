@@ -1,0 +1,26 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Reglements
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT * FROM Fiches_Mvt left join  Fiches_Comptes on compte_cc = compte WHERE dateech >= '20171231' and dateech <= '20181231' and validee = 1  and lettree = 0 and left(compte,3) = '411' and tresorerie <> 1 and collectif is null order by compte, jour desc, dateech, numlot
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000001' and tresorerie = 1 and compte = '411001' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000003' and tresorerie = 1 and compte = '411001' order by numero
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000002' and tresorerie = 1 and compte = '411002' order by numero

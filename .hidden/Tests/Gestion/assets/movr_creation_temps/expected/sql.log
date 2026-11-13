@@ -1,0 +1,31 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+select * from Fiches_Mo where mo_code like  "%" order by mo_code
+SELECT * FROM Fiches_Mo where mo_code = '06'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Fam WHERE code_fam = '10'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Four WHERE fo_code = '401001'
+SELECT * FROM Fiches_Txtmo WHERE code_txtmo = '2'
+SELECT * FROM Fiches_Txtmo WHERE code_txtmo = '2'
+SELECT * FROM Fiches_Mo where mo_code = '06' 
+INSERT INTO Fiches_Mo (mo_code,mo_design,mo_fam,mo_four,mo_txcd, mo_txht,mo_tva,mo_tempmont,mo_montant,mo_valeurht,mo_valeurttc, mo_cdarr, mo_prvt, mo_marge, mo_crst, mo_impcar) VALUES ('06', 'Mo test', '10', '401001', '2', '31.00', '3', '1', '1.50', '0.00', '0.00', '0,01', '15.00', '24.00', NULL, 0)
+select * from Fiches_Mo where mo_code like  "%" order by mo_code

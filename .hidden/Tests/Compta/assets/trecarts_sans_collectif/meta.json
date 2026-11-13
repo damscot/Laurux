@@ -1,0 +1,20 @@
+{
+ "id": "TRECARTS-T06",
+ "objet": "Compte client sans collectif",
+ "classe": "Trecarts",
+ "description": "Jeu trecarts_sans_coll : lot +0,01 sur 411099 (coll_cc NULL), Traitement : écritures tiers et 758000 passées, puis INSERT de la ligne collectif avec compte NULL : Query failed (compte NOT NULL), erreur fatale figée (code 125, Trecarts.Button2_Click) ; tables restées verrouillées (A03).",
+ "dataset": "trecarts_sans_coll",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "code_sortie": 125,
+ "xfail": "erreur SQL fatale (compte NULL) au lieu d'une ligne collectif sur compte vide",
+ "xfail_attendu": "ligne collectif écrite sur un compte vide (comportement A04 décrit par le test.md)",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

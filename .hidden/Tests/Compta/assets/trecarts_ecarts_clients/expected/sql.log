@@ -1,0 +1,136 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT ecart FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Comptes WHERE type_cc = 'C' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Mvt WHERE compte = '411001' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000001' and lettree = 0 and compte = '411001' order by compte
+LOCK TABLES Fiches_Comptes WRITE, Fiches_Mvt WRITE, Fiches_Parametres WRITE, Fiches_MvtM WRITE
+SELECT numecriture FROM Fiches_Parametres
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee) VALUES ('10', 101, '411001', 'A Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000001', 'Facture F1', 0, 0.03, 1, 0, 0, 0, 1, 0 )
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411001'
+Update Fiches_Comptes set solde = 0 Where compte_cc = '411001'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee) VALUES ('10', 101, '658000', 'A Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000001', 'Facture F1', 0.03, 0, 1, 0, 0, 0, 1, 0 )
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '658000'
+Update Fiches_Comptes set solde = -0.03 Where compte_cc = '658000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411001' 
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000' 
+Update Fiches_Comptes set solde = 0.48 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, collectif) VALUES ('10', 101, '411000', 'A Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000001', 'Facture F1', 0, 0.03, 1, 0, 0, 0, 1, 0, 1)
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000001' and lettree = 0 and compte = '411001' order by compte
+UPdate Fiches_Mvt SET numlot = 'E000000001', lettree = 1 where compte = '411001' and numlot = 'L000000001'
+UPdate Fiches_Mvt SET numlot = 'E000000001', lettree = 1 where compte = '411001' and numlot = 'L000000001'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '101' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '101' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 16 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '101' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '101' order by lind desc limit 2
+update Fiches_Mvt set  control = 'Ghqp7ig2EGXPeSWF7PuVucNr2eY=' where lind = 15
+update Fiches_Mvt set  control = 'g/V33G3fy39cHsYYHd7CEysORQg=' where lind = 16
+update Fiches_Mvt set  control = 'P+VVYBVCBc1fofzp/k63qQHL0Nk=' where lind = 17
+UPDATE Fiches_Parametres SET numecriture = 101
+UNLOCK TABLES
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000001' and lettree = 0 and compte = '411001' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte = '411002' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000002' and lettree = 0 and compte = '411002' order by compte
+LOCK TABLES Fiches_Comptes WRITE, Fiches_Mvt WRITE, Fiches_Parametres WRITE, Fiches_MvtM WRITE
+SELECT numecriture FROM Fiches_Parametres
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee) VALUES ('10', 102, '411002', 'B Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000002', 'Facture F2', 0.04, 0, 1, 0, 0, 0, 1, 0 )
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411002'
+Update Fiches_Comptes set solde = 0 Where compte_cc = '411002'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee) VALUES ('10', 102, '758000', 'B Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000002', 'Facture F2', 0, 0.04, 1, 0, 0, 0, 1, 0 )
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '758000'
+Update Fiches_Comptes set solde = 0.04 Where compte_cc = '758000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411002' 
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000' 
+Update Fiches_Comptes set solde = 0.52 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, collectif) VALUES ('10', 102, '411000', 'B Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000002', 'Facture F2', 0.04, 0, 1, 0, 0, 0, 1, 0, 1)
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000002' and lettree = 0 and compte = '411002' order by compte
+UPdate Fiches_Mvt SET numlot = 'E000000002', lettree = 1 where compte = '411002' and numlot = 'L000000002'
+UPdate Fiches_Mvt SET numlot = 'E000000002', lettree = 1 where compte = '411002' and numlot = 'L000000002'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '102' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '102' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 101 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '102' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '102' order by lind desc limit 2
+update Fiches_Mvt set  control = 'Ly2QuoVa/F32YaZpEHROwQqrVT0=' where lind = 18
+update Fiches_Mvt set  control = 'BBjjSwFwOZjlwobPsyGJgdY01Mo=' where lind = 19
+update Fiches_Mvt set  control = 'NblM75uFaXRWjrjl9YdQ3z3WYR4=' where lind = 20
+UPDATE Fiches_Parametres SET numecriture = 102
+UNLOCK TABLES
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000002' and lettree = 0 and compte = '411002' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte = '411003' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000003' and lettree = 0 and compte = '411003' order by compte
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000003' and lettree = 0 and compte = '411003' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte = '411004' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000004' and lettree = 0 and compte = '411004' order by compte
+LOCK TABLES Fiches_Comptes WRITE, Fiches_Mvt WRITE, Fiches_Parametres WRITE, Fiches_MvtM WRITE
+SELECT numecriture FROM Fiches_Parametres
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee) VALUES ('10', 103, '411004', 'D Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000004', 'Facture F4', 0, 0.02, 1, 0, 0, 0, 1, 0 )
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411004'
+Update Fiches_Comptes set solde = 0 Where compte_cc = '411004'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee) VALUES ('10', 103, '658000', 'D Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000004', 'Facture F4', 0.02, 0, 1, 0, 0, 0, 1, 0 )
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '658000'
+Update Fiches_Comptes set solde = -0.05 Where compte_cc = '658000'
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411004' 
+SELECT * FROM Fiches_Comptes WHERE compte_cc = '411000' 
+Update Fiches_Comptes set solde = 0.5 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, collectif) VALUES ('10', 103, '411000', 'D Divers ', '2018-06-15 10:00:04.482', NULL, 'E000000004', 'Facture F4', 0, 0.02, 1, 0, 0, 0, 1, 0, 1)
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000004' and lettree = 0 and compte = '411004' order by compte
+UPdate Fiches_Mvt SET numlot = 'E000000004', lettree = 1 where compte = '411004' and numlot = 'L000000004'
+UPdate Fiches_Mvt SET numlot = 'E000000004', lettree = 1 where compte = '411004' and numlot = 'L000000004'
+UPdate Fiches_Mvt SET numlot = 'E000000004', lettree = 1 where compte = '411004' and numlot = 'L000000004'
+UPdate Fiches_Mvt SET numlot = 'E000000004', lettree = 1 where compte = '411004' and numlot = 'L000000004'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '103' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '103' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 102 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '103' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '103' order by lind desc limit 2
+update Fiches_Mvt set  control = 'kUSxN0lgarcV/5Y/AisMryuDK90=' where lind = 21
+update Fiches_Mvt set  control = 'qABp0P0NmKoH21KsN9Tkkjujq+k=' where lind = 22
+update Fiches_Mvt set  control = '54OOtwyMiKrBcLl2zOuvZSQvYLo=' where lind = 23
+UPDATE Fiches_Parametres SET numecriture = 103
+UNLOCK TABLES
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000004' and lettree = 0 and compte = '411004' order by compte
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000004' and lettree = 0 and compte = '411004' order by compte
+SELECT * FROM Fiches_Mvt WHERE numlot = 'L000000004' and lettree = 0 and compte = '411004' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte = '411005' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411006' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411007' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411008' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411009' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411010' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411011' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411012' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411013' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411014' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411015' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411016' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411017' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411018' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411019' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411020' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411021' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411022' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411023' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411024' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411025' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411026' and lettree = 0 order by numlot
+SELECT * FROM Fiches_Mvt WHERE compte = '411027' and lettree = 0 order by numlot

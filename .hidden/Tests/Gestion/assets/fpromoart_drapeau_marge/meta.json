@@ -1,0 +1,17 @@
+{
+ "id": "FPROMOART-T03",
+ "objet": "Marge négative puis HT",
+ "classe": "FpromoArt",
+ "description": "Article 002 (prix de revient 10) : TTC 5 + Entrée (CalcHt, marge négative) : Message.Warning validé par Entrée (drapeau B = 1) ; prix HT effacé (5 BackSpace) puis 15 + Entrée : marge positive mais CalcTTC sauté une fois (FPROMOART-A03 figée), Enregistrer (Button3) : INSERT avec pttc 5 non recalculé.",
+ "dataset": "fpromoart_shared/fpromoart_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}
