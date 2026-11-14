@@ -1,0 +1,99 @@
+' Gambas test file
+
+''Tests de Htickets (.hidden/reference/.src/Reports/Htickets.class/test.md, HTICKETS-T01, T02).
+''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
+''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
+''Valeurs attendues : assets/HticketsTest/expected.txt, produites dans le clone de référence. Pas de base.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Ticket", "Entete, 10 Entete2 (PosX 40 puis 0), 5 Level4, Footer")
+  TestKit.Desc("T02TicketLong", "Entete, 10 Entete2 puis 70 Level4 de PosY 56 à 401 : pagination figée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "HticketsTest")
+
+End
+
+Private Function Nouveau() As Htickets
+
+  Dim pdf As Htickets
+
+  pdf = New Htickets("P", "mm", "A4")
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, en extrait le texte et vérifie chaque ligne non vide (date du jour et utilisateur masqués).
+Private Sub Verifie(sCle As String, pdf As PdfWriter)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+Private Sub Ticket(sCle As String, sPosX As String)
+
+  Dim pdf As Htickets = Nouveau()
+  Dim i As Integer
+
+  pdf.Entete()
+  For i = 1 To 10
+    pdf.Entete2("Ligne d'en-tête " & i, sPosX, CStr(5 + i * 4))
+  Next
+  For i = 1 To 5
+    pdf.Level4("A" & i, "ARTICLE " & i, CStr(i) & ",50", CStr(i), 56 + i * 5)
+  Next
+  pdf.Footer()
+  Verifie(sCle, pdf)
+
+End
+
+Public Sub T01Ticket()
+
+  Ticket("T01/posx40", "40")
+  Ticket("T01/posx0", "0")
+
+End
+
+Public Sub T02TicketLong()
+
+  Dim pdf As Htickets = Nouveau()
+  Dim i As Integer
+
+  pdf.Entete()
+  For i = 1 To 10
+    pdf.Entete2("Ligne d'en-tête " & i, "0", CStr(5 + i * 4))
+  Next
+  For i = 0 To 69
+    pdf.Level4("A" & i, "ARTICLE " & i, "1,00", "1", 56 + i * 5)
+  Next
+  TestKit.Check("T02/pages", pdf.PageNo())
+  Verifie("T02", pdf)
+
+End

@@ -1,0 +1,23 @@
+{
+ "id": "VISSTATCOMM-T02",
+ "objet": "Affichage synthèse (texte du PDF)",
+ "classe": "VisStatComm",
+ "description": "STATCOMM-T02 (Facn, Detail décoché) puis Imprimer : texte du PDF, une ligne par commercial.",
+ "dataset": "statcomm_shared/statistiques_ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

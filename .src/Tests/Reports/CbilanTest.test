@@ -1,0 +1,159 @@
+' Gambas test file
+
+''Tests de Cbilan (.hidden/reference/.src/Reports/Cbilan.class/test.md, CBILAN-T01 à T04).
+''Chaque test produit un PDF non compressé (SetCompression(False)) dans un fichier temporaire et vérifie :
+''le texte rendu par « pdftotext -layout » (une clé par ligne non vide), le nombre et la taille des pages
+''(pdfinfo) et l'empreinte md5 du fichier PDF (flux : positions, polices, couleurs), après masquage de
+''/CreationDate, de la date du jour et de User.Name. Valeurs attendues : assets/CbilanTest/expected.txt,
+''produites dans le clone de référence. Pas de base de données. T05 (rejeu RubImp/Imp_Bilan) reste à faire.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Entetes", "Level0, Level3 (Sens A, P, 1), Lines, BasPage")
+  TestKit.Desc("T02Level1Net", "Level1 : net pour 6 couples Sens A et un couple Sens P")
+  TestKit.Desc("T03Level1LS", "Level1L et Level1S : mêmes couples et brut négatif, Level1A, Level2")
+  TestKit.Desc("T04MultiPages", "2 pages (Level0, Level3, 40 Level1, BasPage) : Page 1/2 et 2/2")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CbilanTest")
+
+End
+
+Private Function Nouveau(Optional sOrient As String = "Portrait", Optional sFormat As String = "A4") As Cbilan
+
+  Dim pdf As Cbilan
+
+  pdf = New Cbilan(sOrient, "mm", sFormat)
+  pdf.SetCompression(False)
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, vérifie chaque ligne non vide du texte extrait puis l'empreinte du fichier masqué.
+Private Sub Verifie(sCle As String, pdf As Cbilan)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim sBuf As String
+  Dim sMd5 As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "000"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  Shell "pdfinfo " & Shell$(sFic) & " | grep -E '^(Pages|Page size)'" To sBuf
+  TestKit.Check(sCle & "/pdfinfo", Trim(sBuf))
+  ' Flux : masquage des valeurs variables puis empreinte
+  sBuf = File.Load(sFic)
+  sTxt = ""
+  For Each sLig In Split(sBuf, "\n")
+    If InStr(sLig, "/CreationDate") > 0 Then Continue
+    sTxt &= sLig & "\n"
+  Next
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  File.Save(sFic & ".flux", sTxt)
+  Shell "md5sum < " & Shell$(sFic & ".flux") To sMd5
+  TestKit.Check(sCle & "/flux_md5", Trim(Left(sMd5, 32)))
+
+End
+
+Public Sub T01Entetes()
+
+  Dim pdf As Cbilan = Nouveau()
+  Dim sSens As String
+
+  For Each sSens In ["A", "P", "1"]
+    pdf.Level0("Bilan " & sSens, "Du 01/01/2018 au 31/12/2018", "Détaillé", "Société test")
+    Try pdf.Level3("31/12/2018", "31/12/2017", 40, sSens)
+    TestKit.Check("T01/level3_" & sSens & "/erreur", IIf(Error, Error.Text, ""))
+    pdf.Lines("60")
+    pdf.BasPage()
+  Next
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02Level1Net()
+
+  Dim pdf As Cbilan = Nouveau()
+  Dim aCouples As String[] = ["100", "30", "100", "0", "100", "", "100", "100", "1234.5", "0.5", "", ""]
+  Dim i As Integer
+  Dim y As Integer = 50
+
+  pdf.AddPage()
+  pdf.Level3("31/12/2018", "31/12/2017", 40, "A")
+  For i = 0 To aCouples.Max Step 2
+    Try pdf.Level1("Rubrique " & (i \ 2), "", aCouples[i], aCouples[i + 1], "80", "", y, "A")
+    TestKit.Check("T02/A" & (i \ 2) & "/erreur", IIf(Error, Error.Text, ""))
+    y += 6
+  Next
+  Try pdf.Level1("Rubrique passif", "", "100", "0", "80", "", y, "P")
+  TestKit.Check("T02/P/erreur", IIf(Error, Error.Text, ""))
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03Level1LS()
+
+  Dim pdf As Cbilan = Nouveau()
+  Dim aCouples As String[] = ["100", "30", "100", "0", "100", "", "100", "100", "1234.5", "0.5", "", "", "-100", "30"]
+  Dim i As Integer
+  Dim y As Integer = 50
+
+  pdf.AddPage()
+  For i = 0 To aCouples.Max Step 2
+    Try pdf.Level1L("RubL " & (i \ 2), "", aCouples[i], aCouples[i + 1], "80", "", y, "A")
+    TestKit.Check("T03/L" & (i \ 2) & "/erreur", IIf(Error, Error.Text, ""))
+    y += 6
+  Next
+  For i = 0 To aCouples.Max Step 2
+    Try pdf.Level1S("RubS " & (i \ 2), "", aCouples[i], aCouples[i + 1], "80", "", y, "A")
+    TestKit.Check("T03/S" & (i \ 2) & "/erreur", IIf(Error, Error.Text, ""))
+    y += 6
+  Next
+  Try pdf.Level1A("1234.5", y)
+  TestKit.Check("T03/level1A/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level2("Rubrique", "Compte", "401001", "", "100", "30", y + 6, "A")
+  TestKit.Check("T03/level2/erreur", IIf(Error, Error.Text, ""))
+  Verifie("T03", pdf)
+
+End
+
+Public Sub T04MultiPages()
+
+  Dim pdf As Cbilan = Nouveau()
+  Dim p As Integer
+  Dim i As Integer
+
+  For p = 1 To 2
+    pdf.Level0("Bilan", "Exercice 2018", "Page " & p, "Société test")
+    pdf.Level3("31/12/2018", "31/12/2017", 40, "A")
+    For i = 0 To 39
+      pdf.Level1("Rubrique " & i, "", "100", "30", "80", "", 50 + i * 5, "A")
+    Next
+    pdf.BasPage()
+  Next
+  Verifie("T04", pdf)
+
+End

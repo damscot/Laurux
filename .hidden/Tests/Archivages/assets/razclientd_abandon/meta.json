@@ -1,0 +1,21 @@
+{
+ "id": "RAZCLIENTD-T02",
+ "classe": "RazClientd",
+ "objet": "Abandon de la purge des clients divers",
+ "description": "Jeu clid_base : Lancer, Message.Question bouton 2 « Non » (Tab puis Espace), Quitter. Attendu : table inchangée, pas de sauvegarde ~/Sauve ; date limite = date du jour figée 2018-06-15 (valeur par défaut du DateChooser).",
+ "dataset": "razclientd_shared/clid_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "Sauve/Laurux01EffaceD.sql"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

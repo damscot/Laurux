@@ -1,0 +1,47 @@
+' Gambas test file
+
+''Tests de TriMo (.hidden/reference/.src/Affichages/TriMo.class/test.md, TRIMO-T01).
+''Valeurs attendues : assets/TriMoTest/expected.txt, produites dans le clone de référence.
+''Contrôle statique : aucune source du projet (hors TriMo.class et .src/Tests) ne référence la classe TriMo.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01AbsenceReference", "Recherche de New TriMo, \"TriMo\" et TriMo. dans .src (hors Tests et TriMo.class) : aucune occurrence")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriMoTest")
+
+End
+
+Public Sub T01AbsenceReference()
+
+  Dim sRac As String = Application.Path &/ ".src"
+  Dim sFic As String
+  Dim sLigne As String
+  Dim aTrouve As New String[]
+  Dim iNb As Integer
+  Dim iTemoin As Integer
+
+  For Each sFic In RDir(sRac, "*", gb.File)
+    If sFic Begins "Tests/" Then Continue
+    If File.Name(sFic) Begins "TriMo." Then Continue
+    If Not (sFic Ends ".class" Or sFic Ends ".module" Or sFic Ends ".form") Then Continue
+    Inc iNb
+    For Each sLigne In Split(File.Load(sRac &/ sFic), "\n")
+      If sLigne Match "(^|[^A-Za-z0-9_.$])TriMo\\." Or sLigne Match "New TriMo\\b" Or sLigne Match "\"TriMo\"" Then
+        aTrouve.Add(sFic & " : " & Trim(sLigne))
+      Endif
+      ' Témoin : la même recherche appliquée à TriCpt doit trouver ses appelants
+      If sLigne Match "New TriCpt\\b" Then Inc iTemoin
+    Next
+  Next
+  TestKit.Check("T01/sources_parcourues", iNb > 100)
+  TestKit.Check("T01/temoin_TriCpt_trouve", iTemoin > 10)
+  TestKit.Check("T01/references", aTrouve.Count)
+  TestKit.Check("T01/detail", aTrouve.Join(" | "))
+
+End

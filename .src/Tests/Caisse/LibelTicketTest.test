@@ -1,0 +1,109 @@
+' Gambas test file
+
+''Tests de LibelTicket (.hidden/reference/.src/Caisse/LibelTicket.class/test.md, LIBELTICKET-T01 à T04).
+''Écran instancié sans affichage (New LibelTicket), Form_Open appelé directement (lecture du libellé), texte posé dans
+''Txtbfac puis Button2_Click (Enregistrer) ; contenu de Fiches_LibelTicket relu en base.
+''Texte existant de T02 inséré par le test. Valeurs attendues : assets/LibelTicketTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CreationModification", "Table vide : 2 lignes, Enregistrer (INSERT) ; réouverture (texte relu), modification, Enregistrer (UPDATE)")
+  TestKit.Desc("T02TexteVide", "Texte existant ; champ vidé, Enregistrer : texte non effacé (A01)")
+  TestKit.Desc("T03Caracteres", "Texte avec guillemet et esperluette : stocké avec deux apostrophes et « et » (Utils.ReplaceLb)")
+  TestKit.Desc("T04Longueur", "4 lignes de 72 caractères (291 caractères) : contenu de Fiches_LibelTicket ou erreur SQL (A03)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "LibelTicketTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Table(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_LibelTicket ORDER BY lInd")
+  If Not rResult.Available Then
+    TestKit.Check(sCle & "/table", "<aucune ligne>")
+    Return
+  Endif
+  TestKit.Check(sCle & "/nb", rResult.Count)
+  Repeat
+    TestKit.Check(sCle & "/ligne_" & rResult!lInd, rResult!libeltk)
+  Until rResult.MoveNext()
+
+End
+
+Private Function Ouvre() As Object
+
+  Dim hForm As Object
+
+  hForm = New LibelTicket
+  hForm.Form_Open()
+  Return hForm
+
+End
+
+Private Sub Enregistre(sCle As String, sTexte As String)
+
+  Dim hForm As Object
+  Dim hTxt As Object
+
+  hForm = Ouvre()
+  hTxt = hForm.Controls["Txtbfac"]
+  hTxt.Text = sTexte
+  Try hForm.Button2_Click()
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  TestKit.Check(sCle & "/champ", hTxt.Text)
+  Object.Lock(hForm)
+  Table(sCle)
+
+End
+
+Private Sub Relit(sCle As String)
+
+  Dim hForm As Object
+  Dim hTxt As Object
+
+  hForm = Ouvre()
+  hTxt = hForm.Controls["Txtbfac"]
+  TestKit.Check(sCle & "/relu", hTxt.Text)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T01CreationModification()
+
+  Relit("T01/vide")
+  Enregistre("T01/creation", "Ligne un\nLigne deux")
+  Relit("T01/reouverture")
+  Enregistre("T01/modification", "Ligne un modifiee\nLigne deux")
+  Relit("T01/fin")
+
+End
+
+Public Sub T02TexteVide()
+
+  Utils.db.Exec("INSERT INTO Fiches_LibelTicket (libeltk) VALUES (&1)", "Merci de votre visite")
+  Relit("T02/avant")
+  Enregistre("T02/vide", "")
+
+End
+
+Public Sub T03Caracteres()
+
+  Enregistre("T03", "Texte \"cite\" & suite")
+
+End
+
+Public Sub T04Longueur()
+
+  Dim sLigne As String = String$(72, "X")
+
+  Enregistre("T04", sLigne & "\n" & sLigne & "\n" & sLigne & "\n" & sLigne)
+
+End

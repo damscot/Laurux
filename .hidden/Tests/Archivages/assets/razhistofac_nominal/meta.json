@@ -1,0 +1,17 @@
+{
+ "id": "RAZHISTOFAC-T01",
+ "classe": "RazHistoFac",
+ "objet": "Purge nominale des factures archivées",
+ "description": "Jeu factures_archives : Lancer, « Oui », Info, Quitter. Attendu : facture F900001 (antérieure) et ses 2 lignes supprimées ; factures du jour et future intactes ; HistoFacM intacte ; date limite = date du jour figée 2018-06-15 (valeur par défaut du DateChooser).",
+ "dataset": "razhistofac_shared/factures_archives",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -18,9 +18,10 @@
 #                                  sans -w : page vide
 #   hôte contenant « absent »      code 6 « Could not resolve host » (serveur injoignable)
 # Les options de curl sont ignorées, sauf -w (format de sortie), -o (fichier du corps), -I (en-têtes seuls) et -f.
+. "$(dirname "$(readlink -f "$0")")/laurux-regles.sh"
 trace="${LAURUX_FACTICE_TRACE:-$HOME/tmp/outils.trace}"
-mkdir -p "$(dirname "$trace")"
-{ printf 'curl'; for a in "$@"; do printf ' [%s]' "$a"; done; echo; } >> "$trace"
+regles_trace "$trace" curl "$@"
+regles_appliquer curl   # règles « outils » du scénario : réponse forcée prioritaire sur la réponse selon l'URL
 
 url="" ; format="" ; sortie="" ; entetes="" ; echec=""
 ged="$(cd "$(dirname "$0")/../ged" 2>/dev/null && pwd)"

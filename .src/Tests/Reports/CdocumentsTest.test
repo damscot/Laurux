@@ -1,0 +1,188 @@
+' Gambas test file
+
+''Tests de Cdocuments (.hidden/reference/.src/Reports/Cdocuments.class/test.md, CDOCUMENTS-T01, T03, T04, T12).
+''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
+''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
+''Valeurs attendues : assets/CdocumentsTest/expected.txt, produites dans le clone de référence. Pas de base.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01EnteteSociete", "Entete complet puis champs nuls, Entete2, Level1 ; logos désactivés")
+  TestKit.Desc("T02EnteteLogos", "Entete avec glogo, glogo3, les deux (image 200 px) et image de 5 px (A02)")
+  TestKit.Desc("T03EnteteArite", "Entete appelé avec 18 arguments (A01) : erreur figée")
+  TestKit.Desc("T04FactureRegimes", "Level2F/Level3F/Level7F/Level10F : régime normal, TTC, auto-entrepreneur, franchise, exonéré")
+  TestKit.Desc("T12Gabarits", "EnteteN, EnteteP, Lines, LinesLG, LinesP, Level4, Level4D, Level4F, Level4aF, BasPage, BasPageP")
+
+End
+
+' Écrit une image JPEG unie (PdfWriter refuse le canal alpha des PNG) de la taille demandée dans un fichier temporaire.
+Private Function ImageJpg(iLarg As Integer, iHaut As Integer) As String
+
+  Dim sFic As String = Temp$("logo") & ".jpg"
+  Dim hImg As Image
+
+  hImg = New Image(iLarg, iHaut, Color.RGB(200, 30, 30))
+  hImg.Save(sFic)
+  Return sFic
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CdocumentsTest")
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo"] = False
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo3"] = False
+  Start.LocalSettings["/Soc" & Start.Societe & "/AutoEnt"] = False
+  Start.LocalSettings["/Soc" & Start.Societe & "/Franchise"] = False
+  Start.LocalSettings["/Soc" & Start.Societe & "/Taxe"] = "TVA"
+  Variables.EnvoiMail = ""
+  Variables.bRemise = False
+
+End
+
+Private Function Nouveau(Optional sOrient As String = "P") As Cdocuments
+
+  Dim pdf As Cdocuments
+
+  pdf = New Cdocuments(sOrient, "mm", "A4")
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, en extrait le texte et vérifie chaque ligne non vide (date du jour et utilisateur masqués).
+Private Sub Verifie(sCle As String, pdf As PdfWriter, Optional bImages As Boolean)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  If Not bImages Then Return
+  ' Liste des images : page, largeur, hauteur, type (colonnes de « pdfimages -list », en-tête retiré).
+  Shell "pdfimages -list " & Shell$(sFic) & " | awk 'NR>2 {print $1, $4, $5, $6, $9}'" To sTxt
+  n = 0
+  For Each sLig In Split(Trim(sTxt), "\n")
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/image" & n, sLig)
+  Next
+  TestKit.Check(sCle & "/images", n)
+
+End
+
+Public Sub T01EnteteSociete()
+
+  Dim pdf As Cdocuments = Nouveau()
+
+  pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "Tel 0240000000", "Port 0600000000", "Fax 0240000001", "test@exemple.fr", "www.exemple.fr", False, "France", "IBAN FR76", False, "Libre")
+  pdf.Entete2("CLIENT UN", "2 rue des Lilas", "", "75001 PARIS", "", "", True)
+  pdf.Level1("15/06/2018", "F0001")
+  pdf.BasPage()
+  pdf.Entete("SOCIETE NUL", "1 rue", "", "44000 NANTES", Null, Null, Null, Null, Null, Null, Null, Null, Null, Null, False, "", Null, False, "")
+  pdf.Entete2("CLIENT DEUX", "3 rue", "Bat C", "1000 BRUXELLES", "Belgique", "", False)
+  pdf.BasPage()
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T03EnteteArite()
+
+  Dim pdf As Cdocuments = Nouveau()
+
+  Try Object.Call(pdf, "Entete", ["SOCIETE", "a1", "a2", "ville", "cap", "rcs", "siret", "ape", "tva", "tel", "port", "fax", "mail", "site", False, "France", "iban", False])
+  TestKit.Check("T03/erreur", IIf(Error, Error.Text, "<aucune>"))
+
+End
+
+Private Sub Facture(sCle As String, bAuto As Boolean, bFranchise As Boolean, bTtc As Boolean, bImpAuto As Boolean, bExo As Boolean, bRemise As Boolean)
+
+  Dim pdf As Cdocuments = Nouveau()
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/AutoEnt"] = bAuto
+  Start.LocalSettings["/Soc" & Start.Societe & "/Franchise"] = bFranchise
+  Variables.bRemise = bRemise
+  pdf.EnteteV()
+  Try pdf.Level2F(["200", "200", "200"], bTtc, 60)
+  If Error Then TestKit.Check(sCle & "/Level2F", "ERREUR: " & Error.Text)
+  Try pdf.Level3F("ART1", "ARTICLE UN", "10,00", "2", "20,00", "0", "20,00", "20", 70)
+  If Error Then TestKit.Check(sCle & "/Level3F", "ERREUR: " & Error.Text)
+  Try pdf.Level7F(["200", "200", "200"], 200, bImpAuto, bFranchise, bExo)
+  If Error Then TestKit.Check(sCle & "/Level7F", "ERREUR: " & Error.Text)
+  Try pdf.Level10F("20,00", "4,00", "24,00", "Mention legale", 220, bImpAuto, bExo, bFranchise)
+  If Error Then TestKit.Check(sCle & "/Level10F", "ERREUR: " & Error.Text)
+  Verifie(sCle, pdf)
+
+End
+
+Public Sub T04FactureRegimes()
+
+  Facture("T04/normal", False, False, False, False, False, False)
+  Facture("T04/ttc_remise", False, False, True, False, False, True)
+  Facture("T04/autoent", True, False, False, True, False, False)
+  Facture("T04/franchise", False, True, False, False, False, False)
+  Facture("T04/exo", False, False, False, False, True, False)
+
+End
+
+Public Sub T12Gabarits()
+
+  Dim pdf As Cdocuments = Nouveau()
+  Dim pdfp As Cdocuments = Nouveau("L")
+
+  pdf.EnteteN("Titre portrait")
+  pdf.Lines("40")
+  pdf.LinesLG("50")
+  pdf.Level4("1234,56", 60)
+  pdf.Level4D("789,00", 70)
+  pdf.Level4F("Intitule 4F", 80)
+  pdf.Level4aF("Intitule 4aF", 90)
+  pdf.BasPage()
+  Verifie("T12/portrait", pdf)
+  pdfp.EnteteP("Titre paysage")
+  pdfp.LinesP("40")
+  pdfp.BasPageP()
+  Verifie("T12/paysage", pdfp)
+
+End
+
+Private Sub EnteteLogo(sCle As String, bLogo As Boolean, bLogo3 As Boolean, iLarg As Integer)
+
+  Dim pdf As Cdocuments = Nouveau()
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo"] = bLogo
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo3"] = bLogo3
+  Start.LocalSettings["/Soc" & Start.Societe & "/Logo"] = ImageJpg(iLarg, 100)
+  Start.LocalSettings["/Soc" & Start.Societe & "/Logo2"] = ImageJpg(iLarg, 100)
+  Try pdf.Entete("SOCIETE LOGO", "1 rue du Port", "", "44000 NANTES", "", "", "", "", "", "", "", "", "", "", False, "France", "", False, "")
+  TestKit.Check(sCle & "/erreur", IIf(Error, Error.Text, "<aucune>"))
+  Verifie(sCle, pdf, True)
+
+End
+
+Public Sub T02EnteteLogos()
+
+  EnteteLogo("T02/glogo", True, False, 200)
+  EnteteLogo("T02/glogo3", False, True, 200)
+  EnteteLogo("T02/deux", True, True, 200)
+  EnteteLogo("T02/etroit", True, False, 5)
+
+End

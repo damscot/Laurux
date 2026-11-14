@@ -1,0 +1,18 @@
+{
+ "id": "HISTOCLIART-T07",
+ "classe": "Histocliart",
+ "objet": "Filtres saisis et type de document manquant",
+ "description": "Menu Statistiques › Statistiques et relevés détaillés. Décoche BL et Fac puis Éditer : Message.Error « Vous devez sélectionner au moins un type de document » (Entrée) ; recoche BL ; saisit type client 01, marque MARQ, centrale CE (Entrée après chaque zone) ; Éditer (résultat vide : pas d'édition) ; Quitter. Clauses cli_typec, art_marque, art_centrale dans sql.log. Lecture seule : sql.log comparé.",
+ "dataset": "histocliart_shared/ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

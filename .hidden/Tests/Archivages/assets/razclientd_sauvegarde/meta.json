@@ -1,0 +1,21 @@
+{
+ "id": "RAZCLIENTD-T04",
+ "classe": "RazClientd",
+ "objet": "Collision des sauvegardes EffaceD.sql",
+ "description": "Jeu clid_base : purge des clients divers (Oui) puis purge des devis (RazDevis, Oui). Attendu : ~/Sauve/Laurux01EffaceD.sql ne contient que le 2e dump (pris après la purge des clients : 3 clients restants), comportement figé RAZCLIENTD-A02 ; date limite = date du jour figée 2018-06-15 (valeur par défaut du DateChooser).",
+ "dataset": "razclientd_shared/clid_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 32,
+ "fichiers": [
+  "Sauve/Laurux01EffaceD.sql"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "timeout_accord": "utilisateur, 2026-11-14 : 27,8 s mesurées (ref et rework) ; deux purges, chacune avec un mysqldump complet"
+}

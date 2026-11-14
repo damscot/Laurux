@@ -1,0 +1,256 @@
+' Gambas test file
+
+''Tests de TriArticles (.hidden/reference/.src/Affichages/TriArticles.class/test.md).
+''Valeurs attendues : assets/TriArticlesTest/expected.txt, produites dans le clone de référence.
+''La grille de TriGen n'est pas sélectionnable au rejeu : la fenêtre est instanciée sans être affichée et pilotée par
+''ses méthodes publiques (filtres, cases, Colist) ; la liste est relue dans les contrôles créés par TriGen dans Panel2.
+''Le module lui-même est l'objet de retour « ob » (Bsel/Bval). Jeu triarticles_shared/articles_selection.
+
+Public Bsel As Boolean
+Public Bval As Variant
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SelectionSimple", "Ouverture (Bsel/Bval de l'appelant remis à zéro), liste initiale triée par intitulé, MajSel avec un code : code repris")
+  TestKit.Desc("T02Annulation", "MajSel(Null) (Échap) : l'appelant garde Bsel False / Bval Null")
+  TestKit.Desc("T03FiltreFournisseur", "Option Fournisseur : Button1 liste les fournisseurs dans Colist, choix 401002 : CB2, Fnom, liste filtrée")
+  TestKit.Desc("T04FiltreFamilleCentrale", "Options Famille 02 puis Centrale C1 : listes filtrées")
+  TestKit.Desc("T05Disponible", "Disponible coché, avec et sans Bstocke : listes filtrées")
+  TestKit.Desc("T06Materiel", "Option société Materiel active, Mat = True : case visible et cochée, liste art_mat = 1")
+  TestKit.Desc("T07ColonneCB1", "Colonne variable CB1 : Barre, Casier, Four. : 3e colonne de la liste reconstruite")
+  TestKit.Desc("T08MainOeuvre", "Liste des mains d'œuvre (mo_code) : CB1 désactivé, liste, MajSel avec un code")
+  TestKit.Desc("T10SelectionInitiale", "Fournisseur courant passé en Selection (A02) : CB2 rempli, Fnom vide, liste filtrée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriArticlesTest")
+  TestKit.OuvreBase("triarticles_shared/articles_selection")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+' Grille de TriGen dans Panel2 : nombre de lignes, colonnes 0 et iCol de chaque ligne
+Private Sub Grille(hF As TriArticles, Optional iCol As Integer = -1) As String
+
+  Dim hC As Object
+  Dim hG As Object
+  Dim i As Integer
+  Dim s As String
+
+  For Each hC In Ct(hF, "Panel2").Children
+    If Object.Type(hC) = "GridView" Then hG = hC
+  Next
+  If IsNull(hG) Then Return "<pas de grille>"
+  s = hG.Rows.Count & " :"
+  For i = 0 To hG.Rows.Count - 1
+    s &= " " & hG[i, 0].Text
+    If iCol >= 0 Then s &= "/" & hG[i, iCol].Text
+  Next
+  Return s
+
+End
+
+Private Sub Ct(hF As TriArticles, sNom As String) As Object
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  Return hC
+
+End
+
+Private Sub BvalTexte() As String
+
+  If IsNull(Bval) Then Return "<Null>"
+  Return Bval
+
+End
+
+Private Sub Ouvre(Barticle As Boolean, Bstocke As Boolean, TriArticle As String, Selection As String, Option As String, Optional Dispo As Boolean, Optional Mat As Boolean) As TriArticles
+
+  Dim hF As TriArticles
+
+  Try hF = New TriArticles(Barticle, Bstocke, TriArticle, Selection, Option, Null, Dispo, Mat, TriArticlesTest)
+  If Error Then
+    TestKit.Check("ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Public Sub T01SelectionSimple()
+
+  Dim hF As TriArticles
+
+  Bsel = True
+  Bval = "avant"
+  hF = Ouvre(True, False, "art_code", "", "")
+  If IsNull(hF) Then Return
+  TestKit.Check("T01/ouverture.Bsel", Bsel)
+  TestKit.Check("T01/ouverture.Bval", BvalTexte())
+  TestKit.Check("T01/liste", Grille(hF, 1))
+  ' TriGen.Close écrit Bsel/Bval sur TriArticles puis lève MajSel
+  hF.Bsel = True
+  hF.Bval = "A005"
+  hF.ColTri_MajSel("A005")
+  TestKit.Check("T01/selection.Bsel", Bsel)
+  TestKit.Check("T01/selection.Bval", BvalTexte())
+
+End
+
+Public Sub T02Annulation()
+
+  Dim hF As TriArticles
+
+  Bsel = True
+  Bval = "avant"
+  hF = Ouvre(True, False, "art_code", "", "")
+  If IsNull(hF) Then Return
+  hF.Bsel = False
+  hF.Bval = Null
+  hF.ColTri_MajSel(Null)
+  TestKit.Check("T02/annulation.Bsel", Bsel)
+  TestKit.Check("T02/annulation.Bval", BvalTexte())
+
+End
+
+Public Sub T03FiltreFournisseur()
+
+  Dim hF As TriArticles
+  Dim hL As Object
+
+  hF = Ouvre(True, False, "art_code", "", "Fournisseur")
+  If IsNull(hF) Then Return
+  TestKit.Check("T03/liste_sans_fournisseur", Grille(hF))
+  hF.Button1_Click()
+  hL = Ct(hF, "Colist")
+  TestKit.Check("T03/colist.visible", hL.Visible)
+  TestKit.Check("T03/colist.count", hL.Count)
+  hL.MoveTo("401002")
+  hF.Colist_Click()
+  TestKit.Check("T03/CB2", Ct(hF, "CB2").Text)
+  TestKit.Check("T03/Fnom", Ct(hF, "Fnom").Text)
+  TestKit.Check("T03/colist.visible_apres", hL.Visible)
+  TestKit.Check("T03/liste_fournisseur", Grille(hF))
+  Object.Lock(hF)
+
+End
+
+Public Sub T04FiltreFamilleCentrale()
+
+  Dim hF As TriArticles
+
+  hF = Ouvre(True, False, "art_code", "02", "Famille")
+  If IsNull(hF) Then Return
+  TestKit.Check("T04/famille.CB2", Ct(hF, "CB2").Text)
+  TestKit.Check("T04/famille.liste", Grille(hF, 3))
+  Object.Lock(hF)
+  hF = Ouvre(True, False, "art_code", "C1", "Centrale")
+  If IsNull(hF) Then Return
+  TestKit.Check("T04/centrale.liste", Grille(hF))
+  hF.Button1_Click()
+  TestKit.Check("T04/centrale.colist.count", Ct(hF, "Colist").Count)
+  Ct(hF, "Colist").MoveTo("C2")
+  hF.Colist_Click()
+  TestKit.Check("T04/centrale2.CB2", Ct(hF, "CB2").Text)
+  TestKit.Check("T04/centrale2.Fnom", Ct(hF, "Fnom").Text)
+  TestKit.Check("T04/centrale2.liste", Grille(hF))
+  Object.Lock(hF)
+
+End
+
+Public Sub T05Disponible()
+
+  Dim hF As TriArticles
+
+  hF = Ouvre(True, True, "art_code", "", "")
+  If IsNull(hF) Then Return
+  TestKit.Check("T05/stocke.liste", Grille(hF))
+  Ct(hF, "Disponible").Value = True
+  TestKit.Check("T05/stocke_dispo.liste", Grille(hF))
+  Object.Lock(hF)
+  hF = Ouvre(True, False, "art_code", "", "", True)
+  If IsNull(hF) Then Return
+  TestKit.Check("T05/dispo.case", Ct(hF, "Disponible").Value)
+  TestKit.Check("T05/dispo.liste", Grille(hF))
+  Object.Lock(hF)
+
+End
+
+Public Sub T06Materiel()
+
+  Dim hF As TriArticles
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = True
+  hF = Ouvre(True, False, "art_code", "", "", False, True)
+  If IsNull(hF) Then Return
+  TestKit.Check("T06/materiel.visible", Ct(hF, "Materiel").Visible)
+  TestKit.Check("T06/materiel.value", Ct(hF, "Materiel").Value)
+  TestKit.Check("T06/materiel.liste", Grille(hF))
+  Ct(hF, "Materiel").Value = False
+  TestKit.Check("T06/decoche.liste", Grille(hF))
+  Object.Lock(hF)
+  Start.LocalSettings["/Soc" & Start.Societe & "/Materiel"] = False
+  hF = Ouvre(True, False, "art_code", "", "", False, True)
+  If IsNull(hF) Then Return
+  TestKit.Check("T06/option_inactive.visible", Ct(hF, "Materiel").Visible)
+  TestKit.Check("T06/option_inactive.value", Ct(hF, "Materiel").Value)
+  Object.Lock(hF)
+
+End
+
+Public Sub T07ColonneCB1()
+
+  Dim hF As TriArticles
+  Dim hCB As Object
+  Dim i As Integer
+
+  hF = Ouvre(True, False, "art_code", "", "")
+  If IsNull(hF) Then Return
+  hCB = Ct(hF, "CB1")
+  TestKit.Check("T07/CB1.liste", hCB.List.Join("|"))
+  For Each i In [1, 3, 5]
+    hCB.Text = hCB.List[i]
+    hF.CB1_Click()
+    TestKit.Check("T07/colonne[" & hCB.List[i] & "]", Grille(hF, 2))
+  Next
+  Object.Lock(hF)
+
+End
+
+Public Sub T08MainOeuvre()
+
+  Dim hF As TriArticles
+
+  Bsel = True
+  Bval = "avant"
+  hF = Ouvre(True, False, "mo_code", "", "")
+  If IsNull(hF) Then Return
+  TestKit.Check("T08/CB1.enabled", Ct(hF, "CB1").Enabled)
+  TestKit.Check("T08/liste", Grille(hF, 1))
+  hF.Bsel = True
+  hF.Bval = "02"
+  hF.ColTri_MajSel("02")
+  TestKit.Check("T08/selection.Bsel", Bsel)
+  TestKit.Check("T08/selection.Bval", BvalTexte())
+
+End
+
+Public Sub T10SelectionInitiale()
+
+  Dim hF As TriArticles
+
+  hF = Ouvre(True, False, "art_code", "401003", "Fournisseur")
+  If IsNull(hF) Then Return
+  TestKit.Check("T10/CB2", Ct(hF, "CB2").Text)
+  TestKit.Check("T10/Fnom", Ct(hF, "Fnom").Text)
+  TestKit.Check("T10/liste", Grille(hF))
+  Object.Lock(hF)
+
+End

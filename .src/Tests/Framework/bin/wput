@@ -2,9 +2,10 @@
 # Faux wput (tests Laurux, phase 2) : Btqart envoie Prod.csv et les photos par « wput <fichier> ftp://… ». Rien n'est
 # envoyé ; l'appel est tracé dans $LAURUX_FTP_TRACE au format des faux binaires (« wput [arg1] [arg2] ») et le
 # fichier local est copié sous $LAURUX_FTP_DIR/wput/ (nom du fichier distant) pour pouvoir être comparé.
+. "$(dirname "$(readlink -f "$0")")/laurux-regles.sh"
 trace="${LAURUX_FTP_TRACE:-$HOME/tmp/ftp.trace}"
-mkdir -p "$(dirname "$trace")"
-{ printf 'wput'; for a in "$@"; do printf ' [%s]' "$a"; done; echo; } >> "$trace"
+regles_trace "$trace" wput "$@"
+regles_appliquer wput   # règles « outils » du scénario (voir laurux-regles.sh)
 if [ -n "$LAURUX_FTP_DIR" ] && [ -f "$1" ] && [ -n "$2" ]; then
   mkdir -p "$LAURUX_FTP_DIR/wput"
   cp "$1" "$LAURUX_FTP_DIR/wput/$(basename "$2")"

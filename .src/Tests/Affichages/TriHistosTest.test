@@ -1,0 +1,207 @@
+' Gambas test file
+
+''Tests de TriHistos (.hidden/reference/.src/Affichages/TriHistos.class/test.md, TRIHISTOS-T01 à T05).
+''Écran instancié sans affichage (New TriHistos(code, four, décimales, tri, type)) sans passer par Articles ;
+''en-têtes activés par leurs gestionnaires publics (_GotFocus, _DblClick), période par ComboBox1, détail par
+''Colhisto_click après positionnement du curseur de Colhisto. Le jeu est daté par rapport au jour courant (l'écran
+''filtre sur Now) : les dates relevées sont converties en écart en mois avec la date du jour.
+''Jeu trihistos_shared/historique. Valeurs attendues : assets/TriHistosTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01HistoVentes", "Ventes de 002 sur 1 an (BL en cours, BL facturé, facture archivée, sortie exceptionnelle) : Fiches_Stat, Colhisto, Qte_totale")
+  TestKit.Desc("T02PeriodeTri", "Période 3 ans ; clic sur COD, NM, NFAC, double-clic DA : Fiches_Stat et ordre de Colhisto")
+  TestKit.Desc("T03DetailVente", "Détail de la facture archivée puis du BL en cours : Colrcp3, total, quantité non formatée (A05)")
+  TestKit.Desc("T04HistoAchats", "Achats de 002 sur 1 an puis 3 ans, tri NM : Colhisto (réceptions, entrée exceptionnelle), Qte_totale")
+  TestKit.Desc("T05DetailAchat", "Détail de la réception R001 ; article 003 reçu d'un fournisseur absent : erreur figée (A02)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriHistosTest")
+  TestKit.OuvreBase("trihistos_shared/historique")
+
+End
+
+Private Function Mois(vDate As Variant) As String
+  ''Écart en mois entre une date (Date ou texte jj/mm/aaaa) et le jour courant, pour des attendus stables.
+
+  Dim dDate As Date
+
+  If IsNull(vDate) Then Return "<vide>"
+  If TypeOf(vDate) = gb.Date Then
+    dDate = vDate
+  Else
+    Try dDate = Date(CInt(Mid$(vDate, 7, 4)), CInt(Mid$(vDate, 4, 2)), CInt(Left$(vDate, 2)))
+    If Error Then Return "?" & vDate
+  Endif
+  Return "M-" & DateDiff(dDate, Now, gb.Month)
+
+End
+
+Private Sub TableStat(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Stat ORDER BY lind")
+  If Not rResult.Available Then
+    TestKit.Check(sCle & "/stat", "<aucune>")
+    Return
+  Endif
+  Repeat
+    TestKit.Check(sCle & "/stat_" & rResult!lind, rResult!code & "|" & Mois(rResult!date) & "|" & rResult!nom & "|" & rResult!pvb & "|" & rResult!rem & "|" & rResult!pvn & "|" & rResult!qte & "|" & rResult!nfac & "|" & rResult!nlig)
+  Until rResult.MoveNext()
+
+End
+
+Private Sub Vue(sCle As String, hForm As Object, sNom As String, Optional bDate As Boolean)
+
+  Dim hVue As ColumnView
+  Dim i As Integer
+  Dim sRes As String
+  Dim n As Integer
+
+  hVue = hForm.Controls[sNom]
+  TestKit.Check(sCle & "/" & sNom & "_nb", hVue.Count)
+  If hVue.MoveFirst() Then Return
+  Repeat
+    sRes = ""
+    For i = 0 To hVue.Columns.Count - 1
+      If i = 0 And bDate Then
+        sRes &= "[" & Mois(hVue.Item[i]) & "]"
+      Else
+        sRes &= "[" & hVue.Item[i] & "]"
+      Endif
+    Next
+    TestKit.Check(sCle & "/" & sNom & "_" & n, sRes)
+    Inc n
+  Until hVue.MoveNext()
+
+End
+
+Private Sub Champs(sCle As String, hForm As Object, aNoms As String[])
+
+  Dim sNom As String
+  Dim hCtrl As Object
+
+  For Each sNom In aNoms
+    hCtrl = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, hCtrl.Text)
+  Next
+
+End
+
+Private Sub Periode(hForm As Object, sTexte As String)
+
+  Dim hCombo As ComboBox
+
+  hCombo = hForm.Controls["ComboBox1"]
+  hCombo.Text = sTexte
+  hForm.ComboBox1_Change()
+
+End
+
+Private Sub Detail(sCle As String, hForm As Object, sNum As String)
+
+  Dim hVue As ColumnView
+
+  hVue = hForm.Controls["Colhisto"]
+  If hVue.MoveFirst() Then Return
+  Repeat
+    If hVue.Item[7] = sNum Then
+      Try hForm.Colhisto_click()
+      If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+      Return
+    Endif
+  Until hVue.MoveNext()
+  TestKit.Check(sCle & "/introuvable", sNum)
+
+End
+
+Private Function Ouvre(sCode As String, sFour As String, sType As String) As Object
+
+  Return New TriHistos(sCode, sFour, "2", "", sType)
+
+End
+
+Public Sub T01HistoVentes()
+
+  Dim hForm As Object
+
+  hForm = Ouvre("002", "", "V")
+  TableStat("T01")
+  Vue("T01", hForm, "Colhisto", True)
+  Champs("T01", hForm, ["Qte_totale"])
+  Object.Lock(hForm)
+
+End
+
+Public Sub T02PeriodeTri()
+
+  Dim hForm As Object
+
+  hForm = Ouvre("002", "", "V")
+  Periode(hForm, "3 ans")
+  TableStat("T02/3ans")
+  Champs("T02/3ans", hForm, ["Qte_totale"])
+  hForm.COD_GotFocus()
+  Vue("T02/COD", hForm, "Colhisto", True)
+  hForm.NM_GotFocus()
+  Vue("T02/NM", hForm, "Colhisto", True)
+  hForm.NFAC_GotFocus()
+  Vue("T02/NFAC", hForm, "Colhisto", True)
+  hForm.DA_Dblclick()
+  Vue("T02/dbl_DA", hForm, "Colhisto", True)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T03DetailVente()
+
+  Dim hForm As Object
+
+  hForm = Ouvre("002", "", "V")
+  Detail("T03/facture", hForm, "F00100")
+  Champs("T03/facture", hForm, ["Codecli", "Nomcli", "Numfac", "Totalfac", "Nlgf"])
+  Vue("T03/facture", hForm, "Colrcp3")
+  hForm.Button3_Click()
+  Detail("T03/bl", hForm, "H00001")
+  Champs("T03/bl", hForm, ["Codecli", "Nomcli", "Numfac", "Totalfac", "Nlgf"])
+  Vue("T03/bl", hForm, "Colrcp3")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T04HistoAchats()
+
+  Dim hForm As Object
+
+  hForm = Ouvre("002", "401001", "A")
+  Vue("T04/1an", hForm, "Colhisto", True)
+  Champs("T04/1an", hForm, ["Qte_totale"])
+  Periode(hForm, "3 ans")
+  Vue("T04/3ans", hForm, "Colhisto", True)
+  Champs("T04/3ans", hForm, ["Qte_totale"])
+  hForm.NM_GotFocus()
+  Vue("T04/NM", hForm, "Colhisto", True)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T05DetailAchat()
+
+  Dim hForm As Object
+
+  hForm = Ouvre("002", "401001", "A")
+  Detail("T05/R001", hForm, "R001")
+  Champs("T05/R001", hForm, ["Codefour2", "Nomfour2", "Numbl2", "Totalbl", "Nlgbl"])
+  Vue("T05/R001", hForm, "Colrcp2")
+  Object.Lock(hForm)
+  hForm = Null
+  Try hForm = New TriHistos("003", "", "2", "", "A")
+  TestKit.Check("T05/four_absent/erreur", IIf(Error, Error.Text, "<aucune>"))
+  If Object.IsValid(hForm) Then Object.Lock(hForm)
+
+End

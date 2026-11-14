@@ -1,0 +1,44 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdclifac Char(8) NOT NULL,nmclifac Char(25),pnmclifac Char(25),TotA Decimal(12,2),TotM Decimal(12,2),RemP Decimal(12,2),RemMo Decimal(12,2),PRIMARY KEY (cdclifac)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615'
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'H00001' 
+SELECT * FROM Total Where cdclifac = '411001'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('411001', 'A Divers', 'Alain', 100, 50, 10, 5)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'H00002' 
+SELECT * FROM Total Where cdclifac = '411002'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('411002', 'B Divers', 'Bruno', 200, 0, 0, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'H00004' 
+SELECT * FROM Total Where cdclifac = '411001'
+UPdate Total set cdclifac = '411001', nmclifac = 'A Divers', pnmclifac = 'Alain', TotA = 110, TotM = 50, RemP = 12, RemMo = 5 Where cdclifac = '411001'
+SELECT * FROM Fiches_Bl where datebl >= '20180101' and datebl <= '20180615' and type = 'F' or type = 'B'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00001' 
+SELECT * FROM Total Where cdclifac = '411001'
+UPdate Total set cdclifac = '411001', nmclifac = 'A Divers', pnmclifac = 'Alain', TotA = 120, TotM = 70, RemP = 12, RemMo = 10 Where cdclifac = '411001'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00002' 
+SELECT * FROM Total Where cdclifac = '411002'
+UPdate Total set cdclifac = '411002', nmclifac = 'B Divers', pnmclifac = 'Bruno', TotA = 270, TotM = 0, RemP = 0, RemMo = 0 Where cdclifac = '411002'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00004' 
+SELECT * FROM Total Where cdclifac = '411004'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('411004', 'D Divers', 'Denis', 0, 12, 0, 0)
+SELECT * FROM Total 
+SELECT * FROM Total order by cdclifac asc

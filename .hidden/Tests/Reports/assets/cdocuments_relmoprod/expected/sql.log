@@ -1,0 +1,160 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE if exists Fiches_Stat
+CREATE TABLE Fiches_Stat (code Char(15) NOT NULL,intitule char(50) ,qte char(12) ,type char(1) ,montant char(12) ,codecli char(12) ,intitulecli char(35) ,numfac char(10) ,qtefac char(6) ,nethtfac char(10) ,PRIMARY KEY (code, codecli, numfac)) ENGINE = InnoDB
+SELECT * from Fiches_Bl where datebl >= '20180101' and datebl <= '20180615' and type = 'F' and imp = 1 order by cdclibl
+SELECT * from Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' order by cdclifac
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00001' and typel_ligfac = 'M' or num_ligfac = 'F00001' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00001'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411003', NULL, 'A', 'F00001', '2', '20,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00002' and typel_ligfac = 'M' or num_ligfac = 'F00002' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '002' and codecli = '411003' and numfac = 'F00002'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('002', 'Produit 7.00', '411003', NULL, 'A', 'F00002', '1', '7,50')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00003' and typel_ligfac = 'M' or num_ligfac = 'F00003' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00003'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411003', NULL, 'A', 'F00003', '3', '30,00')
+SELECT * from Fiches_Stat where code = '01' and codecli = '411003' and numfac = 'F00003'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('01', 'Mo T1', '411003', NULL, 'M', 'F00003', '1,5', '42,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00004' and typel_ligfac = 'M' or num_ligfac = 'F00004' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = 'ZZZ' and codecli = '411003' and numfac = 'F00004'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('ZZZ', 'Article supprime', '411003', NULL, 'A', 'F00004', '4', '10,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00005' and typel_ligfac = 'M' or num_ligfac = 'F00005' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '002' and codecli = '411003' and numfac = 'F00005'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('002', 'Produit 7.00', '411003', NULL, 'A', 'F00005', '2', '15,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00006' and typel_ligfac = 'M' or num_ligfac = 'F00006' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00006'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411003', NULL, 'A', 'F00006', '1', '10,00')
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00006'
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00011' and typel_ligfac = 'M' or num_ligfac = 'F00011' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411004' and numfac = 'F00011'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411004', NULL, 'A', 'F00011', '1', '10,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00012' and typel_ligfac = 'M' or num_ligfac = 'F00012' and typel_ligfac = 'A'
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00013' and typel_ligfac = 'M' or num_ligfac = 'F00013' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '002' and codecli = '411004' and numfac = 'F00013'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('002', 'Produit 7.00', '411004', NULL, 'A', 'F00013', '2', '14,00')
+SELECT * from Fiches_HistoFacM where datefac >= '20180101' and datefac <= '20180615' order by cdclifac
+SELECT * from Fiches_HistoLigfacM where num_ligfac = 'M00001' and typel_ligfac = 'M' or num_ligfac = 'M00001' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '003' and codecli = '411003' and numfac = 'M00001'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('003', 'produit 20.00', '411003', NULL, 'A', 'M00001', '1', '20,00')
+SELECT * FROM Fiches_Stat order by codecli, code
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Stat where codecli = '411004' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Stat where codecli = '411004' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Stat order by codecli, code
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Stat where codecli = '411004' order by type, codecli, code, numfac 
+DROP TABLE if exists Fiches_Stat
+CREATE TABLE Fiches_Stat (code Char(15) NOT NULL,intitule char(50) ,qte char(12) ,type char(1) ,montant char(12) ,codecli char(12) ,intitulecli char(35) ,numfac char(10) ,qtefac char(6) ,nethtfac char(10) ,PRIMARY KEY (code, codecli, numfac)) ENGINE = InnoDB
+SELECT * from Fiches_Bl where datebl >= '20180101' and datebl <= '20180615' and type = 'F' and imp = 1 order by cdclibl
+SELECT * from Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' order by cdclifac
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00001' and typel_ligfac = 'M' or num_ligfac = 'F00001' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00001'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411003', NULL, 'A', 'F00001', '2', '20,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00002' and typel_ligfac = 'M' or num_ligfac = 'F00002' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '002' and codecli = '411003' and numfac = 'F00002'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('002', 'Produit 7.00', '411003', NULL, 'A', 'F00002', '1', '7,50')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00003' and typel_ligfac = 'M' or num_ligfac = 'F00003' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00003'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411003', NULL, 'A', 'F00003', '3', '30,00')
+SELECT * from Fiches_Stat where code = '01' and codecli = '411003' and numfac = 'F00003'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('01', 'Mo T1', '411003', NULL, 'M', 'F00003', '1,5', '42,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00004' and typel_ligfac = 'M' or num_ligfac = 'F00004' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = 'ZZZ' and codecli = '411003' and numfac = 'F00004'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('ZZZ', 'Article supprime', '411003', NULL, 'A', 'F00004', '4', '10,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00005' and typel_ligfac = 'M' or num_ligfac = 'F00005' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '002' and codecli = '411003' and numfac = 'F00005'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('002', 'Produit 7.00', '411003', NULL, 'A', 'F00005', '2', '15,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00006' and typel_ligfac = 'M' or num_ligfac = 'F00006' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00006'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411003', NULL, 'A', 'F00006', '1', '10,00')
+SELECT * from Fiches_Stat where code = '001' and codecli = '411003' and numfac = 'F00006'
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00011' and typel_ligfac = 'M' or num_ligfac = 'F00011' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '001' and codecli = '411004' and numfac = 'F00011'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411004', NULL, 'A', 'F00011', '1', '10,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00012' and typel_ligfac = 'M' or num_ligfac = 'F00012' and typel_ligfac = 'A'
+SELECT * from Fiches_HistoLigfac where num_ligfac = 'F00013' and typel_ligfac = 'M' or num_ligfac = 'F00013' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '002' and codecli = '411004' and numfac = 'F00013'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('002', 'Produit 7.00', '411004', NULL, 'A', 'F00013', '2', '14,00')
+SELECT * from Fiches_HistoFacM where datefac >= '20180101' and datefac <= '20180615' order by cdclifac
+SELECT * from Fiches_HistoLigfacM where num_ligfac = 'M00001' and typel_ligfac = 'M' or num_ligfac = 'M00001' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '003' and codecli = '411003' and numfac = 'M00001'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('003', 'produit 20.00', '411003', NULL, 'A', 'M00001', '1', '20,00')
+SELECT * FROM Fiches_Stat order by code, codecli
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Stat where codecli = '411004' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Stat where codecli = '411004' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' order by type, code, codecli, numfac 
+SELECT * FROM Fiches_Stat order by type, code, codecli, numfac
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = '001' and numfac = 'F00001' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = '001' and numfac = 'F00003' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = '001' and numfac = 'F00006' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411004' and code = '001' and numfac = 'F00011' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = '002' and numfac = 'F00002' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = '002' and numfac = 'F00005' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411004' and code = '002' and numfac = 'F00013' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = '003' and numfac = 'M00001' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = 'ZZZ' and numfac = 'F00004' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Fiches_Stat where codecli = '411003' and code = '01' and numfac = 'F00003' order by numfac
+SELECT * FROM Fiches_Cli where cli_code = '411003'

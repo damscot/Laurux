@@ -1,0 +1,28 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Commerciaux order by code
+SELECT LEFT(code_fam, 5) AS famille FROM Fiches_Fam GROUP BY famille ORDER BY famille
+SELECT * FROM Fiches_Fam WHERE code_fam='01'
+SELECT * FROM Fiches_Fam WHERE code_fam='02'
+SELECT * FROM Fiches_Fam WHERE code_fam='03'
+SELECT * FROM Fiches_Fam WHERE code_fam='10'
+SELECT * FROM Fiches_Fam WHERE code_fam='11'
+SELECT SUM(qte) AS qte,SUM(ca) AS ca,SUM(mrgart)+SUM(mrgmo) as marge,client,article FROM (SELECT CASE WHEN Fiches_HisLigTickets.qte IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.qte,',','.') END as qte, CASE WHEN Fiches_HisLigTickets.mht IS NULL THEN '0' ELSE REPLACE(Fiches_HisLigTickets.mht,',','.') END as ca, Fiches_HisLigTickets.numero, Fiches_HisLigTickets.type, Fiches_HisLigTickets.block, Fiches_HisLigTickets.fam, (replace(Fiches_HisLigTickets.mht, ',', '.') - (art_paht * replace(Fiches_HisLigTickets.qte, ',', '.')))  as mrgart, '0' as mrgmo, Fiches_HisLigTickets.date AS dte, client,Fiches_HisLigTickets.code as article FROM (select numero, block, max(type) as max_type from Fiches_HisLigTickets where type IN('A','S') group by numero, block) T1, Fiches_HisEntTickets, Fiches_HisLigTickets, Fiches_Cli, Fiches_Art WHERE Fiches_HisEntTickets.numero=Fiches_HisLigTickets.numero AND art_code=code AND cli_code=client AND T1.numero = Fiches_HisLigTickets.numero and T1.block = Fiches_HisLigTickets.block AND T1.max_type = Fiches_HisLigTickets.type AND suppr != 1 AND (client>='41100001' AND client<='41199999') AND (Fiches_HisLigTickets.code>='000000000000000' AND Fiches_HisLigTickets.code<='ZZZZZZZZZZZZZZZ') AND (art_four>='40100001' AND art_four<='40199999')) AS a WHERE (dte BETWEEN '2018-01-01 00:00:00' And '2018-06-30 23:59:59') GROUP BY client,article

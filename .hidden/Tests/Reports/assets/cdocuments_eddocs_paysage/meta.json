@@ -1,0 +1,24 @@
+{
+ "id": "CDOCUMENTS-T08",
+ "objet": "Liste des documents paysage multi-pages",
+ "classe": "Cdocuments",
+ "description": "EdDocs (Menu254), RadioButton7 (détail Oui), RadioButton2 (commandes), Imprimer : 24 commandes à 2 lignes (jeu eddocs_paysage) ; texte du PDF paysage (Level1D, Level2D détaillé, Level2DLG, Level4D, BasPageP) sur plusieurs pages comparé par pdftotext.",
+ "dataset": "eddocs_paysage",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

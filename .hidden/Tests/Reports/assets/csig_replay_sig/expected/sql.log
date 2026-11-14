@@ -1,0 +1,264 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(numrub Char(5) NOT NULL,intitrub Char(70),type Char(1),detail Char(1),compte Char(8),intitcpt Char(50),Col1 Char(25),Col2 Char(25),col3 Char(25),col4 Char(25),PRIMARY KEY (numrub, compte)) ENGINE = InnoDB
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(numrub Char(5) NOT NULL,intitrub Char(70),type Char(1),detail Char(1),compte Char(8),intitcpt Char(50),col1 Char(12),prod Char(1),PRIMARY KEY (numrub, compte)) ENGINE = InnoDB
+SELECT * FROM Fiches_Rubriques WHERE left(numrub,1) = 'S' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0010'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0010', 'SOLDES INTERMEDIAIRES DE GESTION', 'T', NULL, 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0020'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0020', 'Marge commerciale', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0030'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0030', 'Ventes de marchandises', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0030' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '707' and compte <= '70799999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0030'
+UPdate  centralisation  SET  numrub = 'S0030', intitrub = 'Ventes de marchandises', compte = '707000', intitcpt = 'Ventes', type = 'L', detail = 'O', col1 = 100, prod = 'P' WHERE numrub = 'S0030'
+SELECT * FROM centralisation WHERE numrub = 'S0030'
+UPdate  centralisation  SET  numrub = 'S0030', intitrub = 'Ventes de marchandises', compte = '707000', intitcpt = 'Ventes', type = 'L', detail = 'O', col1 = 150, prod = 'P' WHERE numrub = 'S0030'
+SELECT * FROM centralisation WHERE numrub = 'S0030'
+UPdate  centralisation  SET  numrub = 'S0030', intitrub = 'Ventes de marchandises', compte = '707000', intitcpt = 'Ventes', type = 'L', detail = 'O', col1 = 175, prod = 'P' WHERE numrub = 'S0030'
+SELECT * FROM centralisation WHERE numrub = 'S0040'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0040', 'RRR sur ventes', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0040' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '7097' and compte <= '70979999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0050'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0050', 'Cout direct d''achat', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0050' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '6037' and compte <= '60379999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '607' and compte <= '60799999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6087' and compte <= '60879999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6097' and compte <= '60979999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0060'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0060', 'Marge commerciale', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0070'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0070', 'Production vendue', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0070' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '701' and compte <= '70699999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '708' and compte <= '70899999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '709' and compte <= '70999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0080'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0080', 'Production stockee', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0080' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '713' and compte <= '71399999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0090'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0090', 'Production immobilisee', 'L', 'N', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0090' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '72' and compte <= '72999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0100'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0100', 'Produits nets partiels sur operations a long terme', 'L', NULL, 0, NULL, '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0100' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0105'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0105', 'Production de l''exercice', 'E', 'N', 0, 'P', '0')
+SELECT * FROM centralisation WHERE numrub = 'S0110'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0110', 'Production de l''exercice', 'L', 'N', 0, 'R', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0110' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0115'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0115', 'Marge commerciale', 'L', 'N', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0115' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0120'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0120', 'Consommations en provenance de tiers', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0120' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '601' and compte <= '60299999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6031' and compte <= '60329999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '604' and compte <= '60699999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0120'
+UPdate  centralisation  SET  numrub = 'S0120', intitrub = 'Consommations en provenance de tiers', compte = '606100', intitcpt = 'Fournitures', type = 'L', detail = 'O', col1 = -40, prod = 'A' WHERE numrub = 'S0120'
+SELECT * FROM Fiches_Mvt WHERE compte >= '6081' and compte <= '60829999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6084' and compte <= '60869999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6090' and compte <= '60909999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6091' and compte <= '60939999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6094' and compte <= '60969999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '6098' and compte <= '60989999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '61' and compte <= '61999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '62' and compte <= '62999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0130'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0130', 'Valeur ajoutée', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0135'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0135', 'Valeur ajoutée', 'L', 'N', 0, 'R', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0135' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0140'
+UPdate  centralisation  SET  numrub = 'S0140', intitrub = NULL, type = NULL, detail = NULL, col1 = 0, prod = NULL WHERE numrub = 'S0140'
+SELECT * FROM centralisation WHERE numrub = 'S0150'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0150', 'Subventions d''exploitation', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0150' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '74' and compte <= '74999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0160'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0160', 'Impots, taxes, et versements assimiles', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0160' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '63' and compte <= '63999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0170'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0170', 'Charges de personnel', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0170' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '64' and compte <= '64999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0180'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0180', 'Excédent brut d''exploitation', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0190'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0190', 'Excédent brut d''exploitation', 'L', 'N', 0, 'R', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0190' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0195'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0195', 'Insuffisance brute d''exploitation', NULL, NULL, 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0200'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0200', 'Reprises sur ammortissements et provisions d''exploitation', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0200' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '781' and compte <= '78199999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0205'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0205', 'Transferts de charges d''exploitation', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0205' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '791' and compte <= '79199999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0210'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0210', 'Dotations aux amortissements et provisions d''exploitation', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0210' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '681' and compte <= '68199999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0220'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0220', 'Autres produits de gestion courante', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0220' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '75' and compte <= '75999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0230'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0230', 'Autres charges de gestion courante', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0230' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '65' and compte <= '65999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0240'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0240', 'Transferts de charges d''exploitation', NULL, NULL, 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0250'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0250', 'Résultat d''exploitation', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0260'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0260', 'Résultat d''exploitation', 'L', 'N', 0, 'R', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0260' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0270'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0270', 'Quotes-parts de resultat sur operations faites en commun', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0270' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '755' and compte <= '75599999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0280'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0280', 'Quotes-parts de resultat sur operations faites en commun', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0280' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '655' and compte <= '65599999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0290'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0290', 'Produits financiers', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0290' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '76' and compte <= '76999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '786' and compte <= '78699999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '796' and compte <= '79699999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0300'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0300', 'Charges financieres', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0300' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '66' and compte <= '66999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '686' and compte <= '68699999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0310'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0310', 'Résultat courant avant impots', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0315'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0315', 'Résultat courant avant impots', 'L', 'N', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0315' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0320'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0320', 'Résultat courant avant impots', 'L', 'N', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0320' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0330'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0330', 'Produits exceptionnels', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0330' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '77' and compte <= '77999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '787' and compte <= '78799999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '797' and compte <= '79799999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0340'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0340', 'Charges exceptionnelles', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0340' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '67' and compte <= '67999999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM Fiches_Mvt WHERE compte >= '687' and compte <= '68799999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0350'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0350', 'Résultat exceptionnel', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0354'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0354', 'Résultat courant avant impots', 'L', 'N', 0, 'R', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0354' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0358'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0358', 'Résultat exceptionnel', 'L', 'N', 0, 'R', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0358' order by numrub
+SELECT * FROM centralisation WHERE numrub = 'S0360'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0360', 'Participations des salaries aux resultats de l''exercice', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0360' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '691' and compte <= '69199999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0370'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0370', 'Impots sur les benefices', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0370' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '695' and compte <= '69599999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0380'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0380', 'Résultat de l''exercice', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation WHERE numrub = 'S0390'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0390', 'Produits cessions d''éléments d''actif', 'L', 'O', 0, 'P', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0390' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '775' and compte <= '77599999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0400'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0400', 'Valeur comptable éléments cédés', 'L', 'O', 0, 'A', '0')
+SELECT * FROM Fiches_RubCompt WHERE numrub = 'S0400' order by numrub
+SELECT * FROM Fiches_Mvt WHERE compte >= '675' and compte <= '67599999' and dte >= '20180101' and dte <= '20181231' order by compte
+SELECT * FROM centralisation WHERE numrub = 'S0410'
+INSERT INTO centralisation(numrub, intitrub, type, detail, col1, prod, compte) VALUES ( 'S0410', 'Plus et moins-values sur cessions d''éléments d''actif', 'E', 'N', 0, NULL, '0')
+SELECT * FROM centralisation Order by numrub, detail, compte
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '707000' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '606100' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 
+SELECT intitule_cc FROM Fiches_Comptes where compte_cc = '0' 

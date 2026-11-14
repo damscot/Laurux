@@ -5,7 +5,7 @@
 ''appel est tracé dans un fichier temporaire (LAURUX_FACTICE_TRACE) au format « nom [arg1] [arg2] ». Shell étant
 ''asynchrone, le test attend la ligne de trace (3 s au plus).
 ''Envoi SMTP (T02, T03) : faux serveur TestKit.SmtpFactice (bin/laurux-smtp, 127.0.0.1, identifiants ignorés) ; le
-''résumé stable de chaque message (enveloppe, en-têtes, texte, pièces jointes) est comparé. T04 et T06 restent à faire.
+''résumé stable de chaque message (enveloppe, en-têtes, texte, pièces jointes) est comparé. T04 : contrat chemin/FileN des mailings ; T06 : copie cachée lue dans Settings (ENVMAIL-A02).
 ''Valeurs attendues : assets/EnvMailTest/expected.txt, produites dans le clone de référence. Pas de base de données.
 
 Public Sub _Desc()
@@ -14,7 +14,9 @@ Public Sub _Desc()
   TestKit.Desc("T01ExtensionMime", "Extension : type MIME ou erreur par nom de fichier")
   TestKit.Desc("T02SmtpSimple", "Envoi SMTP sans pièce jointe : enveloppe (From, To, Bcc de Settings), objet, corps ; retour False")
   TestKit.Desc("T03SmtpPieces", "Envoi SMTP avec Ticket.pdf, puis avec Ticket.pdf et /Soc01/Pdfchemin : 1 puis 2 pièces jointes")
+  TestKit.Desc("T04SmtpCheminComplet", "Envoi avec chemin = chemin complet du fichier et FileN = nom (contrat des mailings) : erreur File.Load propagée, aucun message")
   TestKit.Desc("T05SmtpVide", "Envoi avec Email vide : aucun envoi, retour False")
+  TestKit.Desc("T06SmtpBccSettings", "Envoi : Bcc lu dans Settings (Laurux.conf par défaut) et non dans Start.LocalSettings (-c), puis Settings sans /Adrmail")
   TestKit.Desc("T07ComposeThunderbird", "Envoi2 Thunderbird, 1 et 2 pièces, corps avec , ; ( ) ' et sauts de ligne")
   TestKit.Desc("T08ComposeAutres", "Envoi2 Icedove, Evolution, Kmail : ligne de commande")
   TestKit.Desc("T09ComposeEnvoi3", "Envoi3 Thunderbird et Icedove avec Pdfchemin renseigné")
@@ -139,6 +141,26 @@ Public Sub T03SmtpPieces()
 
 End
 
+Public Sub T04SmtpCheminComplet()
+
+  Dim sTrace As String = Smtp()
+  Dim sDir As String = Temp$("chemin")
+  Dim b As Boolean
+
+  Mkdir sDir
+  File.Save(sDir &/ "doc.pdf", "%PDF-1.4 document de mailing")
+  Start.LocalSettings["/Soc" & Start.Societe & "/Pdfchemin"] = ""
+  ' Emailing.btnopen_Click passe chemin = Dialog.Path (chemin complet) et FileN = nom du fichier (EMAILING-A02)
+  Try b = EnvMail.Envoi("client@laurux-test.fr", "Mailing", "Corps", True, sDir &/ "doc.pdf", "application/pdf", "doc.pdf")
+  If Error Then
+    TestKit.Check("T04/retour", "ERREUR: " & Replace(Error.Text, sDir, "<dir>"))
+  Else
+    TestKit.Check("T04/retour", b)
+  Endif
+  Recus("T04", sTrace)
+
+End
+
 Public Sub T05SmtpVide()
 
   Dim b As Boolean
@@ -149,6 +171,24 @@ Public Sub T05SmtpVide()
   Else
     TestKit.Check("T05/retour", b)
   Endif
+
+End
+
+Public Sub T06SmtpBccSettings()
+
+  Dim sTrace As String = Smtp()
+  Dim b As Boolean
+
+  ' Deux adresses différentes : fichier -c (Start.LocalSettings) et Laurux.conf par défaut (Settings)
+  Start.LocalSettings["/Adrmail"] = "fichier-c@laurux-test.fr"
+  Settings["/Adrmail"] = "defaut@laurux-test.fr"
+  Try b = EnvMail.Envoi("client1@laurux-test.fr", "Bcc Settings", "Corps 1", False, "", "", "")
+  If Error Then TestKit.Check("T06/retour1", "ERREUR: " & Error.Text) Else TestKit.Check("T06/retour1", b)
+  ' Settings sans /Adrmail
+  Settings["/Adrmail"] = Null
+  Try b = EnvMail.Envoi("client2@laurux-test.fr", "Bcc absent", "Corps 2", False, "", "", "")
+  If Error Then TestKit.Check("T06/retour2", "ERREUR: " & Error.Text) Else TestKit.Check("T06/retour2", b)
+  Recus("T06", sTrace)
 
 End
 

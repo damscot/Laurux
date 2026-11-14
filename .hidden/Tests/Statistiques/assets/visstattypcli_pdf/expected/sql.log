@@ -1,0 +1,406 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdtypclifac Char(8) NOT NULL,nmtypclifac Char(25),brutfac Decimal(12,2),rmfac Decimal(12,2),totfac Decimal(12,2),totfacn1 Decimal(12,2),PRIMARY KEY (cdtypclifac)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615'
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Typec where code = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('01', 'Macon', 112.5, 12.5, 100)
+SELECT * FROM Fiches_HistoFac where cdclifac = '411001' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 80 Where cdtypclifac = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 100 Where cdtypclifac = '01'
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Typec where code = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set cdtypclifac = '01', nmtypclifac = 'Macon', brutfac = 320, rmfac = 20, totfac = 300 Where cdtypclifac = '01'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411001' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 180 Where cdtypclifac = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 200 Where cdtypclifac = '01'
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Typec where code = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('02', 'Plombier', 50, 0, 50)
+SELECT * FROM Fiches_HistoFac where cdclifac = '411002' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 11 Where cdtypclifac = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 20 Where cdtypclifac = '02'
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Total Where cdtypclifac = '*******'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('*******', 'Indéfini', 315, 15, 300)
+SELECT * FROM Fiches_HistoFac where cdclifac = '411003' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '*******'
+UPdate Total set totfacn1 = 150 Where cdtypclifac = '*******'
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Typec where code = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set cdtypclifac = '01', nmtypclifac = 'Macon', brutfac = 360, rmfac = 20, totfac = 340 Where cdtypclifac = '01'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411004' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Typec where code = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set cdtypclifac = '02', nmtypclifac = 'Plombier', brutfac = 87.5, rmfac = 12.5, totfac = 75 Where cdtypclifac = '02'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411002' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 31 Where cdtypclifac = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 40 Where cdtypclifac = '02'
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Typec where code = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set cdtypclifac = '02', nmtypclifac = 'Plombier', brutfac = 112.5, rmfac = 12.5, totfac = 100 Where cdtypclifac = '02'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411002' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 51 Where cdtypclifac = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 60 Where cdtypclifac = '02'
+SELECT * FROM Fiches_Cli where cli_code = '413001'
+SELECT * FROM Fiches_Typec where code = 'A0'
+SELECT * FROM Total Where cdtypclifac = 'A0'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A0', 'TYPE A0', 10, 0, 10)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413001' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413002'
+SELECT * FROM Fiches_Typec where code = 'A1'
+SELECT * FROM Total Where cdtypclifac = 'A1'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A1', 'TYPE A1', 11, 0, 11)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413002' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413003'
+SELECT * FROM Fiches_Typec where code = 'A2'
+SELECT * FROM Total Where cdtypclifac = 'A2'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A2', 'TYPE A2', 12, 0, 12)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413003' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413004'
+SELECT * FROM Fiches_Typec where code = 'A3'
+SELECT * FROM Total Where cdtypclifac = 'A3'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A3', 'TYPE A3', 13, 0, 13)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413004' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413005'
+SELECT * FROM Fiches_Typec where code = 'A4'
+SELECT * FROM Total Where cdtypclifac = 'A4'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A4', 'TYPE A4', 14, 0, 14)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413005' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413006'
+SELECT * FROM Fiches_Typec where code = 'A5'
+SELECT * FROM Total Where cdtypclifac = 'A5'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A5', 'TYPE A5', 15, 0, 15)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413006' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413007'
+SELECT * FROM Fiches_Typec where code = 'A6'
+SELECT * FROM Total Where cdtypclifac = 'A6'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A6', 'TYPE A6', 16, 0, 16)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413007' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413008'
+SELECT * FROM Fiches_Typec where code = 'A7'
+SELECT * FROM Total Where cdtypclifac = 'A7'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A7', 'TYPE A7', 17, 0, 17)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413008' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413009'
+SELECT * FROM Fiches_Typec where code = 'A8'
+SELECT * FROM Total Where cdtypclifac = 'A8'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A8', 'TYPE A8', 18, 0, 18)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413009' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413010'
+SELECT * FROM Fiches_Typec where code = 'A9'
+SELECT * FROM Total Where cdtypclifac = 'A9'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('A9', 'TYPE A9', 19, 0, 19)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413010' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413011'
+SELECT * FROM Fiches_Typec where code = 'B0'
+SELECT * FROM Total Where cdtypclifac = 'B0'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B0', 'TYPE B0', 20, 0, 20)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413011' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413012'
+SELECT * FROM Fiches_Typec where code = 'B1'
+SELECT * FROM Total Where cdtypclifac = 'B1'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B1', 'TYPE B1', 21, 0, 21)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413012' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413013'
+SELECT * FROM Fiches_Typec where code = 'B2'
+SELECT * FROM Total Where cdtypclifac = 'B2'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B2', 'TYPE B2', 22, 0, 22)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413013' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413014'
+SELECT * FROM Fiches_Typec where code = 'B3'
+SELECT * FROM Total Where cdtypclifac = 'B3'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B3', 'TYPE B3', 23, 0, 23)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413014' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413015'
+SELECT * FROM Fiches_Typec where code = 'B4'
+SELECT * FROM Total Where cdtypclifac = 'B4'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B4', 'TYPE B4', 24, 0, 24)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413015' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413016'
+SELECT * FROM Fiches_Typec where code = 'B5'
+SELECT * FROM Total Where cdtypclifac = 'B5'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B5', 'TYPE B5', 25, 0, 25)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413016' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413017'
+SELECT * FROM Fiches_Typec where code = 'B6'
+SELECT * FROM Total Where cdtypclifac = 'B6'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B6', 'TYPE B6', 26, 0, 26)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413017' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413018'
+SELECT * FROM Fiches_Typec where code = 'B7'
+SELECT * FROM Total Where cdtypclifac = 'B7'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B7', 'TYPE B7', 27, 0, 27)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413018' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413019'
+SELECT * FROM Fiches_Typec where code = 'B8'
+SELECT * FROM Total Where cdtypclifac = 'B8'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B8', 'TYPE B8', 28, 0, 28)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413019' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413020'
+SELECT * FROM Fiches_Typec where code = 'B9'
+SELECT * FROM Total Where cdtypclifac = 'B9'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('B9', 'TYPE B9', 29, 0, 29)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413020' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413021'
+SELECT * FROM Fiches_Typec where code = 'C0'
+SELECT * FROM Total Where cdtypclifac = 'C0'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C0', 'TYPE C0', 30, 0, 30)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413021' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413022'
+SELECT * FROM Fiches_Typec where code = 'C1'
+SELECT * FROM Total Where cdtypclifac = 'C1'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C1', 'TYPE C1', 31, 0, 31)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413022' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413023'
+SELECT * FROM Fiches_Typec where code = 'C2'
+SELECT * FROM Total Where cdtypclifac = 'C2'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C2', 'TYPE C2', 32, 0, 32)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413023' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413024'
+SELECT * FROM Fiches_Typec where code = 'C3'
+SELECT * FROM Total Where cdtypclifac = 'C3'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C3', 'TYPE C3', 33, 0, 33)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413024' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413025'
+SELECT * FROM Fiches_Typec where code = 'C4'
+SELECT * FROM Total Where cdtypclifac = 'C4'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C4', 'TYPE C4', 34, 0, 34)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413025' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413026'
+SELECT * FROM Fiches_Typec where code = 'C5'
+SELECT * FROM Total Where cdtypclifac = 'C5'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C5', 'TYPE C5', 35, 0, 35)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413026' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413027'
+SELECT * FROM Fiches_Typec where code = 'C6'
+SELECT * FROM Total Where cdtypclifac = 'C6'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C6', 'TYPE C6', 36, 0, 36)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413027' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413028'
+SELECT * FROM Fiches_Typec where code = 'C7'
+SELECT * FROM Total Where cdtypclifac = 'C7'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C7', 'TYPE C7', 37, 0, 37)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413028' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413029'
+SELECT * FROM Fiches_Typec where code = 'C8'
+SELECT * FROM Total Where cdtypclifac = 'C8'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C8', 'TYPE C8', 38, 0, 38)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413029' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413030'
+SELECT * FROM Fiches_Typec where code = 'C9'
+SELECT * FROM Total Where cdtypclifac = 'C9'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('C9', 'TYPE C9', 39, 0, 39)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413030' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413031'
+SELECT * FROM Fiches_Typec where code = 'D0'
+SELECT * FROM Total Where cdtypclifac = 'D0'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D0', 'TYPE D0', 40, 0, 40)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413031' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413032'
+SELECT * FROM Fiches_Typec where code = 'D1'
+SELECT * FROM Total Where cdtypclifac = 'D1'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D1', 'TYPE D1', 41, 0, 41)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413032' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413033'
+SELECT * FROM Fiches_Typec where code = 'D2'
+SELECT * FROM Total Where cdtypclifac = 'D2'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D2', 'TYPE D2', 42, 0, 42)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413033' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413034'
+SELECT * FROM Fiches_Typec where code = 'D3'
+SELECT * FROM Total Where cdtypclifac = 'D3'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D3', 'TYPE D3', 43, 0, 43)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413034' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413035'
+SELECT * FROM Fiches_Typec where code = 'D4'
+SELECT * FROM Total Where cdtypclifac = 'D4'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D4', 'TYPE D4', 44, 0, 44)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413035' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413036'
+SELECT * FROM Fiches_Typec where code = 'D5'
+SELECT * FROM Total Where cdtypclifac = 'D5'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D5', 'TYPE D5', 45, 0, 45)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413036' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413037'
+SELECT * FROM Fiches_Typec where code = 'D6'
+SELECT * FROM Total Where cdtypclifac = 'D6'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D6', 'TYPE D6', 46, 0, 46)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413037' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413038'
+SELECT * FROM Fiches_Typec where code = 'D7'
+SELECT * FROM Total Where cdtypclifac = 'D7'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D7', 'TYPE D7', 47, 0, 47)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413038' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413039'
+SELECT * FROM Fiches_Typec where code = 'D8'
+SELECT * FROM Total Where cdtypclifac = 'D8'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D8', 'TYPE D8', 48, 0, 48)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413039' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413040'
+SELECT * FROM Fiches_Typec where code = 'D9'
+SELECT * FROM Total Where cdtypclifac = 'D9'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('D9', 'TYPE D9', 49, 0, 49)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413040' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413041'
+SELECT * FROM Fiches_Typec where code = 'E0'
+SELECT * FROM Total Where cdtypclifac = 'E0'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E0', 'TYPE E0', 50, 0, 50)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413041' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413042'
+SELECT * FROM Fiches_Typec where code = 'E1'
+SELECT * FROM Total Where cdtypclifac = 'E1'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E1', 'TYPE E1', 51, 0, 51)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413042' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413043'
+SELECT * FROM Fiches_Typec where code = 'E2'
+SELECT * FROM Total Where cdtypclifac = 'E2'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E2', 'TYPE E2', 52, 0, 52)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413043' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413044'
+SELECT * FROM Fiches_Typec where code = 'E3'
+SELECT * FROM Total Where cdtypclifac = 'E3'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E3', 'TYPE E3', 53, 0, 53)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413044' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413045'
+SELECT * FROM Fiches_Typec where code = 'E4'
+SELECT * FROM Total Where cdtypclifac = 'E4'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E4', 'TYPE E4', 54, 0, 54)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413045' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413046'
+SELECT * FROM Fiches_Typec where code = 'E5'
+SELECT * FROM Total Where cdtypclifac = 'E5'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E5', 'TYPE E5', 55, 0, 55)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413046' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413047'
+SELECT * FROM Fiches_Typec where code = 'E6'
+SELECT * FROM Total Where cdtypclifac = 'E6'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E6', 'TYPE E6', 56, 0, 56)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413047' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413048'
+SELECT * FROM Fiches_Typec where code = 'E7'
+SELECT * FROM Total Where cdtypclifac = 'E7'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E7', 'TYPE E7', 57, 0, 57)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413048' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413049'
+SELECT * FROM Fiches_Typec where code = 'E8'
+SELECT * FROM Total Where cdtypclifac = 'E8'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E8', 'TYPE E8', 58, 0, 58)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413049' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413050'
+SELECT * FROM Fiches_Typec where code = 'E9'
+SELECT * FROM Total Where cdtypclifac = 'E9'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('E9', 'TYPE E9', 59, 0, 59)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413050' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413051'
+SELECT * FROM Fiches_Typec where code = 'F0'
+SELECT * FROM Total Where cdtypclifac = 'F0'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F0', 'TYPE F0', 60, 0, 60)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413051' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413052'
+SELECT * FROM Fiches_Typec where code = 'F1'
+SELECT * FROM Total Where cdtypclifac = 'F1'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F1', 'TYPE F1', 61, 0, 61)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413052' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413053'
+SELECT * FROM Fiches_Typec where code = 'F2'
+SELECT * FROM Total Where cdtypclifac = 'F2'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F2', 'TYPE F2', 62, 0, 62)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413053' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413054'
+SELECT * FROM Fiches_Typec where code = 'F3'
+SELECT * FROM Total Where cdtypclifac = 'F3'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F3', 'TYPE F3', 63, 0, 63)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413054' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413055'
+SELECT * FROM Fiches_Typec where code = 'F4'
+SELECT * FROM Total Where cdtypclifac = 'F4'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F4', 'TYPE F4', 64, 0, 64)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413055' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413056'
+SELECT * FROM Fiches_Typec where code = 'F5'
+SELECT * FROM Total Where cdtypclifac = 'F5'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F5', 'TYPE F5', 65, 0, 65)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413056' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413057'
+SELECT * FROM Fiches_Typec where code = 'F6'
+SELECT * FROM Total Where cdtypclifac = 'F6'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F6', 'TYPE F6', 66, 0, 66)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413057' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413058'
+SELECT * FROM Fiches_Typec where code = 'F7'
+SELECT * FROM Total Where cdtypclifac = 'F7'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F7', 'TYPE F7', 67, 0, 67)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413058' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413059'
+SELECT * FROM Fiches_Typec where code = 'F8'
+SELECT * FROM Total Where cdtypclifac = 'F8'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F8', 'TYPE F8', 68, 0, 68)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413059' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413060'
+SELECT * FROM Fiches_Typec where code = 'F9'
+SELECT * FROM Total Where cdtypclifac = 'F9'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('F9', 'TYPE F9', 69, 0, 69)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413060' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413061'
+SELECT * FROM Fiches_Typec where code = 'G0'
+SELECT * FROM Total Where cdtypclifac = 'G0'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('G0', 'TYPE G0', 70, 0, 70)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413061' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413062'
+SELECT * FROM Fiches_Typec where code = 'G1'
+SELECT * FROM Total Where cdtypclifac = 'G1'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('G1', 'TYPE G1', 71, 0, 71)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413062' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413063'
+SELECT * FROM Fiches_Typec where code = 'G2'
+SELECT * FROM Total Where cdtypclifac = 'G2'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('G2', 'TYPE G2', 72, 0, 72)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413063' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413064'
+SELECT * FROM Fiches_Typec where code = 'G3'
+SELECT * FROM Total Where cdtypclifac = 'G3'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('G3', 'TYPE G3', 73, 0, 73)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413064' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '413065'
+SELECT * FROM Fiches_Typec where code = 'G4'
+SELECT * FROM Total Where cdtypclifac = 'G4'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('G4', 'TYPE G4', 74, 0, 74)
+SELECT * FROM Fiches_HistoFac where cdclifac = '413065' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total 
+SELECT * FROM Total order by lpad(cdtypclifac, 12, ' ') asc

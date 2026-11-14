@@ -1,0 +1,25 @@
+{
+ "id": "CDOCUMENTS-T06",
+ "objet": "Relevé des prestations RelvMo (une page)",
+ "classe": "Cdocuments",
+ "description": "RelvMo (Menu196), Traitement (Button1) puis Imprimer (Button2, tous les clients), réponse Entrée à la boîte d'erreur sur le jeu relvmo : client 411003 avec 10 prestations RV01 à RV10 ; texte du PDF (Entete, Entete2, Level1R, Level4R, Level2R, Level3R) comparé par pdftotext ; table de travail Fiches_Stat dans le dump. Le cas du client à 40 lignes (saut de page, RELVMO-A01) reste à faire.",
+ "dataset": "relvmo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "xfail": "Button2 : « If rResult!villerc_sc Then » (champs de Fiches_Societes NULL dans Laurux01) lève une erreur affichée dans une boîte ; aucun PDF produit",
+ "xfail_attendu": "PDF du relevé de 411003 (10 prestations) produit et comparé par pdftotext"
+}

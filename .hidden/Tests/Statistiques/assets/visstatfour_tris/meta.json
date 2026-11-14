@@ -1,0 +1,23 @@
+{
+ "id": "VISSTATFOUR-T02",
+ "objet": "Tris Bnom, Ca, Ca1, Bcode",
+ "classe": "VisStatFour",
+ "description": "STATFOUR-T01 puis, pour chaque tri (Bnom, Ca, Ca1, Bcode), clic puis Imprimer : ordre des lignes relevé dans les 4 éditions concaténées (edition.txt).",
+ "dataset": "statfour_shared/statfour_receptions",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

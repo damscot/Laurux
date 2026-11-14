@@ -1,0 +1,22 @@
+{
+ "id": "HISTOVMO-T06",
+ "classe": "Histovmo",
+ "objet": "Aucune MO",
+ "description": "Menu Statistiques › Qté MO vendues pour une période ; /Soc01/Materiel = 0. Plage MO ZZZZY–ZZZZZ (zone Mo vidée par Suppr/BackSpace puis saisie, Entrée) ; Imprimer : message « Aucune MO pour cette demande » validé par Entrée ; pas de PDF ; fermeture. Lecture seule : sql.log comparé.",
+ "dataset": "histovmo_shared/ventes_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0,
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

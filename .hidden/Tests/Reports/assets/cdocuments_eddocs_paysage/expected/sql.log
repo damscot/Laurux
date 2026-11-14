@@ -1,0 +1,44 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Bl left join Fiches_Cli on cli_code = cdclibl where cli_code >= '411001' and cli_code <= '41199999' and datebl >= '19700101' and datebl <= '99991231' and type = 'C' order by numbl
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10001' and typel_ligbl = 'A' or num_ligbl = 'C10001' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10002' and typel_ligbl = 'A' or num_ligbl = 'C10002' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10003' and typel_ligbl = 'A' or num_ligbl = 'C10003' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10004' and typel_ligbl = 'A' or num_ligbl = 'C10004' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10005' and typel_ligbl = 'A' or num_ligbl = 'C10005' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10006' and typel_ligbl = 'A' or num_ligbl = 'C10006' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10007' and typel_ligbl = 'A' or num_ligbl = 'C10007' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10008' and typel_ligbl = 'A' or num_ligbl = 'C10008' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10009' and typel_ligbl = 'A' or num_ligbl = 'C10009' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10010' and typel_ligbl = 'A' or num_ligbl = 'C10010' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10011' and typel_ligbl = 'A' or num_ligbl = 'C10011' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10012' and typel_ligbl = 'A' or num_ligbl = 'C10012' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10013' and typel_ligbl = 'A' or num_ligbl = 'C10013' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10014' and typel_ligbl = 'A' or num_ligbl = 'C10014' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10015' and typel_ligbl = 'A' or num_ligbl = 'C10015' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10016' and typel_ligbl = 'A' or num_ligbl = 'C10016' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10017' and typel_ligbl = 'A' or num_ligbl = 'C10017' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10018' and typel_ligbl = 'A' or num_ligbl = 'C10018' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10019' and typel_ligbl = 'A' or num_ligbl = 'C10019' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10020' and typel_ligbl = 'A' or num_ligbl = 'C10020' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10021' and typel_ligbl = 'A' or num_ligbl = 'C10021' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10022' and typel_ligbl = 'A' or num_ligbl = 'C10022' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10023' and typel_ligbl = 'A' or num_ligbl = 'C10023' and code_ligbl = 'YY'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'C10024' and typel_ligbl = 'A' or num_ligbl = 'C10024' and code_ligbl = 'YY'

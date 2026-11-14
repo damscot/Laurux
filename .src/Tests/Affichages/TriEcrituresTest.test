@@ -1,0 +1,82 @@
+' Gambas test file
+
+''Tests de TriEcritures (.hidden/reference/.src/Affichages/TriEcritures.class/test.md, TRIECRITURES-T03, T04 partiels).
+''Écran instancié sans affichage (New TriEcritures(validee, sel, tresorerie)) sans passer par Saisecrit ni Tresor ;
+''en-têtes activés par leurs gestionnaires publics (_Click, _Dblclick), pagination par Descendre/Remonter. La grille
+''Ecrit lit Utils.rs1 (Utils.Base) : le test relève le nombre de lignes et les écritures (numéro|compte|libellé).
+''Saisies au clavier dans les en-têtes (KeyPress, lisent Key) non appelables en gb.test.
+''Jeu triecritures_shared/ecritures. Valeurs attendues : assets/TriEcrituresTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03TriEntetes", "Ouverture validee 0/1 x trésorerie 0/1 ; clic sur chaque en-tête (non validées) : lignes de rs1")
+  TestKit.Desc("T04Pagination", "Double-clic NUM2 x2, Descendre x2, Remonter x3 : lignes de rs1, pas de décalage négatif")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriEcrituresTest")
+  TestKit.OuvreBase("triecritures_shared/ecritures")
+
+End
+
+Private Sub Grille(sCle As String)
+
+  Dim sRes As String
+
+  If Utils.rs1.Count = 0 Then
+    TestKit.Check(sCle, "<aucune ligne>")
+    Return
+  Endif
+  Utils.rs1.MoveFirst()
+  Repeat
+    sRes &= "[" & Utils.rs1!numero & "|" & Utils.rs1!compte & "|" & Utils.rs1!libelle & "]"
+  Until Utils.rs1.MoveNext()
+  TestKit.Check(sCle, Utils.rs1.Count & " " & sRes)
+
+End
+
+Public Sub T03TriEntetes()
+
+  Dim hForm As Object
+  Dim sVal, sTr, sNom As String
+
+  For Each sVal In ["0", "1"]
+    For Each sTr In ["0", "1"]
+      hForm = New TriEcritures(sVal, "", sTr)
+      Grille("T03/ouverture_v" & sVal & "_t" & sTr)
+      Object.Lock(hForm)
+    Next
+  Next
+  hForm = New TriEcritures("0", "", "0")
+  For Each sNom In ["JO", "COM", "Nom", "DA2", "NUM2", "DOC2", "DEB", "CRED", "INTITULE"]
+    Object.Call(hForm, sNom & "_Click")
+    Grille("T03/" & sNom)
+  Next
+  Object.Lock(hForm)
+
+End
+
+Public Sub T04Pagination()
+
+  Dim hForm As Object
+
+  hForm = New TriEcritures("0", "", "0")
+  hForm.NUM2_Dblclick()
+  Grille("T04/dbl_NUM2_1")
+  hForm.NUM2_Dblclick()
+  Grille("T04/dbl_NUM2_2")
+  hForm.Descendre_Click()
+  Grille("T04/descendre_1")
+  hForm.Descendre_Click()
+  Grille("T04/descendre_2")
+  hForm.Remonter_Click()
+  Grille("T04/remonter_1")
+  hForm.Remonter_Click()
+  hForm.Remonter_Click()
+  Grille("T04/remonter_3")
+  Object.Lock(hForm)
+
+End

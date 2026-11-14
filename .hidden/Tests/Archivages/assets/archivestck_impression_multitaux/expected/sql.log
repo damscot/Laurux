@@ -1,0 +1,37 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where numero like  "%%" order by numero Desc limit 0, 19
+SELECT * FROM Fiches_HisLigTickets as l Left join Fiches_HisEntTickets as e on e.numero = l.numero Left join Fiches_Cli on e.client = cli_code where l.numero = '1000061' order by cast(numlig as unsigned)
+SELECT * FROM Fiches_HisEntTickets where numero = '1000061'
+DROP TABLE IF EXISTS  Tottva
+CREATE TABLE Tottva(code VarChar(10) NOT NULL,mtva VarChar(15),PRIMARY KEY (code)) ENGINE = InnoDB
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+ select * from Fiches_HisLigTickets where numero = '1000061' order by cast(numlig as unsigned)
+ select * from Fiches_HisLigTickets where numero = '1000061' and type <> 'M' order by cast(numlig as unsigned)
+ select * from Tottva where code = '20'
+INSERT INTO Tottva (code, mtva) VALUES ('20', 2)
+ select * from Tottva where code = '5.5'
+INSERT INTO Tottva (code, mtva) VALUES ('5.5', 0.550000000000001)
+ select * from Tottva where code = '20'
+UPdate  Tottva  SET mtva = 1.95 WHERE code = '20'
+ select * from Tottva where code = NULL
+INSERT INTO Tottva (code, mtva) VALUES (NULL, 1.4)
+ select * from Tottva
+ select * from Tottva

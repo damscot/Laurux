@@ -1,0 +1,23 @@
+{
+ "id": "RELVMO-T05",
+ "objet": "Impression de la sélection",
+ "classe": "RelvMo",
+ "description": "Traitement, clic sur la ligne 41100101 puis sur la ligne 41100303 (RlCli_Click passe RB2) : au rejeu le 2e clic remplace la sélection (multi-sélection non rejouable) ; Imprimer : texte PDF (pdftotext) avec l'en-tête du client 411003 et sa ligne MO 03.",
+ "dataset": "relvmo_shared/relvmo_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

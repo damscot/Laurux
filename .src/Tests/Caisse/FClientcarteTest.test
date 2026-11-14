@@ -1,0 +1,128 @@
+' Gambas test file
+
+''Tests gb.test de FClientcarte (.hidden/reference/.src/Caisse/FClientcarte.class/test.md, T02 et T08 ; tickets de T08 insérés par le test).
+''Valeurs attendues : assets/FClientcarteTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est instanciée sans être affichée, Form_Open est appelé à la main ; la carte est relue en base.
+''Jeu fclientcarte_shared/cartes_base (3 cartes).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T08Historique", "Carte 000001 avec 3 tickets (dont 1 supprimé) : historique des ventes puis des points (cumul) dans Histo")
+  TestKit.Desc("T02Modification", "Clic sur la 1re carte, téléphone domicile 0111111111 et bureau 0222222222, Enregistrer : téléphones en base (A01)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "FClientcarteTest")
+  TestKit.OuvreBase("fclientcarte_shared/cartes_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+
+End
+
+Private Sub Ct(hF As FClientcarte, sNom As String) As Object
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  Return hC
+
+End
+
+Private Sub Carte(sCode As String) As String
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCarte") & " WHERE code = &1", sCode)
+  If Not r.Available Then Return "<absente>"
+  Return r!code & " nom=" & r!nom & " pnm=" & r!pnm & " tel_dom=" & r!tel_dom & " tel_bur=" & r!tel_bur & " tp1=" & r!tp1 & " tp2=" & r!tp2 & " cb=" & r!cb & " datec=" & r!datec & " datef=" & r!datef
+
+End
+
+Public Sub T02Modification()
+
+  Dim hF As FClientcarte
+
+  Try hF = New FClientcarte
+  If Error Then
+    TestKit.Check("T02/ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return
+  Endif
+  hF.Form_Open()
+  TestKit.Check("T02/avant", Carte("000001"))
+  Ct(hF, "Colcli").Row = 0
+  hF.colcli_Click()
+  TestKit.Check("T02/zones.Cd", Ct(hF, "Cd").Text)
+  TestKit.Check("T02/zones.Nm", Ct(hF, "Nm").Text)
+  TestKit.Check("T02/zones.Button4", Ct(hF, "Button4").Text)
+  Ct(hF, "Teldom").Text = "0111111111"
+  Ct(hF, "Telbur").Text = "0222222222"
+  Try hF.Button4_Click()
+  If Error Then TestKit.Check("T02/enregistrer", "ERREUR: " & Error.Text & " " & Error.Where)
+  TestKit.Check("T02/apres", Carte("000001"))
+  Object.Lock(hF)
+
+End
+
+' Tickets de la carte 000001 (le 3e supprimé) et d'une autre carte, avec leurs lignes
+Private Sub Tickets()
+
+  Dim aE As Variant[] = [["0000101", "000001", 1.5, "10.00", "12.00", 0, "2018-06-01 10:00:00"], ["0000102", "000001", 2.25, "20.50", "24.60", 0, "2018-06-02 11:00:00"], ["0000103", "000001", 5, "50.00", "60.00", 1, "2018-06-03 12:00:00"], ["0000104", "000002", 3, "30.00", "36.00", 0, "2018-06-04 13:00:00"]]
+  Dim aL As Variant[] = [["0000101", "1", "001", "Produit 2.10", "1", "10.00", "0"], ["0000102", "2", "003", "produit 20.00", "1", "0.50", "0"], ["0000102", "10", "002", "Produit 7.00", "2", "20.00", "1.5"], ["0000103", "1", "001", "Produit 2.10", "5", "50.00", "0"], ["0000104", "1", "001", "Produit 2.10", "3", "30.00", "0"]]
+  Dim v As Variant[]
+
+  For Each v In aE
+    Utils.db.Exec("INSERT INTO Fiches_HisEntTickets (caisse, numero, carte, points, mht, mttc, suppr, date) VALUES ('1', &1, &2, &3, &4, &5, &6, &7)", v[0], v[1], v[2], v[3], v[4], v[5], v[6])
+  Next
+  For Each v In aL
+    Utils.db.Exec("INSERT INTO Fiches_HisLigTickets (numero, numlig, code, intitule, qte, mht, mrem, date) VALUES (&1, &2, &3, &4, &5, &6, &7, '2018-06-01 10:00:00')", v[0], v[1], v[2], v[3], v[4], v[5], v[6])
+  Next
+
+End
+
+Private Sub Histo(hF As FClientcarte) As String
+
+  Dim hH As Object
+  Dim s As String
+  Dim i As Integer
+
+  hH = Ct(hF, "Histo")
+  s = hH.Count & " :"
+  If hH.MoveFirst() Then Return s
+  Repeat
+    s &= " ["
+    For i = 0 To hH.Columns.Count - 1
+      s &= hH.Item[i] & ";"
+    Next
+    s &= "]"
+  Until hH.MoveNext()
+  Return s
+
+End
+
+Public Sub T08Historique()
+
+  Dim hF As FClientcarte
+
+  Tickets()
+  Try hF = New FClientcarte
+  If Error Then
+    TestKit.Check("T08/ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return
+  Endif
+  hF.Form_Open()
+  Ct(hF, "Colcli").Row = 0
+  hF.colcli_Click()
+  TestKit.Check("T08/carte", Ct(hF, "Cd").Text)
+  Ct(hF, "Hisv").Value = True
+  TestKit.Check("T08/ventes", Histo(hF))
+  Ct(hF, "Hisp").Value = True
+  TestKit.Check("T08/points", Histo(hF))
+  TestKit.Check("T08/Hisv.Value", Ct(hF, "Hisv").Value)
+  Object.Lock(hF)
+
+End

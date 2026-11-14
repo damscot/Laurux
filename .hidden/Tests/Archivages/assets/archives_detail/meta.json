@@ -1,0 +1,21 @@
+{
+ "id": "ARCHIVES-T06",
+ "classe": "Archives",
+ "objet": "Détail d'une facture",
+ "description": "/Soc01/Materiel = 0 : clic sur la 1re ligne (facture 000060 : ligne A + commentaire C), puis Quitter : requêtes du détail (sql.log ordonné). Grilles et totaux non comparés.",
+ "dataset": "archives_shared/factures_liste",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,51 @@
+' Gambas test file
+
+''Test de DB_Log (.hidden/reference/.src/Utils/DB_Log.class/test.md, DB_LOG-T02).
+''Journal préparé écrit au chemin du journal local de Utils.db (Get_Localfile_Path, HOME de test), puis écran
+''instancié sans affichage (New DB_Log(Utils.db), Refresh dans _new) ; relevé : erreur éventuelle et nombre de
+''lignes de GridView1 (une ligne par ligne physique du fichier). Valeurs attendues : assets/DB_LogTest/expected.txt.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02LignesAtypiques", "Journal avec SQL contenant « ; » et SQL multiligne : erreur éventuelle et nombre de lignes de la grille")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "DB_LogTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T02LignesAtypiques()
+
+  Dim sChemin As String
+  Dim hForm As Object
+  Dim hGrille As GridView
+  Dim sJournal As String
+
+  Try sChemin = Utils.db.Get_Localfile_Path()
+  If Error Then
+    TestKit.Check("T02/chemin", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T02/chemin_defini", Not IsNull(sChemin))
+  sJournal = "01/02/2018 10:00:00.000;Info;Exec_SQL;laurux;h;m;1;Trace;SELECT * FROM Fiches_Art\n"
+  sJournal &= "01/02/2018 10:00:01.000;Info;Exec_SQL;laurux;h;m;1;Trace;SELECT 'a;b' FROM Fiches_Art; SELECT 2\n"
+  sJournal &= "01/02/2018 10:00:02.000;Info;Exec_SQL;laurux;h;m;1;Trace;SELECT *\nFROM Fiches_Cli\nWHERE cli_code = '411001'\n"
+  sJournal &= "ligne courte\n"
+  Try File.Save(sChemin, sJournal)
+  If Error Then
+    TestKit.Check("T02/ecriture", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hForm = New DB_Log(Utils.db)
+  TestKit.Check("T02/ouverture", IIf(Error, "ERREUR: " & Error.Text, "<aucune erreur>"))
+  If Not Object.IsValid(hForm) Then Return
+  hGrille = hForm.Controls["GridView1"]
+  TestKit.Check("T02/lignes", hGrille.Rows.Count)
+  Object.Lock(hForm)
+
+End

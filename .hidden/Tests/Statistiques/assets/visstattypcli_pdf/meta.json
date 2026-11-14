@@ -1,0 +1,23 @@
+{
+ "id": "VISSTATTYPCLI-T03",
+ "objet": "Impression de plus de 60 types",
+ "classe": "VisStatTypCli",
+ "description": "Jeu + 65 types T1..T65 (codes A1..) avec un client et une facture N chacun ; Imprimer : texte du PDF (pas de saut de page, A01 ; total des %, A02).",
+ "dataset": "visstattypcli_pdf/visstattypcli_pdf",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

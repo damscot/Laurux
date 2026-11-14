@@ -1,0 +1,61 @@
+' Gambas test file
+
+''Tests de MyStyle (.hidden/reference/.src/Caisse/MyStyle.class/test.md, MYSTYLE-T01, T02).
+''DrawButton dessiné hors écran (Paint.Begin sur une Image 80 x 40) ; somme de contrôle des pixels (somme pondérée
+''modulo 2^31 et nombre de pixels distincts du fond). Pas de base.
+''Valeurs attendues : assets/MyStyleTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DrawButton", "DrawButton Pressed x Flag {0,1,2,3,4,6,7} x 2 couleurs : somme de contrôle des pixels (A01)")
+  TestKit.Desc("T02Constantes", "Constantes Normal, Disabled, HasFocus, Hovered, Active")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "MyStyleTest")
+
+End
+
+Public Sub T01DrawButton()
+
+  Dim hImg As Image
+  Dim bPressed As Boolean
+  Dim iFlag, iCoul, x, y, iPix As Integer
+  Dim lSomme As Long
+  Dim nDiff As Integer
+
+  For Each iCoul In [&HC6C6C6, &H3080C0]
+    For Each bPressed In [False, True]
+      For Each iFlag In [0, 1, 2, 3, 4, 6, 7]
+        hImg = New Image(80, 40, Color.White)
+        Paint.Begin(hImg)
+        MyStyle.DrawButton(0, 0, 80, 40, bPressed, iFlag, iCoul)
+        Paint.End
+        lSomme = 0
+        nDiff = 0
+        For y = 0 To hImg.Height - 1
+          For x = 0 To hImg.Width - 1
+            iPix = hImg[x, y]
+            If iPix <> Color.White Then Inc nDiff
+            lSomme = (lSomme + CLong(iPix And &HFFFFFF&) * (x + 1 + y * 97)) Mod 2147483647
+          Next
+        Next
+        TestKit.Check("T01/" & Hex$(iCoul, 6) & "/" & IIf(bPressed, "presse", "relache") & "/flag" & iFlag, nDiff & " " & lSomme)
+      Next
+    Next
+  Next
+
+End
+
+Public Sub T02Constantes()
+
+  TestKit.Check("T02/Normal", MyStyle.Normal)
+  TestKit.Check("T02/Disabled", MyStyle.Disabled)
+  TestKit.Check("T02/HasFocus", MyStyle.HasFocus)
+  TestKit.Check("T02/Hovered", MyStyle.Hovered)
+  TestKit.Check("T02/Active", MyStyle.Active)
+
+End

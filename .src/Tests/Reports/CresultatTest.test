@@ -1,0 +1,98 @@
+' Gambas test file
+
+''Tests de Cresultat (.hidden/reference/.src/Reports/Cresultat.class/test.md, CRESULTAT-T01, T02).
+''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
+''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
+''Valeurs attendues : assets/CresultatTest/expected.txt, produites dans le clone de référence. Pas de base.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Niveaux", "Level0, Level3, Level1 (p5 vide / X ; 1234, 1234.56, -5, vide), Level7, Level2, BasPage")
+  TestKit.Desc("T02MultiPages", "2 × (Level0, Level3, 44 Level1, BasPage) : Page 1/2 et 2/2")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CresultatTest")
+
+End
+
+Private Function Nouveau() As Cresultat
+
+  Dim pdf As Cresultat
+
+  pdf = New Cresultat("P", "mm", "A4")
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, en extrait le texte et vérifie chaque ligne non vide (date du jour et utilisateur masqués).
+Private Sub Verifie(sCle As String, pdf As PdfWriter)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+Public Sub T01Niveaux()
+
+  Dim pdf As Cresultat = Nouveau()
+  Dim sMt As String
+  Dim n As Integer
+
+  pdf.Level0("Compte de résultat", "Du 01/01/2018 au 31/12/2018", "Détaillé", "SOCIETE TEST")
+  pdf.Level3("31/12/2018", "31/12/2017", 40)
+  For Each sMt In ["1234", "1234.56", "-5", ""]
+    Inc n
+    Try pdf.Level1("Rubrique " & n, IIf(n Mod 2 = 0, "X", ""), sMt, sMt, 45 + n * 6)
+    TestKit.Check("T01/Level1/" & n & "/erreur", IIf(Error, Error.Text, ""))
+  Next
+  Try pdf.Level7("Total produits", "1234", "-5", 80)
+  TestKit.Check("T01/Level7/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level2("Rubrique compte", "706000", "Ventes", "X", "1234", "1000", 90)
+  TestKit.Check("T01/Level2/erreur", IIf(Error, Error.Text, ""))
+  pdf.BasPage()
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02MultiPages()
+
+  Dim pdf As Cresultat = Nouveau()
+  Dim p As Integer
+  Dim i As Integer
+
+  For p = 1 To 2
+    pdf.Level0("Compte de résultat", "Exercice 2018", "", "SOCIETE TEST")
+    pdf.Level3("31/12/2018", "31/12/2017", 40)
+    For i = 1 To 44
+      pdf.Level1("R" & p & "-" & i, "", CStr(i * 10), CStr(i), 45 + i * 5)
+    Next
+    pdf.BasPage()
+  Next
+  Verifie("T02", pdf)
+
+End

@@ -1,0 +1,23 @@
+{
+ "id": "VISSTATCOMM-T04",
+ "objet": "Impression sur plus de 50 lignes",
+ "classe": "VisStatComm",
+ "description": "Jeu + 55 clients 412001-412055 (commercial 01, une facture chacun) ; Facn, Detail, Traitement, Imprimer : texte du PDF sur 2 pages, sans ligne de total.",
+ "dataset": "visstatcomm_pdf/visstatcomm_pdf",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

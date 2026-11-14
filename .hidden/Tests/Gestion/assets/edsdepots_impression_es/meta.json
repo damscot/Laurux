@@ -1,0 +1,25 @@
+{
+ "id": "EDSDEPOTS-T01",
+ "objet": "Impression entrées + sorties",
+ "classe": "Edsdepots",
+ "description": "Dates par défaut (15.06.2014 → 15.06.2018) ; Imprimer : PDF des entrées puis des sorties (texte pdftotext).",
+ "dataset": "sdepots_shared/sdepots_stock",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Depots": "-1",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

@@ -1,0 +1,23 @@
+{
+ "id": "VISSTATTYPCLI-T02",
+ "objet": "Tris Bnom, Bbrut, Brem, Bnet",
+ "classe": "VisStatTypCli",
+ "description": "STATTYPCLI-T01 puis, pour chaque tri (Bnom, Bbrut, Brem, Bnet), clic puis Imprimer : ordre des lignes dans les éditions concaténées (edition.txt).",
+ "dataset": "stattypcli_shared/stattypcli",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

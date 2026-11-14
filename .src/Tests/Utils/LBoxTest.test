@@ -1,0 +1,110 @@
+' Gambas test file
+
+''Tests de LBox (.hidden/reference/.src/Utils/LBox.class/test.md) en gb.test : la boîte est instanciée sans être
+''affichée, ses contrôles sont pilotés par Controls[…] et ses méthodes publiques (ListSel_Click, ListInv_Click,
+''ListDesel_Click, Valider_Click, Annuler_Click) appelées ; on relève l'objet de sortie (et L / T, inaccessibles après la fermeture : erreur figée).
+''Pas de base. Le filtre invalide (Message.Warning) et le mode FileSelect (boîte de fichiers) restent à faire.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03ListView", "Mode ListView : doublons et Null ignorés, filtre ^fac, Sélectionner, Inverser, Désélectionner, Valider")
+  TestKit.Desc("T04ListEditor", "Mode ListEditor : liste modifiée puis Valider vers un ListBox")
+  TestKit.Desc("T07TextArea", "Mode TextArea : texte modifié, Valider vers un TextBox ; Annuler sans recopie")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LBoxTest")
+
+End
+
+Private Function Selection(hBox As LBox) As String
+
+  Dim hLv As Object = hBox.Controls["ListView1"]
+  Dim s As String
+
+  If Not hLv.MoveFirst() Then
+    Repeat
+      If hLv.Item.Selected Then s &= hLv.Item.Text & " "
+    Until hLv.MoveNext()
+  Endif
+  Return Trim(s)
+
+End
+
+Public Sub T03ListView()
+
+  Dim hOut As New ListBox(New Window)
+  Dim hBox As LBox
+  Dim hLv As Object
+  Dim hF As Object
+
+  hBox = New LBox("Tags à retirer", ["facture", "bl", "facture", Null, "fac2018", "devis"], Null, hOut, "", LBox.ListView)
+  hLv = hBox.Controls["ListView1"]
+  hF = hBox.Controls["ListFiltre"]
+  TestKit.Check("T03/items", hLv.Count)
+  hF.Text = "^fac"
+  hBox.ListSel_Click()
+  TestKit.Check("T03/sel_filtre", Selection(hBox))
+  hBox.ListDesel_Click()
+  TestKit.Check("T03/desel_filtre", Selection(hBox))
+  hF.Text = ""
+  hBox.ListSel_Click()
+  TestKit.Check("T03/sel_tout", Selection(hBox))
+  hBox.ListDesel_Click()
+  TestKit.Check("T03/desel_tout", Selection(hBox))
+  hLv["bl"].Selected = True
+  hBox.ListInv_Click()
+  TestKit.Check("T03/inverse", Selection(hBox))
+  hBox.Valider_Click()
+  Try TestKit.Check("T03/L", hBox.L.Join("|"))
+  If Error Then TestKit.Check("T03/L", "ERREUR: " & Error.Text)
+  TestKit.Check("T03/sortie", hOut.List.Join("|"))
+
+End
+
+Public Sub T04ListEditor()
+
+  Dim hOut As New ListBox(New Window)
+  Dim hBox As LBox
+  Dim aL As String[]
+  Dim hE As Object
+
+  hBox = New LBox("Tags à ajouter", ["urgent"], Null, hOut, "", LBox.ListEditor)
+  hE = hBox.Controls["ListEditor1"]
+  aL = hE.List
+  TestKit.Check("T04/initial", aL.Join("|"))
+  hE.List = ["urgent", "client", "2018"]
+  hBox.Valider_Click()
+  Try TestKit.Check("T04/L", hBox.L.Join("|"))
+  If Error Then TestKit.Check("T04/L", "ERREUR: " & Error.Text)
+  TestKit.Check("T04/sortie", hOut.List.Join("|"))
+
+End
+
+Public Sub T07TextArea()
+
+  Dim hOut As New TextBox(New Window)
+  Dim hBox As LBox
+  Dim hT As Object
+
+  hOut.Text = "avant"
+  hBox = New LBox("Commentaire", "Texte initial", Null, hOut, "", LBox.TextArea)
+  hT = hBox.Controls["TextArea1"]
+  TestKit.Check("T07/initial", hT.Text)
+  hT.Text = "Texte modifié\nsur deux lignes"
+  hBox.Annuler_Click()
+  Try TestKit.Check("T07/annule/T", hBox.T)
+  If Error Then TestKit.Check("T07/annule/T", "ERREUR: " & Error.Text)
+  TestKit.Check("T07/annule/sortie", hOut.Text)
+  hBox = New LBox("Commentaire", "Texte initial", Null, hOut, "", LBox.TextArea)
+  hT = hBox.Controls["TextArea1"]
+  hT.Text = "Texte modifié\nsur deux lignes"
+  hBox.Valider_Click()
+  Try TestKit.Check("T07/valide/T", hBox.T)
+  If Error Then TestKit.Check("T07/valide/T", "ERREUR: " & Error.Text)
+  TestKit.Check("T07/valide/sortie", hOut.Text)
+
+End

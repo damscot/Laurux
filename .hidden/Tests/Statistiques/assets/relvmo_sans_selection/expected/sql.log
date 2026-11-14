@@ -1,0 +1,71 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE if exists Fiches_Stat
+CREATE TABLE Fiches_Stat (code Char(15) NOT NULL,intitule char(50) ,qte char(12) ,montant char(12) ,codecli char(12) ,intitulecli char(35) ,PRIMARY KEY (code, codecli)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mo
+SELECT * from Fiches_Ligbl where code_ligbl = '01' and typel_ligbl = 'M'
+SELECT * from Fiches_Bl where numbl = '000001' and type = 'F' and imp = 1
+SELECT * from Fiches_Stat where code = '01' and codecli = '411001'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('01', 'Mo T1', '2,00', '411001', 'A Divers', '33,60')
+SELECT * from Fiches_Bl where numbl = '000001' and type = 'F' and imp = 1
+SELECT * from Fiches_Stat where code = '01' and codecli = '411001'
+Update  Fiches_Stat  SET  qte = '3,00' where code = '01' and codecli = '411001'
+SELECT * from Fiches_Bl where numbl = '000003' and type = 'F' and imp = 1
+SELECT * from Fiches_HistoLigfac where code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00010'
+SELECT * from Fiches_Stat where code = '01' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('01', 'Mo T1', '1,00', '411002', 'B Divers', '16,80')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '02' and typel_ligbl = 'M'
+SELECT * from Fiches_Bl where numbl = '000001' and type = 'F' and imp = 1
+SELECT * from Fiches_Stat where code = '02' and codecli = '411001'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('02', 'Mo T2', '1,00', '411001', 'A Divers', '18,60')
+SELECT * from Fiches_Bl where numbl = '000004' and type = 'F' and imp = 1
+SELECT * from Fiches_HistoLigfac where code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00011'
+SELECT * from Fiches_Stat where code = '02' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('02', 'Mo T2', '1,00', '411002', 'B Divers', '18,60')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '03' and typel_ligbl = 'M'
+SELECT * from Fiches_Bl where numbl = '000002' and type = 'F' and imp = 1
+SELECT * from Fiches_HistoLigfac where code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00010'
+SELECT * from Fiches_Stat where code = '03' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('03', 'Mo T3', '3,00', '411002', 'B Divers', '63,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFacM where numfac = 'M00001'
+SELECT * from Fiches_Stat where code = '03' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('03', 'Mo T3', '2,00', '411003', 'C Divers', '42,00')
+SELECT * from Fiches_HistoFacM where numfac = 'M00001'
+SELECT * from Fiches_Stat where code = '03' and codecli = '411003'
+Update  Fiches_Stat  SET  qte = '3,00' where code = '03' and codecli = '411003'
+SELECT * from Fiches_Ligbl where code_ligbl = '04' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00012'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '05' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFacM where numfac = 'M00001'
+SELECT * from Fiches_Stat where code = '05' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('05', 'Changement poulie', '1,00', '411003', 'C Divers', '20,16')
+SELECT * FROM Fiches_Stat order by codecli, code 
+SELECT * FROM Fiches_Societes where cd_sc = '01'

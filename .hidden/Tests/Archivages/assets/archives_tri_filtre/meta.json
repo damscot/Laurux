@@ -1,0 +1,21 @@
+{
+ "id": "ARCHIVES-T03",
+ "classe": "Archives",
+ "objet": "Tri et filtre par en-tête",
+ "description": "/Soc01/Materiel = -1 (mode Toutes) : frappe dans NO (« 00005 »), CO (« 4110 »), MT (« 10 »), MTC (« 12 »), NUMS (« SER ») : requêtes like successives, union filtrée par préfixe côté entretien (A04 figée). Double-clic non rejouable ; NM est une ComboBox (recherche dans les lignes, T09).",
+ "dataset": "archives_shared/factures_liste",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

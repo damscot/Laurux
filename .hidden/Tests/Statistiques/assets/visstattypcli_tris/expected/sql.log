@@ -1,0 +1,85 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdtypclifac Char(8) NOT NULL,nmtypclifac Char(25),brutfac Decimal(12,2),rmfac Decimal(12,2),totfac Decimal(12,2),totfacn1 Decimal(12,2),PRIMARY KEY (cdtypclifac)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615'
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Typec where code = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('01', 'Macon', 112.5, 12.5, 100)
+SELECT * FROM Fiches_HistoFac where cdclifac = '411001' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 80 Where cdtypclifac = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 100 Where cdtypclifac = '01'
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Typec where code = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set cdtypclifac = '01', nmtypclifac = 'Macon', brutfac = 320, rmfac = 20, totfac = 300 Where cdtypclifac = '01'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411001' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 180 Where cdtypclifac = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set totfacn1 = 200 Where cdtypclifac = '01'
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Typec where code = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('02', 'Plombier', 50, 0, 50)
+SELECT * FROM Fiches_HistoFac where cdclifac = '411002' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 11 Where cdtypclifac = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 20 Where cdtypclifac = '02'
+SELECT * FROM Fiches_Cli where cli_code = '411003'
+SELECT * FROM Total Where cdtypclifac = '*******'
+INSERT INTO Total(cdtypclifac, nmtypclifac, brutfac, rmfac, totfac) VALUES ('*******', 'Indéfini', 315, 15, 300)
+SELECT * FROM Fiches_HistoFac where cdclifac = '411003' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '*******'
+UPdate Total set totfacn1 = 150 Where cdtypclifac = '*******'
+SELECT * FROM Fiches_Cli where cli_code = '411004'
+SELECT * FROM Fiches_Typec where code = '01'
+SELECT * FROM Total Where cdtypclifac = '01'
+UPdate Total set cdtypclifac = '01', nmtypclifac = 'Macon', brutfac = 360, rmfac = 20, totfac = 340 Where cdtypclifac = '01'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411004' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Typec where code = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set cdtypclifac = '02', nmtypclifac = 'Plombier', brutfac = 87.5, rmfac = 12.5, totfac = 75 Where cdtypclifac = '02'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411002' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 31 Where cdtypclifac = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 40 Where cdtypclifac = '02'
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Typec where code = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set cdtypclifac = '02', nmtypclifac = 'Plombier', brutfac = 112.5, rmfac = 12.5, totfac = 100 Where cdtypclifac = '02'
+SELECT * FROM Fiches_HistoFac where cdclifac = '411002' and datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 51 Where cdtypclifac = '02'
+SELECT * FROM Total Where cdtypclifac = '02'
+UPdate Total set totfacn1 = 60 Where cdtypclifac = '02'
+SELECT * FROM Total 
+SELECT * FROM Total order by lpad(cdtypclifac, 12, ' ') asc
+SELECT * FROM Total order by nmtypclifac desc
+SELECT * FROM Total order by lpad(brutfac, 12, ' ') asc
+SELECT * FROM Total order by lpad(rmfac, 12, ' ') desc
+SELECT * FROM Total order by lpad(totfac, 12, ' ') asc

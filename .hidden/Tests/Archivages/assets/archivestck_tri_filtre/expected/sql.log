@@ -1,0 +1,48 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where numero like  "%%" order by numero Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where numero like  "%%" order by numero Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where numero like  "%0%" order by numero Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where numero like  "%00%" order by numero Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where numero like  "%000%" order by numero Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where numero like  "%0006%" order by numero Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where mttc like  "%%" order by mttc Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where mttc like  "%1%" order by mttc Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where mttc like  "%12%" order by mttc Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where caisse like  "%%" order by caisse Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where caisse like  "%0%" order by caisse Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where caisse like  "%02%" order by caisse Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where vendeur like  "%%" order by vendeur Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where vendeur like  "%%" order by vendeur Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where vendeur like  "%%" order by vendeur Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where vendeur like  "%B%" order by vendeur Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where vendeur like  "%B%" order by vendeur Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where vendeur like  "%B%" order by vendeur Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where vendeur like  "%BR%" order by vendeur Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%A%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%A%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%A%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%AN%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%AN%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%AN%" order by cli_nom Desc limit 0, 19
+select * from Fiches_HisEntTickets Left join Fiches_Cli on client = cli_code where cli_nom like  "%ANO%" order by cli_nom Desc limit 0, 19

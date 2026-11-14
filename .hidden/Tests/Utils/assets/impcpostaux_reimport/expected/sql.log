@@ -1,0 +1,33 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Cpostaux WHERE cp = '75001' and burdist = 'PARIS 01'
+SELECT * FROM Fiches_Cpostaux WHERE cp = '69001' and burdist = 'LYON'
+INSERT INTO Fiches_Cpostaux(cp,burdist) VALUES ('69001', 'LYON')
+SELECT * FROM Fiches_Cpostaux WHERE cp = '01000' and burdist = 'BOURG'
+INSERT INTO Fiches_Cpostaux(cp,burdist) VALUES ('01000', 'BOURG')
+SELECT * FROM Fiches_Cpostaux WHERE cp = '44000' and burdist = 'NANTES'
+INSERT INTO Fiches_Cpostaux(cp,burdist) VALUES ('44000', 'NANTES')
+SELECT * FROM Fiches_Cpostaux WHERE cp = '49000' and burdist = 'ANGERS'
+INSERT INTO Fiches_Cpostaux(cp,burdist) VALUES ('49000', 'ANGERS')
+SELECT * FROM Fiches_Cpostaux WHERE cp = '75001' and burdist = 'PARIS 01'
+SELECT * FROM Fiches_Cpostaux WHERE cp = '69001' and burdist = 'LYON'
+SELECT * FROM Fiches_Cpostaux WHERE cp = '01000' and burdist = 'BOURG'
+SELECT * FROM Fiches_Cpostaux WHERE cp = '44000' and burdist = 'NANTES'
+SELECT * FROM Fiches_Cpostaux WHERE cp = '49000' and burdist = 'ANGERS'

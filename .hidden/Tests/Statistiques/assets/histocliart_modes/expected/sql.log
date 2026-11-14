@@ -1,0 +1,29 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Commerciaux order by code
+SELECT LEFT(code_fam, 5) AS famille FROM Fiches_Fam GROUP BY famille ORDER BY famille
+SELECT * FROM Fiches_Fam WHERE code_fam='01'
+SELECT * FROM Fiches_Fam WHERE code_fam='02'
+SELECT * FROM Fiches_Fam WHERE code_fam='03'
+SELECT * FROM Fiches_Fam WHERE code_fam='10'
+SELECT * FROM Fiches_Fam WHERE code_fam='11'
+SELECT SUM(qte) AS qte,SUM(ca) AS ca,SUM(mrgart)+SUM(mrgmo) as marge,article,client FROM (SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo, CASE WHEN Fiches_Bl.type IN('A','F') THEN dtefac ELSE datebl END AS dte, code_ligbl as article,cdclibl as client FROM Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art WHERE cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN('B','A','F')) AND typel_ligbl = 'A' AND (cdclibl>='41100001' AND cdclibl<='41199999') AND (code_ligbl>='000000000000000' AND code_ligbl<='ZZZZZZZZZZZZZZZ') AND (art_four>='40100001' AND art_four<='40199999') UNION ALL SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo, datefac AS dte,code_ligfac as article ,cdclifac as client FROM Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art WHERE cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A'  AND (cdclifac>='41100001' AND cdclifac<='41199999') AND (code_ligfac>='000000000000000' AND code_ligfac<='ZZZZZZZZZZZZZZZ') AND (art_four>='40100001' AND art_four<='40199999')) AS a WHERE (dte BETWEEN '2018-01-01 00:00:00' And '2018-06-30 23:59:59') GROUP BY article,client
+SELECT SUM(qte) AS qte,SUM(ca) AS ca,SUM(mrgart)+SUM(mrgmo) as marge,famille,article FROM (SELECT CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END AS qte, CASE WHEN netht_ligbl IS NULL THEN '0' ELSE REPLACE(netht_ligbl,',','.') END as ca,CASE WHEN mrgart_ligbl IS NULL THEN '0' ELSE REPLACE(mrgart_ligbl,',','.') END as mrgart,CASE WHEN mrgmo_ligbl IS NULL THEN '0' ELSE REPLACE(mrgmo_ligbl,',','.') END as mrgmo, CASE WHEN Fiches_Bl.type IN('A','F') THEN dtefac ELSE datebl END AS dte,fam_ligbl as famille ,code_ligbl as article FROM Fiches_Bl,Fiches_Ligbl,Fiches_Cli,Fiches_Art WHERE cli_code=cdclibl AND num_ligbl=numbl AND art_code=code_ligbl AND (Fiches_Bl.type IN('B','A','F')) AND typel_ligbl = 'A' AND (cdclibl>='41100001' AND cdclibl<='41199999') AND (code_ligbl>='000000000000000' AND code_ligbl<='ZZZZZZZZZZZZZZZ') AND (art_four>='40100001' AND art_four<='40199999') UNION ALL SELECT CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END AS qte, CASE WHEN netht_ligfac IS NULL THEN '0' ELSE REPLACE(netht_ligfac,',','.') END as ca,CASE WHEN mrgart_ligfac IS NULL THEN '0' ELSE REPLACE(mrgart_ligfac,',','.') END as mrgart,CASE WHEN mrgmo_ligfac IS NULL THEN '0' ELSE REPLACE(mrgmo_ligfac,',','.') END as mrgmo, datefac as dte,fam_ligfac as famille ,code_ligfac as article FROM Fiches_HistoFac,Fiches_HistoLigfac,Fiches_Cli,Fiches_Art WHERE cli_code=cdclifac AND num_ligfac=numfac AND art_code=code_ligfac AND typel_ligfac = 'A' AND (cdclifac>='41100001' AND cdclifac<='41199999') AND (code_ligfac>='000000000000000' AND code_ligfac<='ZZZZZZZZZZZZZZZ') AND (art_four>='40100001' AND art_four<='40199999') ) AS a WHERE (dte BETWEEN '2018-01-01 00:00:00' And '2018-06-30 23:59:59') GROUP BY famille,article

@@ -1,0 +1,55 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE if exists Fiches_Stat
+CREATE TABLE Fiches_Stat (code Char(15) NOT NULL,intitule char(50) ,qte char(12) ,type char(1) ,montant char(12) ,codecli char(12) ,intitulecli char(35) ,numfac char(10) ,qtefac char(6) ,nethtfac char(10) ,PRIMARY KEY (code, codecli, numfac)) ENGINE = InnoDB
+SELECT * from Fiches_Bl where datebl >= '20180101' and datebl <= '20180615' and type = 'F' and imp = 1 order by cdclibl
+SELECT * from Fiches_Ligbl where num_ligbl = '000401' and typel_ligbl = 'M' or num_ligbl = '000401' and typel_ligbl = 'A'
+SELECT * from Fiches_Stat where code = '03' and codecli = '411001' and numfac = '0000451'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('03', 'Mo T3', '411001', 'A Divers', 'M', '0000451', '1', '35,00')
+SELECT * from Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' order by cdclifac
+SELECT * from Fiches_HistoLigfac where num_ligfac = '0000401' and typel_ligfac = 'M' or num_ligfac = '0000401' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '01' and codecli = '411001' and numfac = '0000401'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('01', 'Mo T1', '411001', 'A Divers', 'M', '0000401', '2', '56,00')
+SELECT * from Fiches_Stat where code = '001' and codecli = '411001' and numfac = '0000401'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('001', 'Produit 2.10', '411001', 'A Divers', 'A', '0000401', '3', '30,00')
+SELECT * from Fiches_Stat where code = '001' and codecli = '411001' and numfac = '0000401'
+SELECT * from Fiches_Stat where code = '002' and codecli = '411001' and numfac = '0000401'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('002', 'Produit 7.00', '411001', 'A Divers', 'A', '0000401', '1', '8,00')
+SELECT * from Fiches_HistoLigfac where num_ligfac = '0000402' and typel_ligfac = 'M' or num_ligfac = '0000402' and typel_ligfac = 'A'
+SELECT * from Fiches_Stat where code = '02' and codecli = '411002' and numfac = '0000402'
+INSERT INTO Fiches_Stat (code, intitule, codecli, intitulecli, type, numfac, qtefac, nethtfac) VALUES ('02', 'Mo T2', '411002', 'B Divers', 'M', '0000402', '1', '31,00')
+SELECT * from Fiches_HistoFacM where datefac >= '20180101' and datefac <= '20180615' order by cdclifac
+SELECT * FROM Fiches_Stat order by codecli, code
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Stat where codecli = '411001' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Stat where codecli = '411001' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Stat where codecli = '411001' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Stat where codecli = '411001' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Stat where codecli = '411002' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Stat order by codecli, code
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Stat where codecli = '411001' order by type, codecli, code, numfac 
+SELECT * FROM Fiches_Cli where cli_code = '411002'
+SELECT * FROM Fiches_Stat where codecli = '411002' order by type, codecli, code, numfac 

@@ -1,0 +1,23 @@
+{
+ "id": "RELMOPROD-T05",
+ "classe": "RelMoprod",
+ "objet": "Impression par produit",
+ "description": "Menu Statistiques › Recapitulatif MO-produit par client. Tous les clients (RB1), tri par produit (RB4) ; Traitement (Entrée sur « Soyez patient ») ; Imprimer : texte du PDF (edition.txt) ; Quitter.",
+ "dataset": "relmoprod_shared/factures",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

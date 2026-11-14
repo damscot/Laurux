@@ -1,0 +1,196 @@
+' Gambas test file
+
+''Tests de Cetiquettes (.hidden/reference/.src/Reports/Cetiquettes.class/test.md, CETIQUETTES-T01 à T05).
+''Chaque test produit un PDF non compressé (SetCompression(False)) dans un fichier temporaire et vérifie :
+''le texte rendu par « pdftotext -layout » (une clé par ligne non vide), le nombre et la taille des pages
+''(pdfinfo) et l'empreinte md5 du fichier PDF (flux : positions, polices, couleurs), après masquage de
+''/CreationDate, de la date du jour et de User.Name. Valeurs attendues : assets/CetiquettesTest/expected.txt,
+''produites dans le clone de référence. Pas de base de données. T06 (rejeux des écrans d'étiquettes) reste à faire.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Textes", "14 textes simples (Nom à Refour) en fontratio 1,0 et 0,5")
+  TestKit.Desc("T02Composes", "IntituleB (28, 29, 40 car.), stockc, Poids, volm HT vrai et faux")
+  TestKit.Desc("T03Prix", "Tva, PrixHt, PrixTTC, PrixTTCB, PrixHtP, PrixTTCP en fontratio 1,0 et 0,7")
+  TestKit.Desc("T04Barcode", "Barcode : défauts, hauteur 4.6666, largeur 70, fontratio 0,3 et 1,0, code de 12 caractères")
+  TestKit.Desc("T05Cadres", "Rectangle, Rectangle2, NewPage sur A4 (2 pages), dymog et dymoc")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CetiquettesTest")
+
+End
+
+Private Function Nouveau(Optional sOrient As String = "Portrait", Optional sFormat As String = "A4") As Cetiquettes
+
+  Dim pdf As Cetiquettes
+
+  pdf = New Cetiquettes(sOrient, "mm", sFormat)
+  pdf.SetCompression(False)
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, vérifie chaque ligne non vide du texte extrait puis l'empreinte du fichier masqué.
+Private Sub Verifie(sCle As String, pdf As Cetiquettes)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim sBuf As String
+  Dim sMd5 As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "000"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  Shell "pdfinfo " & Shell$(sFic) & " | grep -E '^(Pages|Page size)'" To sBuf
+  TestKit.Check(sCle & "/pdfinfo", Trim(sBuf))
+  ' Flux : masquage des valeurs variables puis empreinte
+  sBuf = File.Load(sFic)
+  sTxt = ""
+  For Each sLig In Split(sBuf, "\n")
+    If InStr(sLig, "/CreationDate") > 0 Then Continue
+    sTxt &= sLig & "\n"
+  Next
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  File.Save(sFic & ".flux", sTxt)
+  Shell "md5sum < " & Shell$(sFic & ".flux") To sMd5
+  TestKit.Check(sCle & "/flux_md5", Trim(Left(sMd5, 32)))
+
+End
+
+Public Sub T01Textes()
+
+  Dim pdf As Cetiquettes = Nouveau()
+  Dim fR As Float
+  Dim y As Float = 10
+
+  pdf.NewPage()
+  For Each fR In [1.0, 0.5]
+    pdf.Nom("ABC", 10, y, fR)
+    pdf.Cp("ABC", 60, y, fR)
+    pdf.Adrexp("ABC\nDEF", 110, y, fR)
+    pdf.NomC("ABC", 10, y + 10, fR)
+    pdf.CpC("ABC", 60, y + 10, fR)
+    pdf.casierc("ABC", 110, y + 10, fR)
+    pdf.Codec("ABC", 160, y + 10, fR)
+    pdf.Intitulec("ABC", 10, y + 20, fR)
+    pdf.casier("ABC", 60, y + 20, fR)
+    pdf.Code("ABC", 110, y + 20, fR)
+    pdf.IntituleA("ABC", 160, y + 20, fR)
+    pdf.Intitule("ABC", 10, y + 30, fR)
+    pdf.stock("ABC", 60, y + 30, fR)
+    pdf.Refour("ABC", 110, y + 30, fR)
+    y += 60
+  Next
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02Composes()
+
+  Dim pdf As Cetiquettes = Nouveau()
+  Dim y As Float = 10
+
+  pdf.NewPage()
+  pdf.IntituleB("Intitulé de vingt-huit car.", 10, y)
+  pdf.IntituleB("Intitulé de vingt-neuf cara.", 10, y + 10)
+  pdf.IntituleB("Intitulé de quarante caractères au total", 10, y + 20)
+  pdf.stockc("12", 10, y + 30)
+  pdf.Poids("1.5", "kg", 10, y + 40)
+  pdf.volm("75", "cl", True, 10, y + 50)
+  pdf.volm("75", "cl", False, 10, y + 60)
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03Prix()
+
+  Dim pdf As Cetiquettes = Nouveau()
+  Dim fR As Float
+  Dim y As Float = 10
+
+  pdf.NewPage()
+  For Each fR In [1.0, 0.7]
+    Try pdf.Tva("12,50", 10, y, fR)
+    TestKit.Check("T03/Tva_" & fR & "/erreur", IIf(Error, Error.Text, ""))
+    Try pdf.PrixHt("12,50", 40, y, fR)
+    TestKit.Check("T03/PrixHt_" & fR & "/erreur", IIf(Error, Error.Text, ""))
+    Try pdf.PrixTTC("12,50", 70, y, fR)
+    TestKit.Check("T03/PrixTTC_" & fR & "/erreur", IIf(Error, Error.Text, ""))
+    Try pdf.PrixTTCB("12,50", 100, y, fR)
+    TestKit.Check("T03/PrixTTCB_" & fR & "/erreur", IIf(Error, Error.Text, ""))
+    Try pdf.PrixHtP("12,50", 130, y, fR)
+    TestKit.Check("T03/PrixHtP_" & fR & "/erreur", IIf(Error, Error.Text, ""))
+    Try pdf.PrixTTCP("12,50", 160, y, fR)
+    TestKit.Check("T03/PrixTTCP_" & fR & "/erreur", IIf(Error, Error.Text, ""))
+    y += 40
+  Next
+  Verifie("T03", pdf)
+
+End
+
+Public Sub T04Barcode()
+
+  Dim pdf As Cetiquettes = Nouveau()
+
+  pdf.NewPage()
+  Try pdf.Barcode("3012345678907", 10, 10)
+  TestKit.Check("T04/defaut/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Barcode("3012345678907", 10, 40, "4.6666")
+  TestKit.Check("T04/hauteur/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Barcode("3012345678907", 10, 70, "5", "70")
+  TestKit.Check("T04/largeur/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Barcode("3012345678907", 10, 100, "5", "33.25", 0.3)
+  TestKit.Check("T04/ratio03/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Barcode("3012345678907", 10, 130, "5", "33.25", 1.0)
+  TestKit.Check("T04/ratio10/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Barcode("301234567890", 10, 160)
+  TestKit.Check("T04/code12/erreur", IIf(Error, Error.Text, ""))
+  Verifie("T04", pdf)
+
+End
+
+Public Sub T05Cadres()
+
+  Dim pdf As Cetiquettes = Nouveau()
+  Dim sFmt As String
+
+  pdf.NewPage()
+  pdf.Rectangle(10, 10)
+  pdf.Rectangle2(10, 50, 60, 30)
+  pdf.NewPage()
+  pdf.Rectangle(20, 20)
+  Verifie("T05/a4", pdf)
+  For Each sFmt In ["dymog", "dymoc"]
+    Try pdf = Nouveau("Portrait", sFmt)
+    If Error Then
+      TestKit.Check("T05/" & sFmt & "/new", "ERREUR: " & Error.Text)
+      Continue
+    Endif
+    pdf.NewPage()
+    pdf.Rectangle2(1, 1, 20, 10)
+    Verifie("T05/" & sFmt, pdf)
+  Next
+
+End

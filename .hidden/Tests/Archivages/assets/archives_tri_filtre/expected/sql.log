@@ -1,0 +1,49 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT numfac FROM Fiches_HistoFac
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "%" order by abs(lpad(numfac,10,' ')) desc limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "%" order by numfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%0%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "0%" order by numfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%00%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "00%" order by numfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%000%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "000%" order by numfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%0000%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "0000%" order by numfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%00005%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numfac like  "00005%" order by numfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where cdclifac like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where cdclifac like  "%" order by abs(lpad(cdclifac,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where cdclifac like  "%4%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where cdclifac like  "4%" order by cdclifac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where cdclifac like  "%41%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where cdclifac like  "41%" order by cdclifac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where cdclifac like  "%411%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where cdclifac like  "411%" order by cdclifac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where cdclifac like  "%4110%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where cdclifac like  "4110%" order by cdclifac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where totfac like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where totfac like  "%" order by totfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where totfac like  "%1%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where totfac like  "1%" order by totfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where totfac like  "%10%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where totfac like  "10%" order by totfac,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where totfacttc like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where totfacttc like  "%" order by totfacttc,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where totfacttc like  "%1%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where totfacttc like  "1%" order by totfacttc,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where totfacttc like  "%12%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where totfacttc like  "12%" order by totfacttc,datefac limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%S%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "S%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%S%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "S%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%S%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "S%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%SE%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "SE%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%SE%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "SE%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%SE%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "SE%" order by abs(lpad(numserie,10,' ')) limit 0, 21
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numserie like  "%SER%" union select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFacM where numserie like  "SER%" order by abs(lpad(numserie,10,' ')) limit 0, 21

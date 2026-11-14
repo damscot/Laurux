@@ -1,0 +1,53 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Mo WHERE mo_code >= '00000'  and mo_code <= 'ZZZZZ' and mo_fam >= '00000' and mo_fam <= 'ZZZZZ' and mo_four >= '401001' and mo_four <= '40199999' order by mo_code
+SELECT * FROM Fiches_HistoLigfac WHERE code_ligfac = '01' and typel_ligfac = 'M' union SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * FROM Fiches_HistoFac WHERE numfac = '0000301' union SELECT * FROM Fiches_HistoFacM WHERE numfac = '0000301'
+SELECT * FROM Fiches_HistoFac WHERE numfac = '0000302' union SELECT * FROM Fiches_HistoFacM WHERE numfac = '0000302'
+SELECT * FROM Fiches_HistoFac WHERE numfac = '0000501' union SELECT * FROM Fiches_HistoFacM WHERE numfac = '0000501'
+SELECT * FROM Fiches_Ligbl WHERE code_ligbl = '01' and typel_ligbl = 'M' union SELECT * FROM Fiches_LigblM WHERE code_ligbl = '01' and typel_ligbl <> 'M'
+SELECT * FROM Fiches_Bl WHERE numbl = '000301' and type = 'B' or type = 'F' union SELECT * FROM Fiches_BlM WHERE numbl = '000301' and type = 'B' or type = 'F'
+SELECT * FROM Fiches_HistoLigfac WHERE code_ligfac = '02' and typel_ligfac = 'M' union SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * FROM Fiches_HistoFac WHERE numfac = '0000301' union SELECT * FROM Fiches_HistoFacM WHERE numfac = '0000301'
+SELECT * FROM Fiches_HistoFac WHERE numfac = '0000501' union SELECT * FROM Fiches_HistoFacM WHERE numfac = '0000501'
+SELECT * FROM Fiches_Ligbl WHERE code_ligbl = '02' and typel_ligbl = 'M' union SELECT * FROM Fiches_LigblM WHERE code_ligbl = '02' and typel_ligbl <> 'M'
+SELECT * FROM Fiches_HistoLigfac WHERE code_ligfac = '03' and typel_ligfac = 'M' union SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * FROM Fiches_Ligbl WHERE code_ligbl = '03' and typel_ligbl = 'M' union SELECT * FROM Fiches_LigblM WHERE code_ligbl = '03' and typel_ligbl <> 'M'
+SELECT * FROM Fiches_Bl WHERE numbl = '000302' and type = 'B' or type = 'F' union SELECT * FROM Fiches_BlM WHERE numbl = '000302' and type = 'B' or type = 'F'
+SELECT * FROM Fiches_Bl WHERE numbl = '000501' and type = 'B' or type = 'F' union SELECT * FROM Fiches_BlM WHERE numbl = '000501' and type = 'B' or type = 'F'
+SELECT * FROM Fiches_HistoLigfac WHERE code_ligfac = '04' and typel_ligfac = 'M' union SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * FROM Fiches_Ligbl WHERE code_ligbl = '04' and typel_ligbl = 'M' union SELECT * FROM Fiches_LigblM WHERE code_ligbl = '04' and typel_ligbl <> 'M'
+SELECT * FROM Fiches_HistoLigfac WHERE code_ligfac = '05' and typel_ligfac = 'M' union SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * FROM Fiches_Ligbl WHERE code_ligbl = '05' and typel_ligbl = 'M' union SELECT * FROM Fiches_LigblM WHERE code_ligbl = '05' and typel_ligbl <> 'M'
+SELECT * FROM Fiches_Mo WHERE mo_code >= '00000'  and mo_code <= 'ZZZZZ' and mo_fam >= '00000' and mo_fam <= 'ZZZZZ' and mo_four >= '401001' and mo_four <= '40199999' order by mo_code
+SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * FROM Fiches_HistoFacM WHERE numfac = '0000501'
+SELECT * FROM Fiches_LigblM WHERE code_ligbl = '01' and typel_ligbl = 'M'
+SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * FROM Fiches_HistoFacM WHERE numfac = '0000501'
+SELECT * FROM Fiches_LigblM WHERE code_ligbl = '02' and typel_ligbl = 'M'
+SELECT * FROM Fiches_BlM WHERE numbl = '000501' and type = 'B' or type = 'F'
+SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * FROM Fiches_LigblM WHERE code_ligbl = '03' and typel_ligbl = 'M'
+SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * FROM Fiches_LigblM WHERE code_ligbl = '04' and typel_ligbl = 'M'
+SELECT * FROM Fiches_HistoLigfacM WHERE code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * FROM Fiches_LigblM WHERE code_ligbl = '05' and typel_ligbl = 'M'

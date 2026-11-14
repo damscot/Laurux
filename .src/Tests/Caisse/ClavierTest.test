@@ -1,0 +1,52 @@
+' Gambas test file
+
+''Tests de Clavier (.hidden/reference/.src/Caisse/Clavier.class/test.md, CLAVIER-T01, T02).
+''Écran instancié sans affichage (New Clavier) ; chaque touche est « cliquée » par Value = True (événement Click du
+''groupe Clav, Last = la touche) ; la saisie est relue dans Ouverture.Mdp (auto-instance de l'écran Ouverture).
+''T03 (Fermer = connexion par Ouverture.Button1_Click) et T04 (extraction) restent à faire. Pas de base.
+''Valeurs attendues : assets/ClavierTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Saisie", "Touches A, c1, Point, Espace, Efface, c2 : Ouverture.Mdp après chaque touche")
+  TestKit.Desc("T02TouchesIgnorees", "Touches Virgule, Poinvirgule, Etoile : Ouverture.Mdp (A01)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "ClavierTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Touches(sCle As String, aNoms As String[])
+
+  Dim hForm As Object
+  Dim hBtn As Button
+  Dim sNom As String
+
+  hForm = New Clavier
+  For Each sNom In aNoms
+    hBtn = hForm.Controls[sNom]
+    hBtn.Value = True
+    Wait 0.1
+    Wait 0.1
+    TestKit.Check(sCle & "/" & sNom, Ouverture.Mdp.Text)
+  Next
+  Object.Lock(hForm)
+
+End
+
+Public Sub T01Saisie()
+
+  Touches("T01", ["A", "c1", "Point", "Espace", "Efface", "c2"])
+
+End
+
+Public Sub T02TouchesIgnorees()
+
+  Touches("T02", ["A", "Virgule", "Poinvirgule", "Etoile"])
+
+End

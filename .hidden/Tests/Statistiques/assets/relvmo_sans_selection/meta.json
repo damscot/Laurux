@@ -1,0 +1,24 @@
+{
+ "id": "RELVMO-T07",
+ "objet": "Impression sans sélection",
+ "classe": "RelvMo",
+ "description": "Traitement puis Imprimer sans cliquer de ligne (RB2 sélection partielle par défaut dans le .form) : RlCli.Available faux sans ligne courante, ni message « Veuillez faire une sélection SVP ! » ni PDF (comportement figé, candidat anomalie) ; seul le SELECT de la société est émis.",
+ "dataset": "relvmo_shared/relvmo_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

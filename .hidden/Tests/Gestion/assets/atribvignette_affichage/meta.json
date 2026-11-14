@@ -1,0 +1,21 @@
+{
+ "id": "ATRIBVIGNETTE-T01",
+ "objet": "Affichage de l'arbre et des manquants",
+ "classe": "atribvignette",
+ "description": "Option boissons ; Entrées de stock > attribution des vignettes : arbre des documents en régie suspendue (BL, réception, mouvement exceptionnel) et vignettes manquantes 3 et 4 (requêtes, sql.log ordonné).",
+ "dataset": "atribvignette_shared/vign_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/bois": -1
+ },
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

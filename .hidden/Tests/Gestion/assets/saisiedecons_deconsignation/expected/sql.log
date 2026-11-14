@@ -1,0 +1,45 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT fo_nom FROM Fiches_Four WHERE fo_code=401001
+SELECT * FROM Fiches_Entrecpt WHERE four='401001' AND numrecpt='R0001'
+SELECT montant,mttc FROM Fiches_Entrecpt WHERE four='401001' AND numrecpt='R0001' and ddate='2018-06-10 00:00:00' AND NOT validee
+SELECT SUM(montant) AS montant FROM Fiches_ligcons WHERE bloc='10.06.2018R0001401001' AND numlig<>'D'
+SELECT SUM(montant) AS montant FROM Fiches_ligcons WHERE bloc='10.06.2018R0001401001' AND numlig='D'
+SELECT art_dra,art_volm,art_deg,code,qte FROM Fiches_Ligrecpt,Fiches_Art WHERE code=art_code AND numrecpt='R0001' AND daterecpt='2018-06-10 00:00:00' AND four='401001' AND art_dra<>''
+SELECT * FROM Fiches_regie WHERE code='02'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='3'
+SELECT taux_tva FROM Fiches_Parametres,Fiches_Tvaav WHERE code_tva=tvass
+SELECT * FROM Fiches_regie WHERE code='03'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='3'
+SELECT taux_tva FROM Fiches_Parametres,Fiches_Tvaav WHERE code_tva=tvass
+SELECT fo_nom FROM Fiches_Four WHERE fo_code=401001
+SELECT * FROM Fiches_ligcons,Fiches_consigne WHERE codecons=Fiches_consigne.code AND bloc='10.06.2018R0001401001' and numlig='D'
+SELECT *FROM Fiches_Art WHERE art_code='001'
+SELECT * FROM Fiches_consigne WHERE code='P1'
+SELECT * FROM Fiches_consigne WHERE code='C1'
+SELECT * FROM Fiches_consigne WHERE code='01'
+Create Fiches_ligcons
+SELECT * FROM Fiches_consigne WHERE code='P1'
+Create Fiches_ligcons
+SELECT * FROM Fiches_consigne WHERE code='C1'
+Create Fiches_ligcons
+SELECT * FROM Fiches_consigne WHERE code='01'
+SELECT * FROM Fiches_ligcons,Fiches_consigne WHERE codecons=Fiches_consigne.code AND bloc='10.06.2018R0001401001' and numlig='D'
+Edit Fiches_Entrecpt : four='401001' AND numrecpt='R0001'

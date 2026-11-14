@@ -1,0 +1,23 @@
+{
+ "id": "VISSTATFOUR-T03",
+ "objet": "Impression sur plus de 60 fournisseurs",
+ "classe": "VisStatFour",
+ "description": "Jeu + 65 fournisseurs 402001-402065 avec une réception N chacun ; Imprimer : texte du PDF sur 2 pages (titre de la 2e page « CA clients », A02).",
+ "dataset": "visstatfour_pdf/visstatfour_pdf",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,35 @@
+' Gambas test file
+
+''Test de TriBl (TRIBL-T01, .hidden/reference/.src/Affichages/TriBl.class/test.md) : contrôle statique de l'absence de
+''référence (classe morte). grep -rlw TriBl .src (hors .src/Tests, sensible à la casse : la variable Tribl de Facture
+''n'est pas une référence) et recherche de la chaîne "TriBl".
+''Valeurs attendues : assets/TriBlTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01AbsenceReference", "Classe sans référence : fichiers citant TriBl")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriBlTest")
+
+End
+
+Public Sub T01AbsenceReference()
+
+  Dim sRes As String
+  Dim aFic As String[]
+
+  Shell "cd " & Shell$(Application.Path) & " && grep -rlw TriBl .src --exclude-dir=Tests --exclude='*~'" To sRes
+  aFic = Split(Trim(sRes), "\n", "", True)
+  aFic.Sort()
+  TestKit.Check("T01/fichiers", aFic)
+  Shell "cd " & Shell$(Application.Path) & " && grep -rl '\"TriBl\"' .src --exclude-dir=Tests --exclude='*~'" To sRes
+  aFic = Split(Trim(sRes), "\n", "", True)
+  aFic.Sort()
+  TestKit.Check("T01/chaine", aFic)
+
+End

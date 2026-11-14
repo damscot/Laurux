@@ -1,0 +1,24 @@
+{
+ "id": "ARCHIVESTCK-T06",
+ "classe": "ArchivesTck",
+ "objet": "Réimpression mono-taux",
+ "description": "Clic ligne 5 (ticket 1000060, TVA 20 seule), Imprimer (Button4) : texte du PDF par pdftotext (edition.txt) et table de travail Tottva du dump.",
+ "dataset": "archivestck_shared/tickets_consult",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "skipped",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

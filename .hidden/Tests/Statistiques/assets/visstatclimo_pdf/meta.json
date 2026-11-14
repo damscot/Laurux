@@ -1,0 +1,23 @@
+{
+ "id": "VISSTATCLIMO-T03",
+ "objet": "Impression sur plusieurs pages",
+ "classe": "VisStatClimo",
+ "description": "Jeu de 65 clients (brut 12,50, net 10,00) ; Facn, Bl décoché, Valider, Imprimer : texte PDF sur 2 pages, lignes et totaux.",
+ "dataset": "visstatclimo_pdf",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

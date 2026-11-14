@@ -1,0 +1,23 @@
+{
+ "id": "RELMOPROD-T01",
+ "classe": "RelMoprod",
+ "objet": "Traitement tous clients puis impression par client",
+ "description": "Menu Statistiques › Recapitulatif MO-produit par client. Tous les clients (RB1) ; Traitement : Message.Info « Soyez patient » (Entrée) ; table Fiches_Stat (dump : facture 0000401 avec code 001 répété, A01 ; BL F non imprimé exclu) ; Imprimer par client (tri par défaut RB3, RELMOPROD-T04) : texte du PDF par pdftotext (edition.txt) ; Quitter.",
+ "dataset": "relmoprod_shared/factures",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

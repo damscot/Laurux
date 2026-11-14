@@ -1,0 +1,489 @@
+' Gambas test file
+
+''Tests de PdfWriter (.hidden/reference/.src/Reports/PdfWriter.class/test.md, PDFWRITER-T01 à T14).
+''Chaque test produit un PDF non compressé (SetCompression(False)) dans un fichier temporaire et vérifie :
+''le texte rendu par « pdftotext -layout » (une clé par ligne non vide), le nombre et la taille des pages
+''(pdfinfo) et l'empreinte md5 du fichier PDF (flux : positions, polices, couleurs), après masquage de
+''/CreationDate, de la date du jour et de User.Name. Valeurs attendues : assets/PdfWriterTest/expected.txt,
+''produites dans le clone de référence. Pas de base de données. T15 (gabarits réels) est couvert par les scénarios des gabarits.
+''Ops() relève en plus les opérateurs du flux (Tj, Td, re, l, rg, Tf…) pour figer positions et tracés.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Constructeur", "_new : formats a3 à dymog x P/L x mm/pt (MediaBox), format, unité et orientation invalides")
+  TestKit.Desc("T02EncodageCell", "Cell : ASCII, accents, euro, typographie, ligatures, degré, parenthèses et antislash")
+  TestKit.Desc("T03Alignements", "Cell R/C/L/FJ/l/' L ' sur A, ABC, Réglée, vide ; GetStringWidth")
+  TestKit.Desc("T04Bordures", "Cell : border True/False/LTRB/LR/vide/1 x fill, SetFillColor gris et RVB")
+  TestKit.Desc("T05MultiCell", "MultiCell : texte long accentué, saut de ligne, mot trop long, J/L/C, bordure")
+  TestKit.Desc("T06SautPage", "200 Cell(190, 5) en A4 P et L, AliasNbPages et {nb}")
+  TestKit.Desc("T07Compression", "Compression : page vide, 1, 2, 40 cellules ; SetCompression(False)")
+  TestKit.Desc("T08Image", "Image : JPEG, PNG RVB/RVBA/palette, GIF, JPEG nommé .png, absent, sans extension, même image deux fois")
+  TestKit.Desc("T09Ean13", "EAN13 : code valide, 12 chiffres, clé fausse, non numérique, vide")
+  TestKit.Desc("T10Traces", "Line décimale, Rect F/FD/D, SetLineWidth, SetFillColor(r) et (r, g, b), SetDrawColor")
+  TestKit.Desc("T11Polices", "SetFont : 4 familles x 5 styles, taille 0, police inconnue, serif BI")
+  TestKit.Desc("T12Marges", "SetMargins(10, 30) en A4, SetMargins(100, 100) en 80 mm")
+  TestKit.Desc("T13Output", "Output : fichier, S, vide, True, document sans AddPage")
+  TestKit.Desc("T14Performance", "8 000 cellules et 10 EAN13 : nombre de pages, durée < 10 s")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "PdfWriterTest")
+
+End
+
+Private Function Nouveau(Optional sOrient As String = "Portrait", Optional sFormat As String = "A4") As PdfWriter
+
+  Dim pdf As PdfWriter
+
+  pdf = New PdfWriter(sOrient, "mm", sFormat)
+  pdf.SetCompression(False)
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, vérifie chaque ligne non vide du texte extrait puis l'empreinte du fichier masqué.
+Private Sub Verifie(sCle As String, pdf As PdfWriter)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim sBuf As String
+  Dim sMd5 As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "000"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  Shell "pdfinfo " & Shell$(sFic) & " | grep -E '^(Pages|Page size)'" To sBuf
+  TestKit.Check(sCle & "/pdfinfo", Trim(sBuf))
+  ' Flux : masquage des valeurs variables puis empreinte
+  sBuf = File.Load(sFic)
+  sTxt = ""
+  For Each sLig In Split(sBuf, "\n")
+    If InStr(sLig, "/CreationDate") > 0 Then Continue
+    sTxt &= sLig & "\n"
+  Next
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  File.Save(sFic & ".flux", sTxt)
+  Shell "md5sum < " & Shell$(sFic & ".flux") To sMd5
+  TestKit.Check(sCle & "/flux_md5", Trim(Left(sMd5, 32)))
+
+End
+
+' Relève les lignes d'opérateurs graphiques et texte du flux non compressé (une clé par ligne).
+Private Sub Ops(sCle As String, pdf As PdfWriter)
+
+  Dim sBuf As String
+  Dim sLig As String
+  Dim aMots As String[]
+  Dim n As Integer
+
+  Try sBuf = pdf.Output("", "S")
+  If Error Then
+    TestKit.Check(sCle & "/ops_output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  For Each sLig In Split(sBuf, "\n")
+    If Len(sLig) > 200 Or If Len(sLig) = 0 Then Continue
+    If Trim(sLig) = "" Then Continue
+    aMots = Split(Trim(sLig), " ")
+    If ["Tj", "TJ", "Td", "re", "l", "m", "S", "f", "B", "rg", "RG", "w", "Tf", "Tw", "cm", "Do", "ET", "BT", "h", "c", "g", "G", "Q", "q", "n", "f*", "B*"].Exist(aMots[aMots.Max]) Then
+      Inc n
+      TestKit.Check(sCle & "/op" & Format$(n, "000"), sLig)
+    Endif
+  Next
+  TestKit.Check(sCle & "/ops", n)
+
+End
+
+' Valeur ou erreur levée, sous forme de texte.
+Private Function TexteErreur() As String
+
+  Dim sTxt As String
+  Dim sApp As String = LCase(Application.Path)
+
+  If Not Error Then Return ""
+  sTxt = Replace(Error.Text, Application.Path, "<app>")
+  ' Extension déduite après le premier point du chemin complet (fichier sans extension) : chemin masqué
+  If InStr(sApp, ".") > 0 Then sTxt = Replace(sTxt, Mid(sApp, InStr(sApp, ".") + 1), "<app-apres-point>")
+  Return sTxt
+
+End
+
+Public Sub T01Constructeur()
+
+  Dim sFmt As String
+  Dim sOr As String
+  Dim sUn As String
+  Dim pdf As PdfWriter
+  Dim sBuf As String
+  Dim sLig As String
+
+  For Each sFmt In ["a3", "a4", "a5", "80mm", "letter", "legal", "dymoc", "dymog"]
+    For Each sOr In ["P", "L"]
+      For Each sUn In ["mm", "pt"]
+        Try pdf = New PdfWriter(sOr, sUn, sFmt)
+        If Error Then
+          TestKit.Check("T01/" & sFmt & "/" & sOr & "/" & sUn, "ERREUR: " & Error.Text)
+          Continue
+        Endif
+        pdf.Open()
+        pdf.AddPage()
+        sBuf = pdf.Output("", "S")
+        For Each sLig In Split(sBuf, "\n")
+          If InStr(sLig, "/MediaBox") > 0 Then TestKit.Check("T01/" & sFmt & "/" & sOr & "/" & sUn, Trim(sLig))
+        Next
+      Next
+    Next
+  Next
+  Try pdf = New PdfWriter("P", "mm", "b5")
+  TestKit.Check("T01/format_invalide/erreur", TexteErreur())
+  Try pdf = New PdfWriter("P", "km", "a4")
+  TestKit.Check("T01/unite_invalide/erreur", TexteErreur())
+  Try pdf = New PdfWriter("X", "mm", "a4")
+  TestKit.Check("T01/orientation_invalide/erreur", TexteErreur())
+
+End
+
+Public Sub T02EncodageCell()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim sTxt As String
+  Dim y As Integer = 10
+
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 10)
+  For Each sTxt In ["ASCII simple", "Éléments à côté", "Total 12 €", "12 € HT", "’ – — …", "Œ œ Š Ÿ", "ê î û É", "20 °C", "( ) \\ fin"]
+    pdf.SetXY(10, y)
+    Try pdf.Cell(150, 6, sTxt, False, 0, "L")
+    TestKit.Check("T02/" & y & "/erreur", TexteErreur())
+    y += 7
+  Next
+  Ops("T02", pdf)
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03Alignements()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim sTxt As String
+  Dim sAl As String
+  Dim y As Integer = 10
+
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 10)
+  For Each sTxt In ["A", "ABC", "Réglée", ""]
+    TestKit.Check("T03/largeur/" & sTxt, pdf.GetStringWidth(sTxt))
+    For Each sAl In ["R", "C", "L", "FJ", "l", " L "]
+      pdf.SetXY(10, y)
+      Try pdf.Cell(60, 5, sTxt, True, 0, sAl)
+      If Error Then TestKit.Check("T03/" & sTxt & "/" & sAl & "/erreur", TexteErreur())
+      y += 5
+    Next
+  Next
+  Ops("T03", pdf)
+
+End
+
+Public Sub T04Bordures()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim vBord As Variant
+  Dim bFill As Boolean
+  Dim y As Integer = 10
+  Dim i As Integer
+
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 10)
+  For i = 0 To 1
+    If i = 0 Then
+      pdf.SetFillColor(200)
+    Else
+      pdf.SetFillColor(10, 120, 230)
+    Endif
+    For Each vBord In [True, False, "LTRB", "LR", "", 1]
+      For Each bFill In [True, False]
+        pdf.SetXY(10, y)
+        Try pdf.Cell(50, 5, "x", vBord, 0, "L", bFill)
+        If Error Then TestKit.Check("T04/" & i & "/" & CStr(vBord) & "/" & bFill & "/erreur", TexteErreur())
+        y += 6
+      Next
+    Next
+  Next
+  Ops("T04", pdf)
+
+End
+
+Public Sub T05MultiCell()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim sAl As String
+  Dim sLong As String = "Le règlement de la facture est dû à réception, sans escompte pour paiement anticipé. Pénalités de retard : trois fois le taux d'intérêt légal.\nDeuxième paragraphe après un saut de ligne."
+
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 10)
+  For Each sAl In ["J", "L", "C"]
+    pdf.SetX(10)
+    Try pdf.MultiCell(80, 5, sLong, False, sAl)
+    TestKit.Check("T05/" & sAl & "/erreur", TexteErreur())
+    TestKit.Check("T05/" & sAl & "/y", pdf.GetY())
+  Next
+  pdf.SetX(10)
+  Try pdf.MultiCell(30, 5, "Motsansespaceplusquelalargeurdelacellule fin", True, "J")
+  TestKit.Check("T05/motlong/erreur", TexteErreur())
+  TestKit.Check("T05/motlong/y", pdf.GetY())
+  Ops("T05", pdf)
+  Verifie("T05", pdf)
+
+End
+
+Public Sub T06SautPage()
+
+  Dim pdf As PdfWriter
+  Dim sOr As String
+  Dim i As Integer
+
+  For Each sOr In ["P", "L"]
+    pdf = Nouveau(sOr)
+    pdf.AddPage()
+    pdf.SetFont("Helvetica", "", 8)
+    For i = 1 To 200
+      pdf.Cell(190, 5, "Ligne " & i & " page {nb}", True, 1, "L")
+    Next
+    TestKit.Check("T06/" & sOr & "/pages", pdf.PageNo())
+    TestKit.Check("T06/" & sOr & "/derniery", pdf.GetY())
+    Verifie("T06/" & sOr, pdf)
+  Next
+
+End
+
+Public Sub T07Compression()
+
+  Dim pdf As PdfWriter
+  Dim n As Integer
+  Dim i As Integer
+  Dim sBuf As String
+  Dim sLig As String
+  Dim sSortie As String
+
+  For Each n In [0, 1, 2, 40]
+    pdf = New PdfWriter("P", "mm", "A4")
+    pdf.Open()
+    pdf.AddPage()
+    pdf.SetFont("Helvetica", "", 8)
+    For i = 1 To n
+      pdf.Cell(190, 5, "Cellule " & i, True, 1, "L")
+    Next
+    TestKit.Check("T07/" & n & "/compression", pdf.GetCompression())
+    sBuf = pdf.Output("", "S")
+    sSortie = ""
+    For Each sLig In Split(sBuf, "\n")
+      If InStr(sLig, "/Filter") > 0 Or If InStr(sLig, "/Length") > 0 Then sSortie &= Trim(sLig) & " | "
+    Next
+    TestKit.Check("T07/" & n & "/filtres", sSortie)
+  Next
+  pdf = Nouveau()
+  pdf.AddPage()
+  pdf.Cell(190, 5, "Non compressé", True, 1, "L")
+  TestKit.Check("T07/sans/compression", pdf.GetCompression())
+  Ops("T07/sans", pdf)
+
+End
+
+Public Sub T08Image()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim aImg As String[] = ["Fonds_Laurux/Laurux1.jpg", ".src/Images/monnaie/b100.png", ".app.png", "Icones/calculator.png", "Icones/Larus.gif", ".src/Images/monnaie/p2.png", "absent.png", "Fonds_Laurux/Laurux1", ".src/Images/monnaie/b100.png"]
+  Dim i As Integer
+
+  pdf.AddPage()
+  For i = 0 To aImg.Max
+    Try pdf.Image(Application.Path &/ aImg[i], 10 + (i Mod 3) * 60, 10 + (i \ 3) * 60, 50, 30)
+    TestKit.Check("T08/" & i & "_" & aImg[i] & "/erreur", TexteErreur())
+  Next
+  Ops("T08", pdf)
+  Verifie("T08", pdf)
+
+End
+
+Public Sub T09Ean13()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim sCode As String
+  Dim sBuf As String
+  Dim sLig As String
+  Dim y As Integer = 10
+  Dim n As Integer
+
+  For Each sCode In ["3760123456789", "376012345678", "3760123456780", "37601234567A9", ""]
+    pdf = Nouveau()
+    pdf.AddPage()
+    pdf.SetFont("Helvetica", "", 8)
+    Try pdf.EAN13(10, y, sCode)
+    TestKit.Check("T09/" & sCode & "/erreur", TexteErreur())
+    sBuf = pdf.Output("", "S")
+    n = 0
+    For Each sLig In Split(sBuf, "\n")
+      If sLig Like "* re f" Then Inc n
+    Next
+    TestKit.Check("T09/" & sCode & "/barres", n)
+    If sCode = "3760123456789" Then Verifie("T09/valide", pdf)
+  Next
+
+End
+
+Public Sub T10Traces()
+
+  Dim pdf As PdfWriter = Nouveau()
+
+  pdf.AddPage()
+  pdf.Line(10.7, 20.2, 100.9, 20.6)
+  pdf.SetLineWidth(0.8)
+  TestKit.Check("T10/largeur", pdf.GetLineWidth())
+  pdf.SetDrawColor(255, 0, 0)
+  pdf.Line(10, 30, 100, 30)
+  pdf.SetDrawColor(128)
+  pdf.SetFillColor(100)
+  pdf.Rect(10, 40, 30, 10, "F")
+  pdf.SetFillColor(10, 200, 30)
+  pdf.Rect(50, 40, 30, 10, "FD")
+  pdf.Rect(90, 40, 30, 10, "D")
+  pdf.Rect(130, 40, 30, 10)
+  pdf.SetTextColor(0, 0, 255)
+  pdf.SetFont("Helvetica", "", 10)
+  pdf.Text(10, 70, "Texte bleu")
+  Ops("T10", pdf)
+
+End
+
+Public Sub T11Polices()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim sFam As String
+  Dim sSt As String
+  Dim sBuf As String
+  Dim sLig As String
+  Dim y As Integer = 10
+
+  pdf.AddPage()
+  For Each sFam In ["helvetica", "arial", "courier", "times"]
+    For Each sSt In ["", "B", "I", "BI", "U"]
+      Try pdf.SetFont(sFam, sSt, 9)
+      TestKit.Check("T11/" & sFam & "/" & sSt & "/erreur", TexteErreur())
+      pdf.SetXY(10, y)
+      pdf.Cell(100, 5, sFam & " " & sSt)
+      y += 5
+    Next
+  Next
+  Try pdf.SetFont("helvetica", "", 0)
+  TestKit.Check("T11/taille0/erreur", TexteErreur())
+  Try pdf.SetFont("comic", "", 10)
+  TestKit.Check("T11/inconnue/erreur", TexteErreur())
+  Try pdf.SetFont("serif", "BI", 10)
+  TestKit.Check("T11/serifBI/erreur", TexteErreur())
+  sBuf = pdf.Output("", "S")
+  y = 0
+  For Each sLig In Split(sBuf, "\n")
+    If InStr(sLig, "/BaseFont") > 0 Then
+      Inc y
+      TestKit.Check("T11/basefont" & Format$(y, "00"), Trim(sLig))
+    Endif
+  Next
+  Verifie("T11", pdf)
+
+End
+
+Public Sub T12Marges()
+
+  Dim pdf As PdfWriter = Nouveau()
+
+  pdf.SetMargins(10, 30)
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 10)
+  pdf.Cell(0, 5, "x", True)
+  TestKit.Check("T12/a4/marges", pdf.GetLeftMargin() & " " & pdf.GetTopMargin() & " " & pdf.GetRightMargin())
+  Ops("T12/a4", pdf)
+  pdf = Nouveau("P", "80mm")
+  pdf.SetMargins(100, 100)
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 10)
+  Try pdf.Cell(0, 5, "x", True)
+  TestKit.Check("T12/80mm/erreur", TexteErreur())
+  TestKit.Check("T12/80mm/marges", pdf.GetLeftMargin() & " " & pdf.GetTopMargin() & " " & pdf.GetRightMargin())
+  Ops("T12/80mm", pdf)
+
+End
+
+Public Sub T13Output()
+
+  Dim pdf As PdfWriter = Nouveau()
+  Dim sFic As String = Temp$("out") & ".pdf"
+  Dim sFic2 As String = Temp$("out2") & ".pdf"
+  Dim sBuf As String
+  Dim sRet As String
+
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 10)
+  pdf.Cell(50, 5, "Sortie")
+  Try sRet = pdf.Output(sFic, False)
+  TestKit.Check("T13/fichier/erreur", TexteErreur())
+  TestKit.Check("T13/fichier/retour", sRet)
+  Try sBuf = pdf.Output("", "S")
+  TestKit.Check("T13/s/erreur", TexteErreur())
+  TestKit.Check("T13/fichier_egal_tampon", File.Load(sFic) = sBuf)
+  Try pdf.Output(sFic2)
+  TestKit.Check("T13/nom_seul/erreur", TexteErreur())
+  TestKit.Check("T13/nom_seul/existe", Exist(sFic2))
+  Try pdf.Output(sFic2, True)
+  TestKit.Check("T13/true/erreur", TexteErreur())
+  Shell "pdfinfo " & Shell$(sFic) & " >/dev/null 2>&1 && echo valide || echo invalide" To sRet
+  TestKit.Check("T13/pdfinfo", Trim(sRet))
+  pdf = Nouveau()
+  Try sBuf = pdf.Output("", "S")
+  TestKit.Check("T13/sans_page/erreur", TexteErreur())
+  File.Save(sFic2, sBuf)
+  Shell "pdfinfo " & Shell$(sFic2) & " 2>&1 | grep -E '^(Pages|Syntax)'" To sRet
+  TestKit.Check("T13/sans_page/pdfinfo", Trim(sRet))
+
+End
+
+Public Sub T14Performance()
+
+  Dim pdf As PdfWriter = New PdfWriter("P", "mm", "A4")
+  Dim i As Integer
+  Dim fDebut As Float = Timer
+
+  pdf.Open()
+  pdf.AddPage()
+  pdf.SetFont("Helvetica", "", 8)
+  For i = 1 To 8000
+    pdf.Cell(190, 5, "Cellule de performance " & i, True, 1, "L")
+  Next
+  For i = 1 To 10
+    pdf.EAN13(10, 10 + i * 20, "3760123456789")
+  Next
+  pdf.Output("", "S")
+  TestKit.Check("T14/pages", pdf.PageNo())
+  TestKit.Check("T14/duree_inferieure_10s", Timer - fDebut < 10)
+
+End
