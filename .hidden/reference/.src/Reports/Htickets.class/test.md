@@ -10,9 +10,9 @@ Gabarit de rendu PDF sans base : tests `gbtest` qui instancient
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| HTICKETS-T01 | gbtest | `Entete`, `Entete2` (10 lignes, `PosX` variable), `Level4` (5 lignes) | `PosX` = 40 puis 0 | flux identique quel que soit `PosX` ; texte de référence | `tests/htickets_ticket/` | à faire |
-| HTICKETS-T02 | gbtest | Ticket long (A01) | `Entete2` × 10 puis 70 `Level4` de `PosY` = 56 à 401 | nombre de pages et positions de référence (une page par ligne au-delà de ~287 mm, comportement figé) | `tests/htickets_long/` | à faire |
-| HTICKETS-T03 | replay | Réimpression réelle | scénarios ARCHIVESTCK-T06, ARCHIVESTCK-T07 (voir leur `test.md`) | texte PDF identique entre les deux clones ; dump identique (hors table de travail des taux de TVA) | `tests/htickets_archives/` | à faire |
+| HTICKETS-T01 | gbtest | `Entete`, `Entete2` (10 lignes, `PosX` variable), `Level4` (5 lignes) | `PosX` = 40 puis 0 | flux identique quel que soit `PosX` ; texte de référence | `tests/htickets_ticket/` | implémenté (gb.test HticketsTest.T01Ticket, PosX 40 et 0) |
+| HTICKETS-T02 | gbtest | Ticket long (A01) | `Entete2` × 10 puis 70 `Level4` de `PosY` = 56 à 401 | nombre de pages et positions de référence (une page par ligne au-delà de ~287 mm, comportement figé) | `tests/htickets_long/` | implémenté (gb.test HticketsTest.T02TicketLong, 24 pages figées) |
+| HTICKETS-T03 | replay | Réimpression réelle | scénarios ARCHIVESTCK-T06, ARCHIVESTCK-T07 (voir leur `test.md`) | texte PDF identique entre les deux clones ; dump identique (hors table de travail des taux de TVA) | `tests/htickets_archives/` | à faire : scénarios ArchivesTck non encore écrits |
 
 ## Détail des tests
 

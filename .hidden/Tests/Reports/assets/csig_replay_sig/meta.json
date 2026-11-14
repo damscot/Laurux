@@ -1,0 +1,24 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "CSIG-T04",
+ "classe": "Csig",
+ "objet": "SIG complet : texte du PDF",
+ "dataset": "Compta/extrait_shared/extrait_base",
+ "description": "Impressions comptables (RubImp, Menu124), jeu extrait_base (écritures 2018), Sig, exercice E1, Imprimer ; Message.Info « traitement long » (Entrée) ; texte de SIG.pdf (Imp_Sig → Csig) comparé par pdftotext (CmdVis) ; Quitter (Button3). Dérivé de imp_sig_sig_e1.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

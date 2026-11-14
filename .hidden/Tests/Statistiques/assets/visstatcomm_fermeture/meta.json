@@ -1,0 +1,24 @@
+{
+ "id": "VISSTATCOMM-T05",
+ "objet": "Imprimer puis Quitter",
+ "classe": "VisStatComm",
+ "description": "Toutes factures, Detail ; Imprimer puis Quitter (Button1) : ~/tmp/Statcli.pdf supprimé (fichier déclaré absent).",
+ "dataset": "statcomm_shared/statistiques_ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt",
+  "tmp/Statcli.pdf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

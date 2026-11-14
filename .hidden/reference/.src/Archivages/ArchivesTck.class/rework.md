@@ -63,14 +63,14 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ARCHIVESTCK-A01 — [anomalie] Réimpression : le cumul `ttva2` est commun à tous les taux ; dès
+- [ ] ARCHIVESTCK-A01 — [anomalie] (confirmée phase 2, vague 6 : deux lignes à 20 % (TVA 2,00 + 1,40) → `Tottva` et PDF « TVA 20 » = 1,95 (T07)) Réimpression : le cumul `ttva2` est commun à tous les taux ; dès
   qu'un taux réapparaît après un autre, il reçoit le cumul de l'autre taux → TVA par taux fausse sur
   le ticket réimprimé (le HT est ensuite « corrigé » par différence). Correction : cumuler sur
   `rtva!mtva` du taux concerné · tests : T07 · sources : [ArchivesTck.class:620-626](../../../../../.src/Archivages/ArchivesTck.class#L620-L626)
-- [ ] ARCHIVESTCK-A02 — [anomalie] Le filtre d'exclusion des lignes `C` teste `rntck!type` (1re ligne
+- [ ] ARCHIVESTCK-A02 — [anomalie] (confirmée phase 2, vague 6 : constat de T07) Le filtre d'exclusion des lignes `C` teste `rntck!type` (1re ligne
   du ticket) au lieu de `rtva2!type` : lignes `C` comptées dans la TVA, ou aucune TVA si la 1re
   ligne est de type `C` · tests : T07 · sources : [ArchivesTck.class:607](../../../../../.src/Archivages/ArchivesTck.class#L607)
-- [ ] ARCHIVESTCK-A03 — [anomalie, à confirmer] `ttvam` n'est calculé que pour les lignes `A` et
+- [ ] ARCHIVESTCK-A03 — [anomalie, à confirmer] (confirmée phase 2, vague 6 : TVA 5,5 stockée « 0.5500000000000 » ; Total HT recalculé depuis le TTC (T07)) `ttvam` n'est calculé que pour les lignes `A` et
   `S` : pour les autres types porteurs d'un code TVA, la valeur de la ligne précédente est cumulée à
   nouveau · tests : T07, T08 · sources : [ArchivesTck.class:611-619](../../../../../.src/Archivages/ArchivesTck.class#L611-L619)
 - [ ] ARCHIVESTCK-A04 — [anomalie] `TabTva` supprime et recrée la table **permanente** `Tottva`
@@ -86,6 +86,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (SQL modifié) · tests : T09 · sources : [ArchivesTck.class:90](../../../../../.src/Archivages/ArchivesTck.class#L90), [ArchivesTck.class:97](../../../../../.src/Archivages/ArchivesTck.class#L97)
 - [ ] ARCHIVESTCK-A07 — [anomalie, à confirmer] Bouton d'aide `Button1` (groupe `Btn`) sans handler
   `Btn_Click` : inerte (constat commun à de nombreux formulaires) · tests : aucun · sources : [ArchivesTck.class:_New](../../../../../.src/Archivages/ArchivesTck.class#L19-L43)
-- [ ] ARCHIVESTCK-A08 — [anomalie, à confirmer] Détail et réimpression lus par `numero` seul
+- [ ] ARCHIVESTCK-A08 — [anomalie, à confirmer] (confirmée phase 2, vague 6 : ticket au numéro en doublon → « Key already used: 69ART1 » fatal (`Coltk_Click` l. 518, `detk.Add` ; jointure lignes × en-têtes de même numéro), figée par T10 (code 125 ; le test.md attendait des lignes dupliquées)) Détail et réimpression lus par `numero` seul
   (non unique) : deux tickets de même numéro mélangent leurs lignes. Correction : sélection par
   `lInd` d'en-tête · tests : T10 · sources : [ArchivesTck.class:515](../../../../../.src/Archivages/ArchivesTck.class#L515), [ArchivesTck.class:537](../../../../../.src/Archivages/ArchivesTck.class#L537), [ArchivesTck.class:602](../../../../../.src/Archivages/ArchivesTck.class#L602)

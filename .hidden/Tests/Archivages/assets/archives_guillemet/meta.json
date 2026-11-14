@@ -1,0 +1,24 @@
+{
+ "id": "ARCHIVES-T13",
+ "classe": "Archives",
+ "objet": "Saisie d'un guillemet",
+ "description": "/Soc01/Materiel = 0 : guillemet tapé dans NO : requête like cassée (comportement figé, A06).",
+ "dataset": "archives_shared/factures_liste",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125,
+ "xfail": "erreur SQL non attrapée : Query failed (Archives.Deb2:295 via NO_KeyPress), boîte d'erreur Gambas fatale",
+ "xfail_attendu": "erreur SQL attrapée, liste inchangée (A06)"
+}

@@ -50,7 +50,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ACOM-A01 — [anomalie] `DocCom` lit `Rcli!fo_nom` sans tester `Available` (fournisseur supprimé
+- [ ] ACOM-A01 — [anomalie] (confirmée phase 2, vague 6 : fournisseur absent et commande sans ligne → « Result is not available », figée par T02) `DocCom` lit `Rcli!fo_nom` sans tester `Available` (fournisseur supprimé
   → erreur, alors que la liste de l'appelant utilise une jointure externe) et parcourt les lignes sans
   test `Available` (le `If Not Error` ne teste rien) · tests : T02 · sources : [ACom.class:45](../../../../../.src/Affichages/ACom.class#L45), [ACom.class:47](../../../../../.src/Affichages/ACom.class#L47)
 - [ ] ACOM-A02 — [anomalie] Quantité non formatée : `Utils.CDec(art_dec, qte)` est écrit en colonne

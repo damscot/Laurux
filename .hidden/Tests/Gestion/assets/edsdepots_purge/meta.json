@@ -1,0 +1,25 @@
+{
+ "id": "EDSDEPOTS-T04",
+ "objet": "Purge",
+ "classe": "Edsdepots",
+ "description": "Effacement coché ; Imprimer (PDF produit) ; Oui : DELETE sur la colonne inexistante datesortie, Query failed fatale (code 125), aucune suppression (A02 figée ; le message de succès n'est pas atteint).",
+ "dataset": "sdepots_shared/sdepots_stock",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Depots": "-1",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125
+}

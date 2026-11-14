@@ -53,7 +53,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CLAVIER-A01 — [anomalie] Touches inactives : `Etoile` hors du groupe `Clav` et sans
+- [ ] CLAVIER-A01 — [anomalie] (confirmée phase 2, vague 6 : touches Virgule et Poinvirgule sans effet, Etoile hors du groupe `Clav` (T02)) Touches inactives : `Etoile` hors du groupe `Clav` et sans
   handler (branche `"Etoile"` d'`Alpha` inatteignable) ; `Virgule` et `Poinvirgule` ignorées par
   `Alpha` ; lettres toujours en majuscules · tests : T02 · sources : [Clavier.class:47](../../../../../.src/Caisse/Clavier.class#L47), [Clavier.class:Alpha](../../../../../.src/Caisse/Clavier.class#L36-L66)
 - [ ] CLAVIER-A02 — [anomalie] « Fermer » lance la connexion (`Ouverture.Button1_Click`) comme

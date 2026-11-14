@@ -1,0 +1,19 @@
+{
+ "id": "ARCHIVESTCK-T10",
+ "classe": "ArchivesTck",
+ "objet": "Numéro de ticket en doublon",
+ "description": "Clic ligne 0 (ticket 1000064, présent sur les caisses 01 et 02) puis Fermer : la requête du détail ramène les lignes des deux tickets (A08 figée). Comportement actuel figé : erreur fatale « Key already used: 69ART1 » (ColumnView.Add, ArchivesTck.Coltk_Click:518) car la jointure lignes × en-têtes de même numéro duplique les clés (code 125).",
+ "dataset": "archivestck_shared/tickets_consult",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

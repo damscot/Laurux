@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRIMO-T01 | gbtest | Absence de référence (garde de suppression) | recherche de `New TriMo`, `"TriMo"` et `TriMo.` dans `.src` (hors méthode `Facture.TriMo`) | aucune occurrence ; `gbc3 -agt` vert après suppression | `tests/absence_reference/` | à faire |
+| TRIMO-T01 | gbtest | Absence de référence (garde de suppression) | recherche de `New TriMo`, `"TriMo"` et `TriMo.` dans `.src` (hors méthode `Facture.TriMo`) | aucune occurrence ; `gbc3 -agt` vert après suppression | `tests/absence_reference/` | implémenté (gb.test `TriMoTest.T01AbsenceReference` : parcours de `.src` hors `Tests/` et `TriMo.*`, témoin `New TriCpt` ; la compilation après suppression reste à vérifier lors de TRIMO-A01) |
 
 ## Détail des tests
 

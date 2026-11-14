@@ -1,0 +1,158 @@
+' Gambas test file
+
+''Tests de Creleve (.hidden/reference/.src/Reports/Creleve.class/test.md, CRELEVE-T01, T03, T04).
+''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
+''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
+''Valeurs attendues : assets/CreleveTest/expected.txt, produites dans le clone de référence. Pas de base.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Entetes", "Entete complet puis réduit (champs vides), Entete2 pays vide / Belgique ; logo désactivé")
+  TestKit.Desc("T02Logo", "Entete avec glogo : image 200 × 100, image de 5 px (A02), chemin absent")
+  TestKit.Desc("T03Releve", "EnteteN, Entete, Entete2, Level1 org 1 et 2, Level2, 40 Level3, Lines, Level4, Level9 sur 2 pages")
+  TestKit.Desc("T04Relance", "Level5, Level6, Level7, Level8 : texte de 300 caractères et texte à retours à la ligne")
+
+End
+
+' Écrit une image JPEG unie (PdfWriter refuse le canal alpha des PNG) de la taille demandée dans un fichier temporaire.
+Private Function ImageJpg(iLarg As Integer, iHaut As Integer) As String
+
+  Dim sFic As String = Temp$("logo") & ".jpg"
+  Dim hImg As Image
+
+  hImg = New Image(iLarg, iHaut, Color.RGB(200, 30, 30))
+  hImg.Save(sFic)
+  Return sFic
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CreleveTest")
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo"] = False
+End
+
+Private Function Nouveau() As Creleve
+
+  Dim pdf As Creleve
+
+  pdf = New Creleve("P", "mm", "A4")
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, en extrait le texte et vérifie chaque ligne non vide (date du jour et utilisateur masqués).
+Private Sub Verifie(sCle As String, pdf As PdfWriter, Optional bImages As Boolean)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  If Not bImages Then Return
+  ' Liste des images : page, largeur, hauteur, type (colonnes de « pdfimages -list », en-tête retiré).
+  Shell "pdfimages -list " & Shell$(sFic) & " | awk 'NR>2 {print $1, $4, $5, $6, $9}'" To sTxt
+  n = 0
+  For Each sLig In Split(Trim(sTxt), "\n")
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/image" & n, sLig)
+  Next
+  TestKit.Check(sCle & "/images", n)
+
+End
+
+Public Sub T01Entetes()
+
+  Dim pdf As Creleve = Nouveau()
+
+  pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "Tel 0240000000", "Port 0600000000", "Fax 0240000001", "test@exemple.fr", "www.exemple.fr", "France", "IBAN FR76", False)
+  pdf.Entete2("CLIENT UN", "2 rue des Lilas", "", "75001 PARIS", "", "", True)
+  pdf.Entete("SOCIETE REDUITE", "1 rue", "", "44000 NANTES", "", "", "", "", "", "", "", "", "", "", "", "", False)
+  pdf.Entete2("CLIENT DEUX", "3 rue", "Bat C", "1000 BRUXELLES", "Belgique", "", False)
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T03Releve()
+
+  Dim pdf As Creleve = Nouveau()
+  Dim i As Integer
+  Dim y As Integer
+
+  pdf.Entete("SOCIETE TEST", "1 rue du Port", "", "44000 NANTES", "", "", "", "", "", "", "", "", "", "", "", "", False)
+  pdf.Entete2("CLIENT UN", "2 rue des Lilas", "", "75001 PARIS", "", "", True)
+  pdf.Level1("15/06/2018", "15/06/2018", "1")
+  pdf.Level2()
+  y = 110
+  For i = 1 To 40
+    If y > 270 Then
+      pdf.Lines(y)
+      pdf.EnteteN("Suite du relevé")
+      pdf.Level1("15/06/2018", "15/06/2018", "2")
+      pdf.Level2()
+      y = 110
+    Endif
+    pdf.Level3("0" & (1 + i Mod 9) & "/06/2018", "F" & Format$(i, "0000"), "FACTURE " & i, CStr(i) & ",00", "", y)
+    y += 5
+  Next
+  pdf.Lines(y)
+  pdf.Level4("820,00", "0,00", y + 2)
+  pdf.Level9("Texte de pied de relevé", y + 10)
+  Verifie("T03", pdf)
+
+End
+
+Public Sub T04Relance()
+
+  Dim pdf As Creleve = Nouveau()
+
+  pdf.EnteteN("Relance")
+  pdf.Level5("15/06/2018")
+  pdf.Level6()
+  pdf.Level7("01/06/2018", "F0001", "FACTURE UN", "100,00", "", 80)
+  pdf.Level7("02/06/2018", "F0002", "FACTURE DEUX", "", "50,00", 85)
+  pdf.Level8(String$(30, "ABCDEFGHI "), 100)
+  pdf.Level8("Ligne un\nLigne deux\nLigne trois", 130)
+  Verifie("T04", pdf)
+
+End
+
+Private Sub EnteteLogo(sCle As String, sLogo As String)
+
+  Dim pdf As Creleve = Nouveau()
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo"] = True
+  Start.LocalSettings["/Soc" & Start.Societe & "/Logo"] = sLogo
+  Try pdf.Entete("SOCIETE LOGO", "1 rue du Port", "", "44000 NANTES", "", "", "", "", "", "", "", "", "", "", "", "", False)
+  TestKit.Check(sCle & "/erreur", IIf(Error, Error.Text, "<aucune>"))
+  Verifie(sCle, pdf, True)
+
+End
+
+Public Sub T02Logo()
+
+  EnteteLogo("T02/normal", ImageJpg(200, 100))
+  EnteteLogo("T02/etroit", ImageJpg(5, 100))
+  EnteteLogo("T02/absent", "/tmp/laurux-test/logo-absent.png")
+
+End

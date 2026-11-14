@@ -1,0 +1,17 @@
+{
+ "id": "RAZDEVIS-T01",
+ "classe": "RazDevis",
+ "objet": "Purge nominale des devis",
+ "description": "Jeu devis_base : Lancer, « Oui » (Entrée), Message.Info (Entrée), Quitter. Attendu : devis D strictement antérieur (900001) et ses lignes supprimés ; devis du jour et futur, BL B et F intacts ; Fiches_AdrlivBL de 900001 conservée (A01) ; Fiches_BlM intacte (option matériel absente) ; date limite = date du jour figée 2018-06-15 (valeur par défaut du DateChooser).",
+ "dataset": "razdevis_shared/devis_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

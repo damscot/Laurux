@@ -5,10 +5,10 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EXPCONTACT-T01 | replay | Export clients + contacts | `Laurux01.sql`, `RadioButton1` coché, `Button1` | `~/Contacts.vcf` identique à `expected/Contacts.vcf` | `tests/export_clients/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) |
-| EXPCONTACT-T02 | replay | Export fournisseurs | `RadioButton2` coché | `Contacts.vcf` de référence | `tests/export_fournisseurs/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) |
-| EXPCONTACT-T03 | replay | Table vide | base dérivée avec `Fiches_Four` vide, fournisseurs | figer : `Message.Error` puis erreur d'exécution sur `Close` | `tests/table_vide/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) ; sortie en erreur non tolérée par compare |
-| EXPCONTACT-T04 | replay | Caractères spéciaux | client avec `;`, `,` et retour ligne dans `cli_obs` | fichier figé (pas d'échappement) | `tests/caracteres_speciaux/` | à faire : ~/Contacts.vcf écrit sous User.Home (vrai répertoire personnel, non isolé par le runner) et fichier produit non comparé (outillage) |
+| EXPCONTACT-T01 | replay | Export clients + contacts | `Laurux01.sql`, `RadioButton1` coché, `Button1` | `~/Contacts.vcf` identique à `expected/Contacts.vcf` | `tests/export_clients/` | implémenté (scénario Utils/expcontact_export_clients, ~/Contacts.vcf comparé) |
+| EXPCONTACT-T02 | replay | Export fournisseurs | `RadioButton2` coché | `Contacts.vcf` de référence | `tests/export_fournisseurs/` | implémenté (scénario Utils/expcontact_export_fournisseurs) |
+| EXPCONTACT-T03 | replay | Table vide | base dérivée avec `Fiches_Four` vide, fournisseurs | figer : `Message.Error` puis erreur d'exécution sur `Close` | `tests/table_vide/` | implémenté (scénario Utils/expcontact_table_vide, jeu four_vide : Null object sur Close #HFil figé, code 125) |
+| EXPCONTACT-T04 | replay | Caractères spéciaux | client avec `;`, `,` et retour ligne dans `cli_obs` | fichier figé (pas d'échappement) | `tests/caracteres_speciaux/` | implémenté (scénario Utils/expcontact_caracteres_speciaux, jeu speciaux) |
 
 ## Détail des tests
 

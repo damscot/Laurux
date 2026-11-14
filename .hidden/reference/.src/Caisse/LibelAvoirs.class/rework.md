@@ -51,7 +51,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] LIBELAVOIRS-A01 — [anomalie] Texte vide non enregistrable (impossible d'effacer le texte) ;
+- [ ] LIBELAVOIRS-A01 — [anomalie] (confirmée phase 2, vague 6 : champ vidé puis enregistré : texte existant conservé (T02)) Texte vide non enregistrable (impossible d'effacer le texte) ;
   `ReplaceLb` altère `"` et `&` ; aucun retour visuel après l'enregistrement (même défaut que
   LIBELFAC-A01) · tests : T02, T03 · sources : [LibelAvoirs.class:Button2_Click](../../../../../.src/Caisse/LibelAvoirs.class#L63-L77)
 - [ ] LIBELAVOIRS-A02 — [anomalie] Écran non instrumenté (`Utils.Observers(Me)` absent) : saisie et

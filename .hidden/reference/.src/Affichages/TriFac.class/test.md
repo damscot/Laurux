@@ -10,11 +10,11 @@ normalisé après enregistrement de l'avoir et, à titre informatif, sur les lig
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRIFAC-T01 | replay | Sélection d'une facture pour avoir | `Facture` : nouveau document, code client saisi, bouton avoir (`Button26`), clic sur une facture, enregistrement de l'avoir | lignes de l'avoir reprises de la facture choisie (`Fiches_Bl`, `Fiches_Ligbl`) | `tests/selection_avoir/` | à faire |
-| TRIFAC-T02 | replay | Tri et filtre par en-tête | clic sur `NO`, `CO`, `NM`, `MT`, `MTC` ; saisie `12` puis retour arrière ; `DA` : saisie `0101` puis `01012025` | contenu de la grille ; requêtes de référence (tri `abs(lpad())` pour `CO`, alphabétique sinon) | `tests/tri_filtre/` | à faire |
-| TRIFAC-T03 | replay | Double-clic et pagination | double-clic sur `NO` puis `DA` ; PageDown ×2, PageUp, molette, boutons `Descendre`/`Remonter`, flèche bas en dernière ligne | figer l'ordre non inversé et le filtre utilisé en pagination (A01, A02) | `tests/pagination/` | à faire |
-| TRIFAC-T04 | replay | Fermeture sans choix | 1) Échap dans la grille ; 2) après une sélection réussie, nouvel avoir, Échap dans l'en-tête `NM` | 1) aucun chargement ; 2) figer le rechargement de l'ancienne facture (A04) | `tests/fermeture/` | à faire |
-| TRIFAC-T05 | gbtest | `RequeteFactures` (après TRIFAC-009) | tri `numfac`/`cdclifac`/`datefac`, `Dat` 0/1, filtre vide/`12`/motif date, sens, page 0 et 2 | texte SQL identique à celui journalisé par le clone non modifié | `tests/requete_factures/` | à faire |
+| TRIFAC-T01 | replay | Sélection d'une facture pour avoir | `Facture` : nouveau document, code client saisi, bouton avoir (`Button26`), clic sur une facture, enregistrement de l'avoir | lignes de l'avoir reprises de la facture choisie (`Fiches_Bl`, `Fiches_Ligbl`) | `tests/selection_avoir/` | à faire : passe par Facture (écran complexe) |
+| TRIFAC-T02 | replay | Tri et filtre par en-tête | clic sur `NO`, `CO`, `NM`, `MT`, `MTC` ; saisie `12` puis retour arrière ; `DA` : saisie `0101` puis `01012025` | contenu de la grille ; requêtes de référence (tri `abs(lpad())` pour `CO`, alphabétique sinon) | `tests/tri_filtre/` | implémenté partiellement (gb.test TriFacTest.T02TriEntetes : clic (_MouseDown) sur chaque en-tête, ouverture avec client) ; à faire : saisies (KeyPress lit Key) |
+| TRIFAC-T03 | replay | Double-clic et pagination | double-clic sur `NO` puis `DA` ; PageDown ×2, PageUp, molette, boutons `Descendre`/`Remonter`, flèche bas en dernière ligne | figer l'ordre non inversé et le filtre utilisé en pagination (A01, A02) | `tests/pagination/` | implémenté partiellement (gb.test TriFacTest.T03Pagination : double-clic NO x2 (A01 figé), DA, Descendre/Remonter) ; à faire : PageDown, molette, flèche bas |
+| TRIFAC-T04 | replay | Fermeture sans choix | 1) Échap dans la grille ; 2) après une sélection réussie, nouvel avoir, Échap dans l'en-tête `NM` | 1) aucun chargement ; 2) figer le rechargement de l'ancienne facture (A04) | `tests/fermeture/` | à faire : passe par Facture (écran complexe) ; Échap (KeyPress) |
+| TRIFAC-T05 | gbtest | `RequeteFactures` (après TRIFAC-009) | tri `numfac`/`cdclifac`/`datefac`, `Dat` 0/1, filtre vide/`12`/motif date, sens, page 0 et 2 | texte SQL identique à celui journalisé par le clone non modifié | `tests/requete_factures/` | à faire : après extraction TRIFAC-009 |
 
 ## Détail des tests
 
@@ -34,3 +34,4 @@ normalisé après enregistrement de l'avoir et, à titre informatif, sur les lig
   entre capture et rejeu, sinon les `LIMIT` diffèrent.
 - **SQLite** : rejouer T02 sur `Laurux01.sqlite` pour vérifier la traduction de `lpad` par
   `DB_Connection`.
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Affichages/TriFacTest.test` (écran instancié sans affichage, gestionnaires publics appelés directement) ; jeu de données `.hidden/Tests/Affichages/assets/trifac_shared/factures.sql` ; attendus `assets/TriFacTest/expected.txt`.

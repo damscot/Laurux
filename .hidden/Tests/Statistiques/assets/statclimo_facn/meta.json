@@ -1,0 +1,23 @@
+{
+ "id": "STATCLIMO-T01",
+ "objet": "Factures hors entretien, sans BL",
+ "classe": "StatClimo",
+ "description": "Facn (hors entretien), Bl décoché, Valider : table Total par client = factures archivées HistoFac de la période + BL F de la période ; VisStatClimo ouvert puis Imprimer (texte PDF).",
+ "dataset": "statclimo_shared/statclimo_ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

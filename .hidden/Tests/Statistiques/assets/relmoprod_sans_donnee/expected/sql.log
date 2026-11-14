@@ -1,0 +1,27 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+select * from Fiches_Cli order by cli_nom Asc 
+select * from Fiches_Cli where cli_nom like  "%%" order by cli_nom
+DROP TABLE if exists Fiches_Stat
+CREATE TABLE Fiches_Stat (code Char(15) NOT NULL,intitule char(50) ,qte char(12) ,type char(1) ,montant char(12) ,codecli char(12) ,intitulecli char(35) ,numfac char(10) ,qtefac char(6) ,nethtfac char(10) ,PRIMARY KEY (code, codecli, numfac)) ENGINE = InnoDB
+SELECT * from Fiches_Bl where datebl >= '20180101' and datebl <= '20180615' and type = 'F' and imp = 1 and cdclibl = '411003'
+SELECT * from Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' and cdclifac = '411003'
+SELECT * from Fiches_HistoFacM where datefac >= '20180101' and datefac <= '20180615' and cdclifac = '411003'

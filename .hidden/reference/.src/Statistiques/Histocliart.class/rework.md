@@ -63,7 +63,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] HISTOCLIART-A01 — [anomalie] `UNION ALL` manquant : seules les branches BL positionnent `un` ;
+- [ ] HISTOCLIART-A01 — [anomalie] (confirmée phase 2, vague 6 : figée par T05 (`histocliart_union_manquante`, Query failed, code 125)) `UNION ALL` manquant : seules les branches BL positionnent `un` ;
   factures + factures matériel sans document en cours produisent deux `SELECT` collés (SQL invalide),
   dans les trois modes · tests : T05 · sources : [Histocliart.class:405](../../../../../.src/Statistiques/Histocliart.class#L405), [Histocliart.class:422](../../../../../.src/Statistiques/Histocliart.class#L422), [Histocliart.class:507](../../../../../.src/Statistiques/Histocliart.class#L507), [Histocliart.class:524](../../../../../.src/Statistiques/Histocliart.class#L524), [Histocliart.class:609](../../../../../.src/Statistiques/Histocliart.class#L609), [Histocliart.class:626](../../../../../.src/Statistiques/Histocliart.class#L626)
 - [ ] HISTOCLIART-A02 — [anomalie] Familles : `Checktfam` décochée sans nœud sélectionné →
@@ -74,7 +74,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] HISTOCLIART-A04 — [anomalie] `Butcli2_Click` et `butfour_click` ne remettent pas `Bsel` à
   `False` : après une sélection précédente, une annulation de `TriCpt` réécrit l'ancienne valeur ·
   tests : T09 · sources : [Histocliart.class:Butcli2_Click](../../../../../.src/Statistiques/Histocliart.class#L170-L183), [Histocliart.class:butfour_click](../../../../../.src/Statistiques/Histocliart.class#L209-L230)
-- [ ] HISTOCLIART-A05 — [anomalie] `Butexp_Click` ne vérifie ni le nombre de sources (`nbfic`) ni
+- [ ] HISTOCLIART-A05 — [anomalie] (confirmée phase 2, vague 6 : figée par T10 (`histocliart_vide`)) `Butexp_Click` ne vérifie ni le nombre de sources (`nbfic`) ni
   `$res.Available` : aucune source → SQL `FROM ( ) AS a` invalide ; résultat vide → erreur à la lecture
   de `$res` ; `Butedit` sans résultat ne dit rien · tests : T10 · sources : [Histocliart.class:962](../../../../../.src/Statistiques/Histocliart.class#L962), [Histocliart.class:968](../../../../../.src/Statistiques/Histocliart.class#L968), [Histocliart.class:312](../../../../../.src/Statistiques/Histocliart.class#L312)
 - [ ] HISTOCLIART-A06 — [anomalie] Édition détaillée : pas d'`ORDER BY`, les sous-totaux supposent
@@ -85,3 +85,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   le mode famille, couleur du titre fausse si une composante `Start.R/G/B` < 16 (hexadécimal non
   complété), `Mouse.Normal` à confirmer (constante absente ailleurs dans le projet) · tests : T02 ·
   sources : [Histocliart.class:707](../../../../../.src/Statistiques/Histocliart.class#L707), [Histocliart.class:698](../../../../../.src/Statistiques/Histocliart.class#L698), [Histocliart.class:662](../../../../../.src/Statistiques/Histocliart.class#L662)
+- [ ] HISTOCLIART-A08 — [anomalie] `Radiofam_Click` désactive `Checkdetcli` sans le décocher : après un export article avec détail client, l'export famille plante (`Butexp_Click.976: Unknown field: client`) (phase 2, vague 6, 2026-11-14) · tests : T03 (`histocliart_modes`, code 125) · sources : [Histocliart.class:Radiofam_Click](../../../../../.src/Statistiques/Histocliart.class#L942-L946), [Histocliart.class:976](../../../../../.src/Statistiques/Histocliart.class#L976)

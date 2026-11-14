@@ -8,8 +8,8 @@ non modifié (caractérisation, anomalies figées) et contrôlées par comparais
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| PDFWRITERFONT-T01 | gbtest | Tables de largeurs | `Font(n)` pour les 17 noms existants | nombre de valeurs (256, symbol 254) et somme de contrôle / liste complète par police ; écarts AFM connus (helvetica 0xD8, symbol) figés | `tests/tables_largeurs/` | à faire |
-| PDFWRITERFONT-T02 | gbtest | Noms invalides | `Font("serifBI")`, `Font("arial")`, `Font("")`, `Font("Helvetica")` (casse) | texte d'erreur (`Unknown symbol` pour serifBI, `Could not include font definition` sinon) | `tests/noms_invalides/` | à faire |
+| PDFWRITERFONT-T01 | gbtest | Tables de largeurs | `Font(n)` pour les 17 noms existants | nombre de valeurs (256, symbol 254) et somme de contrôle / liste complète par police ; écarts AFM connus (helvetica 0xD8, symbol) figés | `tests/tables_largeurs/` | implémenté (gb.test PdfWriterFontTest.T01Largeurs) |
+| PDFWRITERFONT-T02 | gbtest | Noms invalides | `Font("serifBI")`, `Font("arial")`, `Font("")`, `Font("Helvetica")` (casse) | texte d'erreur (`Unknown symbol` pour serifBI, `Could not include font definition` sinon) | `tests/noms_invalides/` | implémenté (gb.test PdfWriterFontTest.T02NomsInvalides) |
 
 ## Détail des tests
 

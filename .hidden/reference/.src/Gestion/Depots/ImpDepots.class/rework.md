@@ -50,7 +50,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] IMPDEPOTS-A01 — [anomalie] Dépôt vide ou inconnu : PDF créé inutilement, puis `Draw.End`
+- [ ] IMPDEPOTS-A01 — [anomalie] (confirmée phase 2, vague 6 : dépôt vide : `Draw.End` sans dispositif, « No current device » (l. 169), figée par T03) Dépôt vide ou inconnu : PDF créé inutilement, puis `Draw.End`
   sans `Draw.Begin` (erreur probable) ; code dépôt non vérifié · tests : T03 · sources : [ImpDepots.class:111](../../../../../../.src/Gestion/Depots/ImpDepots.class#L111), [ImpDepots.class:167](../../../../../../.src/Gestion/Depots/ImpDepots.class#L167)
 - [ ] IMPDEPOTS-A02 — [anomalie] Écran non instrumenté (`Utils.Observers` absent) : ajouter
   l'appel change le log de rejeu (et la couleur des zones) · tests : T01 · sources : [ImpDepots.class:_new](../../../../../../.src/Gestion/Depots/ImpDepots.class#L9-L19)

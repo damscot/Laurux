@@ -76,7 +76,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   appelé et `$gsm`/`mesg` ne sont jamais affectés ; compteur de caractères par frappes, limite de
   160 non imposée. Décision : implémenter l'envoi via le module SMS commun ou retirer le menu
   « SMS › Envoi multiples » · tests : T09 · sources : [Emailing.class:800](../../../../../../.src/Gestion/Mails/Emailing.class#L800), [Emailing.class:EnvoiSms](../../../../../../.src/Gestion/Mails/Emailing.class#L902-L939), [Emailing.class:sText_KeyPress](../../../../../../.src/Gestion/Mails/Emailing.class#L782-L795), [Fmenu.class:Menu320_Click](../../../../../../.src/Communs/Fmenu.class#L2415-L2423)
-- [ ] EMAILING-A02 — [anomalie] Pièce jointe : `TextBox2.Text` (chemin complet) est passé comme
+- [ ] EMAILING-A02 — [anomalie] (confirmée phase 2, vague 6 : contrat des mailings (chemin complet + nom) → « File or directory does not exist » propagée par `EnvMail.Envoi`, aucun envoi (ENVMAIL-T04)) Pièce jointe : `TextBox2.Text` (chemin complet) est passé comme
   répertoire à `EnvMail.Envoi`, qui charge `chemin & FileN` : fichier introuvable, mailing
   interrompu au premier client ; `piece` n'est jamais remis à `False` · tests : T05 ·
   sources : [Emailing.class:848](../../../../../../.src/Gestion/Mails/Emailing.class#L848), [Emailing.class:862](../../../../../../.src/Gestion/Mails/Emailing.class#L862), [Emailing.class:btnopen_Click](../../../../../../.src/Gestion/Mails/Emailing.class#L941-L957), [EnvMail.module:30](../../../../../../.src/Gestion/Mails/EnvMail.module#L30)
@@ -104,3 +104,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   la ligne de commande (`ps`) ; contrôle SMTP inutile en mode SMS ; `Label7` (un `Label`) ne
   reçoit probablement jamais le focus, le contrôle de crédit ne s'exécuterait pas (à confirmer
   par T09) · tests : T09 · sources : [Emailing.class:133](../../../../../../.src/Gestion/Mails/Emailing.class#L133), [Emailing.class:Form_Show](../../../../../../.src/Gestion/Mails/Emailing.class#L115-L119)
+- [ ] EMAILING-A10 — [anomalie] `_New` : `Statut.Add(" ", "00")` place l'élément vide en tête de liste ; sans choix, le filtre devient `cli_statut = ' '` (`Left$(Statut.Text, 2)`) et ne retient que les clients au statut blanc (phase 2, vague 6, 2026-11-14) · tests : T02 (à faire) · sources : [Emailing.class:109](../../../../../../.src/Gestion/Mails/Emailing.class#L109), [Emailing.class:806](../../../../../../.src/Gestion/Mails/Emailing.class#L806-L807)

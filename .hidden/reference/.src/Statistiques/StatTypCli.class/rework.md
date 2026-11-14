@@ -55,12 +55,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATTYPCLI-A01 — [anomalie] N-1 calculé dans la boucle des factures N : le N-1 d'un client
+- [ ] STATTYPCLI-A01 — [anomalie] (confirmée phase 2, vague 6 : N-1 multiplié (T03)) N-1 calculé dans la boucle des factures N : le N-1 d'un client
   est ajouté autant de fois qu'il a de factures en N ; clients sans facture N absents du N-1 ;
   colonne « Net N-1 » et « % N/N-1 » de `VisStatTypCli` faussées · tests : T03 · sources : [StatTypCli.class:239](../../../../../.src/Statistiques/StatTypCli.class#L239), [StatTypCli.class:251](../../../../../.src/Statistiques/StatTypCli.class#L251)
-- [ ] STATTYPCLI-A02 — [anomalie] Le N-1 lit toujours `Fiches_HistoFac`, même pour les sources
+- [ ] STATTYPCLI-A02 — [anomalie] (confirmée phase 2, vague 6 : N-1 toujours lu sur `HistoFac` (T02)) Le N-1 lit toujours `Fiches_HistoFac`, même pour les sources
   « Factures entretien » ou « Toutes » (incohérent avec N et avec `StatComm`) · tests : T02 · sources : [StatTypCli.class:239](../../../../../.src/Statistiques/StatTypCli.class#L239), [StatComm.class:249](../../../../../.src/Statistiques/StatComm.class#L249)
-- [ ] STATTYPCLI-A03 — [anomalie] `CliResult!cli_typec` et `TypResult!code` lus sans test
+- [ ] STATTYPCLI-A03 — [anomalie] (confirmée phase 2, vague 6 : `Traitement.204`/`.206` (T04, code 125)) `CliResult!cli_typec` et `TypResult!code` lus sans test
   `Available` : facture d'un client supprimé ou client d'un type supprimé → erreur d'exécution,
   traitement interrompu · tests : T04 · sources : [StatTypCli.class:203](../../../../../.src/Statistiques/StatTypCli.class#L203), [StatTypCli.class:206](../../../../../.src/Statistiques/StatTypCli.class#L206)
 - [ ] STATTYPCLI-A04 — [anomalie] Table de travail `Total` partagée entre postes et écrans de

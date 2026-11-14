@@ -1,0 +1,72 @@
+' Gambas test file
+
+''Tests de PdfWriterFont (.hidden/reference/.src/Reports/PdfWriterFont.class/test.md, PDFWRITERFONT-T01, T02).
+''Tables de largeurs des polices : nombre de valeurs, somme et liste complète par police ; noms invalides.
+''Valeurs attendues : assets/PdfWriterFontTest/expected.txt, produites dans le clone de référence. Pas de base.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Largeurs", "Font(n) pour les 17 noms : nombre de valeurs, somme et liste complète")
+  TestKit.Desc("T02NomsInvalides", "Font serifBI, arial, chaîne vide, Helvetica (casse) : texte d'erreur")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "PdfWriterFontTest")
+
+End
+
+Private Function Liste(a As Integer[]) As String
+
+  Dim sRes As New String[]
+  Dim v As Integer
+
+  For Each v In a
+    sRes.Add(CStr(v))
+  Next
+  Return sRes.Join(",")
+
+End
+
+Public Sub T01Largeurs()
+
+  Dim sNom As String
+  Dim a As Integer[]
+  Dim v As Integer
+  Dim s As Long
+
+  For Each sNom In ["courier", "courierB", "courierI", "courierBI", "helvetica", "helveticaB", "helveticaBI", "helveticaI", "symbol", "times", "timesB", "timesBI", "timesI", "serif", "serifB", "serifI", "zapfdingbats"]
+    Try a = PdfWriterFont.Font(sNom)
+    If Error Then
+      TestKit.Check("T01/" & sNom & "/erreur", Error.Text)
+      Continue
+    Endif
+    s = 0
+    For Each v In a
+      s += v
+    Next
+    TestKit.Check("T01/" & sNom & "/nombre", a.Count)
+    TestKit.Check("T01/" & sNom & "/somme", s)
+    TestKit.Check("T01/" & sNom & "/liste", Liste(a))
+  Next
+
+End
+
+Public Sub T02NomsInvalides()
+
+  Dim sNom As String
+  Dim a As Integer[]
+
+  For Each sNom In ["serifBI", "arial", "", "Helvetica"]
+    a = Null
+    Try a = PdfWriterFont.Font(sNom)
+    If Error Then
+      TestKit.Check("T02/" & IIf(sNom = "", "<vide>", sNom), "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T02/" & IIf(sNom = "", "<vide>", sNom), "nombre " & a.Count)
+    Endif
+  Next
+
+End

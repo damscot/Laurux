@@ -1,0 +1,22 @@
+{
+ "id": "HISTOCLIART-T03",
+ "classe": "Histocliart",
+ "objet": "Par article et par famille",
+ "description": "Menu Statistiques › Statistiques et relevés détaillés. Tri par article avec détail client puis Exporter (bouton 2 « Non ») ; tri par famille avec détail article puis Exporter (bouton 2 « Non ») ; Quitter. CSV final (mode famille) comparé ; SQL des deux modes dans sql.log. Code 125 figé : Unknown field client en Butexp_Click (Radiofam_Click n'annule pas Checkdetcli, coché en mode article : candidat anomalie). Lecture seule : sql.log comparé.",
+ "dataset": "histocliart_shared/ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "fichiers": [
+  "tmp/HistoVente.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

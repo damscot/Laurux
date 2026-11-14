@@ -1,0 +1,57 @@
+' Gambas test file
+
+''Tests de Svendeur (.hidden/reference/.src/Caisse/Svendeur.class/test.md, SVENDEUR-T01, T04).
+''Écran instancié sans affichage (New Svendeur) : liste Caissiere ; choix d'un vendeur puis Caissiere_Click.
+''T02 et T03 restent à faire : Button1_Click / Button2_Click écrivent Caisse.$Vendeur (auto-instance de l'écran Caisse).
+''Jeu svendeur_shared/vendeurs. Valeurs attendues : assets/SvendeurTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Liste", "Liste des vendeurs : entrée vide puis « code nom » de chaque vendeur")
+  TestKit.Desc("T04CodeDeuxCar", "Vendeur 12 choisi : Caissiere_Click recherche le code 1 (A02) : aucun message (le vendeur 1 existe)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "SvendeurTest")
+  TestKit.OuvreBase("svendeur_shared/vendeurs")
+
+End
+
+Public Sub T01Liste()
+
+  Dim hForm As Object
+  Dim hListe As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  hForm = New Svendeur
+  hListe = hForm.Controls["Caissiere"]
+  For i = 0 To hListe.Count - 1
+    sRes &= "[" & hListe[i].Text & "]"
+  Next
+  TestKit.Check("T01/nb", hListe.Count)
+  TestKit.Check("T01/liste", sRes)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T04CodeDeuxCar()
+
+  Dim hForm As Object
+  Dim hListe As Object
+  Dim i As Integer
+
+  hForm = New Svendeur
+  hListe = hForm.Controls["Caissiere"]
+  For i = 0 To hListe.Count - 1
+    If hListe[i].Text = "12 BRUNO" Then hListe.Index = i
+  Next
+  TestKit.Check("T04/texte", hListe.Text)
+  hForm.Caissiere_Click()
+  TestKit.Check("T04/fin", "sans message")
+  Object.Lock(hForm)
+
+End

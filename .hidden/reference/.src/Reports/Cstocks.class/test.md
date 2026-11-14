@@ -11,13 +11,13 @@ non modifié**. Le replay passe par les écrans d'inventaire et de dépôts.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CSTOCKS-T01 | gbtest | Valorisation : `Entete`, `Level1`, `Entetefam`, `Level2`, `level3fam`, `Level3`, `BasPage` | 2 familles × 2 lignes, sous-totaux et total « 1234,56 » | texte et flux de référence (recouvrement de `level3fam` figé) | `tests/cstocks_valorisation/` | à faire |
-| CSTOCKS-T02 | gbtest | Feuille de comptage : `Level1G`, `Level2G`, `Lines` | 3 lignes avec casier | flux de référence | `tests/cstocks_comptage/` | à faire |
-| CSTOCKS-T03 | gbtest | Non saisis et écarts : `Level1NS`/`Level2NS`/`Level3NS`, `Level1E`/`Level2E`/`Level3E` | écarts positifs et négatifs | flux de référence | `tests/cstocks_ecarts/` | à faire |
-| CSTOCKS-T04 | gbtest | Dépôts : `Level1D`/`Level2D`, `Level3D`/`Level4D`, `Level1M`/`Level2M` | `/Soc01/Taxe` = « TVA » | libellé de taxe dans l'en-tête ; flux de référence | `tests/cstocks_depots/` | à faire |
-| CSTOCKS-T05 | gbtest | Pagination : 3 × (`Entete` + `BasPage`) | — | « Page 1/3 » à « Page 3/3 » | `tests/cstocks_pied/` | à faire |
-| CSTOCKS-T06 | gbtest | Squelette paginé (après CSTOCKS-006) : `DebutEdition` + 120 lignes + `SautDePageSi` aux seuils 270, 280, 283, 288 | mêmes lignes que les écrans | flux identique à la séquence d'appels actuelle (enregistrée dans le clone non modifié) | `tests/cstocks_squelette/` | à faire |
-| CSTOCKS-T07 | replay | Éditions réelles | scénarios ECARTS-T01, ECARTST-T01, EDNSAISIS-T01, EDINV-T01/T02, GENINV-T01, GENINVT-T01, IMPDEPOTS-T01/T02, EDSDEPOTS-T01 (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump inchangé | `tests/cstocks_editions/` | à faire |
+| CSTOCKS-T01 | gbtest | Valorisation : `Entete`, `Level1`, `Entetefam`, `Level2`, `level3fam`, `Level3`, `BasPage` | 2 familles × 2 lignes, sous-totaux et total « 1234,56 » | texte et flux de référence (recouvrement de `level3fam` figé) | `tests/cstocks_valorisation/` | implémenté (gb.test CstocksTest.T01Valorisation) |
+| CSTOCKS-T02 | gbtest | Feuille de comptage : `Level1G`, `Level2G`, `Lines` | 3 lignes avec casier | flux de référence | `tests/cstocks_comptage/` | implémenté (gb.test CstocksTest.T02Comptage) |
+| CSTOCKS-T03 | gbtest | Non saisis et écarts : `Level1NS`/`Level2NS`/`Level3NS`, `Level1E`/`Level2E`/`Level3E` | écarts positifs et négatifs | flux de référence | `tests/cstocks_ecarts/` | implémenté (gb.test CstocksTest.T03Ecarts) |
+| CSTOCKS-T04 | gbtest | Dépôts : `Level1D`/`Level2D`, `Level3D`/`Level4D`, `Level1M`/`Level2M` | `/Soc01/Taxe` = « TVA » | libellé de taxe dans l'en-tête ; flux de référence | `tests/cstocks_depots/` | implémenté (gb.test CstocksTest.T04Depots) |
+| CSTOCKS-T05 | gbtest | Pagination : 3 × (`Entete` + `BasPage`) | — | « Page 1/3 » à « Page 3/3 » | `tests/cstocks_pied/` | implémenté (gb.test CstocksTest.T05Pagination) |
+| CSTOCKS-T06 | gbtest | Squelette paginé (après CSTOCKS-006) : `DebutEdition` + 120 lignes + `SautDePageSi` aux seuils 270, 280, 283, 288 | mêmes lignes que les écrans | flux identique à la séquence d'appels actuelle (enregistrée dans le clone non modifié) | `tests/cstocks_squelette/` | à faire : après CSTOCKS-006 (extraction) |
+| CSTOCKS-T07 | replay | Éditions réelles | scénarios ECARTS-T01, ECARTST-T01, EDNSAISIS-T01, EDINV-T01/T02, GENINV-T01, GENINVT-T01, IMPDEPOTS-T01/T02, EDSDEPOTS-T01 (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump inchangé | `tests/cstocks_editions/` | à faire : inventaires exclus (complexe) ; ImpDepots/Edsdepots non encore scénarisés |
 
 ## Détail des tests
 

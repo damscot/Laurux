@@ -51,12 +51,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] LIBELTICKET-A01 — [anomalie] Texte vide non enregistrable (impossible d'effacer le texte) ;
+- [ ] LIBELTICKET-A01 — [anomalie] (confirmée phase 2, vague 6 : champ vidé puis enregistré : texte existant conservé (T02)) Texte vide non enregistrable (impossible d'effacer le texte) ;
   `ReplaceLb` altère `"` et `&` ; aucun retour visuel après l'enregistrement (même défaut que
   LIBELFAC-A01) · tests : T02, T03 · sources : [LibelTicket.class:Button2_Click](../../../../../.src/Caisse/LibelTicket.class#L62-L76)
 - [ ] LIBELTICKET-A02 — [anomalie] Écran non instrumenté (`Utils.Observers(Me)` absent) : saisie et
   enregistrement non journalisés, donc non rejouables · tests : T01 · sources : [LibelTicket.class:_New](../../../../../.src/Caisse/LibelTicket.class#L28-L33)
-- [ ] LIBELTICKET-A03 — [anomalie] L'écran annonce 4 lignes de 72 caractères (≈ 291 caractères avec les
+- [ ] LIBELTICKET-A03 — [anomalie] (confirmée phase 2, vague 6 : ~290 caractères tronqués à 250 sans message (T04)) L'écran annonce 4 lignes de 72 caractères (≈ 291 caractères avec les
   sauts de ligne) alors que `libeltk` est un `varchar(250)` : texte tronqué ou erreur SQL selon
   le `sql_mode` (à confirmer). Correction : contrôle de longueur avant l'enregistrement (le
   passage à une colonne plus large relève d'un changement de schéma) · tests : T04 · sources : [LibelTicket.class:Button2_Click](../../../../../.src/Caisse/LibelTicket.class#L62-L76)

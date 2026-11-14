@@ -61,3 +61,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TRIMAT-A03 — [anomalie] Changement de filtre vendu/en stock sans retour à la première page
   (`NbEnreg` conservé) : liste vide possible ; `ChkInput` recharge en ordre croissant même après
   inversion du tri · tests : T03, T02 · sources : [TriMat.class:RadioButton1_Click](../../../../../.src/Affichages/TriMat.class#L418-L424), [TriMat.class:186](../../../../../.src/Affichages/TriMat.class#L186)
+- [ ] TRIMAT-A04 — [anomalie] Tri/filtre par propriétaire : `mat_cli like "%…%"` est faux pour `mat_cli` NULL : les matériels sans client disparaissent de la liste (5 lignes sur 8 dans le jeu) (phase 2, vague 6, 2026-11-14) · tests : T02 · sources : [TriMat.class:97](../../../../../.src/Affichages/TriMat.class#L97), [TriMat.class:257-265](../../../../../.src/Affichages/TriMat.class#L257-L265)

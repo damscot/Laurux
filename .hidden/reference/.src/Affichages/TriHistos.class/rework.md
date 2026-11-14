@@ -61,11 +61,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TRIHISTOS-A01 — [anomalie] `_new` écrit `Four = Four` (paramètre affecté à lui-même) :
+- [ ] TRIHISTOS-A01 — [anomalie] (confirmée phase 2, vague 6 : `Four = Four` : `Cfour` jamais renseigné, constat de T04 (gb.test)) `_new` écrit `Four = Four` (paramètre affecté à lui-même) :
   `Cfour` n'est jamais renseignée, la seconde condition de `Aff_StatAC` (`code = &2`) cherche les
   réceptions de code vide ; les réceptions saisies sous la référence passée par `Articles`
   (`Cfour.text`) n'apparaissent jamais dans l'historique des achats · tests : T04 · sources : [TriHistos.class:19](../../../../../.src/Affichages/TriHistos.class#L19), [TriHistos.class:243](../../../../../.src/Affichages/TriHistos.class#L243), [Articles.class:1456](../../../../../.src/Gestion/Tables/Articles.class#L1456)
-- [ ] TRIHISTOS-A02 — [anomalie] Fournisseur absent de `Fiches_Four` : `fours!fo_nom` /
+- [ ] TRIHISTOS-A02 — [anomalie] (confirmée phase 2, vague 6 : fournisseur absent → « Result is not available », figée par T05) Fournisseur absent de `Fiches_Four` : `fours!fo_nom` /
   `fours!fo_code` lus sans test `Available` dans `Aff_StatAC` et `DocAchat` → erreur non interceptée à
   l'affichage de l'historique ou du détail · tests : T05 · sources : [TriHistos.class:253](../../../../../.src/Affichages/TriHistos.class#L253), [TriHistos.class:647](../../../../../.src/Affichages/TriHistos.class#L647), [TriHistos.class:648](../../../../../.src/Affichages/TriHistos.class#L648)
 - [ ] TRIHISTOS-A03 — [anomalie] (à confirmer en SQLite) La date de début des ventes est passée au
@@ -82,3 +82,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (`Utils.CDec`) est écrite dans la colonne 2 puis écrasée par la désignation ; la colonne 3 reçoit la
   quantité brute et le code n'est affiché que si l'article existe encore (la branche BL est correcte) ·
   tests : T03 · sources : [TriHistos.class:537](../../../../../.src/Affichages/TriHistos.class#L537), [TriHistos.class:538](../../../../../.src/Affichages/TriHistos.class#L538), [TriHistos.class:540](../../../../../.src/Affichages/TriHistos.class#L540)
+- [ ] TRIHISTOS-A06 — [anomalie] `Histo_ventes` : `BlResult!imp = "1"` compare un `tinyint` lu en Booléen à "1" : toujours faux → un BL facturé est affiché sous son numéro de BL (H00002 au lieu de F00009) ; même motif que [EDDOCS-A05](../../Gestion/Impressions/EdDocs.class/rework.md) (phase 2, vague 6, 2026-11-14) · tests : T01, T02 · sources : [TriHistos.class:93](../../../../../.src/Affichages/TriHistos.class#L93), [TriHistos.class:Histo_ventes](../../../../../.src/Affichages/TriHistos.class#L32)

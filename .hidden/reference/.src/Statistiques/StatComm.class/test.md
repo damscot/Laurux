@@ -12,16 +12,16 @@ clique **Traitement**, puis relève l'écran `VisStatComm` ouvert (voir ses test
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| STATCOMM-T01 | replay | Détail par client, factures hors entretien | `statistiques_ventes`, période N, `Facn`, `Detail` coché | dump `Total` : une ligne par client, `brutfac`/`rmfac`/`totfac` cumulés, `commercial` = `cli_comm` | `tests/statcomm_detail_facn/` | à faire |
-| STATCOMM-T02 | replay | Synthèse par commercial | même période, `Detail` décoché | une ligne par commercial ; clients sans commercial ignorés ; `pnmclifac` = prénom d'un client (A04 figée) | `tests/statcomm_synthese/` | à faire |
-| STATCOMM-T03 | replay | Sources entretien / toutes | `Face` puis `Fact` | lignes issues de `HistoFacM`, puis des deux tables (`union`) | `tests/statcomm_sources/` | à faire |
-| STATCOMM-T04 | replay | Cumul N-1 | factures N et N-1 pour un même client ; client vendu en N-1 seulement | `totfacn1` cumulé ; client N-1 seul absent (A03 figée) | `tests/statcomm_n1/` | à faire |
-| STATCOMM-T05 | replay | Client supprimé | facture d'un `cdclifac` absent de `Fiches_Cli`, après une facture d'un autre client | synthèse : montant attribué au commercial précédent (A01 figée) ; détail : erreur figée (A02) | `tests/statcomm_client_absent/` | à faire |
-| STATCOMM-T06 | replay | Période vide et dates inversées | période sans facture ; fin < début (Entrée dans `Dten1`) | « Aucune donnée pour cette période ! » ; `Message.Warning` « sélection n'est pas possible » | `tests/statcomm_cas_limites/` | à faire |
-| STATCOMM-T07 | replay | Option matériel désactivée | `/Soc01/Materiel = 0` | `HBox3` masquée, `Facn` forcé | `tests/statcomm_sans_materiel/` | à faire |
-| STATCOMM-T08 | replay | Base SQLite | `Laurux01.sqlite` + jeu de T01 | même dump `Total` que T01 (aucune fonction MySQL non traduite) | `tests/statcomm_sqlite/` | à faire |
-| STATCOMM-T09 | gbtest | `CalculTotal` (après STATCOMM-006) | jeu de T01-T04, paramètres équivalents | contenu de `Total` identique aux dumps T01-T04 | `tests/statcomm_calcul/` | à faire |
-| STATCOMM-T10 | gbtest | `StatCommun.PeriodeN1` / `DateSaisie` (après STATCOMM-005) | `01.03.2024`, `29.02.2024`, `""`, `"00.00.0:00"` | chaînes de référence (29.02 → 29.02.2023 figé) | `tests/statcommun_dates/` | à faire |
+| STATCOMM-T01 | replay | Détail par client, factures hors entretien | `statistiques_ventes`, période N, `Facn`, `Detail` coché | dump `Total` : une ligne par client, `brutfac`/`rmfac`/`totfac` cumulés, `commercial` = `cli_comm` | `tests/statcomm_detail_facn/` | implémenté (assets/statcomm_detail_facn) |
+| STATCOMM-T02 | replay | Synthèse par commercial | même période, `Detail` décoché | une ligne par commercial ; clients sans commercial ignorés ; `pnmclifac` = prénom d'un client (A04 figée) | `tests/statcomm_synthese/` | implémenté (assets/statcomm_synthese) |
+| STATCOMM-T03 | replay | Sources entretien / toutes | `Face` puis `Fact` | lignes issues de `HistoFacM`, puis des deux tables (`union`) | `tests/statcomm_sources/` | implémenté (assets/statcomm_sources : Fact ; statcomm_sources_entretien : Face) |
+| STATCOMM-T04 | replay | Cumul N-1 | factures N et N-1 pour un même client ; client vendu en N-1 seulement | `totfacn1` cumulé ; client N-1 seul absent (A03 figée) | `tests/statcomm_n1/` | implémenté (couvert par statcomm_detail_facn : totfacn1 411001 = 100, 411005 vendu en N-1 seul absent) |
+| STATCOMM-T05 | replay | Client supprimé | facture d'un `cdclifac` absent de `Fiches_Cli`, après une facture d'un autre client | synthèse : montant attribué au commercial précédent (A01 figée) ; détail : erreur figée (A02) | `tests/statcomm_client_absent/` | implémenté (statcomm_client_absent : A01 ; statcomm_client_absent_detail : A02, code de sortie 125) |
+| STATCOMM-T06 | replay | Période vide et dates inversées | période sans facture ; fin < début (Entrée dans `Dten1`) | « Aucune donnée pour cette période ! » ; `Message.Warning` « sélection n'est pas possible » | `tests/statcomm_cas_limites/` | implémenté (assets/statcomm_cas_limites) |
+| STATCOMM-T07 | replay | Option matériel désactivée | `/Soc01/Materiel = 0` | `HBox3` masquée, `Facn` forcé | `tests/statcomm_sans_materiel/` | implémenté (assets/statcomm_sans_materiel ; masquage de HBox3 non observable, seul Facn forcé l'est) |
+| STATCOMM-T08 | replay | Base SQLite | `Laurux01.sqlite` + jeu de T01 | même dump `Total` que T01 (aucune fonction MySQL non traduite) | `tests/statcomm_sqlite/` | à faire : rejeu sur base SQLite non outillé (runner sur MariaDB) |
+| STATCOMM-T09 | gbtest | `CalculTotal` (après STATCOMM-006) | jeu de T01-T04, paramètres équivalents | contenu de `Total` identique aux dumps T01-T04 | `tests/statcomm_calcul/` | à faire : extraction STATCOMM-006 (CalculTotal) non faite |
+| STATCOMM-T10 | gbtest | `StatCommun.PeriodeN1` / `DateSaisie` (après STATCOMM-005) | `01.03.2024`, `29.02.2024`, `""`, `"00.00.0:00"` | chaînes de référence (29.02 → 29.02.2023 figé) | `tests/statcommun_dates/` | à faire : extraction STATCOMM-005 (StatCommun) non faite |
 
 ## Détail des tests
 
@@ -53,3 +53,4 @@ clique **Traitement**, puis relève l'écran `VisStatComm` ouvert (voir ses test
 - **Isolation** : la table `Total` est partagée ; les replays du lot doivent tourner **en série**
   sur une base dédiée (sinon STATCOMM-A05 rend les dumps instables).
 - T02, T04 et T05 caractérisent des anomalies ; ils seront mis à jour avec leur correction.
+- Phase 2 : jeu réalisé `.hidden/Tests/Statistiques/assets/statcomm_shared/statistiques_ventes.sql` (commerciaux, factures HistoFac/HistoFacM N et N-1 ; réceptions et promotions dans des jeux séparés `statfour_shared/`, `statpromo_shared/`, `stattypcli_shared/`). Fenêtre de résultat nommée `VisStatcomm` au rejeu (nom de la variable de StatComm).

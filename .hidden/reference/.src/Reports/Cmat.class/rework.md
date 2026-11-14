@@ -39,3 +39,8 @@
   `CouleurTheme`, `Entete` → `TitrePage`, `Footer` → `PiedDePage(190)` ; `Level1`/`Level2` via
   `EnteteColonnes`/`LigneColonnes` (CARTICLES-005) ; flux identique · appelants : aucun · tests :
   T01, T02 · sources : [Cmat.class:Entete](../../../../../.src/Reports/Cmat.class#L22-L29), [Cmat.class:Footer](../../../../../.src/Reports/Cmat.class#L32-L38), [Cmat.class:Level1](../../../../../.src/Reports/Cmat.class#L41-L54), [Cmat.class:Level2](../../../../../.src/Reports/Cmat.class#L57-L72)
+
+### Anomalies : changement de comportement, validation utilisateur requise
+
+- [ ] CMAT-A01 — [amélioration][tests] Tests portés par les classes appelantes : CMAT-T02 ne sont couverts que par des tests d'autres classes (CMAT-T02 : couvert par Gestion/edmat_tous (EDMAT-T01) et Gestion/edmat_vendus_stock (EDMAT-T02), edition.txt) ; à rapatrier dans la classe (module .test ou scénarios dans ses assets), puis à alléger dans les appelants pour éviter le double comptage (phase 2, vague 6, 2026-11-14, décision utilisateur du 2026-11-14) · tests : CMAT-T02 · sources : [test.md](test.md)
+

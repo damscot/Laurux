@@ -47,7 +47,7 @@
 
 ### Anomalies : changement de comportement, validation utilisateur requise
 
-- [ ] IMPCPOSTAUX-A01 — [anomalie] Ligne sans `;` : valeurs incohérentes insérées · tests : T03 · sources : [Impcpostaux.class:26-28](../../../../../../.src/Utils/Exports-Imports/Impcpostaux.class#L26-L28)
+- [ ] IMPCPOSTAUX-A01 — [anomalie] (précisée phase 2, vague 6 : ligne sans « ; » final (`PARIS 01;75001`) : `InStr` = 0 puis `Left$(Lig, 0 - 1)` perd le dernier caractère du CP, complété à 5 chiffres (`07500`) ; `PARIS` → cp `0PARI`, ville `PARI` ; `PARIS;` → cp NULL (l. 28-29) ; le format attendu « ville;cp; » n'est documenté nulle part (T03)) Ligne sans `;` : valeurs incohérentes insérées · tests : T03 · sources : [Impcpostaux.class:26-28](../../../../../../.src/Utils/Exports-Imports/Impcpostaux.class#L26-L28)
 - [ ] IMPCPOSTAUX-A02 — [anomalie] Fichier jamais fermé ; musique sans `Music.Load` ni test de
   `Start.Son` ; messages hors i18n · tests : T01 · sources : [Impcpostaux.class:21](../../../../../../.src/Utils/Exports-Imports/Impcpostaux.class#L21), [Impcpostaux.class:40-46](../../../../../../.src/Utils/Exports-Imports/Impcpostaux.class#L40-L46)
 - [ ] IMPCPOSTAUX-A03 — [anomalie] Un code postal vide est inséré (alors que `Enrgcp.Ecp` l'ignore) ;

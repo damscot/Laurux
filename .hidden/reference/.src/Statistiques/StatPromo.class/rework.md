@@ -49,12 +49,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATPROMO-A01 — [anomalie] `Pvht += pht` et `Pvttc += pttc` sans protection : un prix NULL
+- [ ] STATPROMO-A01 — [anomalie] (confirmée phase 2, vague 6 : pht NULL : `Affichage.200` (T05, code 125)) `Pvht += pht` et `Pvttc += pttc` sans protection : un prix NULL
   dans `Fiches_ArtPromo` (colonnes nullables) provoque une erreur de type (à confirmer par T05) ·
   tests : T05 · sources : [StatPromo.class:200](../../../../../.src/Statistiques/StatPromo.class#L200), [StatPromo.class:201](../../../../../.src/Statistiques/StatPromo.class#L201)
 - [ ] STATPROMO-A02 — [anomalie] Totaux `Tht`/`Tttc` = somme des prix unitaires, non pondérés par
   la quantité vendue, alors que `Tmarge` l'est : totaux sans signification commerciale ·
   tests : T01 · sources : [StatPromo.class:200](../../../../../.src/Statistiques/StatPromo.class#L200), [StatPromo.class:204](../../../../../.src/Statistiques/StatPromo.class#L204)
-- [ ] STATPROMO-A03 — [anomalie] `Button1_Click` teste `Label1` (code validé) mais `Affichage`
+- [ ] STATPROMO-A03 — [anomalie] (confirmée phase 2, vague 6 : code retapé sans Entrée utilisé, `Label1` montre l'ancien (T04)) `Button1_Click` teste `Label1` (code validé) mais `Affichage`
   lit `CodeP.Text` : un code retapé sans Entrée affiche une autre promotion que celle annoncée ·
   tests : T04 · sources : [StatPromo.class:141](../../../../../.src/Statistiques/StatPromo.class#L141), [StatPromo.class:189](../../../../../.src/Statistiques/StatPromo.class#L189)

@@ -1,0 +1,23 @@
+{
+ "id": "CBALANCES-T06",
+ "classe": "Cbalances",
+ "dataset": "Compta/extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "objet": "État de TVA annuel (texte PDF)",
+ "description": "Récapitulatif TVA (Menu263, FTVA), jeu Compta extrait_base, RadioBtnAnnuel (année 2018 par défaut), Imprimer (Button2) : texte pdftotext de TVA.pdf (Cbalances) comparé ; Fermer."
+}

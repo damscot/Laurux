@@ -1,0 +1,20 @@
+{
+ "id": "RELVMO-T03",
+ "objet": "Date invalide",
+ "classe": "RelvMo",
+ "description": "DteN0 = 3202 puis Traitement : Utils.Cdate_calc affiche Message.Error « Il y a une incohérence dans votre saisie » (Entrée) puis rend une date ; b reste à 0 et le traitement s'exécute (DROP/CREATE de Fiches_Stat, 7 lignes : facture du 01.01.2018 exclue).",
+ "dataset": "relvmo_shared/relvmo_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "xfail": "Cdate_calc intercepte l'erreur de date (Message.Error + date de repli) : le Catch de DteN0_LostFocus n'est jamais atteint, le traitement est lancé",
+ "xfail_attendu": "message « Veuillez saisir votre date SVP », Fiches_Stat non recréée"
+}

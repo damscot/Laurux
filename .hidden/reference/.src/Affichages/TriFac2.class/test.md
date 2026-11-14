@@ -8,13 +8,13 @@ enregistrement du document créé ; lignes `Exec_SQL` à titre informatif.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRIFAC2-T01 | replay | Reprise d'un BL en cours | `Facture` : nouveau document, `Button25`, mode « en cours », clic sur un BL, enregistrement | lignes reprises du BL choisi (`Fiches_Bl`, `Fiches_Ligbl`) | `tests/reprise_bl/` | à faire |
-| TRIFAC2-T02 | replay | Reprise d'une facture archivée | idem en mode `Archives` ; tri `NMF`, filtre `NM` | lignes reprises de `Fiches_HistoLigfac` ; numéro de BL vide dans la grille | `tests/reprise_archive/` | à faire |
-| TRIFAC2-T03 | replay | Tri, filtre, date, double-clic, pagination | chaque en-tête, `DA` `0101`/`01012025`, double-clic ×2, PageDown/molette | grilles et requêtes de référence ; figer A02 (second double-clic en archives) | `tests/tri_pagination/` | à faire |
-| TRIFAC2-T04 | replay | Changement de source | filtre `DU` sur `NM` en cours, page 2, puis `Archives`, puis `Encours` | figer le filtre et le décalage conservés (A03) | `tests/changement_source/` | à faire |
-| TRIFAC2-T05 | replay | Retour arrière sur la date en archives | `Archives`, `DA`, saisie `01` puis 2 retours arrière | figer l'erreur SQL (A01 : `datefac` sur `Fiches_Bl`) | `tests/date_archives/` | à faire |
-| TRIFAC2-T06 | replay | Fermeture sans choix | après une reprise réussie, nouveau document, `Button25`, Échap dans un en-tête | figer le rechargement de l'ancien document (A04) | `tests/fermeture/` | à faire |
-| TRIFAC2-T07 | gbtest | `RequeteDocuments` (après TRIFAC2-009) | source en cours/archives, tri, filtre, sens, pages | texte SQL identique au clone non modifié | `tests/requete_documents/` | à faire |
+| TRIFAC2-T01 | replay | Reprise d'un BL en cours | `Facture` : nouveau document, `Button25`, mode « en cours », clic sur un BL, enregistrement | lignes reprises du BL choisi (`Fiches_Bl`, `Fiches_Ligbl`) | `tests/reprise_bl/` | à faire : passe par Facture (écran complexe) |
+| TRIFAC2-T02 | replay | Reprise d'une facture archivée | idem en mode `Archives` ; tri `NMF`, filtre `NM` | lignes reprises de `Fiches_HistoLigfac` ; numéro de BL vide dans la grille | `tests/reprise_archive/` | à faire : passe par Facture (écran complexe) |
+| TRIFAC2-T03 | replay | Tri, filtre, date, double-clic, pagination | chaque en-tête, `DA` `0101`/`01012025`, double-clic ×2, PageDown/molette | grilles et requêtes de référence ; figer A02 (second double-clic en archives) | `tests/tri_pagination/` | implémenté partiellement (gb.test TriFac2Test.T03TriPagination : en cours et archives, clic sur chaque en-tête, double-clic DA x2, Descendre/Remonter) ; à faire : saisies DA (KeyPress), molette |
+| TRIFAC2-T04 | replay | Changement de source | filtre `DU` sur `NM` en cours, page 2, puis `Archives`, puis `Encours` | figer le filtre et le décalage conservés (A03) | `tests/changement_source/` | implémenté partiellement (gb.test TriFac2Test.T04ChangementSource : client, tri NM, Archives puis Encours) ; à faire : filtre saisi DU (KeyPress) pour figer A03 |
+| TRIFAC2-T05 | replay | Retour arrière sur la date en archives | `Archives`, `DA`, saisie `01` puis 2 retours arrière | figer l'erreur SQL (A01 : `datefac` sur `Fiches_Bl`) | `tests/date_archives/` | à faire : saisie dans DA (KeyPress lit Key, non appelable en gb.test) |
+| TRIFAC2-T06 | replay | Fermeture sans choix | après une reprise réussie, nouveau document, `Button25`, Échap dans un en-tête | figer le rechargement de l'ancien document (A04) | `tests/fermeture/` | à faire : passe par Facture (écran complexe) |
+| TRIFAC2-T07 | gbtest | `RequeteDocuments` (après TRIFAC2-009) | source en cours/archives, tri, filtre, sens, pages | texte SQL identique au clone non modifié | `tests/requete_documents/` | à faire : après extraction TRIFAC2-009 |
 
 ## Détail des tests
 
@@ -26,3 +26,4 @@ enregistrement du document créé ; lignes `Exec_SQL` à titre informatif.
 - **T05** : l'erreur SQL passe par `DB_Connection.Exec` (`Message.Error`) ; le scénario doit
   fermer le message.
 - **Rejeu** : `ColFac_Click` doit rester `Public` ; géométrie de la grille fixée (calcul de `lg`).
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Affichages/TriFac2Test.test` (écran instancié sans affichage, gestionnaires publics appelés directement) ; jeu de données `.hidden/Tests/Affichages/assets/trifac2_shared/documents.sql` ; attendus `assets/TriFac2Test/expected.txt`.

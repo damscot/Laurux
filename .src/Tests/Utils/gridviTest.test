@@ -1,0 +1,140 @@
+' Gambas test file
+
+''Tests de gridvi (.hidden/reference/.src/Utils/gridvi.class/test.md, GRIDVI-T01 à T04, T06, T07 en gb.test).
+''Le composant est instancié dans une Window non affichée (TabStrip d'un onglet), son code est posé puis
+''bouton_Click calcule les statistiques ; on relève les en-têtes de lignes et de colonnes et le texte de chaque
+''cellule de la grille (une clé par ligne). Jeu gridvi_shared/gridvi_stats (factures 2017 et 2018) ; code le plus facturé de chaque type.
+''sousfam_click (bouton « Familles ») lit Last : non appelable hors clic réel. T05 et T10 (fenêtre de détail ShowModal de grdv_MouseUp), T08 (SQLite) et T09 (après extraction) restent à faire.
+''Valeurs attendues : assets/gridviTest/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Article", "Type A : article le plus facturé, bouton Calcul, grille 13 x 12")
+  TestKit.Desc("T02MainOeuvre", "Type M : main d'oeuvre la plus facturée")
+  TestKit.Desc("T03Famille", "Type S (sous-familles, LOCATE) puis type F (famille exacte) sur la famille FA01")
+  TestKit.Desc("T04Client", "Type C : client le plus facturé")
+  TestKit.Desc("T06Tournee", "Type T : tournée la plus facturée (dec non fixé)")
+  TestKit.Desc("T07Exercice", "Clôture au 30/06 : en-têtes et ordre des mois (type A)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "gridviTest")
+  TestKit.OuvreBase("gridvi_shared/gridvi_stats")
+
+End
+
+Private Function Premier(sReq As String) As String
+
+  Dim r As Result
+
+  Try r = Utils.db.Exec(sReq)
+  If Error Then Return "ERREUR: " & Error.Text
+  If Not r.Available Then Return ""
+  Return r!c
+
+End
+
+Private Function Grille(hCont As Object) As GridView
+
+  Dim hCtrl As Object
+  Dim hG As GridView
+
+  For Each hCtrl In hCont.Children
+    If hCtrl Is GridView Then Return hCtrl
+    If hCtrl Is Container Then
+      hG = Grille(hCtrl)
+      If hG Then Return hG
+    Endif
+  Next
+  Return Null
+
+End
+
+Private Sub Releve(sCle As String, sType As String, sCode As String)
+
+  Dim hWin As New Window
+  Dim hTab As TabStrip
+  Dim hGv As Gridvi
+  Dim hG As GridView
+  Dim i As Integer
+  Dim j As Integer
+  Dim sLig As String
+
+  TestKit.Check(sCle & "/code", sCode)
+  hWin.Resize(900, 500)
+  hTab = New TabStrip(hWin)
+  hTab.Resize(880, 480)
+  hTab.Count = 1
+  Try hGv = New Gridvi(hTab, sType)
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hGv.code = sCode
+  Try hGv.bouton_Click()
+  TestKit.Check(sCle & "/erreur", IIf(Error, Error.Text, ""))
+  hG = Grille(hWin)
+  If Not hG Then
+    TestKit.Check(sCle & "/grille", "absente")
+    Return
+  Endif
+  TestKit.Check(sCle & "/dims", hG.Rows.Count & " x " & hG.Columns.Count)
+  sLig = ""
+  For j = 0 To hG.Columns.Count - 1
+    sLig &= hG.Columns[j].Text & " | "
+  Next
+  TestKit.Check(sCle & "/colonnes", sLig)
+  For i = 0 To hG.Rows.Count - 1
+    sLig = hG.Rows[i].Text & " :"
+    For j = 0 To hG.Columns.Count - 1
+      sLig &= " " & hG[i, j].Text
+    Next
+    TestKit.Check(sCle & "/r" & Format$(i, "00"), sLig)
+  Next
+  hWin.Delete()
+
+End
+
+Public Sub T01Article()
+
+  Releve("T01", "A", Premier("SELECT code_ligfac AS c FROM Fiches_HistoLigfac WHERE typel_ligfac = 'A' GROUP BY code_ligfac ORDER BY COUNT(*) DESC, code_ligfac LIMIT 1"))
+
+End
+
+Public Sub T02MainOeuvre()
+
+  Releve("T02", "M", Premier("SELECT code_ligfac AS c FROM Fiches_HistoLigfac WHERE typel_ligfac = 'M' GROUP BY code_ligfac ORDER BY COUNT(*) DESC, code_ligfac LIMIT 1"))
+
+End
+
+Public Sub T03Famille()
+
+  Dim sFam As String = Premier("SELECT fam_ligfac AS c FROM Fiches_HistoLigfac WHERE typel_ligfac IN ('A', 'M') AND fam_ligfac = 'FA01' GROUP BY fam_ligfac ORDER BY COUNT(*) DESC, fam_ligfac LIMIT 1")
+
+  Releve("T03/S", "S", sFam)
+  Releve("T03/F", "F", sFam)
+
+End
+
+Public Sub T04Client()
+
+  Releve("T04", "C", Premier("SELECT cdclifac AS c FROM Fiches_HistoFac GROUP BY cdclifac ORDER BY COUNT(*) DESC, cdclifac LIMIT 1"))
+
+End
+
+Public Sub T06Tournee()
+
+  Releve("T06", "T", Premier("SELECT tour_ligfac AS c FROM Fiches_HistoLigfac WHERE tour_ligfac <> '' GROUP BY tour_ligfac ORDER BY COUNT(*) DESC, tour_ligfac LIMIT 1"))
+
+End
+
+Public Sub T07Exercice()
+
+  Try Utils.db.Exec("UPdate Fiches_Parametres SET dteclec = &1", "2017-06-30")
+  TestKit.Check("T07/maj", IIf(Error, Error.Text, ""))
+  Releve("T07", "A", Premier("SELECT code_ligfac AS c FROM Fiches_HistoLigfac WHERE typel_ligfac = 'A' GROUP BY code_ligfac ORDER BY COUNT(*) DESC, code_ligfac LIMIT 1"))
+
+End

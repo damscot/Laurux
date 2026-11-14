@@ -80,7 +80,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FCLIENTCARTE-A01 — [anomalie] `Button4_Click` (modification) : `tel_dom = &{10}, tel_bur =
+- [ ] FCLIENTCARTE-A01 — [anomalie] (confirmée phase 2, vague 6 : après modification, `tel_dom` et `tel_bur` enregistrés inversés (T02)) `Button4_Click` (modification) : `tel_dom = &{10}, tel_bur =
   &{11}` reçoivent `Telbur`, `Teldom` → **les téléphones domicile et bureau sont inversés à chaque
   enregistrement d'une carte existante** (l'INSERT est correct) · tests : T02 · sources : [FClientcarte.class:597](../../../../../.src/Caisse/FClientcarte.class#L597), [FClientcarte.class:585](../../../../../.src/Caisse/FClientcarte.class#L585)
 - [ ] FCLIENTCARTE-A02 — [anomalie] Sélection du code postal cassée : `Cpman` ouvre

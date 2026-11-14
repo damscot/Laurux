@@ -11,12 +11,12 @@ horloge figée. Valeurs attendues produites dans le clone **Laurux non modifié*
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RAZHISTOFBL-T01 | replay | Purge nominale | jeu `receptions_base` : réceptions validées avant, le jour même et après la date (numéros distincts) ; « Oui » | réceptions strictement antérieures et leurs lignes supprimées | `tests/razhistofbl_nominal/` | à faire |
-| RAZHISTOFBL-T02 | replay | Abandon | « Non » | tables inchangées | `tests/razhistofbl_abandon/` | à faire |
-| RAZHISTOFBL-T03 | replay | Même numéro, deux fournisseurs | réception `F1/1234` antérieure, `F2/1234` postérieure | comportement figé : **les deux** supprimées avec leurs lignes (A01) | `tests/razhistofbl_meme_numero/` | à faire |
-| RAZHISTOFBL-T04 | replay | Réception non validée | réception `validee = 0` antérieure | comportement figé : supprimée (A03) | `tests/razhistofbl_non_validee/` | à faire |
-| RAZHISTOFBL-T05 | replay | Effet sur le stock | inventaire `Fiches_HisInvT` antérieur à la date, purge, puis recalcul `Calcstock` | stock recalculé figé (diminué des réceptions purgées, A03) | `tests/razhistofbl_stock/` | à faire |
-| RAZHISTOFBL-T06 | replay | Sauvegarde et SQLite | T01 sans `mysqldump` ; T01 sur `Laurux01.sqlite` | purge faite sans sauvegarde (A02) ; SQLite figé (A04) | `tests/razhistofbl_sauvegarde_sqlite/` | à faire |
+| RAZHISTOFBL-T01 | replay | Purge nominale | jeu `receptions_base` : réceptions validées avant, le jour même et après la date (numéros distincts) ; « Oui » | réceptions strictement antérieures et leurs lignes supprimées | `tests/razhistofbl_nominal/` | implémenté |
+| RAZHISTOFBL-T02 | replay | Abandon | « Non » | tables inchangées | `tests/razhistofbl_abandon/` | implémenté |
+| RAZHISTOFBL-T03 | replay | Même numéro, deux fournisseurs | réception `F1/1234` antérieure, `F2/1234` postérieure | comportement figé : **les deux** supprimées avec leurs lignes (A01) | `tests/razhistofbl_meme_numero/` | implémenté |
+| RAZHISTOFBL-T04 | replay | Réception non validée | réception `validee = 0` antérieure | comportement figé : supprimée (A03) | `tests/razhistofbl_non_validee/` | implémenté |
+| RAZHISTOFBL-T05 | replay | Effet sur le stock | inventaire `Fiches_HisInvT` antérieur à la date, purge, puis recalcul `Calcstock` | stock recalculé figé (diminué des réceptions purgées, A03) | `tests/razhistofbl_stock/` | à faire : recalcul Calcstock non abordé (premier passage) |
+| RAZHISTOFBL-T06 | replay | Sauvegarde et SQLite | T01 sans `mysqldump` ; T01 sur `Laurux01.sqlite` | purge faite sans sauvegarde (A02) ; SQLite figé (A04) | `tests/razhistofbl_sauvegarde_sqlite/` | à faire : « sans mysqldump » demande un PATH réduit (outillage) ; SQLite non pris en charge par le runner |
 
 ## Détail des tests
 
@@ -26,3 +26,4 @@ horloge figée. Valeurs attendues produites dans le clone **Laurux non modifié*
 - **Horloge** : figée ; date limite choisie par le scénario.
 - **Instrumentation** : écran sans `Utils.Observers` (décision de phase 2).
 - **Comparaison** : dump des deux tables ; pour T05, `Fiches_Art.art_stkdep` après recalcul.
+- **Assets (phase 2)** : `.hidden/Tests/Archivages/assets/razhistofbl_{nominal,abandon,meme_numero,non_validee}/`, jeux `razhistofbl_shared/receptions_base.sql`, `meme_numero.sql`, `non_validee.sql`. Date limite = date figée 2018-06-15.

@@ -11,13 +11,13 @@ Comparaisons : dump normalisé de `Total` (trié par `cdfour`), messages `Balloo
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| STATFOUR-T01 | replay | Une réception par fournisseur | période N, une réception N et une N-1 par fournisseur | `montant`, `montant1` exacts | `tests/statfour_simple/` | à faire |
-| STATFOUR-T02 | replay | N-1 multiplié | fournisseur avec 3 réceptions N et 2 N-1 | `montant1` = 3 × total N-1 (A01 figée) | `tests/statfour_n1/` | à faire |
-| STATFOUR-T03 | replay | Fournisseur supprimé | réceptions d'un fournisseur absent de `Fiches_Four` après un autre | `nmfour` = nom du précédent (A03 figée) | `tests/statfour_four_absent/` | à faire |
-| STATFOUR-T04 | replay | Réceptions non validées et montant NULL | `validee = 0` ; `montant` NULL | réception non validée comptée ; erreur figée pour NULL (A04) | `tests/statfour_validee/` | à faire |
-| STATFOUR-T05 | replay | Cas limites | période vide ; fin < début | `Message.Warning` « Aucune donnée » ; `Balloon.Warning` | `tests/statfour_cas_limites/` | à faire |
-| STATFOUR-T06 | replay | SQLite | `Laurux01.sqlite` + jeu de T01 | même dump que T01 | `tests/statfour_sqlite/` | à faire |
-| STATFOUR-T07 | gbtest | `CalculTotal` (après STATFOUR-006) | jeu de T01-T03 | `Total` identique | `tests/statfour_calcul/` | à faire |
+| STATFOUR-T01 | replay | Une réception par fournisseur | période N, une réception N et une N-1 par fournisseur | `montant`, `montant1` exacts | `tests/statfour_simple/` | implémenté (assets/statfour_simple, jeu statfour_shared/statfour_receptions) |
+| STATFOUR-T02 | replay | N-1 multiplié | fournisseur avec 3 réceptions N et 2 N-1 | `montant1` = 3 × total N-1 (A01 figée) | `tests/statfour_n1/` | implémenté (couvert par statfour_simple : 401002 montant1 = 36 = 3 × 12, A01) |
+| STATFOUR-T03 | replay | Fournisseur supprimé | réceptions d'un fournisseur absent de `Fiches_Four` après un autre | `nmfour` = nom du précédent (A03 figée) | `tests/statfour_four_absent/` | implémenté (couvert par statfour_simple : 409999 nmfour = C Divers, A03) |
+| STATFOUR-T04 | replay | Réceptions non validées et montant NULL | `validee = 0` ; `montant` NULL | réception non validée comptée ; erreur figée pour NULL (A04) | `tests/statfour_validee/` | implémenté (non validée comptée : statfour_simple ; montant NULL : statfour_validee, code de sortie 125, A04) |
+| STATFOUR-T05 | replay | Cas limites | période vide ; fin < début | `Message.Warning` « Aucune donnée » ; `Balloon.Warning` | `tests/statfour_cas_limites/` | implémenté (assets/statfour_cas_limites ; Balloon.Warning non capturé) |
+| STATFOUR-T06 | replay | SQLite | `Laurux01.sqlite` + jeu de T01 | même dump que T01 | `tests/statfour_sqlite/` | à faire : rejeu sur base SQLite non outillé (runner sur MariaDB) |
+| STATFOUR-T07 | gbtest | `CalculTotal` (après STATFOUR-006) | jeu de T01-T03 | `Total` identique | `tests/statfour_calcul/` | à faire : extraction STATFOUR-006 (CalculTotal) non faite |
 
 ## Détail des tests
 

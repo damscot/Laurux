@@ -1,0 +1,21 @@
+{
+ "id": "HISTOCLIART-T04",
+ "classe": "Histocliart",
+ "objet": "Toutes les sources sauf tickets",
+ "description": "Menu Statistiques › Statistiques et relevés détaillés. Coche documents entretien et factures entretien archivées, types Pro, Dev, Com en plus de BL et Fac ; Exporter (bouton 2 « Non ») ; Quitter. SQL à 4 sous-requêtes ; CSV comparé. Lecture seule : sql.log comparé.",
+ "dataset": "histocliart_shared/ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "fichiers": [
+  "tmp/HistoVente.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

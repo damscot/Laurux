@@ -7,7 +7,7 @@ Classe morte : aucun comportement à figer.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CECHEANCIER-T01 | gbtest | Non-régression de la suppression | `gbc3 -agt` puis `./Laurux -T all` après suppression ; `grep -rni "\bcecheancier\b" .src .project` | compilation sans erreur, suite verte, aucune occurrence | `tests/suppression/` | à faire |
+| CECHEANCIER-T01 | gbtest | Non-régression de la suppression | `gbc3 -agt` puis `./Laurux -T all` après suppression ; `grep -rni "\bcecheancier\b" .src .project` | compilation sans erreur, suite verte, aucune occurrence | `tests/suppression/` | à faire : test de la suppression de la classe (phase 4) ; rien à exécuter avant |
 
 ## Détail des tests
 

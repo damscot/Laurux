@@ -68,7 +68,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RELMOPROD-A01 — [anomalie] Clé (code, client, facture) et `INSERT` seulement si absent : une
+- [ ] RELMOPROD-A01 — [anomalie] (confirmée phase 2, vague 6 : ligne répétée ignorée, figée par T01 (`relmoprod_tous`)) Clé (code, client, facture) et `INSERT` seulement si absent : une
   deuxième ligne du même code dans la même facture est perdue (quantité et montant) · tests : T01 ·
   sources : [RelMoprod.class:198](../../../../../.src/Statistiques/RelMoprod.class#L198), [RelMoprod.class:215](../../../../../.src/Statistiques/RelMoprod.class#L215), [RelMoprod.class:232](../../../../../.src/Statistiques/RelMoprod.class#L232)
 - [ ] RELMOPROD-A02 — [anomalie] Période des factures en cours filtrée sur `datebl` (et non `dtefac`)
@@ -86,10 +86,12 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] RELMOPROD-A06 — [anomalie] Saisie client : un code tapé à la main dans `Code` n'est jamais
   contrôlé (`compteMan` jamais appelée) ; filtre `like "%<sel>%"` construit par concaténation (le collage
   contourne le filtre de touches `ChkInput`) · tests : T02, T08 · sources : [RelMoprod.class:Cmpt_KeyPress](../../../../../.src/Statistiques/RelMoprod.class#L90-L113), [RelMoprod.class:809](../../../../../.src/Statistiques/RelMoprod.class#L809), [RelMoprod.class:815](../../../../../.src/Statistiques/RelMoprod.class#L815)
-- [ ] RELMOPROD-A07 — [anomalie] Impression : en mode par produit, `Baspage` est émis avant le premier
+- [ ] RELMOPROD-A07 — [anomalie] (confirmée phase 2, vague 6 : tri par produit (RB4) : `pdf.Baspage()` avant le 1er `EnteteN` (l. 421), constat T05) Impression : en mode par produit, `Baspage` est émis avant le premier
   en-tête et le saut de page (`Controle`) n'appelle pas `Baspage` et repart à 30 mm (13 mm ailleurs) ;
   en mode par client, la ligne d'en-tête client ne déclenche pas de saut de page et `cli_nom` est lu
   sans test (client supprimé → erreur) · tests : T04, T05 · sources : [RelMoprod.class:421](../../../../../.src/Statistiques/RelMoprod.class#L421), [RelMoprod.class:Controle](../../../../../.src/Statistiques/RelMoprod.class#L478-L491), [RelMoprod.class:367](../../../../../.src/Statistiques/RelMoprod.class#L367)
-- [ ] RELMOPROD-A08 — [anomalie, sans effet visible] (relevée au lot Reports) l. 401 et 461 :
+- [ ] RELMOPROD-A08 — [anomalie, sans effet visible] (confirmée phase 2, vague 6 : `pdf.Footer()` sans effet, pas de « Page n/m » (T04, T05)) (relevée au lot Reports) l. 401 et 461 :
   `pdf.Footer()` est sans effet (`Cdocuments` ne surcharge pas `Footer`, `PdfWriter.Footer` est vide) :
   le pied de page attendu n'est jamais imprimé · tests : T01 · sources : [RelMoprod.class:401](../../../../../.src/Statistiques/RelMoprod.class#L401), [RelMoprod.class:461](../../../../../.src/Statistiques/RelMoprod.class#L461)
+- [ ] RELMOPROD-A09 — [anomalie] Impression par produit (RB4) : titre de la 1re page « … Client/MO et Produit » (l. 422) et des pages suivantes « … MO et Produit/Client » (l. 435, `Controle` l. 484) (phase 2, vague 6, 2026-11-14) · tests : T05 · sources : [RelMoprod.class:422](../../../../../.src/Statistiques/RelMoprod.class#L422), [RelMoprod.class:435](../../../../../.src/Statistiques/RelMoprod.class#L435), [RelMoprod.class:Controle](../../../../../.src/Statistiques/RelMoprod.class#L478-L490)
+- [ ] RELMOPROD-A10 — [anomalie, à confirmer] `RB3_Click`/`RB4_Click` vident la liste (`Rlcli.clear`) : changer l'ordre d'impression après un traitement oblige à relancer le traitement (intention à confirmer) (phase 2, vague 6, 2026-11-14) · tests : T04, T05 · sources : [RelMoprod.class:RB3_Click](../../../../../.src/Statistiques/RelMoprod.class#L514-L524)

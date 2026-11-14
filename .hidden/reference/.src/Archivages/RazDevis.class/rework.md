@@ -47,10 +47,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RAZDEVIS-A01 — [anomalie, à confirmer] Tables liées non purgées → orphelins :
+- [ ] RAZDEVIS-A01 — [anomalie, à confirmer] (confirmée phase 2, vague 6 : adresse de livraison du devis purgé conservée (dump, T01)) Tables liées non purgées → orphelins :
   `Fiches_AdrlivBL`, `Fiches_EntMat`, `Fiches_Suivis.numdev`, `Docs_Ged`. Correction : supprimer
   aussi ces lignes (comme `ObjFacB` pour l'adresse de livraison) · tests : T01 · sources : [RazDevis.class:36-37](../../../../../.src/Archivages/RazDevis.class#L36-L37), [ObjFacB.class:1094](../../../../../.src/Gestion/option/ObjFacB.class#L1094)
-- [ ] RAZDEVIS-A02 — [anomalie] Sauvegarde : fichier `EffaceD.sql` partagé avec `RazClientd`
+- [ ] RAZDEVIS-A02 — [anomalie] (confirmée phase 2, vague 6 : même fichier `~/Sauve/Laurux01EffaceD.sql` que RazClientd, la 2e purge écrase la sauvegarde de la 1re (RAZCLIENTD-T04)) Sauvegarde : fichier `EffaceD.sql` partagé avec `RazClientd`
   (écrasement mutuel), code retour de `mysqldump` ignoré, mot de passe en clair · tests : T04 ·
   sources : [RazDevis.class:29](../../../../../.src/Archivages/RazDevis.class#L29)
 - [ ] RAZDEVIS-A03 — [anomalie] Libellés du `.form` copiés de `RazHistoFac` : titre « Epuration des

@@ -97,7 +97,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ARCHIVES-A05 — [anomalie, à confirmer] `rmail!cli_id_tva` lu sans test `Available` : pour une
   facture dont le client a été supprimé, erreur attrapée par `Catch` et détail non affiché ;
   `TvaCli` n'est d'ailleurs jamais relu · tests : T12 · sources : [Archives.class:1225-1232](../../../../../.src/Archivages/Archives.class#L1225-L1232)
-- [ ] ARCHIVES-A06 — [anomalie] Filtres et recherches construits par concaténation
+- [ ] ARCHIVES-A06 — [anomalie] (confirmée phase 2, vague 6 : guillemet tapé dans `NO` → Query failed non attrapée (`Deb2` l. 295 depuis `NO_KeyPress`), T13 en xfail ; le même cas est attrapé dans ArchivesTck) Filtres et recherches construits par concaténation
   (`like "%<saisie>%"`) : un `"` provoque une erreur SQL, `%`/`_` élargissent le filtre.
   Correction : `LIKE &1` (SQL modifié) · tests : T13 · sources : [Archives.class:293](../../../../../.src/Archivages/Archives.class#L293), [Archives.class:905](../../../../../.src/Archivages/Archives.class#L905), [Archives.class:945](../../../../../.src/Archivages/Archives.class#L945), [Archives.class:986](../../../../../.src/Archivages/Archives.class#L986)
 - [ ] ARCHIVES-A07 — [anomalie, à confirmer] SQLite : `order by abs(lpad(…))` est traduit par

@@ -1,0 +1,21 @@
+{
+ "id": "HISTOCLIART-T02",
+ "classe": "Histocliart",
+ "objet": "Édition par client avec détail article",
+ "description": "Menu Statistiques › Statistiques et relevés détaillés. Coche CA et marges (détail article par défaut) ; Éditer : rapport ~/tmp/Histo.pdf transmis à Visualiseur.Prog (texte gb.report vide sous pdftotext : non comparé) ; Quitter. Lecture seule : sql.log comparé.",
+ "dataset": "histocliart_shared/ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ }
+}

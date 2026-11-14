@@ -1,4 +1,11 @@
 #!/bin/sh
 # Enveloppe de test : Laurux appelle « mysqldump -h <hôte> » sans port (Fmenu, SauvesAuto, FSauve, Moulinage…).
 # Le runner place ce répertoire en tête du PATH pour viser la base Docker de test et jamais le port 3306 local.
+. "$(dirname "$(readlink -f "$0")")/laurux-regles.sh"
+# règles « outils » du scénario (voir laurux-regles.sh) : appel tracé dans outils.trace seulement si une règle
+# est posée pour cet outil ; réponse forcée (rc, sortie, erreur) sans appel du vrai outil
+if regles_actives mysqldump; then
+  regles_trace "${LAURUX_FACTICE_TRACE:-$HOME/tmp/outils.trace}" mysqldump "$@"
+  regles_appliquer mysqldump
+fi
 exec /usr/bin/mysqldump -P "${LAURUX_TEST_DB_PORT:-13306}" "$@"

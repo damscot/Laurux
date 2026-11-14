@@ -53,7 +53,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   code (seul lecteur : `TriclientsD`, mort, TRICLIENTSD-A01). Proposition : supprimer le couple
   `RazClientd.class` + `RazClientd.form` et l'entrée `Menu296` de `Fmenu` (modifie `Fmenu.form`),
   en même temps que TRICLIENTSD-A01 · tests : T03 · sources : [RazClientd.class:Button1_Click](../../../../../.src/Archivages/RazClientd.class#L16-L44), [Fmenu.class:Menu296_Click](../../../../../.src/Communs/Fmenu.class#L2296-L2300)
-- [ ] RAZCLIENTD-A02 — [anomalie] Sauvegarde non fiable : même fichier `~/Sauve/<Base>EffaceD.sql`
+- [ ] RAZCLIENTD-A02 — [anomalie] (confirmée phase 2, vague 6 : la 2e purge (RazDevis) écrase `~/Sauve/Laurux01EffaceD.sql` de la 1re (T04, `razclientd_sauvegarde`)) Sauvegarde non fiable : même fichier `~/Sauve/<Base>EffaceD.sql`
   que `RazDevis` (écrasement mutuel) et libellé de l'écran faux (`Laurux_EffaceCd.sql`) ; code retour
   de `mysqldump` ignoré, mot de passe en clair dans la ligne de commande. Correction : fichier
   `EffaceCd.sql` (cohérent avec le libellé), arrêt si le dump échoue · tests : T04 · sources : [RazClientd.class:26](../../../../../.src/Archivages/RazClientd.class#L26)

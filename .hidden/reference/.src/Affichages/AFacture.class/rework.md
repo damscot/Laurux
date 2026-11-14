@@ -52,7 +52,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] AFACTURE-A01 — [anomalie] Document sans ligne (ni dans `Fiches_Ligbl` ni dans
+- [ ] AFACTURE-A01 — [anomalie] (confirmée phase 2, vague 6 : document inconnu → « Result is not available », figée par T03) Document sans ligne (ni dans `Fiches_Ligbl` ni dans
   `Fiches_LigblM`) : `Button3_Click` ferme la fenêtre mais `DocVentes` continue et lit
   `Rcli!typel_ligbl` sur un résultat vide (le `If Not Error` ne teste rien) → erreur, puis `ShowModal`
   de l'appelant sur une fenêtre fermée. Correction : `Return` après la fermeture et test
@@ -60,3 +60,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] AFACTURE-A02 — [anomalie] Quantité non formatée : `Utils.CDec(art_dec, qte)` écrit en colonne
   2 puis écrasé par la désignation ; la colonne 3 reçoit la quantité brute (même défaut qu'`ACom` et
   `TriHistos`) · tests : T01 · sources : [AFacture.class:62](../../../../../.src/Affichages/AFacture.class#L62), [AFacture.class:64](../../../../../.src/Affichages/AFacture.class#L64)
+- [ ] AFACTURE-A03 — [anomalie] `DocVentes` : `Format$(Val(Totalfac.Text) + Val(Rcli!netht_ligbl), "0.00")` : `Val("12.50")` (décimal lu en base) renvoie `Null` en locale fr → « Type mismatch: wanted Number, got Null », détail d'un BL à montants décimaux inaffichable ; motif transverse « `Val()` / `Format$` sur un décimal en locale fr (point décimal lu en base ou virgule passée à `Format$`) → Type mismatch fatal » : voir aussi [EDCOM-A05](../../Gestion/Impressions/Edcom.class/rework.md), [MATERIEL-A13](../../Gestion/Tables/Materiel.class/rework.md), [EDBR-A05](../../Gestion/Impressions/Edbr.module/rework.md), [CLCR-A01](../../Gestion/Lcr/CLcr.class/rework.md), [MAJFBTARIF2-A04](../../Gestion/Stock/Tarifs/MajFbtarif2.class/rework.md) (phase 2, vague 6, 2026-11-14) · tests : T03 · sources : [AFacture.class:72](../../../../../.src/Affichages/AFacture.class#L72), [AFacture.class:DocVentes](../../../../../.src/Affichages/AFacture.class#L19)

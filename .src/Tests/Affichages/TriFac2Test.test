@@ -1,0 +1,103 @@
+' Gambas test file
+
+''Tests de TriFac2 (.hidden/reference/.src/Affichages/TriFac2.class/test.md, TRIFAC2-T03, T04 partiels).
+''Écran instancié sans affichage (New TriFac2(client)) sans passer par Facture ; en-têtes activés par leurs
+''gestionnaires publics (_MouseDown, _Dblclick), source par Archives/Encours (Value puis _Click), pagination par
+''Descendre/Remonter. La grille ColFac lit Utils.rs2 (Utils.Base2) : le test relève le nombre de lignes et les numéros.
+''Saisies au clavier dans les en-têtes (KeyPress, lisent Key) non appelables en gb.test.
+''Jeu trifac2_shared/documents. Valeurs attendues : assets/TriFac2Test/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03TriPagination", "En cours puis archives : clic sur chaque en-tête, double-clic DA x2 (A02), Descendre/Remonter : lignes de rs2")
+  TestKit.Desc("T04ChangementSource", "Client 411002 ; tri NM (filtre client vidé), Archives puis Encours : lignes de rs2")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriFac2Test")
+  TestKit.OuvreBase("trifac2_shared/documents")
+
+End
+
+Private Sub Grille(sCle As String)
+
+  Dim sRes As String
+  Dim hChamp As ResultField
+  Dim sNum As String
+
+  If Utils.rs2.Count = 0 Then
+    TestKit.Check(sCle, "<aucune ligne>")
+    Return
+  Endif
+  sNum = "numfac"
+  For Each hChamp In Utils.rs2.Fields
+    If hChamp.Name = "numbl" Then sNum = "numbl"
+  Next
+  Utils.rs2.MoveFirst()
+  Repeat
+    sRes &= "[" & Utils.rs2[sNum] & "]"
+  Until Utils.rs2.MoveNext()
+  TestKit.Check(sCle, Utils.rs2.Count & " " & sNum & " " & sRes)
+
+End
+
+Private Sub Source(hForm As Object, sNom As String)
+
+  Dim hRadio As RadioButton
+
+  hRadio = hForm.Controls[sNom]
+  hRadio.Value = True
+  Object.Call(hForm, sNom & "_Click")
+
+End
+
+Public Sub T03TriPagination()
+
+  Dim hForm As Object
+  Dim sSrc As String
+  Dim sNom As String
+
+  hForm = New TriFac2(Null)
+  Grille("T03/ouverture")
+  For Each sSrc In ["Encours", "Archives"]
+    Source(hForm, sSrc)
+    Grille("T03/" & sSrc)
+    For Each sNom In ["NOMM", "DA", "CO", "NM", "NMF", "MT", "MTC"]
+      Try Object.Call(hForm, sNom & "_MouseDown")
+      If Error Then
+        TestKit.Check("T03/" & sSrc & "/" & sNom, "ERREUR: " & Error.Text)
+      Else
+        Grille("T03/" & sSrc & "/" & sNom)
+      Endif
+    Next
+    hForm.DA_Dblclick()
+    Grille("T03/" & sSrc & "/dbl_DA_1")
+    hForm.DA_Dblclick()
+    Grille("T03/" & sSrc & "/dbl_DA_2")
+    hForm.Descendre_Click()
+    Grille("T03/" & sSrc & "/descendre")
+    hForm.Remonter_Click()
+    Grille("T03/" & sSrc & "/remonter")
+  Next
+  Object.Lock(hForm)
+
+End
+
+Public Sub T04ChangementSource()
+
+  Dim hForm As Object
+
+  hForm = New TriFac2("411002")
+  Grille("T04/ouverture")
+  hForm.NM_MouseDown()
+  Grille("T04/NM")
+  Source(hForm, "Archives")
+  Grille("T04/archives")
+  Source(hForm, "Encours")
+  Grille("T04/encours")
+  Object.Lock(hForm)
+
+End

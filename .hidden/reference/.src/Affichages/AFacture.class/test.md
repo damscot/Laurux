@@ -8,11 +8,11 @@ instrumenté, du contenu de `Colrcp3`, de `Totalfac` et de `Nlgf`.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| AFACTURE-T01 | replay | Détail d'un BL en cours | `Facturergbl` (ou `Facture.AffDoc`) : activation d'un BL avec lignes article, ligne commentaire multi-ligne, article supprimé | lignes, total HT et nombre de lignes de référence ; figer la quantité brute (A02) | `tests/detail_bl/` | à faire |
-| AFACTURE-T02 | replay | Détail depuis l'archive | document présent seulement dans `Fiches_LigblM` (depuis `Facturefm`, qui gère `Fiches_BlM`/`Fiches_LigblM` : à confirmer) | lignes de l'archive | `tests/detail_archive/` | à faire |
-| AFACTURE-T03 | replay | Document sans ligne | numéro absent des deux tables | figer l'erreur et la fenêtre fermée (A01) | `tests/document_vide/` | à faire |
-| AFACTURE-T04 | replay | Ouverture depuis `Articles` | liste des ventes d'un article, activation d'une ligne | même détail que T01 | `tests/depuis_articles/` | à faire |
-| AFACTURE-T05 | gbtest | `LignesDocument` / `TotalLignes` (après AFACTURE-004) | numéro en cours, archivé, inconnu ; montants `"12,50"` | lignes et total de référence (locale `fr_FR` fixée) | `tests/lignes_document/` | à faire |
+| AFACTURE-T01 | replay | Détail d'un BL en cours | `Facturergbl` (ou `Facture.AffDoc`) : activation d'un BL avec lignes article, ligne commentaire multi-ligne, article supprimé | lignes, total HT et nombre de lignes de référence ; figer la quantité brute (A02) | `tests/detail_bl/` | implémenté (gb.test AFactureTest.T01DetailBl : écran instancié sans passer par Facture/Facturergbl, jeu afacture_shared/lignes_bl) |
+| AFACTURE-T02 | replay | Détail depuis l'archive | document présent seulement dans `Fiches_LigblM` (depuis `Facturefm`, qui gère `Fiches_BlM`/`Fiches_LigblM` : à confirmer) | lignes de l'archive | `tests/detail_archive/` | implémenté (gb.test AFactureTest.T02DetailArchive) |
+| AFACTURE-T03 | replay | Document sans ligne | numéro absent des deux tables | figer l'erreur et la fenêtre fermée (A01) | `tests/document_vide/` | implémenté (gb.test AFactureTest.T03DocumentVide : erreur figée ; montants décimaux « 12.50 » : Type mismatch figé) |
+| AFACTURE-T04 | replay | Ouverture depuis `Articles` | liste des ventes d'un article, activation d'une ligne | même détail que T01 | `tests/depuis_articles/` | à faire : passe par Articles (écran complexe) |
+| AFACTURE-T05 | gbtest | `LignesDocument` / `TotalLignes` (après AFACTURE-004) | numéro en cours, archivé, inconnu ; montants `"12,50"` | lignes et total de référence (locale `fr_FR` fixée) | `tests/lignes_document/` | à faire : après extraction AFACTURE-004 |
 
 ## Détail des tests
 
@@ -22,3 +22,4 @@ instrumenté, du contenu de `Colrcp3`, de `Totalfac` et de `Nlgf`.
   archivé dans `Fiches_BlM`/`Fiches_LigblM`.
 - **Instrumentation** : pas de `Utils.Observers(Me)`, `Colrcp3` sans `_Click` (`replay_missing`) :
   replays possibles seulement après instrumentation (phase 2) et sans clic dans la vue.
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Affichages/AFactureTest.test` (écran instancié sans affichage, gestionnaires publics appelés directement) ; jeu de données `.hidden/Tests/Affichages/assets/afacture_shared/lignes_bl.sql` ; attendus `assets/AFactureTest/expected.txt`.

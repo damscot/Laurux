@@ -1,0 +1,222 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdclifac Char(8) NOT NULL,nmclifac Char(25),pnmclifac Char(25),TotA Decimal(12,2),TotM Decimal(12,2),RemP Decimal(12,2),RemMo Decimal(12,2),PRIMARY KEY (cdclifac)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615'
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00001' 
+SELECT * FROM Total Where cdclifac = '412001'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412001', 'Client 01', 'P01', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00002' 
+SELECT * FROM Total Where cdclifac = '412002'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412002', 'Client 02', 'P02', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00003' 
+SELECT * FROM Total Where cdclifac = '412003'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412003', 'Client 03', 'P03', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00004' 
+SELECT * FROM Total Where cdclifac = '412004'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412004', 'Client 04', 'P04', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00005' 
+SELECT * FROM Total Where cdclifac = '412005'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412005', 'Client 05', 'P05', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00006' 
+SELECT * FROM Total Where cdclifac = '412006'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412006', 'Client 06', 'P06', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00007' 
+SELECT * FROM Total Where cdclifac = '412007'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412007', 'Client 07', 'P07', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00008' 
+SELECT * FROM Total Where cdclifac = '412008'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412008', 'Client 08', 'P08', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00009' 
+SELECT * FROM Total Where cdclifac = '412009'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412009', 'Client 09', 'P09', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00010' 
+SELECT * FROM Total Where cdclifac = '412010'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412010', 'Client 10', 'P10', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00011' 
+SELECT * FROM Total Where cdclifac = '412011'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412011', 'Client 11', 'P11', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00012' 
+SELECT * FROM Total Where cdclifac = '412012'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412012', 'Client 12', 'P12', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00013' 
+SELECT * FROM Total Where cdclifac = '412013'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412013', 'Client 13', 'P13', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00014' 
+SELECT * FROM Total Where cdclifac = '412014'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412014', 'Client 14', 'P14', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00015' 
+SELECT * FROM Total Where cdclifac = '412015'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412015', 'Client 15', 'P15', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00016' 
+SELECT * FROM Total Where cdclifac = '412016'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412016', 'Client 16', 'P16', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00017' 
+SELECT * FROM Total Where cdclifac = '412017'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412017', 'Client 17', 'P17', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00018' 
+SELECT * FROM Total Where cdclifac = '412018'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412018', 'Client 18', 'P18', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00019' 
+SELECT * FROM Total Where cdclifac = '412019'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412019', 'Client 19', 'P19', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00020' 
+SELECT * FROM Total Where cdclifac = '412020'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412020', 'Client 20', 'P20', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00021' 
+SELECT * FROM Total Where cdclifac = '412021'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412021', 'Client 21', 'P21', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00022' 
+SELECT * FROM Total Where cdclifac = '412022'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412022', 'Client 22', 'P22', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00023' 
+SELECT * FROM Total Where cdclifac = '412023'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412023', 'Client 23', 'P23', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00024' 
+SELECT * FROM Total Where cdclifac = '412024'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412024', 'Client 24', 'P24', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00025' 
+SELECT * FROM Total Where cdclifac = '412025'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412025', 'Client 25', 'P25', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00026' 
+SELECT * FROM Total Where cdclifac = '412026'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412026', 'Client 26', 'P26', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00027' 
+SELECT * FROM Total Where cdclifac = '412027'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412027', 'Client 27', 'P27', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00028' 
+SELECT * FROM Total Where cdclifac = '412028'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412028', 'Client 28', 'P28', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00029' 
+SELECT * FROM Total Where cdclifac = '412029'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412029', 'Client 29', 'P29', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00030' 
+SELECT * FROM Total Where cdclifac = '412030'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412030', 'Client 30', 'P30', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00031' 
+SELECT * FROM Total Where cdclifac = '412031'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412031', 'Client 31', 'P31', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00032' 
+SELECT * FROM Total Where cdclifac = '412032'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412032', 'Client 32', 'P32', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00033' 
+SELECT * FROM Total Where cdclifac = '412033'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412033', 'Client 33', 'P33', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00034' 
+SELECT * FROM Total Where cdclifac = '412034'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412034', 'Client 34', 'P34', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00035' 
+SELECT * FROM Total Where cdclifac = '412035'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412035', 'Client 35', 'P35', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00036' 
+SELECT * FROM Total Where cdclifac = '412036'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412036', 'Client 36', 'P36', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00037' 
+SELECT * FROM Total Where cdclifac = '412037'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412037', 'Client 37', 'P37', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00038' 
+SELECT * FROM Total Where cdclifac = '412038'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412038', 'Client 38', 'P38', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00039' 
+SELECT * FROM Total Where cdclifac = '412039'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412039', 'Client 39', 'P39', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00040' 
+SELECT * FROM Total Where cdclifac = '412040'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412040', 'Client 40', 'P40', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00041' 
+SELECT * FROM Total Where cdclifac = '412041'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412041', 'Client 41', 'P41', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00042' 
+SELECT * FROM Total Where cdclifac = '412042'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412042', 'Client 42', 'P42', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00043' 
+SELECT * FROM Total Where cdclifac = '412043'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412043', 'Client 43', 'P43', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00044' 
+SELECT * FROM Total Where cdclifac = '412044'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412044', 'Client 44', 'P44', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00045' 
+SELECT * FROM Total Where cdclifac = '412045'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412045', 'Client 45', 'P45', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00046' 
+SELECT * FROM Total Where cdclifac = '412046'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412046', 'Client 46', 'P46', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00047' 
+SELECT * FROM Total Where cdclifac = '412047'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412047', 'Client 47', 'P47', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00048' 
+SELECT * FROM Total Where cdclifac = '412048'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412048', 'Client 48', 'P48', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00049' 
+SELECT * FROM Total Where cdclifac = '412049'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412049', 'Client 49', 'P49', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00050' 
+SELECT * FROM Total Where cdclifac = '412050'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412050', 'Client 50', 'P50', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00051' 
+SELECT * FROM Total Where cdclifac = '412051'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412051', 'Client 51', 'P51', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00052' 
+SELECT * FROM Total Where cdclifac = '412052'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412052', 'Client 52', 'P52', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00053' 
+SELECT * FROM Total Where cdclifac = '412053'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412053', 'Client 53', 'P53', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00054' 
+SELECT * FROM Total Where cdclifac = '412054'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412054', 'Client 54', 'P54', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00055' 
+SELECT * FROM Total Where cdclifac = '412055'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412055', 'Client 55', 'P55', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00056' 
+SELECT * FROM Total Where cdclifac = '412056'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412056', 'Client 56', 'P56', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00057' 
+SELECT * FROM Total Where cdclifac = '412057'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412057', 'Client 57', 'P57', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00058' 
+SELECT * FROM Total Where cdclifac = '412058'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412058', 'Client 58', 'P58', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00059' 
+SELECT * FROM Total Where cdclifac = '412059'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412059', 'Client 59', 'P59', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00060' 
+SELECT * FROM Total Where cdclifac = '412060'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412060', 'Client 60', 'P60', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00061' 
+SELECT * FROM Total Where cdclifac = '412061'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412061', 'Client 61', 'P61', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00062' 
+SELECT * FROM Total Where cdclifac = '412062'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412062', 'Client 62', 'P62', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00063' 
+SELECT * FROM Total Where cdclifac = '412063'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412063', 'Client 63', 'P63', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00064' 
+SELECT * FROM Total Where cdclifac = '412064'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412064', 'Client 64', 'P64', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_HistoLigfac where num_ligfac = 'P00065' 
+SELECT * FROM Total Where cdclifac = '412065'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, TotA, Totm, RemP, RemMo) VALUES ('412065', 'Client 65', 'P65', 12.5, 0, 2.5, 0)
+SELECT * FROM Fiches_Bl where datebl >= '20180101' and datebl <= '20180615' and type = 'F'
+SELECT * FROM Total 
+SELECT * FROM Total order by cdclifac asc
+SELECT * FROM Fiches_Societes Where cd_sc = '01'

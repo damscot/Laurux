@@ -52,7 +52,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] DB_LOG-A01 — [anomalie] Découpage `Split(sLine, ";")` non borné : message tronqué si le SQL
+- [ ] DB_LOG-A01 — [anomalie] (précisée phase 2, vague 6 : aucune erreur d'indice : un SQL multiligne s'affiche sur plusieurs lignes de grille et un « ; » dans le SQL décale les champs (T02)) Découpage `Split(sLine, ";")` non borné : message tronqué si le SQL
   contient `;` ; ligne de continuation d'un SQL multiligne → erreur d'indice dans `GridView1_Data` ·
   tests : T02 · sources : [DB_Log.class:72](../../../../../.src/Utils/DB_Log.class#L72), [DB_Log.class:GridView1_Data](../../../../../.src/Utils/DB_Log.class#L101-L105)
 - [ ] DB_LOG-A02 — [anomalie] `Refresh` : `Copy` sans `Try` (log absent) et fichier `hFile` jamais

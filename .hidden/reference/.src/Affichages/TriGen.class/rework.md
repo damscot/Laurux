@@ -75,11 +75,11 @@ Chaque étape repasse aussi les tests du banc d'essai [`Tests/TriTest`](../../Te
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TRIGEN-A01 — [anomalie] Requête sans résultat : `DB_Incr` ne remet pas
+- [ ] TRIGEN-A01 — [anomalie] (précisée phase 2, vague 6 : limitée à `DB_Decr` : inatteignable sans double-clic (`Filter_DblClick` lit `Last`), T06) Requête sans résultat : `DB_Incr` ne remet pas
   `Coltri.Rows.Count` à 0 quand `Res.Count = 0`, `DB_Decr` ni dans ce cas ni quand le `Result` est
   indisponible : les lignes de la page précédente restent affichées (vides) et cliquables · tests :
   T06 · sources : [TriGen.class:668](../../../../../.src/Affichages/TriGen.class#L668), [TriGen.class:692](../../../../../.src/Affichages/TriGen.class#L692)
-- [ ] TRIGEN-A02 — [anomalie] Filtres concaténés dans le SQL (`champ like "%texte%"`) : seuls les
+- [ ] TRIGEN-A02 — [anomalie] (précisée phase 2, vague 6 : filtre `\` : 0 ligne sans erreur (pas d'erreur SQL) ; `"` retiré ; `%` et `_` jokers, T07) Filtres concaténés dans le SQL (`champ like "%texte%"`) : seuls les
   `"` sont retirés ; `%` et `_` agissent comme jokers, `\` provoque une erreur SQL sous MySQL ;
   passer par `Utils.db.Subst`/`&N` change ces cas · tests : T07 · sources : [TriGen.class:312](../../../../../.src/Affichages/TriGen.class#L312), [TriGen.class:314](../../../../../.src/Affichages/TriGen.class#L314)
 - [ ] TRIGEN-A03 — [anomalie] `imprime` (« imprime la sélection ») n'imprime que la **page
@@ -91,3 +91,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TRIGEN-A05 — [anomalie] `Close` en mode `Panel` détruit boutons, filtres et grille mais pas
   le compteur `Count`, qui reste visible dans le panneau de l'appelant (cas `TarTypeCli`,
   `Articles` qui appellent `Close` explicitement) · tests : T03 · sources : [TriGen.class:240](../../../../../.src/Affichages/TriGen.class#L240), [TriGen.class:248](../../../../../.src/Affichages/TriGen.class#L248)
+- [ ] TRIGEN-A06 — [anomalie] API incohérente : `GroupBy(Grp)` affecte `Group = Grp` sans le préfixe `GROUP BY` alors que `_new` l'ajoute (`Group = "GROUP BY " & GroupB`) : l'appelant doit fournir la clause complète dans un cas et pas dans l'autre (phase 2, vague 6, 2026-11-14) · tests : T12 · sources : [TriGen.class:GroupBy](../../../../../.src/Affichages/TriGen.class#L275-L281), [TriGen.class:63](../../../../../.src/Affichages/TriGen.class#L63)

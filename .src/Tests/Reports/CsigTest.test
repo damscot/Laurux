@@ -1,0 +1,112 @@
+' Gambas test file
+
+''Tests de Csig (.hidden/reference/.src/Reports/Csig.class/test.md, CSIG-T01 à T03).
+''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
+''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
+''Valeurs attendues : assets/CsigTest/expected.txt, produites dans le clone de référence. Pas de base.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Entetes", "Level0, Level3, Lines, Lines2, Lines3, BasPage (paysage)")
+  TestKit.Desc("T02Montants", "Level1 et Level2 : 1234, -1234, 0, vide, 1234.56, 1234,56")
+  TestKit.Desc("T03MultiPages", "2 pages : Level0, Level3, 30 Level1, Lines3, BasPage")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CsigTest")
+
+End
+
+Private Function Nouveau() As Csig
+
+  Dim pdf As Csig
+
+  pdf = New Csig("L", "mm", "A4")
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, en extrait le texte et vérifie chaque ligne non vide (date du jour et utilisateur masqués).
+Private Sub Verifie(sCle As String, pdf As PdfWriter)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+Public Sub T01Entetes()
+
+  Dim pdf As Csig = Nouveau()
+
+  pdf.Level0("Soldes intermédiaires de gestion", "Exercice 2018", "Détaillé", "SOCIETE TEST")
+  pdf.Level3(40)
+  pdf.Lines("50")
+  pdf.Lines2("60")
+  pdf.Lines3("70")
+  pdf.BasPage()
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02Montants()
+
+  Dim pdf As Csig = Nouveau()
+  Dim sMt As String
+  Dim n As Integer
+
+  pdf.Level0("SIG", "Exercice 2018", "", "SOCIETE TEST")
+  pdf.Level3(40)
+  For Each sMt In ["1234", "-1234", "0", "", "1234.56", "1234,56"]
+    Inc n
+    Try pdf.Level1("Produit " & n, sMt, "Charge " & n, sMt, 40 + n * 6)
+    TestKit.Check("T02/Level1/" & n & "/erreur", IIf(Error, Error.Text, ""))
+    Try pdf.Level2("Total P " & n, sMt, "Total C " & n, sMt, "Solde " & n, sMt, 43 + n * 6)
+    TestKit.Check("T02/Level2/" & n & "/erreur", IIf(Error, Error.Text, ""))
+  Next
+  pdf.BasPage()
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03MultiPages()
+
+  Dim pdf As Csig = Nouveau()
+  Dim p As Integer
+  Dim i As Integer
+
+  For p = 1 To 2
+    pdf.Level0("SIG", "Exercice 2018", "", "SOCIETE TEST")
+    pdf.Level3(40)
+    For i = 1 To 30
+      pdf.Level1("P" & p & "-" & i, CStr(i * 10), "C" & p & "-" & i, CStr(i), 45 + i * 5)
+    Next
+    pdf.Lines3("200")
+    pdf.BasPage()
+  Next
+  Verifie("T03", pdf)
+
+End

@@ -1,0 +1,25 @@
+{
+ "id": "HISTOVMO-T01",
+ "classe": "Histovmo",
+ "objet": "Historique des MO vendues par défaut",
+ "description": "Menu Statistiques › Qté MO vendues pour une période ; /Soc01/Materiel = 0 ; Imprimer (Button2) avec les réglages par défaut (tri par code, factures hors entretien, Bl) ; texte du PDF extrait par pdftotext (edition.txt) ; fermeture. Lecture seule : sql.log comparé.",
+ "dataset": "histovmo_shared/ventes_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0,
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

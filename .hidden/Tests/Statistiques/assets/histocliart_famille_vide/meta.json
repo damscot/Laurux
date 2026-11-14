@@ -1,0 +1,21 @@
+{
+ "id": "HISTOCLIART-T08",
+ "classe": "Histocliart",
+ "objet": "Familles : « toutes » décochée",
+ "description": "Menu Statistiques › Statistiques et relevés détaillés. Décoche « Pour toutes les familles » sans toucher l'arbre : la première famille (01) est sélectionnée par défaut, d'où la clause IN('01') (le cas « IN) » d'UTILS-A02 exige de désélectionner, clic TreeView non rejoué) ; Exporter (bouton 2 « Non ») ; Quitter. CSV comparé ; lecture seule : sql.log comparé.",
+ "dataset": "histocliart_shared/ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "tmp/HistoVente.csv"
+ ]
+}

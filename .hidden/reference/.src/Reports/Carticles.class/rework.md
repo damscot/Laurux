@@ -66,7 +66,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CARTICLES-A01 — [anomalie] (confirmée phase 2, vague 5 : « Undefined font: hel8vetica » (`Level6bis:202`), mode photo d'EdArt3 en erreur fatale (EDART3-T03, code 125)) `Level6bis` choisit la police « Hel8vetica » : `PdfWriter.SetFont`
+- [ ] CARTICLES-A01 — [anomalie] (confirmée phase 2, vague 6 : « Undefined font: hel8vetica » figée en gb.test par T03 (`CarticlesTest.T03Photo`, `Level6bis`)) (confirmée phase 2, vague 5 : « Undefined font: hel8vetica » (`Level6bis:202`), mode photo d'EdArt3 en erreur fatale (EDART3-T03, code 125)) `Level6bis` choisit la police « Hel8vetica » : `PdfWriter.SetFont`
   lève « Undefined font: hel8vetica » (vérifié avec `gbx3`) → le tarif interne en mode photo
   s'arrête sur une erreur non interceptée au premier article (`EdArt3`, case `Phot` visible ;
   `EdArt1`, case invisible). Correction : « Helvetica » · tests : T03, EDART3-T03 · sources : [Carticles.class:202](../../../../../.src/Reports/Carticles.class#L202), [EdArt3.class:715](../../../../../.src/Gestion/Impressions/EdArt3.class#L715), [EdArt3.class:727](../../../../../.src/Gestion/Impressions/EdArt3.class#L727), [EdArt1.class:648](../../../../../.src/Gestion/Impressions/EdArt1.class#L648)
@@ -77,3 +77,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] CARTICLES-A03 — [anomalie] (cosmétique) `Level5` imprime les valeurs à x = 138, décalées de
   2 mm sous les en-têtes « Total PA »/« Total PMP » (x = 140), et l'en-tête « Total Stock » n'a pas
   de valeur · tests : T01 · sources : [Carticles.class:Level5](../../../../../.src/Reports/Carticles.class#L165-L176)
+- [ ] CARTICLES-A04 — [anomalie] `Photo` : `Try Me.Image(…)` avale toute erreur : une photo refusée par `PdfWriter` (PNG à canal alpha, voir PDFWRITER-A05) ou absente est ignorée sans message, la ligne est imprimée sans image (phase 2, vague 6, 2026-11-14) · tests : T03 · sources : [Carticles.class:Photo](../../../../../.src/Reports/Carticles.class#L429-L433)
+- [ ] CARTICLES-A05 — [amélioration][tests] Tests portés par les classes appelantes : CARTICLES-T08 ne sont couverts que par des tests d'autres classes (CARTICLES-T08 : couvert par les scénarios existants Gestion/edart1_*, edart3_* (dont edart3_photo), edstk_*, edrup_*, edmo_*, edregul_* (texte pdftotext comparé)) ; à rapatrier dans la classe (module .test ou scénarios dans ses assets), puis à alléger dans les appelants pour éviter le double comptage (phase 2, vague 6, 2026-11-14, décision utilisateur du 2026-11-14) · tests : CARTICLES-T08 · sources : [test.md](test.md)

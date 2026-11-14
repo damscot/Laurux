@@ -58,6 +58,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   [PdfWriterFont.class:49](../../../../../.src/Reports/PdfWriterFont.class#L49), [PdfWriter.class:245](../../../../../.src/Reports/PdfWriter.class#L245)
 - [ ] PDFWRITERFONT-A02 — [anomalie] `helvetica[0xD8]` = 39778 au lieu de 778 (faute de frappe ;
   devient visible après PDFWRITER-A02) · tests : T01 · sources : [PdfWriterFont.class:169](../../../../../.src/Reports/PdfWriterFont.class#L169)
-- [ ] PDFWRITERFONT-A03 — [anomalie] Table `symbol` corrompue (254 valeurs, « 987603 » à 0xAE, 53
+- [ ] PDFWRITERFONT-A03 — [anomalie] (précisée phase 2, vague 6 : somme des largeurs de `symbol` anormalement élevée, figée par T01 (à confirmer par l'AFM)) Table `symbol` corrompue (254 valeurs, « 987603 » à 0xAE, 53
   écarts avec l'AFM) ; police inutilisée. Correction : régénération depuis l'AFM · tests : T01 ·
   sources : [PdfWriterFont.class:symbol](../../../../../.src/Reports/PdfWriterFont.class#L280-L312), [PdfWriterFont.class:301](../../../../../.src/Reports/PdfWriterFont.class#L301)

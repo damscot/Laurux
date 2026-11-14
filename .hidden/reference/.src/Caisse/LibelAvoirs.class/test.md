@@ -11,9 +11,9 @@ attendent la correction de A02.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LIBELAVOIRS-T01 | replay | Création puis modification | `Fiches_LibelAvoirs` vide ; saisie de 2 lignes, Enregistrer ; réouverture, modification, Enregistrer | 1 ligne dans `Fiches_LibelAvoirs` (INSERT puis UPDATE) ; texte relu à la réouverture | `tests/libelavoirs_saisie/` | à faire |
-| LIBELAVOIRS-T02 | replay | Texte vide (A01) | texte existant ; champ vidé, Enregistrer | dump inchangé (texte non effacé) | `tests/libelavoirs_vide/` | à faire |
-| LIBELAVOIRS-T03 | replay | `Utils.ReplaceLb` | texte avec `"` et `&` | stocké avec `''` et `et` | `tests/libelavoirs_caracteres/` | à faire |
+| LIBELAVOIRS-T01 | replay | Création puis modification | `Fiches_LibelAvoirs` vide ; saisie de 2 lignes, Enregistrer ; réouverture, modification, Enregistrer | 1 ligne dans `Fiches_LibelAvoirs` (INSERT puis UPDATE) ; texte relu à la réouverture | `tests/libelavoirs_saisie/` | implémenté (gb.test LibelAvoirsTest.T01CreationModification) |
+| LIBELAVOIRS-T02 | replay | Texte vide (A01) | texte existant ; champ vidé, Enregistrer | dump inchangé (texte non effacé) | `tests/libelavoirs_vide/` | implémenté (gb.test LibelAvoirsTest.T02TexteVide : A01 figée) |
+| LIBELAVOIRS-T03 | replay | `Utils.ReplaceLb` | texte avec `"` et `&` | stocké avec `''` et `et` | `tests/libelavoirs_caracteres/` | implémenté (gb.test LibelAvoirsTest.T03Caracteres) |
 
 ## Détail des tests
 
@@ -25,3 +25,5 @@ attendent la correction de A02.
   seulement l'absence d'erreur.
 - Après la séparation LIBELAVOIRS-003, `LitTexte`/`EcritTexte` restent privés : la couverture reste
   assurée par les replays (règle de portée, PLAN §6).
+
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Caisse/LibelAvoirsTest.test` ; attendus `.hidden/Tests/Caisse/assets/LibelAvoirsTest/expected.txt`.

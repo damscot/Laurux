@@ -1,0 +1,298 @@
+' Gambas test file
+
+''Tests de Ccompta (.hidden/reference/.src/Reports/Ccompta.class/test.md, CCOMPTA-T01 à T06 et T08).
+''Chaque test produit un PDF non compressé (SetCompression(False)) dans un fichier temporaire et vérifie :
+''le texte rendu par « pdftotext -layout » (une clé par ligne non vide), le nombre et la taille des pages
+''(pdfinfo) et l'empreinte md5 du fichier PDF (flux : positions, polices, couleurs), après masquage de
+''/CreationDate, de la date du jour et de User.Name. Valeurs attendues : assets/CcomptaTest/expected.txt,
+''produites dans le clone de référence. Pas de base de données. T07 compare les opérateurs de couleur (rg) du flux au lieu d'un rendu raster.
+''T09 est couvert par les scénarios Compta/editcomptem_*, T10 par les scénarios Reports/ccompta_journaux et ccompta_jourcent.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01GrandLivre", "Grand livre : Entete, Level0C, Level1C, Level1CA, Level3C, Level2C, Level2CA, Level2s, Level2sbis, Level4C, Level4T, Level5C, BasPage")
+  TestKit.Desc("T02Extraits", "Extraits, impayés, échéancier : Level0, Level1, level2, Level3, Level4, Level5, Level6, Level1E, level2E, Level4E, Level5E")
+  TestKit.Desc("T03Journaux", "Journaux : Level0J, Level1J, level2J, Level1JT, level2JT, Level5J, level6J, level7J, Level1M, level2M, BasPage2")
+  TestKit.Desc("T04PlanAnalytique", "Plan, anomalies, analytique : Level0P, Level1P, level2P, Level1A2, level2A2, Level0A, Level1A, Level2A")
+  TestKit.Desc("T05RapproTraites", "Rapprochement et traites : Level0R, Level1R, Level2R, Level3R, Level1T, Level2T, Level3T")
+  TestKit.Desc("T06MultiPages", "3 pages (Entete + 50 level2 + BasPage) puis une cellule à PosY 292")
+  TestKit.Desc("T07CouleurHeritee", "Couleur de remplissage de Level4C après Level1C, Level2s, Level4T, Level5C (opérateurs rg du flux)")
+  TestKit.Desc("T08Montants", "level2 et Level4 avec 1234.5, 1234,5, vide et abc")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CcomptaTest")
+
+End
+
+Private Function Nouveau(Optional sOrient As String = "Portrait", Optional sFormat As String = "A4") As Ccompta
+
+  Dim pdf As Ccompta
+
+  pdf = New Ccompta(sOrient, "mm", sFormat)
+  pdf.SetCompression(False)
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, vérifie chaque ligne non vide du texte extrait puis l'empreinte du fichier masqué.
+Private Sub Verifie(sCle As String, pdf As Ccompta)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim sBuf As String
+  Dim sMd5 As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "000"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  Shell "pdfinfo " & Shell$(sFic) & " | grep -E '^(Pages|Page size)'" To sBuf
+  TestKit.Check(sCle & "/pdfinfo", Trim(sBuf))
+  ' Flux : masquage des valeurs variables puis empreinte
+  sBuf = File.Load(sFic)
+  sTxt = ""
+  For Each sLig In Split(sBuf, "\n")
+    If InStr(sLig, "/CreationDate") > 0 Then Continue
+    sTxt &= sLig & "\n"
+  Next
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  File.Save(sFic & ".flux", sTxt)
+  Shell "md5sum < " & Shell$(sFic & ".flux") To sMd5
+  TestKit.Check(sCle & "/flux_md5", Trim(Left(sMd5, 32)))
+
+End
+
+Public Sub T01GrandLivre()
+
+  Dim pdf As Ccompta = Nouveau()
+
+  pdf.Entete("Grand livre")
+  pdf.Level0C("15/06/2018", "Société test")
+  pdf.Level1C()
+  pdf.Level3C("401001", "Fournisseur un", 35)
+  Try pdf.Level2C("Facture", "AC", "15/06/2018", "F001", "12", "100.5", "0", "100.5", 40)
+  TestKit.Check("T01/level2C/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level2s("401001", "Fournisseur un", "0", "0", 45)
+  TestKit.Check("T01/level2s_0/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level2s("401002", "Fournisseur deux", "", "", 50)
+  TestKit.Check("T01/level2s_vide/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level2s("401003", "Fournisseur trois", "12.5", "0", 55)
+  TestKit.Check("T01/level2s_125/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level2sbis("401003", 60)
+  TestKit.Check("T01/level2sbis/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level4C("100.5", "0", "100.5", "401001", 65)
+  TestKit.Check("T01/level4C/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level4T("100.5", "0", "100.5", "4", 70)
+  TestKit.Check("T01/level4T/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level5C("100.5", "0", "100.5", 75)
+  TestKit.Check("T01/level5C/erreur", IIf(Error, Error.Text, ""))
+  pdf.Level1CA()
+  Try pdf.Level2CA("Règlement", "BQ", "16/06/2018", "R01", "D01", "0", "50", "-50", 90)
+  TestKit.Check("T01/level2CA/erreur", IIf(Error, Error.Text, ""))
+  pdf.BasPage()
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02Extraits()
+
+  Dim pdf As Ccompta = Nouveau()
+
+  pdf.Entete("Extrait de compte")
+  pdf.Level0("15/06/2018", "Société test")
+  pdf.Level1()
+  pdf.Level3("411001", "Client un", 35)
+  Try pdf.level2("Facture", "VE", "15/06/2018", "F001", "3", "120", "0", "120", 40)
+  TestKit.Check("T02/level2/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level4("120", "0", "120", 45)
+  TestKit.Check("T02/level4/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level5("120", "0", "120", 50)
+  TestKit.Check("T02/level5/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level6("411001", "Client un", "120", 55)
+  TestKit.Check("T02/level6/erreur", IIf(Error, Error.Text, ""))
+  pdf.Entete("Échéancier")
+  pdf.Level1E()
+  Try pdf.level2E("411001", "Client un", "VE", "15/06/2018", "F001", "15/07/2018", "120", 30)
+  TestKit.Check("T02/level2E/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level4E("Total client", "120", 35)
+  TestKit.Check("T02/level4E/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level5E("120", 40)
+  TestKit.Check("T02/level5E/erreur", IIf(Error, Error.Text, ""))
+  pdf.BasPage()
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03Journaux()
+
+  Dim pdf As Ccompta = Nouveau()
+
+  pdf.Entete("Journal")
+  pdf.Level0J("VE", "Journal des ventes", "15/06/2018", "Provisoire", "Société test")
+  pdf.Level1J()
+  Try pdf.level2J("Facture", "411001", "15/06/2018", "F001", "Vente", "0", "0.001", "-0.001", 40, "1")
+  TestKit.Check("T03/level2J_1/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.level2J("Facture", "706000", "15/06/2018", "F001", "Vente", "0", "0", "0", 45, "1")
+  TestKit.Check("T03/level2J_2/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.level2J("Avoir", "411002", "16/06/2018", "A001", "Avoir", "0", "12.5", "-12.5", 50, "2")
+  TestKit.Check("T03/level2J_3/erreur", IIf(Error, Error.Text, ""))
+  pdf.Level1JT()
+  Try pdf.level2JT("12.5", "12.501", "-0.001", 60)
+  TestKit.Check("T03/level2JT/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level5J("VE")
+  TestKit.Check("T03/level5J/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.level6J()
+  TestKit.Check("T03/level6J/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.level7J("411001", "Client un", CStr(1234.5678), "0", "1234.5678", 80)
+  TestKit.Check("T03/level7J/erreur", IIf(Error, Error.Text, ""))
+  pdf.Entete("Écritures modifiées")
+  pdf.Level1M()
+  Try pdf.level2M("Facture", "411001", "15/06/2018", "F001", "Vente", "100", "0", "100", 30, "1", "20/06/2018")
+  TestKit.Check("T03/level2M/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.BasPage2("3")
+  TestKit.Check("T03/basPage2/erreur", IIf(Error, Error.Text, ""))
+  Verifie("T03", pdf)
+
+End
+
+Public Sub T04PlanAnalytique()
+
+  Dim pdf As Ccompta = Nouveau()
+
+  pdf.Entete("Plan comptable")
+  pdf.Level0P("Société test")
+  pdf.Level1P()
+  pdf.level2P("401001", "Fournisseur un", 30)
+  pdf.level2P("401002", "Fournisseur dont l'intitulé dépasse vingt-quatre caractères", 35)
+  pdf.Entete("Anomalies")
+  pdf.Level1A2()
+  pdf.level2A2("F001", "411001", "Client dont l'intitulé est assez long pour être tronqué", "15/06/2018", "C1", "C2", 30)
+  pdf.Entete("Analytique")
+  pdf.Level0A("411001", "Client un", "15/06/2018", "Définitif", "Société test")
+  pdf.Level1A("A01", "Section analytique un", 30)
+  pdf.Level2A("A02", "Section analytique dont l'intitulé est long", 35)
+  Verifie("T04", pdf)
+
+End
+
+Public Sub T05RapproTraites()
+
+  Dim pdf As Ccompta = Nouveau()
+  Dim y As Integer = 60
+
+  pdf.Entete("Rapprochement")
+  pdf.Level0R("512000", "Banque", "3", "15/06/2018", "Toutes", "Société test")
+  pdf.Level1R(30)
+  Try pdf.Level2R("Chèque 1", "15/06/2018", "D01", "4", "0", "50", 35)
+  TestKit.Check("T05/level2R/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level3R("50", "100", "150", 45)
+  TestKit.Check("T05/level3R/erreur", IIf(Error, Error.Text, ""))
+  pdf.Entete("Traites")
+  pdf.Level1T(30)
+  Try pdf.Level2T("12345", "67890", "00011122233", "44", "BANQUE X", "DUPONT", "1 rue A", "Bât B", "44000 NANTES", "15/06/2018", "15/07/2018", "1234.5", "F001", y)
+  TestKit.Check("T05/level2T/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Level3T("0", "1234.5", "1234.5", 80)
+  TestKit.Check("T05/level3T/erreur", IIf(Error, Error.Text, ""))
+  TestKit.Check("T05/posy_appelant", y)
+  Verifie("T05", pdf)
+
+End
+
+Public Sub T06MultiPages()
+
+  Dim pdf As Ccompta = Nouveau()
+  Dim p As Integer
+  Dim i As Integer
+
+  For p = 1 To 3
+    pdf.Entete("Extrait page " & p)
+    pdf.Level1()
+    For i = 0 To 49
+      pdf.level2("Ligne " & i, "VE", "15/06/2018", "F" & i, "1", "10", "0", "10", 30 + i * 5)
+    Next
+    pdf.BasPage()
+  Next
+  pdf.level2("Ligne basse", "VE", "15/06/2018", "F999", "1", "10", "0", "10", 292)
+  TestKit.Check("T06/pages", pdf.PageNo())
+  Verifie("T06", pdf)
+
+End
+
+Public Sub T07CouleurHeritee()
+
+  Dim sCas As String
+  Dim pdf As Ccompta
+  Dim sBuf As String
+  Dim sLig As String
+  Dim sOps As String
+
+  ' Couleur de thème distincte du blanc pour distinguer la couleur héritée (Laurux-test.conf : blanc)
+  Start.R = 200
+  Start.G = 220
+  Start.B = 240
+  For Each sCas In ["Level1C", "Level2s", "Level4T", "Level5C"]
+    pdf = Nouveau()
+    pdf.AddPage()
+    Select Case sCas
+      Case "Level1C"
+        pdf.Level1C()
+      Case "Level2s"
+        pdf.Level2s("401001", "Fournisseur un", "12.5", "0", 30)
+      Case "Level4T"
+        pdf.Level4T("100.5", "0", "100.5", "4", 30)
+      Case "Level5C"
+        pdf.Level5C("100.5", "0", "100.5", 30)
+    End Select
+    pdf.Level4C("100.5", "0", "100.5", "401001", 50)
+    Try sBuf = pdf.Output("", "S")
+    If Error Then
+      TestKit.Check("T07/" & sCas & "/output", "ERREUR: " & Error.Text)
+      Continue
+    Endif
+    sOps = ""
+    For Each sLig In Split(sBuf, "\n")
+      If sLig Like "* rg" Then sOps &= sLig & " | "
+    Next
+    TestKit.Check("T07/" & sCas & "/rg", sOps)
+  Next
+
+End
+
+Public Sub T08Montants()
+
+  Dim pdf As Ccompta = Nouveau()
+  Dim sVal As String
+  Dim y As Integer = 30
+
+  pdf.Entete("Montants")
+  For Each sVal In ["1234.5", "1234,5", "", "abc"]
+    Try pdf.level2("Ligne " & sVal, "VE", "15/06/2018", "F001", "1", sVal, sVal, sVal, y)
+    TestKit.Check("T08/level2_" & sVal & "/erreur", IIf(Error, Error.Text, ""))
+    Try pdf.Level4(sVal, sVal, sVal, y + 5)
+    TestKit.Check("T08/level4_" & sVal & "/erreur", IIf(Error, Error.Text, ""))
+    y += 12
+  Next
+  Verifie("T08", pdf)
+
+End

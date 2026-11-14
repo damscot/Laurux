@@ -1,0 +1,375 @@
+' Gambas test file
+
+''Tests de TriGen (.hidden/reference/.src/Affichages/TriGen.class/test.md).
+''Valeurs attendues : assets/TriGenTest/expected.txt, produites dans le clone de référence.
+''La grille de TriGen n'est pas sélectionnable au rejeu : TriGen est piloté ici par son API publique, en mode Panel
+''(Window + Panel 800 x 300, hauteur de ligne 20) sur le jeu trigen_shared/liste_paginee (44 articles).
+''Le module lui-même reçoit Bsel/Bval (objet de retour « ob ») et les événements (observateur « _Tri »).
+
+Public Bsel As Boolean
+Public Bval As Variant
+
+Private $hWin As Window
+Private $hPan As Panel
+Private $hTri As TriGen
+Private $sEvt As String
+Private $bStop As Boolean
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01FiltreTri", "Filtre « Vis » saisi dans la colonne Intitulé (LIKE), Raz : lignes, compteur, filtres remis aux libellés")
+  TestKit.Desc("T02Pagination", "Descendre ×2, Remonter, Remonter sous 0, compteur à 13 : premières lignes et compteur à chaque étape")
+  TestKit.Desc("T03SelectionSimple", "Close(valeur) puis Close(Null) : Bsel/Bval de l'objet de retour, MajSel, contrôles détruits du Panel")
+  TestKit.Desc("T04SelectionCle", "Colonnes « cle » : clic sur une ligne (Coltri_Click) renvoie une Collection {champ : texte} ; Activate idem")
+  TestKit.Desc("T05ToutFiltre", "Sélection multiple : MajSel annulé (Stop Event) garde la liste ; GetAllFiltered sans LIMIT ; événement Raz")
+  TestKit.Desc("T06FiltreVide", "Filtre sans résultat (A01) : nombre de lignes de la grille conservé")
+  TestKit.Desc("T07FiltreSpecial", "Filtres %, _, \\ et \" (A02) : lignes obtenues ou erreur")
+  TestKit.Desc("T09FenetrePropre", "Parent Null : fenêtre créée (800 x 480), Bsel/Bval remis à zéro, Close ferme la fenêtre")
+  TestKit.Desc("T12ExtraSel", "ExtraSel, ExtraHave et GroupBy imposés par l'appelant : lignes obtenues")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriGenTest")
+  TestKit.OuvreBase("trigen_shared/liste_paginee")
+  $sEvt = ""
+  $bStop = False
+
+End
+
+' Crée une TriGen sur les articles (code, intitulé, famille) dans un Panel
+Private Sub Cree(Optional bCle As Boolean, Optional bTriIntitule As Boolean, Optional sReq As String)
+
+  Dim Req As String
+  Dim Res As Result
+  Dim Col As New Collection
+  Dim prop As ObjProp
+
+  If sReq Then
+    Req = sReq
+  Else
+    Req = "select art_code, art_design, art_fam from " & Cbase.Table("TabArt")
+  Endif
+  Res = Utils.db.Exec(Req)
+  prop = New ObjProp(Res.Fields["art_code"], "---code---")
+  prop.cle = bCle
+  Col.Add(prop, "---code---")
+  prop = New ObjProp(Res.Fields["art_design"], "------intitule------")
+  prop.tri = bTriIntitule
+  Col.Add(prop, "------intitule------")
+  prop = New ObjProp(Res.Fields["art_fam"], "-famille-")
+  prop.cle = bCle
+  Col.Add(prop, "-famille-")
+  $hWin = New Window
+  $hWin.Resize(800, 300)
+  $hPan = New Panel($hWin)
+  $hPan.Move(0, 0, 800, 300)
+  $hTri = New TriGen($hPan, Col, Res, Req, 20, TriGenTest) As "_Tri"
+
+End
+
+Private Sub Ctrl(sType As String, Optional sNom As String) As Object
+
+  Dim hC As Object
+
+  For Each hC In $hPan.Children
+    If Object.Type(hC) <> sType Then Continue
+    If sNom = "" Then Return hC
+    If sType = "Button" Then
+      If hC.Text = sNom Then Return hC
+    Else
+      If hC.Name = sNom Then Return hC
+    Endif
+  Next
+  Return Null
+
+End
+
+' Contenu de la grille : nombre de lignes et colonne 0 de chaque ligne
+Private Sub Grille() As String
+
+  Dim hG As Object
+  Dim i As Integer
+  Dim s As String
+
+  hG = Ctrl("GridView")
+  If IsNull(hG) Then Return "<pas de grille>"
+  s = hG.Rows.Count & " :"
+  For i = 0 To hG.Rows.Count - 1
+    s &= " " & hG[i, 0].Text
+  Next
+  Return s
+
+End
+
+Private Sub Compteur() As Variant
+
+  Dim hC As Object
+
+  hC = Ctrl("ValueBox")
+  If IsNull(hC) Then Return "<pas de compteur>"
+  Return hC.Value
+
+End
+
+Private Sub Filtre(sNom As String, sTexte As String)
+
+  Dim hF As Object
+
+  hF = Ctrl("TextReg", sNom)
+  hF.Text = sTexte
+
+End
+
+Private Sub Fin()
+
+  Try $hWin.Delete
+
+End
+
+Public Sub _Tri_MajSel(v As Variant)
+
+  If TypeOf(v) = gb.Object Then
+    $sEvt &= "MajSel(Collection " & Coll(v) & ") "
+  Else
+    $sEvt &= "MajSel(" & v & ") "
+  Endif
+  If $bStop Then Stop Event
+
+End
+
+Public Sub _Tri_Activate(v As Variant)
+
+  If TypeOf(v) = gb.Object Then
+    $sEvt &= "Activate(Collection " & Coll(v) & ") "
+  Else
+    $sEvt &= "Activate(" & v & ") "
+  Endif
+
+End
+
+Public Sub _Tri_Raz()
+
+  $sEvt &= "Raz "
+
+End
+
+Public Sub _Tri_ReDim(w As Integer)
+
+  $sEvt &= "ReDim(" & w & ") "
+
+End
+
+Private Sub Coll(c As Collection) As String
+
+  Dim s As String
+  Dim v As Variant
+
+  For Each v In c
+    s &= c.Key & "=" & v & ";"
+  Next
+  Return s
+
+End
+
+Private Sub BvalTexte() As String
+
+  If IsNull(Bval) Then Return "<Null>"
+  If TypeOf(Bval) = gb.Object Then Return "Collection " & Coll(Bval)
+  Return Bval
+
+End
+
+Public Sub T01FiltreTri()
+
+  Cree(False, True)
+  TestKit.Check("T01/evenements", $sEvt)
+  TestKit.Check("T01/initial", Grille())
+  Filtre("------intitule------", "Vis")
+  TestKit.Check("T01/filtre", Grille())
+  TestKit.Check("T01/filtre.compteur", Compteur())
+  Filtre("-famille-", "02")
+  TestKit.Check("T01/deux_filtres", Grille())
+  $hTri.Reset_Click()
+  TestKit.Check("T01/raz", Grille())
+  TestKit.Check("T01/raz.texte_intitule", Ctrl("TextReg", "------intitule------").Text)
+  TestKit.Check("T01/raz.evenements", $sEvt)
+  Fin()
+
+End
+
+Public Sub T02Pagination()
+
+  Cree()
+  TestKit.Check("T02/page0", Grille())
+  $hTri.Descendre_Click()
+  TestKit.Check("T02/descendre1", Grille())
+  TestKit.Check("T02/descendre1.compteur", Compteur())
+  $hTri.Descendre_Click()
+  TestKit.Check("T02/descendre2", Grille())
+  TestKit.Check("T02/descendre2.compteur", Compteur())
+  $hTri.Descendre_Click()
+  TestKit.Check("T02/descendre3", Grille())
+  TestKit.Check("T02/descendre3.compteur", Compteur())
+  $hTri.Remonter_Click()
+  TestKit.Check("T02/remonter", Grille())
+  TestKit.Check("T02/remonter.compteur", Compteur())
+  $hTri.Remonter_Click()
+  $hTri.Remonter_Click()
+  $hTri.Remonter_Click()
+  TestKit.Check("T02/remonter_sous_zero", Grille())
+  TestKit.Check("T02/remonter_sous_zero.compteur", Compteur())
+  Ctrl("ValueBox").Value = 13
+  TestKit.Check("T02/compteur13", Grille())
+  TestKit.Check("T02/compteur13.compteur", Compteur())
+  Fin()
+
+End
+
+Public Sub T03SelectionSimple()
+
+  Bsel = True
+  Bval = "avant"
+  Cree()
+  TestKit.Check("T03/new.Bsel", Bsel)
+  TestKit.Check("T03/new.Bval", BvalTexte())
+  $hTri.Close("T005")
+  TestKit.Check("T03/close.Bsel", Bsel)
+  TestKit.Check("T03/close.Bval", BvalTexte())
+  TestKit.Check("T03/close.evenements", $sEvt)
+  TestKit.Check("T03/close.controles", $hPan.Children.Count)
+  $sEvt = ""
+  Cree()
+  $hTri.Close(Null)
+  TestKit.Check("T03/annule.Bsel", Bsel)
+  TestKit.Check("T03/annule.Bval", BvalTexte())
+  TestKit.Check("T03/annule.evenements", $sEvt)
+  Fin()
+
+End
+
+Public Sub T04SelectionCle()
+
+  Dim hG As Object
+
+  Cree(True)
+  $bStop = True
+  hG = Ctrl("GridView")
+  hG.Row = 2
+  $hTri.Coltri_Click()
+  TestKit.Check("T04/click.Bsel", Bsel)
+  TestKit.Check("T04/click.Bval", BvalTexte())
+  $hTri.Coltri_Activate()
+  TestKit.Check("T04/evenements", $sEvt)
+  TestKit.Check("T04/liste_gardee", Grille())
+  Fin()
+
+End
+
+Public Sub T05ToutFiltre()
+
+  Dim r As Result
+  Dim s As String
+
+  Cree()
+  $bStop = True
+  $hTri.Close("T001")
+  $hTri.Close("T002")
+  TestKit.Check("T05/liste_gardee", Grille())
+  Filtre("------intitule------", "Vis")
+  r = $hTri.GetAllFiltered()
+  s = r.Count & " :"
+  If r.Available Then
+    Repeat
+      s &= " " & r!art_code
+    Until r.MoveNext()
+  Endif
+  TestKit.Check("T05/GetAllFiltered", s)
+  $bStop = True
+  $hTri.Reset_Click()
+  TestKit.Check("T05/raz.evenements", $sEvt)
+  TestKit.Check("T05/raz.grille", Grille())
+  Fin()
+
+End
+
+Public Sub T06FiltreVide()
+
+  Cree()
+  Filtre("------intitule------", "Vis")
+  TestKit.Check("T06/filtre_vis", Grille())
+  Filtre("------intitule------", "ZZZZ")
+  TestKit.Check("T06/filtre_zzzz", Grille())
+  Fin()
+
+End
+
+Public Sub T07FiltreSpecial()
+
+  Dim sCar As String
+
+  Cree()
+  For Each sCar In ["%", "_", "\\", "\""]
+    Try Filtre("---code---", sCar)
+    If Error Then
+      TestKit.Check("T07/filtre[" & sCar & "]", "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T07/filtre[" & sCar & "]", Grille())
+    Endif
+    Try Filtre("---code---", "S" & sCar)
+    If Error Then
+      TestKit.Check("T07/filtre[S" & sCar & "]", "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T07/filtre[S" & sCar & "]", Grille())
+    Endif
+  Next
+  Fin()
+
+End
+
+Public Sub T09FenetrePropre()
+
+  Dim Req As String
+  Dim Res As Result
+  Dim Col As New Collection
+  Dim prop As ObjProp
+  Dim hTri As TriGen
+  Dim hW As Window
+
+  Bsel = True
+  Bval = "avant"
+  Req = "select art_code, art_design from " & Cbase.Table("TabArt")
+  Res = Utils.db.Exec(Req)
+  prop = New ObjProp(Res.Fields["art_code"], "---code---")
+  Col.Add(prop, "---code---")
+  prop = New ObjProp(Res.Fields["art_design"], "------intitule------")
+  Col.Add(prop, "------intitule------")
+  hTri = New TriGen(Null, Col, Res, Req, 20, TriGenTest) As "_Tri"
+  TestKit.Check("T09/new.Bsel", Bsel)
+  TestKit.Check("T09/new.Bval", BvalTexte())
+  For Each hW In Windows
+    If hW.W = 800 And hW.H = 480 Then TestKit.Check("T09/fenetre", hW.W & "x" & hW.H)
+  Next
+  hTri.Close("T003")
+  TestKit.Check("T09/close.Bsel", Bsel)
+  TestKit.Check("T09/close.Bval", BvalTexte())
+  TestKit.Check("T09/close.evenements", $sEvt)
+
+End
+
+Public Sub T12ExtraSel()
+
+  Cree(False, False, "select art_fam, count(*) as parse_having_nb, max(art_code) as art_code, max(art_design) as art_design from " & Cbase.Table("TabArt"))
+  $hTri.GroupBy("GROUP BY art_fam")
+  TestKit.Check("T12/groupby", Grille())
+  $hTri.ExtraSel("art_stocke = 1", "and")
+  TestKit.Check("T12/extrasel", Grille())
+  $hTri.ExtraHave("count(*) > 13", "and")
+  TestKit.Check("T12/extrahave", Grille())
+  Filtre("-famille-", "1")
+  TestKit.Check("T12/extrahave_filtre", Grille())
+  Fin()
+
+End

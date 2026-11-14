@@ -1,0 +1,79 @@
+' Gambas test file
+
+''Tests de ACom (.hidden/reference/.src/Affichages/ACom.class/test.md, ACOM-T01, T02).
+''Écran instancié sans affichage (New ACom(numcom, four, date, montant)) sans passer par Articles ; contenu de
+''Colrcp3 et des champs d'en-tête lus par Controls. Jeu acom_shared/commandes_four.
+''Valeurs attendues : assets/AComTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DetailCommande", "Commande CA1 (article décimal, article supprimé) : en-tête et lignes, quantité brute (A02)")
+  TestKit.Desc("T02FournisseurAbsent", "Commande CA2 d'un fournisseur absent de Fiches_Four et commande CA3 sans ligne : erreur figée (A01)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "AComTest")
+  TestKit.OuvreBase("acom_shared/commandes_four")
+
+End
+
+Private Sub Detail(sCle As String, hForm As Object)
+
+  Dim hVue As ColumnView
+  Dim hCtrl As Object
+  Dim sNom As String
+  Dim i As Integer
+  Dim sRes As String
+
+  For Each sNom In ["Codecli", "Nomcli", "Numfac", "datef", "Totalfac", "Nlgf"]
+    hCtrl = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, hCtrl.Text)
+  Next
+  hVue = hForm.Controls["Colrcp3"]
+  sRes = ""
+  For i = 0 To hVue.Columns.Count - 1
+    sRes &= "[" & hVue.Columns[i].Text & "]"
+  Next
+  TestKit.Check(sCle & "/colonnes", sRes)
+  TestKit.Check(sCle & "/nb_lignes", hVue.Count)
+  If hVue.MoveFirst() Then Return
+  Repeat
+    sRes = ""
+    For i = 0 To hVue.Columns.Count - 1
+      sRes &= "[" & hVue.Item[i] & "]"
+    Next
+    TestKit.Check(sCle & "/ligne_" & hVue.Item.Key, sRes)
+  Until hVue.MoveNext()
+
+End
+
+Public Sub T01DetailCommande()
+
+  Dim hForm As Object
+
+  Try hForm = New ACom("CA1", "401001", "10/05/2018", "57,50")
+  If Error Then
+    TestKit.Check("T01/erreur", Error.Text)
+    Return
+  Endif
+  Detail("T01", hForm)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T02FournisseurAbsent()
+
+  Dim hForm As Object
+
+  Try hForm = New ACom("CA2", "409999", "12/05/2018", "10,00")
+  TestKit.Check("T02/four_absent/erreur", IIf(Error, Error.Text, "<aucune>"))
+  If Object.IsValid(hForm) Then Object.Lock(hForm)
+  hForm = Null
+  Try hForm = New ACom("CA3", "401001", "14/05/2018", "0,00")
+  TestKit.Check("T02/sans_ligne/erreur", IIf(Error, Error.Text, "<aucune>"))
+  If Object.IsValid(hForm) Then Object.Lock(hForm)
+
+End

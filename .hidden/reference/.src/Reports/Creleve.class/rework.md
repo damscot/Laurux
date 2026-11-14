@@ -69,7 +69,8 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `MultiCell` de 294 mm sur une page de 210 mm : une ligne longue sans retour à la ligne est coupée
   au-delà du bord droit et devient illisible. Correction : largeur 196 (ou 0 = jusqu'à la marge) ·
   appelants : `FEditrel`, `Ligcli` · tests : T04, T06 · sources : [Creleve.class:280](../../../../../.src/Reports/Creleve.class#L280)
-- [ ] CRELEVE-A02 — [anomalie] `Logo` : une image de moins de 10 pixels de large donne `L2 = 0` et
+- [ ] CRELEVE-A02 — [anomalie] (confirmée phase 2, vague 6 : image de moins de 10 px → « Division by zero », figée par T02 ; en outre un PNG à canal alpha fait échouer `Entete` (refus de `PdfWriter`, PDFWRITER-A05)) `Logo` : une image de moins de 10 pixels de large donne `L2 = 0` et
   une division par zéro **hors `Try`** à l'appel `Me.Image` (édition interrompue) ; seul le dernier
   `Try` est contrôlé par `If Not Error` · appelants : `Entete` (tous les relevés et relances) ·
   tests : T02 · sources : [Creleve.class:176](../../../../../.src/Reports/Creleve.class#L176), [Creleve.class:179](../../../../../.src/Reports/Creleve.class#L179)
+- [ ] CRELEVE-A03 — [amélioration][tests] Tests portés par les classes appelantes : CRELEVE-T05 ne sont couverts que par des tests d'autres classes (CRELEVE-T05 : couvert par Compta/frelfacture_edition_tous (FRELFACTURE-T03, 3 pages, edition.txt)) ; à rapatrier dans la classe (module .test ou scénarios dans ses assets), puis à alléger dans les appelants pour éviter le double comptage (phase 2, vague 6, 2026-11-14, décision utilisateur du 2026-11-14) · tests : CRELEVE-T05 · sources : [test.md](test.md)

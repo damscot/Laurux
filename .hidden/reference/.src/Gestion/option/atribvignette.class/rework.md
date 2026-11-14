@@ -60,7 +60,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ATRIBVIGNETTE-A01 — [anomalie] Document de type autre que `S`/`E` (ex. `C`) : `res` non
+- [ ] ATRIBVIGNETTE-A01 — [anomalie] (précisée phase 2, vague 6 : ligne de type C → « Result is not available » à l'ouverture (`affiche` l. 54) ; libellé du document repris du document précédent (T07)) Document de type autre que `S`/`E` (ex. `C`) : `res` non
   réaffecté → « Null object » au premier document ou libellé du document précédent ; de même,
   la branche « réception » lit `resbl!vignette` sans tester `Available` · tests : T07 · sources :
   [atribvignette.class:43](../../../../../../.src/Gestion/option/atribvignette.class#L43), [atribvignette.class:52](../../../../../../.src/Gestion/option/atribvignette.class#L52)

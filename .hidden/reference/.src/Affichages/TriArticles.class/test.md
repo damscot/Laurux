@@ -12,19 +12,26 @@ enregistre, lignes `Exec_SQL` à titre informatif.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRIARTICLES-T01 | replay | Sélection simple | `Etiqart` : ouverture de la sélection, clic sur un article | code repris par l'appelant (`Bsel = True`, `Bval` = code) | `tests/selection_simple/` | à faire |
-| TRIARTICLES-T02 | replay | Annulation | ouverture, Échap ; puis ouverture, F2 dans `CB2` | `Bsel = False`, `Bval = Null` chez l'appelant (remise à zéro à l'ouverture) | `tests/annulation/` | à faire |
-| TRIARTICLES-T03 | replay | Filtre fournisseur | `Changefour` (option `Fournisseur`) : `Button1`, choix d'un fournisseur dans `Colist`, sélection | liste filtrée `art_four = …` ; requêtes de référence (doublon `Update` figé) | `tests/filtre_fournisseur/` | à faire |
-| TRIARTICLES-T04 | replay | Filtres famille et centrale | `CB2` → `Famille` puis `Centrale`, choix dans `Colist` | filtres `art_fam`/`art_centrale` appliqués | `tests/filtre_famille_centrale/` | à faire |
-| TRIARTICLES-T05 | replay | Disponible / stocké | `Calcstock` (`Bstocke = True`) puis `EdStk` : cocher `Disponible` | filtres `art_stocke = 1 and art_qte > 0` / `((art_stocke = 0 and art_qte = 0) or art_qte > 0)` | `tests/disponible/` | à faire |
-| TRIARTICLES-T06 | replay | Matériel | option société `Materiel` active, ouverture depuis `Materiel` (`Mat = True`, `Dispo` = bouton radio) | case `Materiel` visible et cochée ; filtre `art_mat = 1` | `tests/materiel/` | à faire |
-| TRIARTICLES-T07 | replay | Colonne variable `CB1` | choix `Barre`, `Casier`, `Four.` | 3ᵉ colonne correspondante ; liste reconstruite (filtres saisis perdus, figé) | `tests/colonne_cb1/` | à faire |
-| TRIARTICLES-T08 | replay | Main d'œuvre | `Prodcomposes` : sélection d'une MO (`"mo_code"`) | code MO repris ; `CB1` désactivé ; composant ajouté (dump comme PRODCOMPOSES-T03) | `tests/main_oeuvre/` | à faire |
-| TRIARTICLES-T09 | replay | Code avec guillemet (A01) | fournisseur dont le code contient `"` | figer l'erreur SQL actuelle | `tests/code_guillemet/` | à faire |
-| TRIARTICLES-T10 | replay | Sélection initiale (A02) | `Achat` avec un fournisseur courant (`Selection` renseigné) | figer : `CB2` rempli, `Fnom` vide | `tests/selection_initiale/` | à faire |
-| TRIARTICLES-T11 | gbtest | `FiltreArticles` (après TRIARTICLES-006) | combinaisons org/code/stock/dispo/mat/tri | texte de filtre identique au clone non modifié | `tests/filtre_articles/` | à faire |
+| TRIARTICLES-T01 | replay | Sélection simple | `Etiqart` : ouverture de la sélection, clic sur un article | code repris par l'appelant (`Bsel = True`, `Bval` = code) | `tests/selection_simple/` | implémenté (gb.test `TriArticlesTest.T01SelectionSimple` : liste initiale, protocole Bsel/Bval par `ColTri_MajSel` ; clic sur la grille non rejouable) |
+| TRIARTICLES-T02 | replay | Annulation | ouverture, Échap ; puis ouverture, F2 dans `CB2` | `Bsel = False`, `Bval = Null` chez l'appelant (remise à zéro à l'ouverture) | `tests/annulation/` | implémenté (gb.test `TriArticlesTest.T02Annulation` : `ColTri_MajSel(Null)` ; Échap/F2 non rejouables) |
+| TRIARTICLES-T03 | replay | Filtre fournisseur | `Changefour` (option `Fournisseur`) : `Button1`, choix d'un fournisseur dans `Colist`, sélection | liste filtrée `art_four = …` ; requêtes de référence (doublon `Update` figé) | `tests/filtre_fournisseur/` | implémenté (gb.test `TriArticlesTest.T03FiltreFournisseur` : `Button1_Click`, `Colist_Click` ; requêtes non comparées) |
+| TRIARTICLES-T04 | replay | Filtres famille et centrale | `CB2` → `Famille` puis `Centrale`, choix dans `Colist` | filtres `art_fam`/`art_centrale` appliqués | `tests/filtre_famille_centrale/` | implémenté (gb.test `TriArticlesTest.T04FiltreFamilleCentrale` : options à l'ouverture et choix dans `Colist`) |
+| TRIARTICLES-T05 | replay | Disponible / stocké | `Calcstock` (`Bstocke = True`) puis `EdStk` : cocher `Disponible` | filtres `art_stocke = 1 and art_qte > 0` / `((art_stocke = 0 and art_qte = 0) or art_qte > 0)` | `tests/disponible/` | implémenté (gb.test `TriArticlesTest.T05Disponible`) |
+| TRIARTICLES-T06 | replay | Matériel | option société `Materiel` active, ouverture depuis `Materiel` (`Mat = True`, `Dispo` = bouton radio) | case `Materiel` visible et cochée ; filtre `art_mat = 1` | `tests/materiel/` | implémenté (gb.test `TriArticlesTest.T06Materiel`, option société active puis inactive) |
+| TRIARTICLES-T07 | replay | Colonne variable `CB1` | choix `Barre`, `Casier`, `Four.` | 3ᵉ colonne correspondante ; liste reconstruite (filtres saisis perdus, figé) | `tests/colonne_cb1/` | implémenté (gb.test `TriArticlesTest.T07ColonneCB1`) |
+| TRIARTICLES-T08 | replay | Main d'œuvre | `Prodcomposes` : sélection d'une MO (`"mo_code"`) | code MO repris ; `CB1` désactivé ; composant ajouté (dump comme PRODCOMPOSES-T03) | `tests/main_oeuvre/` | implémenté (gb.test `TriArticlesTest.T08MainOeuvre` ; ajout du composant : passe par Prodcomposes, voir PRODCOMPOSES-T03) |
+| TRIARTICLES-T09 | replay | Code avec guillemet (A01) | fournisseur dont le code contient `"` | figer l'erreur SQL actuelle | `tests/code_guillemet/` | à faire : l'erreur SQL passe par `Message.Error` de `DB_Connection.Exec` (bloquant en gb.test) ; ouverture depuis un écran appelant : grille non rejouable |
+| TRIARTICLES-T10 | replay | Sélection initiale (A02) | `Achat` avec un fournisseur courant (`Selection` renseigné) | figer : `CB2` rempli, `Fnom` vide | `tests/selection_initiale/` | implémenté (gb.test `TriArticlesTest.T10SelectionInitiale` : A02 figée, `Fnom` Null) ; appelant `Achat` exclu (complexe) |
+| TRIARTICLES-T11 | gbtest | `FiltreArticles` (après TRIARTICLES-006) | combinaisons org/code/stock/dispo/mat/tri | texte de filtre identique au clone non modifié | `tests/filtre_articles/` | à faire : après extraction TRIARTICLES-006 (filtres couverts par les listes obtenues en T03-T06) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2, vague 6)** : la grille de TriGen n'étant pas sélectionnable au rejeu, la fenêtre est
+  instanciée sans affichage dans le module gb.test `.src/Tests/Affichages/TriArticlesTest.test` (le module est l'objet
+  `ob` qui reçoit `Bsel`/`Bval`) ; la liste est relue dans la `GridView` créée par TriGen dans `Panel2`. Jeu
+  `.hidden/Tests/Affichages/assets/triarticles_shared/articles_selection.sql` (2 centrales, 30 articles A001-A030 :
+  familles, fournisseurs, stockés/non stockés, quantités 0/5/-2, matériels, code barre, casier). Ordre des arguments :
+  le `Parent` du Form vient en 6ᵉ position (voir architecture.md).
 
 - **Valeurs attendues** : capturées dans le clone non modifié ; A01 et A02 figées.
 - **Rejeu** : `_new` appelle `Utils.Observers(Me)` **avant** la création des contrôles de

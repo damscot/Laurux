@@ -51,7 +51,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] SETCOLORS-A01 — [anomalie] `Button3_Click:120-125` : les triplets RVB enregistrés
+- [ ] SETCOLORS-A01 — [anomalie] (confirmée phase 2, vague 6 : `/Coul/Coulfond` et `/Coul/Other` enregistrés en décimal (« Background: 16772737 ») ; triplets de `Coulfonds`/`Others` différents du fond affiché (T05)) `Button3_Click:120-125` : les triplets RVB enregistrés
   (`255;254;212`, `229;233;255`) ne correspondent pas aux fonds affichés (`&FFEE81&`, `&FFE0B8&`) ;
   et le format des valeurs diffère de `Start`/`Fmenu` (décimal au lieu de `&H…&`) · tests : T05 · sources : [SetColors.class:120-125](../../../../../.src/Utils/SetColors.class#L120-L125)
 - [ ] SETCOLORS-A02 — [anomalie] `Button2_Click`/`Button3_Click` n'appellent pas

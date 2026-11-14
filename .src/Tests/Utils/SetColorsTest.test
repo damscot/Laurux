@@ -1,0 +1,67 @@
+' Gambas test file
+
+''Tests de SetColors (.hidden/reference/.src/Utils/SetColors.class/test.md, SETCOLORS-T04, T05 en gb.test).
+''L'écran est instancié sans être affiché (sans Form_Open), les boutons « défaut » sont appelés et on relève les
+''clés /Coul/* de Start.LocalSettings et le fond des zones (Controls[…]). Pas de base. Les doubles-clics (T02, T03),
+''l'ouverture (T01) et RVBTexte (T06, après extraction) restent à faire.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04DefautZones", "Button2 : 5 clés /Coul (Fnets, Btns, Znss, Znaff, Focus) et fond des zones")
+  TestKit.Desc("T05DefautDocuments", "Button3 : 4 clés /Coul (Coulfond, Coulfonds, Others, Other) et fond des zones")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "SetColorsTest")
+
+End
+
+Private Sub Releve(sCle As String, hF As SetColors, aCles As String[], aZones As String[])
+
+  Dim s As String
+  Dim hZ As Object
+
+  For Each s In aCles
+    TestKit.Check(sCle & "/conf/" & s, Start.LocalSettings["/Coul/" & s])
+  Next
+  For Each s In aZones
+    hZ = hF.Controls[s]
+    TestKit.Check(sCle & "/zone/" & s, Hex$(hZ.Background, 6))
+  Next
+
+End
+
+Public Sub T04DefautZones()
+
+  Dim hF As SetColors
+
+  Try hF = New SetColors
+  If Error Then
+    TestKit.Check("T04/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hF.Button2_Click()
+  TestKit.Check("T04/erreur", IIf(Error, Error.Text, ""))
+  Releve("T04", hF, ["Fnets", "Btns", "Znss", "Znaff", "Focus"], ["Fnt", "Btn", "Znss", "Znaff", "Fcs"])
+  Object.Lock(hF)
+
+End
+
+Public Sub T05DefautDocuments()
+
+  Dim hF As SetColors
+
+  Try hF = New SetColors
+  If Error Then
+    TestKit.Check("T05/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hF.Button3_Click()
+  TestKit.Check("T05/erreur", IIf(Error, Error.Text, ""))
+  Releve("T05", hF, ["Coulfond", "Coulfonds", "Others", "Other"], ["Docscli", "Others"])
+  Object.Lock(hF)
+
+End

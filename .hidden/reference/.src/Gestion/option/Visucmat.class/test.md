@@ -10,10 +10,10 @@ instrumentation dans les deux clones (VISUCMAT-A03) ou en test manuel guidé.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VISUCMAT-T01 | replay | Ouverture | jeu `cmat_base` ; Caleditcmat → Visu | `Exec_SQL` : `arrete`, `LIMIT 1`, requête `TriGen` avec filtre ; date de début affichée | `tests/ouverture/` | à faire |
-| VISUCMAT-T02 | replay | Filtre par période | saisir `dtdeb`/`dtfin` couvrant un mois du jeu | requête `dtmouv BETWEEN` et lignes `E`/`S` du mois seulement | `tests/filtre_periode/` | à faire |
-| VISUCMAT-T03 | replay | Arrêté non renseigné (A01) | jeu `cmat_base` avec `arrete` NULL | figer la date de début et la requête produites | `tests/arrete_vide/` | à faire |
-| VISUCMAT-T04 | replay | Table vide | option boissons activée, `Fiches_ligregie` vide | figer le comportement de `TriGen` sans colonnes | `tests/table_vide/` | à faire |
+| VISUCMAT-T01 | replay | Ouverture | jeu `cmat_base` ; Caleditcmat → Visu | `Exec_SQL` : `arrete`, `LIMIT 1`, requête `TriGen` avec filtre ; date de début affichée | `tests/ouverture/` | implémenté |
+| VISUCMAT-T02 | replay | Filtre par période | saisir `dtdeb`/`dtfin` couvrant un mois du jeu | requête `dtmouv BETWEEN` et lignes `E`/`S` du mois seulement | `tests/filtre_periode/` | implémenté |
+| VISUCMAT-T03 | replay | Arrêté non renseigné (A01) | jeu `cmat_base` avec `arrete` NULL | figer la date de début et la requête produites | `tests/arrete_vide/` | implémenté |
+| VISUCMAT-T04 | replay | Table vide | option boissons activée, `Fiches_ligregie` vide | figer le comportement de `TriGen` sans colonnes | `tests/table_vide/` | implémenté (code 125 figé) |
 
 ## Détail des tests
 
@@ -23,3 +23,9 @@ instrumentation dans les deux clones (VISUCMAT-A03) ou en test manuel guidé.
   modifié.
 - **Cas non testables** : tri par clic sur les en-têtes (`TriGen`), couvert par les tests du lot
   Affichages.
+- **Implémentation (vague 6)** : `/Soc01/bois` = -1 ; jeux `visucmat_shared/cmat_base` (copie de
+  `modfichier_shared/options_bois_pp` + 5 lignes `Fiches_ligregie`, arrêté `05.2018`), `cmat_arrete_vide`, `cmat_vide`.
+  Ouverture par le menu dynamique `cmat` (Caleditcmat) puis `Visu` ; comparaison du sql.log ordonné. Scénarios
+  `visucmat_ouverture` (T01), `visucmat_filtre_periode` (T02 : `01.06.2018` / `30.06.2018` tapés avec les points ;
+  sans points, la date devient `--`), `visucmat_arrete_vide` (T03 : début au 01.06.2018), `visucmat_table_vide`
+  (T04 : `TriGen._new` ligne 88 « Not an object », code 125). Les dates de saisie sont rejouables (ReplayObservers).

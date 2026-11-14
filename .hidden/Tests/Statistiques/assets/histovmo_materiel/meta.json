@@ -1,0 +1,25 @@
+{
+ "id": "HISTOVMO-T03",
+ "classe": "Histovmo",
+ "objet": "Sources matériel",
+ "description": "Menu Statistiques › Qté MO vendues pour une période ; /Soc01/Materiel = 1 (choix des factures visible) ; Imprimer avec « Toutes factures » (Fact, défaut : union, ligne article 03 de LigblM comptée, A02) puis « Factures entretien » (Face) et Imprimer ; edition.txt = texte du 2e PDF ; requêtes des deux passes dans sql.log ; fermeture. Lecture seule : sql.log comparé.",
+ "dataset": "histovmo_shared/ventes_mo_materiel",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 1,
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

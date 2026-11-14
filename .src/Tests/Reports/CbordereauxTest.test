@@ -1,0 +1,149 @@
+' Gambas test file
+
+''Tests de Cbordereaux (.hidden/reference/.src/Reports/Cbordereaux.class/test.md, CBORDEREAUX-T01 à T04).
+''Chaque test produit un PDF non compressé (SetCompression(False)) dans un fichier temporaire et vérifie :
+''le texte rendu par « pdftotext -layout » (une clé par ligne non vide), le nombre et la taille des pages
+''(pdfinfo) et l'empreinte md5 du fichier PDF (flux : positions, polices, couleurs), après masquage de
+''/CreationDate, de la date du jour et de User.Name. Valeurs attendues : assets/CbordereauxTest/expected.txt,
+''produites dans le clone de référence. Pas de base de données. T05, T06 (rejeux) restent à faire.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Caisse", "Bordereau de caisse : Entete, Logo PNG, 5 Entete2, Ligne, TitreB, 10 Level5")
+  TestKit.Desc("T02Cheques", "Bordereau de chèques : Entete, TitreB, Level6, 30 Level7, Level8")
+  TestKit.Desc("T03Paiements", "Paiements 2 pages : EnteteP, Level1, 40 Level2, Footer, Level3")
+  TestKit.Desc("T04LogoInvalide", "Logo avec un chemin absent, un PNG avec canal alpha, puis un GIF")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "CbordereauxTest")
+
+End
+
+Private Function Nouveau(Optional sOrient As String = "Portrait", Optional sFormat As String = "A4") As Cbordereaux
+
+  Dim pdf As Cbordereaux
+
+  pdf = New Cbordereaux(sOrient, "mm", sFormat)
+  pdf.SetCompression(False)
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, vérifie chaque ligne non vide du texte extrait puis l'empreinte du fichier masqué.
+Private Sub Verifie(sCle As String, pdf As Cbordereaux)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim sBuf As String
+  Dim sMd5 As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "000"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  Shell "pdfinfo " & Shell$(sFic) & " | grep -E '^(Pages|Page size)'" To sBuf
+  TestKit.Check(sCle & "/pdfinfo", Trim(sBuf))
+  ' Flux : masquage des valeurs variables puis empreinte
+  sBuf = File.Load(sFic)
+  sTxt = ""
+  For Each sLig In Split(sBuf, "\n")
+    If InStr(sLig, "/CreationDate") > 0 Then Continue
+    sTxt &= sLig & "\n"
+  Next
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  File.Save(sFic & ".flux", sTxt)
+  Shell "md5sum < " & Shell$(sFic & ".flux") To sMd5
+  TestKit.Check(sCle & "/flux_md5", Trim(Left(sMd5, 32)))
+
+End
+
+Public Sub T01Caisse()
+
+  Dim pdf As Cbordereaux = Nouveau()
+  Dim i As Integer
+
+  pdf.Entete()
+  Try pdf.Logo(Application.Path &/ ".src/Images/monnaie/b100.png")
+  TestKit.Check("T01/logo/erreur", IIf(Error, Replace(Error.Text, Application.Path, "<app>"), ""))
+  For i = 1 To 5
+    pdf.Entete2("Ligne d'en-tête " & i, 10 + i * 5)
+  Next
+  pdf.Ligne(45)
+  pdf.TitreB("Bordereau de caisse du 15/06/2018", 50)
+  For i = 1 To 10
+    pdf.Level5("Billet " & i, Format$(i * 10, "0.00"), 60 + i * 6)
+  Next
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02Cheques()
+
+  Dim pdf As Cbordereaux = Nouveau()
+  Dim i As Integer
+
+  pdf.Entete()
+  pdf.TitreB("Remise de chèques", 20)
+  pdf.Level6()
+  For i = 1 To 30
+    pdf.Level7("15/06/2018", Format$(i * 12.5, "0.00"), "4110" & Format$(i, "00"), "Client " & i, 40 + i * 6)
+  Next
+  pdf.Level8("Total", "5812,50", 230)
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03Paiements()
+
+  Dim pdf As Cbordereaux = Nouveau()
+  Dim p As Integer
+  Dim i As Integer
+
+  For p = 1 To 2
+    pdf.EnteteP("Liste des paiements", 5)
+    pdf.Level1()
+    For i = 0 To 39
+      pdf.Level2("4110" & Format$(i, "00"), "Client " & i, "FA" & (p * 100 + i), "100,00", "50,00", 22 + i * 6)
+    Next
+    pdf.Footer()
+  Next
+  pdf.Level3("4000,00", 270)
+  Verifie("T03", pdf)
+
+End
+
+Public Sub T04LogoInvalide()
+
+  Dim pdf As Cbordereaux = Nouveau()
+
+  pdf.Entete()
+  Try pdf.Logo("/chemin/inexistant/logo.png")
+  TestKit.Check("T04/absent/erreur", IIf(Error, Error.Text, ""))
+  Try pdf.Logo(Application.Path &/ ".hidden/Tests/Gestion/assets/edart4_options/logo.png")
+  TestKit.Check("T04/alpha/erreur", IIf(Error, Replace(Error.Text, Application.Path, "<app>"), ""))
+  Try pdf.Logo(Application.Path &/ "Icones/Larus.gif")
+  TestKit.Check("T04/gif/erreur", IIf(Error, Error.Text, ""))
+  Verifie("T04", pdf)
+
+End

@@ -50,7 +50,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RAZHISTOTK-A01 — [anomalie, à confirmer] Suppression **par numéro seul** (`numero` non
+- [ ] RAZHISTOTK-A01 — [anomalie, à confirmer] (confirmée phase 2, vague 6 : ticket en doublon : les deux supprimés (dump, T03)) Suppression **par numéro seul** (`numero` non
   unique) : un ticket de même numéro postérieur à la date (autre caisse, doublon) et ses lignes sont
   supprimés aussi (famille MOULINAGE-A10). Correction : supprimer l'en-tête par `lInd` et les lignes
   par `numero` + `date` · tests : T03 · sources : [RazHistoTk.class:34-35](../../../../../.src/Archivages/RazHistoTk.class#L34-L35)

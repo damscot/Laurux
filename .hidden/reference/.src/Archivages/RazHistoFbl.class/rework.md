@@ -45,14 +45,14 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RAZHISTOFBL-A01 — [anomalie] **Perte de données hors période** : `DELETE … where numrecpt = &1`
+- [ ] RAZHISTOFBL-A01 — [anomalie] (confirmée phase 2, vague 6 : même n° chez deux fournisseurs : les deux réceptions supprimées (dump, T03)) **Perte de données hors période** : `DELETE … where numrecpt = &1`
   sans `four` → la réception d'un autre fournisseur de même numéro (n° de BL fournisseur) est
   supprimée avec ses lignes, quelle que soit sa date. Correction : `where four = &1 and numrecpt = &2`
   (famille EDREGUL-A01) · tests : T03 · sources : [RazHistoFbl.class:34-35](../../../../../.src/Archivages/RazHistoFbl.class#L34-L35)
 - [ ] RAZHISTOFBL-A02 — [anomalie] Sauvegarde non fiable : code retour de `mysqldump` ignoré, mot de
   passe en clair, fichier écrasé ; libellés incohérents des messages de fin (« Bons de réception » /
   « BL fournisseurs ») · tests : T06 · sources : [RazHistoFbl.class:27](../../../../../.src/Archivages/RazHistoFbl.class#L27), [RazHistoFbl.class:41-42](../../../../../.src/Archivages/RazHistoFbl.class#L41-L42)
-- [ ] RAZHISTOFBL-A03 — [anomalie, à confirmer] Aucun garde-fou : les réceptions non validées
+- [ ] RAZHISTOFBL-A03 — [anomalie, à confirmer] (confirmée phase 2, vague 6 : réception non validée supprimée (dump, T04)) Aucun garde-fou : les réceptions non validées
   (`validee = 0`, pas encore rapprochées d'une facture) sont purgées, et une date postérieure au
   dernier inventaire fausse le recalcul de stock (`Cstock` somme `Fiches_Ligrecpt` depuis
   l'inventaire). Correction proposée : exclure `validee = 0` et refuser une date postérieure au

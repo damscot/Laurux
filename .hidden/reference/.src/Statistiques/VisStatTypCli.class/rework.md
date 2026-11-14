@@ -52,9 +52,9 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VISSTATTYPCLI-A01 — [anomalie] Saut de page jamais déclenché (`p` jamais incrémenté) : au-delà
+- [ ] VISSTATTYPCLI-A01 — [anomalie] (confirmée phase 2, vague 6 : 68 lignes sur une page (T03)) Saut de page jamais déclenché (`p` jamais incrémenté) : au-delà
   d'une page, les lignes débordent (pas de nouvel en-tête ni de pied) · tests : T03 · sources : [VisStatTypCli.class:246](../../../../../.src/Statistiques/VisStatTypCli.class#L246)
-- [ ] VISSTATTYPCLI-A02 — [anomalie] Total imprimé de la colonne % = somme des pourcentages des
+- [ ] VISSTATTYPCLI-A02 — [anomalie] (confirmée phase 2, vague 6 : total des % = somme des %, 236,67 (T03)) Total imprimé de la colonne % = somme des pourcentages des
   lignes (non formatée), différent de l'évolution globale affichée à l'écran (`Netnn2`) ·
   tests : T03 · sources : [VisStatTypCli.class:240](../../../../../.src/Statistiques/VisStatTypCli.class#L240), [VisStatTypCli.class:257](../../../../../.src/Statistiques/VisStatTypCli.class#L257)
 - [ ] VISSTATTYPCLI-A03 — [anomalie] PDF enregistré sous l'extension `.ps` (`~/tmp/StatTypcli.ps`) :

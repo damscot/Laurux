@@ -43,8 +43,9 @@
 
 ### Anomalies : changement de comportement, validation utilisateur requise
 
-- [ ] EXPART-A01 — [anomalie] Prix `Null` : `Format$` lève une erreur, export interrompu et fichier
+- [ ] EXPART-A01 — [anomalie] (confirmée phase 2, vague 6 : `Format$` sur un prix NULL → Type mismatch fatal, CSV partiel (T03)) Prix `Null` : `Format$` lève une erreur, export interrompu et fichier
   non fermé · tests : T03 · sources : [Expart.class:86-96](../../../../../../.src/Utils/Exports-Imports/Expart.class#L86-L96)
-- [ ] EXPART-A02 — [anomalie] Colonne « Nb dcm » = chaîne de format au lieu du nombre de
+- [ ] EXPART-A02 — [anomalie] (confirmée phase 2, vague 6 : « Nb dcm » exporte le masque (`0.00`) au lieu du nombre de décimales (T02)) Colonne « Nb dcm » = chaîne de format au lieu du nombre de
   décimales ; `;` non échappés dans les désignations · tests : T02 · sources : [Expart.class:85](../../../../../../.src/Utils/Exports-Imports/Expart.class#L85), [Expart.class:106](../../../../../../.src/Utils/Exports-Imports/Expart.class#L106)
 - [ ] EXPART-A03 — [anomalie] Fichier créé (vide) même s'il n'y a aucun article · tests : T04 · sources : [Expart.class:71](../../../../../../.src/Utils/Exports-Imports/Expart.class#L71), [Expart.class:113-116](../../../../../../.src/Utils/Exports-Imports/Expart.class#L113-L116)
+- [ ] EXPART-A04 — [anomalie] Colonne « Tx conv » exportée brute (`art_txconv`, toujours 4 décimales) alors que les prix sont formatés selon le nombre de décimales de l'article (phase 2, vague 6, 2026-11-14) · tests : T01, T02 · sources : [Expart.class:89](../../../../../../.src/Utils/Exports-Imports/Expart.class#L89)

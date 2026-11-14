@@ -69,7 +69,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `ExportJdv`, puis suppression d'`Envoi3` devenu sans appelant (sinon, `Envoi3` joindrait les
   CGV au lieu du fichier d'écritures) · appelants : `ExportJdv` · tests : T09, T10,
   EXPORTJDV (replay d'export) · sources : [ExportJdv.class:1000](../../../../../../.src/Compta/Utils/ExportJdv.class#L1000), [EnvMail.module:Envoi3](../../../../../../.src/Gestion/Mails/EnvMail.module#L87-L122)
-- [ ] ENVMAIL-A02 — [anomalie] Copie cachée et chemins de pièces lus dans l'objet `Settings` par
+- [ ] ENVMAIL-A02 — [anomalie] (confirmée phase 2, vague 6 : Bcc lu dans `Settings` ; sans `/Adrmail` dans `Settings`, aucune copie cachée et envoi réussi ; au rejeu, `Settings` du HOME de test vide → pas de Bcc (T06)) Copie cachée et chemins de pièces lus dans l'objet `Settings` par
   défaut au lieu de `Start.LocalSettings` : avec `-c`, la copie cachée d'`Envoi` part vers
   l'adresse du fichier par défaut (fuite possible de factures, tickets et mailings vers une autre
   boîte) · tests : T06 · sources : [EnvMail.module:26](../../../../../../.src/Gestion/Mails/EnvMail.module#L26), [EnvMail.module:176](../../../../../../.src/Gestion/Mails/EnvMail.module#L176)

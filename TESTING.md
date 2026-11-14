@@ -126,6 +126,8 @@ vont dans `output/tests/`, non versionné.
                                        ftp : faux serveur FTP lancé pour le rejeu, "ok" | "refus" | "absent"
                                        (voir « Outils externes factices ») ; « {ftp} » dans une valeur de
                                        conf est remplacé par son URL (ex. {"/Soc01/Adrbase": "{ftp}/sauve"})
+                                       outils : règles des outils externes {"outil": {"rc", "timeout",
+                                       "hidden_argv", "sortie", "erreur"}} (voir « Règles des outils externes »)
                                        smtp : faux serveur SMTP lancé pour le rejeu, "ok" | "refus" | "absent" ;
                                        « {smtp} » (hôte) et « {smtp_port} » (port) dans les valeurs de conf
                                        (ex. {"/Smtp": "{smtp}", "/Port": "{smtp_port}", "/Secumail": "Sans"})
@@ -539,6 +541,28 @@ Documents GED distants de test : l'hôte synthétique `laurux_ged_test.fr` sert 
 autre nom : 404, type `text/html`) ; pour `file:///`, copier ces documents dans le HOME de test (modèle :
 `LGedTest.T15MimeUrl`). Un gb.test qui appelle `curl` place lui-même `Framework/bin` en tête du PATH (le harnais ne
 le fait que pour les rejeux et le runner).
+
+**Règles des outils externes (cas d'erreur).** La clé `"outils"` de `meta.json` fixe, pour un scénario, le
+comportement des faux programmes et des enveloppes de `Framework/bin` :
+```json
+"outils": {"mysqldump": {"rc": 127, "erreur": "sh: 1: mysqldump: not found", "hidden_argv": ["-p*"]},
+           "curl": {"timeout": 6}, "gammu": {"rc": 1, "sortie": "Error opening device"}}
+```
+Le harnais exporte `LAURUX_TEST_<OUTIL>_<PARAM>=<valeur>` (majuscules, caractères hors A-Z et 0-9 remplacés par `_`)
+pour le Laurux testé ; les programmes de `Framework/bin` les lisent par `laurux-regles.sh` :
+| Paramètre | Effet |
+|---|---|
+| `rc` | code de retour forcé |
+| `timeout` | délai (s) avant la réponse : outil lent ou bloqué (Laurux peut l'interrompre, ex. `timeout 5 curl`) |
+| `hidden_argv` | motifs (glob) des arguments masqués `<masqué>` dans la trace (mot de passe…) |
+| `sortie`, `erreur` | texte forcé sur la sortie standard, sur la sortie d'erreur |
+
+Paramètre absent : comportement d'origine (réponse du faux programme, vrai outil pour les enveloppes `mysql`,
+`mysqldump`, `mariadb`, `mariadb-dump`). Si `rc`, `sortie` ou `erreur` est posé, l'outil ne répond qu'avec ces valeurs
+(une enveloppe n'appelle pas le vrai outil). Une enveloppe n'écrit dans `outils.trace` que si une règle la concerne.
+Un outil cité sans faux programme dans `Framework/bin` reçoit, pour ce scénario seulement, un lien vers
+`laurux-factice` en tête du PATH. Modèle : `Archivages/razhistotk_sans_mysqldump` (purge faite sans sauvegarde).
+En gb.test, poser soi-même `Application.Env["LAURUX_TEST_<OUTIL>_<PARAM>"]` et `Framework/bin` en tête du PATH.
 
 **SMTP.** `SmtpClient` (gb.net.smtp, dans le processus Gambas) ne passe par aucun programme externe.
 `TestKit.SmtpFactice(Mode, Dossier)` lance donc `bin/laurux-smtp`, petit serveur SMTP en Python (bibliothèque

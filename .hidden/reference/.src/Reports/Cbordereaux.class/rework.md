@@ -47,7 +47,8 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CBORDEREAUX-A01 — [anomalie, à confirmer par T04] `Logo` appelle `Me.Image` sans contrôle :
+- [ ] CBORDEREAUX-A01 — [anomalie, à confirmer par T04] (confirmée phase 2, vague 6 : figée par T04 : chemin absent, PNG à canal alpha et GIF (« Unsupported image type: gif ») lèvent une erreur non capturée par `Logo` (`Me.Image` l. 64)) `Logo` appelle `Me.Image` sans contrôle :
   un logo configuré mais absent du disque, ou d'un type autre que JPEG/PNG, lève une erreur non
   interceptée et interrompt l'impression du bordereau de caisse. Correction : `Try` + test
   d'existence (logo ignoré) · appelants : `Bordereaux:153` · tests : T04 · sources : [Cbordereaux.class:64](../../../../../.src/Reports/Cbordereaux.class#L64), [Bordereaux.class:153](../../../../../.src/Caisse/Bordereaux.class#L153)
+- [ ] CBORDEREAUX-A02 — [amélioration][tests] Tests portés par les classes appelantes : CBORDEREAUX-T05, CBORDEREAUX-T06 ne sont couverts que par des tests d'autres classes (CBORDEREAUX-T05 : couvert par les scénarios existants Compta/bordereauxc_* (texte pdftotext comparé) ; CBORDEREAUX-T06 : couvert par les scénarios existants Gestion/edpaiement_* (texte pdftotext comparé)) ; à rapatrier dans la classe (module .test ou scénarios dans ses assets), puis à alléger dans les appelants pour éviter le double comptage (phase 2, vague 6, 2026-11-14, décision utilisateur du 2026-11-14) · tests : CBORDEREAUX-T05, CBORDEREAUX-T06 · sources : [test.md](test.md)

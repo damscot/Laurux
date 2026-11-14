@@ -1,0 +1,182 @@
+' Gambas test file
+
+''Tests de Tricartes (.hidden/reference/.src/Caisse/Affichages/Tricartes.class/test.md).
+''Valeurs attendues : assets/TricartesTest/expected.txt, produites dans le clone de référence.
+''Tricartes ne s'ouvre que depuis l'écran Caisse (exclu) : la fenêtre est instanciée sans être affichée, le module
+''est l'objet de retour « ob » (Bsel/Bval) et la liste est relue dans Colcli. Jeu tricartes_shared/cartes_pages.
+
+Public Bsel As Boolean
+Public Bval As Variant
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SelectionFidelite", "Ouverture (Bsel/Bval remis à zéro), liste initiale, clic sur la 3e ligne : carte reprise")
+  TestKit.Desc("T02FiltreTri", "Tri par nom, sens décroissant (double-clic), code postal, ville, code : listes")
+  TestKit.Desc("T03Pagination", "Descendre ×2, Remonter ×3 : pages successives, retour à la page 0")
+  TestKit.Desc("T04ClientsDivers", "Divers = -1 : liste des seules fiches divers, clic : valeur transmise à l'appelant")
+  TestKit.Desc("T06Fermeture", "Mode tactile : bouton Fermer visible ; Fermer : aucune carte reprise")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "TricartesTest")
+  TestKit.OuvreBase("tricartes_shared/cartes_pages")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+
+End
+
+Private Sub Ouvre(iDivers As Integer) As Tricartes
+
+  Dim hF As Tricartes
+
+  Try hF = New Tricartes(iDivers, Null, TricartesTest)
+  If Error Then
+    TestKit.Check("ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Ct(hF As Tricartes, sNom As String) As Object
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  Return hC
+
+End
+
+' Colcli : nombre de lignes, code/nom de chaque ligne
+Private Sub Grille(hF As Tricartes) As String
+
+  Dim hG As Object
+  Dim i As Integer
+  Dim s As String
+
+  hG = Ct(hF, "Colcli")
+  s = hG.Rows.Count & " :"
+  For i = 0 To hG.Rows.Count - 1
+    s &= " " & hG[i, 0].Text & "/" & hG[i, 1].Text
+  Next
+  Return s
+
+End
+
+Private Sub Colonne(hF As Tricartes, iCol As Integer) As String
+
+  Dim hG As Object
+  Dim i As Integer
+  Dim s As String
+
+  hG = Ct(hF, "Colcli")
+  s = hG.Rows.Count & " :"
+  For i = 0 To hG.Rows.Count - 1
+    s &= " " & hG[i, iCol].Text
+  Next
+  Return s
+
+End
+
+Private Sub BvalTexte() As String
+
+  If IsNull(Bval) Then Return "<Null>"
+  Return Bval
+
+End
+
+Public Sub T01SelectionFidelite()
+
+  Dim hF As Tricartes
+
+  Bsel = True
+  Bval = "avant"
+  hF = Ouvre(0)
+  If IsNull(hF) Then Return
+  TestKit.Check("T01/ouverture.Bsel", Bsel)
+  TestKit.Check("T01/ouverture.Bval", BvalTexte())
+  TestKit.Check("T01/liste", Grille(hF))
+  Ct(hF, "Colcli").Row = 2
+  hF.colcli_Click()
+  TestKit.Check("T01/selection.Bsel", Bsel)
+  TestKit.Check("T01/selection.Bval", BvalTexte())
+
+End
+
+Public Sub T02FiltreTri()
+
+  Dim hF As Tricartes
+
+  hF = Ouvre(0)
+  If IsNull(hF) Then Return
+  hF.N1_Click()
+  TestKit.Check("T02/nom", Grille(hF))
+  hF.Dbclk()
+  TestKit.Check("T02/nom_desc", Grille(hF))
+  hF.Dbclk()
+  TestKit.Check("T02/nom_asc", Grille(hF))
+  hF.Cp1_Click()
+  TestKit.Check("T02/cp", Grille(hF))
+  hF.VILLE_Click()
+  ' Tri sur la ville seule : ordre des ex aequo non déterministe, seule la suite des villes est relevée
+  TestKit.Check("T02/ville", Colonne(hF, 6))
+  hF.C1_Click()
+  TestKit.Check("T02/code", Grille(hF))
+  Object.Lock(hF)
+
+End
+
+Public Sub T03Pagination()
+
+  Dim hF As Tricartes
+
+  hF = Ouvre(0)
+  If IsNull(hF) Then Return
+  TestKit.Check("T03/page0", Grille(hF))
+  hF.Descendre_Click()
+  TestKit.Check("T03/descendre1", Grille(hF))
+  hF.Descendre_Click()
+  TestKit.Check("T03/descendre2", Grille(hF))
+  hF.Remonter_Click()
+  TestKit.Check("T03/remonter1", Grille(hF))
+  hF.Remonter_Click()
+  hF.Remonter_Click()
+  TestKit.Check("T03/remonter_sous_zero", Grille(hF))
+  Object.Lock(hF)
+
+End
+
+Public Sub T04ClientsDivers()
+
+  Dim hF As Tricartes
+
+  hF = Ouvre(-1)
+  If IsNull(hF) Then Return
+  TestKit.Check("T04/liste", Grille(hF))
+  Ct(hF, "Colcli").Row = 1
+  hF.colcli_Click()
+  TestKit.Check("T04/selection.Bsel", Bsel)
+  TestKit.Check("T04/selection.Bval", BvalTexte())
+
+End
+
+Public Sub T06Fermeture()
+
+  Dim hF As Tricartes
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/tactile"] = True
+  Bsel = True
+  Bval = "avant"
+  hF = Ouvre(0)
+  If IsNull(hF) Then Return
+  TestKit.Check("T06/Fermer.Visible", Ct(hF, "Fermer").Visible)
+  hF.Fermer_Click()
+  TestKit.Check("T06/fermeture.Bsel", Bsel)
+  TestKit.Check("T06/fermeture.Bval", BvalTexte())
+
+End

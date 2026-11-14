@@ -1,0 +1,25 @@
+{
+ "id": "IMPDEPOTS-T04",
+ "objet": "Saut de page",
+ "classe": "ImpDepots",
+ "description": "Dépôt 02 de 60 articles ; impression chiffrée : 2 pages, en-têtes répétés.",
+ "dataset": "impdepots_soixante",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Depots": "-1",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

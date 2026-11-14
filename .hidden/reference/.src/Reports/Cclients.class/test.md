@@ -10,11 +10,11 @@ et `User.Name` du pied masqués). Attendus produits dans le clone **Laurux non m
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CCLIENTS-T01 | gbtest | Liste des clients portrait : `Entete`, `Level1`, `Level2`, `Lines`, `BasPage` | 3 clients sur 2 pages | texte et flux de référence ; « Page 1/2 », « Page 2/2 » | `tests/cclients_clients/` | à faire |
-| CCLIENTS-T02 | gbtest | Clients Sage : `Level2S` | `dom`/`codebanque`/`codeguichet` renseignés puis vides | même flux dans les deux cas (paramètres ignorés) | `tests/cclients_sage/` | à faire |
-| CCLIENTS-T03 | gbtest | Fournisseurs paysage : `EnteteP`, `Level1F`, `Level2F`, `LinesP`, `BasPageP`, puis `BasPage` | 3 fournisseurs | flux de référence ; pied portrait décentré figé (EDFOUR-A01) | `tests/cclients_fournisseurs/` | à faire |
-| CCLIENTS-T04 | replay | `Level2` à 12 arguments | scénario IMPJDV-T02 (création de clients) | erreur « Not enough arguments » figée (IMPJDV-A04 / CCLIENTS-A01) | `tests/cclients_impjdv/` | à faire |
-| CCLIENTS-T05 | replay | Éditions réelles | scénarios EDCLIENT-T01, EDCLIENT-T03, EDFOUR-T05, IMPSAGE-T01 (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump identique | `tests/cclients_editions/` | à faire |
+| CCLIENTS-T01 | gbtest | Liste des clients portrait : `Entete`, `Level1`, `Level2`, `Lines`, `BasPage` | 3 clients sur 2 pages | texte et flux de référence ; « Page 1/2 », « Page 2/2 » | `tests/cclients_clients/` | implémenté |
+| CCLIENTS-T02 | gbtest | Clients Sage : `Level2S` | `dom`/`codebanque`/`codeguichet` renseignés puis vides | même flux dans les deux cas (paramètres ignorés) | `tests/cclients_sage/` | implémenté |
+| CCLIENTS-T03 | gbtest | Fournisseurs paysage : `EnteteP`, `Level1F`, `Level2F`, `LinesP`, `BasPageP`, puis `BasPage` | 3 fournisseurs | flux de référence ; pied portrait décentré figé (EDFOUR-A01) | `tests/cclients_fournisseurs/` | implémenté |
+| CCLIENTS-T04 | replay | `Level2` à 12 arguments | scénario IMPJDV-T02 (création de clients) | erreur « Not enough arguments » figée (IMPJDV-A04 / CCLIENTS-A01) | `tests/cclients_impjdv/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par les scénarios existants Compta/impjdv_creation_clients (IMPJDV-T02, code de sortie 125 figé) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| CCLIENTS-T05 | replay | Éditions réelles | scénarios EDCLIENT-T01, EDCLIENT-T03, EDFOUR-T05, IMPSAGE-T01 (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump identique | `tests/cclients_editions/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par les scénarios existants Gestion/edclient_*, edfour_*, Compta/impsage_* (texte pdftotext comparé) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
 
 ## Détail des tests
 
@@ -26,3 +26,4 @@ et `User.Name` du pied masqués). Attendus produits dans le clone **Laurux non m
 - **T04** : un appel à 12 arguments ne peut pas être écrit dans un module `.test` compilé sans
   reproduire l'erreur à la compilation ou à l'exécution ; il passe donc par le replay d'`ImpJdv`.
 - **Couverture visée** : 100 % des méthodes.
+- **Module gb.test** : `.src/Tests/Reports/CclientsTest.test`, valeurs attendues dans `.hidden/Tests/Reports/assets/CclientsTest/expected.txt`. Chaque test vérifie le texte `pdftotext -layout` (une clé par ligne), `pdfinfo` (nombre et taille des pages) et l'empreinte md5 du PDF non compressé (date, `User.Name` et `/CreationDate` masqués). Les erreurs levées par une méthode sont figées par `Try` (chemin de l'application remplacé par `<app>`). Image PNG sans canal alpha : `.src/Images/monnaie/b100.png`.

@@ -1,0 +1,62 @@
+' Gambas test file
+
+''Tests de Fclientc (.hidden/reference/.src/Caisse/Fclientc.class/test.md, FCLIENTC-T02 partiel).
+''Écran instancié sans affichage (New Fclientc), Form_Open appelé directement ; bouton loupe (Button4_Click), choix
+''d'un client par Client_Click après positionnement du curseur. T01 (Message.Info après Enregistrer) et T03
+''(Message.Question) bloquent en gb.test ; T04 attend l'extraction FCLIENTC-005.
+''Valeurs attendues : assets/FclientcTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02RechercheClient", "Client caisse existant relu ; loupe : liste des clients ; choix de 411002 : zones remplies ; loupe x2 : liste masquée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "FclientcTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Zones(sCle As String, hForm As Object)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls["code"]
+  TestKit.Check(sCle & "/code", hCtrl.Text)
+  hCtrl = hForm.Controls["intitule"]
+  TestKit.Check(sCle & "/intitule", hCtrl.Text)
+
+End
+
+Public Sub T02RechercheClient()
+
+  Dim hForm As Object
+  Dim hVue As ColumnView
+  Dim sRes As String
+
+  Utils.db.Exec("INSERT INTO Fiches_ClientCaisse (code, nom) VALUES ('411001', 'Client comptoir')")
+  hForm = New Fclientc
+  hForm.Form_Open()
+  Zones("T02/ouverture", hForm)
+  hForm.Button4_Click()
+  hVue = hForm.Controls["Client"]
+  TestKit.Check("T02/liste_visible", hVue.Visible)
+  If Not hVue.MoveFirst() Then
+    Repeat
+      sRes &= "[" & hVue.Item[0] & "|" & hVue.Item[1] & "]"
+    Until hVue.MoveNext()
+  Endif
+  TestKit.Check("T02/liste", sRes)
+  hVue.MoveTo("411002")
+  hForm.Client_Click()
+  Zones("T02/choix", hForm)
+  TestKit.Check("T02/liste_apres_choix", IIf(hVue.Visible, "visible", "masquée") & " " & hVue.Count)
+  hForm.Button4_Click()
+  hForm.Button4_Click()
+  TestKit.Check("T02/loupe_x2", IIf(hVue.Visible, "visible", "masquée") & " " & hVue.Count)
+  Object.Lock(hForm)
+
+End

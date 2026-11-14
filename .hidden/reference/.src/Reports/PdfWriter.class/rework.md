@@ -129,27 +129,32 @@ modifient le PDF produit par les 23 gabarits.
 - [ ] PDFWRITER-A04 — [anomalie] Page au contenu très court écrite non compressée mais déclarée
   `/FlateDecode` (`Compress.String` sans `AllowGrow`) : page illisible. Correction : `AllowGrow` ou
   filtre conditionnel · tests : T07 · sources : [PdfWriter.class:3533](../../../../../.src/Reports/PdfWriter.class#L3533), [PdfWriter.class:_putpages](../../../../../.src/Reports/PdfWriter.class#L3475-L3555)
-- [ ] PDFWRITER-A05 — [anomalie] Images : PNG avec alpha refusé ; PNG à palette refusé à tort
+- [ ] PDFWRITER-A05 — [anomalie] (précisée phase 2, vague 6 : PNG à palette (`Icones/calculator.png`) → « Class 'Array' is not creatable » ; GIF → « Unsupported image type: gif » ; JPEG nommé .png → « Not a PNG file » ; PNG RVBA refusé (T08)) Images : PNG avec alpha refusé ; PNG à palette refusé à tort
   (`IsNull(pal) = ""` vrai quand la palette existe) ; PNG avec `tRNS` → « Class 'Array' is not
   creatable » ; palette tronquée et `Str` localisé ; JPEG gris/CMJN déclarés `/DeviceRGB` ; aucune
   erreur interceptée (logo absent ou GIF → édition interrompue, CFACTURE-A03). Correction possible en
   deux temps : PNG (palette, tRNS) puis repli « image ignorée » à décider avec l'utilisateur ·
   tests : T08 · sources : [PdfWriter.class:Image](../../../../../.src/Reports/PdfWriter.class#L1346-L1386), [PdfWriter.class:3949](../../../../../.src/Reports/PdfWriter.class#L3949), [PdfWriter.class:4012](../../../../../.src/Reports/PdfWriter.class#L4012),
   [PdfWriter.class:4050](../../../../../.src/Reports/PdfWriter.class#L4050), [PdfWriter.class:4056](../../../../../.src/Reports/PdfWriter.class#L4056), [PdfWriter.class:4079](../../../../../.src/Reports/PdfWriter.class#L4079), [PdfWriter.class:3674](../../../../../.src/Reports/PdfWriter.class#L3674)
-- [ ] PDFWRITER-A06 — [anomalie] `_Barcode` (EAN13) : barres retracées 2 à 5 fois (boucle
+- [ ] PDFWRITER-A06 — [anomalie] (précisée phase 2, vague 6 : clé fausse tracée quand même ; caractère non numérique → « Type mismatch: wanted Integer, got Null » (`num = Val(Mid$(…))`, `_Barcode`) (T09)) `_Barcode` (EAN13) : barres retracées 2 à 5 fois (boucle
   `For k = 1 To 7`, rendu identique, PDF plus gros) ; code de longueur ≠ 13 ignoré sans erreur ; clé de
   contrôle non vérifiée · tests : T09 · sources : [PdfWriter.class:4474](../../../../../.src/Reports/PdfWriter.class#L4474), [PdfWriter.class:4453](../../../../../.src/Reports/PdfWriter.class#L4453),
   [PdfWriter.class:_Barcode](../../../../../.src/Reports/PdfWriter.class#L4436-L4483)
-- [ ] PDFWRITER-A07 — [anomalie] `SetMargins` affecte la marge haute à la marge droite
+- [ ] PDFWRITER-A07 — [anomalie] (précisée phase 2, vague 6 : `SetMargins(100, 100)` en 80 mm : largeur utile négative, aucune erreur (T12)) `SetMargins` affecte la marge haute à la marge droite
   (`$rMargin = t`) ; sans effet pour le seul appelant (`Cfacture`, l = t) mais faux en général ·
   tests : T12 · sources : [PdfWriter.class:340](../../../../../.src/Reports/PdfWriter.class#L340), [Cfacture.class:26](../../../../../.src/Caisse/Reports/Cfacture.class#L26)
 - [ ] PDFWRITER-A08 — [anomalie] Seuil de saut de page `h - marge + 18` (contenu jusqu'à 2 mm du
   bord en A4) et recalcul sans `+ 18` dans `_beginpage` lors d'un changement d'orientation · tests :
   T06 · sources : [PdfWriter.class:395](../../../../../.src/Reports/PdfWriter.class#L395), [PdfWriter.class:3889](../../../../../.src/Reports/PdfWriter.class#L3889)
-- [ ] PDFWRITER-A09 — [anomalie] Typage `Integer` hérité du portage : `Line`/`Link` (coordonnées
+- [ ] PDFWRITER-A09 — [anomalie] (confirmée phase 2, vague 6 : `Cell` avec `border = 1` (entier) : aucun cadre tracé (T04)) Typage `Integer` hérité du portage : `Line`/`Link` (coordonnées
   tronquées au mm, cas `Cfacture` 80 mm : 136,5 → 136), `SetFont` (taille entière), `$lasth` ; écarts
   FPDF latents de `Cell` (bordure Integer ignorée, `fill` ignoré avec bordure chaîne) · tests : T04,
   T10 · sources : [PdfWriter.class:Line](../../../../../.src/Reports/PdfWriter.class#L692-L700), [PdfWriter.class:SetFont](../../../../../.src/Reports/PdfWriter.class#L873-L934), [PdfWriter.class:Cell](../../../../../.src/Reports/PdfWriter.class#L1001-L1158)
-- [ ] PDFWRITER-A10 — [anomalie] `Output(…, True)` (destination « D ») lève « Incorrect output
+- [ ] PDFWRITER-A10 — [anomalie] (confirmée phase 2, vague 6 : « Incorrect output destination: D » (T13)) `Output(…, True)` (destination « D ») lève « Incorrect output
   destination » au lieu d'un comportement défini ; aucun appelant actuel (87 × `False`) · tests :
   T13 · sources : [PdfWriter.class:Output](../../../../../.src/Reports/PdfWriter.class#L1434-L1469)
+- [ ] PDFWRITER-A11 — [anomalie] `Cell` alignement "FJ" : `$ws = … / (Split(txt, " ").Count - 1)` → « Division by zero » pour un texte d'un seul mot (« A », « ABC », « Réglée ») ou vide (phase 2, vague 6, 2026-11-14) · tests : T03 · sources : [PdfWriter.class:1071](../../../../../.src/Reports/PdfWriter.class#L1068-L1073)
+- [ ] PDFWRITER-A12 — [anomalie] `Image` sans type ni extension : l'extension est prise après le dernier point du **chemin complet** (`RInStr(filename, ".")`), donc dans un nom de répertoire (« Unsupported image type: cache/… ») au lieu du message « Image file has no extension » (phase 2, vague 6, 2026-11-14) · tests : T08 · sources : [PdfWriter.class:1354-1356](../../../../../.src/Reports/PdfWriter.class#L1354-L1356)
+- [ ] PDFWRITER-A13 — [anomalie] `SetFont("serif", "BI")` écrit `/BaseFont /Serif-BoldOblique`, police hors des 14 polices standard PDF (rendu de substitution par le lecteur) ; voir [PDFWRITERFONT-A01](../PdfWriterFont.class/rework.md) (phase 2, vague 6, 2026-11-14) · tests : T11 · sources : [PdfWriter.class:245](../../../../../.src/Reports/PdfWriter.class#L245), [PdfWriter.class:SetFont](../../../../../.src/Reports/PdfWriter.class#L873)
+- [ ] PDFWRITER-A14 — [anomalie, à confirmer] `Close` d'un document sans `AddPage` ajoute une page vide (`If ($page = -1) Then Me.AddPage()`), comportement hérité de FPDF (intention à confirmer) (phase 2, vague 6, 2026-11-14) · tests : T13 · sources : [PdfWriter.class:512](../../../../../.src/Reports/PdfWriter.class#L512)
+- [ ] PDFWRITER-A15 — [amélioration][tests] Tests portés par les classes appelantes : PDFWRITER-T15 ne sont couverts que par des tests d'autres classes (PDFWRITER-T15 : couvert par les scénarios existants Compta/frelcompte_edition_tous (Creleve), Reports/ccompta_journaux et ccompta_jourcent (Ccompta), Gestion/etiq*_* (Cetiquettes, EAN13) et le module CfactureTest (ticket A4/80 mm) ; texte pdftotext comparé) ; à rapatrier dans la classe (module .test ou scénarios dans ses assets), puis à alléger dans les appelants pour éviter le double comptage (phase 2, vague 6, 2026-11-14, décision utilisateur du 2026-11-14) · tests : PDFWRITER-T15 · sources : [test.md](test.md)

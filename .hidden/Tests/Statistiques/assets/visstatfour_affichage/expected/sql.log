@@ -1,0 +1,63 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdfour Char(8) NOT NULL,nmfour Char(50),montant Decimal(12,2),montant1 Decimal(12,2),PRIMARY KEY (cdfour)) ENGINE = InnoDB
+SELECT * FROM Fiches_Entrecpt where ddate >= '20180101' and ddate <= '20180615'  
+SELECT * FROM Total Where cdfour = '401001'
+SELECT * FROM Fiches_Four where fo_code = '401001'
+INSERT INTO Total(cdfour, montant, nmfour) VALUES ('401001', 100, 'A Divers ')
+SELECT * FROM Fiches_Entrecpt where four = '401001' and ddate >= '20170101' and ddate <= '20170615'  
+SELECT * FROM Total Where cdfour = '401001'
+UPDATE Total set montant1 = 80 Where cdfour = '401001'
+SELECT * FROM Total Where cdfour = '401002'
+SELECT * FROM Fiches_Four where fo_code = '401002'
+INSERT INTO Total(cdfour, montant, nmfour) VALUES ('401002', 10, 'B Divers ')
+SELECT * FROM Fiches_Entrecpt where four = '401002' and ddate >= '20170101' and ddate <= '20170615'  
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set montant1 = 5 Where cdfour = '401002'
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set montant1 = 12 Where cdfour = '401002'
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set cdfour = '401002', montant = 30 Where cdfour = '401002'
+SELECT * FROM Fiches_Entrecpt where four = '401002' and ddate >= '20170101' and ddate <= '20170615'  
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set montant1 = 17 Where cdfour = '401002'
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set montant1 = 24 Where cdfour = '401002'
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set cdfour = '401002', montant = 60 Where cdfour = '401002'
+SELECT * FROM Fiches_Entrecpt where four = '401002' and ddate >= '20170101' and ddate <= '20170615'  
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set montant1 = 29 Where cdfour = '401002'
+SELECT * FROM Total Where cdfour = '401002'
+UPDATE Total set montant1 = 36 Where cdfour = '401002'
+SELECT * FROM Total Where cdfour = '401003'
+SELECT * FROM Fiches_Four where fo_code = '401003'
+INSERT INTO Total(cdfour, montant, nmfour) VALUES ('401003', 50, 'C Divers ')
+SELECT * FROM Fiches_Entrecpt where four = '401003' and ddate >= '20170101' and ddate <= '20170615'  
+UPDATE Total set montant1 = 0 Where cdfour = '401003'
+SELECT * FROM Total Where cdfour = '409999'
+SELECT * FROM Fiches_Four where fo_code = '409999'
+INSERT INTO Total(cdfour, montant, nmfour) VALUES ('409999', 40, 'C Divers ')
+SELECT * FROM Fiches_Entrecpt where four = '409999' and ddate >= '20170101' and ddate <= '20170615'  
+UPDATE Total set montant1 = 0 Where cdfour = '409999'
+SELECT * FROM Total 
+SELECT * FROM Total order by cdfour asc

@@ -1,0 +1,112 @@
+' Gambas test file
+
+''Tests gb.test de Fcaisses (.hidden/reference/.src/Caisse/Fcaisses.class/test.md, T02 et T04).
+''Valeurs attendues : assets/FcaissesTest/expected.txt, produites dans le clone de référence.
+''La fenêtre est instanciée sans être affichée, Form_Open est appelé à la main ; les caisses sont relues en base.
+''Jeu fcaisses_shared/caisses_base (2 caisses au poste fixe « postetest », dépôt DEP003).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02Modification", "Caisse 1 : imprimante /dev/ttyS0 + Tmu950, Enregistrer, puis /dev/ttyUSB0 : lignes en base (typeimp)")
+  TestKit.Desc("T04Depot", "Option Depots : liste des dépôts sans 01, dépôt 02 puis DEP003 sur la caisse 2 : depot en base (A04)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "FcaissesTest")
+  TestKit.OuvreBase("fcaisses_shared/caisses_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Ct(hF As Fcaisses, sNom As String) As Object
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  Return hC
+
+End
+
+Private Sub LigneCaisse(sCode As String) As String
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCaisses") & " WHERE code = &1", sCode)
+  If Not r.Available Then Return "<absente>"
+  Return r!code & " intitule=" & r!intitule & " imp=" & r!imp & " typeimp=" & r!typeimp & " type=" & r!type & " poste=" & r!poste & " depot=" & r!depot & " nb=" & r.Count
+
+End
+
+Private Sub Choisit(hF As Fcaisses, sCode As String)
+
+  Dim hC As Object
+
+  hC = Ct(hF, "Caisse")
+  hC.MoveTo(sCode)
+  hC.Item.Selected = True
+  hF.Caisse_Click()
+
+End
+
+Private Sub Ouvre() As Fcaisses
+
+  Dim hF As Fcaisses
+
+  Try hF = New Fcaisses
+  If Error Then
+    TestKit.Check("ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return Null
+  Endif
+  hF.Form_Open()
+  Return hF
+
+End
+
+Public Sub T02Modification()
+
+  Dim hF As Fcaisses
+
+  hF = Ouvre()
+  If IsNull(hF) Then Return
+  Choisit(hF, "1")
+  TestKit.Check("T02/zones", Ct(hF, "Code").Text & "|" & Ct(hF, "Libelle").Text & "|" & Ct(hF, "ComboBox1").Text & "|" & Ct(hF, "Poste").Text)
+  Ct(hF, "ComboBox1").Text = "/dev/ttyS0"
+  Ct(hF, "ComboBox3").Text = "Tmu950"
+  hF.Button1_Click()
+  TestKit.Check("T02/serie", LigneCaisse("1"))
+  Choisit(hF, "1")
+  TestKit.Check("T02/serie.ComboBox3.Visible", Ct(hF, "ComboBox3").Visible)
+  Ct(hF, "ComboBox1").Text = "/dev/ttyUSB0"
+  hF.Button1_Click()
+  TestKit.Check("T02/usb", LigneCaisse("1"))
+  TestKit.Check("T02/caisse2_inchangee", LigneCaisse("2"))
+  Object.Lock(hF)
+
+End
+
+Public Sub T04Depot()
+
+  Dim hF As Fcaisses
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/Depots"] = 1
+  hF = Ouvre()
+  If IsNull(hF) Then Return
+  TestKit.Check("T04/Panel2.Visible", Ct(hF, "Panel2").Visible)
+  TestKit.Check("T04/depots", Ct(hF, "Dep").List.Join("|"))
+  Choisit(hF, "2")
+  Ct(hF, "Dep").Text = Ct(hF, "Dep").List[1]
+  hF.Button1_Click()
+  TestKit.Check("T04/depot_02", LigneCaisse("2"))
+  Choisit(hF, "2")
+  TestKit.Check("T04/depot_02.Dep", Ct(hF, "Dep").Text)
+  Ct(hF, "Dep").Text = Ct(hF, "Dep").List[2]
+  hF.Button1_Click()
+  TestKit.Check("T04/depot_long", LigneCaisse("2"))
+  Object.Lock(hF)
+
+End

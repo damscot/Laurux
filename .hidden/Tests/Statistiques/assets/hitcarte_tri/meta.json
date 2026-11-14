@@ -1,0 +1,23 @@
+{
+ "id": "HITCARTE-T03",
+ "classe": "HitCarte",
+ "objet": "Tri par visites, 100 premiers",
+ "description": "Menu Caisse › Carte de fidélité › Hit parade des cartes. 100 premiers (RadioButton6) et tri Visites (RadioButton2) ; Traitement ; VisHitCartes : LIMIT 100 ordonné par visites ; Imprimer (edition.txt, VISHITCARTES-T02 sur 1 page : moins de 100 cartes) ; Quitter VisHitCartes. HitCarte (ShowModal) reste ouvert (fermeture non rejouable).",
+ "dataset": "hitcarte_shared/cartes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -49,6 +49,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VISSTATCLIMO-A01 — [anomalie] Lignes du PDF : montants `Float` passés à `level2P`
+- [ ] VISSTATCLIMO-A01 — [anomalie] (confirmée phase 2, vague 6 : lignes « 12.5 » non localisées, totaux « 812,50 » (T03)) Lignes du PDF : montants `Float` passés à `level2P`
   (paramètres `String`) → conversion implicite non localisée et non formatée (`12.5` au lieu de
   `12,50`), incohérente avec la ligne de total · tests : T03 · sources : [VisStatClimo.class:221](../../../../../.src/Statistiques/VisStatClimo.class#L221), [Chistoriques.class:level2P](../../../../../.src/Reports/Chistoriques.class#L343-L355)
+- [ ] VISSTATCLIMO-A02 — [anomalie, à confirmer] 2e clic sur `Bnom` : même ordre au rejeu (bascule croissant/décroissant non observée) ; cause non établie : défaut de l'écran ou clic de RadioButton rejoué deux fois (comme [REPLAYOBSERVER-A09](../../Utils/ReplayObserver.class/rework.md)) (phase 2, vague 6, 2026-11-14) · tests : T02 · sources : [VisStatClimo.class:Bnom_Click](../../../../../.src/Statistiques/VisStatClimo.class#L131)

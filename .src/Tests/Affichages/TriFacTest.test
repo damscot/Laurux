@@ -1,0 +1,81 @@
+' Gambas test file
+
+''Tests de TriFac (.hidden/reference/.src/Affichages/TriFac.class/test.md, TRIFAC-T02, T03 partiels).
+''Écran instancié sans affichage (New TriFac(client)) sans passer par Facture ; les en-têtes sont activés par leurs
+''gestionnaires publics (_MouseDown, _Dblclick) et les boutons Descendre/Remonter par _Click. La grille ColFac lit
+''Utils.rs2 (Utils.Base2) : le test relève le nombre de lignes et les numéros de factures de rs2.
+''Les saisies au clavier dans les en-têtes (KeyPress, lisent Key) ne sont pas appelables en gb.test.
+''Jeu trifac_shared/factures. Valeurs attendues : assets/TriFacTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02TriEntetes", "Ouverture sans client puis avec client 411002 ; clic sur NO, DA, CO, NM, MT, MTC : lignes de rs2")
+  TestKit.Desc("T03Pagination", "Double-clic NO puis DA ; Descendre x2, Remonter, Remonter en tête : lignes de rs2 (A01, A02)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriFacTest")
+  TestKit.OuvreBase("trifac_shared/factures")
+
+End
+
+Private Sub Grille(sCle As String)
+
+  Dim sRes As String
+
+  If Utils.rs2.Count = 0 Then
+    TestKit.Check(sCle, "<aucune ligne>")
+    Return
+  Endif
+  Utils.rs2.MoveFirst()
+  Repeat
+    sRes &= "[" & Utils.rs2!numfac & "|" & Utils.rs2!cdclifac & "]"
+  Until Utils.rs2.MoveNext()
+  TestKit.Check(sCle, Utils.rs2.Count & " " & sRes)
+
+End
+
+Public Sub T02TriEntetes()
+
+  Dim hForm As Object
+  Dim sNom As String
+
+  hForm = New TriFac(Null)
+  Grille("T02/sans_client")
+  For Each sNom In ["NO", "DA", "CO", "NM", "MT", "MTC"]
+    Object.Call(hForm, sNom & "_MouseDown")
+    Grille("T02/" & sNom)
+  Next
+  Object.Lock(hForm)
+  hForm = New TriFac("411002")
+  Grille("T02/client_411002")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T03Pagination()
+
+  Dim hForm As Object
+
+  hForm = New TriFac(Null)
+  hForm.NO_Dblclick()
+  Grille("T03/dbl_NO_1")
+  hForm.NO_Dblclick()
+  Grille("T03/dbl_NO_2")
+  hForm.DA_Dblclick()
+  Grille("T03/dbl_DA")
+  hForm.Descendre_Click()
+  Grille("T03/descendre_1")
+  hForm.Descendre_Click()
+  Grille("T03/descendre_2")
+  hForm.Remonter_Click()
+  Grille("T03/remonter_1")
+  hForm.Remonter_Click()
+  hForm.Remonter_Click()
+  Grille("T03/remonter_tete")
+  Object.Lock(hForm)
+
+End

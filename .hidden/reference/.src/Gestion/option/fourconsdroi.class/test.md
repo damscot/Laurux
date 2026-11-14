@@ -8,8 +8,8 @@ non-régression après suppression.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| FOURCONSDROI-T01 | gbtest | Absence de référence | `grep -rni fourconsdroi .src` ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/suppression/` | à faire |
-| FOURCONSDROI-T02 | replay | Non-régression réception boissons | rejouer CONSIGNE-T06 après suppression | dump identique | `tests/non_regression_reception/` | à faire |
+| FOURCONSDROI-T01 | gbtest | Absence de référence | `grep -rni fourconsdroi .src` ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/suppression/` | à faire : contrôle après suppression de la classe (rework), pas de comportement à figer |
+| FOURCONSDROI-T02 | replay | Non-régression réception boissons | rejouer CONSIGNE-T06 après suppression | dump identique | `tests/non_regression_reception/` | à faire : rejeu de CONSIGNE-T06 après suppression de la classe (rework) |
 
 ## Détail des tests
 
@@ -17,3 +17,4 @@ non-régression après suppression.
   (aucune référence `fourconsdroi.consigne` ni `New Consigne` sans argument dans un contexte de
   structure).
 - Les valeurs de T02 sont celles de CONSIGNE-T06 (clone Laurux non modifié).
+

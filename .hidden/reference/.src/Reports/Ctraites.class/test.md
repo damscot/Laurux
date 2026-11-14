@@ -7,7 +7,7 @@ Classe morte : aucun comportement à figer.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CTRAITES-T01 | gbtest | Non-régression de la suppression | `gbc3 -agt` puis `./Laurux -T all` après suppression ; `grep -rni "\bctraites\b" .src .project` | compilation sans erreur, suite verte, aucune occurrence | `tests/suppression/` | à faire |
+| CTRAITES-T01 | gbtest | Non-régression de la suppression | `gbc3 -agt` puis `./Laurux -T all` après suppression ; `grep -rni "\bctraites\b" .src .project` | compilation sans erreur, suite verte, aucune occurrence | `tests/suppression/` | à faire : test de la suppression (phase 4) |
 
 ## Détail des tests
 

@@ -1,0 +1,23 @@
+{
+ "id": "RELVMO-T06",
+ "objet": "Impression de tout",
+ "classe": "RelvMo",
+ "description": "Traitement, clic sur la ligne 41100101 (ligne courante, RB2), RB1 sélection globale, Imprimer : texte PDF avec un en-tête par client (411001, 411002, 411003) et toutes les lignes MO. Le saut de page (> 34 lignes, anomalie A01) n'est pas couvert par ce jeu.",
+ "dataset": "relvmo_shared/relvmo_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

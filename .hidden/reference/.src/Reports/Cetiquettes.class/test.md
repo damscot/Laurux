@@ -12,12 +12,12 @@ le clone **Laurux non modifié**.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CETIQUETTES-T01 | gbtest | 14 textes simples (`Nom` … `Refour`) | texte « ABC », positions fixes, `fontratio` 1,0 et 0,5 | flux de référence ; `Code` ≡ `Intitule`, `Codec` ≡ `IntituleA` ; épaisseur 0,8 après `Adrexp` | `tests/cetiquettes_textes/` | à faire |
-| CETIQUETTES-T02 | gbtest | Textes composés : `IntituleB`, `stockc`, `Poids`, `volm` (HT vrai/faux) | intitulé de 28, 29 et 40 caractères | troncature à 29 ; flux de référence | `tests/cetiquettes_composes/` | à faire |
-| CETIQUETTES-T03 | gbtest | Prix : `Tva`, `PrixHt`, `PrixTTC`, `PrixTTCB`, `PrixHtP`, `PrixTTCP` | « 12,50 », `fontratio` 1,0 et 0,7 | flux de référence (opérateurs de couleur de `PrixHt`/`PrixHtP` compris) | `tests/cetiquettes_prix/` | à faire |
-| CETIQUETTES-T04 | gbtest | `Barcode` | EAN valide de 13 chiffres ; `hauteur`/`largeur` par défaut, « 4.6666 », « 70 » (plafond 0,55) ; `fontratio` 0,3 et 1,0 ; code de 12 caractères | barres et texte de référence ; hauteur tronquée à 4 ; pas de texte si `fontratio` ≤ 0,3 ; aucune barre pour 12 caractères | `tests/cetiquettes_barcode/` | à faire |
-| CETIQUETTES-T05 | gbtest | Cadres et pages : `Rectangle`, `Rectangle2`, `NewPage` | 2 pages A4, 1 page `dymog`, 1 page `dymoc` | dimensions de page et cadres de référence | `tests/cetiquettes_cadres/` | à faire |
-| CETIQUETTES-T06 | replay | Étiquettes réelles | scénarios ETIQART-T01, ETIGOND-T01, ETIQCASIER-T01, ETIQPROMO-T01, ETIQRECPT-T01, ETIQFBTARIF-T01, ETICLI-T01, FCLIENT-T13, FFOURNISSEUR-T12 (voir leurs `test.md`) | texte et flux PDF identiques entre les deux clones ; dump identique (table de travail `Etiquettes` comprise) | `tests/cetiquettes_editions/` | à faire |
+| CETIQUETTES-T01 | gbtest | 14 textes simples (`Nom` … `Refour`) | texte « ABC », positions fixes, `fontratio` 1,0 et 0,5 | flux de référence ; `Code` ≡ `Intitule`, `Codec` ≡ `IntituleA` ; épaisseur 0,8 après `Adrexp` | `tests/cetiquettes_textes/` | implémenté |
+| CETIQUETTES-T02 | gbtest | Textes composés : `IntituleB`, `stockc`, `Poids`, `volm` (HT vrai/faux) | intitulé de 28, 29 et 40 caractères | troncature à 29 ; flux de référence | `tests/cetiquettes_composes/` | implémenté |
+| CETIQUETTES-T03 | gbtest | Prix : `Tva`, `PrixHt`, `PrixTTC`, `PrixTTCB`, `PrixHtP`, `PrixTTCP` | « 12,50 », `fontratio` 1,0 et 0,7 | flux de référence (opérateurs de couleur de `PrixHt`/`PrixHtP` compris) | `tests/cetiquettes_prix/` | implémenté |
+| CETIQUETTES-T04 | gbtest | `Barcode` | EAN valide de 13 chiffres ; `hauteur`/`largeur` par défaut, « 4.6666 », « 70 » (plafond 0,55) ; `fontratio` 0,3 et 1,0 ; code de 12 caractères | barres et texte de référence ; hauteur tronquée à 4 ; pas de texte si `fontratio` ≤ 0,3 ; aucune barre pour 12 caractères | `tests/cetiquettes_barcode/` | implémenté |
+| CETIQUETTES-T05 | gbtest | Cadres et pages : `Rectangle`, `Rectangle2`, `NewPage` | 2 pages A4, 1 page `dymog`, 1 page `dymoc` | dimensions de page et cadres de référence | `tests/cetiquettes_cadres/` | implémenté |
+| CETIQUETTES-T06 | replay | Étiquettes réelles | scénarios ETIQART-T01, ETIGOND-T01, ETIQCASIER-T01, ETIQPROMO-T01, ETIQRECPT-T01, ETIQFBTARIF-T01, ETICLI-T01, FCLIENT-T13, FFOURNISSEUR-T12 (voir leurs `test.md`) | texte et flux PDF identiques entre les deux clones ; dump identique (table de travail `Etiquettes` comprise) | `tests/cetiquettes_editions/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par les scénarios existants Gestion/etiqart_*, etigond_*, etiqcasier_*, etiqpromo_*, etiqrecpt_*, etiqfbtarif_*, eticli_* (texte pdftotext comparé) ; FCLIENT-T13 et FFOURNISSEUR-T12 exclus (écrans complexes) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
 
 ## Détail des tests
 
@@ -30,3 +30,4 @@ le clone **Laurux non modifié**.
 - **Non testable automatiquement** : lisibilité réelle du code-barres par un lecteur (contrôle
   manuel sur une impression) ; chaîne Zebra (ZEBRA-A01).
 - **Couverture visée** : 100 % des méthodes et des branches (`IntituleB`, `volm`, `Barcode`).
+- **Module gb.test** : `.src/Tests/Reports/CetiquettesTest.test`, valeurs attendues dans `.hidden/Tests/Reports/assets/CetiquettesTest/expected.txt`. Chaque test vérifie le texte `pdftotext -layout` (une clé par ligne), `pdfinfo` (nombre et taille des pages) et l'empreinte md5 du PDF non compressé (date, `User.Name` et `/CreationDate` masqués). Les erreurs levées par une méthode sont figées par `Try` (chemin de l'application remplacé par `<app>`). Image PNG sans canal alpha : `.src/Images/monnaie/b100.png`.

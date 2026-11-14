@@ -8,7 +8,7 @@ l'interface. Le seul test utile vérifie l'absence d'appel avant la suppression.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRIBL-T01 | gbtest | Absence de référence (avant TRIBL-A01) | `grep -rnw "TriBl"` sur `.src` hors variable `Tribl` de `Facture` ; recherche de `"TriBl"` en chaîne ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/absence_reference/` | à faire |
+| TRIBL-T01 | gbtest | Absence de référence (avant TRIBL-A01) | `grep -rnw "TriBl"` sur `.src` hors variable `Tribl` de `Facture` ; recherche de `"TriBl"` en chaîne ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/absence_reference/` | implémenté (gb.test TriBlTest.T01AbsenceReference : grep sensible à la casse ; seule Facture.class cite TriBl, comme variable) |
 
 ## Détail des tests
 
@@ -19,3 +19,4 @@ l'interface. Le seul test utile vérifie l'absence d'appel avant la suppression.
   pas un module gb.test au sens strict ; il garantit que la suppression ne casse pas la compilation.
 - Si l'utilisateur refuse la suppression, les reworks TRIBL-001 à 004 ne sont pas testables par
   replay ; ils ne seraient validés que par `gbc3 -agt`.
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Affichages/TriBlTest.test` ; aucun jeu de données (contrôle statique par grep) ; attendus `assets/TriBlTest/expected.txt`.

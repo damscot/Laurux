@@ -71,7 +71,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TRIFAC-A01 — [anomalie] Le double-clic n'inverse pas l'ordre : `Deb3` trie en `DESC` comme
+- [ ] TRIFAC-A01 — [anomalie] (confirmée phase 2, vague 6 : figée par T03 (`Dbl` Boolean reçoit ""/"1", double-clic sur NO n'inverse pas l'ordre)) Le double-clic n'inverse pas l'ordre : `Deb3` trie en `DESC` comme
   `Deb2` (lignes 130 et 132) ; de plus `Deplacement` utilise, après un double-clic, `Deb3` (filtre
   `sel`) quand la colonne est la date et `Deb3b` (filtre `sel2`, ordre `ASC`) sinon, c'est-à-dire
   l'inverse de `Deb2b`/`Deb2` : la page suivante change de filtre et d'ordre · tests : T03 ·
@@ -92,3 +92,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   dessin de la dernière cellule de colonne 0 ; si le GridView redessine une cellule isolée (survol,
   défilement partiel), le prénom peut appartenir à une autre ligne. Correction : lire `pnmclifac`
   dans `Utils.rs2` à la ligne courante · tests : T02 · sources : [TriFac.class:76](../../../../../.src/Affichages/TriFac.class#L76), [TriFac.class:82](../../../../../.src/Affichages/TriFac.class#L82)
+- [ ] TRIFAC-A06 — [anomalie] `ORDER BY` sur une seule colonne (`Deb2`/`Deb2b`/`Deb3`/`Deb3b`) : l'ordre des ex aequo dépend du moteur (MariaDB) et de la page : listes non déterministes, tests fragiles (phase 2, vague 6, 2026-11-14) · tests : T02, T03 · sources : [TriFac.class:Deb2](../../../../../.src/Affichages/TriFac.class#L96-L138)

@@ -76,11 +76,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sources : [Fcaisses.class:302](../../../../../.src/Caisse/Fcaisses.class#L302)
 - [ ] FCAISSES-A03 — [anomalie] `Btn_KeyPress` : toute touche sur « Enregistrer » enregistre sans
   les contrôles Monoposte/Réseau faits par `Btn_Click` · tests : T03 · sources : [Fcaisses.class:Btn_KeyPress](../../../../../.src/Caisse/Fcaisses.class#L191-L200), [Fcaisses.class:Btn_Click](../../../../../.src/Caisse/Fcaisses.class#L202-L231)
-- [ ] FCAISSES-A04 — [anomalie] Dépôt enregistré par `Left$(Dep.Text, 2)` alors que
+- [ ] FCAISSES-A04 — [anomalie] (confirmée phase 2, vague 6 : dépôt DEP003 enregistré `DE` (T04)) Dépôt enregistré par `Left$(Dep.Text, 2)` alors que
   `Fiches_Depots.code` est `char(8)` : un dépôt de code long est tronqué puis introuvable (même
   convention dans `Famille` et `Facture`, à corriger ensemble) · appelants : `Caisse` (lecture de
   `depot`) · tests : T04 · sources : [Fcaisses.class:248](../../../../../.src/Caisse/Fcaisses.class#L248), [Fcaisses.class:250](../../../../../.src/Caisse/Fcaisses.class#L250), [Famille.class:190](../../../../../.src/Gestion/Tables/Famille.class#L190)
-- [ ] FCAISSES-A05 — [anomalie] Interface : « Type imp. » affiché seulement pour `/dev/ttyS*` alors
+- [ ] FCAISSES-A05 — [anomalie] (confirmée phase 2, vague 6 : `typeimp` Tmu950 conservé en passant l'imprimante en /dev/ttyUSB0 (T02)) Interface : « Type imp. » affiché seulement pour `/dev/ttyS*` alors
   que la liste propose `/dev/ttyUSB*`/`/dev/ttyACM*` (valeur cachée conservée à l'enregistrement) ;
   Échap/F2 masque définitivement la liste jusqu'à la réouverture ; `Chkcaisse` refuse le chiffre
   `0` (aucun code `10`, cohérent avec OUVERTURE-A01) · tests : T02, T07 · sources : [Fcaisses.class:101](../../../../../.src/Caisse/Fcaisses.class#L101), [Fcaisses.class:245](../../../../../.src/Caisse/Fcaisses.class#L245), [Fcaisses.class:331](../../../../../.src/Caisse/Fcaisses.class#L331), [Fcaisses.class:342](../../../../../.src/Caisse/Fcaisses.class#L342)

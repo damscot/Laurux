@@ -1,0 +1,20 @@
+{
+ "id": "RAZDEVIS-T02",
+ "classe": "RazDevis",
+ "objet": "Option matériel cochée",
+ "description": "Jeu devis_base, /Soc01/Materiel = -1 : case CheckBox1 cochée (Click=-1), Lancer, « Oui », Info, Quitter. Attendu : devis 900001 et devis matériel D antérieur 800001 supprimés avec leurs lignes ; 800002 (futur) et 800003 (B) conservés ; message « 2 devis » ; date limite = date du jour figée 2018-06-15 (valeur par défaut du DateChooser).",
+ "dataset": "razdevis_shared/devis_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Materiel": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

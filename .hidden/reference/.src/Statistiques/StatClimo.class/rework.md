@@ -55,15 +55,15 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATCLIMO-A01 — [anomalie] « Inclure les BL » : `… AND type = &3 OR type = &4` sans
+- [ ] STATCLIMO-A01 — [anomalie] (précisée phase 2, vague 6 : BL de type B comptés même avec une période impossible (fin avant début), T02) « Inclure les BL » : `… AND type = &3 OR type = &4` sans
   parenthèses → tous les BL de type `B`, quelle que soit leur date, sont ajoutés · tests : T02 · sources : [StatClimo.class:247](../../../../../.src/Statistiques/StatClimo.class#L247), [StatClimo.class:248](../../../../../.src/Statistiques/StatClimo.class#L248), [StatClimo.class:249](../../../../../.src/Statistiques/StatClimo.class#L249)
 - [ ] STATCLIMO-A02 — [anomalie] Factures en cours (`Fiches_Bl` type `F`) toujours incluses, sans
   contrôle de recouvrement avec les factures archivées (double comptage possible, à confirmer),
   alors que les autres écrans se limitent aux factures archivées · tests : T01 · sources : [StatClimo.class:252](../../../../../.src/Statistiques/StatClimo.class#L252), [StatClimo.class:207](../../../../../.src/Statistiques/StatClimo.class#L207)
-- [ ] STATCLIMO-A03 — [anomalie] Source « Toutes » : lignes lues par `union` de `HistoLigfac` et
+- [ ] STATCLIMO-A03 — [anomalie] (confirmée phase 2, vague 6 : figée par T03 (union)) Source « Toutes » : lignes lues par `union` de `HistoLigfac` et
   `HistoLigfacM` (et `Ligbl`/`LigblM`) sur le **même numéro** → lignes d'une autre facture de même
   numéro ajoutées, et lignes identiques fusionnées par `UNION` · tests : T03 · sources : [StatClimo.class:214](../../../../../.src/Statistiques/StatClimo.class#L214), [StatClimo.class:262](../../../../../.src/Statistiques/StatClimo.class#L262)
-- [ ] STATCLIMO-A04 — [anomalie] Lignes `M` des factures archivées converties par `Val()` sans
+- [ ] STATCLIMO-A04 — [anomalie] (confirmée phase 2, vague 6 : `Traitement.222` Type mismatch sur un brut « 12.50 » (`Val(LigResult!brut_ligfac)`), figée par T04 (code 125) ; motif transverse « `Val()` / `Format$` sur un décimal en locale fr (point décimal lu en base ou virgule passée à `Format$`) → Type mismatch fatal » : voir aussi [EDCOM-A05](../../Gestion/Impressions/Edcom.class/rework.md), [MATERIEL-A13](../../Gestion/Tables/Materiel.class/rework.md), [EDBR-A05](../../Gestion/Impressions/Edbr.module/rework.md), [CLCR-A01](../../Gestion/Lcr/CLcr.class/rework.md), [MAJFBTARIF2-A04](../../Gestion/Stock/Tarifs/MajFbtarif2.class/rework.md)) Lignes `M` des factures archivées converties par `Val()` sans
   `cpoint` : un montant au format `"12.50"` provoque « Type mismatch » et interrompt le
   traitement (la branche BL utilise `cpoint`) · tests : T04 · sources : [StatClimo.class:222](../../../../../.src/Statistiques/StatClimo.class#L222), [StatClimo.class:223](../../../../../.src/Statistiques/StatClimo.class#L223), [StatClimo.class:270](../../../../../.src/Statistiques/StatClimo.class#L270)
 - [ ] STATCLIMO-A05 — [anomalie] Table de travail `Total` partagée entre postes et écrans de

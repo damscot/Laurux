@@ -1,0 +1,276 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdclifac Char(8) NOT NULL,nmclifac Char(25),pnmclifac Char(25),brutfac Decimal(12,2),rmfac Decimal(12,2),totfac Decimal(12,2),totfacn1 Decimal(12,2),commercial Char(2),PRIMARY KEY (cdclifac)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' order by cdclifac, datefac 
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411001'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411001', 'A Divers ', 'Alain', 112.5, 12.5, 100, '01')
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411001'
+UPdate Total set cdclifac = '411001', nmclifac = 'A Divers ', pnmclifac = 'Alain', brutfac = 320, rmfac = 20, totfac = 300 Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411002'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411002'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411002', 'B Divers ', 'Bruno', 50, 0, 50, '01')
+SELECT * FROM Total Where cdclifac = '411003'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411003'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411003', 'C Divers ', 'Claire', 315, 15, 300, '02')
+SELECT * FROM Total Where cdclifac = '411004'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411004'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411004', 'D Divers ', 'Denis', 40, 0, 40, NULL)
+SELECT * FROM Total Where cdclifac = '412001'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412001'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412001', 'CLIENT 01', 'P', 11, 0, 11, '01')
+SELECT * FROM Total Where cdclifac = '412002'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412002'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412002', 'CLIENT 02', 'P', 12, 0, 12, '01')
+SELECT * FROM Total Where cdclifac = '412003'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412003'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412003', 'CLIENT 03', 'P', 13, 0, 13, '01')
+SELECT * FROM Total Where cdclifac = '412004'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412004'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412004', 'CLIENT 04', 'P', 14, 0, 14, '01')
+SELECT * FROM Total Where cdclifac = '412005'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412005'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412005', 'CLIENT 05', 'P', 15, 0, 15, '01')
+SELECT * FROM Total Where cdclifac = '412006'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412006'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412006', 'CLIENT 06', 'P', 16, 0, 16, '01')
+SELECT * FROM Total Where cdclifac = '412007'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412007'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412007', 'CLIENT 07', 'P', 17, 0, 17, '01')
+SELECT * FROM Total Where cdclifac = '412008'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412008'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412008', 'CLIENT 08', 'P', 18, 0, 18, '01')
+SELECT * FROM Total Where cdclifac = '412009'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412009'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412009', 'CLIENT 09', 'P', 19, 0, 19, '01')
+SELECT * FROM Total Where cdclifac = '412010'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412010'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412010', 'CLIENT 10', 'P', 20, 0, 20, '01')
+SELECT * FROM Total Where cdclifac = '412011'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412011'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412011', 'CLIENT 11', 'P', 21, 0, 21, '01')
+SELECT * FROM Total Where cdclifac = '412012'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412012'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412012', 'CLIENT 12', 'P', 22, 0, 22, '01')
+SELECT * FROM Total Where cdclifac = '412013'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412013'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412013', 'CLIENT 13', 'P', 23, 0, 23, '01')
+SELECT * FROM Total Where cdclifac = '412014'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412014'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412014', 'CLIENT 14', 'P', 24, 0, 24, '01')
+SELECT * FROM Total Where cdclifac = '412015'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412015'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412015', 'CLIENT 15', 'P', 25, 0, 25, '01')
+SELECT * FROM Total Where cdclifac = '412016'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412016'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412016', 'CLIENT 16', 'P', 26, 0, 26, '01')
+SELECT * FROM Total Where cdclifac = '412017'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412017'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412017', 'CLIENT 17', 'P', 27, 0, 27, '01')
+SELECT * FROM Total Where cdclifac = '412018'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412018'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412018', 'CLIENT 18', 'P', 28, 0, 28, '01')
+SELECT * FROM Total Where cdclifac = '412019'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412019'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412019', 'CLIENT 19', 'P', 29, 0, 29, '01')
+SELECT * FROM Total Where cdclifac = '412020'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412020'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412020', 'CLIENT 20', 'P', 30, 0, 30, '01')
+SELECT * FROM Total Where cdclifac = '412021'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412021'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412021', 'CLIENT 21', 'P', 31, 0, 31, '01')
+SELECT * FROM Total Where cdclifac = '412022'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412022'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412022', 'CLIENT 22', 'P', 32, 0, 32, '01')
+SELECT * FROM Total Where cdclifac = '412023'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412023'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412023', 'CLIENT 23', 'P', 33, 0, 33, '01')
+SELECT * FROM Total Where cdclifac = '412024'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412024'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412024', 'CLIENT 24', 'P', 34, 0, 34, '01')
+SELECT * FROM Total Where cdclifac = '412025'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412025'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412025', 'CLIENT 25', 'P', 35, 0, 35, '01')
+SELECT * FROM Total Where cdclifac = '412026'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412026'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412026', 'CLIENT 26', 'P', 36, 0, 36, '01')
+SELECT * FROM Total Where cdclifac = '412027'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412027'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412027', 'CLIENT 27', 'P', 37, 0, 37, '01')
+SELECT * FROM Total Where cdclifac = '412028'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412028'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412028', 'CLIENT 28', 'P', 38, 0, 38, '01')
+SELECT * FROM Total Where cdclifac = '412029'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412029'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412029', 'CLIENT 29', 'P', 39, 0, 39, '01')
+SELECT * FROM Total Where cdclifac = '412030'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412030'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412030', 'CLIENT 30', 'P', 40, 0, 40, '01')
+SELECT * FROM Total Where cdclifac = '412031'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412031'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412031', 'CLIENT 31', 'P', 41, 0, 41, '01')
+SELECT * FROM Total Where cdclifac = '412032'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412032'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412032', 'CLIENT 32', 'P', 42, 0, 42, '01')
+SELECT * FROM Total Where cdclifac = '412033'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412033'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412033', 'CLIENT 33', 'P', 43, 0, 43, '01')
+SELECT * FROM Total Where cdclifac = '412034'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412034'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412034', 'CLIENT 34', 'P', 44, 0, 44, '01')
+SELECT * FROM Total Where cdclifac = '412035'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412035'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412035', 'CLIENT 35', 'P', 45, 0, 45, '01')
+SELECT * FROM Total Where cdclifac = '412036'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412036'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412036', 'CLIENT 36', 'P', 46, 0, 46, '01')
+SELECT * FROM Total Where cdclifac = '412037'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412037'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412037', 'CLIENT 37', 'P', 47, 0, 47, '01')
+SELECT * FROM Total Where cdclifac = '412038'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412038'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412038', 'CLIENT 38', 'P', 48, 0, 48, '01')
+SELECT * FROM Total Where cdclifac = '412039'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412039'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412039', 'CLIENT 39', 'P', 49, 0, 49, '01')
+SELECT * FROM Total Where cdclifac = '412040'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412040'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412040', 'CLIENT 40', 'P', 50, 0, 50, '01')
+SELECT * FROM Total Where cdclifac = '412041'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412041'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412041', 'CLIENT 41', 'P', 51, 0, 51, '01')
+SELECT * FROM Total Where cdclifac = '412042'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412042'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412042', 'CLIENT 42', 'P', 52, 0, 52, '01')
+SELECT * FROM Total Where cdclifac = '412043'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412043'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412043', 'CLIENT 43', 'P', 53, 0, 53, '01')
+SELECT * FROM Total Where cdclifac = '412044'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412044'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412044', 'CLIENT 44', 'P', 54, 0, 54, '01')
+SELECT * FROM Total Where cdclifac = '412045'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412045'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412045', 'CLIENT 45', 'P', 55, 0, 55, '01')
+SELECT * FROM Total Where cdclifac = '412046'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412046'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412046', 'CLIENT 46', 'P', 56, 0, 56, '01')
+SELECT * FROM Total Where cdclifac = '412047'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412047'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412047', 'CLIENT 47', 'P', 57, 0, 57, '01')
+SELECT * FROM Total Where cdclifac = '412048'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412048'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412048', 'CLIENT 48', 'P', 58, 0, 58, '01')
+SELECT * FROM Total Where cdclifac = '412049'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412049'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412049', 'CLIENT 49', 'P', 59, 0, 59, '01')
+SELECT * FROM Total Where cdclifac = '412050'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412050'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412050', 'CLIENT 50', 'P', 60, 0, 60, '01')
+SELECT * FROM Total Where cdclifac = '412051'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412051'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412051', 'CLIENT 51', 'P', 61, 0, 61, '01')
+SELECT * FROM Total Where cdclifac = '412052'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412052'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412052', 'CLIENT 52', 'P', 62, 0, 62, '01')
+SELECT * FROM Total Where cdclifac = '412053'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412053'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412053', 'CLIENT 53', 'P', 63, 0, 63, '01')
+SELECT * FROM Total Where cdclifac = '412054'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412054'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412054', 'CLIENT 54', 'P', 64, 0, 64, '01')
+SELECT * FROM Total Where cdclifac = '412055'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '412055'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('412055', 'CLIENT 55', 'P', 65, 0, 65, '01')
+SELECT * FROM Fiches_HistoFac where datefac >= '20170101' and datefac <= '20170615'  
+SELECT * FROM Total Where cdclifac = '411003'
+SELECT * FROM Total Where cdclifac = '411003'
+UPdate Total set totfacn1 = 150 Where cdclifac = '411003'
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411001'
+UPdate Total set totfacn1 = 80 Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411005'
+SELECT * FROM Total Where cdclifac = '411005'
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411001'
+UPdate Total set totfacn1 = 100 Where cdclifac = '411001'
+SELECT * FROM Total 
+SELECT * FROM Total left join Fiches_Cli on cli_code = cdclifac order by lpad(commercial, 12, ' ') asc
+SELECT * FROM Fiches_Commerciaux where code = NULL
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '02'

@@ -1,0 +1,19 @@
+{
+ "id": "HISTOCLIART-T05",
+ "classe": "Histocliart",
+ "objet": "Factures + factures matériel sans BL",
+ "description": "Menu Statistiques › Statistiques et relevés détaillés. Décoche documents non archivés, coche factures entretien archivées ; Exporter : sous-requêtes collées sans UNION ALL (HISTOCLIART-A01) ; Message.Error de DB_Connection validé par Entrée. Lecture seule : sql.log comparé. Code 125 figé : Query failed (DB_Connection.Exec, backtrace désactivée).",
+ "dataset": "histocliart_shared/ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

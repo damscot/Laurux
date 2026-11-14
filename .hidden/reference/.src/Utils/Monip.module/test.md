@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| MONIP-T01 | replay | Fenêtre « Mon IP » | `Fmenu`, menu correspondant ; `curl` factice dans le `PATH` renvoyant `203.0.113.7` ; répertoire courant = `$HOME` | texte du label capturé | `tests/replay_monip/` | à faire : faux `curl` disponible depuis le 2026-11-14 (`ifconfig.me` → 203.0.113.10) ; reste le répertoire courant : Monip écrit « monip » dans le répertoire courant (`Shell "cd"` sans effet sur le Shell suivant) |
+| MONIP-T01 | replay | Fenêtre « Mon IP » | `Fmenu`, menu correspondant ; `curl` factice dans le `PATH` renvoyant `203.0.113.7` ; répertoire courant = `$HOME` | texte du label capturé | `tests/replay_monip/` | à faire : rejoué (Menu256, faux curl tracé) mais `curl ifconfig.me > monip` écrit dans le répertoire courant du rejeu = racine du clone (fichier `monip` non ignoré par git), puis ~/monip absent → Message.Warning (A01 confirmé) ; besoin d'outillage : répertoire courant = HOME de test pour les rejeux. Scénario mis de côté (`monip_replay_monip`) |
 | MONIP-T02 | replay | `curl` absent | `PATH` sans `curl`, `$HOME/monip` absent | `Message.Warning` capturé | `tests/replay_monip_sans_curl/` | à faire : même besoin d'outillage (PATH sans curl par scénario) |
 
 ## Détail des tests

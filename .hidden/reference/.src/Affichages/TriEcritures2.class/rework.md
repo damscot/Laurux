@@ -44,7 +44,7 @@ Ces étapes ne s'appliquent que si l'anomalie TRIECRITURES2-A01 (suppression) es
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TRIECRITURES2-A01 — [anomalie] Classe morte : supprimer le couple `TriEcritures2.class` +
+- [ ] TRIECRITURES2-A01 — [anomalie] (précisée phase 2, vague 6 : « sans référence » à nuancer : la classe est instanciée par le module gb.test `.src/Tests/Compta/CecritTest.test` (T01) ; à prendre en compte avant la suppression) Classe morte : supprimer le couple `TriEcritures2.class` +
   `TriEcritures2.form` (jamais référencée depuis l'import du dépôt en 2016 ; copie à 88 % de
   `TriEcritures` sans filtres `cloturee`/`pointee`) ; mettre à jour en même temps la doc de
   `Comptabilite` (tableau des écrivains) · tests : T01 · sources : [TriEcritures2.class:_new](../../../../../.src/Affichages/TriEcritures2.class#L13-L35), [TriEcritures2.class:Ecrit_Click](../../../../../.src/Affichages/TriEcritures2.class#L547-L555), [TriEcritures.class:_new](../../../../../.src/Affichages/TriEcritures.class#L15-L37)

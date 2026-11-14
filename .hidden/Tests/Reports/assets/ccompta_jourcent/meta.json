@@ -1,0 +1,23 @@
+{
+ "id": "CCOMPTA-T10",
+ "classe": "Ccompta",
+ "objet": "Centralisation des journaux (texte PDF)",
+ "description": "Centralisation (Menu109, Jourcent) > Imprimer, jeu Compta extrait_base : texte pdftotext du PDF (Ccompta Level5J, level6J, level7J) comparé ; Quitter.",
+ "dataset": "Compta/extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

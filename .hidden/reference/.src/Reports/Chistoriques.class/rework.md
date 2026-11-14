@@ -56,7 +56,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CHISTORIQUES-A01 — [anomalie] `level2FO` fait `Format$(Val(x), "0.00")` : une valeur vide ou
+- [ ] CHISTORIQUES-A01 — [anomalie] (confirmée phase 2, vague 6 : `level2FO` : pourcentage vide → « Type mismatch » Float/Null, figée par T05) `level2FO` fait `Format$(Val(x), "0.00")` : une valeur vide ou
   non numérique lève « Type mismatch » (vérifié avec `gbx3`). `VisStatFour` laisse la colonne %
   vide quand le CA de la période est nul (`Try` sur la division) → l'impression du CA
   fournisseurs s'arrête dès qu'un fournisseur n'a vendu qu'en N-1 (à confirmer par T07).

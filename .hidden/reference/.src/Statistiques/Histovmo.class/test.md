@@ -11,15 +11,15 @@ sont produites dans le clone **Laurux non modifié** (anomalies comprises).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| HISTOVMO-T01 | replay | Historique par défaut | `statistiques_ventes`, `/Soc01/Materiel = 0` ; **Imprimer** | texte PDF (une ligne par MO vendue, qté, total HT) ; factures historisées + factures `F` en cours, `Bl` coché | `tests/histovmo_defaut/` | à faire |
-| HISTOVMO-T02 | replay | Les 4 tris | `RadioButton2`, `3`, `4` successivement, plage fournisseur restreinte | ordre des lignes ; plage fournisseur ignorée hors tri par code (A03 figée) | `tests/histovmo_tris/` | à faire |
-| HISTOVMO-T03 | replay | Sources matériel | `/Soc01/Materiel = 1` ; `Face` puis `Fact` | lignes `…M` seules puis union ; lignes MO matériel en cours exclues en `Fact` (A02 figée) | `tests/histovmo_materiel/` | à faire |
-| HISTOVMO-T04 | replay | Case `Bl` | `Bl` coché puis décoché, BL `B` et factures `F` en cours dans et hors période | requête `… type = 'B' or type = 'F'` figée (A01) ; sans `Bl`, factures `F` seules | `tests/histovmo_bl/` | à faire |
-| HISTOVMO-T05 | replay | Listes de choix | F2 (ou bouton) sur chaque zone, clic sur une ligne ; Échap sur `Colfam2`/`Colfour2` | zones remplies, focus (anomalie de focus A05 figée) | `tests/histovmo_listes/` | à faire |
-| HISTOVMO-T06 | replay | Aucune MO | plage MO `ZZZZY`–`ZZZZZ` | message « Aucune MO pour cette demande », pas de PDF | `tests/histovmo_vide/` | à faire |
-| HISTOVMO-T07 | replay | Saisie des dates | `dteN0` = `0101`, `dteN1` antérieure (Entrée) | dates normalisées ; avertissement | `tests/histovmo_dates/` | à faire |
-| HISTOVMO-T08 | replay | Touche sur le bouton Imprimer | focus sur **Imprimer** puis Tab, puis Espace | une impression sur Tab ; Espace : deux impressions (A04, à observer au rejeu) | `tests/histovmo_touche_imprimer/` | à faire |
-| HISTOVMO-T09 | gbtest | Cumul des ventes (après HISTOVMO-007) | `VentesMo(…)` sur le jeu de T01, T03, T04 | collection code → (qté, pvht) identique au PDF de T01/T03/T04 | `tests/histovmo_ventes/` | à faire |
+| HISTOVMO-T01 | replay | Historique par défaut | `statistiques_ventes`, `/Soc01/Materiel = 0` ; **Imprimer** | texte PDF (une ligne par MO vendue, qté, total HT) ; factures historisées + factures `F` en cours, `Bl` coché | `tests/histovmo_defaut/` | implémenté (`Statistiques/histovmo_defaut`) |
+| HISTOVMO-T02 | replay | Les 4 tris | `RadioButton2`, `3`, `4` successivement, plage fournisseur restreinte | ordre des lignes ; plage fournisseur ignorée hors tri par code (A03 figée) | `tests/histovmo_tris/` | implémenté partiel (`Statistiques/histovmo_tris` : 3 tris, texte du dernier PDF) ; à faire : plage fournisseur restreinte (A03) |
+| HISTOVMO-T03 | replay | Sources matériel | `/Soc01/Materiel = 1` ; `Face` puis `Fact` | lignes `…M` seules puis union ; lignes MO matériel en cours exclues en `Fact` (A02 figée) | `tests/histovmo_materiel/` | implémenté (`Statistiques/histovmo_materiel` : Fact puis Face, jeu `histovmo_shared/ventes_mo_materiel`, A02 visible dans sql.log) |
+| HISTOVMO-T04 | replay | Case `Bl` | `Bl` coché puis décoché, BL `B` et factures `F` en cours dans et hors période | requête `… type = 'B' or type = 'F'` figée (A01) ; sans `Bl`, factures `F` seules | `tests/histovmo_bl/` | implémenté (`Statistiques/histovmo_bl` : Bl décoché ; Bl coché et A01 dans histovmo_defaut) |
+| HISTOVMO-T05 | replay | Listes de choix | F2 (ou bouton) sur chaque zone, clic sur une ligne ; Échap sur `Colfam2`/`Colfour2` | zones remplies, focus (anomalie de focus A05 figée) | `tests/histovmo_listes/` | à faire : listes ouvertes par F2/boutons, clic ColumnView et Échap non rejoués |
+| HISTOVMO-T06 | replay | Aucune MO | plage MO `ZZZZY`–`ZZZZZ` | message « Aucune MO pour cette demande », pas de PDF | `tests/histovmo_vide/` | implémenté (`Statistiques/histovmo_vide`) |
+| HISTOVMO-T07 | replay | Saisie des dates | `dteN0` = `0101`, `dteN1` antérieure (Entrée) | dates normalisées ; avertissement | `tests/histovmo_dates/` | à faire : avertissement ouvert depuis un LostFocus (non rejouable) |
+| HISTOVMO-T08 | replay | Touche sur le bouton Imprimer | focus sur **Imprimer** puis Tab, puis Espace | une impression sur Tab ; Espace : deux impressions (A04, à observer au rejeu) | `tests/histovmo_touche_imprimer/` | à faire : Espace/Tab sur bouton, double impression à observer (non traité dans cette vague) |
+| HISTOVMO-T09 | gbtest | Cumul des ventes (après HISTOVMO-007) | `VentesMo(…)` sur le jeu de T01, T03, T04 | collection code → (qté, pvht) identique au PDF de T01/T03/T04 | `tests/histovmo_ventes/` | à faire : exige l’extraction HISTOVMO-007 |
 
 ## Détail des tests
 
@@ -30,3 +30,4 @@ sont produites dans le clone **Laurux non modifié** (anomalies comprises).
 - **Paramètres** : `/Soc01/Materiel` fixé par test dans le `Laurux.conf` ; horloge fixée.
 - **Non testable automatiquement** : son, couleur du champ actif, aide `Doc.Open` (F1).
 - **Couverture visée** : toutes les branches de `Button2_Click` ; `Level1`/`Level2` exclus (code mort).
+- **Jeu de données (phase 2)** : `.hidden/Tests/Statistiques/assets/histovmo_shared/ventes_mo.sql` (lignes MO en factures historisées 2017/2018, BL `F` et `B` en cours) ; `"conf": {"/Soc01/Materiel": 0}` ; scénarios `.hidden/Tests/Statistiques/assets/histovmo_*/`.

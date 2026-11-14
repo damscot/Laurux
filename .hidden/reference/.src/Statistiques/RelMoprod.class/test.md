@@ -16,15 +16,15 @@ cumulés et chaque événement journalisé deux fois ; la capture et le rejeu do
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RELMOPROD-T01 | replay | Traitement tous clients | `statistiques_ventes` ; `RB1`, **Traitement** | dump de `Fiches_Stat` (ligne répétée d'une même facture ignorée : A01 figée) | `tests/relmoprod_tous/` | à faire |
-| RELMOPROD-T02 | replay | Traitement d'un client | `RB2`, recherche par nom dans `Colcli` (saisie dans `N1`), clic sur un client, **Traitement** | `Code` rempli ; `Fiches_Stat` limitée au client | `tests/relmoprod_un_client/` | à faire |
-| RELMOPROD-T03 | replay | Client sans donnée | `RB2`, client sans facture | « Il n'y a aucune donnée pour ce client » | `tests/relmoprod_sans_donnee/` | à faire |
-| RELMOPROD-T04 | replay | Impression par client | après T01, `RB3`, **Traitement**, **Imprimer** | texte PDF (client, MO, articles, factures) ; saut de page à 273 | `tests/relmoprod_impr_client/` | à faire |
-| RELMOPROD-T05 | replay | Impression par produit | `RB4`, **Traitement**, **Imprimer** | texte PDF par type puis code ; page de garde issue du `Baspage` initial (figée) | `tests/relmoprod_impr_produit/` | à faire |
-| RELMOPROD-T06 | replay | Détail d'une facture | après T04, clic sur un nœud « Facture numéro … » historisé, puis sur une facture en cours ; **Fermer** | requêtes `Fiches_HistoFac`/`HistoLigfac` puis `Fiches_Bl`/`Ligbl` ; total affiché (contrôle visuel) | `tests/relmoprod_detail/` | à faire |
-| RELMOPROD-T07 | replay | Impression sans traitement | ouverture, **Imprimer** | « Veuillez lancer le traitement avant l'impression SVP ! » | `tests/relmoprod_impr_vide/` | à faire |
-| RELMOPROD-T08 | replay | Tri de la grille client | clic `C1`, double-clic `N1`, saisie dans `Cp1`, Échap | requêtes `like "%…%"` avec tri ascendant/descendant | `tests/relmoprod_recherche/` | à faire |
-| RELMOPROD-T09 | gbtest | Remplissage (après RELMOPROD-006) | `RemplitStat(d0, d1, "")` et `(d0, d1, client)` sur le jeu de T01/T02 | contenu de `Fiches_Stat` identique à T01/T02 | `tests/relmoprod_remplissage/` | à faire |
+| RELMOPROD-T01 | replay | Traitement tous clients | `statistiques_ventes` ; `RB1`, **Traitement** | dump de `Fiches_Stat` (ligne répétée d'une même facture ignorée : A01 figée) | `tests/relmoprod_tous/` | implémenté (`Statistiques/relmoprod_tous` : Fiches_Stat, ligne répétée ignorée A01) |
+| RELMOPROD-T02 | replay | Traitement d'un client | `RB2`, recherche par nom dans `Colcli` (saisie dans `N1`), clic sur un client, **Traitement** | `Code` rempli ; `Fiches_Stat` limitée au client | `tests/relmoprod_un_client/` | implémenté partiel (`Statistiques/relmoprod_un_client` : code saisi dans `Code`) ; à faire : recherche par nom dans `Colcli` |
+| RELMOPROD-T03 | replay | Client sans donnée | `RB2`, client sans facture | « Il n'y a aucune donnée pour ce client » | `tests/relmoprod_sans_donnee/` | implémenté (`Statistiques/relmoprod_sans_donnee`) |
+| RELMOPROD-T04 | replay | Impression par client | après T01, `RB3`, **Traitement**, **Imprimer** | texte PDF (client, MO, articles, factures) ; saut de page à 273 | `tests/relmoprod_impr_client/` | implémenté (dans `Statistiques/relmoprod_tous` : impression par client, edition.txt) ; à faire : saut de page à 273 (jeu > 50 lignes) |
+| RELMOPROD-T05 | replay | Impression par produit | `RB4`, **Traitement**, **Imprimer** | texte PDF par type puis code ; page de garde issue du `Baspage` initial (figée) | `tests/relmoprod_impr_produit/` | implémenté (`Statistiques/relmoprod_impr_produit`) |
+| RELMOPROD-T06 | replay | Détail d'une facture | après T04, clic sur un nœud « Facture numéro … » historisé, puis sur une facture en cours ; **Fermer** | requêtes `Fiches_HistoFac`/`HistoLigfac` puis `Fiches_Bl`/`Ligbl` ; total affiché (contrôle visuel) | `tests/relmoprod_detail/` | à faire : clic sur un nœud de l’arbre `Rlcli` (TreeView, non traité dans cette vague) |
+| RELMOPROD-T07 | replay | Impression sans traitement | ouverture, **Imprimer** | « Veuillez lancer le traitement avant l'impression SVP ! » | `tests/relmoprod_impr_vide/` | implémenté (`Statistiques/relmoprod_impr_vide`) |
+| RELMOPROD-T08 | replay | Tri de la grille client | clic `C1`, double-clic `N1`, saisie dans `Cp1`, Échap | requêtes `like "%…%"` avec tri ascendant/descendant | `tests/relmoprod_recherche/` | à faire : double-clic et Échap non rejoués |
+| RELMOPROD-T09 | gbtest | Remplissage (après RELMOPROD-006) | `RemplitStat(d0, d1, "")` et `(d0, d1, client)` sur le jeu de T01/T02 | contenu de `Fiches_Stat` identique à T01/T02 | `tests/relmoprod_remplissage/` | à faire : exige l’extraction RELMOPROD-006 |
 
 ## Détail des tests
 
@@ -38,3 +38,4 @@ cumulés et chaque événement journalisé deux fois ; la capture et le rejeu do
 - **Horloge** fixée (période par défaut et pied de page).
 - **Grille sans `_Click`** : `Colrcp3` (`replay_missing`) : pas de clic dans le détail.
 - **Non testable automatiquement** : contenu de l'arbre et du détail (contrôle visuel), son, couleurs.
+- **Jeu de données (phase 2)** : `.hidden/Tests/Statistiques/assets/relmoprod_shared/factures.sql` (factures historisées MO/articles/commentaire avec code 001 répété, BL `F` imprimé et non imprimé, client 411003 sans facture) ; scénarios `.hidden/Tests/Statistiques/assets/relmoprod_*/`. Le double `Utils.Observers(Me)` (A05) n’a pas gêné le rejeu.

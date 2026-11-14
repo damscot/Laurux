@@ -7,10 +7,11 @@ Classe **morte** : aucun écran ne l'ouvre, aucun replay n'est possible.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRIECRITURES2-T01 | gbtest | Absence de référence (avant TRIECRITURES2-A01) | `grep -rnw "TriEcritures2"` sur `.src`, recherche en chaîne ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/absence_reference/` | à faire |
+| TRIECRITURES2-T01 | gbtest | Absence de référence (avant TRIECRITURES2-A01) | `grep -rnw "TriEcritures2"` sur `.src`, recherche en chaîne ; `gbc3 -agt` après suppression | aucune référence ; compilation sans erreur | `tests/absence_reference/` | implémenté (gb.test TriEcritures2Test.T01AbsenceReference ; hors .src/Tests : CecritTest instancie encore TriEcritures2) |
 
 ## Détail des tests
 
 - **Pas de replay** : la sélection d'écritures est couverte par `TRIECRITURES-T01` à `T05`.
 - T01 est un contrôle de construction (étape de validation de l'anomalie), pas un module gb.test au
   sens strict.
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Affichages/TriEcritures2Test.test` ; aucun jeu de données (contrôle statique par grep) ; attendus `assets/TriEcritures2Test/expected.txt`.

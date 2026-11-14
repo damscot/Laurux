@@ -1,0 +1,35 @@
+' Gambas test file
+
+''Test de TriEcritures2 (TRIECRITURES2-T01, .hidden/reference/.src/Affichages/TriEcritures2.class/test.md) : contrôle statique de l'absence de
+''référence (classe morte). grep -rlw TriEcritures2 .src (hors .src/Tests)
+''et recherche de la chaîne "TriEcritures2".
+''Valeurs attendues : assets/TriEcritures2Test/expected.txt, produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01AbsenceReference", "Classe sans référence : fichiers citant TriEcritures2")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriEcritures2Test")
+
+End
+
+Public Sub T01AbsenceReference()
+
+  Dim sRes As String
+  Dim aFic As String[]
+
+  Shell "cd " & Shell$(Application.Path) & " && grep -rlw TriEcritures2 .src --exclude-dir=Tests --exclude='*~'" To sRes
+  aFic = Split(Trim(sRes), "\n", "", True)
+  aFic.Sort()
+  TestKit.Check("T01/fichiers", aFic)
+  Shell "cd " & Shell$(Application.Path) & " && grep -rl '\"TriEcritures2\"' .src --exclude-dir=Tests --exclude='*~'" To sRes
+  aFic = Split(Trim(sRes), "\n", "", True)
+  aFic.Sort()
+  TestKit.Check("T01/chaine", aFic)
+
+End

@@ -1,0 +1,149 @@
+' Gambas test file
+
+''Tests de Chistoriques (.hidden/reference/.src/Reports/Chistoriques.class/test.md, CHISTORIQUES-T01 à T05).
+''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
+''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
+''Valeurs attendues : assets/ChistoriquesTest/expected.txt, produites dans le clone de référence. Pas de base.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Cadre", "Entete, Level0F, Lines, Footer sur 2 pages")
+  TestKit.Desc("T02HistoMo", "Level1, Level2, Level1bis, Level2bis : désignation de 40 caractères")
+  TestKit.Desc("T03Stats", "Level1C/level2C/Level4C/Level5C, Level1AC/level2AC/Level5AC, Level1A/level2A/Level5A, Level1H/level2H")
+  TestKit.Desc("T04PiecesMo", "Level1P, level2P (chaînes et Float 12.5), Level4P, Level5P")
+  TestKit.Desc("T05CaFour", "Level1FO, level2FO (pourcent 12,50 / -3,20 / vide), Level4FO, Level5FO")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Reports", "ChistoriquesTest")
+
+End
+
+Private Function Nouveau() As Chistoriques
+
+  Dim pdf As Chistoriques
+
+  pdf = New Chistoriques("P", "mm", "A4")
+  pdf.Open()
+  pdf.AliasNbPages()
+  Return pdf
+
+End
+
+' Écrit le PDF, en extrait le texte et vérifie chaque ligne non vide (date du jour et utilisateur masqués).
+Private Sub Verifie(sCle As String, pdf As PdfWriter)
+
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Try pdf.Output(sFic, False)
+  If Error Then
+    TestKit.Check(sCle & "/output", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+Public Sub T01Cadre()
+
+  Dim pdf As Chistoriques = Nouveau()
+
+  pdf.Entete("Historique des ventes")
+  pdf.Level0F("01/01/2026", "31/12/2026")
+  pdf.Lines("40")
+  pdf.Footer()
+  pdf.Entete("Historique des ventes")
+  pdf.Footer()
+  Verifie("T01", pdf)
+
+End
+
+Public Sub T02HistoMo()
+
+  Dim pdf As Chistoriques = Nouveau()
+
+  pdf.Entete("Historique MO")
+  pdf.Level1()
+  pdf.Level2("C001", "CLIENT UN", "P01", "DESIGNATION DE QUARANTE CARACTERES ABCDE", "2", "12,50", 40)
+  pdf.Level1bis()
+  pdf.Level2bis("C001", "CLIENT UN", "F0001", "P01", "DESIGNATION DE QUARANTE CARACTERES ABCDE", "2", "12,50", 60)
+  pdf.Footer()
+  Verifie("T02", pdf)
+
+End
+
+Public Sub T03Stats()
+
+  Dim pdf As Chistoriques = Nouveau()
+
+  pdf.Entete("Types de client")
+  pdf.Level1C()
+  pdf.level2C("T1", "TYPE UN", "100,00", "5,00", "95,00", "90,00", "5,5", 40)
+  pdf.level2C("T2", "TYPE DEUX", "200,00", "0,00", "200,00", "180,00", "11,1", 45)
+  pdf.Level4C(50)
+  pdf.Level5C("1234,56", "5,00", "1229,56", "1000,00", "900,00", 55)
+  pdf.Level1AC()
+  pdf.level2AC("A1", "ARTICLE UN", "100,00", "5,00", "95,00", "10", "9,50", "COMM UN", 80)
+  pdf.Level5AC("1234,56", 85)
+  pdf.Level1A()
+  pdf.level2A("A1", "ARTICLE UN", "100,00", "2", "CO1", "COMM UN", 110)
+  pdf.Level5A("1234,56", 115)
+  pdf.Level1H()
+  pdf.level2H("A1", "ARTICLE UN", "100,00", 140)
+  pdf.level2H("A2", "ARTICLE DEUX", "50,00", 145)
+  pdf.Footer()
+  Verifie("T03", pdf)
+
+End
+
+Public Sub T04PiecesMo()
+
+  Dim pdf As Chistoriques = Nouveau()
+  Dim f As Float = 12.5
+
+  pdf.Entete("Pièces et MO")
+  pdf.Level1P()
+  pdf.level2P("C001", "CLIENT UN", "100,00", "5,00", "50,00", "0,00", "145,00", 40)
+  pdf.level2P("C002", "CLIENT DEUX", f, f, f, f, f, 45)
+  pdf.Level4P(50)
+  pdf.Level5P("1234,56", "5,00", "50,00", "0,00", "1279,56", 55)
+  pdf.Footer()
+  Verifie("T04", pdf)
+
+End
+
+Public Sub T05CaFour()
+
+  Dim pdf As Chistoriques = Nouveau()
+  Dim sPc As String
+  Dim n As Integer
+
+  pdf.Entete("CA fournisseurs")
+  pdf.Level1FO()
+  For Each sPc In ["12,50", " -3,20 ", ""]
+    Inc n
+    Try pdf.level2FO("F" & n, "FOURNISSEUR " & n, IIf(n = 2, "0,00", "1234,5"), "1000", sPc, 35 + n * 5)
+    TestKit.Check("T05/level2FO/" & n & "/erreur", IIf(Error, Error.Text, ""))
+  Next
+  pdf.Level4FO(60)
+  pdf.Level5FO("1234,5", "1000", "23,45", 65)
+  pdf.Footer()
+  Verifie("T05", pdf)
+
+End

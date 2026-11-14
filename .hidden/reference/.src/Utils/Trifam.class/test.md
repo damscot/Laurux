@@ -14,8 +14,8 @@ Sortie : parcours de l'arbre (même algorithme que les appelants) en lignes `niv
 | TRIFAM-T03 | gbtest | Liens | arbre de T01 | `enfant` = dernier fils ; `precedant`/`suivant` cohérents | `tests/liens/` | implémenté |
 | TRIFAM-T04 | gbtest | Sous-totaux | écritures successives de `soustotpa`/`soustotpmp` sur des feuilles | cumuls propagés à la racine | `tests/sous_totaux/` | implémenté |
 | TRIFAM-T05 | gbtest | Codes limites | codes contenant `z`, `Z`, espaces, accents | figer l'exclusion éventuelle (A01) | `tests/codes_limites/` | implémenté |
-| TRIFAM-T06 | replay | Paramétrage absent | `ipr` absent, ouverture de Stockmvt | figer `Message.Error` + arrêt (A02) | `tests/ipr_absent/` | à faire : le runner n'offre pas de Laurux.conf par scénario (ipr absent) ; Quit + Message.Error |
-| TRIFAM-T07 | replay | Édition d'inventaire | Edinv sur un inventaire du jeu dérivé | flux PDF identique | `tests/replay_edinv/` | à faire : le runner ne compare pas les fichiers produits (flux PDF d'Edinv) |
+| TRIFAM-T06 | replay | Paramétrage absent | `ipr` absent, ouverture de Stockmvt | figer `Message.Error` + arrêt (A02) | `tests/ipr_absent/` | à faire : le runner n'offre pas de Laurux.conf par scénario (ipr absent) ; Quit + Message.Error ; réévalué en vague 6 : Message.Error puis Quit : non testable en gb.test |
+| TRIFAM-T07 | replay | Édition d'inventaire | Edinv sur un inventaire du jeu dérivé | flux PDF identique | `tests/replay_edinv/` | à faire : le runner ne compare pas les fichiers produits (flux PDF d'Edinv) ; réévalué en vague 6 : passe par Edinv (inventaires, exclus) |
 | TRIFAM-T08 | gbtest | Performance | 2 000 familles, `ipr = [2, 4, 6]` | durée et nombre de requêtes de référence | `tests/perf/` | implémenté (durée relevée par le runner, non comparée ; nombre de requêtes non relevé) |
 
 ## Détail des tests

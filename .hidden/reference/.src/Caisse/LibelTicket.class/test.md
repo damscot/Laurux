@@ -11,10 +11,10 @@ attendent la correction de A02.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LIBELTICKET-T01 | replay | Création puis modification | `Fiches_LibelTicket` vide ; saisie de 2 lignes, Enregistrer ; réouverture, modification, Enregistrer | 1 ligne dans `Fiches_LibelTicket` (INSERT puis UPDATE) ; texte relu à la réouverture | `tests/libelticket_saisie/` | à faire |
-| LIBELTICKET-T02 | replay | Texte vide (A01) | texte existant ; champ vidé, Enregistrer | dump inchangé (texte non effacé) | `tests/libelticket_vide/` | à faire |
-| LIBELTICKET-T03 | replay | `Utils.ReplaceLb` | texte avec `"` et `&` | stocké avec `''` et `et` | `tests/libelticket_caracteres/` | à faire |
-| LIBELTICKET-T04 | replay | Limite de longueur (A03) | 4 lignes de 72 caractères (≈ 291 caractères) | contenu de `Fiches_LibelTicket` ou erreur SQL figés (selon `sql_mode` de la base de test) | `tests/libelticket_longueur/` | à faire |
+| LIBELTICKET-T01 | replay | Création puis modification | `Fiches_LibelTicket` vide ; saisie de 2 lignes, Enregistrer ; réouverture, modification, Enregistrer | 1 ligne dans `Fiches_LibelTicket` (INSERT puis UPDATE) ; texte relu à la réouverture | `tests/libelticket_saisie/` | implémenté (gb.test LibelTicketTest.T01CreationModification : Form_Open et Button2_Click appelés directement) |
+| LIBELTICKET-T02 | replay | Texte vide (A01) | texte existant ; champ vidé, Enregistrer | dump inchangé (texte non effacé) | `tests/libelticket_vide/` | implémenté (gb.test LibelTicketTest.T02TexteVide : texte non effacé, A01 figée) |
+| LIBELTICKET-T03 | replay | `Utils.ReplaceLb` | texte avec `"` et `&` | stocké avec `''` et `et` | `tests/libelticket_caracteres/` | implémenté (gb.test LibelTicketTest.T03Caracteres) |
+| LIBELTICKET-T04 | replay | Limite de longueur (A03) | 4 lignes de 72 caractères (≈ 291 caractères) | contenu de `Fiches_LibelTicket` ou erreur SQL figés (selon `sql_mode` de la base de test) | `tests/libelticket_longueur/` | implémenté (gb.test LibelTicketTest.T04Longueur : texte tronqué à 250 caractères sans erreur, A03 figée) |
 
 ## Détail des tests
 
@@ -26,3 +26,5 @@ attendent la correction de A02.
   seulement l'absence d'erreur.
 - Après la séparation LIBELTICKET-003, `LitTexte`/`EcritTexte` restent privés : la couverture reste
   assurée par les replays (règle de portée, PLAN §6).
+
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Caisse/LibelTicketTest.test` ; attendus `.hidden/Tests/Caisse/assets/LibelTicketTest/expected.txt`.

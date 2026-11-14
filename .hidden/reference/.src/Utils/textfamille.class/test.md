@@ -12,8 +12,8 @@ Contrôle graphique : tests **gbtest sous affichage virtuel** (Xvfb, à confirme
 | TEXTFAMILLE-T02 | gbtest | `text` écriture/lecture | `"A0102"`, `"A01"`, `"A"`, `""`, `"A0102XYZ"` | zones et relecture de référence | `tests/text/` | implémenté |
 | TEXTFAMILLE-T03 | gbtest | Niveau vide intermédiaire | zone 1 vide, zone 2 `"01"` | figer le résultat de `Trim$` | `tests/niveau_vide/` | implémenté |
 | TEXTFAMILLE-T04 | gbtest | `Clear` | zones remplies | `text = ""` | `tests/clear/` | implémenté |
-| TEXTFAMILLE-T05 | replay | Saisie dans Articles | fiche article : saisie famille niveau par niveau (Tab), validation | `art_fam` enregistré (dump `Fiches_Art`) | `tests/replay_articles/` | à faire : zones créées par code (noms absents du .form), chemin de rejeu à établir ; rejeu suspendu |
-| TEXTFAMILLE-T06 | replay | `ipr` absent | ouverture de la fiche article sans `ipr` | figer `Message.Error` + arrêt | `tests/ipr_absent/` | à faire : nécessite un Laurux.conf de test sans ipr (configuration par scénario non gérée) |
+| TEXTFAMILLE-T05 | replay | Saisie dans Articles | fiche article : saisie famille niveau par niveau (Tab), validation | `art_fam` enregistré (dump `Fiches_Art`) | `tests/replay_articles/` | à faire : zones créées par code (noms absents du .form), chemin de rejeu à établir ; rejeu suspendu ; réévalué en vague 6 : passe par Articles (écran complexe) |
+| TEXTFAMILLE-T06 | replay | `ipr` absent | ouverture de la fiche article sans `ipr` | figer `Message.Error` + arrêt | `tests/ipr_absent/` | à faire : nécessite un Laurux.conf de test sans ipr (configuration par scénario non gérée) ; réévalué en vague 6 : Message.Error puis arrêt : non testable en gb.test |
 
 ## Détail des tests
 

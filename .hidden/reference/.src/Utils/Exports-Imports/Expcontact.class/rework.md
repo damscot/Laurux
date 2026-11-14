@@ -45,10 +45,10 @@
 
 ### Anomalies : changement de comportement, validation utilisateur requise
 
-- [ ] EXPCONTACT-A01 — [anomalie] Table vide : `Print`/`Close` sur un fichier non ouvert (erreur
+- [ ] EXPCONTACT-A01 — [anomalie] (confirmée phase 2, vague 6 : table vide : après `Message.Error` (l. 95) le code continue, « Export terminé » s'affiche (l. 123) puis `Close #HFil` sur un fichier jamais ouvert → « Null object » fatal (l. 124), figée par T03) Table vide : `Print`/`Close` sur un fichier non ouvert (erreur
   d'exécution) · tests : T03 · sources : [Expcontact.class:47-48](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L47-L48), [Expcontact.class:115](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L115), [Expcontact.class:122](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L122)
 - [ ] EXPCONTACT-A02 — [anomalie] Contacts clients : `Teldom` hérité du dernier client, `Poste` et
   `Portable` = `tel` · tests : T01 · sources : [Expcontact.class:99-115](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L99-L115)
-- [ ] EXPCONTACT-A03 — [anomalie] Valeurs non échappées selon la RFC vCard ; libellé de statut
+- [ ] EXPCONTACT-A03 — [anomalie] (confirmée phase 2, vague 6 : aucun échappement vCard des « ; », « , » et retours à la ligne (T04)) Valeurs non échappées selon la RFC vCard ; libellé de statut
   calculé mais jamais exporté (requête `Aff_Statut` inutile) · tests : T04 · sources : [Expcontact.class:89](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L89), [Expcontact.class:68](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L68), [Expcontact.class:Aff_Statut](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L127-L136)
 - [ ] EXPCONTACT-A04 — [anomalie] Musique jouée sans tester `Start.Son` ni `Music.Load` · tests : aucun (manuel) · sources : [Expcontact.class:120](../../../../../../.src/Utils/Exports-Imports/Expcontact.class#L120)

@@ -50,10 +50,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] SDEPOTS-A01 — [anomalie] `ToggleButton2_Click` : `Start.Soc` inexistant (IMPRESSION-A03) →
+- [ ] SDEPOTS-A01 — [anomalie] (confirmée phase 2, vague 6 : `ToggleButton2_Click` l. 220 : « Unknown symbol » fatal, figée par T04) `ToggleButton2_Click` : `Start.Soc` inexistant (IMPRESSION-A03) →
   erreur à chaque ouverture de la liste des articles du dépôt ; la supprimer rend la liste
   fonctionnelle · tests : T04 · sources : [Sdepots.class:218](../../../../../../.src/Gestion/Depots/Sdepots.class#L218)
-- [ ] SDEPOTS-A02 — [anomalie] Sortie supérieure au stock : la ligne de stock est supprimée sans
+- [ ] SDEPOTS-A02 — [anomalie] (précisée phase 2, vague 6 : `Maj_Colrcp` met toujours `b = True` : la ligne est ajoutée à la grille même pour un article absent du dépôt, sans écriture (T05)) Sortie supérieure au stock : la ligne de stock est supprimée sans
   avertissement ; article sans ligne de stock : aucune sortie ni message ; drapeau `b` remis à vrai
   par `Maj_Colrcp` · tests : T02, T05 · sources : [Sdepots.class:387](../../../../../../.src/Gestion/Depots/Sdepots.class#L387), [Sdepots.class:390](../../../../../../.src/Gestion/Depots/Sdepots.class#L390), [Sdepots.class:344](../../../../../../.src/Gestion/Depots/Sdepots.class#L344)
 - [ ] SDEPOTS-A03 — [anomalie] `db.Exec` (classe `DB`, connexion courante) au lieu de

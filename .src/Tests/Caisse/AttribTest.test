@@ -1,0 +1,129 @@
+' Gambas test file
+
+''Tests de Attrib (.hidden/reference/.src/Caisse/Attrib.class/test.md, ATTRIB-T01, T02, T03, T07 partiels).
+''Écran instancié sans affichage (New Attrib) SANS Form_Open (qui écrit Caisse.origine : auto-instance de l'écran
+''Caisse, exclu) : Init() appelé directement, caisse Start.$Tcai = "01" ; touche choisie en posant Bouton, Cart et
+''TextArea1 (comme Clav2_Click) puis Button1_Click (Enregistrer) ou Button5_Click (Supprimer).
+''Jeu attrib_shared/touches. Valeurs attendues : assets/AttribTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Affichage", "Init : textes des touches A1, A12, A2 (caisse 01 seulement)")
+  TestKit.Desc("T02Enregistrement", "Touche vide A2 : INSERT ; touche existante A12 : nouveau code (UPDATE) ; Fiches_Touches")
+  TestKit.Desc("T03Suppression", "Touche A1 supprimée sans confirmation ; A1 de la caisse 02 intacte")
+  TestKit.Desc("T07ToucheInconnue", "Bouton ZZ : INSERT de la touche puis erreur sur Me.Controls[\"ZZ\"] (A07)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "AttribTest")
+  TestKit.OuvreBase("attrib_shared/touches")
+
+End
+
+Private Function Ouvre() As Object
+
+  Dim hForm As Object
+
+  Start.$Tcai = "01"
+  hForm = New Attrib
+  hForm.Init()
+  Return hForm
+
+End
+
+Private Sub Textes(sCle As String, hForm As Object)
+
+  Dim sNom As String
+  Dim hBtn As Object
+
+  For Each sNom In ["A1", "A2", "A12"]
+    hBtn = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, hBtn.Text)
+  Next
+
+End
+
+Private Sub Touches(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Touches ORDER BY cai, touche")
+  If Not rResult.Available Then
+    TestKit.Check(sCle & "/touches", "<aucune>")
+    Return
+  Endif
+  Repeat
+    TestKit.Check(sCle & "/" & rResult!cai & "_" & rResult!touche, rResult!libelle & "|" & rResult!code & "|" & IIf(IsNull(rResult!touche_s), "<Null>", IIf(rResult!touche_s, "1", "0")))
+  Until rResult.MoveNext()
+
+End
+
+Private Sub Pose(hForm As Object, sTouche As String, sLibelle As String, sCode As String)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls["Bouton"]
+  hCtrl.Text = sTouche
+  hCtrl = hForm.Controls["TextArea1"]
+  hCtrl.Text = sLibelle
+  hCtrl = hForm.Controls["Cart"]
+  hCtrl.Text = sCode
+
+End
+
+Public Sub T01Affichage()
+
+  Dim hForm As Object
+
+  hForm = Ouvre()
+  Textes("T01", hForm)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T02Enregistrement()
+
+  Dim hForm As Object
+
+  hForm = Ouvre()
+  Pose(hForm, "A2", "Nouveau", "003")
+  Try hForm.Button1_Click()
+  If Error Then TestKit.Check("T02/A2/erreur", Error.Text)
+  Pose(hForm, "A12", "Produit 7 bis", "001")
+  Try hForm.Button1_Click()
+  If Error Then TestKit.Check("T02/A12/erreur", Error.Text)
+  Textes("T02", hForm)
+  Touches("T02")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T03Suppression()
+
+  Dim hForm As Object
+
+  hForm = Ouvre()
+  Pose(hForm, "A1", "Produit 2", "001")
+  Try hForm.Button5_Click()
+  If Error Then TestKit.Check("T03/erreur", Error.Text)
+  Textes("T03", hForm)
+  Touches("T03")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T07ToucheInconnue()
+
+  Dim hForm As Object
+
+  hForm = Ouvre()
+  Pose(hForm, "ZZ", "Inconnue", "002")
+  Try hForm.Button1_Click()
+  TestKit.Check("T07/erreur", IIf(Error, Error.Text, "<aucune>"))
+  Touches("T07")
+  Object.Lock(hForm)
+
+End

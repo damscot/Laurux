@@ -16,15 +16,15 @@ de page. Les valeurs attendues sont produites en phase 2 dans le clone **Laurux 
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CARTICLES-T01 | gbtest | Stock chiffré et non chiffré : `Entete`, `Level1`, `Level3`, `Level5`, `Level2`, `Level4` | 2 lignes de chaque, totaux « 1234,56 » | texte et flux de référence ; titre décalé à x = 40 figé | `tests/carticles_stock/` | à faire |
-| CARTICLES-T02 | gbtest | Tarif interne : `Level7`, `Level6`, `Level7M`, `Level6M`, `Level10`, `Ligne` | 2 articles, PV conseillé `Lg` = 184 et 8 | texte et flux de référence ; police de `Level10` héritée | `tests/carticles_tarif/` | à faire |
-| CARTICLES-T03 | gbtest | Mode photo : `Level7bis`, `Level6bis`, `Photo` | une image PNG valide, une inexistante | `Level7bis` et `Photo` imprimés ; `Level6bis` lève « Undefined font: hel8vetica » (CARTICLES-A01 figée) ; photo inexistante ignorée | `tests/carticles_photo/` | à faire |
-| CARTICLES-T04 | gbtest | Ruptures et ventes : `Level13`, `Level13R`, `Level13V`, `Level14`, `Level14V` | 2 lignes de chaque | texte et flux de référence | `tests/carticles_ruptures/` | à faire |
-| CARTICLES-T05 | gbtest | Régularisations : `Level11`, `Level12` ; mains d'oeuvre : `Level1MO`, `Level2MO` | intitulé de 60 caractères ; `/Soc01/Taxe` = « TVA » | intitulé tronqué à 45 dans `Level2MO` ; libellé de taxe | `tests/carticles_regul_mo/` | à faire |
-| CARTICLES-T06 | gbtest | Pied de page et pagination : `Footer` sur 3 pages, `AliasNbPages` | 3 × (`Entete` + `Footer`) | « Page 1/3 » … « Page 3/3 » (date et utilisateur masqués) | `tests/carticles_pied/` | à faire |
-| CARTICLES-T07 | gbtest | Tarif client (`EdArt2`, mort) : `Level9`, `Level9bis`, `Level8`, `Level8bis`, `Ligne2` | 2 lignes de chaque | flux de référence ; test retiré si EDART2-A01 est validée | `tests/carticles_tarif_client/` | à faire |
-| CARTICLES-T08 | replay | Éditions réelles via les écrans | jeu `editions_articles` ; scénarios EDART1-T01/T03, EDART3-T03 (photo), EDSTK, EDRUP, EDMO, EDREGUL (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump de base inchangé | `tests/carticles_editions/` | à faire |
-| CARTICLES-T09 | gbtest | `FormatAligne` (après CARTICLES-006) | « 12,5 », « 12,50 », « 12,500 », « 12 », « » | « 12,5 », « 12,50␠ », « 12,500 », « 12 », « » (comportement de l'idiome actuel) | `tests/carticles_formataligne/` | à faire |
+| CARTICLES-T01 | gbtest | Stock chiffré et non chiffré : `Entete`, `Level1`, `Level3`, `Level5`, `Level2`, `Level4` | 2 lignes de chaque, totaux « 1234,56 » | texte et flux de référence ; titre décalé à x = 40 figé | `tests/carticles_stock/` | implémenté |
+| CARTICLES-T02 | gbtest | Tarif interne : `Level7`, `Level6`, `Level7M`, `Level6M`, `Level10`, `Ligne` | 2 articles, PV conseillé `Lg` = 184 et 8 | texte et flux de référence ; police de `Level10` héritée | `tests/carticles_tarif/` | implémenté |
+| CARTICLES-T03 | gbtest | Mode photo : `Level7bis`, `Level6bis`, `Photo` | une image PNG valide, une inexistante | `Level7bis` et `Photo` imprimés ; `Level6bis` lève « Undefined font: hel8vetica » (CARTICLES-A01 figée) ; photo inexistante ignorée | `tests/carticles_photo/` | implémenté |
+| CARTICLES-T04 | gbtest | Ruptures et ventes : `Level13`, `Level13R`, `Level13V`, `Level14`, `Level14V` | 2 lignes de chaque | texte et flux de référence | `tests/carticles_ruptures/` | implémenté |
+| CARTICLES-T05 | gbtest | Régularisations : `Level11`, `Level12` ; mains d'oeuvre : `Level1MO`, `Level2MO` | intitulé de 60 caractères ; `/Soc01/Taxe` = « TVA » | intitulé tronqué à 45 dans `Level2MO` ; libellé de taxe | `tests/carticles_regul_mo/` | implémenté |
+| CARTICLES-T06 | gbtest | Pied de page et pagination : `Footer` sur 3 pages, `AliasNbPages` | 3 × (`Entete` + `Footer`) | « Page 1/3 » … « Page 3/3 » (date et utilisateur masqués) | `tests/carticles_pied/` | implémenté |
+| CARTICLES-T07 | gbtest | Tarif client (`EdArt2`, mort) : `Level9`, `Level9bis`, `Level8`, `Level8bis`, `Ligne2` | 2 lignes de chaque | flux de référence ; test retiré si EDART2-A01 est validée | `tests/carticles_tarif_client/` | implémenté |
+| CARTICLES-T08 | replay | Éditions réelles via les écrans | jeu `editions_articles` ; scénarios EDART1-T01/T03, EDART3-T03 (photo), EDSTK, EDRUP, EDMO, EDREGUL (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump de base inchangé | `tests/carticles_editions/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par les scénarios existants Gestion/edart1_*, edart3_* (dont edart3_photo), edstk_*, edrup_*, edmo_*, edregul_* (texte pdftotext comparé) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| CARTICLES-T09 | gbtest | `FormatAligne` (après CARTICLES-006) | « 12,5 », « 12,50 », « 12,500 », « 12 », « » | « 12,5 », « 12,50␠ », « 12,500 », « 12 », « » (comportement de l'idiome actuel) | `tests/carticles_formataligne/` | à faire : FormatAligne n'existe qu'après l'extraction CARTICLES-006 (phase 4) |
 
 ## Détail des tests
 
@@ -42,3 +42,4 @@ de page. Les valeurs attendues sont produites en phase 2 dans le clone **Laurux 
   de 2 mm de `Level5`) : contrôle à l'oeil sur le PDF de référence.
 - **Couverture visée** : 100 % des méthodes vivantes ; le code mort supprimé par CARTICLES-002 n'est
   pas testé.
+- **Module gb.test** : `.src/Tests/Reports/CarticlesTest.test`, valeurs attendues dans `.hidden/Tests/Reports/assets/CarticlesTest/expected.txt`. Chaque test vérifie le texte `pdftotext -layout` (une clé par ligne), `pdfinfo` (nombre et taille des pages) et l'empreinte md5 du PDF non compressé (date, `User.Name` et `/CreationDate` masqués). Les erreurs levées par une méthode sont figées par `Try` (chemin de l'application remplacé par `<app>`). Image PNG sans canal alpha : `.src/Images/monnaie/b100.png`.

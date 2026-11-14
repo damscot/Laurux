@@ -62,7 +62,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RELVMO-A01 — [anomalie] Saut de page de l'impression : `pdf.Entete` appelé avec 18 arguments
+- [ ] RELVMO-A01 — [anomalie] (confirmée phase 2, vague 6 : `Button2_Click.427: Not enough arguments` au saut de page, figée par T06 (code 125)) Saut de page de l'impression : `pdf.Entete` appelé avec 18 arguments
   pour 19 paramètres obligatoires (`Libre` absent) → erreur « Not enough arguments », aucun PDF dès
   qu'un client dépasse une page (corriger en passant `Libre` comme ligne 411) · tests : T06 · sources : [RelvMo.class:427](../../../../../.src/Statistiques/RelvMo.class#L427), [RelvMo.class:411](../../../../../.src/Statistiques/RelvMo.class#L411), [Cdocuments.class:Entete](../../../../../.src/Reports/Cdocuments.class#L96-L196)
 - [ ] RELVMO-A02 — [anomalie] Montant TTC non cumulé : l'`Update` de `Fiches_Stat` n'écrit que `qte`
@@ -82,3 +82,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] RELVMO-A06 — [anomalie, sans effet visible] l. 440 : `pdf.Footer()` est sans effet
   (`Cdocuments` ne surcharge pas `Footer`, `PdfWriter.Footer` est vide) : le pied de page attendu
   n'est jamais imprimé · tests : T01 · sources : [RelvMo.class:440](../../../../../.src/Statistiques/RelvMo.class#L440)
+- [ ] RELVMO-A07 — [anomalie] `Button2_Click` : `If rResult!villerc_sc Then` (et `siret_sc`, `tvaintra_sc`, `cap_sc`, `ape_sc`, `tel_sc`, `port_sc`, `fax_sc`, `email_sc`, `site`, `banq`) teste comme booléens des chaînes ou des NULL de `Fiches_Societes` : avec les champs NULL de `Laurux01`, boîte d'erreur et aucun relevé ; même construction à vérifier dans les autres éditions (phase 2, vague 6, 2026-11-14) · tests : CDOCUMENTS-T06 (xfail) · sources : [RelvMo.class:383-393](../../../../../.src/Statistiques/RelvMo.class#L383-L393)
+- [ ] RELVMO-A08 — [anomalie] Date invalide (« 3202 ») : `Utils.Cdate_calc` intercepte l'erreur (« incohérence dans votre saisie ») et renvoie une date de repli, le `Catch` de `dteN0_LostFocus` n'est jamais atteint : `Fiches_Stat` est recréée sans « Veuillez saisir votre date SVP » (phase 2, vague 6, 2026-11-14) · tests : T03 (xfail) · sources : [RelvMo.class:dteN0_LostFocus](../../../../../.src/Statistiques/RelvMo.class#L129-L140), [Utils.module:Cdate_calc](../../../../../.src/Utils/Utils.module#L473-L476)
+- [ ] RELVMO-A09 — [anomalie] `Button2_Click` : `RB2` (sélection partielle) est vrai par défaut dans le `.form` ; sans ligne courante (`Rlcli.Available` faux), « Imprimer » ne produit ni PDF ni « Veuillez faire une sélection SVP ! » (le message n'est émis que dans la branche `Available`) (phase 2, vague 6, 2026-11-14) · tests : T07 · sources : [RelvMo.form:87](../../../../../.src/Statistiques/RelvMo.form#L83-L88), [RelvMo.class:394](../../../../../.src/Statistiques/RelvMo.class#L394), [RelvMo.class:444](../../../../../.src/Statistiques/RelvMo.class#L441-L446)

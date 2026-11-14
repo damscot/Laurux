@@ -56,7 +56,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RAZRLVB-A01 — [anomalie] **CRITIQUE** : la purge est exécutée **même si l'utilisateur répond
+- [ ] RAZRLVB-A01 — [anomalie] (confirmée phase 2, vague 6 : « Non » purge quand même, pas d'`EffaceR.sql` (dump, T02)) **CRITIQUE** : la purge est exécutée **même si l'utilisateur répond
   « Non »** (le `Endif` l. 29 ne couvre que la sauvegarde) ; dans ce cas, aucune sauvegarde n'est
   faite. Correction : inclure la lecture et les `DELETE` dans le `If` (même famille que
   EPURMVTEXP-A01, EDREGUL-A01) · tests : T02 · sources : [RazRlvb.class:25-36](../../../../../.src/Archivages/RazRlvb.class#L25-L36)

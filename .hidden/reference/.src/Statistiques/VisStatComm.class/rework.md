@@ -59,7 +59,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   le changement de valeur du RadioButton) et `Affichage` force `Tri = "commercial"` quand
   `Bnom.value` est faux → tris Brut/Remise/Net jamais appliqués, tri par nom au second clic
   seulement (à confirmer par replay) · tests : T03 · sources : [VisStatComm.class:117](../../../../../.src/Statistiques/VisStatComm.class#L117), [VisStatComm.class:124](../../../../../.src/Statistiques/VisStatComm.class#L124), [VisStatComm.class:Bbrut_MouseDown](../../../../../.src/Statistiques/VisStatComm.class#L198-L203)
-- [ ] VISSTATCOMM-A02 — [anomalie] Lignes dont le commercial est introuvable (client sans
+- [ ] VISSTATCOMM-A02 — [anomalie] (confirmée phase 2, vague 6 : clients sans commercial absents de l'édition (T01)) Lignes dont le commercial est introuvable (client sans
   commercial en détail) masquées et exclues des totaux, sans signalement · tests : T01 · sources : [VisStatComm.class:140](../../../../../.src/Statistiques/VisStatComm.class#L140)
 - [ ] VISSTATCOMM-A03 — [anomalie] PDF sans ligne de total (`Level4C`/`Level5c` commentés) et
   fichier `~/tmp/Statcli.pdf` partagé avec `VisStatComArt` (la fermeture de l'un supprime le PDF

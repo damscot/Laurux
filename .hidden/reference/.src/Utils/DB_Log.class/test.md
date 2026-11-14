@@ -10,7 +10,7 @@ attendues produites dans le clone **Laurux non modifié**.
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | DB_LOG-T01 | replay | Ouverture et affichage | log préparé : lignes `Exec_SQL`, `GUI`, `Log` ; Gestion → menu Log | aucune erreur ; nombre de lignes de la grille (capture) | `tests/affichage_log/` | implémenté (aucune erreur ; nombre de lignes de la grille non capturé) |
-| DB_LOG-T02 | replay | Lignes atypiques | log avec SQL contenant `;` et SQL multiligne | figer le comportement (troncature ; erreur d'indice éventuelle) | `tests/lignes_atypiques/` | à faire : le journal affiché est celui du rejeu (--logfile) ; injecter un journal préparé demande un outillage (journal distinct du scénario) |
+| DB_LOG-T02 | replay | Lignes atypiques | log avec SQL contenant `;` et SQL multiligne | figer le comportement (troncature ; erreur d'indice éventuelle) | `tests/lignes_atypiques/` | implémenté (gb.test DB_LogTest.T02LignesAtypiques : journal préparé au chemin Get_Localfile_Path, New DB_Log(Utils.db) ; aucune erreur, 6 lignes de grille pour 4 entrées dont une SQL sur 3 lignes : une ligne par ligne physique ; contenu des cellules non relevé, Data privé) |
 | DB_LOG-T03 | replay | Activation / vidage | **Enable** décoché puis coché, **Vider** | taille du fichier de log ; présence de lignes après réactivation | `tests/activation_vidage/` | implémenté (effet lu dans sql.log : seules les requêtes du dernier Agenda restent journalisées ; taille du fichier non comparée) |
 | DB_LOG-T04 | replay | Sauvegarde | **Sauvegarder**, choix d'un répertoire, **Enregistrer** | fichier `Laurux_log.csv` copié (emplacement réel, voir `DirChooser1_Change`) | `tests/sauvegarde/` | à faire : copie vers User.Home/Laurux_log.csv (vrai répertoire personnel, non isolé) ; DirChooser non observé ; fichier produit non comparé |
 | DB_LOG-T05 | replay | Filtres | **Filtres**, saisie `Exec_SQL:SELECT` puis ligne invalide, **Enregistrer** | texte de `FiltresStatus` ; lignes journalisées ensuite | `tests/edition_filtres/` | implémenté (INSERT filtré, SELECT journalisés ; texte de FiltresStatus non capturé) |
@@ -31,3 +31,5 @@ attendues produites dans le clone **Laurux non modifié**.
   Logging se lit dans le `sql.log` comparé, le journal affiché étant celui du rejeu) et
   `.hidden/Tests/Utils/assets/db_log_edition_filtres/` (T05 : filtre `Exec_SQL:SELECT` + ligne invalide `xyz`, puis création
   Agenda : l'INSERT ne doit plus être journalisé).
+
+- **Implémentation (phase 2, vague 6)** : module gb.test `.src/Tests/Utils/DB_LogTest.test` ; attendus `.hidden/Tests/Utils/assets/DB_LogTest/expected.txt`.

@@ -9,7 +9,7 @@ sur CHXIMP-A01.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CHXIMP-T01 | gbtest | (si CHXIMP-A01 est refusée et CHXIMP-A02 réalisée) `ListeImprimantes` | sorties `lpstat -p` enregistrées : 2 imprimantes, ligne « Rendering… », ligne vide, « aucune destination », locale fr et C | liste attendue figée sur le comportement actuel (mots parasites compris), sans « Out of bounds » si A02 le corrige | `tests/chximp_lpstat/` | à faire |
+| CHXIMP-T01 | gbtest | (si CHXIMP-A01 est refusée et CHXIMP-A02 réalisée) `ListeImprimantes` | sorties `lpstat -p` enregistrées : 2 imprimantes, ligne « Rendering… », ligne vide, « aucune destination », locale fr et C | liste attendue figée sur le comportement actuel (mots parasites compris), sans « Out of bounds » si A02 le corrige | `tests/chximp_lpstat/` | à faire : conditionné à CHXIMP-A01 refusée et CHXIMP-A02 réalisée (extraction de ListeImprimantes, phase 4) |
 
 ## Détail des tests
 

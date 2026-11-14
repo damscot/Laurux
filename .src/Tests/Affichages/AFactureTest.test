@@ -1,0 +1,80 @@
+' Gambas test file
+
+''Tests de AFacture (.hidden/reference/.src/Affichages/AFacture.class/test.md, AFACTURE-T01, T02, T03).
+''Écran instancié sans affichage (New AFacture(numbl, code, nom, date)) sans passer par Facture ni Articles ;
+''contenu de Colrcp3 et des champs d'en-tête lus par Controls. Jeu afacture_shared/lignes_bl.
+''Valeurs attendues : assets/AFactureTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DetailBl", "BL 900001 en cours (article, commentaire sur 3 lignes, article supprimé) : lignes, total, quantité brute (A02)")
+  TestKit.Desc("T02DetailArchive", "BL 900002 présent seulement dans Fiches_LigblM : lignes de l'archive")
+  TestKit.Desc("T03DocumentVide", "Numéro absent des deux tables : erreur figée (A01) ; BL 900003 à montants décimaux")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "AFactureTest")
+  TestKit.OuvreBase("afacture_shared/lignes_bl")
+
+End
+
+Private Sub Detail(sCle As String, hForm As Object)
+
+  Dim hVue As ColumnView
+  Dim hCtrl As Object
+  Dim sNom As String
+  Dim i As Integer
+  Dim sRes As String
+
+  For Each sNom In ["Codecli", "Nomcli", "Numfac", "datef", "Totalfac", "Nlgf"]
+    hCtrl = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, hCtrl.Text)
+  Next
+  hVue = hForm.Controls["Colrcp3"]
+  TestKit.Check(sCle & "/nb_lignes", hVue.Count)
+  If hVue.MoveFirst() Then Return
+  Repeat
+    sRes = ""
+    For i = 0 To hVue.Columns.Count - 1
+      sRes &= "[" & hVue.Item[i] & "]"
+    Next
+    TestKit.Check(sCle & "/ligne_" & hVue.Item.Key, sRes)
+  Until hVue.MoveNext()
+
+End
+
+Private Sub Ouvre(sCle As String, sNum As String)
+
+  Dim hForm As Object
+
+  Try hForm = New AFacture(sNum, "411001", "Client test", "15/06/2018")
+  If Error Then
+    TestKit.Check(sCle & "/erreur", Error.Text)
+    Return
+  Endif
+  Detail(sCle, hForm)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T01DetailBl()
+
+  Ouvre("T01", "900001")
+
+End
+
+Public Sub T02DetailArchive()
+
+  Ouvre("T02", "900002")
+
+End
+
+Public Sub T03DocumentVide()
+
+  Ouvre("T03/inconnu", "999999")
+  Ouvre("T03/decimaux", "900003")
+
+End

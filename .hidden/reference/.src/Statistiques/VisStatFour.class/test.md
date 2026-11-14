@@ -12,13 +12,14 @@ cliquer dans `Liste`, `replay_missing`). Données : `Total` produit par
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VISSTATFOUR-T01 | replay | Affichage initial (manuel avant A03) | STATFOUR-T01 | grille triée par code, % = (N − N-1) / N (A01 figée) | `tests/visstatfour_affichage/` | à faire |
-| VISSTATFOUR-T02 | replay | Tris (manuel avant A03) | `Bnom`, `Ca`, `Ca1`, `Bcode` | ordres attendus | `tests/visstatfour_tris/` | à faire |
-| VISSTATFOUR-T03 | replay | Impression (manuel avant A03) | > 60 fournisseurs, Imprimer | texte PDF ; titre 2e page « CA clients » (A02 figée) | `tests/visstatfour_pdf/` | à faire |
-| VISSTATFOUR-T04 | gbtest | `LignesTotal` (après VISSTATFOUR-005) | `Total` de STATFOUR-T01 et T02 | lignes et % identiques aux captures T01 | `tests/visstatfour_lignes/` | à faire |
+| VISSTATFOUR-T01 | replay | Affichage initial (manuel avant A03) | STATFOUR-T01 | grille triée par code, % = (N − N-1) / N (A01 figée) | `tests/visstatfour_affichage/` | implémenté (assets/visstatfour_affichage : rejouable par Utils.ReplayObservers, grille relevée par le texte du PDF) |
+| VISSTATFOUR-T02 | replay | Tris (manuel avant A03) | `Bnom`, `Ca`, `Ca1`, `Bcode` | ordres attendus | `tests/visstatfour_tris/` | implémenté (assets/visstatfour_tris : Bnom, Ca, Ca1, Bcode, une édition par tri) |
+| VISSTATFOUR-T03 | replay | Impression (manuel avant A03) | > 60 fournisseurs, Imprimer | texte PDF ; titre 2e page « CA clients » (A02 figée) | `tests/visstatfour_pdf/` | implémenté (assets/visstatfour_pdf, jeu visstatfour_pdf : 2 pages, titre « CA clients » page 2, A02) |
+| VISSTATFOUR-T04 | gbtest | `LignesTotal` (après VISSTATFOUR-005) | `Total` de STATFOUR-T01 et T02 | lignes et % identiques aux captures T01 | `tests/visstatfour_lignes/` | à faire : extraction VISSTATFOUR-005 (LignesTotal) non faite |
 
 ## Détail des tests
 
 - Valeurs attendues capturées dans le clone **non modifié** (grille relevée à la main ou par
   capture d'écran pour T01-T02 avant A03 ; PDF par `CmdVis` + `pdftotext`).
 - T04 est le seul test automatisable sans modifier le comportement : à privilégier en phase 2.
+- Phase 2 : `VisStatFour._New` appelle désormais `Utils.ReplayObservers(Me)` (harnais) : écran rejouable ; scénarios dans `.hidden/Tests/Statistiques/assets/visstatfour_*` (fenêtre ouverte par StatFour, jeu `statfour_shared/statfour_receptions`).

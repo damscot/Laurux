@@ -12,18 +12,25 @@ compte repris par l'appelant, lignes `Exec_SQL` (conditions imposées) à titre 
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TRICPT-T01 | replay | Sélection d'un compte général | `Plancomptable` (`General`, sans solde) : filtre `401`, clic | compte repris ; figer la liste (condition `type_cc='B' OR type_cc='G'` sans parenthèses, A02) | `tests/compte_general/` | à faire |
-| TRICPT-T02 | replay | Clients : facturation, livraison, contacts | `EdMat` (`Client`) : `Livr`, `contact`, `Afac`, changement de `Cselc` | colonnes et requêtes de référence ; code client repris | `tests/clients_modes/` | à faire |
-| TRICPT-T03 | replay | Conditions clients | cocher `inact`, puis `divers`, `autoe` | conditions `cli_actif`/`cli_div`/`cli_autoent` de référence | `tests/conditions_clients/` | à faire |
-| TRICPT-T04 | replay | Mode Tous | `LGed` (comptabilité) : `gest`, `bil`, `all`, `cli`, `fou`, `clifou` | listes successives ; largeur de fenêtre (captures) | `tests/mode_tous/` | à faire |
-| TRICPT-T05 | replay | Condition après changement de mode (A03) | mode Tous → `cli` → cocher `inact` → `gest` | figer l'erreur SQL (colonne `cli_actif` inconnue) | `tests/condition_mode/` | à faire |
-| TRICPT-T06 | replay | Lettrage | `Lettrage` client puis fournisseur | client : seuls les comptes `lettrable` ; fournisseur : tous (A04 figée) | `tests/lettrage/` | à faire |
-| TRICPT-T07 | replay | Annulation après sélection (A01) | `Materiel` : sélection d'un client, puis réouverture et Échap | figer : l'ancien client est réappliqué | `tests/annulation/` | à faire |
-| TRICPT-T08 | replay | Trésorerie avec solde | `Pointage` (`Tresorerie`, avec solde) | comptes `type_cc='B' and comptr_cc != 0`, colonne solde arrondie | `tests/tresorerie/` | à faire |
-| TRICPT-T09 | replay | Clients et fournisseurs | `SaiReg` (`Client_Fournisseur`, avec solde) | `UNION`, colonne Type ; compte repris | `tests/clients_fournisseurs/` | à faire |
-| TRICPT-T10 | gbtest | `ConditionComptes` (après TRICPT-005) | 8 types × appelant `Lettrage`/autre × 3 cases | texte identique au clone non modifié | `tests/condition_comptes/` | à faire |
+| TRICPT-T01 | replay | Sélection d'un compte général | `Plancomptable` (`General`, sans solde) : filtre `401`, clic | compte repris ; figer la liste (condition `type_cc='B' OR type_cc='G'` sans parenthèses, A02) | `tests/compte_general/` | implémenté (gb.test `TriCptTest.T01CompteGeneral` : A02 figée, le filtre `401` ne s'applique qu'à la branche `type_cc='G'`) |
+| TRICPT-T02 | replay | Clients : facturation, livraison, contacts | `EdMat` (`Client`) : `Livr`, `contact`, `Afac`, changement de `Cselc` | colonnes et requêtes de référence ; code client repris | `tests/clients_modes/` | implémenté (gb.test `TriCptTest.T02ClientsModes` : `Livr`, `contact`, `Afac`, `Cselc`) |
+| TRICPT-T03 | replay | Conditions clients | cocher `inact`, puis `divers`, `autoe` | conditions `cli_actif`/`cli_div`/`cli_autoent` de référence | `tests/conditions_clients/` | implémenté (gb.test `TriCptTest.T03ConditionsClients`) |
+| TRICPT-T04 | replay | Mode Tous | `LGed` (comptabilité) : `gest`, `bil`, `all`, `cli`, `fou`, `clifou` | listes successives ; largeur de fenêtre (captures) | `tests/mode_tous/` | implémenté (gb.test `TriCptTest.T04ModeTous` ; largeur de fenêtre non comparée ; `cli` en mode Tous laisse la liste inchangée, figé) |
+| TRICPT-T05 | replay | Condition après changement de mode (A03) | mode Tous → `cli` → cocher `inact` → `gest` | figer l'erreur SQL (colonne `cli_actif` inconnue) | `tests/condition_mode/` | à faire : l'erreur SQL passe par `Message.Error` de `DB_Connection.Exec` (bloquant en gb.test) ; grille non rejouable |
+| TRICPT-T06 | replay | Lettrage | `Lettrage` client puis fournisseur | client : seuls les comptes `lettrable` ; fournisseur : tous (A04 figée) | `tests/lettrage/` | implémenté (gb.test `TriCptTest.T06Lettrage` : appelant nommé `Lettrage`, A04 figée) |
+| TRICPT-T07 | replay | Annulation après sélection (A01) | `Materiel` : sélection d'un client, puis réouverture et Échap | figer : l'ancien client est réappliqué | `tests/annulation/` | implémenté (gb.test `TriCptTest.T07Annulation` : A01 figée, l'appelant garde 411001) |
+| TRICPT-T08 | replay | Trésorerie avec solde | `Pointage` (`Tresorerie`, avec solde) | comptes `type_cc='B' and comptr_cc != 0`, colonne solde arrondie | `tests/tresorerie/` | implémenté (gb.test `TriCptTest.T08Tresorerie`) |
+| TRICPT-T09 | replay | Clients et fournisseurs | `SaiReg` (`Client_Fournisseur`, avec solde) | `UNION`, colonne Type ; compte repris | `tests/clients_fournisseurs/` | implémenté (gb.test `TriCptTest.T09ClientsFournisseurs`) |
+| TRICPT-T10 | gbtest | `ConditionComptes` (après TRICPT-005) | 8 types × appelant `Lettrage`/autre × 3 cases | texte identique au clone non modifié | `tests/condition_comptes/` | à faire : après extraction TRICPT-005 (conditions couvertes par les listes obtenues en T01-T09) |
 
 ## Détail des tests
+
+- **Implémentation (phase 2, vague 6)** : grille non rejouable ; la fenêtre est instanciée sans affichage dans le module
+  gb.test `.src/Tests/Affichages/TriCptTest.test`, `form_Open` est appelé à la main, les RadioButton/CheckBox sont
+  pilotés par `Value` (qui déclenche leur `_Click`) et la liste est relue dans la `GridView` de `Panel1` (10 premières
+  lignes). L'appelant est une seconde fenêtre TriCpt non ouverte (`Bsel`, `Bval`, `Name`) : `TriTest` échoue à la
+  construction (ResultField passé pour un ObjProp). Jeu `.hidden/Tests/Affichages/assets/tricpt_shared/comptes_selection.sql`
+  (indicateurs clients, `lettrable`, adresses de livraison, contacts clients/fournisseurs, compte de trésorerie).
 
 - **Valeurs attendues** : capturées dans le clone non modifié ; A01 à A04 figées.
 - **Rejeu** : `TriCpt` n'appelle **pas** `Utils.Observers(Me)` et la grille est créée par

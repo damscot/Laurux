@@ -1,0 +1,312 @@
+' Gambas test file
+
+''Tests de TriCpt (.hidden/reference/.src/Affichages/TriCpt.class/test.md).
+''Valeurs attendues : assets/TriCptTest/expected.txt, produites dans le clone de référence.
+''La grille de TriGen n'est pas sélectionnable au rejeu : la fenêtre est instanciée sans être affichée, form_Open est
+''appelé à la main (création de la liste), les choix sont pilotés par les RadioButton/CheckBox et la liste est relue
+''dans la GridView créée par TriGen dans Panel1. L'appelant (Bsel/Bval et Name lu par tricond) est une seconde fenêtre TriCpt non ouverte.
+''Jeu tricpt_shared/comptes_selection.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CompteGeneral", "General sans solde : liste (condition sans parenthèses, A02), filtre 401, sélection reprise par l'appelant")
+  TestKit.Desc("T02ClientsModes", "Client : facturation, livraison (Livr), contacts, changement de colonne Cselc : listes")
+  TestKit.Desc("T03ConditionsClients", "Client : cases inact, divers, autoe : listes filtrées")
+  TestKit.Desc("T04ModeTous", "Tous : gest, bil, all, cli, fou, clifou : listes successives")
+  TestKit.Desc("T06Lettrage", "Appelant Lettrage : client (comptes lettrables seuls) puis fournisseur (tous, A04)")
+  TestKit.Desc("T07Annulation", "Annulation (MajSel Null) après une sélection précédente : l'appelant garde l'ancien compte (A01)")
+  TestKit.Desc("T08Tresorerie", "Trésorerie avec solde : comptes B de trésorerie, colonne solde arrondie")
+  TestKit.Desc("T09ClientsFournisseurs", "Clients et fournisseurs avec solde : UNION, colonne Type, sélection reprise")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriCptTest")
+  TestKit.OuvreBase("tricpt_shared/comptes_selection")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Appelant(Optional sNom As String) As Object
+
+  Dim hO As Object
+
+  ' Fenêtre TriCpt non ouverte (form_Open non appelé) : expose Bsel, Bval et Name (TriTest échoue à la construction)
+  hO = New TriCpt("B", TriCpt.Sans_Solde, Null)
+  If sNom Then hO.Name = sNom
+  Return hO
+
+End
+
+Private Sub Ouvre(vType As Variant, iSolde As Integer, hObj As Object) As TriCpt
+
+  Dim hF As TriCpt
+
+  Try hF = New TriCpt(vType, iSolde, hObj)
+  If Error Then
+    TestKit.Check("ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return Null
+  Endif
+  Try hF.form_Open()
+  If Error Then TestKit.Check("form_Open", "ERREUR: " & Error.Text & " " & Error.Where)
+  Return hF
+
+End
+
+Private Sub Ct(hF As TriCpt, sNom As String) As Object
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  Return hC
+
+End
+
+' Grille de TriGen dans Panel1 : nombre de lignes, colonnes 0 et iCol (au plus 10 lignes)
+Private Sub Grille(hF As TriCpt, Optional iCol As Integer = 1) As String
+
+  Dim hC As Object
+  Dim hG As Object
+  Dim i As Integer
+  Dim s As String
+
+  For Each hC In Ct(hF, "Panel1").Children
+    If Object.Type(hC) = "GridView" Then hG = hC
+  Next
+  If IsNull(hG) Then Return "<pas de grille>"
+  s = hG.Rows.Count & " colonnes " & hG.Columns.Count & " :"
+  For i = 0 To Min(hG.Rows.Count, 10) - 1
+    s &= " " & hG[i, 0].Text
+    If iCol >= 0 Then s &= "/" & hG[i, iCol].Text
+  Next
+  Return s
+
+End
+
+' Intitulés (colonne 1) de la page affichée, triés : indépendant de l'ordre des ex aequo
+Private Sub Intitules(hF As TriCpt) As String
+
+  Dim hC As Object
+  Dim hG As Object
+  Dim i As Integer
+  Dim a As New String[]
+
+  For Each hC In Ct(hF, "Panel1").Children
+    If Object.Type(hC) = "GridView" Then hG = hC
+  Next
+  If IsNull(hG) Then Return "<pas de grille>"
+  For i = 0 To hG.Rows.Count - 1
+    a.Add(hG[i, 1].Text)
+  Next
+  a.Sort()
+  Return hG.Rows.Count & " colonnes " & hG.Columns.Count & " : " & a.Join("|")
+
+End
+
+' Libellés des filtres (en-têtes de colonnes créés par TriGen)
+Private Sub Entetes(hF As TriCpt) As String
+
+  Dim hC As Object
+  Dim s As String
+
+  For Each hC In Ct(hF, "Panel1").Children
+    If Object.Type(hC) = "TextReg" Then s &= hC.Text & "|"
+  Next
+  Return s
+
+End
+
+Private Sub Filtre(hF As TriCpt, iCol As Integer, sTexte As String)
+
+  Dim hC As Object
+  Dim i As Integer
+
+  For Each hC In Ct(hF, "Panel1").Children
+    If Object.Type(hC) = "TextReg" Then
+      If i = iCol Then
+        hC.Text = sTexte
+        Return
+      Endif
+      Inc i
+    Endif
+  Next
+
+End
+
+Private Sub Valeur(v As Variant) As String
+
+  If IsNull(v) Then Return "<Null>"
+  Return v
+
+End
+
+Public Sub T01CompteGeneral()
+
+  Dim hO As Object
+  Dim hF As TriCpt
+
+  hO = Appelant()
+  hF = Ouvre(TriCpt.General, TriCpt.Sans_Solde, hO)
+  If IsNull(hF) Then Return
+  TestKit.Check("T01/liste", Grille(hF))
+  Filtre(hF, 0, "401")
+  TestKit.Check("T01/filtre_401", Grille(hF))
+  hF.Bsel = True
+  hF.Bval = "401001"
+  hF.ColTri_MajSel("401001")
+  TestKit.Check("T01/appelant.Bsel", hO.Bsel)
+  TestKit.Check("T01/appelant.Bval", Valeur(hO.Bval))
+  Object.Lock(hO)
+
+End
+
+Public Sub T02ClientsModes()
+
+  Dim hF As TriCpt
+  Dim hO As Object
+
+  hO = Appelant()
+  hF = Ouvre(TriCpt.Client, TriCpt.Sans_Solde, hO)
+  If IsNull(hF) Then Return
+  TestKit.Check("T02/facturation", Grille(hF, 4))
+  TestKit.Check("T02/facturation.Cselc", Ct(hF, "Cselc").Text)
+  Ct(hF, "Livr").Value = True
+  TestKit.Check("T02/livraison", Grille(hF, 4))
+  TestKit.Check("T02/livraison.Cselc", Ct(hF, "Cselc").Text)
+  Ct(hF, "contact").Value = True
+  TestKit.Check("T02/contact", Grille(hF, 3))
+  Ct(hF, "Afac").Value = True
+  TestKit.Check("T02/retour_facturation", Grille(hF, 4))
+  Ct(hF, "Cselc").Text = "------Mail------"
+  hF.Cselc_Click()
+  TestKit.Check("T02/cselc_mail", Grille(hF, 4))
+  Object.Lock(hF)
+  Object.Lock(hO)
+
+End
+
+Public Sub T03ConditionsClients()
+
+  Dim hF As TriCpt
+  Dim hO As Object
+
+  hO = Appelant()
+  hF = Ouvre(TriCpt.Client, TriCpt.Sans_Solde, hO)
+  If IsNull(hF) Then Return
+  Ct(hF, "inact").Value = True
+  TestKit.Check("T03/inact", Grille(hF))
+  Ct(hF, "divers").Value = True
+  TestKit.Check("T03/inact_divers", Grille(hF))
+  Ct(hF, "divers").Value = False
+  Ct(hF, "autoe").Value = True
+  TestKit.Check("T03/inact_autoe", Grille(hF))
+  Object.Lock(hF)
+  Object.Lock(hO)
+
+End
+
+Public Sub T04ModeTous()
+
+  Dim hF As TriCpt
+  Dim hO As Object
+  Dim sNom As String
+
+  hO = Appelant()
+  hF = Ouvre(TriCpt.Tous, TriCpt.Sans_Solde, hO)
+  If IsNull(hF) Then Return
+  ' Mode Tous : comptes 411001/401001 homonymes (ex aequo sur l'intitulé) : intitulés triés
+  TestKit.Check("T04/ouverture", Intitules(hF))
+  TestKit.Check("T04/all.Value", Ct(hF, "all").Value)
+  For Each sNom In ["gest", "bil", "all", "cli", "fou"]
+    Ct(hF, sNom).Value = True
+    If sNom = "all" Or sNom = "cli" Then
+      TestKit.Check("T04/" & sNom, Intitules(hF))
+    Else
+      TestKit.Check("T04/" & sNom, Grille(hF))
+    Endif
+  Next
+  ' UNION triée sur l'intitulé seul : ordre des ex aequo (client/fournisseur homonymes) non déterministe
+  Ct(hF, "clifou").Value = True
+  TestKit.Check("T04/clifou", Intitules(hF))
+  Object.Lock(hF)
+  Object.Lock(hO)
+
+End
+
+Public Sub T06Lettrage()
+
+  Dim hF As TriCpt
+  Dim hO As Object
+
+  hO = Appelant("Lettrage")
+  hF = Ouvre("C", TriCpt.Sans_Solde, hO)
+  If IsNull(hF) Then Return
+  TestKit.Check("T06/client", Grille(hF))
+  Object.Lock(hF)
+  hF = Ouvre("F", TriCpt.Sans_Solde, hO)
+  If IsNull(hF) Then Return
+  TestKit.Check("T06/fournisseur", Grille(hF))
+  Object.Lock(hF)
+  Object.Lock(hO)
+
+End
+
+Public Sub T07Annulation()
+
+  Dim hF As TriCpt
+  Dim hO As Object
+
+  hO = Appelant()
+  hO.Bsel = True
+  hO.Bval = "411001"
+  hF = Ouvre("C", TriCpt.Sans_Solde, hO)
+  If IsNull(hF) Then Return
+  TestKit.Check("T07/ouverture.Bsel", hO.Bsel)
+  TestKit.Check("T07/ouverture.Bval", Valeur(hO.Bval))
+  ' Échap : TriGen.Close(Null) écrit Bsel False / Bval Null sur TriCpt puis lève MajSel
+  hF.Bsel = False
+  hF.Bval = Null
+  hF.ColTri_MajSel(Null)
+  TestKit.Check("T07/annulation.Bsel", hO.Bsel)
+  TestKit.Check("T07/annulation.Bval", Valeur(hO.Bval))
+  Object.Lock(hO)
+
+End
+
+Public Sub T08Tresorerie()
+
+  Dim hF As TriCpt
+  Dim hO As Object
+
+  hO = Appelant()
+  hF = Ouvre(TriCpt.Tresorerie, TriCpt.Avec_Solde, hO)
+  If IsNull(hF) Then Return
+  TestKit.Check("T08/liste", Grille(hF, 2))
+  Object.Lock(hF)
+  Object.Lock(hO)
+
+End
+
+Public Sub T09ClientsFournisseurs()
+
+  Dim hF As TriCpt
+  Dim hO As Object
+
+  hO = Appelant()
+  hF = Ouvre(TriCpt.Client_Fournisseur, TriCpt.Avec_Solde, hO)
+  If IsNull(hF) Then Return
+  ' UNION triée sur l'intitulé seul : ordre des ex aequo (client/fournisseur homonymes) non déterministe
+  TestKit.Check("T09/liste", Intitules(hF))
+  TestKit.Check("T09/colonnes.Type_solde", Entetes(hF))
+  hF.Bsel = True
+  hF.Bval = "411002"
+  hF.ColTri_MajSel("411002")
+  TestKit.Check("T09/appelant.Bsel", hO.Bsel)
+  TestKit.Check("T09/appelant.Bval", Valeur(hO.Bval))
+  Object.Lock(hO)
+
+End

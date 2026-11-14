@@ -54,7 +54,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VISHITCARTES-A01 — [anomalie] Ratio `points / Totl` sans protection : si toutes les cartes
+- [ ] VISHITCARTES-A01 — [anomalie] (confirmée phase 2, vague 6 : « Division by zero » dans `_New` l. 95 (T03, code 125)) Ratio `points / Totl` sans protection : si toutes les cartes
   retenues ont 0 point, erreur de division à l'ouverture · tests : T03 · sources : [VisHitCartes.class:95](../../../../../.src/Statistiques/VisHitCartes.class#L95)
 - [ ] VISHITCARTES-A02 — [anomalie] Impression : titre différent entre la première page (« hit
   parades ») et les suivantes, PDF écrit sous `~/tmp/Edhit.kud` (extension `.kud`), visites non
@@ -62,3 +62,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] VISHITCARTES-A03 — [anomalie] Histogramme : `sumdata` déclaré `Integer` (somme des points
   tronquée) et barre dessinée même pour une valeur nulle (à confirmer visuellement) · tests : T01
   (contrôle visuel) · sources : [VisHitCartes.class:123](../../../../../.src/Statistiques/VisHitCartes.class#L123), [VisHitCartes.class:168](../../../../../.src/Statistiques/VisHitCartes.class#L168)
+- [ ] VISHITCARTES-A04 — [amélioration][tests] Tests portés par les classes appelantes : VISHITCARTES-T01, VISHITCARTES-T02, VISHITCARTES-T04 ne sont couverts que par des tests d'autres classes (VISHITCARTES-T01 : `Statistiques/hitcarte_defaut` ; VISHITCARTES-T02 : `Statistiques/hitcarte_tri` : LIMIT 100 par visites ; 3 cartes donc 1 page) ; à faire : jeu de plus de 50 cartes pour le saut de page ; VISHITCARTES-T04 : `Statistiques/hitcarte_defaut` : Quitter après impression ; suppression de ~/tmp/Edhit.kud non comparée, fichier jamais créé par l’impression PDF) ; à rapatrier dans la classe (module .test ou scénarios dans ses assets), puis à alléger dans les appelants pour éviter le double comptage (phase 2, vague 6, 2026-11-14, décision utilisateur du 2026-11-14) · tests : VISHITCARTES-T01, VISHITCARTES-T02, VISHITCARTES-T04 · sources : [test.md](test.md)

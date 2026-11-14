@@ -53,7 +53,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] VISSTATFOUR-A01 — [anomalie] « % N/N-1 » calculé sur la base du montant **N** (`/ montant`),
   alors que `VisStatTypCli` divise par le N-1 ; idem pour le total imprimé (division par zéro si
   le total N est nul) · tests : T01, T03 · sources : [VisStatFour.class:98](../../../../../.src/Statistiques/VisStatFour.class#L98), [VisStatFour.class:196](../../../../../.src/Statistiques/VisStatFour.class#L196), [VisStatTypCli.class:125](../../../../../.src/Statistiques/VisStatTypCli.class#L125)
-- [ ] VISSTATFOUR-A02 — [anomalie] Titre des pages suivantes du PDF « Impression du CA clients »
+- [ ] VISSTATFOUR-A02 — [anomalie] (confirmée phase 2, vague 6 : page 2 titrée « CA clients » (T03)) Titre des pages suivantes du PDF « Impression du CA clients »
   au lieu de « CA fournisseurs » · tests : T03 · sources : [VisStatFour.class:186](../../../../../.src/Statistiques/VisStatFour.class#L186)
 - [ ] VISSTATFOUR-A03 — [anomalie] Absence de `Utils.Observers(Me)` dans `_New` : écran non
   journalisé ni rejouable ; l'ajouter change le journal (`Exec_SQL`/événements) · tests : T01-T03 · sources : [VisStatFour.class:_New](../../../../../.src/Statistiques/VisStatFour.class#L39-L67)

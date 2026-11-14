@@ -773,7 +773,7 @@ index 9d09130a..368e87de 100644
    GridView1.Columns.Count = 2
    GridView1.Columns[0].Width = 150
 diff --git a/.src/Start.module b/.src/Start.module
-index 7cfaf9e5..2118806f 100644
+index 7cfaf9e5..327fdb38 100644
 --- a/.src/Start.module
 +++ b/.src/Start.module
 @@ -40,7 +40,9 @@ Public Arg_Config_File As String
@@ -839,7 +839,7 @@ index 7cfaf9e5..2118806f 100644
    
    remaining_args = Args.End()
    
-@@ -470,48 +479,599 @@ Public Sub Restore_Args()
+@@ -470,48 +479,655 @@ Public Sub Restore_Args()
  
  End
  
@@ -962,7 +962,7 @@ index 7cfaf9e5..2118806f 100644
 +      If Test_Choisi(aTest, Trim(sDemande), bListe) Then
 +        aSel.Add(aTest)
 +        Break
-+      Endif
+       Endif
 +    Next
 +  Next
 +  If bListe Then
@@ -983,7 +983,7 @@ index 7cfaf9e5..2118806f 100644
 +      If aTest[0] = "replay" Then
 +        Print "# " & sDemande
 +        Quit 2
-       Endif
++      Endif
 +    Next
 +    Print "# Avertissement : " & sDemande & " ; les tests qui ouvrent la base échoueront"
 +  Endif
@@ -1231,6 +1231,26 @@ index 7cfaf9e5..2118806f 100644
 +
 +End
 +
++Private Function Var_Outil(sTexte As String) As String
++  ''Nom de variable des règles d'outils (LAURUX_TEST_<OUTIL>_<PARAM>) : majuscules, tout caractère hors A-Z et 0-9
++  ''remplacé par « _ », comme dans Framework/bin/laurux-regles.sh.
++
++  Dim i As Integer
++  Dim sC, sRes As String
++
++  sTexte = UCase(sTexte)
++  For i = 1 To Len(sTexte)
++    sC = Mid$(sTexte, i, 1)
++    If (sC >= "A" And sC <= "Z") Or (sC >= "0" And sC <= "9") Then
++      sRes &= sC
++    Else
++      sRes &= "_"
++    Endif
++  Next
++  Return sRes
++
++End
++
 +Private Function Run_Scenario(sRoot As String, sSpec As String, Optional sId As String) As Boolean
 +  ''Rejoue le scénario GUI <lot>/<nom> (.hidden/Tests/<lot>/assets/<nom>/ : scenario.log, meta.json) et renvoie
 +  ''True si le code de sortie du rejeu est celui attendu (« code_sortie » de meta.json, défaut 0).
@@ -1243,7 +1263,9 @@ index 7cfaf9e5..2118806f 100644
 +  ''   « {out} » y sont remplacés par le HOME de test du fils et le répertoire de sortie ; fichiers reçus dans
 +  ''   ftp/, commandes dans ftp.trace ; « {smtp} » et « {smtp_port} » : hôte et port du faux serveur SMTP lancé si
 +  ''   meta.json porte « smtp » : "ok" | "refus" | "absent", voir TestKit.SmtpFactice ; messages reçus dans smtp/,
-+  ''   résumé dans smtp.trace), copie les fichiers d'entrée du
++  ''   résumé dans smtp.trace ; « outils » : règles des outils externes, {"outil": {"rc", "timeout", "hidden_argv",
++  ''   "sortie", "erreur"}}, exportées en LAURUX_TEST_<OUTIL>_<PARAM> pour les faux programmes et enveloppes de
++  ''   Framework/bin, voir laurux-regles.sh), copie les fichiers d'entrée du
 +  ''   scénario dans /tmp/laurux-test/ (même chemin sur le poste et dans le conteneur) et ceux de « entrees »
 +  ''   ({"fichier": "~/chemin"} : HOME de test, {out}/, /tmp/laurux-test/) à leur destination, place les enveloppes
 +  ''   mysql/mysqldump de Framework/bin en tête du PATH, dirige Desktop.Open vers laurux-ouvrir
@@ -1271,6 +1293,9 @@ index 7cfaf9e5..2118806f 100644
 +  Dim iTimeout, iCode, iAttendu, iPos, iChamp As Integer
 +  Dim hConf As Settings
 +  Dim sSrc, sDst, sFtp, sSmtp As String
++  Dim sOutils, sBinScen, sNomOutil, sVal As String
++  Dim vVal, vElem As Variant
++  Dim aVal As String[]
 +
 +  cMeta = JSON.Decode(File.Load(sDir &/ "meta.json"))
 +  sOut = Application.Env["LAURUX_TEST_OUT"]
@@ -1396,9 +1421,40 @@ index 7cfaf9e5..2118806f 100644
 +  Endif
 +  ' Desktop.Open du fils : faux programme laurux-ouvrir (XDG temporaires, portail désactivé), trace dans sOut
 +  TestKit.OuvertureFactice(sOut &/ "ouvrir.trace")
-+  sCmd = Env_Home(sRoot, sHome) & " PATH=" & Shell$(sRoot &/ ".src/Tests/Framework/bin" & ":" & Application.Env["PATH"])
++  ' règles des outils externes du scénario (clé « outils » de meta.json : {"outil": {"rc": 127, "timeout": 5,
++  ' "hidden_argv": ["-p*"], "sortie": "…", "erreur": "…"}}) : variables LAURUX_TEST_<OUTIL>_<PARAM> lues par les faux
++  ' programmes et enveloppes de Framework/bin (laurux-regles.sh) ; un outil sans faux programme reçoit, pour ce
++  ' scénario seulement, un lien vers laurux-factice (sOut/bin, en tête du PATH)
++  Try Shell "rm -rf " & Shell$(sOut &/ "bin") Wait
++  If cMeta.Exist("outils") And If cMeta["outils"] Then
++    For Each vArg In cMeta["outils"]
++      sNomOutil = cMeta["outils"].Key
++      If Not sNomOutil Or If InStr(sNomOutil, "/") Or If sNomOutil Begins "." Or If TypeOf(vArg) <> gb.Object Then
++        Print "Rejeu " & sSpec & " : outil « " & sNomOutil & " » ignoré (nom de programme et {paramètre: valeur} attendus)"
++        Continue
++      Endif
++      If Not Exist(sRoot &/ ".src/Tests/Framework/bin" &/ sNomOutil) Then
++        sBinScen = sOut &/ "bin"
++        Shell "mkdir -p " & Shell$(sBinScen) & " && ln -sfn " & Shell$(sRoot &/ ".src/Tests/Framework/bin/laurux-factice") & " " & Shell$(sBinScen &/ sNomOutil) Wait
++      Endif
++      For Each vVal In vArg
++        If TypeOf(vVal) = gb.Object Then ' liste (hidden_argv, Variant[] du JSON) : un motif par ligne
++          aVal = New String[]
++          For Each vElem In vVal
++            aVal.Add(CStr(vElem))
++          Next
++          sVal = aVal.Join("\n")
++        Else
++          sVal = CStr(vVal)
++        Endif
++        sOutils &= " LAURUX_TEST_" & Var_Outil(sNomOutil) & "_" & Var_Outil(vArg.Key) & "=" & Shell$(sVal)
++      Next
++    Next
++  Endif
++  sCmd = Env_Home(sRoot, sHome) & " PATH=" & Shell$(IIf(sBinScen, sBinScen & ":", "") & sRoot &/ ".src/Tests/Framework/bin" & ":" & Application.Env["PATH"])
 +  sCmd &= " LAURUX_TEST_DB_HOST=" & Shell$(sHost) & " LAURUX_TEST_DB_PORT=" & Shell$(sPort)
 +  sCmd &= " LAURUX_FACTICE_TRACE=" & Shell$(sOut &/ "outils.trace") ' outils externes factices de Framework/bin
++  sCmd &= sOutils
 +  sCmd &= " GB_DESKTOP_PORTAL_ENABLED=0 SDL_AUDIODRIVER=dummy " & Bus_Prive() & "timeout -k 2 " & iTimeout & " "
 +  If cMeta.Exist("date") And If cMeta["date"] And If System.Find("faketime") Then
 +    sCmd &= "faketime -f " & Shell$("@" & cMeta["date"]) & " "

@@ -69,3 +69,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   résultat) : les `Try` de lecture échouent mais `Comptabilite.Bsel` passe à `True` ; l'appelant
   reprend alors l'écriture `snum` de la sélection précédente (valeur résiduelle du module) · tests :
   T05 · sources : [TriEcritures.class:Ecrit_Click](../../../../../.src/Affichages/TriEcritures.class#L631-L639), [Saisecrit.class:641](../../../../../.src/Compta/Saisecrit.class#L641)
+- [ ] TRIECRITURES-A04 — [anomalie] `ORDER BY` sur une seule colonne (`Tri`) : l'ordre des ex aequo dépend du moteur (MariaDB) et de la page : listes non déterministes, tests fragiles (phase 2, vague 6, 2026-11-14) · tests : T03, T04 · sources : [TriEcritures.class:735-788](../../../../../.src/Affichages/TriEcritures.class#L735-L788)

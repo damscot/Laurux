@@ -11,11 +11,11 @@ base inchangée.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| VISSTATTYPCLI-T01 | replay | Affichage initial | STATTYPCLI-T01 | grille triée par code croissant, % N/N-1 par type, `Netnn2` global | `tests/visstattypcli_affichage/` | à faire |
-| VISSTATTYPCLI-T02 | replay | Tris | `Bnom`, `Bbrut`, `Brem`, `Bnet`, `Bnet2`, `Bcode`, puis `Bnet` deux fois | ordres attendus (bascule asc/desc à chaque clic) | `tests/visstattypcli_tris/` | à faire |
-| VISSTATTYPCLI-T03 | replay | Impression longue | `Total` de > 60 types (jeu dérivé) | PDF sans saut de page ni pied intermédiaire (A01 figée), total des % = somme (A02 figée) | `tests/visstattypcli_pdf/` | à faire |
-| VISSTATTYPCLI-T04 | replay | Fermeture | Imprimer puis Quitter | `~/tmp/StatTypcli.ps` supprimé | `tests/visstattypcli_fermeture/` | à faire |
-| VISSTATTYPCLI-T05 | gbtest | `LignesTotal` (après VISSTATTYPCLI-006) | `Total` de T01 | lignes et totaux identiques à T01 | `tests/visstattypcli_lignes/` | à faire |
+| VISSTATTYPCLI-T01 | replay | Affichage initial | STATTYPCLI-T01 | grille triée par code croissant, % N/N-1 par type, `Netnn2` global | `tests/visstattypcli_affichage/` | implémenté (assets/visstattypcli_affichage : grille relevée par le texte du PDF) |
+| VISSTATTYPCLI-T02 | replay | Tris | `Bnom`, `Bbrut`, `Brem`, `Bnet`, `Bnet2`, `Bcode`, puis `Bnet` deux fois | ordres attendus (bascule asc/desc à chaque clic) | `tests/visstattypcli_tris/` | implémenté (visstattypcli_tris : Bnom, Bbrut, Brem, Bnet ; visstattypcli_tris2 : Bnet2, Bcode, Bnet, Bnet) |
+| VISSTATTYPCLI-T03 | replay | Impression longue | `Total` de > 60 types (jeu dérivé) | PDF sans saut de page ni pied intermédiaire (A01 figée), total des % = somme (A02 figée) | `tests/visstattypcli_pdf/` | implémenté (assets/visstattypcli_pdf, jeu visstattypcli_pdf : 68 lignes sur 1 page, A01 ; total des % = somme, A02) |
+| VISSTATTYPCLI-T04 | replay | Fermeture | Imprimer puis Quitter | `~/tmp/StatTypcli.ps` supprimé | `tests/visstattypcli_fermeture/` | implémenté (assets/visstattypcli_fermeture : tmp/StatTypcli.ps absent) |
+| VISSTATTYPCLI-T05 | gbtest | `LignesTotal` (après VISSTATTYPCLI-006) | `Total` de T01 | lignes et totaux identiques à T01 | `tests/visstattypcli_lignes/` | à faire : extraction VISSTATTYPCLI-006 (LignesTotal) non faite |
 
 ## Détail des tests
 

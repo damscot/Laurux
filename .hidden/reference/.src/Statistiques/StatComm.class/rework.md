@@ -61,12 +61,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATCOMM-A01 — [anomalie] Mode synthèse : `Codec`, `commercial`, `Client` et `TotResult`
+- [ ] STATCOMM-A01 — [anomalie] (confirmée phase 2, vague 6 : montant attribué au commercial du client précédent (T05, `statcomm_client_absent`)) Mode synthèse : `Codec`, `commercial`, `Client` et `TotResult`
   affectés par `Try` ; si le client de la facture n'existe plus, ils gardent les valeurs de la
   facture précédente → CA attribué au mauvais commercial (N et N-1) · tests : T05 · sources : [StatComm.class:226](../../../../../.src/Statistiques/StatComm.class#L226), [StatComm.class:229](../../../../../.src/Statistiques/StatComm.class#L229), [StatComm.class:261](../../../../../.src/Statistiques/StatComm.class#L261), [StatComm.class:263](../../../../../.src/Statistiques/StatComm.class#L263)
-- [ ] STATCOMM-A02 — [anomalie] Mode détail : `cliResult!cli_nom` lu sans test `Available` →
+- [ ] STATCOMM-A02 — [anomalie] (confirmée phase 2, vague 6 : `Traitement.222` client absent (T05, `statcomm_client_absent_detail`, code 125)) Mode détail : `cliResult!cli_nom` lu sans test `Available` →
   erreur d'exécution si une facture archivée référence un client supprimé · tests : T05 · sources : [StatComm.class:221](../../../../../.src/Statistiques/StatComm.class#L221), [StatComm.class:222](../../../../../.src/Statistiques/StatComm.class#L222)
-- [ ] STATCOMM-A03 — [anomalie] Le N-1 ne met à jour que les lignes déjà créées par N (clients
+- [ ] STATCOMM-A03 — [anomalie] (confirmée phase 2, vague 6 : client vendu seulement en N-1 absent (T04)) Le N-1 ne met à jour que les lignes déjà créées par N (clients
   ou commerciaux sans vente en N ignorés) et `totfacn1` n'est affiché nulle part (`VisStatComm`
   n'a pas de colonne N-1, `Bnet2_MouseDown` est mort) : calcul inutile ou affichage à ajouter,
   à trancher · tests : T04 · sources : [StatComm.class:249](../../../../../.src/Statistiques/StatComm.class#L249), [StatComm.class:270](../../../../../.src/Statistiques/StatComm.class#L270), [VisStatComm.class:Bnet2_MouseDown](../../../../../.src/Statistiques/VisStatComm.class#L219-L224)

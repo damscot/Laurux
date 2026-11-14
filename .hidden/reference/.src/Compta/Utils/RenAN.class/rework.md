@@ -42,3 +42,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] RENAN-A01 — [anomalie] Script sur `Fiches_Mvtoc` (table inexistante) : erreur SQL à chaque
   lancement ; supprimer la classe et l'entrée `RenAN` de `Prgm` (même commit que PRGM-A06) ·
   tests : T01 · sources : [RenAN.class:10](../../../../../../.src/Compta/Utils/RenAN.class#L10), [Prgm.class:74](../../../../../../.src/Communs/Prgm.class#L74)
+- [ ] RENAN-A02 — [amélioration][tests] Tests portés par les classes appelantes : RENAN-T01 ne sont couverts que par des tests d'autres classes (RENAN-T01 : couvert par Communs/prgm_scripts_renan, PRGM-T06 : Query failed fatal figé, code 125) ; à rapatrier dans la classe (module .test ou scénarios dans ses assets), puis à alléger dans les appelants pour éviter le double comptage (phase 2, vague 6, 2026-11-14, décision utilisateur du 2026-11-14) · tests : RENAN-T01 · sources : [test.md](test.md)

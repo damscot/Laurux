@@ -1,0 +1,23 @@
+{
+ "id": "HITCARTE-T01",
+ "classe": "HitCarte",
+ "objet": "Hit-parade par défaut, impression et sortie",
+ "description": "Menu Caisse › Carte de fidélité › Hit parade des cartes ; Traitement avec les dates par défaut (01.01.2006 au jour) : table Total (dump) ; VisHitCartes s'ouvre (10 premiers, tri par points) ; Imprimer (texte du PDF par pdftotext dans edition.txt, VISHITCARTES-T01) ; Quitter VisHitCartes (VISHITCARTES-T04). HitCarte (ShowModal) reste ouvert (fermeture non rejouable).",
+ "dataset": "hitcarte_shared/cartes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

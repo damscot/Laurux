@@ -1,0 +1,42 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT num,type FROM Fiches_ligregie WHERE cloture=False GROUP BY num,type
+SELECT suspendu FROM Fiches_regie, Fiches_ligregie WHERE num='BL0000010' AND cloture=False AND coderegie=Fiches_regie.code AND suspendu=True
+SELECT nmclibl AS lib FROM Fiches_Bl WHERE numfac='BL0000010'
+SELECT nmclifac AS lib FROM Fiches_HistoFac WHERE numfac='BL0000010'
+SELECT 'mouvements exceptionnels' AS lib
+SELECT LEFT(numlig,6) as bl, vignette FROM Fiches_ligregie WHERE num='BL0000010' AND type='S' AND cloture=False GROUP BY bl,vignette
+SELECT suspendu FROM Fiches_regie, Fiches_ligregie WHERE num='BL0000011' AND cloture=False AND coderegie=Fiches_regie.code AND suspendu=True
+SELECT nmclibl AS lib FROM Fiches_Bl WHERE numfac='BL0000011'
+SELECT nmclifac AS lib FROM Fiches_HistoFac WHERE numfac='BL0000011'
+SELECT 'mouvements exceptionnels' AS lib
+SELECT LEFT(numlig,6) as bl, vignette FROM Fiches_ligregie WHERE num='BL0000011' AND type='S' AND cloture=False GROUP BY bl,vignette
+SELECT suspendu FROM Fiches_regie, Fiches_ligregie WHERE num='BL0000012' AND cloture=False AND coderegie=Fiches_regie.code AND suspendu=True
+SELECT suspendu FROM Fiches_regie, Fiches_ligregie WHERE num='BR0000001' AND cloture=False AND coderegie=Fiches_regie.code AND suspendu=True
+SELECT fo_nom  AS lib FROM Fiches_Entrecpt, Fiches_Four WHERE four=fo_code   AND numrecpt='BR0000001'
+SELECT 'mouvements exceptionnels' AS lib
+SELECT LEFT(numlig,6) as bl, vignette FROM Fiches_ligregie WHERE num='BR0000001' AND type='S' AND cloture=False GROUP BY bl,vignette
+SELECT * FROM Fiches_ligregie WHERE num='BR0000001' AND type='E' and cloture=False
+SELECT suspendu FROM Fiches_regie, Fiches_ligregie WHERE num='MX0000001' AND cloture=False AND coderegie=Fiches_regie.code AND suspendu=True
+SELECT nmclibl AS lib FROM Fiches_Bl WHERE numfac='MX0000001'
+SELECT nmclifac AS lib FROM Fiches_HistoFac WHERE numfac='MX0000001'
+SELECT 'mouvements exceptionnels' AS lib
+SELECT LEFT(numlig,6) as bl, vignette FROM Fiches_ligregie WHERE num='MX0000001' AND type='S' AND cloture=False GROUP BY bl,vignette
+SELECT vignette FROM Fiches_ligregie WHERE vignette<>'' GROUP BY vignette ORDER BY vignette

@@ -45,6 +45,6 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] MYSTYLE-A01 — [anomalie] Drapeaux comparés par égalité (`Flag = 2 Or Flag = 6`) : l'état
+- [ ] MYSTYLE-A01 — [anomalie] (confirmée phase 2, vague 6 : seuls les drapeaux 2 et 6 dessinent le cadre de focus (T01)) Drapeaux comparés par égalité (`Flag = 2 Or Flag = 6`) : l'état
   `Disabled` n'est jamais dessiné, le survol seul non plus, et un bouton désactivé avec focus perd
   son cadre ; le cadre ignore `X`/`Y` · tests : T01 · sources : [MyStyle.class:41](../../../../../.src/Caisse/MyStyle.class#L41), [MyStyle.class:43](../../../../../.src/Caisse/MyStyle.class#L43)

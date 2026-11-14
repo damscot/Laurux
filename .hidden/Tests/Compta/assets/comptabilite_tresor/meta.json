@@ -1,0 +1,18 @@
+{
+ "id": "COMPTABILITE-T02",
+ "objet": "Sélection d'écriture validée depuis Tresor",
+ "classe": "Comptabilite",
+ "description": "Jeu ecritures_shared/ecritures_base (écritures validées 2018, lecture seule). Saisies › Trésorerie (Menu22), journal 50 + Entrée, ToggleButton6, Choix1 « 3- Liste des écritures validées » (index 2 ; le clic de ListBox est rejoué deux fois, REPLAYOBSERVER-A09 : TriEcritures s'ouvre deux fois) : 1re ligne de la grille Ecrit (TriEcritures.Ecrit_Click renseigne Comptabilite.snum, libelle, journal et Bsel) → Tresor.ecritv → Ecrit3 : Message.Question « Vous allez modifier l'écriture n° … » bouton 1 « Oui » (Entrée) : écriture recopiée dans Fiches_MvtM (numéro et journal repris de Comptabilite) ; seconde TriEcritures fermée sans choix. Fiches_MvtM est vidée à la sortie de Tresor : la reprise (INSERT dans Fiches_MvtM de l'écriture n° 2, journal du jeu) est vérifiée dans sql.log (comparé).",
+ "dataset": "ecritures_shared/ecritures_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered"
+}

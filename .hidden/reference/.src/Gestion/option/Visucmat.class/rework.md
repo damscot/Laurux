@@ -47,7 +47,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VISUCMAT-A01 — [anomalie] `arrete` lu sans test (`Available`, valeur nulle) : date de début
+- [ ] VISUCMAT-A01 — [anomalie] (confirmée phase 2, vague 6 : arrêté NULL → début au 1er du mois courant (T03) ; `Fiches_ligregie` vide → `TriGen._new` l. 88 « Not an object » (sortie de `_new` avant la définition des colonnes, T04, code 125)) `arrete` lu sans test (`Available`, valeur nulle) : date de début
   invalide si l'arrêté n'est pas paramétré ; table vide → colonnes non définies avant la création
   de `TriGen` · tests : T03, T04 · sources : [Visucmat.class:18](../../../../../../.src/Gestion/option/Visucmat.class#L18), [Visucmat.class:24](../../../../../../.src/Gestion/option/Visucmat.class#L24)
 - [ ] VISUCMAT-A02 — [anomalie] Début de période = premier jour du mois de l'arrêté, alors

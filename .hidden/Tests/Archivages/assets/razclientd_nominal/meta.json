@@ -1,0 +1,17 @@
+{
+ "id": "RAZCLIENTD-T01",
+ "classe": "RazClientd",
+ "objet": "Purge nominale des clients divers",
+ "description": "Jeu clid_base (6 clients) : Lancer, Message.Question bouton 1 « Oui » (Entrée, RazClientd.class:25), Message.Info « N clients » (Entrée), Quitter. Attendu : clients de ddate strictement antérieure supprimés (2017-12-31, 05-10, 06-14) ; jour même, postérieur et ddate NULL conservés ; date limite = date du jour figée 2018-06-15 (valeur par défaut du DateChooser).",
+ "dataset": "razclientd_shared/clid_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

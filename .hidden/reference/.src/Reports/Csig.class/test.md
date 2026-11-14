@@ -8,10 +8,10 @@ replay des SIG sur le jeu comptable dérivé.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CSIG-T01 | gbtest | Page, en-têtes, filets | `Level0`, `Level3`, `Lines`, `Lines2`, `Lines3`, `BasPage` (paysage) | texte de référence ; rendu raster des filets | `tests/entetes/` | à faire |
-| CSIG-T02 | gbtest | Formatage de `Level1`/`Level2` | montants `"1234"`, `"-1234"`, `"0"`, `""`, `"1234.56"`, `"1234,56"` | texte de référence (chaîne brute pour `"1234.56"`, A01 figée) | `tests/formatage_montants/` | à faire |
-| CSIG-T03 | gbtest | Multi-pages | `AliasNbPages`, 2 pages (`Level0`, `Level3`, 30 `Level1`, `Lines3`, `BasPage`) | `Page 1/2`, `Page 2/2` | `tests/multipages/` | à faire |
-| CSIG-T04 | replay | SIG complet (`RubImp` → `Imp_Sig`) | jeu comptable dérivé (classes 6 et 7, montants avec centimes) | `pdftotext` de `~/tmp/SIG.pdf` identique entre clones | `tests/replay_sig/` | à faire |
+| CSIG-T01 | gbtest | Page, en-têtes, filets | `Level0`, `Level3`, `Lines`, `Lines2`, `Lines3`, `BasPage` (paysage) | texte de référence ; rendu raster des filets | `tests/entetes/` | implémenté (gb.test CsigTest.T01Entetes ; texte seulement, pas de rendu raster) |
+| CSIG-T02 | gbtest | Formatage de `Level1`/`Level2` | montants `"1234"`, `"-1234"`, `"0"`, `""`, `"1234.56"`, `"1234,56"` | texte de référence (chaîne brute pour `"1234.56"`, A01 figée) | `tests/formatage_montants/` | implémenté (gb.test CsigTest.T02Montants) |
+| CSIG-T03 | gbtest | Multi-pages | `AliasNbPages`, 2 pages (`Level0`, `Level3`, 30 `Level1`, `Lines3`, `BasPage`) | `Page 1/2`, `Page 2/2` | `tests/multipages/` | implémenté (gb.test CsigTest.T03MultiPages) |
+| CSIG-T04 | replay | SIG complet (`RubImp` → `Imp_Sig`) | jeu comptable dérivé (classes 6 et 7, montants avec centimes) | `pdftotext` de `~/tmp/SIG.pdf` identique entre clones | `tests/replay_sig/` | implémenté (scénario Reports/csig_replay_sig, dérivé de imp_sig_sig_e1, edition.txt 2 pages) |
 
 ## Détail des tests
 

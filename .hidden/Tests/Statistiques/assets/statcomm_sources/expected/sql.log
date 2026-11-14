@@ -1,0 +1,65 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdclifac Char(8) NOT NULL,nmclifac Char(25),pnmclifac Char(25),brutfac Decimal(12,2),rmfac Decimal(12,2),totfac Decimal(12,2),totfacn1 Decimal(12,2),commercial Char(2),PRIMARY KEY (cdclifac)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' union SELECT * FROM Fiches_HistoFacM where datefac >= '20180101' and datefac <= '20180615' 
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411001'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411001', 'A Divers ', 'Alain', 112.5, 12.5, 100, '01')
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411001'
+UPdate Total set cdclifac = '411001', nmclifac = 'A Divers ', pnmclifac = 'Alain', brutfac = 320, rmfac = 20, totfac = 300 Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411002'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411002'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411002', 'B Divers ', 'Bruno', 50, 0, 50, '01')
+SELECT * FROM Total Where cdclifac = '411003'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411003'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411003', 'C Divers ', 'Claire', 315, 15, 300, '02')
+SELECT * FROM Total Where cdclifac = '411004'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411004'
+INSERT INTO Total(cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, commercial) VALUES ('411004', 'D Divers ', 'Denis', 40, 0, 40, NULL)
+SELECT * FROM Total Where cdclifac = '411003'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411003'
+UPdate Total set cdclifac = '411003', nmclifac = 'C Divers ', pnmclifac = 'Claire', brutfac = 395, rmfac = 15, totfac = 380 Where cdclifac = '411003'
+SELECT * FROM Total Where cdclifac = '411002'
+SELECT cli_nom, cli_comm FROM  Fiches_Cli where cli_code = '411002'
+UPdate Total set cdclifac = '411002', nmclifac = 'B Divers ', pnmclifac = 'Bruno', brutfac = 175, rmfac = 5, totfac = 170 Where cdclifac = '411002'
+SELECT * FROM Fiches_HistoFac where datefac >= '20170101' and datefac <= '20170615' union SELECT * FROM Fiches_HistoFacM where datefac >= '20170101' and datefac <= '20170615'
+SELECT * FROM Total Where cdclifac = '411003'
+SELECT * FROM Total Where cdclifac = '411003'
+UPdate Total set totfacn1 = 150 Where cdclifac = '411003'
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411001'
+UPdate Total set totfacn1 = 80 Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411005'
+SELECT * FROM Total Where cdclifac = '411005'
+SELECT * FROM Total Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411001'
+UPdate Total set totfacn1 = 100 Where cdclifac = '411001'
+SELECT * FROM Total Where cdclifac = '411002'
+SELECT * FROM Total Where cdclifac = '411002'
+UPdate Total set totfacn1 = 45 Where cdclifac = '411002'
+SELECT * FROM Total 
+SELECT * FROM Total left join Fiches_Cli on cli_code = cdclifac order by lpad(commercial, 12, ' ') asc
+SELECT * FROM Fiches_Commerciaux where code = NULL
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '02'

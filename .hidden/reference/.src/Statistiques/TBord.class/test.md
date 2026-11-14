@@ -15,14 +15,14 @@ Les valeurs attendues sont produites dans le clone **Laurux non modifié** (anom
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TBORD-T01 | replay | Ouverture, factures historisées seules | `statistiques_ventes`, `/Soc01/Materiel = 0`, horloge fixée ; menu Tableau de bord, puis **Quitter** | dump de `Total` (12 mois au plus) ; `SELECT … Fiches_HistoFac` sans `union` | `tests/tbord_factures/` | à faire |
-| TBORD-T02 | replay | Avec matériel | même jeu, `/Soc01/Materiel = 1`, factures dans `Fiches_HistoFacM` et BL dans `Fiches_BlM` | `Total` inclut les tables `M` (requêtes `union`) | `tests/tbord_materiel/` | à faire |
-| TBORD-T03 | replay | BL facturés non historisés | `Fiches_Bl` type `F`, `imp` 0 et 1, dans et hors période ; un mois sans facture historisée | seules les lignes `imp = 1` cumulées ; ordre des lignes de `Total` (A04 figée) | `tests/tbord_bl_factures/` | à faire |
-| TBORD-T04 | replay | Documents en cours | `Fiches_Bl` de types `P`, `D`, `C`, `B`, `F` (2 documents au moins par type), un `totalht` NULL | log `SELECT … order by type` ; dump inchangé hors `Total` ; montants sous-évalués figés (A01) via T07 | `tests/tbord_docs_en_cours/` | à faire |
-| TBORD-T05 | replay | Base sans vente | `Laurux01.sql` brut (aucune facture) | `Total` vide, aucun message, pas de dessin ; documents en cours à 0 | `tests/tbord_vide/` | à faire |
-| TBORD-T06 | replay | Division par zéro | une facture de `totfac = 0` seule dans un mois, puis un BL `F` à 0 dans le même mois | comportement actuel figé (erreur Gambas ligne 168/172 ou valeurs) (A05) | `tests/tbord_zero/` | à faire |
-| TBORD-T07 | gbtest | Indicateurs (après TBORD-005) | `RemplitTotal`, `LitAgregats`, `DocsEnCours` sur le jeu de T01-T04 | tableaux de valeurs identiques aux libellés relevés manuellement dans le clone de référence | `tests/tbord_indicateurs/` | à faire |
-| TBORD-T08 | replay | SQLite | T01 sur la base `Laurux01.sqlite` + jeu converti | erreur `MONTH` ou résultat (A02 figée, à confirmer) | `tests/tbord_sqlite/` | à faire |
+| TBORD-T01 | replay | Ouverture, factures historisées seules | `statistiques_ventes`, `/Soc01/Materiel = 0`, horloge fixée ; menu Tableau de bord, puis **Quitter** | dump de `Total` (12 mois au plus) ; `SELECT … Fiches_HistoFac` sans `union` | `tests/tbord_factures/` | implémenté (assets/tbord_factures, /Soc01/Materiel = 0 : aucune union) |
+| TBORD-T02 | replay | Avec matériel | même jeu, `/Soc01/Materiel = 1`, factures dans `Fiches_HistoFacM` et BL dans `Fiches_BlM` | `Total` inclut les tables `M` (requêtes `union`) | `tests/tbord_materiel/` | implémenté (assets/tbord_materiel : union HistoFacM ; jeu sans BlM) |
+| TBORD-T03 | replay | BL facturés non historisés | `Fiches_Bl` type `F`, `imp` 0 et 1, dans et hors période ; un mois sans facture historisée | seules les lignes `imp = 1` cumulées ; ordre des lignes de `Total` (A04 figée) | `tests/tbord_bl_factures/` | à faire : jeu Fiches_Bl de type F non écrit (fin de vague) |
+| TBORD-T04 | replay | Documents en cours | `Fiches_Bl` de types `P`, `D`, `C`, `B`, `F` (2 documents au moins par type), un `totalht` NULL | log `SELECT … order by type` ; dump inchangé hors `Total` ; montants sous-évalués figés (A01) via T07 | `tests/tbord_docs_en_cours/` | à faire : jeu Fiches_Bl par type non écrit (fin de vague) |
+| TBORD-T05 | replay | Base sans vente | `Laurux01.sql` brut (aucune facture) | `Total` vide, aucun message, pas de dessin ; documents en cours à 0 | `tests/tbord_vide/` | implémenté (assets/tbord_vide : Total vide) |
+| TBORD-T06 | replay | Division par zéro | une facture de `totfac = 0` seule dans un mois, puis un BL `F` à 0 dans le même mois | comportement actuel figé (erreur Gambas ligne 168/172 ou valeurs) (A05) | `tests/tbord_zero/` | à faire : jeu à totfac = 0 non écrit (fin de vague) |
+| TBORD-T07 | gbtest | Indicateurs (après TBORD-005) | `RemplitTotal`, `LitAgregats`, `DocsEnCours` sur le jeu de T01-T04 | tableaux de valeurs identiques aux libellés relevés manuellement dans le clone de référence | `tests/tbord_indicateurs/` | à faire : extraction TBORD-005 non faite |
+| TBORD-T08 | replay | SQLite | T01 sur la base `Laurux01.sqlite` + jeu converti | erreur `MONTH` ou résultat (A02 figée, à confirmer) | `tests/tbord_sqlite/` | à faire : rejeu sur base SQLite non outillé (runner sur MariaDB) |
 
 ## Détail des tests
 
@@ -44,3 +44,4 @@ Les valeurs attendues sont produites dans le clone **Laurux non modifié** (anom
   des barres TBORD-A04) et contenu des libellés tant que TBORD-005 n'est pas faite : contrôle visuel
   (capture d'écran comparée à la main).
 - **Couverture visée** : toutes les branches de `Traitement` sauf la branche `Else` morte.
+- Phase 2 : `TBord._New` appelle `Utils.ReplayObservers(Me)` (harnais) : le bouton Quitter est rejoué (`Click=True@Button1#TBord#Button1#`).

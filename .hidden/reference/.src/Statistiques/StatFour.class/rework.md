@@ -55,15 +55,15 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATFOUR-A01 — [anomalie] Le N-1 est recalculé et ajouté pour **chaque réception N** du
+- [ ] STATFOUR-A01 — [anomalie] (confirmée phase 2, vague 6 : N-1 multiplié par le nombre de réceptions N : 36 = 3 × 12 (T02)) Le N-1 est recalculé et ajouté pour **chaque réception N** du
   fournisseur : `montant1` multiplié par le nombre de réceptions N ; fournisseurs sans réception
   N absents · tests : T02 · sources : [StatFour.class:196](../../../../../.src/Statistiques/StatFour.class#L196), [StatFour.class:208](../../../../../.src/Statistiques/StatFour.class#L208)
 - [ ] STATFOUR-A02 — [anomalie] Date de repli formatée `"dd/mm/yyyy"` au lieu de `"dd.mm.yyyy"`
   dans `DteN0_LF`/`DteN1_LF` (incohérent avec `Cdate_Dbase` ; branche probablement inatteignable,
   à confirmer) · tests : T05 · sources : [StatFour.class:121](../../../../../.src/Statistiques/StatFour.class#L121), [StatFour.class:140](../../../../../.src/Statistiques/StatFour.class#L140)
-- [ ] STATFOUR-A03 — [anomalie] `Nmfour` non réinitialisé : un fournisseur absent de
+- [ ] STATFOUR-A03 — [anomalie] (confirmée phase 2, vague 6 : `nmfour` du fournisseur précédent (T03)) `Nmfour` non réinitialisé : un fournisseur absent de
   `Fiches_Four` reçoit le nom du fournisseur précédent · tests : T03 · sources : [StatFour.class:192](../../../../../.src/Statistiques/StatFour.class#L192)
-- [ ] STATFOUR-A04 — [anomalie] Réceptions non validées (`validee = 0`) comptées et `montant` NULL
+- [ ] STATFOUR-A04 — [anomalie] (confirmée phase 2, vague 6 : montant NULL : `Traitement.185` (T04, code 125)) Réceptions non validées (`validee = 0`) comptées et `montant` NULL
   non protégé (erreur de type probable) : périmètre à confirmer avec l'utilisateur · tests : T04 · sources : [StatFour.class:182](../../../../../.src/Statistiques/StatFour.class#L182), [StatFour.class:185](../../../../../.src/Statistiques/StatFour.class#L185)
 - [ ] STATFOUR-A05 — [anomalie] Table de travail `Total` partagée entre postes et écrans de
   structures différentes (= STATCOMM-A05, STATCAI-A04) · tests : T01 · sources : [StatFour.class:174](../../../../../.src/Statistiques/StatFour.class#L174), [StatFour.class:175](../../../../../.src/Statistiques/StatFour.class#L175)

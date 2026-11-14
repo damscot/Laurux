@@ -8,8 +8,8 @@ que la suppression prévue (CDOCUMENTS2-001) ne change rien.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CDOCUMENTS2-T01 | replay | Édition des documents de vente sans `Cdocuments2` | jeu `facturation_base` : impression d'une facture, d'un BL et d'un devis depuis `Facture` (chaîne `OptFac` → `ObjFacB` → `EditfacB`) avec trace `gbx3 -t` | aucune ligne de `Cdocuments2` exécutée ; PDF (texte `pdftotext`) identiques avant/après suppression | `tests/sans_cdocuments2/` | à faire |
-| CDOCUMENTS2-T02 | gbtest | Compilation après suppression | suppression de la classe et de `Facture.class:200` | `gbc3 -agt` sans erreur ; `./Laurux -T all` vert | `tests/compilation/` | à faire |
+| CDOCUMENTS2-T01 | replay | Édition des documents de vente sans `Cdocuments2` | jeu `facturation_base` : impression d'une facture, d'un BL et d'un devis depuis `Facture` (chaîne `OptFac` → `ObjFacB` → `EditfacB`) avec trace `gbx3 -t` | aucune ligne de `Cdocuments2` exécutée ; PDF (texte `pdftotext`) identiques avant/après suppression | `tests/sans_cdocuments2/` | à faire : passe par Facture (écran complexe exclu) |
+| CDOCUMENTS2-T02 | gbtest | Compilation après suppression | suppression de la classe et de `Facture.class:200` | `gbc3 -agt` sans erreur ; `./Laurux -T all` vert | `tests/compilation/` | à faire : test de la suppression (phase 4) |
 
 ## Détail des tests
 

@@ -13,12 +13,12 @@ par `DateChooser1` dépend du jour courant). Les valeurs attendues sont produite
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RAZRLVB-T01 | replay | Purge nominale | jeu `rappro_base` : 2 comptes, relevés avant, **le jour même** et après la date ; date choisie, « Lancer », « Oui » | relevés strictement antérieurs supprimés, relevés du jour et postérieurs conservés ; message « N relevés » | `tests/razrlvb_nominal/` | à faire |
-| RAZRLVB-T02 | replay | Abandon (« Non ») | même jeu ; « Lancer », « Non » | comportement actuel figé : **mêmes suppressions que T01**, aucun fichier `EffaceR.sql` créé (A01) | `tests/razrlvb_abandon/` | à faire |
-| RAZRLVB-T03 | replay | Rien à purger | date antérieure à tous les relevés | table inchangée ; message « 0 relevés » | `tests/razrlvb_vide/` | à faire |
-| RAZRLVB-T04 | replay | Sauvegarde | T01 avec `mysqldump` disponible puis indisponible (`PATH` réduit) | fichier `~/Sauve/<Base>EffaceR.sql` présent dans le 1er cas ; purge faite **dans les deux cas** (A02 figée) | `tests/razrlvb_sauvegarde/` | à faire |
-| RAZRLVB-T05 | replay | Effet sur le pointage | après T01, ouverture de `Pointage` sur un compte dont tous les relevés sont purgés | solde de départ proposé (comportement figé, A04) | `tests/razrlvb_pointage/` | à faire |
-| RAZRLVB-T06 | replay | SQLite | T01 sur `Laurux01.sqlite` + jeu dérivé (dates écrites par `Subst`) | comportement figé (aujourd'hui : aucune suppression attendue, A03 à confirmer) | `tests/razrlvb_sqlite/` | à faire |
+| RAZRLVB-T01 | replay | Purge nominale | jeu `rappro_base` : 2 comptes, relevés avant, **le jour même** et après la date ; date choisie, « Lancer », « Oui » | relevés strictement antérieurs supprimés, relevés du jour et postérieurs conservés ; message « N relevés » | `tests/razrlvb_nominal/` | implémenté |
+| RAZRLVB-T02 | replay | Abandon (« Non ») | même jeu ; « Lancer », « Non » | comportement actuel figé : **mêmes suppressions que T01**, aucun fichier `EffaceR.sql` créé (A01) | `tests/razrlvb_abandon/` | implémenté |
+| RAZRLVB-T03 | replay | Rien à purger | date antérieure à tous les relevés | table inchangée ; message « 0 relevés » | `tests/razrlvb_vide/` | implémenté |
+| RAZRLVB-T04 | replay | Sauvegarde | T01 avec `mysqldump` disponible puis indisponible (`PATH` réduit) | fichier `~/Sauve/<Base>EffaceR.sql` présent dans le 1er cas ; purge faite **dans les deux cas** (A02 figée) | `tests/razrlvb_sauvegarde/` | à faire : « sans mysqldump » demande un PATH réduit (outillage) |
+| RAZRLVB-T05 | replay | Effet sur le pointage | après T01, ouverture de `Pointage` sur un compte dont tous les relevés sont purgés | solde de départ proposé (comportement figé, A04) | `tests/razrlvb_pointage/` | à faire : ouverture de Pointage non abordée (premier passage) |
+| RAZRLVB-T06 | replay | SQLite | T01 sur `Laurux01.sqlite` + jeu dérivé (dates écrites par `Subst`) | comportement figé (aujourd'hui : aucune suppression attendue, A03 à confirmer) | `tests/razrlvb_sqlite/` | à faire : base SQLite non prise en charge par le runner |
 
 ## Détail des tests
 
@@ -35,3 +35,4 @@ par `DateChooser1` dépend du jour courant). Les valeurs attendues sont produite
   nulle du fichier de sauvegarde (contenu non comparé : il dépend de l'horodatage).
 - **Non testable automatiquement** : le mot de passe visible dans `ps` (A02) ; la lecture vocale de
   `Syntheses.Message`.
+- **Assets (phase 2)** : `.hidden/Tests/Archivages/assets/razrlvb_{nominal,abandon,vide}/`, jeux `razrlvb_shared/rappro_base.sql`, `rappro_futur.sql` (T03 : relevés tous ≥ date limite, DateChooser non rejouable). Date limite = date figée 2018-06-15.

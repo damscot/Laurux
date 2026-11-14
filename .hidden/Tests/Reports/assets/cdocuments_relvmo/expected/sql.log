@@ -1,0 +1,100 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE if exists Fiches_Stat
+CREATE TABLE Fiches_Stat (code Char(15) NOT NULL,intitule char(50) ,qte char(12) ,montant char(12) ,codecli char(12) ,intitulecli char(35) ,PRIMARY KEY (code, codecli)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mo
+SELECT * from Fiches_Ligbl where code_ligbl = '01' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '02' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '03' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '04' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '05' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV01' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV01' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0002'
+SELECT * from Fiches_Stat where code = 'RV01' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV01', 'Prestation 01', '1,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV01' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV02' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV02' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0001'
+SELECT * from Fiches_Stat where code = 'RV02' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV02', 'Prestation 02', '2,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV02' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV03' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV03' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0002'
+SELECT * from Fiches_Stat where code = 'RV03' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV03', 'Prestation 03', '3,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV03' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV04' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV04' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0001'
+SELECT * from Fiches_Stat where code = 'RV04' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV04', 'Prestation 04', '4,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV04' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV05' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV05' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0002'
+SELECT * from Fiches_Stat where code = 'RV05' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV05', 'Prestation 05', '5,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV05' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV06' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV06' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0001'
+SELECT * from Fiches_Stat where code = 'RV06' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV06', 'Prestation 06', '6,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV06' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV07' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV07' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0002'
+SELECT * from Fiches_Stat where code = 'RV07' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV07', 'Prestation 07', '7,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV07' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV08' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV08' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0001'
+SELECT * from Fiches_Stat where code = 'RV08' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV08', 'Prestation 08', '8,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV08' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV09' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV09' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0002'
+SELECT * from Fiches_Stat where code = 'RV09' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV09', 'Prestation 09', '9,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV09' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'RV10' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'RV10' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'FR0001'
+SELECT * from Fiches_Stat where code = 'RV10' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('RV10', 'Prestation 10', '10,00', '411003', 'Divers', '0,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'RV10' and typel_ligfac = 'M'
+SELECT * FROM Fiches_Stat order by codecli, code 
+SELECT * FROM Fiches_Societes where cd_sc = '01'

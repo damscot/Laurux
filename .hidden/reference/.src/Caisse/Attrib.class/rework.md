@@ -79,7 +79,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ATTRIB-A06 — [anomalie] `Form_Open` écrit `Caisse.origine = "Attrib"` : membre jamais lu, et
   l'accès crée l'auto-instance de `Caisse` (fenêtre cachée, distincte de celle ouverte par `Cmenu`) ;
   le retrait supprime cet effet de bord · tests : T01 · sources : [Attrib.class:22](../../../../../.src/Caisse/Attrib.class#L22), [Cmenu.class:253](../../../../../.src/Caisse/Cmenu.class#L253)
-- [ ] ATTRIB-A07 — [anomalie] Suppression d'une touche (`Button5`, touche Suppr dans `Bouton`) sans
+- [ ] ATTRIB-A07 — [anomalie] (confirmée phase 2, vague 6 : `Button5_Click` supprime sans confirmation, la même touche de la caisse 02 intacte (T03) ; `Button1_Click` touche « ZZ » : INSERT fait puis « Null object » (T07)) Suppression d'une touche (`Button5`, touche Suppr dans `Bouton`) sans
   confirmation ; `Me.Controls[Bouton.Text]` sans `Try` dans `Button1_Click`, `Button5_Click`,
   `Bouton_KeyPress` : un nom saisi à la main qui n'est pas une touche lève une erreur après
   l'écriture en base ; `Button4_Click` masque toute erreur par un `Catch` vide · tests : T03, T07 · sources : [Attrib.class:149](../../../../../.src/Caisse/Attrib.class#L149), [Attrib.class:176](../../../../../.src/Caisse/Attrib.class#L176), [Attrib.class:198](../../../../../.src/Caisse/Attrib.class#L198), [Attrib.class:Button4_Click](../../../../../.src/Caisse/Attrib.class#L236-L267)

@@ -63,10 +63,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] HISTOVMO-A01 — [anomalie] Avec `Bl` coché, `WHERE numbl = &1 and type = &2 or type = &3` (priorité
+- [ ] HISTOVMO-A01 — [anomalie] (confirmée phase 2, vague 6 : case `Bl` cochée (T04, `histovmo_defaut`)) Avec `Bl` coché, `WHERE numbl = &1 and type = &2 or type = &3` (priorité
   `AND`/`OR`) renvoie aussi toutes les factures `F` : la date testée peut être celle d'un autre
   document, d'où des lignes MO comptées ou ignorées à tort · tests : T04 · sources : [Histovmo.class:808](../../../../../.src/Statistiques/Histovmo.class#L808), [Histovmo.class:809](../../../../../.src/Statistiques/Histovmo.class#L809), [Histovmo.class:810](../../../../../.src/Statistiques/Histovmo.class#L810)
-- [ ] HISTOVMO-A02 — [anomalie] En mode `Fact`, la partie `Fiches_LigblM` de l'union filtre
+- [ ] HISTOVMO-A02 — [anomalie] (confirmée phase 2, vague 6 : figée par T03 (`histovmo_materiel`)) En mode `Fact`, la partie `Fiches_LigblM` de l'union filtre
   `typel_ligbl <> 'M'` : les lignes MO des documents matériel en cours sont exclues et des lignes non
   MO de même code sont comptées · tests : T03 · sources : [Histovmo.class:803](../../../../../.src/Statistiques/Histovmo.class#L803)
 - [ ] HISTOVMO-A03 — [anomalie] La plage fournisseur (`Four`–`Four2`) n'est appliquée qu'avec le tri

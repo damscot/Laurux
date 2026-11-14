@@ -67,7 +67,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   réapplique l'ancien compte chez les appelants qui ne le font pas eux-mêmes (MATERIEL-A09,
   FFOURNISSEUR-A07). Correction : `Object.SetProperty($obj, "Bsel", False)` / `"Bval", Null` dans
   `_new` (les 41 appelants sont concernés, comportement d'annulation modifié) · tests : T07 · sources : [TriCpt.class:48](../../../../../.src/Affichages/TriCpt.class#L48), [Materiel.class:2528](../../../../../.src/Gestion/Tables/Materiel.class#L2528)
-- [ ] TRICPT-A02 — [anomalie] Mode `General` : condition `type_cc='B' OR type_cc='G'` sans
+- [ ] TRICPT-A02 — [anomalie] (confirmée phase 2, vague 6 : figée par T01 (mode General : filtre `401` appliqué à la seule branche `type_cc='G'`, OR sans parenthèses)) Mode `General` : condition `type_cc='B' OR type_cc='G'` sans
   parenthèses, combinée par `AND` avec `lettrable` et avec les filtres saisis : les comptes de
   bilan s'affichent sans tenir compte du filtre ni de `lettrable` · tests : T01 · sources : [TriCpt.class:388](../../../../../.src/Affichages/TriCpt.class#L388)
 - [ ] TRICPT-A03 — [anomalie] Les conditions `inact`/`autoe`/`divers` (colonnes `cli_*`) restent
@@ -81,3 +81,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TRICPT-A05 — [anomalie] Le bouton radio `treso` n'est jamais rendu visible (et porte le
   libellé « Bilan ») : `treso_Click` est inatteignable ; le mode Trésorerie n'est accessible qu'à
   l'ouverture (`Pointage`). Le rendre visible en mode Tous change l'écran · tests : T04 · sources : [TriCpt.class:treso_Click](../../../../../.src/Affichages/TriCpt.class#L546-L557), [TriCpt.class:55](../../../../../.src/Affichages/TriCpt.class#L55)
+- [ ] TRICPT-A06 — [anomalie, à confirmer] Mode `Tous` : un clic sur la case `cli` reste sans effet sur la liste (figé T04) ; cause non analysée (phase 2, vague 6, 2026-11-14) · tests : T04 · sources : [TriCpt.class:cli_Click](../../../../../.src/Affichages/TriCpt.class#L416)

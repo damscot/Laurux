@@ -1,0 +1,24 @@
+{
+ "id": "RELVMO-T06",
+ "objet": "Impression de tout, saut de page",
+ "classe": "RelvMo",
+ "description": "Jeu avec 38 lignes MO pour le client 411002 ; Traitement, clic sur la ligne 41100101, RB1 sélection globale, Imprimer : saut de page (PosY >= 283). Erreur fatale « RelvMo.Button2_Click.427: Not enough arguments » (appel pdf.Entete sans l'argument Libre, anomalie RELVMO-A01 figée) : code 125, pas de PDF.",
+ "dataset": "relvmo_saut_page",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

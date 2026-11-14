@@ -1,0 +1,26 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT numfac FROM Fiches_HistoFac
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%%" order by abs(lpad(numfac,10,' ')) desc limit 0, 21
+select * from Fiches_HistoFac where numfac = '000060'
+select cli_email, cli_pays, cli_id_tva from Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_HisentMat where numfac = '000060'
+select * from Fiches_HistoLigfac where num_ligfac = '000060'

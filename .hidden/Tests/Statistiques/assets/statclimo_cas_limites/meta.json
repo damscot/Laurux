@@ -1,0 +1,18 @@
+{
+ "id": "STATCLIMO-T06",
+ "objet": "Cas limites",
+ "classe": "StatClimo",
+ "description": "DteN0 = 01.01.2016 (Entrée), Dten1 = 31.12.2015 (Entrée) : Message.Warning « Votre selection n'est pas possible » (Ok, Entrée) ; Bl décoché (sinon la clause « or type = B » de A01 ramène des BL), Valider sur cette période vide : Total recréée vide, Message.Warning « Aucune donnée pour cette période ! » (OK, Entrée).",
+ "dataset": "statclimo_shared/statclimo_ventes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "id": "CDOCUMENTS-T11",
+ "objet": "Historique RelMoprod, deux tris",
+ "classe": "Cdocuments",
+ "description": "RelMoprod (Menu197), Traitement (Button1, Message.Info « Soyez patient », Entrée) sur le jeu Gestion/listecom_shared/historique_client (lecture seule) ; Imprimer (Button4) tri par code client (RB3), puis tri par MO/produit (RB4, qui vide la liste), nouveau Traitement (Entrée) et Imprimer : texte des deux PDF (Level2RL, Level4RL, Level5RL) comparé par pdftotext ; table de travail Fiches_Stat dans le dump.",
+ "dataset": "Gestion/listecom_shared/historique_client",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

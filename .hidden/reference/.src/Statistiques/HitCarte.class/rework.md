@@ -60,9 +60,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] HITCARTE-A01 — [anomalie] Table de travail `Total` partagée (nom et structure différents selon
   l'écran) : un traitement lancé pendant qu'un autre écran ou poste l'utilise la détruit (= TBORD-A03,
   STATCAI-A04 ; changement du dump) · tests : T01 · sources : [HitCarte.class:174](../../../../../.src/Statistiques/HitCarte.class#L174), [HitCarte.class:175](../../../../../.src/Statistiques/HitCarte.class#L175)
-- [ ] HITCARTE-A02 — [anomalie] Les tickets supprimés (`suppr = 1`) sont comptés dans les visites et
+- [ ] HITCARTE-A02 — [anomalie] (confirmée phase 2, vague 6 : ticket supprimé compté (T04)) Les tickets supprimés (`suppr = 1`) sont comptés dans les visites et
   les points (`Histocliart` les exclut) · tests : T04 · sources : [HitCarte.class:182](../../../../../.src/Statistiques/HitCarte.class#L182)
-- [ ] HITCARTE-A03 — [anomalie] Borne de fin `date <= aaaammjj` sur une colonne `datetime` : les
+- [ ] HITCARTE-A03 — [anomalie] (confirmée phase 2, vague 6 : borne de fin à 00:00 (T02)) Borne de fin `date <= aaaammjj` sur une colonne `datetime` : les
   tickets du dernier jour après minuit sont exclus (`Histocliart` utilise `Fin_Jour`) · tests : T02 ·
   sources : [HitCarte.class:182](../../../../../.src/Statistiques/HitCarte.class#L182)
 - [ ] HITCARTE-A04 — [anomalie] Le tri libellé « CA » classe par **points** de fidélité, pas par

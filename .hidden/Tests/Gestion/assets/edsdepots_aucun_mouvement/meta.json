@@ -1,0 +1,22 @@
+{
+ "id": "EDSDEPOTS-T03",
+ "objet": "Aucun mouvement",
+ "classe": "Edsdepots",
+ "description": "Base Laurux01 sans mouvement de dépôt ; Imprimer : message « Aucun mouvement pour cette demande ».",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Depots": "-1",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered"
+}

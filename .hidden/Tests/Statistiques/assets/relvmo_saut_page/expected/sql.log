@@ -1,0 +1,283 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE if exists Fiches_Stat
+CREATE TABLE Fiches_Stat (code Char(15) NOT NULL,intitule char(50) ,qte char(12) ,montant char(12) ,codecli char(12) ,intitulecli char(35) ,PRIMARY KEY (code, codecli)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mo
+SELECT * from Fiches_Ligbl where code_ligbl = '01' and typel_ligbl = 'M'
+SELECT * from Fiches_Bl where numbl = '000001' and type = 'F' and imp = 1
+SELECT * from Fiches_Stat where code = '01' and codecli = '411001'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('01', 'Mo T1', '2,00', '411001', 'A Divers', '33,60')
+SELECT * from Fiches_Bl where numbl = '000001' and type = 'F' and imp = 1
+SELECT * from Fiches_Stat where code = '01' and codecli = '411001'
+Update  Fiches_Stat  SET  qte = '3,00' where code = '01' and codecli = '411001'
+SELECT * from Fiches_Bl where numbl = '000003' and type = 'F' and imp = 1
+SELECT * from Fiches_HistoLigfac where code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00010'
+SELECT * from Fiches_Stat where code = '01' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('01', 'Mo T1', '1,00', '411002', 'B Divers', '16,80')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '01' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '02' and typel_ligbl = 'M'
+SELECT * from Fiches_Bl where numbl = '000001' and type = 'F' and imp = 1
+SELECT * from Fiches_Stat where code = '02' and codecli = '411001'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('02', 'Mo T2', '1,00', '411001', 'A Divers', '18,60')
+SELECT * from Fiches_Bl where numbl = '000004' and type = 'F' and imp = 1
+SELECT * from Fiches_HistoLigfac where code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00011'
+SELECT * from Fiches_Stat where code = '02' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('02', 'Mo T2', '1,00', '411002', 'B Divers', '18,60')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '02' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '03' and typel_ligbl = 'M'
+SELECT * from Fiches_Bl where numbl = '000002' and type = 'F' and imp = 1
+SELECT * from Fiches_HistoLigfac where code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00010'
+SELECT * from Fiches_Stat where code = '03' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('03', 'Mo T3', '3,00', '411002', 'B Divers', '63,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '03' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFacM where numfac = 'M00001'
+SELECT * from Fiches_Stat where code = '03' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('03', 'Mo T3', '2,00', '411003', 'C Divers', '42,00')
+SELECT * from Fiches_HistoFacM where numfac = 'M00001'
+SELECT * from Fiches_Stat where code = '03' and codecli = '411003'
+Update  Fiches_Stat  SET  qte = '3,00' where code = '03' and codecli = '411003'
+SELECT * from Fiches_Ligbl where code_ligbl = '04' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00012'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '04' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = '05' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoLigfacM where code_ligfac = '05' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFacM where numfac = 'M00001'
+SELECT * from Fiches_Stat where code = '05' and codecli = '411003'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('05', 'Changement poulie', '1,00', '411003', 'C Divers', '20,16')
+SELECT * from Fiches_Ligbl where code_ligbl = 'S01' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S01' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S01' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S01', 'Mo saut 01', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S01' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S02' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S02' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S02' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S02', 'Mo saut 02', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S02' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S03' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S03' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S03' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S03', 'Mo saut 03', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S03' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S04' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S04' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S04' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S04', 'Mo saut 04', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S04' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S05' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S05' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S05' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S05', 'Mo saut 05', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S05' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S06' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S06' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S06' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S06', 'Mo saut 06', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S06' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S07' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S07' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S07' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S07', 'Mo saut 07', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S07' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S08' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S08' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S08' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S08', 'Mo saut 08', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S08' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S09' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S09' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S09' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S09', 'Mo saut 09', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S09' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S10' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S10' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S10' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S10', 'Mo saut 10', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S10' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S11' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S11' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S11' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S11', 'Mo saut 11', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S11' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S12' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S12' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S12' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S12', 'Mo saut 12', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S12' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S13' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S13' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S13' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S13', 'Mo saut 13', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S13' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S14' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S14' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S14' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S14', 'Mo saut 14', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S14' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S15' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S15' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S15' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S15', 'Mo saut 15', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S15' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S16' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S16' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S16' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S16', 'Mo saut 16', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S16' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S17' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S17' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S17' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S17', 'Mo saut 17', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S17' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S18' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S18' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S18' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S18', 'Mo saut 18', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S18' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S19' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S19' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S19' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S19', 'Mo saut 19', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S19' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S20' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S20' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S20' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S20', 'Mo saut 20', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S20' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S21' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S21' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S21' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S21', 'Mo saut 21', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S21' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S22' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S22' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S22' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S22', 'Mo saut 22', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S22' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S23' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S23' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S23' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S23', 'Mo saut 23', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S23' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S24' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S24' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S24' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S24', 'Mo saut 24', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S24' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S25' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S25' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S25' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S25', 'Mo saut 25', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S25' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S26' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S26' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S26' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S26', 'Mo saut 26', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S26' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S27' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S27' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S27' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S27', 'Mo saut 27', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S27' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S28' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S28' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S28' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S28', 'Mo saut 28', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S28' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S29' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S29' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S29' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S29', 'Mo saut 29', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S29' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S30' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S30' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S30' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S30', 'Mo saut 30', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S30' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S31' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S31' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S31' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S31', 'Mo saut 31', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S31' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S32' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S32' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S32' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S32', 'Mo saut 32', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S32' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S33' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S33' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S33' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S33', 'Mo saut 33', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S33' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S34' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S34' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S34' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S34', 'Mo saut 34', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S34' and typel_ligfac = 'M'
+SELECT * from Fiches_Ligbl where code_ligbl = 'S35' and typel_ligbl = 'M'
+SELECT * from Fiches_HistoLigfac where code_ligfac = 'S35' and typel_ligfac = 'M'
+SELECT * from Fiches_HistoFac where numfac = 'F00020'
+SELECT * from Fiches_Stat where code = 'S35' and codecli = '411002'
+INSERT INTO Fiches_Stat (code, intitule, qte, codecli, intitulecli, montant) VALUES ('S35', 'Mo saut 35', '1,00', '411002', 'B Divers', '10,00')
+SELECT * from Fiches_HistoLigfacM where code_ligfac = 'S35' and typel_ligfac = 'M'
+SELECT * FROM Fiches_Stat order by codecli, code 
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_Cli where cli_code = '411002'

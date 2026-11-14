@@ -8,7 +8,7 @@ Module sans fonction : il n'est testable qu'à travers le protocole de sélectio
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | COMPTABILITE-T01 | replay | Sélection d'écriture depuis `Saisecrit` | Saisie d'écritures, recherche d'écriture (F-touche / bouton), choix d'une ligne dans `TriEcritures` ; puis abandon | écriture chargée dans `Saisecrit` ; rien sur abandon | `tests/comptabilite_saisecrit/` | à faire : passe par Saisecrit (écran complexe) |
-| COMPTABILITE-T02 | replay | Sélection d'écriture depuis `Tresor` | idem depuis l'écran Trésorerie | numéro, libellé et journal repris | `tests/comptabilite_tresor/` | à faire : atteignable depuis l'écran Trésorerie (`Tresor.ToggleButton6_Click` ouvre la liste `Choix1` ; `Choix1_Click` appelle `Ecritnv`/`Ecritv`, Tresor.class:1366-1368) ; correction du 2026-11-13 (l'affirmation « aucun appelant » de la vague 5 était fausse) ; à reprendre dans une vague suivante |
+| COMPTABILITE-T02 | replay | Sélection d'écriture depuis `Tresor` | idem depuis l'écran Trésorerie | numéro, libellé et journal repris | `tests/comptabilite_tresor/` | implémenté (`Compta/comptabilite_tresor`, jeu `ecritures_shared/ecritures_base` : journal 50, ToggleButton6, Choix1 index 2 → `ecritv`, 1re ligne de TriEcritures, « Oui » → écriture n° 2 recopiée dans Fiches_MvtM ; sql.log comparé, Fiches_MvtM vidée à la sortie) |
 
 ## Détail des tests
 

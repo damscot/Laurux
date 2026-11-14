@@ -63,7 +63,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] SAISIEDECONS-A01 — [anomalie] Suppression d'une déconsignation (Suppr) : la ligne est effacée
   mais les totaux HT/TTC affichés et `Fiches_Entrecpt.montant/mttc` restent diminués (réception
   sous-évaluée) · tests : T04 · sources : [Saisiedecons.class:GridView1_KeyPress](../../../../../../.src/Gestion/option/Saisiedecons.class#L334-L347)
-- [ ] SAISIEDECONS-A02 — [anomalie] `selectionbr` recumule l'accise dans `Labelacc` sans remise à
+- [ ] SAISIEDECONS-A02 — [anomalie] (précisée phase 2, vague 6 : inatteignable par l'interface : `Panel1.Enabled = False` après la 1re sélection (`selectionbr` l. 290), T05 laissé à faire) `selectionbr` recumule l'accise dans `Labelacc` sans remise à
   zéro à chaque nouvel appel · tests : T05 · sources : [Saisiedecons.class:282](../../../../../../.src/Gestion/option/Saisiedecons.class#L282)
 - [ ] SAISIEDECONS-A03 — [anomalie, à confirmer] `lirefour` cherche `fo_code = Val(Textfour.Text)` :
   codes fournisseurs alphanumériques jamais trouvés (code vidé) ; `Butval_Click` met à jour
