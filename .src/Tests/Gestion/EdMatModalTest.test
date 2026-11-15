@@ -1,0 +1,74 @@
+' Gambas test file
+
+''Tests de EdMat ouvrant TriCpt en ShowModal (.hidden/reference/.src/Gestion/Impressions/EdMat.class/test.md, EDMAT-T06).
+''Module séparé d'EdMatTest (vague 7, fusion). Un Timer du module agit pendant la boucle modale : il retrouve la
+''fenêtre TriCpt ouverte (Windows) et simule la sélection d'une ligne (Bsel = True puis ColTri_MajSel(code), ce
+''que fait TriGen au double-clic) ou la fermeture sans choix. EdMat est instanciée sans être affichée.
+''Valeurs attendues : assets/EdMatModalTest/expected.txt, produites dans le clone de référence.
+
+Private $hTimer As Timer
+Private $sChoix As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06Proprietaire", "ToggleButton3 : choix du client 411001 dans TriCpt (A01 : Cli vidé), puis fermeture sans choix")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EdMatModalTest")
+  TestKit.OuvreBase()
+
+End
+
+' Programme l'action de l'utilisateur dans TriCpt : code choisi, ou "" pour fermer sans choix.
+Private Sub Programme(sChoix As String)
+
+  $sChoix = sChoix
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "TriCpt" Then Continue
+    $hTimer.Enabled = False
+    If $sChoix Then
+      Object.SetProperty(hWin, "Bsel", True)
+      Object.Call(hWin, "ColTri_MajSel", [$sChoix])
+    Else
+      hWin.Close()
+    Endif
+    Return
+  Next
+
+End
+
+Public Sub T06Proprietaire()
+
+  Dim hF As New EdMat
+  Dim hCli As Object = hF.Controls["Cli"]
+
+  Programme("411001")
+  Try hF.ToggleButton3_Click()
+  TestKit.Check("T06/choix/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T06/choix/Bsel", hF.Bsel)
+  TestKit.Check("T06/choix/Bval", hF.Bval)
+  TestKit.Check("T06/choix/cli", hCli.Text)
+  hCli.Text = "41100001"
+  hF.Bsel = False
+  Programme("")
+  Try hF.ToggleButton3_Click()
+  TestKit.Check("T06/annule/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T06/annule/Bsel", hF.Bsel)
+  TestKit.Check("T06/annule/cli", hCli.Text)
+  Object.Lock(hF)
+
+End

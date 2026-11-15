@@ -1,0 +1,28 @@
+{
+ "id": "EMAILINGCARTE-T07",
+ "objet": "Touche sur le bouton Envoyer",
+ "classe": "EmailingCarte",
+ "description": "Jeu emailingcarte_shared/cartes (cartes sans courriel : EnvMail.Envoi ne se connecte pas), faux serveur SMTP. Emailing (cartes) (Menu240), sujet et texte saisis, plage de codes par défaut. Focus sur Envoyer (Button2) puis Tab : Btn_KeyPress appelle Button2_Click (A03) → 1 traitement (SELECT Fiches_Carte), « Traitement terminé » (Entrée) ; Focus sur Button2 puis Espace : 1 seul traitement (une 2e boîte n'apparaît pas : une 2e réponse échoue, code 3), « Traitement terminé » (Entrée). sql.log ordonné (2 SELECT) ; @smtp.trace : aucune connexion.",
+ "dataset": "emailingcarte_shared/cartes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "smtp": "ok",
+ "conf": {
+  "/Smtp": "{smtp}",
+  "/Port": "{smtp_port}",
+  "/Secumail": "Sans",
+  "/Adrmail": "laurux.test.example"
+ },
+ "fichiers": [
+  "@smtp.trace"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

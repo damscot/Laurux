@@ -1,0 +1,12 @@
+{
+ "id": "FCLIENTCARTE-T06",
+ "objet": "Liste : filtre par frappe dans l'en-tête Nom",
+ "classe": "FClientcarte",
+ "description": "Table des cartes (Menu238) : focus sur l'en-tête Nom (N1_GotFocus appelle N1_Click : tri par nom ; un Click rejoué sur une TextBox échoue dans le harnais), frappe D, U puis Retour arrière dans N1 (N1_KeyPress : sel = D, DU, D, Deb2 à chaque frappe), focus sur l'en-tête Ville (V1_GotFocus → V1_Click : sel remis à vide, tri par ville) ; requêtes de la liste comparées (sql.log ordonné), base inchangée. Tri inverse (double-clic) couvert par FClientcarteTest.T06Tri.",
+ "dataset": "fclientcarte_shared/cartes_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered"
+}

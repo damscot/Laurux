@@ -1,0 +1,23 @@
+{
+ "id": "CCOMPTA-T09",
+ "objet": "Grand livre client, compte de plus de 60 écritures : texte du PDF",
+ "classe": "Ccompta",
+ "description": "Grands livres (Menu38), jeu extrait_long (extrait_base + 70 écritures du compte 411002), grand livre client (Bclient), Imprimer, Quitter : texte du PDF (edition.txt, plusieurs pages, reports et totaux de Ccompta) et dump comparés. Scénario construit sur editcomptem_client.",
+ "dataset": "extrait_long",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

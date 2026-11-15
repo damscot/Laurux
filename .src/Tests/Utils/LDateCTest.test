@@ -1,0 +1,99 @@
+' Gambas test file
+
+''Tests de LDateC (.hidden/reference/.src/Utils/LDateC.class/test.md, LDATEC-T01 à T03).
+''LDateC.Select ouvre le sélecteur en ShowModal : un Timer du module (« _Choix », ignoré comme test) agit pendant la
+''boucle modale comme l'utilisateur : il pose DateChooser1.Value puis appelle DateChooser1_Activate (double-clic)
+''ou DateChooser1_Cancel (Échap). Les écrans appelants (TextReg F2 dans Saisecrit, LGed) ne sont pas rejouables
+''(F2/Échap/double-clic) : la logique de sélection est vérifiée ici directement. Pas de base.
+''Valeurs attendues : assets/LDateCTest/expected.txt, produites dans le clone de référence.
+
+Private $hTimer As Timer
+Private $sAction As String
+Private $dChoix As Date
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Selection", "Select (mode par défaut des appelants) : jour choisi puis double-clic ; update vrai (même objet) et faux (nouvelle LDate)")
+  TestKit.Desc("T02Annulation", "Select annulé (Échap) puis nouvelle sélection validée : remise à zéro d'Escape")
+  TestKit.Desc("T03DateHeure", "Select en mode DateTime : date et heure choisies, format .LT")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "LDateCTest")
+
+End
+
+' Programme l'action de l'utilisateur dans la boucle modale.
+Private Sub Programme(sAction As String, dChoix As Date)
+
+  $sAction = sAction
+  $dChoix = dChoix
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hDc As Object = LDateC.Controls["DateChooser1"]
+
+  $hTimer.Enabled = False
+  If $sAction = "activate" Then
+    hDc.Value = $dChoix
+    LDateC.DateChooser1_Activate()
+  Else
+    LDateC.DateChooser1_Cancel()
+  Endif
+
+End
+
+Public Sub T01Selection()
+
+  Dim hDte As LDate = New LDate(Date(2018, 6, 15))
+  Dim hRes As LDate
+
+  Programme("activate", Date(2018, 6, 20))
+  hRes = LDateC.Select(hDte)
+  TestKit.Check("T01/update/L", hRes.L)
+  TestKit.Check("T01/update/meme_objet", hRes = hDte)
+  TestKit.Check("T01/update/origine", hDte.L)
+  hDte = New LDate(Date(2018, 6, 15))
+  Programme("activate", Date(2018, 7, 2))
+  hRes = LDateC.Select(hDte, DateChooser.DateTime, False)
+  TestKit.Check("T01/nouvelle/L", hRes.L)
+  TestKit.Check("T01/nouvelle/meme_objet", hRes = hDte)
+  TestKit.Check("T01/nouvelle/origine", hDte.L)
+
+End
+
+Public Sub T02Annulation()
+
+  Dim hDte As LDate = New LDate(Date(2018, 6, 15))
+  Dim hRes As LDate
+
+  Programme("cancel", Date(2018, 6, 20))
+  hRes = LDateC.Select(hDte)
+  TestKit.Check("T02/annule/L", hRes.L)
+  TestKit.Check("T02/annule/meme_objet", hRes = hDte)
+  Programme("activate", Date(2018, 6, 25))
+  hRes = LDateC.Select(hDte)
+  TestKit.Check("T02/seconde/L", hRes.L)
+  TestKit.Check("T02/seconde/origine", hDte.L)
+
+End
+
+Public Sub T03DateHeure()
+
+  Dim hDte As LDate = New LDate(Date(2018, 6, 15, 10, 0, 0))
+  Dim hRes As LDate
+
+  Programme("activate", Date(2018, 6, 20, 14, 30, 0))
+  hRes = LDateC.Select(hDte)
+  TestKit.Check("T03/LT", hRes.LT)
+  TestKit.Check("T03/L", hRes.L)
+
+End

@@ -1,0 +1,65 @@
+' Gambas test file
+
+''Tests de Depots (.hidden/reference/.src/Gestion/Depots/Depots.class/test.md, DEPOTS-T04 partiel).
+''Le clic et le double-clic sur les en-têtes filtres (CP, BD) ne sont pas rejouables : l'écran est instancié sans
+''affichage, Form_Open, BD_GotFocus, BD_DblClick et Refresh appelés directement. Coldepot (événement Data, non levé
+''sans affichage) est lu par la requête courante Utils.rs1 que Utils.Base lui associe. La frappe dans l'en-tête
+''(BD_KeyPress lit Key.Text) n'est pas simulable : filtre « Dé » non couvert. Jeu : Laurux01 (dépôts 01 et 02).
+''Valeurs attendues : assets/DepotsTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04FiltreTri", "En-tête Libellé (GotFocus, double-clic × 2) : ordre des lignes ; Refresh : en-tête CP vidé (A03 figée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "DepotsTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Lignes(hForm As Object, sCle As String)
+
+  Dim sTxt As String
+  Dim hGrid, hCtrl As Object
+
+  hGrid = hForm.Controls["Coldepot"]
+  TestKit.Check(sCle & "/lignes", hGrid.Rows.Count)
+  sTxt = ""
+  If Utils.rs1.Available Then
+    Utils.rs1.MoveFirst()
+    Repeat
+      sTxt &= Utils.rs1!code & ":" & Utils.rs1!libelle & " "
+    Until Utils.rs1.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/ordre", Trim(sTxt))
+  hCtrl = hForm.Controls["CP"]
+  TestKit.Check(sCle & "/entete_cp", hCtrl.Text)
+  hCtrl = hForm.Controls["BD"]
+  TestKit.Check(sCle & "/entete_bd", hCtrl.Text)
+
+End
+
+Public Sub T04FiltreTri()
+
+  Dim hForm As Object
+
+  hForm = New Depots
+  hForm.Form_Open()
+  Lignes(hForm, "T04/ouverture")
+  hForm.BD_GotFocus()
+  Lignes(hForm, "T04/bd_focus")
+  hForm.BD_DblClick()
+  Lignes(hForm, "T04/bd_dblclick1")
+  hForm.BD_DblClick()
+  Lignes(hForm, "T04/bd_dblclick2")
+  hForm.CP_DblClick()
+  Lignes(hForm, "T04/cp_dblclick")
+  hForm.Refresh()
+  Lignes(hForm, "T04/refresh")
+  Object.Lock(hForm)
+
+End

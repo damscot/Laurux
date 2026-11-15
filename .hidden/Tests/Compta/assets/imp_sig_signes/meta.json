@@ -1,0 +1,23 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "IMP_SIG-T03",
+ "classe": "Imp_Sig",
+ "objet": "Signes : comptes 709 et 609, résultat exceptionnel négatif",
+ "dataset": "imp_sig_signes",
+ "description": "Impressions comptables (RubImp, Menu124), jeu imp_sig_signes (709000 dernier compte de S0070 à cumul positif, 609700 dans S0050, charges exceptionnelles 671000 sans produit), Sig, E1, Imprimer (Entrée sur « traitement long ») ; texte du PDF (pdftotext -layout via /Soc01/caisse/CmdVis, ~/edition.txt) et table centralisation comparés (signes figés) ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

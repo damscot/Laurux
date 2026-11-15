@@ -8,13 +8,16 @@
  "objet": "Journal de banque",
  "dataset": "extrait_shared/extrait_base",
  "fichiers": [
-  "@ouvrir.trace"
+  "edition.txt"
  ],
- "description": "Journaux > Imprimer (jeu extrait_base : journal 50 Banque, 512000 compte de trésorerie comptr_cc = 1) : requêtes sur Fiches_Comptes et centralisation du journal de banque (sql.log) ; intitulé imprimé non comparé (PDF) ; Quitter.",
+ "description": "Journaux > Imprimer (jeu extrait_base : journal 50 Banque, 512000 compte de trésorerie comptr_cc = 1) : requêtes sur Fiches_Comptes et centralisation du journal de banque (sql.log) ; intitulé imprimé non comparé (PDF) ; Quitter. Vague 7 : le texte de chaque PDF (pdftotext -layout via /Soc01/caisse/CmdVis) est ajouté à ~/edition.txt et comparé ; cela remplace @ouvrir.trace et les mentions « PDF ouvert / non comparé » ci-dessus.",
  "cadence": {
   "frappe": 50,
   "focus": 100,
   "traitement": 1000,
   "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
  }
 }

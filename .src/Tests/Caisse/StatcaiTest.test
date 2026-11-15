@@ -1,0 +1,124 @@
+' Gambas test file
+
+''Tests de Statcai (.hidden/reference/.src/Caisse/Statcai.class/test.md, STATCAI-T01 à T04).
+''Valeurs attendues : assets/StatcaiTest/expected.txt, produites dans le clone de référence.
+''L'écran (ouvert par Fmenu en ShowModal) est construit par New Statcai sans être affiché ; la date du 14/06/2018
+''est posée dans DateBox1, puis Recup_ca et Traitement (gestionnaire du bouton Rafraîchir) sont appelés directement.
+''On relève la table Total (ncai, heure, ca), les lignes de la grille Liste et le total Totc.
+''Jeu : statcai_shared/statcai_tickets. Le cas « aucune caisse » (Message.Warning) est rejoué (statcai_sans_caisse).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CaHoraire", "CA horaire du 14/06/2018 sur deux caisses : 7 h cumulé sur 8 h, 21 h sur 19 h, total")
+  TestKit.Desc("T02EnCours", "Tickets en cours (statut 0 et V) ignorés (A01)")
+  TestKit.Desc("T03Doublon", "Même heure et même CA dans les deux tables : une seule ligne comptée (A03)")
+  TestKit.Desc("T04Supprime", "Ticket supprimé (suppr = 1) exclu")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "StatcaiTest")
+  TestKit.OuvreBase("statcai_shared/statcai_tickets")
+
+End
+
+Private Function Calcul(sT As String) As Statcai
+
+  Dim hF As Statcai
+  Dim hD As Object
+
+  Try hF = New Statcai
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  hD = hF.Controls["DateBox1"]
+  hD.Value = Date(2018, 6, 14)
+  Try hF.Recup_ca()
+  If Error Then TestKit.Check(sT & "/recup_ca", "ERREUR: " & Error.Text)
+  Try hF.Traitement()
+  If Error Then TestKit.Check(sT & "/traitement", "ERREUR: " & Error.Text)
+  Return hF
+
+End
+
+Private Function Ligne(sCaisse As String, iHeure As Integer) As String
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT ca FROM Total WHERE ncai = &1 AND heure = &2", sCaisse, iHeure)
+  If Not r.Available Then Return "<absente>"
+  Return r!ca
+
+End
+
+Public Sub T01CaHoraire()
+
+  Dim hF As Statcai
+  Dim hL As Object
+  Dim r As Result
+  Dim sTotal, sLignes As String
+  Dim i As Integer
+
+  hF = Calcul("T01")
+  If Not hF Then Return
+  r = Utils.db.Exec("SELECT ncai, heure, ca FROM Total ORDER BY ncai, heure")
+  If r.Available Then
+    Repeat
+      sTotal &= "[" & r!ncai & "|" & r!heure & "|" & r!ca & "]"
+    Until r.MoveNext()
+  Endif
+  TestKit.Check("T01/total", sTotal)
+  hL = hF.Controls["Liste"]
+  If hL.MoveFirst() = False Then
+    Repeat
+      sLignes &= "["
+      For i = 0 To 12
+        If i > 0 Then sLignes &= "|"
+        sLignes &= hL.Item[i]
+      Next
+      sLignes &= "]"
+    Until hL.MoveNext()
+  Endif
+  TestKit.Check("T01/liste", sLignes)
+  hL = hF.Controls["Totc"]
+  TestKit.Check("T01/totc", hL.Text)
+  Object.Lock(hF)
+
+End
+
+Public Sub T02EnCours()
+
+  Dim hF As Statcai
+
+  hF = Calcul("T02")
+  If Not hF Then Return
+  TestKit.Check("T02/01_11h", Ligne("01", 11))
+  TestKit.Check("T02/02_12h", Ligne("02", 12))
+  Object.Lock(hF)
+
+End
+
+Public Sub T03Doublon()
+
+  Dim hF As Statcai
+
+  hF = Calcul("T03")
+  If Not hF Then Return
+  TestKit.Check("T03/01_9h", Ligne("01", 9))
+  Object.Lock(hF)
+
+End
+
+Public Sub T04Supprime()
+
+  Dim hF As Statcai
+
+  hF = Calcul("T04")
+  If Not hF Then Return
+  TestKit.Check("T04/01_10h", Ligne("01", 10))
+  Object.Lock(hF)
+
+End

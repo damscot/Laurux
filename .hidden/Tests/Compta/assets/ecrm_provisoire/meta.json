@@ -1,0 +1,23 @@
+{
+ "id": "ECRM-T10",
+ "objet": "Édition provisoire",
+ "classe": "EcrM",
+ "description": "Jeu ecrm_provisoire (dtepc 31.03.2018, MvtM numero 11/12, numerodef 1/2) : Imprimer (Toutes) du 01.01.2018 au 31.12.2018 (après dtepc, numéros numero), puis Dten1 = « 31.03.2018 » (saisie complète : la forme abrégée n’est pas normalisée, A01) et Imprimer (numéros numerodef) ; PDF convertis par pdftotext -layout via /Soc01/caisse/CmdVis et ajoutés à ~/edition.txt (qualificatif « Edition provisoire » jamais imprimé) ; Quitter.",
+ "dataset": "ecrm_provisoire",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
+}

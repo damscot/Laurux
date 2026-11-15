@@ -1,0 +1,23 @@
+{
+ "classe": "FTVA",
+ "dataset": "extrait_shared/extrait_base",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "FTVA-T10",
+ "objet": "Impression sans interaction (A05)",
+ "description": "Récapitulatif TVA (Menu263), jeu extrait_base : Imprimer (Button2) dès l'ouverture, sans choix de mois : TVA.pdf converti par pdftotext -layout via /Soc01/caisse/CmdVis dans ~/edition.txt, comparé (mois imprimé figé, A05) ; Fermer.",
+ "date": "2018-06-15 10:00:00",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

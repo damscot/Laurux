@@ -1,0 +1,52 @@
+' Gambas test file
+
+''Tests de Edbl (.hidden/reference/.src/Gestion/Impressions/Edbl.class/test.md, EDBL-T06).
+''Écran instancié sans affichage (New Edbl) ; la touche Échap de Colbl_KeyPress (non rejouable, Key.Code non
+''simulable en gb.test) est remplacée par l'appel de cache_bl, seul traitement de cette branche après le focus.
+''Jeu edbl_shared/edbl_receptions. Valeurs attendues : assets/EdblTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06FermetureListe", "Liste ouverte par ToggleButton1 puis fermée par cache_bl (branche Échap) : Mt reste visible (A03)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EdblTest")
+  TestKit.OuvreBase("edbl_shared/edbl_receptions")
+
+End
+
+Private Sub Visibles(sCle As String, hForm As Object)
+
+  Dim sNom As String
+  Dim hCtrl As Object
+  Dim sRes As String
+
+  For Each sNom In ["Nm", "Cd", "nr", "Dt", "Mt", "Colbl"]
+    hCtrl = hForm.Controls[sNom]
+    sRes &= "[" & sNom & "=" & IIf(hCtrl.Visible, "visible", "masqué") & "]"
+  Next
+  TestKit.Check(sCle & "/visibles", sRes)
+
+End
+
+Public Sub T06FermetureListe()
+
+  Dim hForm As Edbl
+  Dim hCol As Object
+
+  hForm = New Edbl
+  Visibles("T06/ouverture", hForm)
+  hForm.ToggleButton1_Click()
+  Visibles("T06/liste", hForm)
+  hCol = hForm.Controls["Colbl"]
+  TestKit.Check("T06/liste/lignes", hCol.Count)
+  hForm.cache_bl()
+  Visibles("T06/fermeture", hForm)
+  TestKit.Check("T06/fermeture/lignes", hCol.Count)
+  Object.Lock(hForm)
+
+End

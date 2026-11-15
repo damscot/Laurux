@@ -2,7 +2,7 @@
  "id": "DB_SANITY-T02",
  "objet": "Contrôle base dégradée",
  "classe": "DB_Sanity",
- "description": "Contrôle d'une base dégradée (jeu db_sanity_degrade : type, défaut, NULL, collation, champ en trop, champ et table manquants, index manquant, AUTO_INCREMENT absent, MyISAM), Export CSV. Les couleurs et le CSV ne sont pas comparés (SQL seul).",
+ "description": "Contrôle d'une base dégradée (jeu db_sanity_degrade : type, défaut, NULL, collation, champ en trop, champ et table manquants, index manquant, AUTO_INCREMENT absent, MyISAM), Export CSV. CSV exporté ~/tmp/db_control.csv comparé ; couleurs non comparées.",
  "dataset": "db_sanity_shared/db_sanity_degrade",
  "date": "2026-01-15 10:00:00",
  "args": [],
@@ -14,5 +14,8 @@
   "traitement": 1000,
   "fenetre": 1000
  },
- "compare_sql_log": "ordered"
+ "compare_sql_log": "ordered",
+ "fichiers": [
+  "tmp/db_control.csv"
+ ]
 }

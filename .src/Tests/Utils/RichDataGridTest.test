@@ -1,0 +1,134 @@
+' Gambas test file
+
+''Tests de RichDataGrid (.hidden/reference/.src/Utils/RichDataGrid.class/test.md, RICHDATAGRID-T02 à T04).
+''Valeurs attendues : assets/RichDataGridTest/expected.txt, produites dans le clone de référence.
+''Le clic d'en-tête (ColumnClick), le clic droit (MouseUp) avec saisie dans la zone de recherche dynamique et la
+''sélection de ligne de Remisec ne sont pas rejoués : la grille est configurée comme dans Remisec (Fiches_RemTypec,
+''jeu richdatagrid_shared/richdatagrid_remises) dans une fenêtre non affichée, et les gestionnaires publics
+''(Grid_ColumnClick, txtSearch_Change via le texte de la zone de recherche, Grid_Select, Grid_Activate) sont
+''appelés directement. Les lignes sont lues dans Result (contenu des cellules produit par Grid_Data à l'affichage).
+
+Private $hW As Window
+Private $hG As GridView
+Private $hR As RichDataGrid
+Private $sEvt As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02Tri", "Clic sur l'en-tête « Type client » ×2 (Grid_ColumnClick) : ordre des lignes à chaque clic")
+  TestKit.Desc("T03Recherche", "Zone de recherche de la colonne 2 : « 0 », « 01 », vidée, apostrophe (A01) : lignes filtrées")
+  TestKit.Desc("T04Selection", "Ligne 3 choisie : Grid_Select puis Grid_Activate : Value = lind, événements Select/Activate")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "RichDataGridTest")
+  TestKit.OuvreBase("richdatagrid_shared/richdatagrid_remises")
+  $sEvt = ""
+  $hW = New Window
+  $hW.Resize(600, 300)
+  $hG = New GridView($hW)
+  $hG.Move(0, 0, 600, 300)
+  $hR = New RichDataGrid($hG) As "_Rdg"
+  $hR.Table = "Fiches_RemTypec"
+  $hR.Fields = ["lind", "coder", "codef", "remise"]
+  $hR.Display = ["N°", "Type client", "Code Famille", "Remise"]
+  $hR.DataField = "lind"
+  $hR.Refresh()
+
+End
+
+Public Sub _Teardown()
+
+  Try $hW.Delete
+
+End
+
+Public Sub _Rdg_Select()
+
+  $sEvt &= "Select "
+
+End
+
+Public Sub _Rdg_Activate()
+
+  $sEvt &= "Activate "
+
+End
+
+' Lignes de la grille : nombre de lignes et « lind:coder:codef » de chaque ligne du Result
+Private Sub Lignes() As String
+
+  Dim r As Result
+  Dim i As Integer
+  Dim s As String
+
+  s = $hG.Rows.Count & " :"
+  r = $hR.Result
+  If IsNull(r) Then Return s & " <pas de résultat>"
+  For i = 0 To r.Count - 1
+    r.MoveTo(i)
+    s &= " " & r!lind & ":" & r!coder & ":" & r!codef
+  Next
+  Return s
+
+End
+
+' Zone de recherche dynamique (TextBox créée par RichDataGrid dans le parent de la grille)
+Private Sub Recherche() As TextBox
+
+  Dim hC As Object
+
+  For Each hC In $hW.Children
+    If Object.Type(hC) = "TextBox" Then Return hC
+  Next
+  Return Null
+
+End
+
+Public Sub T02Tri()
+
+  TestKit.Check("T02/initial", Lignes())
+  $hR.Grid_ColumnClick(1)
+  TestKit.Check("T02/clic 1", Lignes())
+  $hR.Grid_ColumnClick(1)
+  TestKit.Check("T02/clic 2", Lignes())
+
+End
+
+Public Sub T03Recherche()
+
+  Dim hT As TextBox
+
+  hT = Recherche()
+  TestKit.Check("T03/zone trouvée", Not IsNull(hT))
+  If IsNull(hT) Then Return
+  TestKit.Check("T03/zone visible", hT.Visible)
+  hT.Tag = 1
+  hT.Text = "0"
+  TestKit.Check("T03/0", Lignes())
+  hT.Text = "01"
+  TestKit.Check("T03/01", Lignes())
+  hT.Text = ""
+  TestKit.Check("T03/vidée", Lignes())
+  hT.Text = "'"
+  TestKit.Check("T03/apostrophe", Lignes())
+
+End
+
+Public Sub T04Selection()
+
+  $hG.Row = 2
+  $sEvt = ""
+  $hR.Grid_Select()
+  TestKit.Check("T04/Select/Value", $hR.Value)
+  TestKit.Check("T04/Select/événements", $sEvt)
+  $sEvt = ""
+  $hG.Row = 4
+  $hR.Grid_Activate()
+  TestKit.Check("T04/Activate/Value", $hR.Value)
+  TestKit.Check("T04/Activate/événements", $sEvt)
+
+End

@@ -1,0 +1,20 @@
+{
+ "id": "VERIFDATE-T08",
+ "objet": "ClotDroi refusé (B/T)",
+ "classe": "VerifDate",
+ "description": "Option boissons (/Soc01/bois = -1), jeu verifdate_clotdroi (vign_base + 001 en régie 01 suspendue, arrêté 12.2018 → DateSus 01.01.2019) ; Mvtex (Gestion › Stock › Mouvements exceptionnels) au 15.06.2018 : Entrée, 001, qté 1, Enregistrer (Button1, Entrée) → VerifDate.ClotDroi → Message.Warning « La CM en droit suspendu est clôturée… » validé par Entrée ; aucune ligne ajoutée ; Quitter (Button3). Fiches_ligregie et Fiches_Mvtexp inchangées.",
+ "dataset": "verifdate_clotdroi",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/bois": -1
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

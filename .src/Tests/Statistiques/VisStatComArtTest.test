@@ -1,0 +1,184 @@
+' Gambas test file
+
+''Tests de VisStatComArt (.hidden/reference/.src/Statistiques/VisStatComArt.class/test.md, VISSTATCOMART-T01 à T04).
+''Valeurs attendues : assets/VisStatComArtTest/expected.txt, produites dans le clone de référence.
+''La table de travail Total est créée et remplie par le test (contenu de STATCOMART-T01 + une ligne du commercial 03
+''absent de Fiches_Commerciaux), puis l'écran est construit par New VisStatComArt sans être affiché. Les tris sont
+''déclenchés sur MouseDown, que le rejeu ne sait pas jouer : les gestionnaires sont appelés directement, avant le
+''changement de Value du bouton radio (ordre réel des événements, A01). Jeu : statcomart_shared/statcomart_ventes.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Affichage", "Affichage initial : liste Comm (A02), lignes triées par article, total NetHT")
+  TestKit.Desc("T02Filtre", "Filtre commercial 02 puis « Tous les commerciaux »")
+  TestKit.Desc("T03Tris", "Tris Commercial, Brut HT, Quantité, Article (MouseDown avant Value, A01)")
+  TestKit.Desc("T04CommAbsent", "Ligne du commercial 03 absent de Fiches_Commerciaux masquée et hors NetHT (A03)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Statistiques", "VisStatComArtTest")
+  TestKit.OuvreBase("statcomart_shared/statcomart_ventes")
+  ' Clés de couleur lues par _New, absentes de Laurux-test.conf
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+  Utils.db.Exec("DROP TABLE IF EXISTS Total")
+  Utils.db.Exec("CREATE TABLE Total (cdartfac Char(15) NOT NULL, lbartfac Char(35), nethtfac Decimal(12,2), qte Decimal(12,2), totfac Decimal(12,2), commercial Char(2), PRIMARY KEY (cdartfac, commercial))" & Utils.db.Engine())
+  Ligne("ART1", "Article un", 250, 1, "01")
+  Ligne("ART1", "Article un", 60, 1, "02")
+  Ligne("ART2", "Article deux", 30.5, 1, "01")
+  Ligne("ART3", "Article trois", 80, 4, "02")
+  Ligne("ART10", "Article dix", 5, 12, "01")
+  Ligne("ART9", "Article neuf", 999, 3, "03")
+
+End
+
+Private Sub Ligne(sCode As String, sLib As String, fNet As Float, fQte As Float, sComm As String)
+
+  Utils.db.Exec("INSERT INTO Total (cdartfac, lbartfac, nethtfac, qte, commercial) VALUES (&1, &2, &3, &4, &5)", sCode, sLib, fNet, fQte, sComm)
+
+End
+
+Private Function Ecran(sT As String) As VisStatComArt
+
+  Dim hF As VisStatComArt
+
+  Try hF = New VisStatComArt(Null, "01", 0, "01.01.2018", "15.06.2018")
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Releve(sT As String, hF As VisStatComArt)
+
+  Dim hL As Object
+  Dim sLignes As String
+  Dim i As Integer
+
+  hL = hF.Controls["Liste"]
+  If hL.MoveFirst() = False Then
+    Repeat
+      sLignes &= "["
+      For i = 0 To 5
+        If i > 0 Then sLignes &= "|"
+        sLignes &= hL.Item[i]
+      Next
+      sLignes &= "]"
+    Until hL.MoveNext()
+  Endif
+  TestKit.Check(sT & "/lignes", sLignes)
+  hL = hF.Controls["NetHT"]
+  TestKit.Check(sT & "/netht", hL.Text)
+
+End
+
+Private Sub Choix(hF As VisStatComArt, sTexte As String)
+
+  Dim hC As Object
+  Dim i As Integer
+
+  hC = hF.Controls["Comm"]
+  For i = 0 To hC.Count - 1
+    If hC[i].Text = sTexte Then
+      hC.Index = i
+      Break
+    Endif
+  Next
+  hF.Comm_Change()
+
+End
+
+Private Sub Coche(hF As VisStatComArt, sNom As String)
+
+  Dim hR As Object
+
+  hR = hF.Controls[sNom]
+  hR.Value = True
+
+End
+
+Public Sub T01Affichage()
+
+  Dim hF As VisStatComArt
+  Dim hC As Object
+  Dim sListe As String
+  Dim i As Integer
+
+  hF = Ecran("T01")
+  If Not hF Then Return
+  hC = hF.Controls["Comm"]
+  For i = 0 To hC.Count - 1
+    If i > 0 Then sListe &= "|"
+    sListe &= hC[i].Text
+  Next
+  TestKit.Check("T01/comm", sListe)
+  TestKit.Check("T01/tri", hF.Tri & " " & hF.sens)
+  Releve("T01", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T02Filtre()
+
+  Dim hF As VisStatComArt
+
+  hF = Ecran("T02")
+  If Not hF Then Return
+  Choix(hF, "02 - MARTIN")
+  Releve("T02/02", hF)
+  Choix(hF, "Tous les commerciaux")
+  Releve("T02/tous", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T03Tris()
+
+  Dim hF As VisStatComArt
+
+  hF = Ecran("T03")
+  If Not hF Then Return
+  hF.Bnom_MouseDown()
+  Coche(hF, "Bnom")
+  Releve("T03/commercial", hF)
+  hF.Bbrut_MouseDown()
+  Coche(hF, "Bbrut")
+  Releve("T03/brut", hF)
+  hF.Brem_MouseDown()
+  Coche(hF, "Brem")
+  Releve("T03/qte", hF)
+  hF.Bcode_MouseDown()
+  Coche(hF, "Bcode")
+  Releve("T03/article", hF)
+  hF.Bcode_MouseDown()
+  Releve("T03/article2", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T04CommAbsent()
+
+  Dim hF As VisStatComArt
+  Dim hL As Object
+  Dim r As Result
+
+  hF = Ecran("T04")
+  If Not hF Then Return
+  r = Utils.db.Exec("SELECT count(*) AS n, sum(nethtfac) AS s FROM Total")
+  If Not r.Available Then Return
+  TestKit.Check("T04/total_lignes", r!n)
+  TestKit.Check("T04/total_net", r!s)
+  hL = hF.Controls["Liste"]
+  TestKit.Check("T04/liste_lignes", hL.Count)
+  hL = hF.Controls["NetHT"]
+  TestKit.Check("T04/netht", hL.Text)
+  Object.Lock(hF)
+
+End

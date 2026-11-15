@@ -1,0 +1,24 @@
+{
+ "id": "CCLIENTS-T04",
+ "objet": "Level2 à 12 arguments (import JDV, création de clients)",
+ "classe": "Cclients",
+ "description": "Import du JDV Laurux (Menu134), Chemin-import = HOME de test, clients.txt (411901 complet, 411902 presque vide, absents de la base) et ecritures70.csv (2 factures 411901/411902/707000/445730) déposés par entrees : Importer, Message.Question bouton 1 « Oui » (Entrée, ImpJdv.class:163) ; Creation_Client insère 411901 (Fiches_Cli, champs décalés A02, et Fiches_Comptes, dnc) puis pdf.Level2 appelé avec 12 arguments lève « Not enough arguments » (ImpJdv.Import.205, IMPJDV-A04) : code de sortie 125 figé, aucune écriture importée ; dump, rejets.txt, Nvcomptes.txt comparés. Les 2 FMessage suivants du scénario ne sont pas atteints. Dérivé de Compta/impjdv_creation_clients (IMPJDV-T02) : test propre à Cclients.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-import": "{home}"
+ },
+ "entrees": {
+  "clients.txt": "~/clients.txt",
+  "ecritures70.csv": "~/ecritures70.csv"
+ },
+ "fichiers": [
+  "rejets.txt",
+  "Nvcomptes.txt",
+  "@ouvrir.trace"
+ ],
+ "code_sortie": 125
+}

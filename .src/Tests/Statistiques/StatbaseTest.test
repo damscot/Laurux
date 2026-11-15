@@ -1,0 +1,56 @@
+' Gambas test file
+
+''Tests de Statbase (.hidden/reference/.src/Statistiques/Statbase.class/test.md, STATBASE-T01 et T02).
+''Valeurs attendues : assets/StatbaseTest/expected.txt, produites dans le clone de référence.
+''L'écran (ouvert par Fmenu en ShowModal) est construit par New Statbase sans être affiché : _new remplit les 10
+''compteurs, relevés dans TextLabel1 à TextLabel10. T01 : base Laurux01 ; T02 : jeu statbase_ventes/statbase_ventes.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Reference", "Compteurs sur la base de référence Laurux01")
+  TestKit.Desc("T02Ventes", "Compteurs sur le jeu de ventes : tickets en cours/archivés (A01), entretien non compté (A02), BL B/D/F")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Statistiques", "StatbaseTest")
+  TestKit.OuvreBase()
+  ' Clés de couleur lues par _new, absentes de Laurux-test.conf
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+
+End
+
+Private Sub Compteurs(sT As String)
+
+  Dim hF As Statbase
+  Dim hL As Object
+  Dim i As Integer
+
+  Try hF = New Statbase
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  For i = 1 To 10
+    hL = hF.Controls["TextLabel" & CStr(i)]
+    TestKit.Check(sT & "/TextLabel" & CStr(i), hL.Text)
+  Next
+  Object.Lock(hF)
+
+End
+
+Public Sub T01Reference()
+
+  Compteurs("T01")
+
+End
+
+Public Sub T02Ventes()
+
+  TestKit.OuvreBase("statbase_ventes/statbase_ventes")
+  Compteurs("T02")
+
+End

@@ -1,0 +1,231 @@
+' Gambas test file
+
+''Tests de Emailing (.hidden/reference/.src/Gestion/Mails/Emailing.class/test.md, EMAILING-T01, T03, T07 partiel).
+''T01/T03 : envoi SMTP vers le faux serveur (TestKit.SmtpFactice), Button2_Click appelé directement ; un Timer du module
+''(« _Boite ») répond aux boîtes Message (1er bouton, comme Entrée) pendant leur boucle modale.
+''F2 sur Client1/Client2 (KeyPress, Key non simulable) est remplacé par ToggleButton1/ToggleButton2 (même liste),
+''le clic d'en-tête de colonne (non rejouable) par l'appel direct de Colcli_ColumnClick / Colcli2_ColumnClick.
+''Écran instancié sans affichage ; les grilles (événement Data non levé) sont lues par la requête courante Utils.rs1
+''associée par Utils.Base. Le clic sur une ligne (codes recopiés) n'est pas couvert : cellules vides sans Data.
+''Jeu : Laurux01 (clients). Valeurs attendues : assets/EmailingTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PlageCode", "Plage 411001..411004, tri par code : un message par client ayant un courriel (411001, 411003), Bcc /Adrmail de Settings")
+  TestKit.Desc("T03ModeListe", "Liste cochée : 411001, 411001 (doublon), 411999 (inexistant), 411003 ; Envoyer : Cli_Mailing et messages")
+  TestKit.Desc("T07Grilles", "Listes ouvertes (ToggleButton1/2), tri par en-tête Nom puis Code : ordre (rs1), colonnes de Colcli reconfigurées par le tri de Colcli2 (EMAILING-A07 figée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EmailingTest")
+  TestKit.OuvreBase()
+
+End
+
+Private $hTimer As Timer
+Private $iBoites As Integer
+Private $hDerniere As Window
+
+Public Sub _Teardown()
+
+  TestKit.FinSmtp()
+
+End
+
+' Répond aux boîtes Message (« Traitement terminé ») ouvertes pendant le traitement, comme l'utilisateur (Entrée).
+Public Sub _Boite_Timer()
+
+  Dim hWin As Window
+  Dim hCtrl As Object
+
+  For Each hWin In Windows
+    ' Le clic par Value est différé : une boîte déjà répondue peut encore être ouverte au tick suivant
+    If Object.Type(hWin) = "FMessage" And If hWin <> $hDerniere Then
+      $hDerniere = hWin
+      ' 1er bouton de la boîte (réponse par défaut) : Value = True déclenche son Click
+      For Each hCtrl In hWin.Controls
+        If Object.Type(hCtrl) = "Button" Then
+          Inc $iBoites
+          hCtrl.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+' Configuration SMTP vers le faux serveur, clients 411001 et 411003 seuls à avoir un courriel ; renvoie le résumé smtp.trace.
+Private Function Prepare() As String
+
+  Dim sDossier As String = Temp$("smtp")
+
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Smtp"] = "127.0.0.1"
+  Start.LocalSettings["/Port"] = TestKit.SmtpFactice("ok", sDossier)
+  Start.LocalSettings["Port"] = Start.LocalSettings["/Port"]
+  Start.LocalSettings["/Adrmail"] = "societe@laurux-test.fr"
+  Start.LocalSettings["/Utilisateur"] = "laurux"
+  Start.LocalSettings["/MdpStmp"] = ""
+  Start.LocalSettings["/Secumail"] = "Sans"
+  Settings["/Adrmail"] = "copie@laurux-test.fr"
+  Utils.db.Exec("UPDATE Fiches_Cli SET cli_email = NULL")
+  Utils.db.Exec("UPDATE Fiches_Cli SET cli_email = &1 WHERE cli_code = &2", "un@laurux-test.fr", 411001)
+  Utils.db.Exec("UPDATE Fiches_Cli SET cli_email = &1 WHERE cli_code = &2", "trois@laurux-test.fr", 411003)
+  $iBoites = 0
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Return File.Dir(sDossier) &/ "smtp.trace"
+
+End
+
+Private Sub Envoie(hForm As Object, sCle As String)
+
+  Try hForm.Button2_Click()
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  TestKit.Check(sCle & "/boites", $iBoites)
+
+End
+
+Private Sub Recus(sCle As String, sTrace As String)
+
+  Dim aLignes As String[]
+  Dim i As Integer
+
+  $hTimer.Enabled = False
+  TestKit.FinSmtp()
+  If Not Exist(sTrace) Then
+    TestKit.Check(sCle & "/messages", "<aucun>")
+    Return
+  Endif
+  aLignes = Split(RTrim(File.Load(sTrace)), "\n")
+  For i = 0 To aLignes.Max
+    TestKit.Check(sCle & "/smtp_" & Format(i, "00"), aLignes[i])
+  Next
+
+End
+
+Private Sub Pose(hForm As Object, sNom As String, vVal As Variant)
+
+  Dim hCtrl As Object = hForm.Controls[sNom]
+
+  If Object.Type(hCtrl) = "RadioButton" Or If Object.Type(hCtrl) = "CheckBox" Then
+    hCtrl.Value = vVal
+  Else
+    hCtrl.Text = vVal
+  Endif
+
+End
+
+Public Sub T01PlageCode()
+
+  Dim sTrace As String = Prepare()
+  Dim hForm As Object
+
+  hForm = New Emailing("mail")
+  Pose(hForm, "TextBox1", "Sujet T01")
+  Pose(hForm, "Stext", "Texte T01")
+  Pose(hForm, "Client1", "411001")
+  Pose(hForm, "Client2", "411004")
+  Pose(hForm, "RadioButton1", True)
+  Envoie(hForm, "T01")
+  Recus("T01", sTrace)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T03ModeListe()
+
+  Dim sTrace As String = Prepare()
+  Dim hForm As Object
+  Dim sCode As String
+  Dim rResult As Result
+
+  hForm = New Emailing("mail")
+  Pose(hForm, "Liste", True)
+  For Each sCode In ["411001", "411001", "411999", "411003"]
+    Pose(hForm, "Client1", sCode)
+    Try hForm.Cli_Man()
+    If Error Then TestKit.Check("T03/saisie_" & sCode & "/erreur", Error.Text)
+  Next
+  TestKit.Check("T03/boites_saisie", $iBoites)
+  rResult = Utils.db.Exec("SELECT code FROM Cli_Mailing ORDER BY code")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check("T03/cli_mailing_" & rResult!code, "present")
+    Until rResult.MoveNext()
+  Endif
+  Pose(hForm, "TextBox1", "Sujet T03")
+  Pose(hForm, "Stext", "Texte T03")
+  Envoie(hForm, "T03/envoi")
+  Recus("T03", sTrace)
+  Object.Lock(hForm)
+
+End
+
+Private Sub Etat(hForm As Object, sCle As String)
+
+  Dim sTxt As String
+  Dim i As Integer
+  Dim hGrid As Object
+  Dim sNom As String
+
+  For Each sNom In ["Colcli", "Colcli2"]
+    hGrid = hForm.Controls[sNom]
+    sTxt = IIf(hGrid.Visible, "visible", "masquée") & "|" & hGrid.Rows.Count & "|" & hGrid.Columns.Count
+    For i = 0 To hGrid.Columns.Count - 1
+      sTxt &= "|" & hGrid.Columns[i].Text & ":" & hGrid.Columns[i].Width
+    Next
+    TestKit.Check(sCle & "/" & sNom, sTxt)
+  Next
+  sTxt = ""
+  i = 0
+  If IsNull(Utils.rs1) Then
+    sTxt = "<aucune requête>"
+  Else If Utils.rs1.Available Then
+    Utils.rs1.MoveFirst()
+    Repeat
+      sTxt &= Utils.rs1!cli_code & ":" & Utils.rs1!cli_nom & " "
+      Inc i
+    Until Utils.rs1.MoveNext() Or i >= 3
+  Endif
+  TestKit.Check(sCle & "/rs1", Trim(sTxt))
+
+End
+
+Private Sub Appel(hForm As Object, sCle As String, sMethode As String, Optional iCol As Integer = -1)
+
+  If iCol < 0 Then
+    Try Object.Call(hForm, sMethode)
+  Else
+    Try Object.Call(hForm, sMethode, [iCol])
+  Endif
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  Etat(hForm, sCle)
+
+End
+
+Public Sub T07Grilles()
+
+  Dim hForm As Object
+
+  ' Clés de couleur lues par _New, absentes de Laurux-test.conf
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  hForm = New Emailing("mail")
+  Etat(hForm, "T07/ouverture")
+  Appel(hForm, "T07/toggle1", "ToggleButton1_Click")
+  Appel(hForm, "T07/colcli_nom", "Colcli_ColumnClick", 1)
+  Appel(hForm, "T07/toggle2", "ToggleButton2_Click")
+  Appel(hForm, "T07/colcli2_nom", "Colcli2_ColumnClick", 1)
+  Appel(hForm, "T07/colcli2_code", "Colcli2_ColumnClick", 0)
+  Object.Lock(hForm)
+
+End

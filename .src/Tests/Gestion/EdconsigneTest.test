@@ -1,0 +1,165 @@
+' Gambas test file
+
+''Tests de Edconsigne (.hidden/reference/.src/Gestion/option/Edconsigne.class/test.md, EDCONSIGNE-T01 à T04, T06).
+''La fenêtre est instanciée sans être affichée ; options, dates et bornes sont posées puis Butedit_Click est appelé
+''directement. Vérifications : requête exécutée (journal Exec_SQL relu dans ~/tmp/Debug, dates fixées par le test),
+''lignes renvoyées par cette requête (données de l'édition gb.report, dont pdftotext ne rend pas le texte), présence
+''du PDF ~/tmp/consigne.pdf, nombre de pages (pdfinfo) et texte « pdftotext -layout » (vide pour gb.report). Jeu : edconsigne_shared/edconsigne_mvt. Valeurs attendues : assets/EdconsigneTest/expected.txt,
+''produites dans le clone de référence.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CodeDetail", "Par code, détail, valorisé : requête, PDF (A01/A02 figées)")
+  TestKit.Desc("T02CodeCumul", "Par code, cumul (Détail décoché) : requête, PDF")
+  TestKit.Desc("T03ParClient", "Par client 411000-411999, détail puis cumul : requêtes, PDF (ruptures par client, client inconnu)")
+  TestKit.Desc("T04ParFournisseur", "Par fournisseur 401000-401999, détail puis cumul : requêtes, PDF (fournisseur inconnu)")
+  TestKit.Desc("T06Requetes", "Texte SQL des 3 modes x détail/cumul, non valorisé (base vide de mouvements)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EdconsigneTest")
+  TestKit.OuvreBase("edconsigne_shared/edconsigne_mvt")
+
+End
+
+Private Sub Pose(hF As Edconsigne, sNom As String, sProp As String, vVal As Variant)
+
+  Dim hCtl As Object = hF.Controls[sNom]
+
+  Object.SetProperty(hCtl, sProp, vVal)
+
+End
+
+' Lance l'édition dans le mode demandé (code, cli, four), détail ou cumul, valorisée ou non.
+Private Sub Edite(sCle As String, sMode As String, bDet As Boolean, Optional bVal As Boolean = True, Optional bPdf As Boolean = True)
+
+  Dim hF As New Edconsigne
+  Dim sPdf As String = User.Home &/ "tmp/consigne.pdf"
+  Dim sTxt, sLig, sReq As String
+  Dim n As Integer
+
+  Try Kill sPdf
+  Pose(hF, "Dateinf", "Value", Date(2018, 1, 1))
+  Pose(hF, "Datesup", "Value", Date(2018, 12, 31))
+  Pose(hF, "Textinf", "Text", "0")
+  Pose(hF, "Textsup", "Text", "ZZ")
+  Pose(hF, "Textcinf", "Text", "411000")
+  Pose(hF, "Textcsup", "Text", "411999")
+  Pose(hF, "Textfinf", "Text", "401000")
+  Pose(hF, "Textfsup", "Text", "401999")
+  Pose(hF, "Radio" & sMode, "Value", True)
+  Pose(hF, "Checkdet", "Value", bDet)
+  Pose(hF, "Checkval", "Value", bVal)
+  Utils.db.Enable_Log()
+  Utils.db.Clear()
+  Try hF.Butedit_Click()
+  TestKit.Check(sCle & "/erreur", IIf(Error, Error.Text, "<aucune>"))
+  sReq = Requete()
+  TestKit.Check(sCle & "/requete", sReq)
+  If bPdf Then Lignes(sCle, sReq)
+  TestKit.Check(sCle & "/pdf", Exist(sPdf))
+  Object.Lock(hF)
+  If Not bPdf Or If Not Exist(sPdf) Then Return
+  Shell "pdfinfo " & Shell$(sPdf) & " | grep -E '^Pages'" To sTxt
+  TestKit.Check(sCle & "/pages", Trim(sTxt))
+  Shell "pdftotext -layout " & Shell$(sPdf) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Now, "dd.mm.yyyy"), "<date>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+' Lignes renvoyées par la requête journalisée (celles que parcourt Edconsigne.edition).
+Private Sub Lignes(sCle As String, sReq As String)
+
+  Dim r As Result
+  Dim hFld As ResultField
+  Dim sLig As String
+  Dim n As Integer
+
+  Try r = Utils.db.Exec(sReq)
+  If Error Then
+    TestKit.Check(sCle & "/resultat", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  If r.Available Then
+    Repeat
+      sLig = ""
+      For Each hFld In r.Fields
+        sLig &= hFld.Name & "=" & TestKit.Canonique(r[hFld.Name]) & " "
+      Next
+      Inc n
+      TestKit.Check(sCle & "/r" & Format$(n, "00"), RTrim(sLig))
+    Until r.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/resultat", n)
+
+End
+
+' Dernière requête du journal applicatif portant sur Fiches_consigne (texte après les 8 champs d'en-tête).
+Private Function Requete() As String
+
+  Dim sFichier As String = User.Home &/ "tmp/Debug" &/ Application.Name & ".log"
+  Dim sLigne, sReq As String
+  Dim i, iPos As Integer
+
+  Utils.db.Refresh()
+  If Not Exist(sFichier) Then Return "<pas de journal>"
+  For Each sLigne In Split(File.Load(sFichier), "\n")
+    If InStr(sLigne, ";Exec_SQL;") = 0 Or If InStr(sLigne, "Fiches_consigne") = 0 Then Continue
+    iPos = 0
+    For i = 1 To 8
+      iPos = InStr(sLigne, ";", iPos + 1)
+    Next
+    sReq = Mid$(sLigne, iPos + 1)
+  Next
+  Return sReq
+
+End
+
+Public Sub T01CodeDetail()
+
+  Edite("T01", "code", True)
+
+End
+
+Public Sub T02CodeCumul()
+
+  Edite("T02", "code", False)
+
+End
+
+Public Sub T03ParClient()
+
+  Edite("T03/detail", "cli", True)
+  Edite("T03/cumul", "cli", False)
+
+End
+
+Public Sub T04ParFournisseur()
+
+  Edite("T04/detail", "four", True)
+  Edite("T04/cumul", "four", False)
+
+End
+
+Public Sub T06Requetes()
+
+  Dim sMode As String
+
+  Utils.db.Exec("DELETE FROM Fiches_ligcons")
+  For Each sMode In ["code", "cli", "four"]
+    Edite("T06/" & sMode & "/detail", sMode, True, False, False)
+    Edite("T06/" & sMode & "/cumul", sMode, False, False, False)
+  Next
+
+End

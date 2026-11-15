@@ -1,0 +1,28 @@
+{
+ "id": "ENVMAIL-T10",
+ "objet": "ExportJdv → Envoi3 à 5 arguments",
+ "classe": "EnvMail",
+ "description": "Comptabilite > Outils > Export des journaux (Menu133, /Soc01/Exp actif), jeu Compta/exportjdv_shared/exportjdv_jeu, envoi par mail coché d'office (/Soc01/Expmail), adresse /Soc01/Adr-export, client /Soc01/Prgmail = Thunderbird ; format 2 Quadra (Tpj index 1), Exporter (Button2). ExportJdv.export appelle EnvMail.Envoi3 avec 5 arguments (4 déclarés) : erreur interceptée par le Catch de export, message « Le fichier n'a pas pu être envoyé » (ENVMAIL-A01 figée) ; aucun lancement du client (outils.trace).",
+ "dataset": "Compta/exportjdv_shared/exportjdv_jeu",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Exp": -1,
+  "/Soc01/Expmail": -1,
+  "/Soc01/Adr-export": "compta@exemple.fr",
+  "/Soc01/Prgmail": "Thunderbird"
+ },
+ "fichiers": [
+  "ecritures70.csv",
+  "clients.txt",
+  "@outils.trace"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

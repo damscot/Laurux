@@ -1,0 +1,41 @@
+' Gambas test file
+
+''Tests de TestCaisses (.hidden/reference/.src/Caisse/TestCaisses.module/test.md, TESTCAISSES-T01).
+''TestCai lit les verrous ~/Caisse<n>.lock du HOME de test (jetable) ; cas sans conflit seulement (le conflit ouvre
+''un Message.Warning modal, bloquant en gb.test). Valeurs attendues : assets/TestCaissesTest/expected.txt.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SansConflit", "TestCai sans verrou, verrou de la même caisse, verrou d'un autre vendeur : \"0\"")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "TestCaissesTest")
+
+End
+
+Private Sub EffaceVerrous()
+
+  Dim C As Integer
+
+  For C = 1 To 10
+    Try Kill User.Home & "/Caisse" & C & ".lock"
+  Next
+
+End
+
+Public Sub T01SansConflit()
+
+  EffaceVerrous()
+  TestKit.Check("T01/aucun_verrou", TestCaisses.TestCai("1", "1"))
+  File.Save(User.Home & "/Caisse1.lock", "12 Paul O\n")
+  TestKit.Check("T01/meme_caisse", TestCaisses.TestCai("1", "1"))
+  EffaceVerrous()
+  File.Save(User.Home & "/Caisse2.lock", "23 Anne O\n")
+  TestKit.Check("T01/autre_vendeur", TestCaisses.TestCai("1", "1"))
+  EffaceVerrous()
+
+End

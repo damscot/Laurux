@@ -1,0 +1,18 @@
+{
+ "id": "BORDEREAUX-T06",
+ "objet": "Tickets supprimés ou en erreur",
+ "classe": "Bordereaux",
+ "description": "Menu214 ; tickets 0000301 (valide), 0000302 (suppr = 1) et 0000303 (statut E) réglés par chèque ; Cheques, Imprimer : les trois règlements figurent dans le bordereau (aucun filtre, A01 figée), edition.txt.",
+ "dataset": "bordereaux_shared/supprimes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

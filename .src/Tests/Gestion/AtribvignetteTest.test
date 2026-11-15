@@ -1,0 +1,149 @@
+' Gambas test file
+
+''Tests de atribvignette (.hidden/reference/.src/Gestion/option/atribvignette.class/test.md, ATRIBVIGNETTE-T02 à T06).
+''Écran instancié sans affichage (New atribvignette : _new appelle affiche) ; le double-clic sur un nœud (TreeView1_Activate,
+''non rejouable par le harnais) est remplacé par la sélection du nœud (Selected) puis l'appel direct de TreeView1_Activate ;
+''la sortie de la zone (Entrée, Tab) par l'appel de Textvig_LostFocus (ce que fait Textvig_KeyPress).
+''Jeux atribvignette_shared/vign_base et vign_cloture. Valeurs attendues : assets/AtribvignetteTest/expected.txt.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02AttributionBl", "Nœud BL bl0001 de BL0000010, saisie 3, sortie de zone : vignette 000…03 sur les lignes bl0001%")
+  TestKit.Desc("T03AttributionReception", "Nœud « Réception B.R » de BR0000001, saisie 4 : toutes les lignes non clôturées du document")
+  TestKit.Desc("T04Refus", "Numéro 1 déjà utilisé sur un autre BL (ballon, aucun UPDATE) ; saisie abc (zone vidée, aucun UPDATE)")
+  TestKit.Desc("T05MiseABlanc", "Nœud BL bl0002 (vignette 2), Button1 : vignette vidée sur les lignes visées")
+  TestKit.Desc("T06LigneCloturee", "Jeu vign_cloture : attribution sur bl0001 de BL0000010 modifie aussi la ligne clôturée (A02 figée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "AtribvignetteTest")
+
+End
+
+Private Function Ouvre(sJeu As String) As Object
+
+  TestKit.OuvreBase("atribvignette_shared/" & sJeu)
+  Return New Atribvignette
+
+End
+
+Private Function Active(hForm As Object, sCle As String, sNoeud As String) As Object
+
+  Dim hTree As Object
+  Dim hVig As Object
+
+  hTree = hForm.Controls["TreeView1"]
+  Try hTree[sNoeud].Selected = True
+  If Error Then TestKit.Check(sCle & "/selection", "ERREUR: " & Error.Text)
+  Try TestKit.Check(sCle & "/courant", hTree.Current.Key)
+  Try hForm.TreeView1_Activate()
+  If Error Then TestKit.Check(sCle & "/activate", "ERREUR: " & Error.Text)
+  hVig = hForm.Controls["Textvig"]
+  TestKit.Check(sCle & "/textvig", hVig.Text)
+  Return hVig
+
+End
+
+Private Sub Sortie(hForm As Object, sCle As String)
+
+  Try hForm.Textvig_LostFocus()
+  If Error Then TestKit.Check(sCle & "/sortie", "ERREUR: " & Error.Text)
+
+End
+
+Private Sub Etat(hForm As Object, sCle As String)
+
+  Dim rResult As Result
+  Dim hTree, hCol As Object
+  Dim sTxt As String
+
+  rResult = Utils.db.Exec("SELECT code, num, numlig, type, vignette, cloture FROM Fiches_ligregie ORDER BY code")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check(sCle & "/ligne" & rResult!code, rResult!num & "|" & rResult!numlig & "|" & rResult!type & "|" & rResult!vignette & "|" & rResult!cloture)
+    Until rResult.MoveNext()
+  Endif
+  hTree = hForm.Controls["TreeView1"]
+  Try TestKit.Check(sCle & "/noeud", hTree.Current.Text)
+  hCol = hForm.Controls["ColumnView1"]
+  sTxt = ""
+  If hCol.MoveFirst() = False Then
+    Repeat
+      sTxt &= hCol.Item.Text & " "
+    Until hCol.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/manquants", Trim(sTxt))
+
+End
+
+Public Sub T02AttributionBl()
+
+  Dim hForm, hVig As Object
+
+  hForm = Ouvre("vign_base")
+  hVig = Active(hForm, "T02", "BL0000010/bl0001/0000000000000000000000001")
+  hVig.Text = "3"
+  Sortie(hForm, "T02")
+  Etat(hForm, "T02")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T03AttributionReception()
+
+  Dim hForm, hVig As Object
+
+  hForm = Ouvre("vign_base")
+  hVig = Active(hForm, "T03", "BR0000001//0000000000000000000000005")
+  hVig.Text = "4"
+  Sortie(hForm, "T03")
+  Etat(hForm, "T03")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T04Refus()
+
+  Dim hForm, hVig As Object
+
+  hForm = Ouvre("vign_base")
+  hVig = Active(hForm, "T04", "BL0000011/bl0002/0000000000000000000000002")
+  hVig.Text = "1"
+  Sortie(hForm, "T04/existant")
+  TestKit.Check("T04/existant/textvig", hVig.Text)
+  hVig.Text = "abc"
+  Sortie(hForm, "T04/abc")
+  TestKit.Check("T04/abc/textvig", hVig.Text)
+  Etat(hForm, "T04")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T05MiseABlanc()
+
+  Dim hForm As Object
+
+  hForm = Ouvre("vign_base")
+  Active(hForm, "T05", "BL0000011/bl0002/0000000000000000000000002")
+  Try hForm.Button1_Click()
+  If Error Then TestKit.Check("T05/button1", "ERREUR: " & Error.Text)
+  Etat(hForm, "T05")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T06LigneCloturee()
+
+  Dim hForm, hVig As Object
+
+  hForm = Ouvre("vign_cloture")
+  hVig = Active(hForm, "T06", "BL0000010/bl0001/0000000000000000000000001")
+  hVig.Text = "3"
+  Sortie(hForm, "T06")
+  Etat(hForm, "T06")
+  Object.Lock(hForm)
+
+End

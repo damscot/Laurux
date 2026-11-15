@@ -1,0 +1,45 @@
+' Gambas test file
+
+''Tests de Ligcli (.hidden/reference/.src/Compta/Relances/Ligcli.class/test.md, LIGCLI-T07).
+''La ligne est construite ici directement (New Ligcli dans un ScrollView d'une fenêtre jamais affichée, avec les arguments
+''de FEditrel.affiche), avec le jeu ligcli_sans_compte (jeu FEditrel prêt dont le compte 411002 est retiré de
+''Fiches_Comptes). Valeurs attendues : assets/LigcliTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T07SansCompte", "Client présent dans Fiches_Cli et Fiches_Mvt mais absent de Fiches_Comptes : erreur à la construction")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "LigcliTest")
+  TestKit.OuvreBase("ligcli_sans_compte")
+
+End
+
+Public Sub T07SansCompte()
+
+  Dim hW As New Window
+  Dim hScr As New ScrollView(hW)
+  Dim hExt As New ScrollView(hW)
+  Dim hL As Ligcli
+
+  ' compte complet (411001) : construction sans erreur
+  Try hL = New Ligcli(411001, 0, "Euro", hExt, hScr)
+  If Error Then
+    TestKit.Check("T07/411001", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Else
+    TestKit.Check("T07/411001", hL.numero)
+  Endif
+  ' compte absent de Fiches_Comptes (411002) : res!solde lu sur un résultat vide (comportement actuel figé)
+  Try hL = New Ligcli(411002, 1, "Euro", hExt, hScr)
+  If Error Then
+    TestKit.Check("T07/411002", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Else
+    TestKit.Check("T07/411002", "<aucune erreur>")
+  Endif
+  Object.Lock(hW)
+
+End

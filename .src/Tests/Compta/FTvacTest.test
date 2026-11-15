@@ -1,0 +1,75 @@
+' Gambas test file
+
+''Tests de FTvac (.hidden/reference/.src/Compta/Tables/FTvac.class/test.md, FTVAC-T05).
+''Prévu en replay, bloqué au rejeu (touche F2 non rejouable) : l'écran est instancié ici sans être affiché
+''(Laurux01), Button4_Click (appelé par F2 dans Tvacc) et Tvalist3_Click (appelé par Entrée dans Tvalist3) sont
+''appelés directement. Le filtre saisi (4456) n'est pas joué : il est lu dans la variable privée Dne, posée
+''seulement par Tva_KeyPress (Key et Last non simulables ici). Valeurs attendues : assets/FTvacTest/expected.txt
+''(clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05ListeComptes", "Liste des comptes 445 (Button4_Click, compte vide), choix d'un compte, bascule")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "FTvacTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Liste(sCle As String, hF As FTvac)
+
+  Dim hV As Object = hF.Controls["Tvalist3"]
+  Dim i As Integer
+
+  TestKit.Check(sCle & "/visible", hV.Visible)
+  TestKit.Check(sCle & "/lignes", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check(sCle & "/l" & i, hV.Item.Key & "|" & hV.Item[0] & "|" & hV.Item[1])
+      Inc i
+    Until hV.MoveNext()
+  Endif
+
+End
+
+Public Sub T05ListeComptes()
+
+  Dim hF As FTvac
+  Dim hV As Object
+  Dim sKey As String
+
+  Try hF = New FTvac
+  If Error Then
+    TestKit.Check("T05/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hV = hF.Controls["Tvalist3"]
+  Liste("T05/avant", hF)
+  ' F2 avec compte vide : comptes commençant par 445
+  Try hF.Button4_Click()
+  If Error Then TestKit.Check("T05/f2_err", "ERREUR: " & Error.Text)
+  Liste("T05/f2", hF)
+  ' Entrée sur le dernier compte de la liste : compte recopié dans Tvacc, liste masquée et vidée
+  If Not hV.MoveLast() Then
+    sKey = hV.Item.Key
+    TestKit.Check("T05/choix", sKey)
+    hV.Key = sKey
+    hV.MoveTo(sKey)
+    Try hF.Tvalist3_Click()
+    If Error Then TestKit.Check("T05/choix_err", "ERREUR: " & Error.Text)
+  Endif
+  TestKit.Check("T05/Tvacc", Object.GetProperty(hF.Controls["Tvacc"], "Text"))
+  Liste("T05/apres_choix", hF)
+  ' Deux appels successifs : la liste s'ouvre puis se referme (bascule)
+  Try hF.Button4_Click()
+  Try hF.Button4_Click()
+  If Error Then TestKit.Check("T05/bascule_err", "ERREUR: " & Error.Text)
+  Liste("T05/bascule", hF)
+  Object.Lock(hF)
+
+End

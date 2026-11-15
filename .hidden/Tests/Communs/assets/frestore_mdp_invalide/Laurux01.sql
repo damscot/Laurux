@@ -1,0 +1,1 @@
+-- Sauvegarde fictive : lue seulement par ls (FRestore s'arrête au contrôle des processus, aucune restauration).

@@ -1,0 +1,109 @@
+' Gambas test file
+
+''Tests de FEditrel (.hidden/reference/.src/Compta/Relances/FEditrel.class/test.md, FEDITREL-T04, T07).
+''Écran instancié sans affichage (New FEditrel) ; flèches de ScrollView1_KeyPress remplacées par lig_Down / Lig_up,
+''tri par Buttontrnom_Click / Buttontrn_Click ; ordre lu dans ScrollView1.Children (Ligcli : numero, lib).
+''Jeu feditrel_shared/feditrel_relances_prete. Valeurs attendues : assets/FEditrelTest/expected.txt.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T07EditionApresIndividuelle", "Ligcli.Buttonedit_Click sur 411001, puis édition groupée (Buttonedit_Click) : 411001 traité exclu, Fiches_Mvt.relance")
+  TestKit.Desc("T04NavigationTri", "Ordre initial, tri par nom puis par code (2 sens chacun), flèches bas/haut (sans erreur) : ordre des lignes Ligcli")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "FEditrelTest")
+  TestKit.OuvreBase("feditrel_shared/feditrel_relances_prete")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "true"
+
+End
+
+Private Sub Ordre(sCle As String, hForm As Object)
+
+  Dim hScroll As Object
+  Dim hLig As Object
+  Dim sRes As String
+
+  hScroll = hForm.Controls["ScrollView1"]
+  For Each hLig In hScroll.Children
+    sRes &= "[" & hLig.numero & "|" & Trim(hLig.lib) & "]"
+  Next
+  TestKit.Check(sCle & "/ordre", sRes)
+
+End
+
+Public Sub T04NavigationTri()
+
+  Dim hForm As FEditrel
+
+  hForm = New FEditrel
+  Ordre("T04/ouverture", hForm)
+  hForm.lig_Down(0)
+  hForm.Lig_up(1)
+  Ordre("T04/fleches", hForm)
+  hForm.Buttontrnom_Click()
+  Ordre("T04/tri_nom_1", hForm)
+  hForm.Buttontrnom_Click()
+  Ordre("T04/tri_nom_2", hForm)
+  hForm.Buttontrn_Click()
+  Ordre("T04/tri_code_1", hForm)
+  hForm.Buttontrn_Click()
+  Ordre("T04/tri_code_2", hForm)
+  Object.Lock(hForm)
+
+End
+
+Private Sub Relances(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT compte, numdoc, relance FROM Fiches_Mvt WHERE compte LIKE '411%' AND numdoc <> '' ORDER BY compte, numdoc, relance")
+  If Not rResult.Available Then
+    TestKit.Check(sCle & "/mvt", "<aucune>")
+    Return
+  Endif
+  Repeat
+    TestKit.Check(sCle & "/mvt_" & rResult.Index, rResult!compte & "|" & rResult!numdoc & "|" & rResult!relance)
+  Until rResult.MoveNext()
+
+End
+
+Private Sub Traitement(sCle As String, hForm As Object)
+
+  Dim hScroll As Object
+  Dim hLig As Object
+  Dim sRes As String
+
+  hScroll = hForm.Controls["ScrollView1"]
+  For Each hLig In hScroll.Children
+    sRes &= "[" & hLig.numero & "|" & IIf(hLig.selection, "sel", "-") & "|" & IIf(hLig.traitement, "traité", "-") & "]"
+  Next
+  TestKit.Check(sCle & "/lignes", sRes)
+
+End
+
+Public Sub T07EditionApresIndividuelle()
+
+  Dim hForm As FEditrel
+  Dim hScroll As Object
+  Dim hLig As Object
+
+  hForm = New FEditrel
+  Relances("T07/avant")
+  hScroll = hForm.Controls["ScrollView1"]
+  hLig = hScroll.Children[0]
+  hLig.Buttonedit_Click()
+  Traitement("T07/individuelle", hForm)
+  Relances("T07/individuelle")
+  hForm.Buttonedit_Click()
+  Traitement("T07/groupee", hForm)
+  Relances("T07/groupee")
+  Object.Lock(hForm)
+
+End

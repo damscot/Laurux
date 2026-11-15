@@ -1,0 +1,18 @@
+{
+ "id": "MODFICHIER-T03",
+ "objet": "modiffrais : réponse OUI avec articles à frais",
+ "classe": "modfichier",
+ "description": "Préférences locales (Menu110), jeu frais (articles 001 et 002 à art_frais 1,5 et 2) : cocher « Boissons » (fichierboisson → commun : ALTER art_trsp réussi → question modiffrais, réponse OUI par Entrée) ; modiffrais (Begin, Edit art_frais <> 0) écrit art_trspr, colonne pas encore créée : erreur fatale « Unknown field: art_trspr » (A03 figée, code 125). Comparé : dump (art_trsp ajouté, art_trspr absent, Fiches_Art inchangée) et code de sortie.",
+ "dataset": "frais",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

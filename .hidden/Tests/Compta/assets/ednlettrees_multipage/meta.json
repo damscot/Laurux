@@ -1,0 +1,23 @@
+{
+ "id": "EDNLETTREES-T09",
+ "objet": "Multipage",
+ "classe": "EdNlettrees",
+ "description": "Jeu ednl_multipage (gen_ednl_multipage.py : 411001 lettrable, 70 lignes non lettrées) : Menu103, Imprimer ; texte du PDF (pdftotext -layout via /Soc01/caisse/CmdVis, ~/edition.txt) : en-têtes répétés, pied de page ; Quitter.",
+ "dataset": "ednl_multipage",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
+}

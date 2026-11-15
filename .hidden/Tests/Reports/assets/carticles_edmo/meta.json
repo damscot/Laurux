@@ -1,0 +1,23 @@
+{
+ "id": "CARTICLES-T08",
+ "objet": "Édition de la main-d'œuvre (Edmo) : texte du PDF",
+ "classe": "Carticles",
+ "description": "Listes Mo (ToggleButton1/2) et familles (ToggleButton3/4) ouvertes par bouton, clic sur 03, 07, 10, 11 ; Entrée sur Fam2 renvoie le focus sur Mo (A03) ; Imprimer : bornes reportées dans la requête et le PDF. Échap non rejouable. Dérivé de Gestion/edmo_listes (EDMO-T06) : test propre à Carticles.",
+ "dataset": "Gestion/edmo_shared/edmo_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 600,
+  "fenetre": 1000
+ }
+}

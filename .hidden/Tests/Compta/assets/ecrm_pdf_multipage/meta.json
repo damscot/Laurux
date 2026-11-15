@@ -1,0 +1,23 @@
+{
+ "id": "ECRM-T05",
+ "objet": "Multipage",
+ "classe": "EcrM",
+ "description": "Jeu ecrm_multipage (gen_ecrm_multipage.py : 80 lignes MvtM supprimées) : Supprimee puis Imprimer ; texte du PDF (pdftotext -layout via /Soc01/caisse/CmdVis, ~/edition.txt) : en-têtes après saut de page (A03) et numéro de page (A05) figés ; Quitter.",
+ "dataset": "ecrm_multipage",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
+}

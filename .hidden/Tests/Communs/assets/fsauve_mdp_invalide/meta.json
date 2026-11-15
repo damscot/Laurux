@@ -1,0 +1,28 @@
+{
+ "id": "FSAUVE-T04",
+ "classe": "FSauve",
+ "objet": "Mot de passe invalide",
+ "description": "Règle « outils » : gksu répond une ligne contenant « incorrecte » (message synthétique : la détection dépend de la locale, MMYSQL-A01) : lg = 0, « Mot de passe invalide ! » (Entrée), aucun mysqldump ; Quitter.",
+ "dataset": "fusers_shared/fusers_base",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "outils": {
+  "gksu": {
+   "sortie": "mysqladmin: connexion au serveur 'db' impossible : identification incorrecte",
+   "hidden_argv": [
+    "*-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace"
+ ]
+}

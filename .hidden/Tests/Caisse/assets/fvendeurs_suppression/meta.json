@@ -1,0 +1,18 @@
+{
+ "id": "FVENDEURS-T04",
+ "objet": "Suppression du vendeur sélectionné puis sans sélection",
+ "classe": "Fvendeurs",
+ "description": "Menu206 ; clic sur le vendeur 1, code remplacé par 12, Supprimer (Button3), « Oui » (bouton 1 de Message.Question Fvendeurs.class:212, Entrée) : le vendeur 1 sélectionné est supprimé, pas le 12 (A01) ; code 2 saisi sans sélection (liste rechargée), Supprimer, « Oui » : erreur non interceptée sur Vendeur.Current (Fvendeurs.Button3_Click), figée en code 125 (A01).",
+ "dataset": "fvendeurs_shared/vendeurs",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

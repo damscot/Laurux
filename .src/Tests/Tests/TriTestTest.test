@@ -1,0 +1,136 @@
+' Gambas test file
+
+''Tests de TriTest (.hidden/reference/.src/Tests/TriTest.class/test.md), formulaire de test de TriGen.
+''Valeurs attendues : assets/TriTestTest/expected.txt, produites dans le clone de référence.
+''TriTest n'a ni menu ni appelant (aucun point d'entrée au rejeu) et la grille de TriGen n'est pas sélectionnable
+''au rejeu : le formulaire est instancié sans être affiché, sur le jeu Affichages/trigen_shared/liste_paginee.
+''L'objet TriGen (privé dans TriTest) est retrouvé comme observateur de la grille (Object.Parent) ; le clic sur une
+''ligne (Coltri_Click) et la touche Échap (Coltri_KeyPress → Close(Null), Key non simulable) sont appelés
+''directement ; la case « en stock » est cochée par sa valeur (déclenche CheckBox1_Click).
+''TRITEST-A01 (documentée) : la construction échoue (« Type mismatch: wanted ObjProp, got ResultField » dans
+''TriGen._new) ; chaque test fige d'abord cette erreur (Check normal) et ne poursuit que si le formulaire existe.
+
+Private $hF As TriTest
+Private $sErreur As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Selection", "Clic sur la 3e ligne (Coltri_Click) : TextBox1 = code, Bsel/Bval, contrôles de TriGen détruits du Panel")
+  TestKit.Desc("T02ExtraSel", "Case « en stock » cochée puis décochée : lignes de la grille limitée (ExtraSel) puis complète")
+  TestKit.Desc("T03Annulation", "Échap sans choix (Close(Null)) : TextBox1 vide, Bsel False, Stop Event : grille conservée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Tests", "TriTestTest")
+  TestKit.OuvreBase("Affichages/trigen_shared/liste_paginee")
+  $sErreur = ""
+  Try $hF = New TriTest
+  If Error Then $sErreur = "ERREUR: " & Error.Text & " (" & Error.Where & ")"
+
+End
+
+' Construction du formulaire (TRITEST-A01) : True si le test peut se poursuivre
+Private Sub Construit(sCle As String) As Boolean
+
+  TestKit.Check(sCle & "/construction", IIf($sErreur, $sErreur, "OK"))
+  Return Object.IsValid($hF)
+
+End
+
+Public Sub _Teardown()
+
+  If Object.IsValid($hF) Then Object.Lock($hF)
+
+End
+
+Private Sub Ctrl(sNom As String) As Object
+
+  Return $hF.Controls[sNom]
+
+End
+
+' Grille de TriGen dans Panel1 (Null si détruite)
+Private Sub Grid() As Object
+
+  Dim hC As Object
+  Dim hPan As Object
+
+  hPan = Ctrl("Panel1")
+  For Each hC In hPan.Children
+    If Object.Type(hC) = "GridView" Then Return hC
+  Next
+  Return Null
+
+End
+
+Private Sub Lignes() As String
+
+  Dim hG As Object
+  Dim i As Integer
+  Dim s As String
+
+  hG = Grid()
+  If IsNull(hG) Then Return "<pas de grille>"
+  s = hG.Rows.Count & " :"
+  For i = 0 To hG.Rows.Count - 1
+    s &= " " & hG[i, 0].Text
+  Next
+  Return s
+
+End
+
+Private Sub Etat(sCle As String)
+
+  Dim hT As Object
+
+  hT = Ctrl("TextBox1")
+  TestKit.Check(sCle & "/TextBox1", hT.Text)
+  TestKit.Check(sCle & "/Bsel", $hF.Bsel)
+  TestKit.Check(sCle & "/Bval", $hF.Bval)
+  TestKit.Check(sCle & "/grille", Lignes())
+
+End
+
+Public Sub T01Selection()
+
+  Dim hG As Object
+  Dim hTri As Object
+
+  If Not Construit("T01") Then Return
+  TestKit.Check("T01/grille initiale", Lignes())
+  hG = Grid()
+  hTri = Object.Parent(hG)
+  TestKit.Check("T01/observateur", Object.Type(hTri))
+  hG.Row = 2
+  TestKit.Check("T01/ligne choisie", hG[2, 0].Text)
+  hTri.Coltri_Click()
+  Etat("T01/après clic")
+
+End
+
+Public Sub T02ExtraSel()
+
+  Dim hC As Object
+
+  If Not Construit("T02") Then Return
+  hC = Ctrl("CheckBox1")
+  hC.Value = True
+  TestKit.Check("T02/en stock coché", Lignes())
+  hC.Value = False
+  TestKit.Check("T02/en stock décoché", Lignes())
+
+End
+
+Public Sub T03Annulation()
+
+  Dim hTri As Object
+
+  If Not Construit("T03") Then Return
+  hTri = Object.Parent(Grid())
+  hTri.Close(Null)
+  Etat("T03/après Échap")
+
+End

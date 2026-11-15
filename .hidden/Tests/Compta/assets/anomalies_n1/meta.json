@@ -1,0 +1,23 @@
+{
+ "classe": "Anomalies",
+ "dataset": "anomalies_shared/anomalies_mvt_cles",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "ANOMALIES-T03",
+ "objet": "Exercice N-1",
+ "description": "Anomalies (Menu324), jeu anomalies_shared/anomalies_mvt_cles (Fiches_Mvt1 : 2 lignes 2017 à clé fausse), N1, Traitement, « Traitement terminé. » validé par Entrée ; texte du PDF (pdftotext -layout via /Soc01/caisse/CmdVis, ~/edition.txt) : clé calculée sur Fiches_Mvt (A01 figée).",
+ "date": "2018-06-15 10:00:00",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

@@ -1,0 +1,46 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),ville Char(35),totf Char(12),tottc Char(12),PRIMARY KEY (code)) ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num)) ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where type = 'A' and totalht <> 0 and dtefac <= '20180615' or type = 'A' and totalht <> 0 and isnull(dtefac) order by cdclibl asc, dtefac desc
+SELECT * FROM Facturefm WHERE code = '411961'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411961', 'RET UN', '75000','PARIS','10,00', '12,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'A00401' order by num_ligbl
+INSERT INTO Bl (num, code, date, ht, ttc) Values ('A00401', '411961', '2017-01-10 00:00:00', 10, 12)
+SELECT * FROM Facturefm WHERE code = '411962'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411962', 'RET DEUX', '75000','PARIS','30,00', '36,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'A00403' order by num_ligbl
+INSERT INTO Bl (num, code, date, ht, ttc) Values ('A00403', '411962', '2017-01-10 00:00:00', 30, 36)
+SELECT * FROM Facturefm WHERE code = '411963'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc) Values ('411963', 'RET TROIS', '75000','PARIS','40,00', '48,00')
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'A00404' order by num_ligbl
+INSERT INTO Bl (num, code, date, ht, ttc) Values ('A00404', '411963', '2017-01-10 00:00:00', 40, 48)
+SELECT * FROM Facturefm order by nom
+SELECT * FROM Bl where code = '411962' order by num
+delete from Facturefm WHERE code = '411962' 
+delete from Bl WHERE code = '411962' 
+SELECT * FROM Facturefm order by nom
+SELECT * FROM Bl where code = '411961' order by num
+delete from Bl WHERE num = 'A00401' 
+SELECT * FROM Bl where code = '411961' order by num

@@ -1,0 +1,23 @@
+{
+ "classe": "FTVA",
+ "dataset": "ftva_multipage",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "FTVA-T06",
+ "objet": "Impression détaillée multipage",
+ "description": "Jeu ftva_multipage (gen_ftva_multipage.py : 70 lignes 445730 et 10 lignes 445660 au 1er trimestre 2018) : Detail coché, RadioBtnTrimestre, Trimestre 1, Imprimer (Button2) ; TVA.pdf converti par pdftotext -layout via /Soc01/caisse/CmdVis dans ~/edition.txt, comparé (en-têtes répétés, A04, pied de page) ; Fermer.",
+ "date": "2018-06-15 10:00:00",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

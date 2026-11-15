@@ -1,0 +1,18 @@
+{
+ "id": "CCLIENTS-T05",
+ "objet": "Édition des clients par mode de règlement : texte du PDF",
+ "classe": "Cclients",
+ "description": "Cli = 411100, Cli2 = 411105, Mreg = Chèque (index 1), Imprimer : SQL limité à cli_reg (plage ignorée, A01 figée), titre « Liste des clients Chèque ». Dérivé de Gestion/edclient_mode_reglement (EDCLIENT-T03) : test propre à Cclients.",
+ "dataset": "Gestion/edclient_shared/clients",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

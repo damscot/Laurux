@@ -1,0 +1,101 @@
+' Gambas test file
+
+''Tests de Echeances (.hidden/reference/.src/Compta/Echeances.class/test.md, ECHEANCES-T05, T08).
+''Écran instancié sans affichage (New Echeances) ; zones posées, simulateur Button5_Click appelé, résultat lu dans
+''les contrôles Dateech / Datej (affichage seul, non comparable au rejeu). Base Laurux01 (aucune écriture).
+''Valeurs attendues : assets/EcheancesTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05Simulateur", "30 j, 45 j fin de mois, 60 j le 10 sur 15.01, 31.01, 28.02.2018 : Dateech ; base inchangée")
+  TestKit.Desc("T08DateSimulateur", "Datej vide → date du jour ; 1502 et 150218 normalisés (310299 et 0 : Message.Error de Utils.Cdate_calc, non testables)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EcheancesTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Pose(hForm As Object, sNom As String, sTexte As String)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls[sNom]
+  hCtrl.Text = sTexte
+
+End
+
+Private Function Lit(hForm As Object, sNom As String) As String
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls[sNom]
+  Return hCtrl.Text
+
+End
+
+Private Function Simule(hForm As Object, sDuree As String, sJours As String, bFinm As Boolean, sDate As String) As String
+
+  Dim hChk As Object
+
+  Pose(hForm, "Cdech", "99")
+  Pose(hForm, "Dureech", sDuree)
+  Pose(hForm, "Joursech", sJours)
+  hChk = hForm.Controls["Finm"]
+  hChk.Value = bFinm
+  Pose(hForm, "Datej", sDate)
+  hForm.Button5_Click()
+  Return Lit(hForm, "Datej") & " -> " & Lit(hForm, "Dateech")
+
+End
+
+Private Function NbEcheances() As String
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT COUNT(*) AS nb FROM Fiches_Echeances")
+  If Not rResult.Available Then Return ""
+  Return rResult!nb
+
+End
+
+Public Sub T05Simulateur()
+
+  Dim hForm As Echeances
+  Dim sDate As String
+  Dim sAvant As String
+
+  sAvant = NbEcheances()
+  hForm = New Echeances
+  hForm.Form_Open()
+  For Each sDate In ["15.01.2018", "31.01.2018", "28.02.2018"]
+    TestKit.Check("T05/30j_" & sDate, Simule(hForm, "30", "00", False, sDate))
+    TestKit.Check("T05/45jfm_" & sDate, Simule(hForm, "45", "00", True, sDate))
+    TestKit.Check("T05/60jle10_" & sDate, Simule(hForm, "60", "10", True, sDate))
+  Next
+  TestKit.Check("T05/base_inchangee", NbEcheances() = sAvant)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T08DateSimulateur()
+
+  Dim hForm As Echeances
+  Dim sJour As String
+
+  hForm = New Echeances
+  hForm.Form_Open()
+  sJour = Format$(Now, "dd.mm.yyyy")
+  Simule(hForm, "30", "00", False, "1502")
+  TestKit.Check("T08/1502", Lit(hForm, "Datej") = "15.02." & Year(Now))
+  Simule(hForm, "30", "00", False, "150218")
+  TestKit.Check("T08/150218", Lit(hForm, "Datej"))
+  Simule(hForm, "30", "00", False, "")
+  TestKit.Check("T08/vide_aujourdhui", Lit(hForm, "Datej") = sJour)
+  Object.Lock(hForm)
+
+End

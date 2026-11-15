@@ -1,0 +1,146 @@
+' Gambas test file
+
+''Tests de Movr (.hidden/reference/.src/Gestion/Tables/Movr.class/test.md, MOVR-T06 (listes), MOVR-T07).
+''Écran instancié sans affichage (New Movr, Form_Open appelé) ; clics et doubles clics d'en-tête (non rejoués)
+''appelés directement (Co/Inte/Fo/Fa _Click et _Dblclick), Échap/F2 de Colmo_KeyPress remplacés par RdimColmo.
+''Contenu de Colmo lu dans Utils.rs1 (source de Colmo_Data). Base Laurux01.
+''Valeurs attendues : assets/MovrTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06Listes", "Listes fournisseur, famille et taux MO ouvertes sans saisie (F2 = ToggleButton1/3/5), choix de la 2e ligne au clic : zones remplies")
+  TestKit.Desc("T07TriGrille", "Clic puis double clic (x2) sur chaque en-tête Co/Inte/Fo/Fa, RdimColmo (Échap/F2) : ordre des lignes de Colmo")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "MovrTest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Grille(sCle As String, hForm As Object)
+
+  Dim hGrid As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  hGrid = hForm.Controls["Colmo"]
+  TestKit.Check(sCle & "/lignes", hGrid.Rows.Count)
+  For i = 0 To hGrid.Rows.Count - 1
+    Utils.rs1.MoveTo(i)
+    sRes &= "[" & Utils.rs1!mo_code & "|" & Utils.rs1!mo_four & "|" & Utils.rs1!mo_fam & "|" & Utils.rs1!mo_design & "]"
+  Next
+  TestKit.Check(sCle & "/ordre", sRes)
+
+End
+
+Private Sub Entete(hForm As Movr, sNom As String)
+
+  Select Case sNom
+    Case "Co"
+      hForm.Co_Click()
+      Grille("T07/" & sNom & "_clic", hForm)
+      hForm.Co_Dblclick()
+      Grille("T07/" & sNom & "_dbl1", hForm)
+      hForm.Co_Dblclick()
+      Grille("T07/" & sNom & "_dbl2", hForm)
+    Case "Inte"
+      hForm.Inte_Click()
+      Grille("T07/" & sNom & "_clic", hForm)
+      hForm.Inte_Dblclick()
+      Grille("T07/" & sNom & "_dbl1", hForm)
+      hForm.Inte_Dblclick()
+      Grille("T07/" & sNom & "_dbl2", hForm)
+    Case "Fo"
+      hForm.Fo_Click()
+      Grille("T07/" & sNom & "_clic", hForm)
+      hForm.Fo_Dblclick()
+      Grille("T07/" & sNom & "_dbl1", hForm)
+      hForm.Fo_Dblclick()
+      Grille("T07/" & sNom & "_dbl2", hForm)
+    Case "Fa"
+      hForm.Fa_Click()
+      Grille("T07/" & sNom & "_clic", hForm)
+      hForm.Fa_Dblclick()
+      Grille("T07/" & sNom & "_dbl1", hForm)
+      hForm.Fa_Dblclick()
+      Grille("T07/" & sNom & "_dbl2", hForm)
+  End Select
+
+End
+
+Public Sub T07TriGrille()
+
+  Dim hForm As Movr
+  Dim hGrid As Object
+  Dim iHaut As Integer
+
+  hForm = New Movr
+  hForm.Form_Open()
+  Grille("T07/ouverture", hForm)
+  Entete(hForm, "Co")
+  Entete(hForm, "Inte")
+  Entete(hForm, "Fo")
+  Entete(hForm, "Fa")
+  hGrid = hForm.Controls["Colmo"]
+  iHaut = hGrid.Height
+  hForm.RdimColmo()
+  TestKit.Check("T07/agrandie", hGrid.Height > iHaut)
+  Grille("T07/agrandie", hForm)
+  hForm.RdimColmo()
+  TestKit.Check("T07/reduite", hGrid.Height < iHaut + 1)
+  Object.Lock(hForm)
+
+End
+
+Private Sub Zones(sCle As String, hForm As Object)
+
+  Dim sNom As String
+  Dim hCtrl As Object
+  Dim sRes As String
+
+  For Each sNom In ["Four", "Fournom", "fam", "Libelfam", "Tva", "TxTva", "TxCmo", "Txht"]
+    hCtrl = hForm.Controls[sNom]
+    sRes &= "[" & sNom & "=" & hCtrl.Text & "]"
+  Next
+  TestKit.Check(sCle & "/zones", sRes)
+
+End
+
+Private Sub Liste(sCle As String, hForm As Object, sNom As String)
+
+  Dim hList As ColumnView
+
+  hList = hForm.Controls[sNom]
+  TestKit.Check(sCle & "/" & sNom & "_lignes", hList.Count)
+  hList.MoveFirst()
+  hList.MoveNext()
+  TestKit.Check(sCle & "/" & sNom & "_choix", hList.Item[0])
+
+End
+
+Public Sub T06Listes()
+
+  Dim hForm As Movr
+
+  hForm = New Movr
+  hForm.Form_Open()
+  hForm.ToggleButton1_Click()
+  Liste("T06/fournisseur", hForm, "Fourlist")
+  hForm.fourList_Click()
+  hForm.ToggleButton3_Click()
+  Liste("T06/famille", hForm, "FamList")
+  hForm.FamList_Click()
+  hForm.ToggleButton5_Click()
+  Liste("T06/taux", hForm, "CmoList")
+  hForm.CmoList_Click()
+  Zones("T06", hForm)
+  Object.Lock(hForm)
+
+End

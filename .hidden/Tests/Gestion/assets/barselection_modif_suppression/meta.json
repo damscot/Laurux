@@ -1,0 +1,20 @@
+{
+ "id": "BARSELECTION-T03",
+ "objet": "Modification validée, suppression annulée puis validée",
+ "classe": "barselection",
+ "description": "Tconsigne, jeu consigne_shared/consigne_base : Modification (4e bouton) de la 1re fiche (B1), prix effacé puis 3 ; Valider : UPDATE ; Suppression (5e bouton, libellé « Suppression ? ») puis Annuler (rollback, barre reconstruite) ; Suppression puis Valider (Tconsigne.bar1_suprimer est vide : aucune suppression) ; Suivant (barre utilisable) ; fermeture. Dump : prix de B1 = 3, 3 consignes.",
+ "dataset": "consigne_shared/consigne_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/bois": true
+ }
+}

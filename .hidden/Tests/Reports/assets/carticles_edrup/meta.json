@@ -1,0 +1,23 @@
+{
+ "id": "CARTICLES-T08",
+ "objet": "Édition des ruptures (EdRup) : texte du PDF",
+ "classe": "Carticles",
+ "description": "Jeu edrup_base (copie de CruptTest/crupt) : Gestion > Produits a commander (Menu253), plages par defaut, cases decochees, Imprimer : Crupt.Rupture (tables de travail Rupture/RuptureC dans le dump), Level13, articles stockes en rupture ; PDF Pcommande.pdf -> ~/edition.txt. Dérivé de Gestion/edrup_simple (EDRUP-T01) : test propre à Carticles.",
+ "dataset": "Gestion/edrup_shared/edrup_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

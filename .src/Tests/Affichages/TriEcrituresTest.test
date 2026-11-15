@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de TriEcritures (.hidden/reference/.src/Affichages/TriEcritures.class/test.md, TRIECRITURES-T03, T04 partiels).
+''Tests de TriEcritures (.hidden/reference/.src/Affichages/TriEcritures.class/test.md, TRIECRITURES-T02, T03, T04, T05 partiels).
 ''Écran instancié sans affichage (New TriEcritures(validee, sel, tresorerie)) sans passer par Saisecrit ni Tresor ;
 ''en-têtes activés par leurs gestionnaires publics (_Click, _Dblclick), pagination par Descendre/Remonter. La grille
 ''Ecrit lit Utils.rs1 (Utils.Base) : le test relève le nombre de lignes et les écritures (numéro|compte|libellé).
@@ -10,6 +10,8 @@
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T02Reprise", "Trésorerie, non validées puis validées : 1re ligne choisie (Ecrit_Click) : Comptabilite.snum/libelle/journal/Bsel")
+  TestKit.Desc("T05FermetureSansChoix", "Fermeture sans choix (Close) : Bsel faux ; filtre sans résultat puis choix : ancienne écriture conservée, Bsel vrai (A03)")
   TestKit.Desc("T03TriEntetes", "Ouverture validee 0/1 x trésorerie 0/1 ; clic sur chaque en-tête (non validées) : lignes de rs1")
   TestKit.Desc("T04Pagination", "Double-clic NUM2 x2, Descendre x2, Remonter x3 : lignes de rs1, pas de décalage négatif")
 
@@ -56,6 +58,49 @@ Public Sub T03TriEntetes()
     Grille("T03/" & sNom)
   Next
   Object.Lock(hForm)
+
+End
+
+Private Sub Reprise(sCle As String)
+
+  TestKit.Check(sCle, Comptabilite.Bsel & "|" & Comptabilite.snum & "|" & Comptabilite.libelle & "|" & Comptabilite.journal)
+
+End
+
+Public Sub T02Reprise()
+
+  Dim hForm As Object
+  Dim sVal As String
+
+  For Each sVal In ["0", "1"]
+    Comptabilite.Bsel = False
+    Comptabilite.snum = ""
+    Comptabilite.libelle = ""
+    Comptabilite.journal = ""
+    hForm = New TriEcritures(sVal, "", "1")
+    Grille("T02/liste_validee" & sVal)
+    hForm.Controls["Ecrit"].Row = 0
+    hForm.Ecrit_Click()
+    Reprise("T02/reprise_validee" & sVal)
+  Next
+
+End
+
+Public Sub T05FermetureSansChoix()
+
+  Dim hForm As Object
+
+  Comptabilite.Bsel = False
+  Comptabilite.snum = "ANCIEN"
+  Comptabilite.libelle = "Ancien libellé"
+  Comptabilite.journal = "OD"
+  hForm = New TriEcritures("0", "", "0")
+  hForm.Close()
+  Reprise("T05/echap")
+  hForm = New TriEcritures("0", "ZZZZZZ", "0")
+  Grille("T05/filtre_vide")
+  hForm.Ecrit_Click()
+  Reprise("T05/choix_grille_vide")
 
 End
 

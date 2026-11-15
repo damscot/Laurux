@@ -1,0 +1,56 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+CREATE TABLE Ciel_Lrx (Cciel Char(10),Intitule Char(30), Clrx Char(10), PRIMARY KEY (Cciel)) ENGINE = InnoDB
+CREATE TABLE Ciel_Lrx_Jo (Cciel Char(10),Intitule Char(30), Clrx Char(2), PRIMARY KEY (Cciel)) ENGINE = InnoDB
+SELECT imp_ciel FROM Fiches_Parametres
+ALTER TABLE Fiches_Parametres ADD (imp_ciel char(1))
+SELECT imp_ciel FROM Fiches_Parametres
+drop Table IF exists Cptabs
+CREATE TABLE Cptabs(code Char(8) NOT NULL,PRIMARY KEY (code)) ENGINE = InnoDB
+SELECT * FROM Fiches_Comptes where compte_cc = '51210000'
+SELECT * FROM Fiches_Journaux where code_jo = '50'
+SELECT * FROM Ciel_Lrx where Cciel = '411DUP'
+SELECT * FROM Fiches_Journaux where code_jo = '50'
+SELECT * FROM Cptabs
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres 
+SELECT numecriture FROM Fiches_Parametres 
+SELECT * FROM Ciel_Lrx_Jo Where Cciel = '50'
+SELECT * FROM Fiches_Journaux Where code_jo = '50'
+SELECT * FROM Fiches_Mvt Where compte = '51210000' and numdoc = '1CHQ001      '
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef) VALUES ('50', 1, '51210000', 'Banque                        ', '20180620', '1CHQ001      ', '1CHQ001      ', 'Reglement Dupont              ', 120, '0', 1, 0, '0', 0, 0, 1, 0, 1)
+SELECT * FROM Fiches_Comptes Where compte_cc = '51210000'
+UPdate Fiches_Comptes set solde = 120 Where compte_cc = '51210000'
+SELECT * FROM Ciel_Lrx_Jo Where Cciel = '50'
+SELECT * FROM Fiches_Journaux Where code_jo = '50'
+SELECT * FROM Ciel_Lrx Where Cciel = '411DUP  '
+SELECT * FROM Fiches_Mvt Where compte = '411001' and numdoc = '1CHQ001      '
+SELECT * FROM Fiches_Comptes Where compte_cc = '411001'
+INSERT INTO Fiches_Mvt(jour, numero, compte, collectif, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef) VALUES ('50', 1, '411000', '1', 'Client Dupont                 ', '20180620', '1CHQ001      ', '1CHQ001      ', 'Reglement Dupont              ', '0', '120', 1, 0, '0', 0, 0, 1, 0, 1)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411000'
+UPdate Fiches_Comptes set solde = -120 Where compte_cc = '411000'
+INSERT INTO Fiches_Mvt(jour, numero, compte, intitule, dte, numdoc, numlot, libelle, montantd, montantc, validee, provisoire, tresorerie, pointee, lettree, cloturee, relance, numerodef) VALUES ('50', 1, '411001', 'Client Dupont                 ', '20180620', '1CHQ001      ', '1CHQ001      ', 'Reglement Dupont              ', 0, '120', 1, 0, '0', 0, 0, 1, 0, 1)
+SELECT * FROM Fiches_Comptes Where compte_cc = '411001'
+UPdate Fiches_Comptes set solde = -120 Where compte_cc = '411001'
+UPdate Fiches_Parametres set numecriture = 1
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  imp_ciel = 1
+SELECT * from  Fiches_Mvt where compte = '51210000'
+Update Fiches_Mvt set tresorerie = 1, datee = '2018-06-20 00:00:00' where numero= 1

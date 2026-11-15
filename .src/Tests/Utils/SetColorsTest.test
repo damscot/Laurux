@@ -1,13 +1,15 @@
 ' Gambas test file
 
-''Tests de SetColors (.hidden/reference/.src/Utils/SetColors.class/test.md, SETCOLORS-T04, T05 en gb.test).
+''Tests de SetColors (.hidden/reference/.src/Utils/SetColors.class/test.md, SETCOLORS-T01, T04, T05 en gb.test).
 ''L'écran est instancié sans être affiché (sans Form_Open), les boutons « défaut » sont appelés et on relève les
-''clés /Coul/* de Start.LocalSettings et le fond des zones (Controls[…]). Pas de base. Les doubles-clics (T02, T03),
-''l'ouverture (T01) et RVBTexte (T06, après extraction) restent à faire.
+''clés /Coul/* de Start.LocalSettings et le fond des zones (Controls[…]). Pas de base. T01 : Form_Open appelé directement
+''(ShowDialog depuis Fmenu : la fermeture n'est pas rejouable et Laurux.conf n'est écrit qu'à la fermeture de Fmenu),
+''puis chaque zone à clé (Tag « /… ») est relevée. Les doubles-clics (T02, T03) et RVBTexte (T06) restent à faire.
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T01Ouverture", "Form_Open : zones initialisées depuis les clés /Coul de la configuration de test, parcours des 6 panneaux")
   TestKit.Desc("T04DefautZones", "Button2 : 5 clés /Coul (Fnets, Btns, Znss, Znaff, Focus) et fond des zones")
   TestKit.Desc("T05DefautDocuments", "Button3 : 4 clés /Coul (Coulfond, Coulfonds, Others, Other) et fond des zones")
 
@@ -62,6 +64,48 @@ Public Sub T05DefautDocuments()
   Try hF.Button3_Click()
   TestKit.Check("T05/erreur", IIf(Error, Error.Text, ""))
   Releve("T05", hF, ["Coulfond", "Coulfonds", "Others", "Other"], ["Docscli", "Others"])
+  Object.Lock(hF)
+
+End
+
+Private Sub Zones(sCle As String, hCont As Object)
+
+  Dim hCtrl As Object
+
+  For Each hCtrl In hCont.Children
+    If hCtrl Is Container Then Zones(sCle, hCtrl)
+    If hCtrl Is TextBox Then
+      If Left(hCtrl.Tag, 1) = "/" Then
+        TestKit.Check(sCle & "/" & hCtrl.Name & hCtrl.Tag, Hex$(hCtrl.Background, 6) & " " & Hex$(hCtrl.Foreground, 6) & " " & CStr(hCtrl.Alignment))
+      Endif
+    Endif
+  Next
+
+End
+
+Public Sub T01Ouverture()
+
+  Dim hF As SetColors
+  Dim hB As Object
+  Dim i As Integer
+
+  Try hF = New SetColors
+  If Error Then
+    TestKit.Check("T01/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  ' Quelques clés de référence (absentes de Laurux-test.conf) : fond, texte et alignement
+  Start.LocalSettings["/Coul/Stk"] = "background: 16711680;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 65280; foreground: 255;"
+  Start.LocalSettings["/Coul/Facts"] = "background: 16776960; alignment: 2;"
+  Try hF.Form_Open()
+  TestKit.Check("T01/erreur", IIf(Error, Error.Text, ""))
+  Zones("T01/zone", hF)
+  For i = 1 To 6
+    hB = hF.Controls["ToolButton" & CStr(i)]
+    Try hB.Value = True
+    TestKit.Check("T01/panneau" & CStr(i), IIf(Error, "ERREUR: " & Error.Text, Str$(hB.Value)))
+  Next
   Object.Lock(hF)
 
 End

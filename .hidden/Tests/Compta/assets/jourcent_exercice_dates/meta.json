@@ -2,19 +2,22 @@
  "id": "JOURCENT-T10",
  "objet": "Choix d'exercice et contrôles de date",
  "classe": "Jourcent",
- "description": "Jourcent (jeu extrait_shared/extrait_base : écritures 2018 dans Fiches_Mvt, 2017 dans Fiches_Mvt1) : N-1 puis Imprimer (période 2017, Fiches_Mvt1) ; saisie Du 01.01.2016 (hors bornes) + Entrée : Message.Warning « date inférieure au début de la période » (bouton unique Ok, Entrée) qui recharge l'exercice précédent (Exo) et recoche Exercice en cours ; Imprimer de nouveau ; Quitter.",
+ "description": "Jourcent (jeu extrait_shared/extrait_base : écritures 2018 dans Fiches_Mvt, 2017 dans Fiches_Mvt1) : N-1 puis Imprimer (période 2017, Fiches_Mvt1) ; saisie Du 01.01.2016 (hors bornes) + Entrée : Message.Warning « date inférieure au début de la période » (bouton unique Ok, Entrée) qui recharge l'exercice précédent (Exo) et recoche Exercice en cours ; Imprimer de nouveau ; Quitter. Vague 7 : le texte de chaque PDF (pdftotext -layout via /Soc01/caisse/CmdVis) est ajouté à ~/edition.txt et comparé ; cela remplace @ouvrir.trace et les mentions « PDF ouvert / non comparé » ci-dessus.",
  "dataset": "extrait_shared/extrait_base",
  "date": "2018-06-15 10:00:00",
  "args": [],
  "societe": "01",
  "timeout": 20,
  "fichiers": [
-  "@ouvrir.trace"
+  "edition.txt"
  ],
  "cadence": {
   "frappe": 50,
   "focus": 100,
   "traitement": 1000,
   "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
  }
 }

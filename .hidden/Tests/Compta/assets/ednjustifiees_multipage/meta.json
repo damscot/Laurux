@@ -1,0 +1,23 @@
+{
+ "id": "EDNJUSTIFIEES-T07",
+ "objet": "Multipage",
+ "classe": "EdNjustifiees",
+ "description": "Jeu ednj_multipage (gen_ednj_multipage.py : 411001, 70 lignes non lettrées, solde mémorisé faux) : Menu252, Imprimer ; texte du PDF (pdftotext -layout via /Soc01/caisse/CmdVis, ~/edition.txt) : en-têtes répétés après saut de page ; Quitter.",
+ "dataset": "ednj_multipage",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
+}

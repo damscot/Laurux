@@ -1,0 +1,23 @@
+{
+ "id": "CRUPT-T09",
+ "objet": "Impression des ruptures, cases décochées",
+ "classe": "Crupt",
+ "description": "Gestion › Produits à commander (Menu253, écran EdRup), jeu Gestion/edrup_shared/edrup_base, cases décochées, Imprimer : Crupt.Rupture (tables Rupture/RuptureC du dump) puis PDF Pcommande.pdf → ~/edition.txt (pdftotext).",
+ "dataset": "Gestion/edrup_shared/edrup_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,96 @@
+' Gambas test file
+
+''Tests de EditcompteA (.hidden/reference/.src/Compta/Impressions/EditcompteA.class/test.md, EDITCOMPTEA-T01, T02, T07 partiel).
+''Écran instancié sans affichage (New EditcompteA), gestionnaires appelés directement, contrôles lus par Controls ;
+''base Laurux01. La date du jour (fin de période de l'exercice en cours) et l'année/le mois courants sont masqués.
+''Valeurs attendues : assets/EditcompteATest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01BornesExercice", "Ouverture puis E1, N1 à N5, E0 : dteN0/dteN1, cpt/cpt2")
+  TestKit.Desc("T07Bbilan", "Bbilan puis Bgestion : plage de comptes Cpt/Cpt2 (partie F2/TriCpt non jouée)")
+  TestKit.Desc("T02SaisieDates", "dteN0 = 12, 12.10, 1210, 121025, 12.10.25 puis dteN0_LostFocus : texte obtenu (A03)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EditcompteATest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+
+End
+
+Private Function Masque(s As String) As String
+
+  s = Replace(s, Format$(Now, "dd.mm.yyyy"), "<jour>")
+  s = Replace(s, Format$(Now, "mm.yyyy"), "<mois>.<an>")
+  s = Replace(s, Format$(Now, "yyyy"), "<an>")
+  Return s
+
+End
+
+Private Sub Zones(sCle As String, hForm As Object)
+
+  Dim sNom As String
+  Dim hCtrl As Object
+
+  For Each sNom In ["DteN0", "Dten1", "Cpt", "Cpt2"]
+    hCtrl = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, Masque(hCtrl.Text))
+  Next
+
+End
+
+Public Sub T01BornesExercice()
+
+  Dim hForm As Object
+  Dim sBouton As String
+
+  hForm = New EditcompteA
+  Zones("T01/ouverture", hForm)
+  For Each sBouton In ["E1", "N1", "N2", "N3", "N4", "N5", "E0"]
+    Object.Call(hForm, sBouton & "_Click")
+    Zones("T01/" & sBouton, hForm)
+  Next
+  Object.Lock(hForm)
+
+End
+
+Public Sub T02SaisieDates()
+  ''Exercice en cours porté au 31.12.2099 et période E1 (01.01.2018 au 31.12.2099) : toutes les dates saisies sont dans
+  ''la période, aucun Message.Warning (bloquant en gb.test). « 1.2 » n'est pas saisi : son résultat dépend du mois
+  ''courant (Message.Error de Utils.Cdate_calc en décembre).
+
+  Dim hForm As Object
+  Dim hCtrl As Object
+  Dim sSaisie As String
+
+  Utils.db.Exec("UPDATE Fiches_Parametres SET dteclec = &1", Date(2099, 12, 31))
+  hForm = New EditcompteA
+  hForm.E1_Click()
+  Zones("T02/periode", hForm)
+  hCtrl = hForm.Controls["DteN0"]
+  For Each sSaisie In ["12", "12.10", "1210", "121025", "12.10.25"]
+    hCtrl.Text = sSaisie
+    hForm.dteN0_LostFocus()
+    TestKit.Check("T02/" & sSaisie, Masque(hCtrl.Text))
+  Next
+  Object.Lock(hForm)
+
+End
+
+Public Sub T07Bbilan()
+  ''F2 sur Cpt (TriCpt en mode Bilan) : non joué (Button4_Click ouvre TriCpt en ShowModal).
+
+  Dim hForm As Object
+
+  hForm = New EditcompteA
+  hForm.Bbilan_Click()
+  Zones("T07/Bbilan", hForm)
+  hForm.Bgestion_Click()
+  Zones("T07/Bgestion", hForm)
+  Object.Lock(hForm)
+
+End

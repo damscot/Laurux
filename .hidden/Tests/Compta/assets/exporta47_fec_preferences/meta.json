@@ -1,0 +1,23 @@
+{
+ "id": "EXPORTA47-T12",
+ "objet": "Préférences (adresse, chemin, Envoi)",
+ "classe": "ExportA47",
+ "description": "Export A47 (Menu298), Chemin-export = {out} (conf) : saisie de l'adresse « compta » dans Adrexport, case « Envoi par Mail » cochée, Quitter (Button6, enregistre Adr-export et Chemin-export) ; réouverture puis Quitter ; fermeture de Fmenu (écriture de Laurux.conf). Attendus : Adr-export/Chemin-export restaurés, /Expmail non enregistré (A06). Sélection du répertoire par Svs2 (Dialog) non jouée.",
+ "dataset": "exporta47_shared/exporta47_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Chemin-export": "{out}"
+ },
+ "fichiers": [
+  "@Laurux.conf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

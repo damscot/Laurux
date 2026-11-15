@@ -1,0 +1,112 @@
+' Gambas test file
+
+''Tests de Remisec (.hidden/reference/.src/Gestion/Tables/Remisec.class/test.md, REMISEC-T02, T05).
+''Écran instancié sans affichage (New Remisec, Form_Open appelé). La sélection d'une ligne et le clic d'en-tête de la
+''grille Tabtypec (RichDataGrid, non rejouables) sont produits par Row puis Object.Raise(Select / ColumnClick) sur la
+''GridView, ce qui déclenche les gestionnaires de RichDataGrid puis Tabtypec_Select. Base Laurux01 + 3 remises
+''insérées par le test (01/01 7,5 ; 02/02 12,345 ; 03/03 0). Valeurs attendues : assets/RemisecTest/expected.txt.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02Modification", "Sélection de la ligne 02/02, remise 10, Enregistrer : remise mise à jour")
+  TestKit.Desc("T05AffichageGrille", "Textes de la grille (colonne Remise, A02), tri par clic sur l'en-tête Remise (deux fois)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "RemisecTest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Utils.db.Exec("INSERT INTO Fiches_RemTypec (coder, codef, remise) VALUES ('01', '01', 7.5)")
+  Utils.db.Exec("INSERT INTO Fiches_RemTypec (coder, codef, remise) VALUES ('02', '02', 12.345)")
+  Utils.db.Exec("INSERT INTO Fiches_RemTypec (coder, codef, remise) VALUES ('03', '03', 0)")
+
+End
+
+Private Sub Grille(sCle As String, hForm As Object)
+
+  Dim hGrid As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  hGrid = hForm.Controls["Tabtypec"]
+  TestKit.Check(sCle & "/lignes", hGrid.Rows.Count)
+  For i = 0 To hGrid.Rows.Count - 1
+    sRes &= "[" & hGrid[i, 1].Text & "|" & hGrid[i, 2].Text & "|" & hGrid[i, 3].Text & "]"
+  Next
+  TestKit.Check(sCle & "/textes", sRes)
+
+End
+
+Private Sub Zones(sCle As String, hForm As Object)
+
+  Dim sNom As String
+  Dim hCtrl As Object
+  Dim sRes As String
+
+  For Each sNom In ["Cdt", "Libeltype", "Cdf", "Libelfam", "Remise"]
+    hCtrl = hForm.Controls[sNom]
+    sRes &= "[" & sNom & "=" & hCtrl.Text & "]"
+  Next
+  TestKit.Check(sCle & "/zones", sRes)
+
+End
+
+Private Sub Remises(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT coder, codef, remise FROM Fiches_RemTypec ORDER BY coder, codef")
+  If Not rResult.Available Then
+    TestKit.Check(sCle & "/base", "<aucune>")
+    Return
+  Endif
+  Repeat
+    TestKit.Check(sCle & "/base_" & rResult.Index, rResult!coder & "|" & rResult!codef & "|" & rResult!remise)
+  Until rResult.MoveNext()
+
+End
+
+Public Sub T02Modification()
+
+  Dim hForm As Remisec
+  Dim hGrid As Object
+  Dim hCtrl As Object
+
+  hForm = New Remisec
+  hForm.Form_Open()
+  Grille("T02/ouverture", hForm)
+  hGrid = hForm.Controls["Tabtypec"]
+  hGrid.Row = 1
+  Object.Raise(hGrid, "Select")
+  Zones("T02/selection", hForm)
+  hCtrl = hForm.Controls["Remise"]
+  hCtrl.Text = "10"
+  hForm.Button3_Click()
+  Zones("T02/apres", hForm)
+  Grille("T02/apres", hForm)
+  Remises("T02")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T05AffichageGrille()
+
+  Dim hForm As Remisec
+  Dim hGrid As Object
+
+  hForm = New Remisec
+  hForm.Form_Open()
+  Grille("T05/ouverture", hForm)
+  hGrid = hForm.Controls["Tabtypec"]
+  Object.Raise(hGrid, "ColumnClick", [3])
+  Grille("T05/tri_remise_1", hForm)
+  Object.Raise(hGrid, "ColumnClick", [3])
+  Grille("T05/tri_remise_2", hForm)
+  Object.Lock(hForm)
+
+End

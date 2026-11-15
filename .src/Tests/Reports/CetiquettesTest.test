@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Cetiquettes (.hidden/reference/.src/Reports/Cetiquettes.class/test.md, CETIQUETTES-T01 à T05).
+''Tests de Cetiquettes (.hidden/reference/.src/Reports/Cetiquettes.class/test.md, CETIQUETTES-T01 à T06).
 ''Chaque test produit un PDF non compressé (SetCompression(False)) dans un fichier temporaire et vérifie :
 ''le texte rendu par « pdftotext -layout » (une clé par ligne non vide), le nombre et la taille des pages
 ''(pdfinfo) et l'empreinte md5 du fichier PDF (flux : positions, polices, couleurs), après masquage de
@@ -15,6 +15,7 @@ Public Sub _Desc()
   TestKit.Desc("T03Prix", "Tva, PrixHt, PrixTTC, PrixTTCB, PrixHtP, PrixTTCP en fontratio 1,0 et 0,7")
   TestKit.Desc("T04Barcode", "Barcode : défauts, hauteur 4.6666, largeur 70, fontratio 0,3 et 1,0, code de 12 caractères")
   TestKit.Desc("T05Cadres", "Rectangle, Rectangle2, NewPage sur A4 (2 pages), dymog et dymoc")
+  TestKit.Desc("T06Planches", "Séquence d'Etiqcasier : planche A4 3 x 8 de 30 étiquettes (2 pages, EAN13 valide ou absent), puis 2 étiquettes dymoc")
 
 End
 
@@ -192,5 +193,85 @@ Public Sub T05Cadres()
     pdf.Rectangle2(1, 1, 20, 10)
     Verifie("T05/" & sFmt, pdf)
   Next
+
+End
+
+' CETIQUETTES-T06 : appels de Cetiquettes dans l'ordre d'Etiqcasier (Imprime_Etiq / pos_Etiq) sur une planche A4
+' de 3 x 8 étiquettes (70 x 33,9 mm, marges 5 et 10 mm) : 30 étiquettes, donc 2 pages ; puis le format dymoc.
+Public Sub T06Planches()
+
+  Dim pdf As Cetiquettes = Nouveau("Portrait", "A4")
+  Dim Largeur As Float = 70
+  Dim Hauteur As Float = 33.9
+  Dim Mrghaut As Float = 10
+  Dim Mrgauche As Float = 5
+  Dim Esplargeur As Float = 0
+  Dim Esphauteur As Float = 0
+  Dim Nbetiq As Integer = 1
+  Dim i2, i As Integer
+  Dim txtPosX, txtPosY, FontRatio As Float
+  Dim sCode, sBarre As String
+
+  pdf.NewPage()
+  txtPosY = Mrghaut
+  For i = 1 To 30
+    ' pos_Etiq d'Etiqcasier
+    If Nbetiq = 1 Then
+      txtPosY = Mrghaut
+      txtPosX = 2 + Mrgauche
+    Else
+      txtPosX = 2 + Mrgauche + (Largeur * (Nbetiq - 1)) + Esplargeur
+    Endif
+    If Nbetiq > 3 Then
+      Nbetiq = 1
+      txtPosX = 2 + Mrgauche
+      txtPosY = txtPosY + Hauteur + Esphauteur
+      Inc i2
+      If i2 >= 8 Then
+        pdf.NewPage()
+        i2 = 0
+        txtPosY = Mrghaut
+      Endif
+    Endif
+    sCode = "ART" & Format$(i, "000")
+    sBarre = IIf(i Mod 3 = 0, "", "301234567890" & CStr(EanCle("301234567890")))
+    FontRatio = Largeur / 100.0
+    pdf.casier("C" & (i Mod 7), txtPosX + (2 * FontRatio), txtPosY + (2 * FontRatio), FontRatio + 0.3)
+    pdf.Code(sCode, txtPosX, txtPosY + (8 * FontRatio), FontRatio + 0.3)
+    pdf.stock(CStr(i * 2), txtPosX + (Largeur - (14 * FontRatio)), txtPosY + (8 * FontRatio), FontRatio + 0.3)
+    pdf.Intitule(Left$("ARTICLE DE TEST AU LIBELLE TRES LONG POUR LA TRONCATURE " & i, 45), txtPosX, txtPosY + (12 * FontRatio), FontRatio)
+    If Len(sBarre) = 13 Then pdf.Barcode(sBarre, txtPosX + 2, txtPosY + ((2 * Hauteur) / 3) - (Hauteur / 6), (Hauteur / 3), (Largeur - 6), FontRatio)
+    Inc Nbetiq
+  Next
+  Verifie("T06/a4", pdf)
+
+  pdf = Nouveau("Portrait", "dymoc")
+  pdf.NewPage()
+  Largeur = 25
+  Hauteur = 25
+  txtPosX = 2
+  txtPosY = 0
+  FontRatio = Largeur / 50.0
+  For i = 1 To 2
+    If i = 2 Then pdf.NewPage()
+    pdf.casierc("C" & i, txtPosX, txtPosY + (6 * FontRatio), FontRatio + 0.4)
+    pdf.Codec("ART" & Format$(i, "000"), txtPosX, txtPosY + (14 * FontRatio), FontRatio + 0.3)
+    pdf.Intitulec(Left$("ARTICLE DYMO AU LIBELLE LONG " & i, 25), txtPosX, txtPosY + (17 * FontRatio), FontRatio + 0.3)
+    pdf.Barcode("301234567890" & CStr(EanCle("301234567890")), txtPosX, txtPosY + ((2 * Hauteur) / 3) - (Hauteur / 7), (Hauteur / 6), (Largeur - 6), FontRatio)
+    pdf.stockc(CStr(i * 5), txtPosX, txtPosY + (35 * FontRatio), FontRatio + 0.3)
+  Next
+  Verifie("T06/dymoc", pdf)
+
+End
+
+' Clé de contrôle EAN13 d'un code de 12 chiffres.
+Private Function EanCle(sCode As String) As Integer
+
+  Dim i, iSom As Integer
+
+  For i = 1 To 12
+    iSom += CInt(Mid$(sCode, i, 1)) * IIf(i Mod 2 = 0, 3, 1)
+  Next
+  Return (10 - (iSom Mod 10)) Mod 10
 
 End

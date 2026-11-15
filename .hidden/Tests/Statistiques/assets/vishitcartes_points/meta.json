@@ -1,0 +1,23 @@
+{
+ "id": "VISHITCARTES-T01",
+ "objet": "Affichage et impression, tri par points",
+ "classe": "VisHitCartes",
+ "description": "HitCarte par défaut (10 premiers, tri par points), Traitement ; VisHitCartes : Imprimer, texte du PDF (cartes classées par points) dans edition.txt.",
+ "dataset": "hitcarte_shared/cartes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

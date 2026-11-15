@@ -1,0 +1,143 @@
+' Gambas test file
+
+''Tests de Preferences (.hidden/reference/.src/Caisse/Preferences.class/test.md, PREFERENCES-T01 à T03).
+''Écran instancié sans affichage (New Preferences) : _new lit /Soc01/caisse/* ; Form_Close appelé directement écrit
+''les clés (Start.LocalSettings) ; on relit chaque clé de la section caisse. Object.Lock évite un second Form_Close.
+''T04 (Dialog.SelectDirectory), T05 (passe par l'écran Caisse) et T06 (après PREFERENCES-003) restent à faire.
+''Valeurs attendues : assets/PreferencesTest/expected.txt (clone de référence).
+
+Private Const CLES As String = "logo,admin,admin2,qt1,ctrlstk,recapbonus,recapsoldecli,ilogo,ordre,lieu,Font,intitule,son,balance,Tbalance,portb,choiximp,choiximp2,choiximpn,choiximpc,histocli,nbf,tactile,tircarte,affusbwn,choixtouches,Tfamilles,ChmZ,Cimp,CmdImp,CmdVis,TKpdf,FACpdf"
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01AllerRetour", "Toutes les clés caisse renseignées : ouverture puis Form_Close sans modification, clés relues")
+  TestKit.Desc("T02ConfVide", "Section caisse absente : Form_Close crée les clés avec les valeurs par défaut (nbf 1, police Serif,9)")
+  TestKit.Desc("T03Modification", "Chaque case basculée et chaque zone saisie : chaque clé écrite par Form_Close")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "PreferencesTest")
+
+End
+
+Private Sub VideCaisse()
+
+  Dim sCle As String
+
+  For Each sCle In Split(CLES)
+    Try Start.LocalSettings.Clear("/Soc01/caisse/" & sCle)
+  Next
+
+End
+
+Private Sub ReleveCles(sPrefixe As String)
+
+  Dim sCle As String
+  Dim vVal As Variant
+
+  For Each sCle In Split(CLES)
+    vVal = Start.LocalSettings["/Soc01/caisse/" & sCle]
+    If IsNull(vVal) Then
+      TestKit.Check(sPrefixe & "/" & sCle, "<absente>")
+    Else
+      TestKit.Check(sPrefixe & "/" & sCle, vVal)
+    Endif
+  Next
+
+End
+
+Public Sub T01AllerRetour()
+
+  Dim hForm As Object
+
+  VideCaisse()
+  Start.LocalSettings["/Soc01/caisse/logo"] = False
+  Start.LocalSettings["/Soc01/caisse/admin"] = True
+  Start.LocalSettings["/Soc01/caisse/admin2"] = False
+  Start.LocalSettings["/Soc01/caisse/qt1"] = True
+  Start.LocalSettings["/Soc01/caisse/ctrlstk"] = True
+  Start.LocalSettings["/Soc01/caisse/recapbonus"] = True
+  Start.LocalSettings["/Soc01/caisse/recapsoldecli"] = False
+  Start.LocalSettings["/Soc01/caisse/ilogo"] = "/tmp/logo.png"
+  Start.LocalSettings["/Soc01/caisse/ordre"] = "SARL TEST"
+  Start.LocalSettings["/Soc01/caisse/lieu"] = "NANTES"
+  Start.LocalSettings["/Soc01/caisse/Font"] = "Sans,10"
+  Start.LocalSettings["/Soc01/caisse/intitule"] = "Intitulé"
+  Start.LocalSettings["/Soc01/caisse/son"] = True
+  Start.LocalSettings["/Soc01/caisse/balance"] = True
+  Start.LocalSettings["/Soc01/caisse/Tbalance"] = "Dibal"
+  Start.LocalSettings["/Soc01/caisse/portb"] = "/dev/ttyS0"
+  Start.LocalSettings["/Soc01/caisse/choiximp"] = True
+  Start.LocalSettings["/Soc01/caisse/choiximp2"] = False
+  Start.LocalSettings["/Soc01/caisse/choiximpn"] = True
+  Start.LocalSettings["/Soc01/caisse/choiximpc"] = False
+  Start.LocalSettings["/Soc01/caisse/histocli"] = True
+  Start.LocalSettings["/Soc01/caisse/nbf"] = "2"
+  Start.LocalSettings["/Soc01/caisse/tactile"] = True
+  Start.LocalSettings["/Soc01/caisse/tircarte"] = True
+  Start.LocalSettings["/Soc01/caisse/affusbwn"] = False
+  Start.LocalSettings["/Soc01/caisse/choixtouches"] = True
+  Start.LocalSettings["/Soc01/caisse/Tfamilles"] = True
+  Start.LocalSettings["/Soc01/caisse/ChmZ"] = "/tmp/z"
+  Start.LocalSettings["/Soc01/caisse/Cimp"] = "Ticket"
+  Start.LocalSettings["/Soc01/caisse/CmdImp"] = "lpr -P Ticket"
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = "evince"
+  Start.LocalSettings["/Soc01/caisse/TKpdf"] = True
+  Start.LocalSettings["/Soc01/caisse/FACpdf"] = False
+  hForm = New Preferences
+  hForm.Form_Close()
+  ReleveCles("T01")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T02ConfVide()
+
+  Dim hForm As Object
+
+  VideCaisse()
+  hForm = New Preferences
+  hForm.Form_Close()
+  ReleveCles("T02")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T03Modification()
+
+  Dim hForm As Object
+  Dim sCtrl As String
+  Dim hCtrl As Object
+
+  VideCaisse()
+  hForm = New Preferences
+  For Each sCtrl In Split("Admin,Admin2,Qt1,Ctrlstk,RecapBonus,RecapSoldeCli,Son,ChoixImp,HistoCli,ChoixImp2,ChoixImpc,ChoixImpn,Tircarte,GestAffUSB,ChoixTouches,Tfamille,Tactile,Balance,Logo,TKpdf,FACpdf")
+    hCtrl = hForm.Controls[sCtrl]
+    hCtrl.Value = True
+  Next
+  hCtrl = hForm.Controls["Ordre"]
+  hCtrl.Text = "ORDRE T03"
+  hCtrl = hForm.Controls["Lieu"]
+  hCtrl.Text = "RENNES"
+  hCtrl = hForm.Controls["Nbf"]
+  hCtrl.Text = "3"
+  hCtrl = hForm.Controls["TypeB"]
+  hCtrl.Text = "Mettler"
+  hCtrl = hForm.Controls["Portb"]
+  hCtrl.Text = "/dev/ttyUSB0"
+  hCtrl = hForm.Controls["ChmZ"]
+  hCtrl.Text = "/tmp/tickets_z"
+  hCtrl = hForm.Controls["CmdImp"]
+  hCtrl.Text = "lp -d caisse"
+  hCtrl = hForm.Controls["CmdVis"]
+  hCtrl.Text = "okular"
+  hCtrl = hForm.Controls["FontChooser1"]
+  hCtrl.SelectedFont = "Monospace,12"
+  hForm.Form_Close()
+  ReleveCles("T03")
+  Object.Lock(hForm)
+
+End

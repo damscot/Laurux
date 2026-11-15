@@ -30,6 +30,7 @@ Public Sub _Desc()
   TestKit.Desc("T19Ciel", "`Ciel`")
   TestKit.Desc("T20MkdirRmdir", "`Mkdir_p`, `Rmdir_rf`")
   TestKit.Desc("T21Log", "`Log`")
+  TestKit.Desc("T23ObserversCouleurs", "`Observers` (Coul_fen 1 puis 0), `ObsGotf`, `ObsLstf`, `ObsLstf2`, `SetEditColor` : couleurs de fond")
 
 End
 
@@ -616,5 +617,103 @@ Public Sub T21Log()
   TestKit.Check("T21/objet/nb_loggers", Start.LLogColl.Count)
   TestKit.Check("T21/objet/existe", Start.LLogColl.Exist("Collection"))
   TestKit.Check("T21/objet/active", Start.LLogColl["Collection"].Enabled)
+
+End
+
+' UTILS-T23 : couleurs de fond relevées sur une fenêtre non affichée (au lieu de FClient, écran complexe) ; couleurs
+' /Coul/* posées par le test. L'enregistrement des ReplayObserver est couvert par REPLAYOBSERVER-T02 à T04.
+Private Sub Fond(hF As Form) As String
+
+  Dim hCtrl As Object
+  Dim s As String
+
+  Dim sNom As String
+
+  ' contrôles créés par le test seulement (les sous-contrôles internes de GridView/ComboBox ont des noms instables)
+  s = "Form=" & hF.Background
+  For Each sNom In ["t1", "t2", "t3", "b1", "g1", "c1", "p1"]
+    hCtrl = hF.Controls[sNom]
+    s &= " " & sNom & "=" & hCtrl.Background
+  Next
+  Return s
+
+End
+
+Private Sub FenetreT23() As Form
+
+  Dim hF As New Form
+  Dim hCtrl As Object
+
+  hCtrl = New TextBox(hF)
+  hCtrl.Name = "t1"
+  hCtrl.Tag = 1
+  hCtrl = New TextBox(hF)
+  hCtrl.Name = "t2"
+  hCtrl.Tag = 2
+  hCtrl = New TextBox(hF)
+  hCtrl.Name = "t3"
+  hCtrl.ReadOnly = True
+  hCtrl = New Button(hF)
+  hCtrl.Name = "b1"
+  hCtrl = New GridView(hF)
+  hCtrl.Name = "g1"
+  hCtrl = New ComboBox(hF)
+  hCtrl.Name = "c1"
+  hCtrl = New Panel(hF)
+  hCtrl.Name = "p1"
+  Return hF
+
+End
+
+Public Sub T23ObserversCouleurs()
+
+  Dim hF As Form
+  Dim hT As Object
+  Dim iCoul As Integer
+  Dim hCb As ComboBox
+
+  Start.LocalSettings["/Coul/Fnets"] = "background: 1;"
+  Start.LocalSettings["/Coul/Btns"] = "background: 2;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 3;"
+  Start.LocalSettings["/Coul/Znaff"] = "background: 4;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 5;"
+  Start.LocalSettings["/Soc" & Start.Societe & "/Coul_fen"] = 1
+  hF = FenetreT23()
+  Utils.Observers(hF)
+  TestKit.Check("T23/Observers Coul_fen=1", Fond(hF))
+  Start.LocalSettings["/Soc" & Start.Societe & "/Coul_fen"] = 0
+  hF = FenetreT23()
+  Utils.Observers(hF)
+  TestKit.Check("T23/Observers Coul_fen=0", Fond(hF))
+
+  hT = hF.Controls["t1"]
+  hT.Background = 77
+  iCoul = Utils.ObsGotf(hT)
+  TestKit.Check("T23/ObsGotf retour", iCoul)
+  TestKit.Check("T23/ObsGotf fond", hT.Background)
+  Utils.ObsLstf(hT, iCoul)
+  TestKit.Check("T23/ObsLstf(coul) fond", hT.Background)
+  Utils.ObsGotf(hT)
+  Utils.ObsLstf(hT)
+  TestKit.Check("T23/ObsLstf(Null) fond", hT.Background)
+  hT = hF.Controls["t3"]
+  hT.Background = 88
+  TestKit.Check("T23/ObsGotf lecture seule retour", Utils.ObsGotf(hT))
+  TestKit.Check("T23/ObsGotf lecture seule fond", hT.Background)
+
+  hCb = hF.Controls["c1"]
+  Utils.ObsLstf2(hCb)
+  TestKit.Check("T23/ObsLstf2 fond", hCb.Background)
+  hCb.ReadOnly = True
+  Utils.ObsLstf2(hCb)
+  TestKit.Check("T23/ObsLstf2 lecture seule fond", hCb.Background)
+
+  hF = FenetreT23()
+  hT = hF.Controls["t3"]
+  hT.Background = &HD4D0C8&
+  Utils.SetEditColor(hF, hF.Controls["t1"])
+  TestKit.Check("T23/SetEditColor t1", Fond(hF))
+  Utils.SetEditColor(hF, hF.Controls["t2"])
+  TestKit.Check("T23/SetEditColor t2", Fond(hF))
 
 End

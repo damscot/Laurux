@@ -1,0 +1,21 @@
+{
+ "id": "RAZDEVIS-T04",
+ "classe": "RazDevis",
+ "objet": "Collision des sauvegardes EffaceD.sql (devis puis clients divers)",
+ "description": "Jeu devis_base : purge des devis (RazDevis, Oui) puis purge des clients divers (RazClientd, Oui). Attendu : ~/Sauve/Laurux01EffaceD.sql ne contient que le 2e dump (pris après la purge des devis : devis 900001 absent), écrasé par RazClientd (comportement figé RAZCLIENTD-A02) ; cas « sans mysqldump » : razdevis_sans_mysqldump.",
+ "dataset": "razdevis_shared/devis_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 35,
+ "timeout_accord": "utilisateur, 2026-11-15 : 28,2 s mesurées sous charge (vague 7) ; purge des devis puis RazClientd, deux mysqldump complets",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "Sauve/Laurux01EffaceD.sql"
+ ]
+}

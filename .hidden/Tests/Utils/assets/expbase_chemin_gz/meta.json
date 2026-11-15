@@ -1,0 +1,27 @@
+{
+ "id": "EXPBASE-T03",
+ "objet": "Chemin du fichier joint (Compression = -1)",
+ "classe": "Expbase",
+ "description": "/Rep_Sauv = /tmp/sauve, /Compression = -1, /Soc01/Adr-base et /Soc01/Prgmail = Thunderbird ; Exporter : EnvMail.Envoi2 lance « thunderbird -compose » (faux programme, tracé dans outils.trace) avec la pièce jointe /tmp/sauve/Laurux01.sql.gz (le fichier n'est pas vérifié) ; Quitter.",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Rep_Sauv": "/tmp/sauve",
+  "/Compression": -1,
+  "/Soc01/Adr-base": "comptable@laurux-test.fr",
+  "/Soc01/Prgmail": "Thunderbird"
+ },
+ "fichiers": [
+  "@outils.trace"
+ ]
+}

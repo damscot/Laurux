@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Cdocuments (.hidden/reference/.src/Reports/Cdocuments.class/test.md, CDOCUMENTS-T01, T03, T04, T12).
+''Tests de Cdocuments (.hidden/reference/.src/Reports/Cdocuments.class/test.md, CDOCUMENTS-T01 à T05, T07, T09, T10, T12).
 ''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
 ''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
 ''Valeurs attendues : assets/CdocumentsTest/expected.txt, produites dans le clone de référence. Pas de base.
@@ -12,6 +12,10 @@ Public Sub _Desc()
   TestKit.Desc("T02EnteteLogos", "Entete avec glogo, glogo3, les deux (image 200 px) et image de 5 px (A02)")
   TestKit.Desc("T03EnteteArite", "Entete appelé avec 18 arguments (A01) : erreur figée")
   TestKit.Desc("T04FactureRegimes", "Level2F/Level3F/Level7F/Level10F : régime normal, TTC, auto-entrepreneur, franchise, exonéré")
+  TestKit.Desc("T05EdcomMultipage", "Séquence d'Edcom : commande fournisseur de 40 lignes, saut à PosY >= 280 (2 pages), Level4")
+  TestKit.Desc("T07EdbrMultipage", "Séquence d'Edbr (ValidBR) : BR de 60 lignes, saut à PosY >= 250 (date de suite = paramètre dater), Level3br, Level7F/Level9F/Level10F/Level11F")
+  TestKit.Desc("T09EdprepListe", "Séquence d'EdPrep (partie Cdocuments, paysage) : 12 commandes détaillées, téléphones, commentaires, saut à 194")
+  TestKit.Desc("T10EdfamMultipage", "Séquence d'EdFam : 60 familles, saut à PosY >= 278 (2 pages), en-tête et pied répétés")
   TestKit.Desc("T12Gabarits", "EnteteN, EnteteP, Lines, LinesLG, LinesP, Level4, Level4D, Level4F, Level4aF, BasPage, BasPageP")
 
 End
@@ -184,5 +188,164 @@ Public Sub T02EnteteLogos()
   EnteteLogo("T02/glogo3", False, True, 200)
   EnteteLogo("T02/deux", True, True, 200)
   EnteteLogo("T02/etroit", True, False, 5)
+
+End
+
+' CDOCUMENTS-T05 : appels de Cdocuments dans l'ordre d'Edcom.Button1_Click (commande fournisseur de 40 lignes,
+' saut de page à PosY >= 280 par Entete/Entete2/Level1/Level2 sans BasPage, total par Level4).
+Public Sub T05EdcomMultipage()
+
+  Dim pdf As Cdocuments = Nouveau("Portrait")
+  Dim PosY As Integer
+  Dim i As Integer
+  Dim Totcom As Float
+
+  pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "0240000000", "0600000000", "0240000001", "test@exemple.fr", "www.exemple.fr", "", "France", "IBAN FR76", False, "Libre")
+  pdf.Entete2("FOURNISSEUR UN", "2 rue des Lilas", "", "75001 PARIS", "France", "0140000000", False)
+  pdf.Level1("15.06.2018", "F0001")
+  pdf.Level2(True)
+  PosY = 105
+  For i = 1 To 40
+    pdf.Level3("ART" & Format$(i, "00"), "ARTICLE NUMERO " & i, "2", "10.00", "5", "9.50", "19.00", False, "", PosY)
+    Totcom += 19
+    PosY += 5
+    If PosY >= 280 Then
+      pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "0240000000", "0600000000", "0240000001", "test@exemple.fr", "www.exemple.fr", "", "France", "IBAN FR76", False, "Libre")
+      pdf.Entete2("FOURNISSEUR UN", "2 rue des Lilas", "", "75001 PARIS", "France", "0140000000", False)
+      pdf.Level1("15.06.2018", "F0001")
+      pdf.Level2(True)
+      PosY = 105
+    Endif
+  Next
+  pdf.Level4(Format$(Totcom, " 0.00"), PosY + 5)
+  Verifie("T05", pdf)
+
+End
+
+' Saut de page de la liste de préparation (EdPrep) : BaspageP, EnteteP, Level1d.
+Private Sub SautEdprep(pdf As Cdocuments, ByRef PosY As Integer)
+
+  If PosY < 194 Then Return
+  pdf.BaspageP()
+  pdf.EnteteP("Impression des bons de préparation")
+  PosY = 26
+  pdf.Level1d(PosY)
+  PosY += 10
+
+End
+
+' CDOCUMENTS-T09 : appels de Cdocuments dans l'ordre d'EdPrep (liste paysage, détail activé) : 12 commandes,
+' ligne de téléphones, 2 lignes article et un commentaire de 2 lignes par commande, saut à PosY >= 194.
+Public Sub T09EdprepListe()
+
+  Dim pdf As Cdocuments = Nouveau("l")
+  Dim PosY As Integer
+  Dim i, j As Integer
+  Dim sLigne As String
+
+  pdf.EnteteP("Impression des bons de préparation")
+  PosY = 16
+  pdf.Level1d(PosY)
+  PosY += 10
+  pdf.LinesLG(PosY)
+  For i = 1 To 12
+    pdf.level2d("C", "M. CLIENT " & i, i & " rue des Lilas", "Batiment " & i, "4400" & (i Mod 10) & " NANTES", "15/06/2018", "C" & Format$(i, "0000"), Format$(i * 12.5, "0.00"), PosY, "", True, i Mod 2 = 0)
+    PosY += 4
+    pdf.level2d("", "", "024000000" & (i Mod 10), "12", "060000000" & (i Mod 10), "", "", "", PosY, "", True, "")
+    PosY += 4
+    SautEdprep(pdf, ByRef PosY)
+    For j = 1 To 2
+      pdf.level2DLG("ART" & i & "-" & j, "ARTICLE " & j & " DE LA COMMANDE " & i, CStr(j), Format$(j * 6.25, "0.00"), PosY)
+      PosY += 4
+      SautEdprep(pdf, ByRef PosY)
+    Next
+    For Each sLigne In ["Commentaire " & i & " ligne 1", "Commentaire " & i & " ligne 2"]
+      PosY += 4
+      SautEdprep(pdf, ByRef PosY)
+      pdf.level2DLG2(sLigne, PosY)
+    Next
+    PosY += 4
+    SautEdprep(pdf, ByRef PosY)
+    pdf.LinesLG(PosY)
+  Next
+  pdf.LinesLG(PosY)
+  pdf.BaspageP()
+  Verifie("T09", pdf)
+
+End
+
+' CDOCUMENTS-T10 : appels de Cdocuments dans l'ordre d'EdFam.Button1_Click : 60 familles, saut à PosY >= 278.
+Public Sub T10EdfamMultipage()
+
+  Dim pdf As Cdocuments = Nouveau("p")
+  Dim PosY As Integer
+  Dim i As Integer
+
+  pdf.EnteteN("Liste des familles")
+  PosY = 16
+  pdf.Level1FAM(PosY)
+  PosY += 8
+  For i = 1 To 60
+    pdf.level2FAM("F" & Format$(i, "000"), "FAMILLE NUMERO " & i, "7070000" & (i Mod 10), "7090000" & (i Mod 10), Format$(1 + i / 100, "00.000"), CStr(i Mod 3 + 1), CStr(i Mod 15), Format$(i / 10, "0.00"), PosY)
+    PosY += 5
+    If PosY >= 278 Then
+      pdf.Baspage()
+      pdf.EnteteN("Liste des familles")
+      PosY = 16
+      pdf.Level1FAM(PosY)
+      PosY += 8
+    Endif
+  Next
+  PosY += 3
+  pdf.Lines(PosY)
+  pdf.Baspage()
+  Verifie("T10", pdf)
+
+End
+
+' CDOCUMENTS-T07 : appels de Cdocuments dans l'ordre d'Edbr.Imprime (origine ValidBR) : BR de 60 lignes, saut à
+' PosY >= 250 (Level1br de suite avec le paramètre dater d'Edbr.Ed au lieu de la date de réception), Level3br, puis
+' tableau de TVA de Calc_tva (Level7F, un Level9F par taux, Level10F, Level11F).
+Public Sub T07EdbrMultipage()
+
+  Dim pdf As Cdocuments = Nouveau("Portrait")
+  Dim PosY As Integer
+  Dim i As Integer
+  Dim fTotal As Float
+  Dim sPaht, sTot As String
+
+  pdf.EnteteN("Impression des bl fournisseurs")
+  pdf.Level1br("401001", "SARL FOURNISSEUR UN", "R00001", "15.06.2018", "2 rue des Lilas", "", "75001 PARIS", "0140000000")
+  PosY = 60
+  For i = 1 To 60
+    sPaht = Format$(i * 1.5, "0.00")
+    If Len(sPaht) - InStr(sPaht, ",") = 2 Then sPaht &= " "
+    sTot = Format$(i * 1.5 * 2, "0.00")
+    fTotal += i * 3
+    pdf.level2br("ART" & Format$(i, "00"), "ARTICLE RECU NUMERO " & i, "2", sPaht, "0", sPaht, sTot, "C" & (i Mod 9), PosY)
+    PosY += 4
+    If PosY >= 250 Then
+      pdf.Baspage()
+      PosY = 60
+      pdf.EnteteN("Impression des bl fournisseurs")
+      pdf.Level1br("401001", "SARL FOURNISSEUR UN", "R00001", "20/06/2018", "2 rue des Lilas", "", "75001 PARIS", "0140000000")
+    Endif
+  Next
+  PosY += 4
+  pdf.Level3br(Format$(fTotal, "0.00"), PosY)
+  pdf.Baspage()
+  PosY = 258
+  pdf.Level7F(["200", "200", "200"], PosY, False, False, False)
+  PosY += 8
+  pdf.Level9F("1", "4 575,00", "20,00", "915,00", "", PosY)
+  PosY += 5
+  pdf.Level9F("2", "915,00", "05,50", "50,33", "", PosY)
+  PosY = 280
+  pdf.Level10F(Format$(fTotal, "0.00"), "965,33", "6 455,33 ", "", PosY - 6, False, False, False)
+  PosY += 8
+  pdf.Level11F("", PosY)
+  PosY += 8
+  pdf.Baspage()
+  Verifie("T07", pdf)
 
 End

@@ -1,0 +1,23 @@
+{
+ "id": "EDITCOMPTEM-T07",
+ "objet": "Sous-comptes",
+ "classe": "EditcompteM",
+ "description": "Grands livres (Menu38), jeu extrait_base + groupe de sous-comptes 445730 (Fiches_SousComptes : code_vtl 445730 et 512000), bouton Général, plage complète (606100 suit le groupe), Imprimer : « Total sous-comptes » attendu après 512000 (texte du PDF, edition.txt) ; la variante « plage finissant dans le groupe » n'est pas jouée.",
+ "dataset": "sous_comptes",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

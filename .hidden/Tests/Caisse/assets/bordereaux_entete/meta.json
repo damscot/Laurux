@@ -1,0 +1,24 @@
+{
+ "id": "BORDEREAUX-T07",
+ "objet": "En-tête société avec logo et SIRET local",
+ "classe": "Bordereaux",
+ "description": "Menu214 ; /Soc01/glogo = -1 et /Soc01/Logo = ~/logo.png (déposé par entrees), /Soc01/Siret = 12345 ; Cartes, Imprimer : en-tête (société, Siret local et SIRET de la société, téléphone) dans edition.txt.",
+ "dataset": "bordereaux_shared/remises",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'",
+  "/Soc01/glogo": -1,
+  "/Soc01/Logo": "{home}/logo.png",
+  "/Soc01/Siret": "12345"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "entrees": {
+  "logo.png": "~/logo.png"
+ }
+}

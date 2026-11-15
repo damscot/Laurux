@@ -1,0 +1,26 @@
+{
+ "id": "COMPART-T01",
+ "objet": "Comparaison nominale",
+ "classe": "CompArt",
+ "description": "Prgm → CompArt ; chemin du fichier saisi dans ChemFic (fichier compart_shared/codes_mixtes.csv déposé en /tmp/laurux-test/codes.csv : 5 lignes dont ZZ1 et ZZ2 absents de Laurux01), Traitement (Button2) : message « Traitement terminé ! » validé, ~/tmp/Diff.txt = les 2 lignes absentes, visualiseur appelé (CmdVis factice « true »). Écran ShowModal non refermé (REPLAYOBSERVER-A15).",
+ "dataset": null,
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "true"
+ },
+ "entrees": {
+  "compart_shared/codes_mixtes.csv": "/tmp/laurux-test/codes.csv"
+ },
+ "fichiers": [
+  "tmp/Diff.txt"
+ ]
+}

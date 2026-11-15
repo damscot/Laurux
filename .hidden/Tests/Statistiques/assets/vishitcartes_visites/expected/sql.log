@@ -1,0 +1,384 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(carte Char(13) NOT NULL,nom Char(35),visite Integer(5),points Decimal(12,2),PRIMARY KEY (carte)) ENGINE = InnoDB
+SELECT * FROM Fiches_HisEntTickets where date >= '20060101' and date <= '20180615'  order by carte
+SELECT * FROM Fiches_Carte Where code = '2100000000001'
+SELECT * FROM Total Where carte = '2100000000001'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000001', 'CARTE01', 1, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000001'
+SELECT * FROM Total Where carte = '2100000000001'
+UPdate Total set carte = '2100000000001', points = 2, visite = 2 Where carte = '2100000000001'
+SELECT * FROM Fiches_Carte Where code = '2100000000002'
+SELECT * FROM Total Where carte = '2100000000002'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000002', 'CARTE02', 2, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000002'
+SELECT * FROM Total Where carte = '2100000000002'
+UPdate Total set carte = '2100000000002', points = 4, visite = 2 Where carte = '2100000000002'
+SELECT * FROM Fiches_Carte Where code = '2100000000002'
+SELECT * FROM Total Where carte = '2100000000002'
+UPdate Total set carte = '2100000000002', points = 6, visite = 3 Where carte = '2100000000002'
+SELECT * FROM Fiches_Carte Where code = '2100000000003'
+SELECT * FROM Total Where carte = '2100000000003'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000003', 'CARTE03', 3, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000004'
+SELECT * FROM Total Where carte = '2100000000004'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000004', 'CARTE04', 4, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000004'
+SELECT * FROM Total Where carte = '2100000000004'
+UPdate Total set carte = '2100000000004', points = 8, visite = 2 Where carte = '2100000000004'
+SELECT * FROM Fiches_Carte Where code = '2100000000005'
+SELECT * FROM Total Where carte = '2100000000005'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000005', 'CARTE05', 5, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000005'
+SELECT * FROM Total Where carte = '2100000000005'
+UPdate Total set carte = '2100000000005', points = 10, visite = 2 Where carte = '2100000000005'
+SELECT * FROM Fiches_Carte Where code = '2100000000005'
+SELECT * FROM Total Where carte = '2100000000005'
+UPdate Total set carte = '2100000000005', points = 15, visite = 3 Where carte = '2100000000005'
+SELECT * FROM Fiches_Carte Where code = '2100000000006'
+SELECT * FROM Total Where carte = '2100000000006'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000006', 'CARTE06', 6, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000007'
+SELECT * FROM Total Where carte = '2100000000007'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000007', 'CARTE07', 7, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000007'
+SELECT * FROM Total Where carte = '2100000000007'
+UPdate Total set carte = '2100000000007', points = 14, visite = 2 Where carte = '2100000000007'
+SELECT * FROM Fiches_Carte Where code = '2100000000008'
+SELECT * FROM Total Where carte = '2100000000008'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000008', 'CARTE08', 8, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000008'
+SELECT * FROM Total Where carte = '2100000000008'
+UPdate Total set carte = '2100000000008', points = 16, visite = 2 Where carte = '2100000000008'
+SELECT * FROM Fiches_Carte Where code = '2100000000008'
+SELECT * FROM Total Where carte = '2100000000008'
+UPdate Total set carte = '2100000000008', points = 24, visite = 3 Where carte = '2100000000008'
+SELECT * FROM Fiches_Carte Where code = '2100000000009'
+SELECT * FROM Total Where carte = '2100000000009'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000009', 'CARTE09', 9, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000010'
+SELECT * FROM Total Where carte = '2100000000010'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000010', 'CARTE10', 10, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000010'
+SELECT * FROM Total Where carte = '2100000000010'
+UPdate Total set carte = '2100000000010', points = 20, visite = 2 Where carte = '2100000000010'
+SELECT * FROM Fiches_Carte Where code = '2100000000011'
+SELECT * FROM Total Where carte = '2100000000011'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000011', 'CARTE11', 11, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000011'
+SELECT * FROM Total Where carte = '2100000000011'
+UPdate Total set carte = '2100000000011', points = 22, visite = 2 Where carte = '2100000000011'
+SELECT * FROM Fiches_Carte Where code = '2100000000011'
+SELECT * FROM Total Where carte = '2100000000011'
+UPdate Total set carte = '2100000000011', points = 33, visite = 3 Where carte = '2100000000011'
+SELECT * FROM Fiches_Carte Where code = '2100000000012'
+SELECT * FROM Total Where carte = '2100000000012'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000012', 'CARTE12', 12, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000013'
+SELECT * FROM Total Where carte = '2100000000013'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000013', 'CARTE13', 13, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000013'
+SELECT * FROM Total Where carte = '2100000000013'
+UPdate Total set carte = '2100000000013', points = 26, visite = 2 Where carte = '2100000000013'
+SELECT * FROM Fiches_Carte Where code = '2100000000014'
+SELECT * FROM Total Where carte = '2100000000014'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000014', 'CARTE14', 14, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000014'
+SELECT * FROM Total Where carte = '2100000000014'
+UPdate Total set carte = '2100000000014', points = 28, visite = 2 Where carte = '2100000000014'
+SELECT * FROM Fiches_Carte Where code = '2100000000014'
+SELECT * FROM Total Where carte = '2100000000014'
+UPdate Total set carte = '2100000000014', points = 42, visite = 3 Where carte = '2100000000014'
+SELECT * FROM Fiches_Carte Where code = '2100000000015'
+SELECT * FROM Total Where carte = '2100000000015'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000015', 'CARTE15', 15, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000016'
+SELECT * FROM Total Where carte = '2100000000016'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000016', 'CARTE16', 16, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000016'
+SELECT * FROM Total Where carte = '2100000000016'
+UPdate Total set carte = '2100000000016', points = 32, visite = 2 Where carte = '2100000000016'
+SELECT * FROM Fiches_Carte Where code = '2100000000017'
+SELECT * FROM Total Where carte = '2100000000017'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000017', 'CARTE17', 17, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000017'
+SELECT * FROM Total Where carte = '2100000000017'
+UPdate Total set carte = '2100000000017', points = 34, visite = 2 Where carte = '2100000000017'
+SELECT * FROM Fiches_Carte Where code = '2100000000017'
+SELECT * FROM Total Where carte = '2100000000017'
+UPdate Total set carte = '2100000000017', points = 51, visite = 3 Where carte = '2100000000017'
+SELECT * FROM Fiches_Carte Where code = '2100000000018'
+SELECT * FROM Total Where carte = '2100000000018'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000018', 'CARTE18', 18, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000019'
+SELECT * FROM Total Where carte = '2100000000019'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000019', 'CARTE19', 19, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000019'
+SELECT * FROM Total Where carte = '2100000000019'
+UPdate Total set carte = '2100000000019', points = 38, visite = 2 Where carte = '2100000000019'
+SELECT * FROM Fiches_Carte Where code = '2100000000020'
+SELECT * FROM Total Where carte = '2100000000020'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000020', 'CARTE20', 20, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000020'
+SELECT * FROM Total Where carte = '2100000000020'
+UPdate Total set carte = '2100000000020', points = 40, visite = 2 Where carte = '2100000000020'
+SELECT * FROM Fiches_Carte Where code = '2100000000020'
+SELECT * FROM Total Where carte = '2100000000020'
+UPdate Total set carte = '2100000000020', points = 60, visite = 3 Where carte = '2100000000020'
+SELECT * FROM Fiches_Carte Where code = '2100000000021'
+SELECT * FROM Total Where carte = '2100000000021'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000021', 'CARTE21', 21, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000022'
+SELECT * FROM Total Where carte = '2100000000022'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000022', 'CARTE22', 22, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000022'
+SELECT * FROM Total Where carte = '2100000000022'
+UPdate Total set carte = '2100000000022', points = 44, visite = 2 Where carte = '2100000000022'
+SELECT * FROM Fiches_Carte Where code = '2100000000023'
+SELECT * FROM Total Where carte = '2100000000023'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000023', 'CARTE23', 23, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000023'
+SELECT * FROM Total Where carte = '2100000000023'
+UPdate Total set carte = '2100000000023', points = 46, visite = 2 Where carte = '2100000000023'
+SELECT * FROM Fiches_Carte Where code = '2100000000023'
+SELECT * FROM Total Where carte = '2100000000023'
+UPdate Total set carte = '2100000000023', points = 69, visite = 3 Where carte = '2100000000023'
+SELECT * FROM Fiches_Carte Where code = '2100000000024'
+SELECT * FROM Total Where carte = '2100000000024'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000024', 'CARTE24', 24, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000025'
+SELECT * FROM Total Where carte = '2100000000025'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000025', 'CARTE25', 25, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000025'
+SELECT * FROM Total Where carte = '2100000000025'
+UPdate Total set carte = '2100000000025', points = 50, visite = 2 Where carte = '2100000000025'
+SELECT * FROM Fiches_Carte Where code = '2100000000026'
+SELECT * FROM Total Where carte = '2100000000026'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000026', 'CARTE26', 26, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000026'
+SELECT * FROM Total Where carte = '2100000000026'
+UPdate Total set carte = '2100000000026', points = 52, visite = 2 Where carte = '2100000000026'
+SELECT * FROM Fiches_Carte Where code = '2100000000026'
+SELECT * FROM Total Where carte = '2100000000026'
+UPdate Total set carte = '2100000000026', points = 78, visite = 3 Where carte = '2100000000026'
+SELECT * FROM Fiches_Carte Where code = '2100000000027'
+SELECT * FROM Total Where carte = '2100000000027'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000027', 'CARTE27', 27, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000028'
+SELECT * FROM Total Where carte = '2100000000028'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000028', 'CARTE28', 28, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000028'
+SELECT * FROM Total Where carte = '2100000000028'
+UPdate Total set carte = '2100000000028', points = 56, visite = 2 Where carte = '2100000000028'
+SELECT * FROM Fiches_Carte Where code = '2100000000029'
+SELECT * FROM Total Where carte = '2100000000029'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000029', 'CARTE29', 29, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000029'
+SELECT * FROM Total Where carte = '2100000000029'
+UPdate Total set carte = '2100000000029', points = 58, visite = 2 Where carte = '2100000000029'
+SELECT * FROM Fiches_Carte Where code = '2100000000029'
+SELECT * FROM Total Where carte = '2100000000029'
+UPdate Total set carte = '2100000000029', points = 87, visite = 3 Where carte = '2100000000029'
+SELECT * FROM Fiches_Carte Where code = '2100000000030'
+SELECT * FROM Total Where carte = '2100000000030'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000030', 'CARTE30', 30, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000031'
+SELECT * FROM Total Where carte = '2100000000031'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000031', 'CARTE31', 31, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000031'
+SELECT * FROM Total Where carte = '2100000000031'
+UPdate Total set carte = '2100000000031', points = 62, visite = 2 Where carte = '2100000000031'
+SELECT * FROM Fiches_Carte Where code = '2100000000032'
+SELECT * FROM Total Where carte = '2100000000032'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000032', 'CARTE32', 32, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000032'
+SELECT * FROM Total Where carte = '2100000000032'
+UPdate Total set carte = '2100000000032', points = 64, visite = 2 Where carte = '2100000000032'
+SELECT * FROM Fiches_Carte Where code = '2100000000032'
+SELECT * FROM Total Where carte = '2100000000032'
+UPdate Total set carte = '2100000000032', points = 96, visite = 3 Where carte = '2100000000032'
+SELECT * FROM Fiches_Carte Where code = '2100000000033'
+SELECT * FROM Total Where carte = '2100000000033'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000033', 'CARTE33', 33, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000034'
+SELECT * FROM Total Where carte = '2100000000034'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000034', 'CARTE34', 34, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000034'
+SELECT * FROM Total Where carte = '2100000000034'
+UPdate Total set carte = '2100000000034', points = 68, visite = 2 Where carte = '2100000000034'
+SELECT * FROM Fiches_Carte Where code = '2100000000035'
+SELECT * FROM Total Where carte = '2100000000035'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000035', 'CARTE35', 35, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000035'
+SELECT * FROM Total Where carte = '2100000000035'
+UPdate Total set carte = '2100000000035', points = 70, visite = 2 Where carte = '2100000000035'
+SELECT * FROM Fiches_Carte Where code = '2100000000035'
+SELECT * FROM Total Where carte = '2100000000035'
+UPdate Total set carte = '2100000000035', points = 105, visite = 3 Where carte = '2100000000035'
+SELECT * FROM Fiches_Carte Where code = '2100000000036'
+SELECT * FROM Total Where carte = '2100000000036'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000036', 'CARTE36', 36, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000037'
+SELECT * FROM Total Where carte = '2100000000037'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000037', 'CARTE37', 37, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000037'
+SELECT * FROM Total Where carte = '2100000000037'
+UPdate Total set carte = '2100000000037', points = 74, visite = 2 Where carte = '2100000000037'
+SELECT * FROM Fiches_Carte Where code = '2100000000038'
+SELECT * FROM Total Where carte = '2100000000038'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000038', 'CARTE38', 38, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000038'
+SELECT * FROM Total Where carte = '2100000000038'
+UPdate Total set carte = '2100000000038', points = 76, visite = 2 Where carte = '2100000000038'
+SELECT * FROM Fiches_Carte Where code = '2100000000038'
+SELECT * FROM Total Where carte = '2100000000038'
+UPdate Total set carte = '2100000000038', points = 114, visite = 3 Where carte = '2100000000038'
+SELECT * FROM Fiches_Carte Where code = '2100000000039'
+SELECT * FROM Total Where carte = '2100000000039'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000039', 'CARTE39', 39, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000040'
+SELECT * FROM Total Where carte = '2100000000040'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000040', 'CARTE40', 40, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000040'
+SELECT * FROM Total Where carte = '2100000000040'
+UPdate Total set carte = '2100000000040', points = 80, visite = 2 Where carte = '2100000000040'
+SELECT * FROM Fiches_Carte Where code = '2100000000041'
+SELECT * FROM Total Where carte = '2100000000041'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000041', 'CARTE41', 41, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000041'
+SELECT * FROM Total Where carte = '2100000000041'
+UPdate Total set carte = '2100000000041', points = 82, visite = 2 Where carte = '2100000000041'
+SELECT * FROM Fiches_Carte Where code = '2100000000041'
+SELECT * FROM Total Where carte = '2100000000041'
+UPdate Total set carte = '2100000000041', points = 123, visite = 3 Where carte = '2100000000041'
+SELECT * FROM Fiches_Carte Where code = '2100000000042'
+SELECT * FROM Total Where carte = '2100000000042'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000042', 'CARTE42', 42, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000043'
+SELECT * FROM Total Where carte = '2100000000043'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000043', 'CARTE43', 43, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000043'
+SELECT * FROM Total Where carte = '2100000000043'
+UPdate Total set carte = '2100000000043', points = 86, visite = 2 Where carte = '2100000000043'
+SELECT * FROM Fiches_Carte Where code = '2100000000044'
+SELECT * FROM Total Where carte = '2100000000044'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000044', 'CARTE44', 44, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000044'
+SELECT * FROM Total Where carte = '2100000000044'
+UPdate Total set carte = '2100000000044', points = 88, visite = 2 Where carte = '2100000000044'
+SELECT * FROM Fiches_Carte Where code = '2100000000044'
+SELECT * FROM Total Where carte = '2100000000044'
+UPdate Total set carte = '2100000000044', points = 132, visite = 3 Where carte = '2100000000044'
+SELECT * FROM Fiches_Carte Where code = '2100000000045'
+SELECT * FROM Total Where carte = '2100000000045'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000045', 'CARTE45', 45, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000046'
+SELECT * FROM Total Where carte = '2100000000046'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000046', 'CARTE46', 46, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000046'
+SELECT * FROM Total Where carte = '2100000000046'
+UPdate Total set carte = '2100000000046', points = 92, visite = 2 Where carte = '2100000000046'
+SELECT * FROM Fiches_Carte Where code = '2100000000047'
+SELECT * FROM Total Where carte = '2100000000047'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000047', 'CARTE47', 47, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000047'
+SELECT * FROM Total Where carte = '2100000000047'
+UPdate Total set carte = '2100000000047', points = 94, visite = 2 Where carte = '2100000000047'
+SELECT * FROM Fiches_Carte Where code = '2100000000047'
+SELECT * FROM Total Where carte = '2100000000047'
+UPdate Total set carte = '2100000000047', points = 141, visite = 3 Where carte = '2100000000047'
+SELECT * FROM Fiches_Carte Where code = '2100000000048'
+SELECT * FROM Total Where carte = '2100000000048'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000048', 'CARTE48', 48, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000049'
+SELECT * FROM Total Where carte = '2100000000049'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000049', 'CARTE49', 49, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000049'
+SELECT * FROM Total Where carte = '2100000000049'
+UPdate Total set carte = '2100000000049', points = 98, visite = 2 Where carte = '2100000000049'
+SELECT * FROM Fiches_Carte Where code = '2100000000050'
+SELECT * FROM Total Where carte = '2100000000050'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000050', 'CARTE50', 50, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000050'
+SELECT * FROM Total Where carte = '2100000000050'
+UPdate Total set carte = '2100000000050', points = 100, visite = 2 Where carte = '2100000000050'
+SELECT * FROM Fiches_Carte Where code = '2100000000050'
+SELECT * FROM Total Where carte = '2100000000050'
+UPdate Total set carte = '2100000000050', points = 150, visite = 3 Where carte = '2100000000050'
+SELECT * FROM Fiches_Carte Where code = '2100000000051'
+SELECT * FROM Total Where carte = '2100000000051'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000051', 'CARTE51', 51, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000052'
+SELECT * FROM Total Where carte = '2100000000052'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000052', 'CARTE52', 52, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000052'
+SELECT * FROM Total Where carte = '2100000000052'
+UPdate Total set carte = '2100000000052', points = 104, visite = 2 Where carte = '2100000000052'
+SELECT * FROM Fiches_Carte Where code = '2100000000053'
+SELECT * FROM Total Where carte = '2100000000053'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000053', 'CARTE53', 53, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000053'
+SELECT * FROM Total Where carte = '2100000000053'
+UPdate Total set carte = '2100000000053', points = 106, visite = 2 Where carte = '2100000000053'
+SELECT * FROM Fiches_Carte Where code = '2100000000053'
+SELECT * FROM Total Where carte = '2100000000053'
+UPdate Total set carte = '2100000000053', points = 159, visite = 3 Where carte = '2100000000053'
+SELECT * FROM Fiches_Carte Where code = '2100000000054'
+SELECT * FROM Total Where carte = '2100000000054'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000054', 'CARTE54', 54, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000055'
+SELECT * FROM Total Where carte = '2100000000055'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000055', 'CARTE55', 55, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000055'
+SELECT * FROM Total Where carte = '2100000000055'
+UPdate Total set carte = '2100000000055', points = 110, visite = 2 Where carte = '2100000000055'
+SELECT * FROM Fiches_Carte Where code = '2100000000056'
+SELECT * FROM Total Where carte = '2100000000056'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000056', 'CARTE56', 56, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000056'
+SELECT * FROM Total Where carte = '2100000000056'
+UPdate Total set carte = '2100000000056', points = 112, visite = 2 Where carte = '2100000000056'
+SELECT * FROM Fiches_Carte Where code = '2100000000056'
+SELECT * FROM Total Where carte = '2100000000056'
+UPdate Total set carte = '2100000000056', points = 168, visite = 3 Where carte = '2100000000056'
+SELECT * FROM Fiches_Carte Where code = '2100000000057'
+SELECT * FROM Total Where carte = '2100000000057'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000057', 'CARTE57', 57, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000058'
+SELECT * FROM Total Where carte = '2100000000058'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000058', 'CARTE58', 58, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000058'
+SELECT * FROM Total Where carte = '2100000000058'
+UPdate Total set carte = '2100000000058', points = 116, visite = 2 Where carte = '2100000000058'
+SELECT * FROM Fiches_Carte Where code = '2100000000059'
+SELECT * FROM Total Where carte = '2100000000059'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000059', 'CARTE59', 59, 1)
+SELECT * FROM Fiches_Carte Where code = '2100000000059'
+SELECT * FROM Total Where carte = '2100000000059'
+UPdate Total set carte = '2100000000059', points = 118, visite = 2 Where carte = '2100000000059'
+SELECT * FROM Fiches_Carte Where code = '2100000000059'
+SELECT * FROM Total Where carte = '2100000000059'
+UPdate Total set carte = '2100000000059', points = 177, visite = 3 Where carte = '2100000000059'
+SELECT * FROM Fiches_Carte Where code = '2100000000060'
+SELECT * FROM Total Where carte = '2100000000060'
+INSERT INTO Total(carte, nom, points, visite) VALUES ('2100000000060', 'CARTE60', 60, 1)
+SELECT * FROM Total
+SELECT * FROM Total order by visite deSC LIMIT 100

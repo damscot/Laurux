@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Analytique (.hidden/reference/.src/Compta/Analytique.class/test.md, ANALYTIQUE-T01, T02, T03, T05, T07).
+''Tests de Analytique (.hidden/reference/.src/Compta/Analytique.class/test.md, ANALYTIQUE-T01, T02, T03, T05, T06, T07).
 ''Prévus en replay depuis la saisie d'écritures (Saisecrit) : la fenêtre est instanciée ici sans être affichée,
 ''avec les arguments que lui passe Saisecrit (montant formaté « 0.00 », sens = debit.Value), puis Deb1,
 ''Tbrem_Save et Button2_Click (publics) sont appelés directement. Jeu analytique_postes (postes 01-03,
@@ -14,6 +14,7 @@ Public Sub _Desc()
   TestKit.Desc("T02VentilationExistante", "Rechargement d'une ventilation existante puis Valider")
   TestKit.Desc("T03EditionCellules", "Tbrem_Save : changement de poste, de % et de montant (cellules et totaux)")
   TestKit.Desc("T05DeuxComptes", "Deux comptes ventilés dans une même écriture (A02)")
+  TestKit.Desc("T06Aide", "Bouton d'aide (Btn_Click, sans effet, A01) puis Button1_Click (appelé par F1) : xdg-open tracé")
   TestKit.Desc("T07Postes21", "21 postes analytiques : erreur d'indice à l'instanciation (A03)")
 
 End
@@ -164,5 +165,41 @@ Public Sub T07Postes21()
   TestKit.Check("T07/postes", Utils.db.Exec("SELECT count(*) AS n FROM " & Cbase.Table("TabPostes"))!n)
   hF = Ouvre("T07", "606100", "200,00", "900007", True, "AC", "Achats fournitures")
   TestKit.Check("T07/instance", Not IsNull(hF))
+
+End
+
+Public Sub T06Aide()
+  ''Aide : le bouton Button1 appartient au groupe Btn (Btn_Click vide : clic sans effet, A01) ; F1 (Form_KeyPress,
+  ''touche non simulable ici) appelle Button1_Click → Doc.Open → Exec xdg-open, remplacé par le faux programme de
+  ''.src/Tests/Framework/bin (placé en tête du PATH) qui trace l'appel.
+
+  Dim hF As Analytique
+  Dim sBin As String = Application.Path &/ ".src/Tests/Framework/bin"
+  Dim sTrace As String = Temp$() & ".trace"
+  Dim i As Integer
+
+  If Application.Env["LAURUX_TEST_ROOT"] Then sBin = Application.Env["LAURUX_TEST_ROOT"] &/ ".src/Tests/Framework/bin"
+  If InStr(Application.Env["PATH"], "Framework/bin") = 0 Then Application.Env["PATH"] = sBin & ":" & Application.Env["PATH"]
+  Application.Env["LAURUX_FACTICE_TRACE"] = sTrace
+  hF = Ouvre("T06", "606100", "200,00", "900001", True, "AC", "Achats fournitures")
+  If Not hF Then Return
+  Try hF.Btn_Click()
+  If Error Then TestKit.Check("T06/btn_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T06/btn_trace", Exist(sTrace))
+  Try hF.Button1_Click()
+  If Error Then TestKit.Check("T06/aide_err", "ERREUR: " & Error.Text)
+  ' Exec asynchrone : attente de la trace (5 s au plus)
+  For i = 1 To 50
+    If Exist(sTrace) Then
+      If File.Load(sTrace) Then Break
+    Endif
+    Wait 0.1
+  Next
+  If Exist(sTrace) Then
+    TestKit.Check("T06/aide_trace", Replace(Trim(File.Load(sTrace)), Application.Path, "<Application.Path>"))
+  Else
+    TestKit.Check("T06/aide_trace", "<absente>")
+  Endif
+  Object.Lock(hF)
 
 End

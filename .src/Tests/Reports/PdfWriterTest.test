@@ -1,11 +1,11 @@
 ' Gambas test file
 
-''Tests de PdfWriter (.hidden/reference/.src/Reports/PdfWriter.class/test.md, PDFWRITER-T01 à T14).
+''Tests de PdfWriter (.hidden/reference/.src/Reports/PdfWriter.class/test.md, PDFWRITER-T01 à T15).
 ''Chaque test produit un PDF non compressé (SetCompression(False)) dans un fichier temporaire et vérifie :
 ''le texte rendu par « pdftotext -layout » (une clé par ligne non vide), le nombre et la taille des pages
 ''(pdfinfo) et l'empreinte md5 du fichier PDF (flux : positions, polices, couleurs), après masquage de
 ''/CreationDate, de la date du jour et de User.Name. Valeurs attendues : assets/PdfWriterTest/expected.txt,
-''produites dans le clone de référence. Pas de base de données. T15 (gabarits réels) est couvert par les scénarios des gabarits.
+''produites dans le clone de référence. Pas de base de données. T15 : gabarits réels des classes filles (Cfacture, Cetiquettes, Ccompta, Creleve).
 ''Ops() relève en plus les opérateurs du flux (Tj, Td, re, l, rg, Tf…) pour figer positions et tracés.
 
 Public Sub _Desc()
@@ -25,6 +25,7 @@ Public Sub _Desc()
   TestKit.Desc("T12Marges", "SetMargins(10, 30) en A4, SetMargins(100, 100) en 80 mm")
   TestKit.Desc("T13Output", "Output : fichier, S, vide, True, document sans AddPage")
   TestKit.Desc("T14Performance", "8 000 cellules et 10 EAN13 : nombre de pages, durée < 10 s")
+  TestKit.Desc("T15Gabarits", "Gabarits réels non compressés : ticket 80 mm et A4 (Cfacture), étiquettes EAN13 (Cetiquettes), journal (Ccompta), relevé avec logo (Creleve)")
 
 End
 
@@ -485,5 +486,85 @@ Public Sub T14Performance()
   pdf.Output("", "S")
   TestKit.Check("T14/pages", pdf.PageNo())
   TestKit.Check("T14/duree_inferieure_10s", Timer - fDebut < 10)
+
+End
+
+' Applique au gabarit les réglages communs du module (flux non compressé, alias du nombre de pages).
+Private Sub Prepare(pdf As PdfWriter)
+
+  pdf.SetCompression(False)
+  pdf.Open()
+  pdf.AliasNbPages()
+
+End
+
+' PDFWRITER-T15 : documents représentatifs produits par les classes filles réelles (texte, pages et empreinte du
+' flux non compressé), pour garder la sortie de PdfWriter sur les gabarits utilisés par Laurux.
+Public Sub T15Gabarits()
+
+  Dim hTk As Cfacture
+  Dim hEt As Cetiquettes
+  Dim hJr As Ccompta
+  Dim hRl As Creleve
+  Dim sFmt As String
+  Dim hImg As Image
+  Dim sLogo As String = Temp$("logo") & ".jpg"
+  Dim i As Integer
+
+  ' Ticket de caisse 80 mm puis A4
+  For Each sFmt In ["80mm", "a4"]
+    hTk = New Cfacture("P", "mm", sFmt)
+    Prepare(hTk)
+    hTk.AddPage()
+    hTk.Entete("SOCIETE TEST", "5", "5", "B", sFmt = "a4")
+    hTk.Entete2("1 rue du Port 44000 NANTES", "5", "10", "", sFmt = "a4")
+    hTk.Level2T(5, 20)
+    For i = 1 To 5
+      hTk.Level1T("ART" & i, "ARTICLE " & i, Format$(i * 2.5, "0.00"), CStr(i), 20 + i * 5, "A")
+    Next
+    hTk.Lines(55)
+    hTk.Level3("Total TTC 37,50", "60", sFmt = "a4")
+    Verifie("T15/ticket_" & sFmt, hTk)
+  Next
+
+  ' Étiquettes EAN13 (planche A4 et dymoc)
+  For Each sFmt In ["A4", "dymoc"]
+    hEt = New Cetiquettes("Portrait", "mm", sFmt)
+    Prepare(hEt)
+    hEt.NewPage()
+    hEt.Code("ART001", 5, 5, 1.0)
+    hEt.Intitule("ARTICLE ETIQUETTE", 5, 9, 1.0)
+    hEt.Barcode("3012345678900", 5, 12, "8", "40", 1.0)
+    Verifie("T15/etiquette_" & sFmt, hEt)
+  Next
+
+  ' Journal comptable
+  hJr = New Ccompta("Portrait", "mm", "A4")
+  Prepare(hJr)
+  hJr.Entete("Impression du journal VT")
+  hJr.Level0J("VT", "Journal des ventes", "du 01/01/2018 au 31/01/2018", "Provisoire", "SOCIETE TEST")
+  hJr.Level1J()
+  For i = 1 To 6
+    hJr.level2J("Ecriture " & i, "41100" & i, "0" & i & ".01.2018", "F000" & i, "Facture " & i, CStr(i * 12.5), "0", CStr(i * 12.5), 40 + i * 5, CStr(i))
+  Next
+  hJr.Level4("262.5", "0", "262.5", 80)
+  hJr.BasPage()
+  Verifie("T15/journal", hJr)
+
+  ' Relevé avec logo
+  hImg = New Image(200, 100, Color.RGB(30, 30, 200))
+  hImg.Save(sLogo)
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo"] = True
+  Start.LocalSettings["/Soc" & Start.Societe & "/Logo"] = sLogo
+  hRl = New Creleve("Portrait", "mm", "A4")
+  Prepare(hRl)
+  hRl.Entete("SOCIETE TEST", "1 rue du Port", "", "44000 NANTES", "", "", "", "", "", "", "", "", "", "", "France", "", False)
+  hRl.Entete2("CLIENT UN", "2 rue des Lilas", "", "75001 PARIS", "", "", False)
+  hRl.Level1("15.06.2018", "01.01.2018 au 30.06.2018", "1")
+  hRl.Level2()
+  hRl.Level3("15.01.2018", "F0001", "Facture 1", "120.00", "0.00", 120)
+  hRl.Level4("120.00", "0.00", 130)
+  Verifie("T15/releve_logo", hRl)
+  Start.LocalSettings["/Soc" & Start.Societe & "/glogo"] = False
 
 End

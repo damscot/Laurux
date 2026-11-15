@@ -2,12 +2,14 @@
 
 ''Tests de TriMat (.hidden/reference/.src/Affichages/TriMat.class/test.md).
 ''Valeurs attendues : assets/TriMatTest/expected.txt, produites dans le clone de référence.
-''La fenêtre est instanciée sans être affichée (Org vide : pas de reprise dans EdMat) et pilotée par ses méthodes
+''La fenêtre est instanciée sans être affichée (Org vide, ou « EdMat » pour T01/T05 : reprise dans l'auto-instance EdMat) et pilotée par ses méthodes
 ''publiques ; la liste est relue dans ColMat. Jeu Gestion/edmat_shared/edmat_base (8 matériels, lecture seule).
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T01Selection", "Org = EdMat : clic sur la 2e puis la 4e ligne (ColMat_Click) : EdMat.Bsel et EdMat.CodeMat, fenêtre fermée")
+  TestKit.Desc("T05Annulation", "Sélection puis réouverture fermée sans choix (Close, équivalent d'Échap) : EdMat.Bsel reste vrai et l'ancien code reste dans EdMat.CodeMat (A02)")
   TestKit.Desc("T02FiltreTri", "Tri par intitulé, code (lpad), propriétaire, marque, type ; double-clic (tri décroissant) : listes")
   TestKit.Desc("T03VendusStock", "Boutons radio vendus (2), en stock (3), tous (1) : listes filtrées par mat_vendu")
   TestKit.Desc("T04Pagination", "Descendre et Remonter sur une liste d'une page : liste inchangée")
@@ -76,6 +78,69 @@ Private Sub Trie(hF As TriMat) As String
   Next
   aCode.Sort()
   Return hG.Rows.Count & " : " & aCode.Join(" ") & " ; colonne :" & s
+
+End
+
+' Ouverture avec reprise dans l'auto-instance EdMat (Org = "EdMat"), sans afficher
+Private Sub OuvreEdMat() As TriMat
+
+  Dim hF As TriMat
+
+  Try hF = New TriMat(True, False, "mat_design", "EdMat")
+  If Error Then
+    TestKit.Check("ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Public Sub T01Selection()
+
+  Dim hF As TriMat
+  Dim hG As Object
+
+  EdMat.Bsel = False
+  EdMat.CodeMat = ""
+  hF = OuvreEdMat()
+  If IsNull(hF) Then Return
+  hG = Ct(hF, "ColMat")
+  hG.Row = 1
+  TestKit.Check("T01/ligne1", hG[1, 0].Text)
+  hF.ColMat_Click()
+  TestKit.Check("T01/bsel1", EdMat.Bsel)
+  TestKit.Check("T01/codemat1", EdMat.CodeMat)
+  ' 2e matériel (borne haute)
+  hF = OuvreEdMat()
+  If IsNull(hF) Then Return
+  hG = Ct(hF, "ColMat")
+  hG.Row = 3
+  TestKit.Check("T01/ligne3", hG[3, 0].Text)
+  hF.ColMat_Click()
+  TestKit.Check("T01/bsel2", EdMat.Bsel)
+  TestKit.Check("T01/codemat2", EdMat.CodeMat)
+
+End
+
+Public Sub T05Annulation()
+
+  Dim hF As TriMat
+  Dim hG As Object
+
+  EdMat.Bsel = False
+  EdMat.CodeMat = ""
+  hF = OuvreEdMat()
+  If IsNull(hF) Then Return
+  hG = Ct(hF, "ColMat")
+  hG.Row = 2
+  hF.ColMat_Click()
+  TestKit.Check("T05/codemat_choisi", EdMat.CodeMat)
+  ' Réouverture puis fermeture sans choix (Échap/F2 de ColMat_KeyPress : Me.Close)
+  hF = OuvreEdMat()
+  If IsNull(hF) Then Return
+  hF.Close()
+  TestKit.Check("T05/bsel_apres_annulation", EdMat.Bsel)
+  TestKit.Check("T05/codemat_apres_annulation", EdMat.CodeMat)
 
 End
 

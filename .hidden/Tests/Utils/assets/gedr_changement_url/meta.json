@@ -1,0 +1,18 @@
+{
+ "id": "GEDR-T04",
+ "objet": "Changement d'URL",
+ "classe": "GedR",
+ "description": "GED Recherche (jeu gedr_url : gedr_shared/ged avec les documents 1 et 2 sous file:///ged/clients/) : filtre tag « urgent », Sel. Tous (documents 1 et 2), Changer URL, Message.Warning bouton 2 « Continuer » (Tab puis Espace) : partie commune calculée, puis New LBox(…, LBox.TextReg) (GedR.class:373) échoue : LBox._New lit Inp.dat / Inp.numerique (propriétés absentes de TextReg), le Catch appelle Message.Error alors que le paramètre « Message » (String) masque la classe Message : « Unknown symbol 'Error' in class '_BoxedString' » (LBox._New.80), erreur fatale figée (code 125, candidat anomalie) ; Docs_Ged inchangée.",
+ "dataset": "gedr_url",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

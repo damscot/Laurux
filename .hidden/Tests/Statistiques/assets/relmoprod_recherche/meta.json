@@ -1,0 +1,18 @@
+{
+ "id": "RELMOPROD-T08",
+ "objet": "Recherche dans la grille client (frappe)",
+ "classe": "RelMoprod",
+ "description": "RB2 (grille Colcli ouverte, tri par nom) ; focus N1 (tri cli_nom) et frappe « Di » : requêtes like \"%D%\" puis \"%Di%\" ; focus CP1 (tri cli_cd_ptl, filtre remis à vide) et frappe « 8 » : like \"%8%\". Lecture seule : sql.log comparé. Double-clic (tri décroissant) et Échap : gb.test RelMoprodTest.T08Recherche / non rejoués.",
+ "dataset": "relmoprod_shared/factures",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

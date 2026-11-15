@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Cdocuments3 (.hidden/reference/.src/Reports/Cdocuments3.class/test.md, CDOCUMENTS3-T01).
+''Tests de Cdocuments3 (.hidden/reference/.src/Reports/Cdocuments3.class/test.md, CDOCUMENTS3-T01 à T03).
 ''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
 ''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
 ''Valeurs attendues : assets/Cdocuments3Test/expected.txt, produites dans le clone de référence. Pas de base.
@@ -9,6 +9,8 @@ Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T01BonPreparation", "Entete, Entete2, cadre, adresse, adresse2, Level1, 3 Level2/carre, Level2b, Level3, Basep, BasPage")
+  TestKit.Desc("T02EdprepMultipage", "Séquence d'EdPrep (bons, détail désactivé) : 2 commandes dont une de 45 articles, saut à PosY >= 266 (3 pages)")
+  TestKit.Desc("T03EdprepCommentaire", "Séquence d'EdPrep, détail activé : 1 article puis commentaire de 60 lignes ; saut dans les commentaires sans Entete (A01)")
 
 End
 
@@ -76,5 +78,95 @@ Public Sub T01BonPreparation()
   pdf.Basep()
   pdf.BasPage()
   Verifie("T01", pdf)
+
+End
+
+' CDOCUMENTS3-T02 : appels de Cdocuments3 dans l'ordre d'EdPrep (bons de préparation, détail désactivé) :
+' commande C0001 de 45 articles (saut à PosY >= 266 : en-tête complet répété), commande C0002 de 3 articles.
+Public Sub T02EdprepMultipage()
+
+  Dim pdf As Cdocuments3 = Nouveau()
+  Dim PosY As Integer
+  Dim i, c, n, nArt As Integer
+  Dim sNum As String
+
+  For c = 1 To 2
+    sNum = "C000" & c
+    nArt = IIf(c = 1, 45, 3)
+    pdf.Entete("SOCIETE TEST")
+    pdf.Entete2("Commande N° " & sNum & " du 15.06.2018   CLI0" & c)
+    pdf.cadre()
+    pdf.adresse("M. CLIENT " & c, c & " rue des Lilas", "Batiment B", "75001 PARIS", "0100000000", "0600000000", "0100000001", "client@exemple.fr")
+    pdf.adresse2("LIVRAISON " & c, "5 rue du Quai", "", "44000 NANTES")
+    pdf.Level1()
+    PosY = 86
+    i = 0
+    For n = 1 To nArt
+      pdf.Level2("ART" & Format$(n, "00"), "CAS" & n, "FOURNISSEUR UN", "ARTICLE NUMERO " & n, CStr(n + 10), CStr(n Mod 5 + 1), "", PosY, i)
+      pdf.carre(PosY)
+      PosY += 5
+      Inc i
+      If PosY >= 266 Then
+        pdf.Baspage()
+        pdf.Entete("SOCIETE TEST")
+        pdf.Entete2("Commande N° " & sNum & " du 15/06/2018")
+        pdf.cadre()
+        pdf.adresse("M. CLIENT " & c, c & " rue des Lilas", "Batiment B", "75001 PARIS", "0100000000", "0600000000", "0100000001", "client@exemple.fr")
+        pdf.adresse2("LIVRAISON " & c, "5 rue du Quai", "", "44000 NANTES")
+        pdf.Level1()
+        PosY = 86
+        i = 0
+      Endif
+    Next
+    pdf.Basep()
+    pdf.BasPage()
+  Next
+  Verifie("T02", pdf)
+
+End
+
+' CDOCUMENTS3-T03 (A01) : boucle des commentaires d'EdPrep (détail activé) : au-delà de PosY >= 266, Baspage puis
+' Entete2/cadre/adresse/adresse2/Level1 sans Entete (pas de nouvelle page demandée). Nombre de pages et texte figés.
+Public Sub T03EdprepCommentaire()
+
+  Dim pdf As Cdocuments3 = Nouveau()
+  Dim PosY, i, n As Integer
+  Dim sFic As String = Temp$("rep") & ".pdf"
+  Dim sTxt As String
+
+  pdf.Entete("SOCIETE TEST")
+  pdf.Entete2("Commande N° C0001 du 15.06.2018   CLI01")
+  pdf.cadre()
+  pdf.adresse("M. CLIENT 1", "1 rue des Lilas", "Batiment B", "75001 PARIS", "0100000000", "0600000000", "0100000001", "client@exemple.fr")
+  pdf.adresse2("LIVRAISON 1", "5 rue du Quai", "", "44000 NANTES")
+  pdf.Level1()
+  PosY = 86
+  pdf.Level2("ART01", "CAS1", "FOURNISSEUR UN", "ARTICLE NUMERO 1", "11", "2", "", PosY, i)
+  pdf.carre(PosY)
+  PosY += 5
+  Inc i
+  For n = 1 To 60
+    If PosY >= 266 Then
+      pdf.Baspage()
+      pdf.Entete2("Commande N° C0001 du 15/06/2018")
+      pdf.cadre()
+      pdf.adresse("M. CLIENT 1", "1 rue des Lilas", "Batiment B", "75001 PARIS", "0100000000", "0600000000", "0100000001", "client@exemple.fr")
+      pdf.adresse2("LIVRAISON 1", "5 rue du Quai", "", "44000 NANTES")
+      pdf.Level1()
+      PosY = 86
+      i = 0
+    Endif
+    i = 1
+    pdf.Level2b("Ligne de commentaire numero " & n, PosY, i)
+    PosY += 4
+  Next
+  pdf.Basep()
+  pdf.BasPage()
+  Try pdf.Output(sFic, False)
+  If Not Error Then
+    Shell "pdfinfo " & Shell$(sFic) & " | grep -E '^Pages'" To sTxt
+    TestKit.Check("T03/pages", Trim(sTxt))
+  Endif
+  Verifie("T03", pdf)
 
 End

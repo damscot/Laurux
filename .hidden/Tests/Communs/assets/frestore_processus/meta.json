@@ -1,0 +1,28 @@
+{
+ "id": "FRESTORE-T09",
+ "classe": "FRestore",
+ "objet": "Trop de processus",
+ "description": "Restauration depuis /tmp/laurux-test ; règle « outils » : gksu répond 9 lignes (8 connexions) : lg > 7, Panel1 affiché, aucune question ni restauration ; Button6 (« Revenir au menu ») masque Panel1 ; base inchangée.",
+ "dataset": "fusers_shared/fusers_base",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "outils": {
+  "gksu": {
+   "sortie": "+----+--------+-----------+---------+---------+------+-------+------------------+\n| 1  | laurux | db:40001 | Laurux01 | Sleep   | 1    |       |                  |\n| 2  | laurux | db:40002 | Laurux01 | Sleep   | 1    |       |                  |\n| 3  | laurux | db:40003 | Laurux01 | Sleep   | 1    |       |                  |\n| 4  | laurux | db:40004 | Laurux01 | Sleep   | 1    |       |                  |\n| 5  | laurux | db:40005 | Laurux01 | Sleep   | 1    |       |                  |\n| 6  | laurux | db:40006 | Laurux01 | Sleep   | 1    |       |                  |\n| 7  | laurux | db:40007 | Laurux01 | Sleep   | 1    |       |                  |\n| 8  | laurux | db:40008 | Laurux01 | Sleep   | 1    |       |                  |",
+   "hidden_argv": [
+    "*-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace"
+ ]
+}

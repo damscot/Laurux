@@ -1,0 +1,23 @@
+{
+ "id": "CARTICLES-T08",
+ "objet": "Édition des régularisations (Edregul) : texte du PDF",
+ "classe": "Carticles",
+ "description": "Période par défaut (15.06.2014 - 15.06.2018, dates non ressaisies), Effmvts décochée, Imprimer : texte du PDF (3 régularisations dont « Article inexistant ») ; dump inchangé. Dérivé de Gestion/edregul_impression_periode (EDREGUL-T01) : test propre à Carticles.",
+ "dataset": "Gestion/edregul_shared/edregul_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

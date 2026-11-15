@@ -1,14 +1,15 @@
 ' Gambas test file
 
-''Tests de Ccomptes (.hidden/reference/.src/Compta/Ccomptes.module/test.md, CCOMPTES-T01, T02, T03, T05).
+''Tests de Ccomptes (.hidden/reference/.src/Compta/Ccomptes.module/test.md, CCOMPTES-T01, T02, T03, T04, T05).
 ''Prévus en replay depuis le plan comptable (FComptes) : les procédures publiques Deb2…Deb9 et Tris sont
 ''appelées ici sur une GridView non affichée ; le résultat de la requête (Utils.rs3, construit par Utils.Base3)
-''et le nombre de lignes de la grille sont relevés. Colco_Data n'est pas appelable hors de l'événement Data de
-''la grille (T04 : couleurs, à faire). Base Laurux01 ; T02 ajoute quelques comptes 41xxxx et 512xxx (jeu
+''et le nombre de lignes de la grille sont relevés. Colco_Data n'est appelable que dans l'événement Data :
+''T04 affiche une grille dont le gestionnaire Data l'appelle. Base Laurux01 ; T02 ajoute quelques comptes 41xxxx et 512xxx (jeu
 ''ccomptes_comptes). Valeurs attendues : assets/CcomptesTest/expected.txt (clone de référence).
 
 Private $hW As Window
 Private $hG As GridView
+Private $cData As Collection
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
@@ -16,6 +17,7 @@ Public Sub _Desc()
   TestKit.Desc("T01OuvertureTri", "Deb2 sans filtre (tri croissant par cast(compte_cc)) et Tris")
   TestKit.Desc("T02RecherchePrefixe", "Deb2 filtré par préfixe 41, 512 et préfixe absent")
   TestKit.Desc("T03TriDecroissant", "Deb3 (tri décroissant) sur le code puis l'intitulé, retour Deb2")
+  TestKit.Desc("T04Couleurs", "Colco_Data appelé depuis l'événement Data d'une grille affichée : Coul_fen 0 puis 1")
   TestKit.Desc("T05Requetes", "Deb4…Deb9 : filtres par type, collectif, banque, pagination, tris")
 
 End
@@ -121,5 +123,53 @@ Public Sub T05Requetes()
   ' sélection accentuée sur l'intitulé
   Ccomptes.Deb2($hG, sTab, "intitule_cc", "Ré")
   Releve("T05/accent")
+
+End
+
+Public Sub _Grille_Data(Row As Integer, Column As Integer)
+  ''Événement Data de la grille de T04 (préfixe « _ » : ignoré comme test) : Ccomptes.Colco_Data puis relevé.
+
+  Ccomptes.Colco_Data(Last, Row, Column)
+  If Row = 0 Then $cData[CStr(Column)] = Last.Data.Text & "|" & Hex$(Last.Data.Background, 6) & "|" & Hex$(Last.Data.Foreground, 6) & "|" & Last.Data.Alignment
+
+End
+
+Private Sub Couleurs(sCle As String, vCoul As Variant)
+
+  Dim hW As New Window
+  Dim hG As GridView
+  Dim i As Integer
+
+  Start.LocalSettings["/Soc01/Coul_fen"] = vCoul
+  hG = New GridView(hW) As "_Grille"
+  hG.Resize(600, 200)
+  hG.Columns.Count = 5
+  hW.Resize(620, 220)
+  Ccomptes.Deb2(hG, Cbase.Table("TabComptes"), "cast(compte_cc AS char)", "")
+  $cData = New Collection
+  hW.Show()
+  hG.Refresh
+  For i = 1 To 20
+    Wait 0.1
+    If $cData.Count >= 5 Then Break
+  Next
+  TestKit.Check(sCle & "/lignes", hG.Rows.Count > 0)
+  For i = 0 To 4
+    If $cData.Exist(CStr(i)) Then
+      TestKit.Check(sCle & "/col" & i, $cData[CStr(i)])
+    Else
+      TestKit.Check(sCle & "/col" & i, "<non affichée>")
+    Endif
+  Next
+  hW.Close()
+
+End
+
+Public Sub T04Couleurs()
+  ''CCOMPTES-T04 : les couleurs sont posées dans l'événement Data, déclenché seulement à l'affichage : la grille
+  ''est affichée (Xvfb du runner) et son gestionnaire Data appelle Ccomptes.Colco_Data ; ligne 0 relevée.
+
+  Couleurs("T04/coul_fen_0", 0)
+  Couleurs("T04/coul_fen_1", 1)
 
 End

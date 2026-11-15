@@ -1,0 +1,43 @@
+' Gambas test file
+
+''Tests de JournauxA (.hidden/reference/.src/Compta/Impressions/JournauxA.class/test.md, JOURNAUXA-T01).
+''Le formulaire est instancié sans affichage ; la touche F2 sur Cpt (non rejouée) est remplacée par l'appel direct
+''de ToggleButton1_Click qu'elle déclenche (Aff_Postes). Jeu journauxa_shared/journauxa_base (postes existants).
+''Valeurs attendues : assets/JournauxATest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ListePostes", "Liste des postes (F2 sur Cpt → Aff_Postes) : erreur sur le champ intitule (A02 figée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "JournauxATest")
+  TestKit.OuvreBase("journauxa_shared/journauxa_base")
+
+End
+
+Public Sub T01ListePostes()
+
+  Dim hF As JournauxA
+  Dim hCol As Object
+
+  Try hF = New JournauxA
+  If Error Then
+    TestKit.Check("T01/creation", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hF.ToggleButton1_Click()
+  If Error Then
+    TestKit.Check("T01/erreur", Error.Text)
+  Else
+    TestKit.Check("T01/erreur", "<aucune>")
+  Endif
+  hCol = hF.Controls["Coljour"]
+  TestKit.Check("T01/visible", hCol.Visible)
+  TestKit.Check("T01/nombre", hCol.Count)
+  Object.Lock(hF)
+
+End

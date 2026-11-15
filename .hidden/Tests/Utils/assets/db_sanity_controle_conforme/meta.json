@@ -2,7 +2,7 @@
  "id": "DB_SANITY-T01",
  "objet": "Contrôle base conforme",
  "classe": "DB_Sanity",
- "description": "Admin › Contrôle de la base : radio Tous, Contrôle, Export CSV (~/tmp/db_control.csv du HOME temporaire, non comparé : seul le SQL l'est), Quitter. Base Laurux01 conforme.",
+ "description": "Admin › Contrôle de la base : radio Tous, Contrôle, Export CSV (~/tmp/db_control.csv comparé), Quitter. Base Laurux01 conforme.",
  "dataset": null,
  "date": "2026-01-15 10:00:00",
  "args": [],
@@ -14,5 +14,8 @@
   "traitement": 1000,
   "fenetre": 1000
  },
- "compare_sql_log": "ordered"
+ "compare_sql_log": "ordered",
+ "fichiers": [
+  "tmp/db_control.csv"
+ ]
 }

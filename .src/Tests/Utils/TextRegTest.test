@@ -12,6 +12,7 @@ Public Sub _Desc()
   TestKit.Desc("T01Numerique", "`EstNum` : `Text`/`Value`/`nbdec`")
   TestKit.Desc("T02Dates", "`EstDate`/`EstDateTime`")
   TestKit.Desc("T03ChangementType", "Changement de `Type`")
+  TestKit.Desc("T08Effacer", "Bouton effacer (butb_click appelé directement) : numérique, date, désactivé, lecture seule")
 
 End
 
@@ -127,5 +128,40 @@ Public Sub T03ChangementType()
   Try hT.Type = TextReg.EstDate
   If Error Then TestKit.Check("T03/reg_force/Date/erreur", "ERREUR: " & Error.Text)
   TestKit.Check("T03/reg_force/Date", hT.reg)
+
+End
+
+' TEXTREG-T08 (partie « bouton effacer ») : le clic du bouton de la ButtonBox n'est pas rejoué par le harnais
+' (Click sur un TextReg ignoré) ; butb_click est appelé directement. Échap et calendrier (Key, LDateC modal) : à faire.
+Public Sub T08Effacer()
+
+  Dim hT As TextReg
+
+  hT = Nouveau(TextReg.EstNum)
+  hT.nbdec = "2"
+  hT.Value = 3.5
+  Fige("T08/num avant", hT)
+  hT.butb_click()
+  Fige("T08/num après", hT)
+
+  hT = Nouveau(TextReg.EstDate)
+  hT.Text = "01/02/2024"
+  Fige("T08/date avant", hT)
+  hT.butb_click()
+  ' texte vidé : TextReg affiche alors la date du jour (comparée, pas figée)
+  TestKit.Check("T08/date après = date du jour", hT.Text = Format(Date(), "dd.mm.yyyy"))
+  TestKit.Check("T08/date après/Value", hT.Value)
+
+  hT = Nouveau(TextReg.EstText)
+  hT.Text = "abc"
+  hT.Enabled = False
+  hT.butb_click()
+  Fige("T08/désactivé", hT)
+
+  hT = Nouveau(TextReg.EstText)
+  hT.Text = "def"
+  hT.ReadOnly = True
+  hT.butb_click()
+  Fige("T08/lecture seule", hT)
 
 End

@@ -1,0 +1,85 @@
+' Gambas test file
+
+''Tests de FClientcarte ouvrant Tricp en ShowModal (.hidden/reference/.src/Caisse/FClientcarte.class/test.md,
+''FCLIENTCARTE-T07). Module séparé de FClientcarteTest (vague 7, fusion). Un Timer du module agit pendant la boucle
+''modale : il retrouve la fenêtre Tricp (Windows), sélectionne la 1re ligne de la grille colco puis appelle
+''colco_Click (clic de l'utilisateur) ; l'erreur éventuelle de colco_Click est relevée et la fenêtre refermée.
+''Valeurs attendues : assets/FClientcarteModalTest/expected.txt, produites dans le clone de référence.
+
+Private $hTimer As Timer
+Private $sErreur As String
+Private $sLigne As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T07CodePostal", "Cpman puis ToggleButton5 : choix de la 1re ligne de Tricp ; CP non repris (A02), erreur au second chemin")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "FClientcarteModalTest")
+  TestKit.OuvreBase("fclientcarte_shared/cartes_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+
+End
+
+Private Sub Programme()
+
+  $sErreur = "<aucune>"
+  $sLigne = ""
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+  Dim hGr As Object
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "Tricp" Then Continue
+    $hTimer.Enabled = False
+    hGr = hWin.Controls["colco"]
+    Try hGr.Row = 0
+    Try Object.Call(hWin, "colco_Click")
+    If Error Then
+      $sErreur = Error.Text
+      Try hWin.Close()
+    Endif
+    Return
+  Next
+
+End
+
+Public Sub T07CodePostal()
+
+  Dim hF As New FClientcarte
+  Dim hCp As Object = hF.Controls["Cp"]
+  Dim hBur As Object = hF.Controls["Burdist"]
+
+  Variables.Bsel = False
+  hCp.Text = ""
+  hBur.Text = ""
+  Programme()
+  Try hF.Cpman()
+  TestKit.Check("T07/cpman/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T07/cpman/erreur_tricp", $sErreur)
+  TestKit.Check("T07/cpman/variables_bsel", Variables.Bsel)
+  TestKit.Check("T07/cpman/cp", hCp.Text)
+  TestKit.Check("T07/cpman/burdist", hBur.Text)
+  Programme()
+  Try hF.ToggleButton5_Click()
+  TestKit.Check("T07/toggle5/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T07/toggle5/erreur_tricp", $sErreur)
+  TestKit.Check("T07/toggle5/cp", hCp.Text)
+  TestKit.Check("T07/toggle5/burdist", hBur.Text)
+  Object.Lock(hF)
+
+End

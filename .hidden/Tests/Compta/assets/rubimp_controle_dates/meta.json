@@ -1,0 +1,24 @@
+{
+ "id": "RUBIMP-T06",
+ "objet": "Contrôle des dates saisies",
+ "classe": "RubImp",
+ "description": "Jeu extrait_shared/extrait_base : N1 (2017), DteN0 vidé puis « 01012010 » + Entrée (Cmpt_KeyPress → dteN0_LostFocus) : Message.Warning « date saisie inférieure au début de la période » (Entrée) → Exo() remet l'exercice en cours (A02) ; Imprimer (Info : Entrée) : période imprimée relevée dans ~/resultat_pdf.txt ; Quitter. Les cas « fin après la clôture » et « fin < début » ne sont pas joués.",
+ "dataset": "extrait_shared/extrait_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/resultat_pdf.txt'"
+ },
+ "fichiers": [
+  "resultat_pdf.txt",
+  "tmp/Resultat.csv"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

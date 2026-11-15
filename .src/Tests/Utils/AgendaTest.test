@@ -1,0 +1,63 @@
+' Gambas test file
+
+''Tests de Agenda (.hidden/reference/.src/Utils/Agenda.class/test.md, AGENDA-T04).
+''Écran instancié sans affichage (New Agenda) ; le choix d'une date dans DateChooser1 (non observé par le rejeu)
+''est remplacé par DateChooser1.Value puis DateChooser1_Change. Base Laurux01 + 3 actions insérées par le test.
+''Valeurs attendues : assets/AgendaTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04ChangementDate", "Actions au 10.01.2026 (08h15, 14h30) et au 12.01.2026 (09h00) ; passage d'une date à l'autre : grille rechargée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "AgendaTest")
+  TestKit.OuvreBase()
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAgenda") & " (daction, haction, iaction, nuser) VALUES (&1, &2, &3, &4)", "2026-01-10", "08h15", "Rendez-vous A", User.Name)
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAgenda") & " (daction, haction, iaction, nuser) VALUES (&1, &2, &3, &4)", "2026-01-10", "14h30", "Livraison B", User.Name)
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabAgenda") & " (daction, haction, iaction, nuser) VALUES (&1, &2, &3, &4)", "2026-01-12", "09h00", "Inventaire C", User.Name)
+
+End
+
+Private Sub Grille(sCle As String, hForm As Object)
+
+  Dim hGrid As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  hGrid = hForm.Controls["Coldetail"]
+  TestKit.Check(sCle & "/lignes", hGrid.Rows.Count)
+  For i = 0 To hGrid.Rows.Count - 1
+    If hGrid[i, 1].Text Then sRes &= "[" & hGrid[i, 0].Text & "|" & hGrid[i, 1].Text & "]"
+  Next
+  TestKit.Check(sCle & "/actions", sRes)
+
+End
+
+Private Sub Choisit(hForm As Object, dDate As Date)
+
+  Dim hCal As Object
+
+  hCal = hForm.Controls["DateChooser1"]
+  hCal.Value = dDate
+  hForm.DateChooser1_Change()
+
+End
+
+Public Sub T04ChangementDate()
+
+  Dim hForm As Agenda
+
+  hForm = New Agenda
+  Choisit(hForm, Date(2026, 1, 10))
+  Grille("T04/date_10", hForm)
+  Choisit(hForm, Date(2026, 1, 12))
+  Grille("T04/date_12", hForm)
+  Choisit(hForm, Date(2026, 1, 11))
+  Grille("T04/date_11", hForm)
+  Object.Lock(hForm)
+
+End

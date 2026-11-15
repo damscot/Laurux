@@ -1,0 +1,82 @@
+' Gambas test file
+
+''Tests de Rubresult (.hidden/reference/.src/Compta/Utils/Rubresult.class/test.md, RUBRESULT-T05, T07).
+''Prévus en replay, bloqués au rejeu (choix du répertoire par DirChooser : BcrSelect_Activate non rejoué) :
+''l'écran est instancié ici sans être affiché (Laurux01), BcrSelect.SelectedPath est posé sur un répertoire
+''temporaire puis BcrSelect_Activate est appelé directement. Un import complet se termine par Message.Info
+''(bloquant en gb.test : RUBRESULT-T04 non joué) ; sans Bcrcpt.txt, l'import s'arrête sur une erreur d'exécution
+''avant ce message (A01), ce qui permet aussi de relever le découpage des lignes de Bcr.txt (T07).
+''Valeurs attendues : assets/RubresultTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05ImportSansBcrcpt", "Import d'un répertoire avec Bcr.txt seul : Rubriques rechargées, RubCompt vide, erreur (A01)")
+  TestKit.Desc("T07LignesMalFormees", "Découpage de lignes mal formées de Bcr.txt (sans ; final, intitulé contenant ;)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "RubresultTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Import(sCle As String, sBcr As String)
+  ''Répertoire temporaire contenant Bcr.txt seul, puis BcrSelect_Activate.
+
+  Dim hF As Rubresult
+  Dim sDir As String = Temp$()
+
+  Mkdir sDir
+  File.Save(sDir &/ "Bcr.txt", sBcr)
+  Try hF = New Rubresult
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Object.SetProperty(hF.Controls["BcrSelect"], "SelectedPath", sDir)
+  Try hF.BcrSelect_Activate()
+  If Error Then
+    TestKit.Check(sCle & "/erreur", Replace(Error.Text, sDir, "<rep>"))
+  Else
+    TestKit.Check(sCle & "/erreur", "<aucune>")
+  Endif
+  Object.Lock(hF)
+
+End
+
+Private Sub Tables(sCle As String)
+
+  Dim r As Result
+  Dim i As Integer
+
+  r = Utils.db.Exec("SELECT * FROM Fiches_Rubriques ORDER BY numrub")
+  TestKit.Check(sCle & "/rubriques_nb", r.Count)
+  If r.Available Then
+    Repeat
+      TestKit.Check(sCle & "/rub" & i, "[" & r!numrub & "][" & r!intitule & "][" & r!type & "][" & r!detail & "][" & r!num & "]")
+      Inc i
+    Until r.MoveNext()
+  Endif
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM Fiches_RubCompt")
+  TestKit.Check(sCle & "/rubcompt_nb", r!nb)
+
+End
+
+Public Sub T05ImportSansBcrcpt()
+
+  Import("T05", "B0010;Actif immobilise;T;N;01;\nB0050;Frais d'etablissement;L;D;02;\nR9000;Resultat;T;N;;\n")
+  Tables("T05")
+
+End
+
+Public Sub T07LignesMalFormees()
+
+  ' ligne sans « ; » final, intitulé contenant « ; », ligne de 3 champs, ligne vide (numrub Null : la requête
+  ' INSERT échoue avant la lecture de Bcrcpt.txt, Fiches_RubCompt inchangée)
+  Import("T07", "Z0001;Sans point-virgule final;L;N;02\nZ0002;Intitule; avec point-virgule;L;N;03;\nZ0003;Trois champs;L\n\n")
+  Tables("T07")
+
+End
