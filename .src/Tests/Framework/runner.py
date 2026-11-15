@@ -58,6 +58,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+from collections import Counter
 from pathlib import Path
 
 FRAMEWORK = Path(__file__).resolve().parent
@@ -1199,10 +1200,63 @@ def doc_tests(docdir):
     for l in txt.splitlines():
         m = re.match(r"^\| ([A-Z0-9_]+-T\d+) \| ([^|]*) \| ([^|]*) \|", l)
         # statut (dernière colonne) « hors périmètre » : test écarté par décision de l'utilisateur, jamais à faire
-        if m and not re.match(r"\s*hors périmètre", l.rstrip().rstrip("|").rsplit("|", 1)[-1], re.I):
-            tests[m[1]] = {"type": m[2].strip(), "objet": m[3].strip()}
+        statut = l.rstrip().rstrip("|").rsplit("|", 1)[-1].strip()
+        if m and not re.match(r"\s*hors périmètre", statut, re.I):
+            tests[m[1]] = {"type": m[2].strip(), "objet": m[3].strip(), "statut": statut}
     complexe = bool(re.search(r"(à faire valider|valider par l'utilisateur|module complexe)", txt[:3000], re.I))
     return tests, complexe
+
+
+# Causes de blocage d'un test non implémenté, déduites de la raison écrite dans son statut test.md
+# (« à faire : <raison> ») ; la première qui correspond l'emporte. « réalisable » : test simplement pas encore
+# écrit (temps, jeu de données à créer…), compté dans « Restant ».
+BLOCAGES = [
+    ("module complexe", r"(passe par|réévalué|via|depuis|scénario|écran|parcours|relève de|édition par)\b.{0,40}\b("
+     r"complexe|Facture|ObjFac\w*|Caisse|Achat|Articles|FClient|Saisecrit|SaiReg|commande1|Moulinage|ValidBR\w*|"
+     r"Impart\b|MajTarifM|FFournisseur|inventaire|clôture)|écran complexe|module complexe|classe complexe|"
+     r"exclus? \(complexe\)|auto-instance|lit Caisse"),
+    ("réalisable", r"faute de temps|manque de temps|non commencé|non traité|non écrit|non scénarisé|non synthétisé|"
+     r"non abordé|premier passage|fin de vague|temps écoulé|à écrire|à (créer|préparer)\b|durée de la vague|dans ce lot|"
+     r"non tenté|durée mesurée|attendus non|rejeu suspendu|scénario prêt|hors liste|réalisable"),
+    ("SQLite", r"SQLite"),
+    ("extraction / réécriture (phases 3-4)", r"extraction|après [A-Z0-9_]+-0\d\d|phase [34]|n'existe pas encore|"
+     r"n'existe qu'après|absente? des sources|suppression|classe morte|« -t » retirée|contrôle statique"),
+    ("harnais : démarrage, code de sortie", r"harnais|avant (le démarrage du rejeu|la création du timer|le timer|"
+     r"Lancement)|code de sortie attendu|START-A\d\d"),
+    ("anomalie applicative", r"anomalie|bloqué par l.?erreur|erreur fatale|(?<!REPLAYOBSERVER)(?<!START)-A\d\d"),
+    ("Message.* / fenêtre modale", r"Message\.|ShowModal|ShowDialog|modal|TriCpt|Tricp\b"),
+    ("clavier / souris", r"Key\.|KeyPress|touche|\bF\d{1,2}\b|Échap|Escape|double-clic|DblClick|clic droit|Mouse|"
+     r"\bLast\b|flèches|curseur de souris"),
+    ("dialogue natif", r"Dialog\.|DirChooser|sélecteur|FileSelect"),
+    ("écran sans point d'entrée", r"point d.entrée|aucun menu|aucun appelant|ouvert par aucun|inatteignable|"
+     r"inaccessible|sans \.form appelant"),
+    ("matériel / réseau / environnement", r"matériel|TPE|imprimante|afficheur|tiroir|réseau|NetHandler|DNS|"
+     r"certificat|SSH|ssh|droits? d.admi|seconde base|non créables?|schéma .{0,80}absent|concurrence|User\.Name"),
+    ("outillage runner (comparaison, mesure)", r"runner|outillage|non compar|non capturé|non observ|gbx3 -p|"
+     r"performance|mesure de durée|projet minimal|HOME|Laurux\.conf|graphique|minutage|seulement|affiché|TextBox|"
+     r"golden"),
+    ("contrôle non rejouable", r"non rejou|REPLAYOBSERVER|TreeView|ColumnView|ListView|grille|GridView|"
+     r"RichDataGrid|DateChooser|ListEditor|Drag|focus|rejeu|non sélectionnable"),
+]
+
+
+def cause_blocage(statut, statuts):
+    """Cause de blocage d'un test non implémenté (None : réalisable) ; une raison sans cause reconnue qui renvoie à un
+    autre test de la classe (« même raison que T05 », « voir T02 ») prend la cause de ce test (statuts : {« T05 » :
+    statut})."""
+    s = statut.strip()
+    if not re.match(r"(à faire|bloqué)", s, re.I):
+        return None
+    raison = re.sub(r"^(à faire|bloqué)\s*[:(]?\s*", "", s, flags=re.I).strip(" )")
+    if not raison:
+        return None
+    for cause, motif in BLOCAGES:
+        if re.search(motif, raison, re.I):
+            return None if cause == "réalisable" else cause
+    ref = re.search(r"(même(s)? (raison|blocage|limites?)s? que|idem|voir|comme) (T\d+)", raison, re.I)
+    if ref and ref[4] in statuts and statuts[ref[4]] != statut:
+        return cause_blocage(statuts[ref[4]], {})
+    return "autre (voir test.md)"
 
 
 def classe_of_module(module):
@@ -1358,19 +1412,26 @@ def write_todo(results, docs):
             verif.append(r)
     verif.sort(key=lambda r: (r["classe"].lower(), test_num(r)))
     todo = []
+    causes_tot = Counter()
     for classe, d in docs.items():
         tests, complexe = doc_tests(d)
-        missing = [t for t in tests if t not in done_ids]
+        # implémenté : résultat enregistré, ou statut test.md « implémenté » (test porté par un scénario commun)
+        missing = [t for t in tests if t not in done_ids and not re.match(r"implémenté", tests[t]["statut"], re.I)]
         if not missing:
             continue
+        statuts = {t.rsplit("-", 1)[1]: v["statut"] for t, v in tests.items()}
+        causes = Counter(c for c in (cause_blocage(tests[t]["statut"], statuts) for t in missing) if c)
+        causes_tot.update(causes)
+        nb = sum(causes.values())
         rel = d.relative_to(REWORK / ".hidden" / "reference")
         src = REWORK / rel
         try:
             k = kpi_of(parse(src, REWORK))
         except Exception:
             k = {"cc_total": 0, "cc_max": 0, "loc": 0}
-        score = k["cc_total"] * (2 if complexe else 1) + 5 * len(missing)
-        todo.append((score, classe, rel, len(tests), len(missing), k, complexe))
+        score = k["cc_total"] * (2 if complexe else 1) + 5 * (len(missing) - nb)
+        todo.append((score, classe, rel, len(tests), len(tests) - len(missing), nb, len(missing) - nb, causes, k,
+                     complexe))
     todo.sort(key=lambda x: -x[0])
     out = ["<!-- AUTO:tests -->",
            "## Phase 2 — tests\n",
@@ -1386,14 +1447,26 @@ def write_todo(results, docs):
         link = f"[{r['id'] or r['test']}]({d.relative_to(REWORK / '.hidden' / 'reference')}/test.md)" if d else (r["id"] or r["test"])
         out.append(f"| {link} | {r['statut']} | {short(r['obtenu'])} | {short(r['attendu'])} | "
                    f"{short(r.get('raison', ''), 50)} | {short(r['test'], 40)} |")
+    nb_bloq = sum(causes_tot.values())
+    nb_rest = sum(x[6] for x in todo)
+    out += ["", f"### Tests bloqués ({nb_bloq}), par cause\n",
+            "Test non implémenté dont le statut test.md donne une raison de blocage (évolution du framework de test, "
+            "réécriture du code applicatif, anomalie, module complexe en attente de validation…), classée par "
+            "`runner.py` (`BLOCAGES`) d'après cette raison. Les autres tests non implémentés sont « restants » "
+            f"(réalisables avec l'outillage actuel) : {nb_rest}.\n",
+            "| Cause | Tests |", "|---|---|"]
+    out += [f"| {c} | {n} |" for c, n in causes_tot.most_common()]
     out += ["", f"### Classes dont des tests restent à implémenter ({len(todo)}), par priorité\n",
+            "Restant = prévus − implémentés − bloqués (tests réalisables avec l'outillage actuel). "
             "Priorité = complexité cyclomatique totale (×2 pour un module complexe à scénarios validés par "
             "l'utilisateur) + 5 par test restant.\n",
-            "| # | Classe | Tests prévus | Restant | CC totale | CC max | LOC | Complexe | test.md |",
-            "|---|---|---|---|---|---|---|---|---|"]
-    for i, (score, classe, rel, nt, nm, k, complexe) in enumerate(todo, 1):
-        out.append(f"| {i} | {classe} | {nt} | {nm} | {k['cc_total']} | {k['cc_max']} | {k['loc']} | "
-                   f"{'oui' if complexe else ''} | [{rel}]({rel}/test.md) |")
+            "| # | Classe | Tests prévus | Implémentés | Tests bloqués | Restant | Causes de blocage | CC totale | "
+            "CC max | LOC | Complexe | test.md |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for i, (score, classe, rel, nt, ni, nb, nr, causes, k, complexe) in enumerate(todo, 1):
+        cs = ", ".join(f"{c} {n}" for c, n in causes.most_common())
+        out.append(f"| {i} | {classe} | {nt} | {ni} | {nb} | {nr} | {cs} | {k['cc_total']} | {k['cc_max']} | "
+                   f"{k['loc']} | {'oui' if complexe else ''} | [{rel}]({rel}/test.md) |")
     out.append("<!-- /AUTO:tests -->")
     block = "\n".join(out)
     if TODO.exists():
