@@ -1,0 +1,70 @@
+' Gambas test file
+
+''Tests de Histovmo (.hidden/reference/.src/Statistiques/Histovmo.class/test.md, HISTOVMO-T05, partiel).
+''Valeurs attendues : assets/HistovmoTest/expected.txt, produites dans le clone de référence.
+''Les listes de choix (ToggleButton1 à 6 → Colmo, Colmo2, Colfam, Colfam2, Colfour, Colfour2) et le choix d'une
+''ligne ne sont pas rejouables (clic ColumnView, F2, Échap) : l'écran est construit sans être affiché, chaque
+''ToggleButton*_Click est appelé (ouverture de la liste), la 2e ligne est rendue courante puis Col*_Click est appelé
+''(zone remplie, liste vidée et masquée) ; un second appel du ToggleButton referme une liste ouverte. Échap/F2
+''(Col*_KeyPress lit Key) restent hors gb.test. Jeu : histovmo_shared/ventes_mo.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05Listes", "Listes de choix MO, familles, fournisseurs : ouverture, choix d'une ligne, refermeture par le bouton")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Statistiques", "HistovmoTest")
+  TestKit.OuvreBase("histovmo_shared/ventes_mo")
+
+End
+
+Private Sub Liste(sT As String, hF As Histovmo, iBouton As Integer, sListe As String, sZone As String)
+
+  Dim hL, hZ As Object
+  Dim sCle As String
+
+  hL = hF.Controls[sListe]
+  hZ = hF.Controls[sZone]
+  Object.Call(hF, "ToggleButton" & CStr(iBouton) & "_Click")
+  TestKit.Check(sT & "/" & sListe & "/ouverte", hL.Visible)
+  TestKit.Check(sT & "/" & sListe & "/lignes", hL.Count)
+  If hL.Count = 0 Then Return
+  hL.MoveFirst()
+  sCle = hL.Item.Key
+  If hL.Count > 1 Then
+    hL.MoveNext()
+    sCle = hL.Item.Key
+  Endif
+  hL.MoveTo(sCle)
+  Object.Call(hF, sListe & "_Click")
+  TestKit.Check(sT & "/" & sListe & "/zone", hZ.Text)
+  TestKit.Check(sT & "/" & sListe & "/apres_choix", Str$(hL.Visible) & " " & Str$(hL.Count))
+  ' Ouverture puis refermeture par un second clic sur le bouton
+  Object.Call(hF, "ToggleButton" & CStr(iBouton) & "_Click")
+  Object.Call(hF, "ToggleButton" & CStr(iBouton) & "_Click")
+  TestKit.Check(sT & "/" & sListe & "/refermee", Str$(hL.Visible) & " " & Str$(hL.Count))
+
+End
+
+Public Sub T05Listes()
+
+  Dim hF As Histovmo
+
+  Try hF = New Histovmo
+  If Error Then
+    TestKit.Check("T05/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Liste("T05", hF, 1, "Colmo", "Mo")
+  Liste("T05", hF, 2, "Colmo2", "Mo2")
+  Liste("T05", hF, 3, "Colfam", "Fam")
+  Liste("T05", hF, 4, "Colfam2", "Fam2")
+  Liste("T05", hF, 5, "Colfour", "Four")
+  Liste("T05", hF, 6, "Colfour2", "Four2")
+  Object.Lock(hF)
+
+End

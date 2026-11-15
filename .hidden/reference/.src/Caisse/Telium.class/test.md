@@ -9,9 +9,9 @@ point de départ à une correction (A01-A04).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| TELIUM-T01 | gbtest | `_new` : port absent | `New Telium(1, True, False, "/dev/inexistant")` | erreur figée `'Telium.:Error' is not static` (A01) | `tests/telium_port_absent/` | à faire |
-| TELIUM-T02 | gbtest | `demanderPaiement` sur faux TPE | paire pty `socat`, faux TPE Python qui répond `ACK` / `ACK` / `ENQ` ; montant 12,5 | retour `False` ; octets reçus par le faux TPE `06 0a 06 0a` (A02, A03) | `tests/telium_pty/` | à faire |
-| TELIUM-T03 | gbtest | Modes `_new` | combinaisons `unModeReponse` × `forcerAutorisation` | trame émise (si un jour atteinte) ; aujourd'hui identique à T02 | `tests/telium_modes/` | à faire |
+| TELIUM-T01 | gbtest | `_new` : port absent | `New Telium(1, True, False, "/dev/inexistant")` | erreur figée `'Telium.:Error' is not static` (A01) | `tests/telium_port_absent/` | implémenté |
+| TELIUM-T02 | gbtest | `demanderPaiement` sur faux TPE | paire pty `socat`, faux TPE Python qui répond `ACK` / `ACK` / `ENQ` ; montant 12,5 | retour `False` ; octets reçus par le faux TPE `06 0a 06 0a` (A02, A03) | `tests/telium_pty/` | implémenté |
+| TELIUM-T03 | gbtest | Modes `_new` | combinaisons `unModeReponse` × `forcerAutorisation` | trame émise (si un jour atteinte) ; aujourd'hui identique à T02 | `tests/telium_modes/` | implémenté |
 
 ## Détail des tests
 
@@ -24,3 +24,4 @@ point de départ à une correction (A01-A04).
 - **Non testable sans matériel** : comportement réel d'un TPE Ingenico (temps de réponse, trames
   de réponse, refus de carte, mode de connexion USB/série), conformité au protocole caisse.
 - Si TELIUM-001 est exécuté, ces tests sont supprimés avec la classe.
+- **Phase 2 (vague 7)** : gb.test `.src/Tests/Caisse/TeliumTest.test` ; paire pty `socat` et faux TPE Python (`python3 -I`, script écrit par le test dans un répertoire `Temp$()`) ; `socat` est pris sur l'hôte (monté dans le conteneur). Octets reçus `06 0a 06 0a` pour les quatre combinaisons de modes, retour `False`.

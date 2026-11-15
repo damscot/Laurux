@@ -70,7 +70,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] JOURNAUX-A01 — [anomalie] `Button1_Click` passe la commande `RadioButton1` (objet, converti
+- [ ] JOURNAUX-A01 — [anomalie] (confirmée phase 2, vague 7 : tri par numéro imprimé dans l'ordre des dates, figée par T05) `Button1_Click` passe la commande `RadioButton1` (objet, converti
   en `True`) au lieu de `RadioButton1.Value` : le tri « numéro/date/compte » n'est jamais appliqué
   à l'impression · tests : T05, JOURNAUXM-T01 · sources : [Journaux.class:607](../../../../../../.src/Compta/Impressions/Journaux.class#L607), [JournauxM.module:96](../../../../../../.src/Compta/Impressions/JournauxM.module#L96)
 - [ ] JOURNAUX-A02 — [anomalie] (confirmée phase 2, vague 3 : au second export, le solde reprend la valeur laissée par le premier) Export : le solde de ligne n'est jamais remis à zéro (`pl` n'est
@@ -82,7 +82,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] JOURNAUX-A04 — [anomalie] Export : `DROP`/`CREATE` de la table `centralisation` (types
   `FLOAT`/`Char(40)` différents de `JournauxM`) sans usage ; la suppression change le dump ·
   tests : T06 · sources : [Journaux.class:683-690](../../../../../../.src/Compta/Impressions/Journaux.class#L683-L690)
-- [ ] JOURNAUX-A05 — [anomalie] Quitter : `Kill filename` sur une variable jamais affectée,
+- [ ] JOURNAUX-A05 — [anomalie] (confirmée phase 2, vague 7 : `~/tmp/Journaux.pdf` conservé après Quitter, figée par T10) Quitter : `Kill filename` sur une variable jamais affectée,
   `~/tmp/Journaux.pdf` n'est pas supprimé (contrairement à `Jourcent`) · tests : T10 · sources : [Journaux.class:340](../../../../../../.src/Compta/Impressions/Journaux.class#L340)
 - [ ] JOURNAUX-A06 — [anomalie] Export : boucle `For y = 0 To 15` sur `q` de taille 12 ;
   dépassement d'indice si `Entete12..15` est renseigné (configuration modifiée à la main) ·

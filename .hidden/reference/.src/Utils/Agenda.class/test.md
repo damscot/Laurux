@@ -11,7 +11,7 @@ masquée) et sur les lignes `Exec_SQL` du log.
 | AGENDA-T01 | replay | Création d'une action | Menu Agenda ; date fixe ; clic sur 08h15 ; saisie ; Valider | 1 ligne `Fiches_Agenda` (`daction`, `haction = "08h15"`, `nuser`) | `tests/replay_creation/` | implémenté |
 | AGENDA-T02 | replay | Modification d'une action | base avec une action existante ; clic ; nouveau texte ; Valider | `iaction` modifié | `tests/replay_modification/` | implémenté |
 | AGENDA-T03 | replay | Affichage multi-utilisateur (anomalies figées) | base avec la même action pour `nuser` = A et B ; ouverture par A ; modification | grille affiche les deux ; `UPDATE` modifie les deux lignes (A01/A02 figées) | `tests/replay_multi_user/` | implémenté (A01/A02 figées : l'UPDATE modifie les deux lignes) |
-| AGENDA-T04 | replay | Changement de date | sélection d'une autre date dans `DateChooser1` | grille rechargée (log `Exec_SQL`) | `tests/replay_changement_date/` | à faire : DateChooser non observé par Utils.Recursive_Observers (aucun événement enregistré ni rejoué) |
+| AGENDA-T04 | replay | Changement de date | sélection d'une autre date dans `DateChooser1` | grille rechargée (log `Exec_SQL`) | `tests/replay_changement_date/` | implémenté (gb.test `AgendaTest.T04ChangementDate` : `DateChooser1.Value` + `DateChooser1_Change`, actions de 3 dates insérées ; grille rechargée, vidée pour une date sans action) |
 
 ## Détail des tests
 

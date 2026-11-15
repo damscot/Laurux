@@ -55,7 +55,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] REMISEC-A01 — [anomalie] (confirmée phase 2, vague 5 : type et famille inexistants, remise `abc` → ligne `('99','ZZ',NULL)` (T03)) `Button3_Click` enregistre même si les contrôles `Quitte_*` ont
   échoué (type ou famille inexistants, remise invalide → `NULL`) · tests : T03 · sources : [Remisec.class:304](../../../../../../.src/Gestion/Tables/Remisec.class#L304), [Remisec.class:307](../../../../../../.src/Gestion/Tables/Remisec.class#L307)
-- [ ] REMISEC-A02 — [anomalie] Colonne « Remise » : le format `0.000` est converti en `0` par
+- [ ] REMISEC-A02 — [anomalie] (non reproduite phase 2, vague 7 : sur MariaDB la remise `decimal` est lue en texte et affichée `7.500` (format non appliqué, pas d'arrondi à l'entier) : le défaut décrit (CFormat) n'est pas observé, l'affichage reste non localisé (T05)) Colonne « Remise » : le format `0.000` est converti en `0` par
   `CFormat._Get` (CFORMAT-A01) et appliqué à toute valeur Float (RICHDATAGRID-A04) → remise
   affichée arrondie (à confirmer par T05) ; la correction se fait dans `CFormat` · tests : T05 ·
   sources : [Remisec.class:73](../../../../../../.src/Gestion/Tables/Remisec.class#L73), [CFormat.class:51](../../../../../../.src/Utils/CFormat.class#L51)

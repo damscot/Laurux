@@ -1,0 +1,76 @@
+' Gambas test file
+
+''Tests de Journaux (.hidden/reference/.src/Compta/Impressions/Journaux.class/test.md, JOURNAUX-T04).
+''Le formulaire est instancié sans affichage ; les touches F2/Échap (non rejouées) sont remplacées par l'appel direct
+''des gestionnaires qu'elles déclenchent : ToggleButton3_Click (F2 sur Cpt), ToggleButton2_Click (F2 sur Cpt2),
+''coljour_Click / coljour2_Click (Entrée ou clic sur une ligne). Base Laurux01.
+''Valeurs attendues : assets/JournauxTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04ListeJournaux", "Listes des journaux (Coljour, Coljour2) : contenu, choix d'une ligne reporté dans Cpt/Cpt2, seconde ouverture qui referme la liste")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "JournauxTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Sub Liste(hCol As Object, sCle As String)
+
+  Dim sRes As String
+
+  TestKit.Check(sCle & "/visible", hCol.Visible)
+  TestKit.Check(sCle & "/nombre", hCol.Count)
+  If hCol.Count = 0 Then Return
+  TestKit.Check(sCle & "/courant", hCol.Item.Key)
+  hCol.MoveFirst
+  Repeat
+    sRes &= hCol.Item[0] & "=" & hCol.Item[1] & " | "
+  Until hCol.MoveNext()
+  TestKit.Check(sCle & "/elements", sRes)
+
+End
+
+Public Sub T04ListeJournaux()
+
+  Dim hF As Journaux
+  Dim hCol, hCpt As Object
+
+  Try hF = New Journaux
+  If Error Then
+    TestKit.Check("T04/creation", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  ' F2 sur Cpt : liste des journaux, puis choix du journal 70
+  hF.ToggleButton3_Click()
+  hCol = hF.Controls["Coljour"]
+  Liste(hCol, "T04/cpt")
+  hCol["70"].Selected = True
+  hCol.MoveTo("70")
+  hF.coljour_Click()
+  hCpt = hF.Controls["Cpt"]
+  TestKit.Check("T04/cpt/texte", hCpt.Text)
+  TestKit.Check("T04/cpt/visible_apres", hCol.Visible)
+  TestKit.Check("T04/cpt/nombre_apres", hCol.Count)
+  ' F2 sur Cpt2 : liste, choix du journal 50
+  hF.ToggleButton2_Click()
+  hCol = hF.Controls["Coljour2"]
+  Liste(hCol, "T04/cpt2")
+  hCol.MoveTo("50")
+  hF.coljour2_Click()
+  hCpt = hF.Controls["Cpt2"]
+  TestKit.Check("T04/cpt2/texte", hCpt.Text)
+  ' seconde ouverture puis nouvel appel : la liste se referme sans choix (Cpt2 inchangé)
+  hF.ToggleButton2_Click()
+  hF.ToggleButton2_Click()
+  TestKit.Check("T04/fermeture/visible", hCol.Visible)
+  TestKit.Check("T04/fermeture/nombre", hCol.Count)
+  TestKit.Check("T04/fermeture/cpt2", hCpt.Text)
+  Object.Lock(hF)
+
+End

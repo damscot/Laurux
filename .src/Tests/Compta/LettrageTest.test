@@ -1,0 +1,152 @@
+' Gambas test file
+
+''Tests de Lettrage (.hidden/reference/.src/Compta/Lettrages/Lettrage.class/test.md, LETTRAGE-T02, T04).
+''Prévus en replay mais bloqués au rejeu (Colcli, ColumnView Mode=Multiple : Current Null au rejeu) : l'écran est
+''instancié ici sans être affiché sur le compte 411001 (jeu lettrage_shared/lettrage_base), les lignes sont
+''sélectionnées par programme puis Colcli_Click, Button5_Click (Lettrer) et Button7_Click (Délettrer) sont appelés
+''directement. LETTRAGE-T03 (lettrage refusé) ouvre un Message.Warning (bloquant en gb.test) : non joué.
+''Valeurs attendues : assets/LettrageTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02LettrageLotAleatoire", "Facture + règlement de même montant cochés, numlot vide : lot aléatoire")
+  TestKit.Desc("T02bLettrageLotSaisi", "Facture + règlement de même montant cochés, lot saisi")
+  TestKit.Desc("T04Delettrage", "Lignes lettrées cochées (vue Toutes), Délettrer : lettree = 0, numlot (A03)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "LettrageTest")
+  TestKit.OuvreBase("lettrage_shared/lettrage_base")
+
+End
+
+Private Function Ouvre(sCle As String) As Lettrage
+
+  Dim hF As Lettrage
+
+  Try hF = New Lettrage("411001", "C")
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Grille(sCle As String, hF As Lettrage)
+
+  ''Relève la grille sans déplacer le curseur interne (Colcli.Item), lu par l'écran.
+
+  Dim hV As Object = hF.Controls["Colcli"]
+  Dim i As Integer
+  Dim sK As String
+
+  If hV.Available Then sK = hV.Item.Key
+  TestKit.Check(sCle & "/lignes", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check(sCle & "/l" & i, hV.Item.Key & "|" & hV.Item[2] & "|" & hV.Item[4] & "|" & hV.Item[5] & "|" & hV.Item[6] & "|" & hV.Item[8])
+      Inc i
+    Until hV.MoveNext()
+  Endif
+  If sK Then hV.MoveTo(sK)
+  TestKit.Check(sCle & "/Sld", Object.GetProperty(hF.Controls["Sld"], "Text"))
+  TestKit.Check(sCle & "/Totselection", Object.GetProperty(hF.Controls["Totselection"], "Text"))
+  TestKit.Check(sCle & "/Numlot", Object.GetProperty(hF.Controls["Numlot"], "Text"))
+
+End
+
+Private Sub Coche(sCle As String, hF As Lettrage, sKey As String)
+  ''Ligne sKey rendue courante (propriété Key de la ColumnView) puis Colcli_Click, comme un clic sur la ligne.
+  ''Colcli_Click lit aussi Colcli.Item (curseur interne) : il est placé sur la même ligne (MoveTo), hypothèse d'un
+  ''clic réel (sans cela, le curseur laissé hors grille par le relevé de la grille donne « Null object »).
+
+  Dim hV As Object = hF.Controls["Colcli"]
+
+  hV.Key = sKey
+  hV.MoveTo(sKey)
+  If hV.Current Then
+    TestKit.Check(sCle & "/courante", hV.Current.Key)
+  Else
+    TestKit.Check(sCle & "/courante", "<Null>")
+    Return
+  Endif
+  Try hF.Colcli_Click()
+  If Error Then TestKit.Check(sCle & "/click_err", "ERREUR: " & Error.Text)
+
+End
+
+Private Sub Ecritures(sCle As String)
+  ''Lettrage des écritures 101 à 106 (lot à 7 chiffres tiré au hasard masqué).
+
+  Dim r As Result
+  Dim sLot As String
+
+  r = Utils.db.Exec("SELECT lind, numlot, lettree FROM " & Cbase.Table("TabMvt") & " WHERE lind BETWEEN 101 AND 106 ORDER BY lind")
+  If Not r.Available Then Return
+  Repeat
+    sLot = Str(r!numlot)
+    If Len(sLot) = 7 And If IsDigit(sLot) Then sLot = "<lot aléatoire>"
+    TestKit.Check(sCle & "/mvt" & r!lind, sLot & "|" & r!lettree)
+  Until r.MoveNext()
+
+End
+
+Public Sub T02LettrageLotAleatoire()
+
+  Dim hF As Lettrage
+
+  hF = Ouvre("T02")
+  If Not hF Then Return
+  Grille("T02/ouverture", hF)
+  Coche("T02/c1", hF, "10111")
+  Coche("T02/c2", hF, "10212")
+  Grille("T02/coche", hF)
+  Try hF.Button5_Click()
+  If Error Then TestKit.Check("T02/lettrer_err", "ERREUR: " & Error.Text)
+  Grille("T02/apres", hF)
+  Ecritures("T02/base")
+  Object.Lock(hF)
+
+End
+
+Public Sub T02bLettrageLotSaisi()
+
+  Dim hF As Lettrage
+
+  hF = Ouvre("T02b")
+  If Not hF Then Return
+  Coche("T02b/c1", hF, "10111")
+  Coche("T02b/c2", hF, "10212")
+  Object.SetProperty(hF.Controls["Numlot"], "Text", "L0777")
+  Try hF.Button5_Click()
+  If Error Then TestKit.Check("T02b/lettrer_err", "ERREUR: " & Error.Text)
+  Grille("T02b/apres", hF)
+  Ecritures("T02b/base")
+  Object.Lock(hF)
+
+End
+
+Public Sub T04Delettrage()
+
+  Dim hF As Lettrage
+
+  hF = Ouvre("T04")
+  If Not hF Then Return
+  Object.SetProperty(hF.Controls["Toutes"], "Value", True)
+  Try hF.Toutes_Click()
+  If Error Then TestKit.Check("T04/toutes_err", "ERREUR: " & Error.Text)
+  Grille("T04/toutes", hF)
+  Coche("T04/c1", hF, "10414")
+  Coche("T04/c2", hF, "10515")
+  Grille("T04/coche", hF)
+  Try hF.Button7_Click()
+  If Error Then TestKit.Check("T04/delettrer_err", "ERREUR: " & Error.Text)
+  Grille("T04/apres", hF)
+  Ecritures("T04/base")
+  Object.Lock(hF)
+
+End

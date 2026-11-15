@@ -54,3 +54,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] EDFOUR-A01 — [anomalie] Dernière page du PDF paysage terminée par `BasPage` (pied portrait,
   largeur 206 mm) au lieu de `BasPageP` : pied de page décentré · tests : T05 · sources : [EdFour.class:305](../../../../../../.src/Gestion/Impressions/EdFour.class#L305), [EdFour.class:298](../../../../../../.src/Gestion/Impressions/EdFour.class#L298)
+- [ ] EDFOUR-A02 — [amélioration][tests] alléger le scénario `Gestion/edfour_tri_nom` (EDFOUR-T02) : sa vérification d'édition est désormais portée par `Reports/cclients_edfour` (CCLIENTS-T05, classe Cclients) (règle « les tests d'une classe sont portés par la classe » : éviter le double comptage) (phase 2, vague 7, 2026-11-15, décision utilisateur du 2026-11-14) · tests : EDFOUR-T02 → CCLIENTS-T05 · sources : [test.md](test.md), [Cclients/rework.md](../../../Reports/Cclients.class/rework.md)

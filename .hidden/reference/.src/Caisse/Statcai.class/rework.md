@@ -50,13 +50,13 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATCAI-A01 — [anomalie] `statut IN(&2)` reçoit la chaîne `"V","0"` : `Subst` la cite comme
+- [ ] STATCAI-A01 — [anomalie] (confirmée phase 2, vague 7 : `statut IN(&2)` reçoit `"V","0"` d'un bloc (`Recup_ca` l. 109, et non l. 83 comme indiqué par l'agent) : aucun ticket en cours compté, figée par T02) `statut IN(&2)` reçoit la chaîne `"V","0"` : `Subst` la cite comme
   une seule valeur, aucun ticket en cours (`Fiches_EntTicketz`) n'est compté ; seul le CA archivé
   apparaît. Correction : `statut IN (&2, &3)` avec deux arguments · tests : T02 · sources : [Statcai.class:109](../../../../../.src/Caisse/Statcai.class#L109)
 - [ ] STATCAI-A02 — [anomalie] `HOUR()` n'est pas traduit pour SQLite par `DB_Connection.Exec` :
   l'écran est inutilisable sur une base SQLite (message « problème sur une ligne de CA ») ;
   correction dans la traduction (`strftime('%H', …)`) ou dans la requête · tests : T05 · sources : [Statcai.class:109](../../../../../.src/Caisse/Statcai.class#L109)
-- [ ] STATCAI-A03 — [anomalie] `union` au lieu de `union all` : une ligne (heure, CA) identique
+- [ ] STATCAI-A03 — [anomalie] (précisée phase 2, vague 7 : inatteignable tant que A01 n'est pas corrigée (la branche des tickets en cours ne renvoie rien) : T03 ne fige qu'une heure comptée une fois) `union` au lieu de `union all` : une ligne (heure, CA) identique
   dans les tickets en cours et archivés n'est comptée qu'une fois (visible seulement après A01) ·
   tests : T03 · sources : [Statcai.class:109](../../../../../.src/Caisse/Statcai.class#L109)
 - [ ] STATCAI-A04 — [anomalie] Table de travail `Total` détruite et recréée sous un nom partagé

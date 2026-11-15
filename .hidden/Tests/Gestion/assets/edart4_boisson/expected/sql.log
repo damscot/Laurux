@@ -1,0 +1,56 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT LEFT(code_fam, 5) AS famille FROM Fiches_Fam GROUP BY famille ORDER BY famille
+SELECT * FROM Fiches_Fam WHERE code_fam='01'
+SELECT * FROM Fiches_Fam WHERE code_fam='02'
+SELECT * FROM Fiches_Fam WHERE code_fam='03'
+SELECT * FROM Fiches_Fam WHERE code_fam='10'
+SELECT * FROM Fiches_Fam WHERE code_fam='11'
+SELECT * FROM Fiches_Societes
+SELECT art_code,art_design,art_prvt,art_pvht,taux_tva,art_fam,art_photo FROM Fiches_Art,Fiches_Tvaav WHERE code_tva=art_tva AND art_fam='01' AND art_suspendu='0' AND art_four BETWEEN '40100001' AND '40199999' AND art_code BETWEEN '00000' AND 'ZZZZZ'
+SELECT art_fam,art_pvht,libell_fam,art_prvt,art_dra,art_volm, art_deg FROM Fiches_Art,Fiches_Fam WHERE art_fam=code_fam AND art_code='001'
+SELECT * FROM Fiches_regie WHERE code='A1'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='2'
+SELECT taux_tva FROM Fiches_Parametres,Fiches_Tvaav WHERE code_tva=tvass
+SELECT * FROM Fiches_RemTypec WHERE codef='01'
+SELECT * FROM Fiches_CoeffTypec WHERE codef='01'
+SELECT * FROM Fiches_TarTypcli WHERE cart='001'
+SELECT * FROM Fiches_RemCliFam WHERE codec=NULL AND codef='01'
+SELECT * FROM Fiches_Tarcli WHERE ccli=NULL AND cart='001'
+SELECT art_code,art_design,art_prvt,art_pvht,taux_tva,art_fam,art_photo FROM Fiches_Art,Fiches_Tvaav WHERE code_tva=art_tva AND art_fam='02' AND art_suspendu='0' AND art_four BETWEEN '40100001' AND '40199999' AND art_code BETWEEN '00000' AND 'ZZZZZ'
+SELECT art_fam,art_pvht,libell_fam,art_prvt,art_dra,art_volm, art_deg FROM Fiches_Art,Fiches_Fam WHERE art_fam=code_fam AND art_code='002'
+SELECT * FROM Fiches_regie WHERE code='A1'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='2'
+SELECT * FROM Fiches_RemTypec WHERE codef='02'
+SELECT * FROM Fiches_CoeffTypec WHERE codef='02'
+SELECT * FROM Fiches_TarTypcli WHERE cart='002'
+SELECT * FROM Fiches_RemCliFam WHERE codec=NULL AND codef='02'
+SELECT * FROM Fiches_Tarcli WHERE ccli=NULL AND cart='002'
+SELECT art_code,art_design,art_prvt,art_pvht,taux_tva,art_fam,art_photo FROM Fiches_Art,Fiches_Tvaav WHERE code_tva=art_tva AND art_fam='03' AND art_suspendu='0' AND art_four BETWEEN '40100001' AND '40199999' AND art_code BETWEEN '00000' AND 'ZZZZZ'
+SELECT art_fam,art_pvht,libell_fam,art_prvt,art_dra,art_volm, art_deg FROM Fiches_Art,Fiches_Fam WHERE art_fam=code_fam AND art_code='003'
+SELECT * FROM Fiches_regie WHERE code='B1'
+SELECT * FROM Fiches_Tvaav WHERE code_tva='1'
+SELECT * FROM Fiches_RemTypec WHERE codef='03'
+SELECT * FROM Fiches_CoeffTypec WHERE codef='03'
+SELECT * FROM Fiches_TarTypcli WHERE cart='003'
+SELECT * FROM Fiches_RemCliFam WHERE codec=NULL AND codef='03'
+SELECT * FROM Fiches_Tarcli WHERE ccli=NULL AND cart='003'
+SELECT art_code,art_design,art_prvt,art_pvht,taux_tva,art_fam,art_photo FROM Fiches_Art,Fiches_Tvaav WHERE code_tva=art_tva AND art_fam='10' AND art_suspendu='0' AND art_four BETWEEN '40100001' AND '40199999' AND art_code BETWEEN '00000' AND 'ZZZZZ'
+SELECT art_code,art_design,art_prvt,art_pvht,taux_tva,art_fam,art_photo FROM Fiches_Art,Fiches_Tvaav WHERE code_tva=art_tva AND art_fam='11' AND art_suspendu='0' AND art_four BETWEEN '40100001' AND '40199999' AND art_code BETWEEN '00000' AND 'ZZZZZ'

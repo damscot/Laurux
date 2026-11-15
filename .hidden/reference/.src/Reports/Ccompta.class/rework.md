@@ -71,7 +71,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `Level1R`, `Level1T`, `Level3R` dépendent de même de la couleur fixée par `Entete`. Correction :
   `SetFillColor(R, G, B)` explicite (rendu modifié) · appelants : `EditcompteM`, `EditcompteA`,
   `Pointage`, `Traites`, `Lcr` · tests : T07 · sources : [Ccompta.class:Level4C](../../../../../.src/Reports/Ccompta.class#L548-L558), [Ccompta.class:526](../../../../../.src/Reports/Ccompta.class#L526), [Ccompta.class:Level5C](../../../../../.src/Reports/Ccompta.class#L576-L587)
-- [ ] CCOMPTA-A02 — [anomalie] (confirmée phase 2, vague 6 : PDF des journaux centralisés (`Jourcent`/`JournauxM`) : débits de centralisation non formatés « 120.00 » à côté de crédits « 0,00 », figée par T10 (scénarios `Reports/ccompta_journaux`, `ccompta_jourcent`)) `level7J` imprime le débit de centralisation par `Left$(db, 24)`
+- [ ] CCOMPTA-A02 — [anomalie] (confirmée phase 2, vague 7 : revue depuis les écrans : débit des pages de centralisation « 120.00 » dans le texte PDF de JOURNAUXM-T01 et JOURCENT-T01) (confirmée phase 2, vague 6 : PDF des journaux centralisés (`Jourcent`/`JournauxM`) : débits de centralisation non formatés « 120.00 » à côté de crédits « 0,00 », figée par T10 (scénarios `Reports/ccompta_journaux`, `ccompta_jourcent`)) `level7J` imprime le débit de centralisation par `Left$(db, 24)`
   sans `Format$` (ex. `1234.5`), alors que crédit et solde sont formatés (`1 234,50`) ; les trois
   appelants passent la valeur brute `db_cent` · appelants : `Jourcent:858`, `JournauxA:795`,
   `JournauxM:346` · tests : T03, T10 · sources : [Ccompta.class:416](../../../../../.src/Reports/Ccompta.class#L416), [Jourcent.class:858](../../../../../.src/Compta/Impressions/Jourcent.class#L858)

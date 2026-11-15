@@ -58,7 +58,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] LIGCLI-A01 — [anomalie] `_new` : `Fiches_Comptes` et `Fiches_Txt_Relances` lus sans test
+- [ ] LIGCLI-A01 — [anomalie] (confirmée phase 2, vague 7 : client sans fiche `Fiches_Comptes` → « Result is not available » à l'ouverture de Relances › Préparation (`_new` l. 61, `res!solde`), figée par T07) `_new` : `Fiches_Comptes` et `Fiches_Txt_Relances` lus sans test
   `Available` (erreur si le client n'a pas de compte ou si aucun texte n'est saisi) · tests : T07 ·
   sources : [Ligcli.class:58-64](../../../../../../.src/Compta/Relances/Ligcli.class#L58-L64)
 - [ ] LIGCLI-A02 — [anomalie] Solde du compte négatif imprimé sans changement de signe (colonne

@@ -1,6 +1,9 @@
 ' Gambas test file
 
-''Tests de ImpartParam (.hidden/reference/.src/Gestion/Stock/Tarifs/ImpartParam.class/test.md, IMPARTPARAM-T08).
+''Tests de ImpartParam (.hidden/reference/.src/Gestion/Stock/Tarifs/ImpartParam.class/test.md, IMPARTPARAM-T01 à T08).
+''T01 à T07 : la fenêtre est instanciée sans être affichée, ses contrôles sont posés puis ses gestionnaires publics
+''appelés directement (Btncreer, BtnEnregistre, BtnEnregistreZone, BtnRetirerZone, Champs_Activate, TgleBtnFDef,
+''DefList_Click, BtnEffacerList) ; vérification des lignes de Fiches_ImpArtDef et Fiches_ImpArtDef2.
 ''Valeurs attendues : assets/ImpartParamTest/expected.txt, produites dans le clone de référence.
 ''La fenêtre est instanciée sans être affichée et Btncreer_Click (public) est appelé directement (MySQL seulement :
 ''le framework ne fournit pas de base SQLite). Jeu : impartparam_shared/definitions_1_2_10.
@@ -8,6 +11,11 @@
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T01CreationSep", "Définition séparée (;) : Btncreer, en-tête, 5 zones par BtnEnregistreZone ; tables et grille")
+  TestKit.Desc("T02CreationFixe", "Définition largeur fixe, 17 zones (A03 : zones 16-17 et posorg non enregistrés)")
+  TestKit.Desc("T05RetraitZone", "Définition de T01 : retrait de la 2e zone (BtnRetirerZone), puis édition de la 1re (Champs_Activate) et ré-enregistrement")
+  TestKit.Desc("T06Selection", "Liste des définitions (TgleBtnFDef) puis DefList_Click sur la définition 2 : champs affichés, aucune écriture")
+  TestKit.Desc("T07EffacerList", "BtnEffacerList : zones de la définition supprimées, en-tête conservé")
   TestKit.Desc("T08Numerotation", "Btncreer avec les définitions 1, 2 et 10 : numéro proposé dans Cdef (A04), et sur table vide")
 
 End
@@ -31,6 +39,225 @@ Public Sub T08Numerotation()
   Try hF.Btncreer_Click()
   If Error Then TestKit.Check("T08/Btncreer_vide", "ERREUR: " & Error.Text)
   TestKit.Check("T08/cdef_vide", Object.GetProperty(hF.Controls["Cdef"], "Text"))
+  Object.Lock(hF)
+
+End
+
+' Contrôle de la fenêtre par son nom (lecture et écriture par Object.GetProperty / SetProperty).
+Private Sub Pose(hF As ImpartParam, sNom As String, sProp As String, vVal As Variant)
+
+  Dim hCtl As Object = hF.Controls[sNom]
+
+  Object.SetProperty(hCtl, sProp, vVal)
+
+End
+
+Private Function Lit(hF As ImpartParam, sNom As String, Optional sProp As String = "Text") As Variant
+
+  Dim hCtl As Object = hF.Controls[sNom]
+
+  Return Object.GetProperty(hCtl, sProp)
+
+End
+
+' Écrit un fichier tarif d'exemple (10 lignes) et renvoie son chemin.
+Private Function Tarif(bSep As Boolean) As String
+
+  Dim sFic As String = Temp$("tarif") & IIf(bSep, ".csv", ".txt")
+  Dim sTxt As String
+  Dim i As Integer
+
+  For i = 1 To 10
+    If bSep Then
+      sTxt &= "REF" & i & ";ART" & i & ";Article " & i & ";" & (i * 10) & ";5;301234567890" & (i Mod 10) & "\n"
+    Else
+      sTxt &= Format$(i, "REF000") & Format$(i, "ART000") & "Article " & Format$(i, "00") & "\n"
+    Endif
+  Next
+  File.Save(sFic, sTxt)
+  Return sFic
+
+End
+
+' Colonnes non nulles des deux tables pour la définition (chemin du fichier masqué).
+Private Sub VerifTables(sCle As String, sNum As String, sFic As String)
+
+  Dim sTab As String
+  Dim r As Result
+  Dim hFld As ResultField
+  Dim n As Integer
+
+  For Each sTab In ["Fiches_ImpArtDef", "Fiches_ImpArtDef2"]
+    r = Utils.db.Exec("SELECT * FROM " & sTab & " WHERE num = &1", sNum)
+    TestKit.Check(sCle & "/" & sTab & "/lignes", r.Count)
+    If Not r.Available Then Continue
+    n = 0
+    For Each hFld In r.Fields
+      If IsNull(r[hFld.Name]) Or If CStr(r[hFld.Name]) = "" Then Continue
+      Inc n
+      TestKit.Check(sCle & "/" & sTab & "/" & hFld.Name, IIf(sFic, Replace(CStr(r[hFld.Name]), sFic, "<fichier>"), CStr(r[hFld.Name])))
+    Next
+    TestKit.Check(sCle & "/" & sTab & "/non_nulles", n)
+  Next
+
+End
+
+' Contenu de la grille Champs (une clé par ligne : colonnes 0 à 4 séparées par « | »).
+Private Sub VerifGrille(sCle As String, hF As ImpartParam)
+
+  Dim hCv As ColumnView = hF.Controls["Champs"]
+  Dim sLig As String
+  Dim i As Integer
+
+  TestKit.Check(sCle & "/grille/count", hCv.Count)
+  If hCv.Count = 0 Then Return
+  hCv.MoveFirst()
+  Repeat
+    sLig = ""
+    For i = 0 To 4
+      Try sLig &= hCv.Item[i] & "|"
+    Next
+    TestKit.Check(sCle & "/grille/" & hCv.Item.Key, sLig)
+  Until hCv.MoveNext()
+
+End
+
+' Crée une définition comme l'écran : Btncreer, en-tête, mode, enregistrement de l'en-tête puis des zones.
+Private Function Cree(hF As ImpartParam, sCle As String, bSep As Boolean, aZones As String[], sFic As String) As String
+
+  Dim sZone As String
+  Dim i As Integer
+
+  hF.Btncreer_Click()
+  Pose(hF, "NmDef", "Text", IIf(bSep, "Def separee", "Def fixe"))
+  Pose(hF, "Four", "Text", "401001")
+  Pose(hF, "Fournom", "Text", "Fournisseur test")
+  Pose(hF, "Fam", "Text", "01")
+  Pose(hF, "Famnom", "Text", "Famille test")
+  Pose(hF, "Chemin", "Text", sFic)
+  If Not bSep Then Pose(hF, "Cfix", "Value", True)
+  hF.Lignes()
+  hF.BtnEnregistre_Click()
+  For Each sZone In aZones
+    Inc i
+    Pose(hF, "CBoxZone", "Text", sZone)
+    If bSep Then
+      Pose(hF, "Pfic", "Text", CStr(i))
+    Else
+      Pose(hF, "Debut", "Text", CStr(i * 6 - 5))
+      Pose(hF, "Longueur", "Text", "6")
+    Endif
+    Try hF.BtnEnregistreZone_Click()
+    If Error Then TestKit.Check(sCle & "/zone" & i, "ERREUR: " & Error.Text)
+  Next
+  Return Lit(hF, "Cdef")
+
+End
+
+Private Function ZonesSep() As String[]
+
+  Return [" 2 - Code article", " 5 - Intitulé", " 7 - Pa brut HT", " 9 - Remise 1", " 4 -  Code barre"]
+
+End
+
+Public Sub T01CreationSep()
+
+  Dim hF As New ImpartParam
+  Dim sFic As String = Tarif(True)
+  Dim sNum As String
+
+  sNum = Cree(hF, "T01", True, ZonesSep(), sFic)
+  TestKit.Check("T01/cdef", sNum)
+  TestKit.Check("T01/ligne2", Lit(hF, "Ligne2"))
+  VerifTables("T01", sNum, sFic)
+  VerifGrille("T01", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T02CreationFixe()
+
+  Dim hF As New ImpartParam
+  Dim sFic As String = Tarif(False)
+  Dim aZones As New String[]
+  Dim hCb As ComboBox = hF.Controls["CBoxZone"]
+  Dim sNum As String
+  Dim i As Integer
+
+  For i = 0 To 16
+    aZones.Add(hCb[i].Text)
+  Next
+  sNum = Cree(hF, "T02", False, aZones, sFic)
+  TestKit.Check("T02/cfix", Lit(hF, "Cfix", "Value"))
+  VerifTables("T02", sNum, sFic)
+  VerifGrille("T02", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T05RetraitZone()
+
+  Dim hF As New ImpartParam
+  Dim sFic As String = Tarif(True)
+  Dim hCv As ColumnView = hF.Controls["Champs"]
+  Dim sNum As String
+
+  sNum = Cree(hF, "T05", True, ZonesSep(), sFic)
+  ' Retrait de la 2e zone (ligne courante de la grille)
+  hCv["2"].Selected = True
+  Try hF.BtnRetirerZone_Click()
+  If Error Then TestKit.Check("T05/retrait", "ERREUR: " & Error.Text)
+  VerifTables("T05/retrait", sNum, sFic)
+  VerifGrille("T05/retrait", hF)
+  ' Double-clic sur la 1re zone : rechargée dans la saisie, retirée, puis ré-enregistrée avec une autre position
+  hCv.MoveTo("1")
+  hCv["1"].Selected = True
+  Try hF.Champs_Activate()
+  If Error Then TestKit.Check("T05/activate", "ERREUR: " & Error.Text)
+  TestKit.Check("T05/activate/cboxzone", Lit(hF, "CBoxZone"))
+  TestKit.Check("T05/activate/pfic", Lit(hF, "Pfic"))
+  VerifTables("T05/activate", sNum, sFic)
+  Pose(hF, "Pfic", "Text", "6")
+  Try hF.BtnEnregistreZone_Click()
+  If Error Then TestKit.Check("T05/reenregistre", "ERREUR: " & Error.Text)
+  VerifTables("T05/reenregistre", sNum, sFic)
+  VerifGrille("T05/reenregistre", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T06Selection()
+
+  Dim hF As New ImpartParam
+  Dim hCv As ColumnView = hF.Controls["DefList"]
+  Dim sNom As String
+
+  hF.TgleBtnFDef_Click()
+  TestKit.Check("T06/deflist/visible", hCv.Visible)
+  TestKit.Check("T06/deflist/count", hCv.Count)
+  hCv.MoveTo("2")
+  hF.DefList_Click()
+  For Each sNom In ["Cdef", "NmDef", "Four", "Fournom", "Fam", "Famnom", "Chemin", "CBox"]
+    TestKit.Check("T06/" & sNom, Lit(hF, sNom))
+  Next
+  TestKit.Check("T06/sep", Lit(hF, "Sep", "Value"))
+  TestKit.Check("T06/deflist/visible_apres", hCv.Visible)
+  VerifGrille("T06", hF)
+  VerifTables("T06", "2", "")
+  Object.Lock(hF)
+
+End
+
+Public Sub T07EffacerList()
+
+  Dim hF As New ImpartParam
+  Dim sFic As String = Tarif(True)
+  Dim sNum As String
+
+  sNum = Cree(hF, "T07", True, ZonesSep(), sFic)
+  hF.BtnEffacerList_Click()
+  VerifTables("T07", sNum, sFic)
+  VerifGrille("T07", hF)
   Object.Lock(hF)
 
 End

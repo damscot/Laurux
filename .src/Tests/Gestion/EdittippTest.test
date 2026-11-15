@@ -1,6 +1,8 @@
 ' Gambas test file
 
-''Tests de Edittipp (.hidden/reference/.src/Gestion/option/Edittipp.class/test.md, EDITTIPP-T03).
+''Tests de Edittipp (.hidden/reference/.src/Gestion/option/Edittipp.class/test.md, EDITTIPP-T01 à T03).
+''T01, T02 : texte complet du rapport (libellés fixes relevés par parcours de Children dans l'ordre, puis valeurs de
+''chaque ligne) à la place du texte PDF (gb.report : pdftotext rend un texte vide).
 ''Valeurs attendues : assets/EdittippTest/expected.txt, produites dans le clone de référence.
 ''Le rapport est construit sans impression ; les méthodes publiques <champ>_Data(Index) sont appelées pour chaque
 ''ligne et la valeur Data du champ est relevée. Jeu edittipp_shared/edittipp_lignes.
@@ -8,6 +10,8 @@
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T01EditionMois", "New Edittipp(\"03\", \"2018\") : libellés du rapport et lignes de détail (texte de l'édition)")
+  TestKit.Desc("T02MoisVide", "New Edittipp(\"06\", \"2018\") : mois sans ligne, libellés seuls, aucune ligne de détail")
   TestKit.Desc("T03LignesMois", "New Edittipp(\"03\", \"2018\") : nombre de lignes et valeurs (duplications A01/A02 figées)")
 
 End
@@ -79,5 +83,70 @@ Public Sub T03LignesMois()
     Next
     TestKit.Check("T03/ligne" & i, Valeurs(aData))
   Next
+
+End
+
+' Libellés fixes du rapport (propriété Text non vide), dans l'ordre du parcours de Children.
+Private Sub Libelles(hObj As Object, aTxt As String[])
+
+  Dim hChild As Object
+  Dim cChildren As Object
+  Dim sTxt As String
+
+  Try sTxt = Object.GetProperty(hObj, "Text")
+  If Not Error And If sTxt Then aTxt.Add(Object.Type(hObj) & ":" & sTxt)
+  Try cChildren = Object.GetProperty(hObj, "Children")
+  If Error Or Not cChildren Then Return
+  For Each hChild In cChildren
+    Libelles(hChild, aTxt)
+  Next
+
+End
+
+' Texte de l'édition : libellés puis valeurs de chaque ligne de détail.
+Private Sub Edition(sCle As String, sMois As String)
+
+  Dim hR As Edittipp
+  Dim aTxt As New String[]
+  Dim aCount As New Object[]
+  Dim aData As New Object[]
+  Dim hObj As Object
+  Dim sNom As String
+  Dim i, n As Integer
+
+  Try hR = New Edittipp(sMois, "2018")
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Libelles(hR, aTxt)
+  For i = 0 To aTxt.Max
+    TestKit.Check(sCle & "/libelle" & Format$(i + 1, "00"), aTxt[i])
+  Next
+  TestKit.Check(sCle & "/libelles", aTxt.Count)
+  Parcours(hR, aCount, aData)
+  For Each hObj In aCount
+    n = Max(n, Object.GetProperty(hObj, "DataCount"))
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+  For i = 0 To n - 1
+    For Each sNom In ["num", "prod", "vol", "rais", "siret", "code", "dest"]
+      Try Object.Call(hR, sNom & "_Data", [i])
+      If Error Then TestKit.Check(sCle & "/ligne" & i & "/" & sNom, "ERREUR: " & Error.Text)
+    Next
+    TestKit.Check(sCle & "/ligne" & i, Valeurs(aData))
+  Next
+
+End
+
+Public Sub T01EditionMois()
+
+  Edition("T01", "03")
+
+End
+
+Public Sub T02MoisVide()
+
+  Edition("T02", "06")
 
 End

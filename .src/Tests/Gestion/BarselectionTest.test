@@ -1,0 +1,74 @@
+' Gambas test file
+
+''Tests de barselection (.hidden/reference/.src/Gestion/option/barselection.class/test.md, BARSELECTION-T01 : Recherche).
+''Le 9e bouton de la barre (Recherche) lève l'événement recherche : Tconsigne.bar1_recherche ouvre Rechcons en ShowModal,
+''non rejouable. Écran Tconsigne affiché (Show : form_Open ; le clic par Value = True n'agit pas sur une fenêtre non affichée), clic du 9e bouton « bout » de Panel2 par
+''Value = True ; un Timer du module (« _Choix ») agit pendant la boucle modale : ligne 2 de Rechcons puis
+''GridView1_Activate (double-clic). Jeu consigne_shared/consigne_base. Valeurs : assets/BarselectionTest/expected.txt.
+
+Private $hTimer As Timer
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Recherche", "Bouton Recherche (9e) de la barre de Tconsigne : Rechcons modale, ligne 2 choisie, fiche affichée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "BarselectionTest")
+  TestKit.OuvreBase("consigne_shared/consigne_base")
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+  Dim hGrid As Object
+
+  For Each hWin In Windows
+    If Object.Type(hWin) = "Rechcons" Then
+      $hTimer.Enabled = False
+      $sVu = "Rechcons"
+      hGrid = hWin.Controls["GridView1"]
+      hGrid.Row = 2
+      Object.Call(hWin, "GridView1_Activate")
+      Return
+    Endif
+  Next
+
+End
+
+Public Sub T01Recherche()
+
+  Dim hForm, hPanel, hBtn, hCtrl As Object
+  Dim i As Integer
+
+  hForm = New Tconsigne
+  hForm.Show()
+  hPanel = hForm.Controls["Panel2"]
+  TestKit.Check("T01/boutons", hPanel.Children.Count)
+  hBtn = hPanel.Children[8]
+  TestKit.Check("T01/bouton9", hBtn.Tooltip)
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hBtn.Value = True
+  If Error Then TestKit.Check("T01/clic", "ERREUR: " & Error.Text)
+  ' Le clic par Value est différé : laisser tourner la boucle d'événements (3 s au plus)
+  For i = 1 To 30
+    If $sVu Then Break
+    Wait 0.1
+  Next
+  $hTimer.Enabled = False
+  TestKit.Check("T01/modale", $sVu)
+  hCtrl = hForm.Controls["Textcode"]
+  TestKit.Check("T01/code", hCtrl.Text)
+  hCtrl = hForm.Controls["Textlib"]
+  TestKit.Check("T01/libelle", hCtrl.Text)
+  Object.Lock(hForm)
+  Try hForm.Hide()
+
+End

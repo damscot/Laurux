@@ -1,0 +1,23 @@
+{
+ "id": "CBORDEREAUX-T06",
+ "objet": "Liste des paiements (Edpaiement) : texte du PDF",
+ "classe": "Cbordereaux",
+ "description": "Date du jour 15.06.2018, Fact (défaut) : factures Fiches_Bl et Fiches_BlM, groupes Cheque (2 règlements, pluriel) et Especes (2) ; facture du 14/06 exclue. Texte du PDF. Dérivé de Gestion/edpaiement_toutes_factures (EDPAIEMENT-T01) : test propre à Cbordereaux.",
+ "dataset": "Gestion/edpaiement_shared/edpaiement_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

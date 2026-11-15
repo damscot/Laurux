@@ -1,0 +1,23 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "IMP_SIG-T02",
+ "classe": "Imp_Sig",
+ "objet": "Exercice antérieur et écritures non validées",
+ "dataset": "imp_sig_shared/imp_sig_n2",
+ "description": "Impressions comptables (RubImp, Menu124), jeu imp_sig_shared/imp_sig_n2 (2016 dans Fiches_Mvt2, dont des écritures non validées), Sig, exercice N2, Imprimer ; Message.Info « traitement long » (Entrée) ; texte du PDF (pdftotext -layout via /Soc01/caisse/CmdVis, ~/edition.txt) et table centralisation comparés (montants incluant les non validées, A01) ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

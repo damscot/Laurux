@@ -10,7 +10,7 @@ résultat comparé est le **texte du PDF** (`pdftotext ~/tmp/Plan.pdf`) et les l
 |---|---|---|---|---|---|---|
 | PLANCOMPTABLE-T01 | replay | Impression par type | Clients, Fournisseurs, Gestion, Bilan avec plages par défaut | texte PDF de référence (titre, comptes, pagination) | `tests/plancomptable_types/` | implémenté |
 | PLANCOMPTABLE-T02 | replay | Plage personnalisée et vide | Gestion `606000`-`606999` ; plage sans compte | texte PDF ; message « Aucun compte » | `tests/plancomptable_plage/` | implémenté |
-| PLANCOMPTABLE-T03 | replay | Sélection par `TriCpt` | F2 dans `Cpt`, F2 dans `Cpt2`, boutons `ToggleButton2`/`3` | champ rempli (comportement A01 figé) | `tests/plancomptable_tricpt/` | à faire : F2 non rejoué ; grille de TriCpt (TriGen) construite après la pose des observateurs, non rejouable |
+| PLANCOMPTABLE-T03 | replay | Sélection par `TriCpt` | F2 dans `Cpt`, F2 dans `Cpt2`, boutons `ToggleButton2`/`3` | champ rempli (comportement A01 figé) | `tests/plancomptable_tricpt/` | à faire : F2 non rejoué ; grille de TriCpt (TriGen) construite après la pose des observateurs, non rejouable ; en gb.test, TriCpt ouvert par ShowModal (bloquant) |
 | PLANCOMPTABLE-T04 | replay | Quitter | bouton Quitter après impression | fichier `~/tmp/Plan.pdf` supprimé | `tests/plancomptable_quitter/` | implémenté |
 
 ## Détail des tests

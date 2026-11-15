@@ -63,10 +63,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   paramètres (`Ccompta.Level4C(…, compte, posy)`) → erreur d'exécution non interceptée au premier
   compte mouvementé, l'extrait analytique n'aboutit jamais (à confirmer par T03). Correction :
   passer `Compt` ; débloque la fusion avec `EditcompteM` · tests : T03 · sources : [EditcompteA.class:726](../../../../../../.src/Compta/Impressions/EditcompteA.class#L726)
-- [ ] EDITCOMPTEA-A02 — [anomalie] L'impression lit toujours `Fiches_MvtA` (`TabMvtA`) : le choix
+- [ ] EDITCOMPTEA-A02 — [anomalie] (confirmée phase 2, vague 7 : N-1 lit `Fiches_MvtA` au lieu de `Fiches_MvtA1`, figée par T06) L'impression lit toujours `Fiches_MvtA` (`TabMvtA`) : le choix
   d'exercice N-1…N-5 ne change que les dates, pas la table (`TabMvtA1`…`TabMvtA5` existent dans
   `Cbase`) ; même défaut dans `JournauxA` · tests : T06 · sources : [EditcompteA.class:633](../../../../../../.src/Compta/Impressions/EditcompteA.class#L633), [EditcompteA.class:N1_Click](../../../../../../.src/Compta/Impressions/EditcompteA.class#L484-L489), [JournauxA.class:616](../../../../../../.src/Compta/Impressions/JournauxA.class#L616)
-- [ ] EDITCOMPTEA-A03 — [anomalie] Prétraitement des dates : `jjmmaa` perd l'année saisie, une
+- [ ] EDITCOMPTEA-A03 — [anomalie] (confirmée phase 2, vague 7 : « 121025 » → 12.10.<année courante> (`dteN0_LostFocus` l. 331-338), figée par T02 ; même code dans [ExportJdv](../../Utils/ExportJdv.class/rework.md)) Prétraitement des dates : `jjmmaa` perd l'année saisie, une
   saisie de 3 caractères donne une date fausse ; `Utils.Cdate_calc` seul traite correctement ces
   formats · tests : T02 · sources : [EditcompteA.class:336](../../../../../../.src/Compta/Impressions/EditcompteA.class#L336), [EditcompteA.class:361](../../../../../../.src/Compta/Impressions/EditcompteA.class#L361), [EditcompteA.class:335](../../../../../../.src/Compta/Impressions/EditcompteA.class#L335)
 - [ ] EDITCOMPTEA-A04 — [anomalie] `Compdate`/`compdate2` remettent la période sur `Exo` et cochent

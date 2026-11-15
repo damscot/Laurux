@@ -10,14 +10,14 @@
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | EDNLETTREES-T01 | replay | Ouverture | `faketime`, `Fiches_Parametres` de test | `DteN0` = début de l'exercice, `Dten1` = aujourd'hui, plage clients | `tests/ouverture/` | implémenté (requête Fiches_Parametres ; dates affichées non comparées) |
-| EDNLETTREES-T02 | replay | Clients, exercice en cours | jeu non lettré ; « Imprimer » | texte normalisé : comptes, lignes, soldes progressifs, totaux | `tests/clients/` | implémenté (requêtes comptes lettrables et Listextcpt bornées 01.01.2018-15.06.2018, ouverture du PDF ; texte PDF non comparé) |
-| EDNLETTREES-T03 | replay | Fournisseurs et bilan | `Bfournisseur` puis `Bbilan` | texte normalisé ; plages par défaut | `tests/fournisseurs_bilan/` | implémenté (requêtes types F et B, deux PDF ouverts ; texte non comparé) |
-| EDNLETTREES-T04 | replay | Type de clients | sélection d'un type dans `TypeClient1` | seuls les clients du type (`cli_typec IN (…)`) | `tests/type_client/` | à faire : sélection dans TypeClient1 (TreeView) non rejouable |
-| EDNLETTREES-T05 | replay | Multi-exercices | `DteN0` dans l'exercice N-1 (écritures en `Fiches_Mvt1`) | lignes des deux exercices, journal d'à-nouveaux exclu | `tests/multi_exercices/` | implémenté (Listextcpt borné au 01.06.2017, lecture Fiches_Mvt1 ; exclusion des à-nouveaux visible dans le PDF seulement) |
-| EDNLETTREES-T06 | replay | Compte centralisateur | compte `cent_cc = 1` avec écritures | en-tête du compte et total à 0, aucune ligne (A02 figée) | `tests/centralisateur/` | à faire : sortie PDF non comparée (411003 centralisateur présent dans ednl_lettrage) |
-| EDNLETTREES-T07 | replay | Sélection par `TriCpt` | F2 sur `Cpt`, choix d'un compte | `Cpt` renseigné (`Bsel`/`Bval`) | `tests/tricpt/` | à faire : touche F2 non rejouée |
+| EDNLETTREES-T02 | replay | Clients, exercice en cours | jeu non lettré ; « Imprimer » | texte normalisé : comptes, lignes, soldes progressifs, totaux | `tests/clients/` | implémenté (requêtes comptes lettrables et Listextcpt bornées 01.01.2018-15.06.2018 ; texte du PDF comparé par pdftotext, vague 7) |
+| EDNLETTREES-T03 | replay | Fournisseurs et bilan | `Bfournisseur` puis `Bbilan` | texte normalisé ; plages par défaut | `tests/fournisseurs_bilan/` | implémenté (requêtes types F et B, texte des deux PDF comparé par pdftotext, vague 7) |
+| EDNLETTREES-T04 | replay | Type de clients | sélection d'un type dans `TypeClient1` | seuls les clients du type (`cli_typec IN (…)`) | `tests/type_client/` | implémenté (gb.test EdNlettreesTest.T04TypeClient, jeu ednl_types : type 01 → 411001 seul ; type 02 → 411002 et 411003) |
+| EDNLETTREES-T05 | replay | Multi-exercices | `DteN0` dans l'exercice N-1 (écritures en `Fiches_Mvt1`) | lignes des deux exercices, journal d'à-nouveaux exclu | `tests/multi_exercices/` | implémenté (Listextcpt borné au 01.06.2017, lecture Fiches_Mvt1 ; texte du PDF comparé par pdftotext, vague 7) |
+| EDNLETTREES-T06 | replay | Compte centralisateur | compte `cent_cc = 1` avec écritures | en-tête du compte et total à 0, aucune ligne (A02 figée) | `tests/centralisateur/` | implémenté (par ednlettrees_clients, texte PDF : 411003 centralisateur, en-tête et total à 0, aucune ligne, A02) |
+| EDNLETTREES-T07 | replay | Sélection par `TriCpt` | F2 sur `Cpt`, choix d'un compte | `Cpt` renseigné (`Bsel`/`Bval`) | `tests/tricpt/` | à faire : touche F2 non rejouée ; ToggleButton3/2_Click ouvrent TriCpt en ShowModal (bloquant en gb.test), logique Bsel/Bval atteignable seulement après la fenêtre modale |
 | EDNLETTREES-T08 | replay | Aucune écriture / aucun compte | plage sans compte ; plage avec comptes tous lettrés | message « Aucune ecriture » ; puis PDF sans ligne (A03 figée) | `tests/vide/` | implémenté (cas « plage sans compte » ; cas « tous lettrés » : PDF non comparé) |
-| EDNLETTREES-T09 | replay | Multipage | > 60 lignes | en-têtes répétés, pied de page sur la dernière page | `tests/multipage/` | à faire : sortie PDF non comparée (en-têtes répétés) |
+| EDNLETTREES-T09 | replay | Multipage | > 60 lignes | en-têtes répétés, pied de page sur la dernière page | `tests/multipage/` | implémenté (ednlettrees_multipage, gen_ednl_multipage.py : en-têtes répétés, pied de page sur la dernière page) |
 | EDNLETTREES-T10 | gbtest | `Lignes_Compte` (après EDNLETTREES-006) | compte, bornes, centralisateur oui/non | lignes et totaux identiques à T02/T06 | `tests/lignes_compte/` | à faire : extraction EDNLETTREES-006 non réalisée |
 | EDNLETTREES-T11 | replay | SQLite | T02 sur `Laurux01.sqlite` | même texte que MySQL (`lettrable <> false` accepté par SQLite ≥ 3.23, à vérifier) | `tests/sqlite/` | à faire : rejeu SQLite non outillé par le runner (base MariaDB seule) |
 
@@ -40,3 +40,4 @@
   `clients`, `fournisseurs_bilan`, `multi_exercices`, `vide`), jeu partagé `ednlettrees_shared/ednl_lettrage.sql`
   (comptes lettrables, 411003 centralisateur, Fiches_Mvt 2018 dont à-nouveaux jour 90, Fiches_Mvt1 2017).
   Ouverture du PDF vérifiée par `@ouvrir.trace` ; texte du PDF non comparé.
+- **Vague 7** : texte des PDF comparé (`~/edition.txt`) dans les scénarios existants ; T06 couvert par `ednlettrees_clients` ; T09 `ednlettrees_multipage` (`gen_ednl_multipage.py`) ; T04 `.src/Tests/Compta/EdNlettreesTest.test` (jeu `assets/EdNlettreesTest/ednl_types.sql`).

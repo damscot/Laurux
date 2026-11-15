@@ -14,7 +14,7 @@ Valeurs attendues produites dans le clone **Laurux non modifié**.
 | EDBL-T03 | replay | Choix dans la liste | `ToggleButton1`, clic sur une ligne, Imprimer | PDF du BR choisi (date texte transmise) | `tests/choix_liste/` | xfail : Edbr.Ed.190 Type mismatch avant le PDF (code 125 figé) |
 | EDBL-T04 | replay | Réimpression d'un autre numéro | T03 puis numéro d'un BR d'un autre fournisseur tapé dans `Nbl`, Imprimer | « Aucun mouvement » (fournisseur mémorisé, A01 figée) | `tests/autre_numero/` | à faire : la première impression (T03) s arrête sur l erreur fatale Edbr.Ed.190, réimpression impossible |
 | EDBL-T05 | replay | Tri des colonnes | focus successif sur `Nm`, `Cd`, `Nr`, `Dt`, `Mt` (deux fois) | ordre des lignes de `Colbl` (log des contrôles) | `tests/tri_colonnes/` | implémenté |
-| EDBL-T06 | replay | Fermeture de la liste au clavier | Entrée puis Échap dans `Colbl` | `Mt` reste visible (A03 figée) | `tests/clavier_liste/` | à faire : Échap non rejouable |
+| EDBL-T06 | replay | Fermeture de la liste au clavier | Entrée puis Échap dans `Colbl` | `Mt` reste visible (A03 figée) | `tests/clavier_liste/` | implémenté (gb.test `EdblTest.T06FermetureListe` : `ToggleButton1_Click` puis `cache_bl`, seul traitement de la branche Échap ; `Mt` reste visible, A03 figée ; l'affectation de `Nbl` par Entrée, écrite dans `Colbl_KeyPress`, n'est pas atteinte : `Key.Code` non simulable) |
 | EDBL-T07 | replay | Numéro partagé | même `numrecpt` pour deux fournisseurs, Entrée | BR du premier fournisseur trouvé (A02 figée) | `tests/numero_partage/` | xfail : Edbr.Ed.190 Type mismatch (code 125 figé) ; premier fournisseur 401001 retenu (A02 visible dans sql.log) |
 
 ## Détail des tests

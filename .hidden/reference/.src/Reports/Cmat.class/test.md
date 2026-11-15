@@ -11,7 +11,7 @@ masqués). Attendus produits dans le clone **Laurux non modifié**.
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | CMAT-T01 | gbtest | `Entete`, `Level1`, `Level2`, `Footer` sur 2 pages | 3 matériels, prix « 1234,50 » | texte et flux de référence ; « Page 1/2 », « Page 2/2 » | `tests/cmat_liste/` | implémenté (gb.test CmatTest.T01Liste) |
-| CMAT-T02 | replay | Liste réelle des matériels | scénarios EDMAT-T01, EDMAT-T02 sur le jeu `editions_articles` (matériels vendus et en stock) | texte PDF identique entre les deux clones ; dump identique | `tests/cmat_edmat/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par Gestion/edmat_tous (EDMAT-T01) et Gestion/edmat_vendus_stock (EDMAT-T02), edition.txt) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| CMAT-T02 | replay | Liste réelle des matériels | scénarios EDMAT-T01, EDMAT-T02 sur le jeu `editions_articles` (matériels vendus et en stock) | texte PDF identique entre les deux clones ; dump identique | `tests/cmat_edmat/` | implémenté (gb.test CmatTest.T02EdmatListe : appels d'EdMat, 60 matériels, 2 pages ; texte pdftotext) |
 
 ## Détail des tests
 
@@ -19,3 +19,4 @@ masqués). Attendus produits dans le clone **Laurux non modifié**.
   matériels, 3 marques), voir [EdArt1/test.md](../../Gestion/Impressions/EdArt1.class/test.md).
 - `Ligne`/`Ligne2` (code mort) ne sont pas testés.
 - **Couverture visée** : 100 % des méthodes vivantes.
+- **Implémentation (phase 2, vague 7)** : T02 dans `CmatTest.T02EdmatListe` (appels d'EdMat, saut à 283, en-tête de suite « marériels » figé).

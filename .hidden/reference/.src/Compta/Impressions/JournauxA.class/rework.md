@@ -62,7 +62,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] JOURNAUXA-A01 — [anomalie] (confirmée phase 2, vague 3 : tri par postes → « Not enough arguments » sur `pdf.level2J` (l. 695), erreur fatale dès qu'une écriture est dans la période) `pdf.level2J` appelé avec 9 arguments (paramètre `Nlot` absent,
   non optionnel dans `Ccompta`) : erreur à la première écriture de la période, impression
   impossible (à confirmer par T02) · tests : T02 · sources : [JournauxA.class:695](../../../../../../.src/Compta/Impressions/JournauxA.class#L695), [Ccompta.class:level2J](../../../../../../.src/Reports/Ccompta.class#L289-L307)
-- [ ] JOURNAUXA-A02 — [anomalie] (confirmée phase 2, vague 3 : tri par journaux → « Unknown column 'intitule' ») `Fiches_Postes` n'a pas de colonne `intitule` (c'est
+- [ ] JOURNAUXA-A02 — [anomalie] (confirmée phase 2, vague 7 : « Unknown field: intitule » (liste des postes, gb.test T01 ; tri par journaux, T03)) (confirmée phase 2, vague 3 : tri par journaux → « Unknown column 'intitule' ») `Fiches_Postes` n'a pas de colonne `intitule` (c'est
   `intitulep`) : liste des postes en erreur, tri journaux/postes en erreur SQL · tests : T01, T03 ·
   sources : [JournauxA.class:233](../../../../../../.src/Compta/Impressions/JournauxA.class#L233), [JournauxA.class:663](../../../../../../.src/Compta/Impressions/JournauxA.class#L663)
 - [ ] JOURNAUXA-A03 — [anomalie] Libellés de poste et de journal lus avec `>=` sans `ORDER BY` :

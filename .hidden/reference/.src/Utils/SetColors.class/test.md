@@ -9,7 +9,7 @@ le scénario, plus les couleurs des zones d'aperçu (dump des propriétés `Back
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| SETCOLORS-T01 | replay | Ouverture | `Laurux.conf` de référence ; menu → couleurs ; parcours des 6 onglets | dump des 21 zones | `tests/ouverture/` | à faire : le résultat (Laurux.conf, propriétés des zones) n'est pas comparé par le runner (dump BDD + SQL seulement) |
+| SETCOLORS-T01 | gbtest | Ouverture | `Laurux.conf` de référence ; menu → couleurs ; parcours des 6 onglets | dump des 21 zones | `tests/ouverture/` | implémenté (gb.test `SetColorsTest.T01Ouverture` : Form_Open appelé, 21 zones relevées (fond, texte, alignement) avec 3 clés /Coul posées, 6 panneaux ; Laurux.conf non comparé : ShowDialog, écrit seulement à la fermeture de Fmenu) |
 | SETCOLORS-T02 | replay | Double-clic zone simple | double-clic « Stk », fond choisi | `/Coul/Stk` et zone | `tests/dblclic_zone/` | à faire : double-clic (Coul_DblClick) non enregistré ni rejoué, choix de couleur FSetFormat non injectable ; Laurux.conf non comparé |
 | SETCOLORS-T03 | replay | Double-clic fond documents | double-clic `Docscli` et `Others` | `/Coul/Coulfond`, `/Coul/Coulfonds`, `/Coul/Other`, `/Coul/Others` | `tests/dblclic_rvb/` | à faire : mêmes limites que T02 |
 | SETCOLORS-T04 | replay | Défauts zones | bouton « défaut » du panneau 8 (`Button2`) ; fermeture | 5 clés `/Coul/*` (enregistrement à la fermeture à confirmer) | `tests/defaut_zones/` | implémenté (gb.test SetColorsTest.T04DefautZones : Button2 appelé, clés /Coul de Start.LocalSettings et fond des zones relevés ; l'écriture de Laurux.conf à la fermeture n'est pas vérifiée) |

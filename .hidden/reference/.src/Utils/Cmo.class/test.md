@@ -6,7 +6,7 @@
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | CMO-T01 | gbtest | Compilation sans la classe | suppression de `Cmo.class` + `Cmo.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : classe morte, contrôle de build (suppression) à porter par la validation de phase 4 |
-| CMO-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Motps`, `/Coul/Momnt` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire : classe morte ; résultat dans Laurux.conf (non comparé par le runner) et choix de couleur par dialogue natif |
+| CMO-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Motps`, `/Coul/Momnt` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire : Cmo lit Last.Tag (double-clic réel) et SetColors.Coul_DblClick lit Last puis ouvre FSetFormat.Run (modal) : ni rejouable ni atteignable en gb.test |
 
 ## Détail des tests
 

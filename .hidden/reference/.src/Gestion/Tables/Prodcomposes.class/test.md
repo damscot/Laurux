@@ -16,7 +16,7 @@ deviennent testables en `gbtest` après PRODCOMPOSES-004.
 | PRODCOMPOSES-T05 | replay | Clavier et F4 | Tab sur le bouton Ajouter (A05) ; F2 sur code et composant ; F4 sur code et sur composant (A06) | ajout déclenché par Tab ; listes ; produit composé rechargé | `tests/clavier/` | à faire : F2/F4 non rejoués ; F4 ouvre Articles (écran complexe exclu) |
 | PRODCOMPOSES-T06 | replay | Composant article supprimé | jeu dérivé : `PC2` dont un composant n'existe plus dans `Fiches_Art` ; affichage de `PC2` | aucune mise à jour de `Fiches_Art` (A03 figée), affichage partiel | `tests/composant_absent/` | implémenté (A03 figée : aucune mise à jour de Fiches_Art pour PC2) |
 | PRODCOMPOSES-T07 | gbtest | `CoutCompose` / `PrixRevientCompose` (après PRODCOMPOSES-004) | composants articles et MO, quantités `"1"`, `"2,5"`, `"0"`, quantité saisie `"0"`/`"3"`/vide | Float de référence | `tests/cout_compose/` | à faire : attend l'extraction PRODCOMPOSES-004 |
-| PRODCOMPOSES-T08 | replay | Base SQLite | T01 et T03 rejoués sur `Laurux01.sqlite` | même dump qu'en MySQL ou écart documenté (test `"False"` de la colonne `mo`, A08) | `tests/sqlite/` | à faire : non traité dans la vague 4 (rejeu sur Laurux01.sqlite à étudier) |
+| PRODCOMPOSES-T08 | replay | Base SQLite | T01 et T03 rejoués sur `Laurux01.sqlite` | même dump qu'en MySQL ou écart documenté (test `"False"` de la colonne `mo`, A08) | `tests/sqlite/` | à faire : base SQLite non prise en charge par le framework de test (rejeu et gb.test sur MariaDB seulement ; aucune clé de meta.json pour Laurux01.sqlite, constaté en vague 7) |
 
 ## Détail des tests
 

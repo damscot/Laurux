@@ -12,13 +12,13 @@ couvrent la saisie, les contrôles et l'export texte.
 | JOURNAUX-T01 | replay | Ouverture | jeu dérivé commun (Balance), date système figée | `dteN0` = 1er jour après `dteclec`, `dteN1` = aujourd'hui (ou exercice précédent si aujourd'hui précède) ; `Cpt` = 01, `Cpt2` = 99 | `tests/ouverture/` | implémenté |
 | JOURNAUX-T02 | replay | Choix d'exercice | clic `E1`, `N1` … `N5`, `E0` | dates affichées de référence ; `Exo5` = `dteclec5` − 1 an + 1 mois | `tests/choix_exercice/` | implémenté |
 | JOURNAUX-T03 | replay | Contrôle des dates | `dteN0` avant le début ; `dteN1` après la fin ; `dteN1` < `dteN0` ; saisie `00` | avertissements, retour sur l'exercice précédent avec `E0` coché (comportement figé) | `tests/controle_dates/` | implémenté |
-| JOURNAUX-T04 | replay | Listes de journaux | F2 sur `Cpt` puis Entrée ; F2 sur `Cpt2` puis Échap ; clic | `Cpt`/`Cpt2` renseignés, focus attendu | `tests/liste_journaux/` | à faire : touches F2 et Échap non rejouées |
-| JOURNAUX-T05 | replay | Impression, tri par numéro | `RadioButton2` coché | PDF identique au tri par date (A01 figée) | `tests/tri_numero/` | à faire : tri visible seulement dans le PDF (sortie PDF non comparée) |
+| JOURNAUX-T04 | replay | Listes de journaux | F2 sur `Cpt` puis Entrée ; F2 sur `Cpt2` puis Échap ; clic | `Cpt`/`Cpt2` renseignés, focus attendu | `tests/liste_journaux/` | implémenté partiellement (gb.test JournauxTest.T04ListeJournaux : listes Coljour/Coljour2 ouvertes par ToggleButton3/2 — gestionnaires de F2 —, choix reporté dans Cpt/Cpt2 par coljour_Click/coljour2_Click, refermeture ; touches F2/Échap elles-mêmes non rejouées) |
+| JOURNAUX-T05 | replay | Impression, tri par numéro | `RadioButton2` coché | PDF identique au tri par date (A01 figée) | `tests/tri_numero/` | implémenté (journaux_tri_numero, jeu journaux_tri : tri par numéro imprimé dans l'ordre des dates, identique au tri par date, A01 figée) |
 | JOURNAUX-T06 | replay | Export texte | configuration 12 colonnes, journaux 01-99, période complète | `~/tmp/journaux.txt` identique octet par octet ; dump (`centralisation` recréée vide, A04) | `tests/export_txt/` | implémenté |
 | JOURNAUX-T07 | replay | Export sans configuration | aucune clé `/ExportJournal<soc>` | message « Veuillez renseigner l'ordre des colonnes » ; aucun fichier | `tests/export_sans_config/` | implémenté |
 | JOURNAUX-T08 | replay | Exports successifs | export, changement de configuration (6 colonnes), second export | solde cumulé d'un export à l'autre (A02) et colonnes résiduelles (A03) figés | `tests/export_successifs/` | implémenté |
 | JOURNAUX-T09 | replay | Export : période partielle et collectifs | période d'un mois, collectifs 411 | lignes hors période et collectives absentes | `tests/export_periode/` | implémenté |
-| JOURNAUX-T10 | replay | Quitter | bouton Quitter après impression | écran fermé ; `~/tmp/Journaux.pdf` conservé (A05 figée) | `tests/quitter/` | à faire : seul effet = ~/tmp/Journaux.pdf conservé (sortie PDF non comparée) |
+| JOURNAUX-T10 | replay | Quitter | bouton Quitter après impression | écran fermé ; `~/tmp/Journaux.pdf` conservé (A05 figée) | `tests/quitter/` | implémenté (journaux_quitter : ~/tmp/Journaux.pdf conservé après Quitter et comparé, A05 figée) |
 
 ## Détail des tests
 
@@ -39,3 +39,4 @@ couvrent la saisie, les contrôles et l'export texte.
   déséquilibrées). Configuration 12 colonnes par la clé `conf` de meta.json (`/ExportJournal01/Entete<i>`, `Titre<i>`).
   Les dates affichées ne sont observées qu'au travers de l'export `~/tmp/journaux.txt` (comparé par `fichiers`).
   La question finale « Voulez-vous l'ouvrir ? » reçoit « Non » (Tab + Espace).
+- **Vague 7** : T05 `journaux_tri_numero` (jeu `journaux_tri`), T10 `journaux_quitter` (texte du PDF et `tmp/Journaux.pdf` comparés) ; T04 `.src/Tests/Compta/JournauxTest.test` (gestionnaires appelés directement).

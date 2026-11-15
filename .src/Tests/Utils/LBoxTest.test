@@ -8,6 +8,7 @@
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T01TextReg", "Mode TextReg (entrée TextReg comme GedR.ChangerUrl) : construction en erreur figée (Inp.dat absent, Message masqué par le paramètre)")
   TestKit.Desc("T03ListView", "Mode ListView : doublons et Null ignorés, filtre ^fac, Sélectionner, Inverser, Désélectionner, Valider")
   TestKit.Desc("T04ListEditor", "Mode ListEditor : liste modifiée puis Valider vers un ListBox")
   TestKit.Desc("T07TextArea", "Mode TextArea : texte modifié, Valider vers un TextBox ; Annuler sans recopie")
@@ -106,5 +107,24 @@ Public Sub T07TextArea()
   Try TestKit.Check("T07/valide/T", hBox.T)
   If Error Then TestKit.Check("T07/valide/T", "ERREUR: " & Error.Text)
   TestKit.Check("T07/valide/sortie", hOut.Text)
+
+End
+
+' LBOX-T01/T02 : en mode TextReg, _New lit Inp.dat et Inp.numerique (absents de TextReg) ; le Catch appelle
+' Message.Error alors que le paramètre « Message » (String) masque la classe : erreur « Unknown symbol 'Error' in
+' class '_BoxedString' » (candidat anomalie, même erreur fatale que le scénario gedr_changement_url). Figée ici.
+Public Sub T01TextReg()
+
+  Dim hW As New Window
+  Dim hIn As TextReg
+  Dim hBox As LBox
+
+  hIn = New TextReg(hW)
+  hIn.reg = hIn.path
+  hIn.Text = "file:///ged/clients/"
+  Try hBox = New LBox("Veuillez définir la partie commune de l'url a modifier", hIn, Null, hIn, "", LBox.TextReg)
+  TestKit.Check("T01/construction", IIf(Error, "ERREUR: " & Error.Text & " (" & Error.Where & ")", "OK"))
+  TestKit.Check("T01/boîte créée", Object.IsValid(hBox))
+  TestKit.Check("T01/entrée", hIn.Text)
 
 End

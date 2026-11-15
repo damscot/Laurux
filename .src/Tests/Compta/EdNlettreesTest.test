@@ -1,0 +1,92 @@
+' Gambas test file
+
+''Tests de EdNlettrees (.hidden/reference/.src/Compta/Impressions/EdNlettrees.class/test.md, EDNLETTREES-T04).
+''Le formulaire est instancié sans affichage (Form_Open non appelé) ; la sélection des types de clients se fait
+''directement dans le contrôle TypeClient1 (TreeView non rejouable), puis Button1_Click (Imprimer) produit
+''~/tmp/Enlettrees.pdf, lu par « pdftotext -layout » (date du jour masquée). Visualiseur.Prog neutralisé par
+''/Soc01/caisse/CmdVis = true. Jeu ednl_types (assets/EdNlettreesTest). Valeurs attendues : assets/EdNlettreesTest/expected.txt
+''(clone de référence).
+
+Private $sVis As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04TypeClient", "Les types sélectionnés filtrent les comptes lettrables (cli_typec IN) : type 01 → 411001 seul ; types 02 → 411002 et 411003")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EdNlettreesTest")
+  TestKit.OuvreBase("ednl_types")
+  $sVis = Start.LocalSettings["/Soc01/caisse/CmdVis"]
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = "true"
+  Try Mkdir User.Home &/ "tmp"
+
+End
+
+Public Sub _Teardown()
+
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = $sVis
+
+End
+
+Private Sub Imprime(hF As EdNlettrees, aTypes As String[], sCle As String)
+
+  Dim hTc As Object
+  Dim sType, sTxt, sLig As String
+  Dim n As Integer
+  Dim sFic As String = User.Home &/ "tmp/Enlettrees.pdf"
+
+  hTc = hF.Controls["TypeClient1"]
+  hTc.Mode = Select.Multiple
+  hTc.UnselectAll
+  For Each sType In aTypes
+    hTc[sType].Selected = True
+  Next
+  TestKit.Check(sCle & "/where", hTc.where)
+  Try Kill sFic
+  Try hF.Button1_Click()
+  If Error Then
+    TestKit.Check(sCle & "/imprimer", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  If Not Exist(sFic) Then
+    TestKit.Check(sCle & "/pdf", "<absent>")
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Now, "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, Format$(Now, "dd.mm.yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Or If sLig = "\f" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+Public Sub T04TypeClient()
+
+  Dim hF As EdNlettrees
+  Dim hCtl As Object
+
+  Try hF = New EdNlettrees
+  If Error Then
+    TestKit.Check("T04/creation", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  ' bornes fixes (Ex1 met Dten1 à la date du jour)
+  hCtl = hF.Controls["DteN0"]
+  hCtl.Text = "01.01.2018"
+  hCtl = hF.Controls["Dten1"]
+  hCtl.Text = "15.06.2018"
+  Imprime(hF, ["01"], "T04/type01")
+  Imprime(hF, ["02"], "T04/type02")
+  Object.Lock(hF)
+
+End

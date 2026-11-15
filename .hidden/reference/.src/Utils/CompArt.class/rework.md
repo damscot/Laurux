@@ -39,5 +39,5 @@
 
 ### Anomalies : changement de comportement, validation utilisateur requise
 
-- [ ] COMPART-A01 — [anomalie] `Close` sur fichiers non ouverts si le chemin n'existe pas ; ligne sans
+- [ ] COMPART-A01 — [anomalie] (confirmée phase 2, vague 7 : « Out of bounds » à `Button2_Click` l. 57 (`Lig2[1]`) ; « Null object » sur `Close #hfile` (l. 66, rapporté `.64` par Gambas), figée par T03 (code 125)) `Close` sur fichiers non ouverts si le chemin n'existe pas ; ligne sans
   `;` → erreur hors bornes · tests : T03 · sources : [CompArt.class:55](../../../../../.src/Utils/CompArt.class#L55), [CompArt.class:64-65](../../../../../.src/Utils/CompArt.class#L64-L65)

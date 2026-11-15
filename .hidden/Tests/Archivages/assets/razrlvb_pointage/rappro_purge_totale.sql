@@ -1,0 +1,6 @@
+-- Jeu RAZRLVB-T05 : comme rappro_base sans le relevé 512100 et avec 512001 (compte existant) : tous les relevés de 512001 antérieurs à 2018-06-15).
+INSERT INTO Fiches_Rappro (cpt, nreleve, date_releve, date_rappro, solde) VALUES
+('512000', 1, '2018-05-31 00:00:00', '2018-06-02 00:00:00', 1000),
+('512000', 2, '2018-06-15 00:00:00', '2018-06-15 00:00:00', 1500),
+('512000', 3, '2018-06-30 00:00:00', '2018-07-02 00:00:00', 1800),
+('512001', 1, '2018-04-30 00:00:00', '2018-05-02 00:00:00', 200);

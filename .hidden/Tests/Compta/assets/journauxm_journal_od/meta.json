@@ -8,13 +8,16 @@
  "objet": "Journal OD",
  "dataset": "jourcent_shared/jourcent_journal_od",
  "fichiers": [
-  "@ouvrir.trace"
+  "edition.txt"
  ],
- "description": "Journaux > Imprimer (jeu jourcent_journal_od : journal 10 de type OD) : table centralisation non alimentée pour l'OD (sql.log, dump) ; Quitter.",
+ "description": "Journaux > Imprimer (jeu jourcent_journal_od : journal 10 de type OD) : table centralisation non alimentée pour l'OD (sql.log, dump) ; Quitter. Vague 7 : le texte de chaque PDF (pdftotext -layout via /Soc01/caisse/CmdVis) est ajouté à ~/edition.txt et comparé ; cela remplace @ouvrir.trace et les mentions « PDF ouvert / non comparé » ci-dessus.",
  "cadence": {
   "frappe": 50,
   "focus": 100,
   "traitement": 1000,
   "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
  }
 }

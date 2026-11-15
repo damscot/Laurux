@@ -1,0 +1,23 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "JOURNAUXM-T04",
+ "classe": "JournauxM",
+ "objet": "Édition provisoire puis définitive",
+ "dataset": "journauxm_shared/journauxm_provisoire",
+ "fichiers": [
+  "edition.txt"
+ ],
+ "description": "Journaux (jeu journauxm_provisoire : dtepc 31.03.2018, journal 70 numero 11/12, numerodef 1/2) : Imprimer du 01.01.2018 au 15.06.2018 (après dtepc : « ( Edition provisoire ) », numéros numero), puis DteN1 = 31.03.2018 et Imprimer (édition définitive, numéros numerodef) ; les deux PDF convertis par pdftotext -layout via /Soc01/caisse/CmdVis et ajoutés à ~/edition.txt ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
+}

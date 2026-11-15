@@ -77,10 +77,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (sans `ORDER BY`), alors que les libellés de mois partent du mois de `dte1` ; un mois sans vente
   décale toutes les barres suivantes, et sous SQLite l'ordre d'insertion (factures puis BL) peut
   différer de l'ordre chronologique · tests : T03 · sources : [TBord.class:203](../../../../../.src/Statistiques/TBord.class#L203), [TBord.class:Draw_Chart](../../../../../.src/Statistiques/TBord.class#L278-L359)
-- [ ] TBORD-A05 — [anomalie] Divisions non protégées : taux de marge du bloc BL (`Total = 0`), taux
+- [ ] TBORD-A05 — [anomalie] (confirmée phase 2, vague 7 : « Division by zero » à `Traitement` l. 170 (`MargePart = (MargeArt / Total) * 100`, bloc BL) quand un BL `F` à 0 rejoint une facture à 0 dans le même mois, figée par T06 (code 125)) Divisions non protégées : taux de marge du bloc BL (`Total = 0`), taux
   globaux et panier moyen (`Totca = 0` ou `nb = 0`) lèvent une erreur Gambas à l'ouverture · tests :
   T06 · sources : [TBord.class:168](../../../../../.src/Statistiques/TBord.class#L168), [TBord.class:172](../../../../../.src/Statistiques/TBord.class#L172), [TBord.class:224](../../../../../.src/Statistiques/TBord.class#L224), [TBord.class:229](../../../../../.src/Statistiques/TBord.class#L229)
 - [ ] TBORD-A06 — [anomalie] Indicateurs incohérents (à confirmer avec l'utilisateur) : « Total CA »
   et les taux de marge portent sur le CA **brut** (avant remises) alors que l'histogramme montre le
   net ; échelle divisée par 100 000 si `/Soc<XX>/Prxdec` ; la borne `datefac <= aaaammjj` exclut les
   documents du jour qui ont une heure · tests : T01, T07 · sources : [TBord.class:217](../../../../../.src/Statistiques/TBord.class#L217), [TBord.class:224](../../../../../.src/Statistiques/TBord.class#L224), [TBord.class:313](../../../../../.src/Statistiques/TBord.class#L313), [TBord.class:73](../../../../../.src/Statistiques/TBord.class#L73)
+- [ ] TBORD-A07 — [anomalie, à confirmer] Bloc BL : novembre affiche `rmfac` = 5,00 pour deux BL dont un seul remisé (constat T03) ; l'hypothèse « `Remmo`/`Remart` non remis à zéro dans la boucle » est contredite par le code (remise à zéro l. 182-183, cumul mensuel par `N1Result!rmfac` l. 167) : la valeur pourrait être la somme correcte des remises du mois (phase 2, vague 7, 2026-11-15) · tests : T03 · sources : [TBord.class:Traitement](../../../../../.src/Statistiques/TBord.class#L141-L183)

@@ -1,0 +1,76 @@
+' Gambas test file
+
+''Tests de Eticli (.hidden/reference/.src/Gestion/Etiquettes/Eticli.class/test.md, ETICLI-T06).
+''Écran instancié sans affichage (New Eticli), gestionnaires appelés directement à la place de F2, du clic d'en-tête
+''et du clic de ligne (non rejouables) ; jeu eticli_shared/eticli_base.
+''Valeurs attendues : assets/EticliTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06Grilles", "Listes client1/client2 : ouverture, tri par Nom deux fois, choix d'une ligne ; tri de Colcli2 (A04)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EticliTest")
+  TestKit.OuvreBase("eticli_shared/eticli_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Grille(sCle As String, hForm As Object, sNom As String)
+
+  Dim hGrid As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  hGrid = hForm.Controls[sNom]
+  TestKit.Check(sCle & "/" & sNom & "_visible", hGrid.Visible)
+  TestKit.Check(sCle & "/" & sNom & "_colonnes", hGrid.Columns.Count)
+  TestKit.Check(sCle & "/" & sNom & "_lignes", hGrid.Rows.Count)
+  For i = 0 To Min(hGrid.Rows.Count, 4) - 1
+    Utils.rs1.MoveTo(i)
+    sRes &= "[" & Utils.rs1!cli_code & " " & Utils.rs1!cli_nom & "]"
+  Next
+  TestKit.Check(sCle & "/" & sNom & "_debut", sRes)
+
+End
+
+Public Sub T06Grilles()
+
+  Dim hForm As Eticli
+  Dim hGrid As Object
+  Dim hTxt As Object
+
+  hForm = New Eticli
+  ' F2 sur client1 : ouverture de la liste
+  hForm.ToggleButton1_Click()
+  Grille("T06/ouverture", hForm, "Colcli")
+  hForm.Colcli_ColumnClick(1)
+  Grille("T06/tri_nom_1", hForm, "Colcli")
+  hForm.Colcli_ColumnClick(1)
+  Grille("T06/tri_nom_2", hForm, "Colcli")
+  hGrid = hForm.Controls["Colcli"]
+  hGrid.Row = 1
+  hForm.ColCli_Click()
+  hTxt = hForm.Controls["Client1"]
+  TestKit.Check("T06/client1", hTxt.Text)
+  TestKit.Check("T06/colcli_visible", hGrid.Visible)
+  ' Seconde liste
+  hForm.ToggleButton2_Click()
+  Grille("T06/ouverture2", hForm, "Colcli2")
+  hForm.Colcli2_ColumnClick(1)
+  Grille("T06/tri2_colcli2", hForm, "Colcli2")
+  Grille("T06/tri2_colcli", hForm, "Colcli")
+  hGrid = hForm.Controls["Colcli2"]
+  hGrid.Row = 2
+  hForm.ColCli2_Click()
+  hTxt = hForm.Controls["Client2"]
+  TestKit.Check("T06/client2", hTxt.Text)
+  Object.Lock(hForm)
+
+End

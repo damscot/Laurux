@@ -11,10 +11,10 @@ modifié**.
 |---|---|---|---|---|---|---|
 | SAISIEDECONS-T01 | replay | Sélection d'une réception | fournisseur numérique saisi ; n° de réception saisi | en-tête HT/TTC/consignes/déconsignations/accise affiché (log) | `tests/selection_reception/` | implémenté |
 | SAISIEDECONS-T02 | replay | Déconsignation palette + colis proposés | article à `art_nbcol`/`art_nbbou` ; 2 palettes ; Valider | 3 lignes `Fiches_ligcons` `numlig = 'D'` ; `Fiches_Entrecpt.montant/mttc` diminués | `tests/deconsignation/` | implémenté |
-| SAISIEDECONS-T03 | replay | Modification d'une ligne | double-clic sur une ligne ; nouvelle quantité ; Valider | UPDATE de la ligne, totaux corrigés | `tests/modification/` | à faire : GridView1 sans `_Click` (double-clic / Activate non rejouable, REPLAYOBSERVER-A14) |
-| SAISIEDECONS-T04 | replay | Suppression d'une ligne | Suppr sur une ligne | DELETE ; `Fiches_Entrecpt` **inchangé** (A01 figée) | `tests/suppression/` | à faire : GridView1 sans `_Click` (sélection de ligne non rejouable, REPLAYOBSERVER-A14) |
+| SAISIEDECONS-T03 | replay | Modification d'une ligne | double-clic sur une ligne ; nouvelle quantité ; Valider | UPDATE de la ligne, totaux corrigés | `tests/modification/` | implémenté (gb.test `SaisiedeconsTest.T03Modification` : GridView1_Data puis GridView1_Activate appelés directement sur la ligne 0, quantité 10, Butval_Click : UPDATE -10 / -2,00, Entrecpt 99,20 / 119,20) |
+| SAISIEDECONS-T04 | replay | Suppression d'une ligne | Suppr sur une ligne | DELETE ; `Fiches_Entrecpt` **inchangé** (A01 figée) | `tests/suppression/` | à faire : GridView1 sans `_Click` (REPLAYOBSERVER-A14) ; en gb.test, `GridView1_KeyPress` lit `Key.Code` (aucun événement clavier simulable hors rejeu) |
 | SAISIEDECONS-T05 | replay | Accise recumulée | sortir deux fois de la zone n° de réception | `Labelacc` doublé (A02 figée, log) | `tests/accise_cumul/` | à faire : après la 1re sélection, `Panel1.Enabled = False` : la zone n° de réception ne reprend pas le focus (scénario d'essai : selectionbr exécuté une seule fois) ; à caractériser autrement |
-| SAISIEDECONS-T06 | replay | Calculette F5 | F5 dans une quantité ; `3*4` ; validation | quantité `12` | `tests/calculette/` | à faire : touche F5 (FCalc) non rejouable |
+| SAISIEDECONS-T06 | replay | Calculette F5 | F5 dans une quantité ; `3*4` ; validation | quantité `12` | `tests/calculette/` | à faire : touche F5 (FCalc) non rejouable ; en gb.test, `saisie_keypress` lit `Key.Code` (non simulable) |
 | SAISIEDECONS-T07 | gbtest | Montant d'une déconsignation | code de consigne, nombre (après SAISIEDECONS-003) | `nb`, `montant` négatifs de référence | `tests/montant_ligne/` | à faire : exige une extraction (après SAISIEDECONS-003) |
 
 ## Détail des tests

@@ -50,10 +50,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDCONSIGNE-A01 — [anomalie, à confirmer] Jointure `Fiches_consigne.code = Fiches_ligcons.code`
+- [ ] EDCONSIGNE-A01 — [anomalie, à confirmer] (confirmée phase 2, vague 7 : jointure sur l'identifiant de `Fiches_ligcons`, codes affichés = identifiants (T01) ; en mode fournisseur, colonnes préfixées (T04)) Jointure `Fiches_consigne.code = Fiches_ligcons.code`
   (identifiant auto-incrémenté) au lieu de `codecons`, et colonne « code » affichée = identifiant :
   l'état ne rapproche pas les bons mouvements · tests : T01-T04 · sources : [Edconsigne.class:80](../../../../../../.src/Gestion/option/Edconsigne.class#L80), [Edconsigne.class:84](../../../../../../.src/Gestion/option/Edconsigne.class#L84), [Edconsigne.class:88](../../../../../../.src/Gestion/option/Edconsigne.class#L88), [Edconsigne.class:92](../../../../../../.src/Gestion/option/Edconsigne.class#L92)
-- [ ] EDCONSIGNE-A02 — [anomalie, à confirmer] Jointures sur le seul numéro de document : chaque
+- [ ] EDCONSIGNE-A02 — [anomalie, à confirmer] (confirmée phase 2, vague 7 : cumul par code doublé pour une réception de 2 lignes (T02) ; ligne en double en mode fournisseur détaillé (T04)) Jointures sur le seul numéro de document : chaque
   mouvement est répété (et sommé) autant de fois que le document a de lignes · tests : T01, T02 ·
   sources : [Edconsigne.class:80](../../../../../../.src/Gestion/option/Edconsigne.class#L80), [Edconsigne.class:96](../../../../../../.src/Gestion/option/Edconsigne.class#L96)
 - [ ] EDCONSIGNE-A03 — [anomalie] Mode cumul : la requête BL ne filtre pas `type <> 'E'` (le détail

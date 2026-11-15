@@ -10,6 +10,8 @@ Public Sub _Desc()
 
   TestKit.Desc("T08Historique", "Carte 000001 avec 3 tickets (dont 1 supprimé) : historique des ventes puis des points (cumul) dans Histo")
   TestKit.Desc("T02Modification", "Clic sur la 1re carte, téléphone domicile 0111111111 et bureau 0222222222, Enregistrer : téléphones en base (A01)")
+  TestKit.Desc("T05Dates", "Carte 000001 : dates d'émission et de fin choisies par DateChooser1 (Button6/Button11 puis DateChooser1_Activate), Enregistrer : datec/datef en base")
+  TestKit.Desc("T06Tri", "Liste : clic sur les en-têtes Nom et Ville (tri), double-clic (tri inverse), clic sur Code (retour) : ordre des cartes")
 
 End
 
@@ -123,6 +125,78 @@ Public Sub T08Historique()
   Ct(hF, "Hisp").Value = True
   TestKit.Check("T08/points", Histo(hF))
   TestKit.Check("T08/Hisv.Value", Ct(hF, "Hisv").Value)
+  Object.Lock(hF)
+
+End
+
+Private Sub Liste(hF As FClientcarte) As String
+
+  Dim hG As Object
+  Dim s As String
+  Dim i As Integer
+
+  hG = Ct(hF, "Colcli")
+  s = hG.Rows.Count & " :"
+  For i = 0 To hG.Rows.Count - 1
+    s &= " " & hG[i, 0].Text & "/" & hG[i, 2].Text & "/" & hG[i, 6].Text
+  Next
+  Return s
+
+End
+
+Public Sub T05Dates()
+
+  Dim hF As FClientcarte
+
+  Try hF = New FClientcarte
+  If Error Then
+    TestKit.Check("T05/ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return
+  Endif
+  hF.Form_Open()
+  TestKit.Check("T05/avant", Carte("000001"))
+  Ct(hF, "Colcli").Row = 0
+  hF.colcli_Click()
+  hF.Button6_Click()
+  TestKit.Check("T05/DateChooser1.Visible", Ct(hF, "DateChooser1").Visible)
+  Ct(hF, "DateChooser1").Value = Date(2018, 7, 1)
+  hF.DateChooser1_Activate()
+  TestKit.Check("T05/Dte1", Ct(hF, "Dte1").Text)
+  TestKit.Check("T05/DateChooser1.Visible.apres", Ct(hF, "DateChooser1").Visible)
+  hF.Button11_Click()
+  Ct(hF, "DateChooser1").Value = Date(2019, 12, 31)
+  hF.DateChooser1_Activate()
+  TestKit.Check("T05/Dte2", Ct(hF, "Dte2").Text)
+  Try hF.Button4_Click()
+  If Error Then TestKit.Check("T05/enregistrer", "ERREUR: " & Error.Text & " " & Error.Where)
+  TestKit.Check("T05/apres", Carte("000001"))
+  Object.Lock(hF)
+
+End
+
+Public Sub T06Tri()
+
+  Dim hF As FClientcarte
+
+  Try hF = New FClientcarte
+  If Error Then
+    TestKit.Check("T06/ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return
+  Endif
+  hF.Form_Open()
+  TestKit.Check("T06/initial", Liste(hF))
+  hF.N1_Click()
+  TestKit.Check("T06/nom", Liste(hF))
+  hF.N1_Dblclick()
+  TestKit.Check("T06/nom.inverse", Liste(hF))
+  hF.N1_Dblclick()
+  TestKit.Check("T06/nom.redouble", Liste(hF))
+  hF.V1_Click()
+  TestKit.Check("T06/ville", Liste(hF))
+  TestKit.Check("T06/V1.Text", Ct(hF, "V1").Text)
+  hF.C1_Click()
+  TestKit.Check("T06/code", Liste(hF))
+  TestKit.Check("T06/C1.Text", Ct(hF, "C1").Text)
   Object.Lock(hF)
 
 End

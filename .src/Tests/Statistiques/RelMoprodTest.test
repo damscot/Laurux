@@ -1,0 +1,175 @@
+' Gambas test file
+
+''Tests de RelMoprod (.hidden/reference/.src/Statistiques/RelMoprod.class/test.md, RELMOPROD-T06, T08 partiel).
+''Valeurs attendues : assets/RelMoprodTest/expected.txt, produites dans le clone de référence.
+''Le clic sur un nœud de l'arbre Rlcli (TreeView) n'est pas rejouable et le Traitement (Button1_Click) ouvre un
+''Message.Info bloquant : le test construit l'écran sans l'afficher, crée Fiches_Stat avec le contenu produit par
+''RELMOPROD-T01 (relmoprod_tous), coche RB3 (par client) et appelle MajTab (remplissage de l'arbre), puis rend
+''courant un nœud « Facture numéro … » et appelle Rlcli_click : facture historisée 0000401, puis facture en cours
+''0000451 (BL imprimé), dont le numéro de 7 caractères n'est pas retrouvé (A03), puis les mêmes cas avec des
+''numéros de 10 caractères (ajoutés par le test) ; Button2_Click (Fermer) masque le détail. T08 : les clics, double-clics
+''et le choix d'une ligne de la grille Colcli sont appelés directement ; la grille est relue par Utils.rs2 (Base2) ;
+''la frappe d'un filtre (ChkInput) et Échap lisent Key et restent hors gb.test. Jeu : relmoprod_shared/factures.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T08Recherche", "Grille client : ouverture (nom croissant), clic C1 et N1, double-clic N1 (décroissant puis croissant), choix d'une ligne")
+  TestKit.Desc("T06Detail", "Détail d'une facture historisée puis d'une facture en cours depuis l'arbre, puis Fermer")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Statistiques", "RelMoprodTest")
+  TestKit.OuvreBase("relmoprod_shared/factures")
+  Utils.db.Exec("DROP TABLE IF EXISTS " & Cbase.Table("TabStat"))
+  Utils.db.Exec("CREATE TABLE " & Cbase.Table("TabStat") & " (code Char(15) NOT NULL, intitule char(50), qte char(12), type char(1), montant char(12), codecli char(12), intitulecli char(35), numfac char(10), qtefac char(6), nethtfac char(10), PRIMARY KEY (code, codecli, numfac))" & Utils.db.Engine())
+  AjouteStat("001", "Produit 2.10", "A", "411001", "A Divers", "0000401", "3", "30,00")
+  AjouteStat("002", "Produit 7.00", "A", "411001", "A Divers", "0000401", "1", "8,00")
+  AjouteStat("01", "Mo T1", "M", "411001", "A Divers", "0000401", "2", "56,00")
+  AjouteStat("02", "Mo T2", "M", "411002", "B Divers", "0000402", "1", "31,00")
+  AjouteStat("03", "Mo T3", "M", "411001", "A Divers", "0000451", "1", "35,00")
+  ' Numéros de 10 caractères (seul cas où Right$(clé, 10) retrouve le numéro, A03) : facture historisée et BL en cours
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabHisFac") & " (numfac, cdclifac, nmclifac, datefac, totfac) VALUES ('0000000403', '411002', 'B Divers', '2018-03-20 00:00:00', 45)")
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabHisLigFac") & " (num_ligfac, numlig_ligfac, code_ligfac, libel_ligfac, qte_ligfac, brut_ligfac, rem_ligfac, netht_ligfac, typel_ligfac, com_ligfac) VALUES ('0000000403', '000001', '01', 'Mo T1', '2', '20,00', '0', '20,00', 'M', NULL), ('0000000403', '000002', '', '', NULL, NULL, NULL, NULL, 'C', 'Ligne un\nLigne deux'), ('0000000403', '000003', '001', 'Produit 2.10', '1', '5,00', '0', '5,00', 'A', NULL)")
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabBl") & " (numbl, type, cdclibl, nmclibl, datebl, imp, numfac, totalht) VALUES ('000403', 'F', '411002', 'B Divers', '2018-04-05 00:00:00', 1, '0000000453', 12)")
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabLigbl") & " (num_ligbl, numlig_ligbl, code_ligbl, libel_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, typel_ligbl) VALUES ('000403', '000001', '02', 'Mo T2', '3', '4,00', '0', '4,00', 'M')")
+  AjouteStat("01", "Mo T1", "M", "411002", "B Divers", "0000000403", "2", "20,00")
+  AjouteStat("02", "Mo T2", "M", "411002", "B Divers", "0000000453", "3", "4,00")
+
+End
+
+Private Sub AjouteStat(sCode As String, sInt As String, sType As String, sCli As String, sIntCli As String, sFac As String, sQte As String, sNet As String)
+
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabStat") & " (code, intitule, type, codecli, intitulecli, numfac, qtefac, nethtfac) VALUES (&1, &2, &3, &4, &5, &6, &7, &8)", sCode, sInt, sType, sCli, sIntCli, sFac, sQte, sNet)
+
+End
+
+Private Sub Detail(sT As String, hF As RelMoprod, sCle As String)
+
+  Dim hT, hC, hO As Object
+  Dim sLignes As String
+  Dim i As Integer
+
+  hT = hF.Controls["Rlcli"]
+  If Not hT.Exist(sCle) Then
+    TestKit.Check(sT & "/noeud", "<absent> " & sCle)
+    Return
+  Endif
+  TestKit.Check(sT & "/noeud", hT[sCle].Text)
+  hT.MoveTo(sCle)
+  hT[sCle].Selected = True
+  Try hF.Rlcli_click()
+  If Error Then TestKit.Check(sT & "/erreur", Error.Text)
+  hO = hF.Controls["Codecli"]
+  TestKit.Check(sT & "/codecli", hO.Text)
+  hO = hF.Controls["Nomcli"]
+  TestKit.Check(sT & "/nomcli", hO.Text)
+  hO = hF.Controls["Numfac"]
+  TestKit.Check(sT & "/numfac", hO.Text)
+  hO = hF.Controls["datef"]
+  TestKit.Check(sT & "/datef", hO.Text)
+  hC = hF.Controls["Colrcp3"]
+  If hC.MoveFirst() = False Then
+    Repeat
+      sLignes &= "["
+      For i = 0 To 6
+        If i > 0 Then sLignes &= "|"
+        sLignes &= hC.Item[i]
+      Next
+      sLignes &= "]"
+    Until hC.MoveNext()
+  Endif
+  TestKit.Check(sT & "/lignes", sLignes)
+  hO = hF.Controls["Totalfac"]
+  TestKit.Check(sT & "/totalfac", hO.Text)
+  hO = hF.Controls["Nlgf"]
+  TestKit.Check(sT & "/nlgf", hO.Text)
+  hO = hF.Controls["Panel3"]
+  TestKit.Check(sT & "/panel3", hO.Visible)
+
+End
+
+Public Sub T06Detail()
+
+  Dim hF As RelMoprod
+  Dim hO As Object
+
+  Try hF = New RelMoprod
+  If Error Then
+    TestKit.Check("T06/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hO = hF.Controls["RB3"]
+  hO.Value = True
+  hF.MajTab()
+  hO = hF.Controls["Rlcli"]
+  TestKit.Check("T06/arbre", hO.Count)
+  Detail("T06/historisee", hF, "411001;010000401")
+  Detail("T06/en_cours", hF, "411001;030000451")
+  Detail("T06/historisee10", hF, "411002;010000000403")
+  Detail("T06/en_cours10", hF, "411002;020000000453")
+  hF.Button2_Click()
+  hO = hF.Controls["Panel3"]
+  TestKit.Check("T06/fermer/panel3", hO.Visible)
+  hO = hF.Controls["Colrcp3"]
+  TestKit.Check("T06/fermer/lignes", hO.Count)
+  Object.Lock(hF)
+
+End
+
+Private Sub Grille(sT As String)
+
+  Dim r As Result
+  Dim sCodes As String
+  Dim i As Integer
+
+  r = Utils.rs2
+  If Not r Then
+    TestKit.Check(sT & "/grille", "<aucune>")
+    Return
+  Endif
+  TestKit.Check(sT & "/lignes", r.Count)
+  For i = 0 To Min(3, r.Count) - 1
+    r.MoveTo(i)
+    If i > 0 Then sCodes &= "|"
+    sCodes &= r!cli_code & " " & r!cli_nom
+  Next
+  TestKit.Check(sT & "/premieres", sCodes)
+
+End
+
+Public Sub T08Recherche()
+
+  Dim hF As RelMoprod
+  Dim hO As Object
+
+  Try hF = New RelMoprod
+  If Error Then
+    TestKit.Check("T08/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hF.ToggleButton3_click()
+  hO = hF.Controls["Colcli"]
+  TestKit.Check("T08/ouverture/visible", hO.Visible)
+  Grille("T08/ouverture")
+  hF.C1_Click()
+  Grille("T08/C1")
+  hF.N1_Click()
+  Grille("T08/N1")
+  hF.N1_Dblclick()
+  Grille("T08/N1_dbl1")
+  hF.N1_Dblclick()
+  Grille("T08/N1_dbl2")
+  hO.Row = 1
+  hF.ColCli_Click()
+  hO = hF.Controls["Code"]
+  TestKit.Check("T08/choix/code", hO.Text)
+  hO = hF.Controls["Int"]
+  TestKit.Check("T08/choix/int", hO.Text)
+  hO = hF.Controls["Colcli"]
+  TestKit.Check("T08/choix/visible", hO.Visible)
+  Object.Lock(hF)
+
+End

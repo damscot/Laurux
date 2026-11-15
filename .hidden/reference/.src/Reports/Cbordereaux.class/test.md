@@ -9,8 +9,8 @@
 | CBORDEREAUX-T02 | gbtest | Bordereau de chèques | `Entete`, `TitreB`, `Level6`, 30 × `Level7`, `Level8` | texte de référence | `tests/bordereau_cheques/` | implémenté |
 | CBORDEREAUX-T03 | gbtest | Paiements multi-pages | `AliasNbPages`, 2 × (`EnteteP`, `Level1`, 40 × `Level2`, `Footer`), `Level3` | `Page 1/2`, `Page 2/2` | `tests/paiements/` | implémenté |
 | CBORDEREAUX-T04 | gbtest | Logo invalide | `Logo` avec un chemin absent, puis un `.gif` | erreur capturée (`Try`) de référence (A01 figée) | `tests/logo_invalide/` | implémenté |
-| CBORDEREAUX-T05 | replay | Bordereau de remise de chèques (`BordereauxC`) | jeu dérivé avec règlements par chèque | `pdftotext` identique entre clones ; dump BDD identique | `tests/replay_bordereauxC/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par les scénarios existants Compta/bordereauxc_* (texte pdftotext comparé) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
-| CBORDEREAUX-T06 | replay | Liste des paiements (`Edpaiement`) | `Laurux01.sql` + règlements clients | `pdftotext` identique entre clones | `tests/replay_edpaiement/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par les scénarios existants Gestion/edpaiement_* (texte pdftotext comparé) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| CBORDEREAUX-T05 | replay | Bordereau de remise de chèques (`BordereauxC`) | jeu dérivé avec règlements par chèque | `pdftotext` identique entre clones ; dump BDD identique | `tests/replay_bordereauxC/` | implémenté (scénario Reports/cbordereaux_bordereauxc, dérivé de bordereauxc_remise_complete : edition.txt pdftotext et dump comparés) |
+| CBORDEREAUX-T06 | replay | Liste des paiements (`Edpaiement`) | `Laurux01.sql` + règlements clients | `pdftotext` identique entre clones | `tests/replay_edpaiement/` | implémenté (scénario Reports/cbordereaux_edpaiement, dérivé de Gestion/edpaiement_toutes_factures : edition.txt pdftotext comparé) |
 
 ## Détail des tests
 

@@ -17,7 +17,7 @@ nul et positif, `art_etiq` vrai/faux.
 | MAJFBTARIF2-T04 | replay | Date vide (A01) | T01 exécuté, puis nouveau lancement avec date vide | dump `Fiches_Art` (fige la remise à zéro des prix des articles déjà traités) | `tests/date_vide/` | implémenté |
 | MAJFBTARIF2-T05 | replay | Aucune ligne | date sans article | message « Aucune mise à jour… », dump inchangé | `tests/aucun_article/` | implémenté |
 | MAJFBTARIF2-T06 | replay | SQLite | T01 et T02 sur la base SQLite (`LOCK` neutralisé) | dump de référence SQLite | `tests/sqlite/` | à faire : le runner ne prend pas en charge de base SQLite (besoin d'outillage) |
-| MAJFBTARIF2-T07 | gbtest | Chaîne de calcul (après commonalisation `LTarifCalc`) | jeu des articles de T01/T03 passé à `LTarifCalc` | mêmes prix que les dumps de T01/T03 | `tests/calcul_tarif/` | à faire : après commonalisation LTarifCalc (MAJFBTARIF2-004) |
+| MAJFBTARIF2-T07 | gbtest | Chaîne de calcul (après commonalisation `LTarifCalc`) | jeu des articles de T01/T03 passé à `LTarifCalc` | mêmes prix que les dumps de T01/T03 | `tests/calcul_tarif/` | à faire : après commonalisation LTarifCalc (MAJFBTARIF2-004) ; classe `LTarifCalc` absente des sources (vague 7) |
 
 ## Détail des tests
 

@@ -10,7 +10,7 @@ décision sur les anomalies.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| JOURNAUXA-T01 | replay | Liste des postes | F2 sur `Cpt` (postes existants) | erreur sur le champ `intitule` (A02 figée, message exact à capturer) | `tests/liste_postes/` | à faire : touche F2 non rejouée |
+| JOURNAUXA-T01 | replay | Liste des postes | F2 sur `Cpt` (postes existants) | erreur sur le champ `intitule` (A02 figée, message exact à capturer) | `tests/liste_postes/` | implémenté (gb.test JournauxATest.T01ListePostes : ToggleButton1_Click — gestionnaire de F2 — lève « Unknown field: intitule » après la 1re ligne, A02 figée ; touche F2 elle-même non rejouée) |
 | JOURNAUXA-T02 | replay | Impression, tri postes/journaux | `Fiches_MvtA` : 2 postes, 2 journaux, écritures dans la période | comportement figé (erreur d'arguments de `level2J` attendue, A01 à confirmer) | `tests/tri_postes/` | implémenté |
 | JOURNAUXA-T03 | replay | Impression, tri journaux/postes | mêmes données, `RadioButton2` | erreur SQL `intitule` (A02 figée) | `tests/tri_journaux/` | implémenté |
 | JOURNAUXA-T04 | replay | Écritures toutes hors période | `Fiches_MvtA` avec dates hors période | PDF avec titres de rupture sans ligne + page de centralisation vide (A05 figée) | `tests/hors_periode/` | implémenté |
@@ -37,3 +37,4 @@ décision sur les anomalies.
   « Unknown column 'intitule' », A02), `hors_periode` (T04 et T08 : PDF ouvert puis supprimé par Quitter, `tmp/Journaux.pdf`
   comparé « <fichier absent> »), `aucune_ecriture` (T05, Laurux01). Jeux : `journauxa_shared/journauxa_base.sql` (postes 10/20,
   Fiches_MvtA 2018), `journauxa_hors_periode/journauxa_hors_periode.sql` (écritures 2016).
+- **Vague 7** : T01 `.src/Tests/Compta/JournauxATest.test` (ToggleButton1_Click appelé directement, jeu `journauxa_shared/journauxa_base`).

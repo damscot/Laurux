@@ -1,0 +1,99 @@
+' Gambas test file
+
+''Tests de Famille (.hidden/reference/.src/Gestion/Tables/Famille.class/test.md, FAMILLE-T06).
+''Écran instancié sans affichage (New Famille, Form_Open appelé) ; le clic sur la TableView Tbrem et les touches de
+''Tbxrem (non rejouables) sont remplacés par les appels que fait tbxrem_KeyPress : HideTextBox, MoveTo, tbrem_Click.
+''Base Laurux01. Valeurs attendues : assets/FamilleTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06RemisesQuantite", "Grille Tbrem de la 1re famille : saisie, Entrée (cellule suivante), flèches, valeur > 9 999 999,99 ; Enregistrer : qte*/rem*")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "FamilleTest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Grille(sCle As String, hForm As Object)
+
+  Dim hTb As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  hTb = hForm.Controls["Tbrem"]
+  For i = 0 To 5
+    sRes &= "[" & hTb[i, 0].Text & "|" & hTb[i, 1].Text & "|" & hTb[i, 2].Text & "]"
+  Next
+  TestKit.Check(sCle & "/tbrem", sRes)
+
+End
+
+' Saisie dans la zone d'édition puis touche (Entrée, Gauche, Haut, Bas) : même enchaînement que tbxrem_KeyPress
+Private Sub Saisit(hForm As Object, sTexte As String, iDr As Integer, iDc As Integer)
+
+  Dim hTb As Object
+  Dim hTx As Object
+
+  hTb = hForm.Controls["Tbrem"]
+  hTx = hForm.Controls["Tbxrem"]
+  If sTexte Then hTx.Text = sTexte
+  hForm.HideTextBox()
+  hForm.MoveTo(hTb.Row + iDr, hTb.Column + iDc)
+  hForm.tbrem_Click()
+
+End
+
+Public Sub T06RemisesQuantite()
+
+  Dim hForm As Famille
+  Dim hCol As ColumnView
+  Dim hTb As Object
+  Dim hTx As Object
+  Dim sFam As String
+  Dim rResult As Result
+
+  hForm = New Famille
+  hForm.Form_Open()
+  hCol = hForm.Controls["Colfam"]
+  hCol.MoveFirst()
+  hCol.Item.Selected = True
+  sFam = hCol.Item.Key
+  TestKit.Check("T06/famille", sFam)
+  hForm.Colfam_Click()
+  Grille("T06/ouverture", hForm)
+  hTb = hForm.Controls["Tbrem"]
+  hTx = hForm.Controls["Tbxrem"]
+  hTb.MoveTo(0, 1)
+  hForm.tbrem_Click()
+  TestKit.Check("T06/zone_0_1", hTx.Text)
+  Saisit(hForm, "10", 0, 1)
+  Saisit(hForm, "5", 0, 1)
+  TestKit.Check("T06/zone_1_0", hTx.Text)
+  Saisit(hForm, "", 0, 1)
+  Saisit(hForm, "12345678", 0, 1)
+  Saisit(hForm, "2,5", 1, 0)
+  TestKit.Check("T06/zone_2_2", hTx.Text)
+  Saisit(hForm, "", -1, 0)
+  Saisit(hForm, "", 0, -1)
+  TestKit.Check("T06/position", hTb.Row & "," & hTb.Column)
+  Saisit(hForm, "", 0, 0)
+  Grille("T06/saisie", hForm)
+  Try hForm.Button1_Click()
+  If Error Then
+    TestKit.Check("T06/enregistrer", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T06/enregistrer", "ok")
+  Endif
+  rResult = Utils.db.Exec("SELECT qte1, qte2, rem1, qte3, qte4, rem2, qte5, qte6, rem3 FROM " & Cbase.Table("TabFam") & " WHERE code_fam = &1", sFam)
+  If rResult.Available Then TestKit.Check("T06/base", rResult!qte1 & "|" & rResult!qte2 & "|" & rResult!rem1 & "|" & rResult!qte3 & "|" & rResult!qte4 & "|" & rResult!rem2 & "|" & rResult!qte5 & "|" & rResult!qte6 & "|" & rResult!rem3)
+  Object.Lock(hForm)
+
+End

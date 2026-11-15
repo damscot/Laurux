@@ -12,7 +12,7 @@ un compte 411 sans fiche client). Comparaisons : dump de `Fiches_Relcomptes`, te
 | FRELCOMPTE-T01 | replay | Liste clients | période du mois, `RB3` | dump `Fiches_Relcomptes` ; lignes et totaux de la liste | `tests/liste_clients/` | implémenté |
 | FRELCOMPTE-T02 | replay | Liste fournisseurs | même période, `RB4` | dump `Fiches_Relcomptes` (tous les fournisseurs) | `tests/liste_fournisseurs/` | implémenté |
 | FRELCOMPTE-T03 | replay | Édition de tous les comptes | `RB1`, Éditer | texte PDF de référence, saut de page | `tests/edition_tous/` | implémenté |
-| FRELCOMPTE-T04 | replay | Édition de la sélection | `RB2`, 2 comptes sélectionnés | texte PDF des 2 comptes seulement | `tests/edition_selection/` | à faire : sélection de comptes dans `CompteRel` non rejouable (ColumnView sans `CompteRel_Click`) |
+| FRELCOMPTE-T04 | replay | Édition de la sélection | `RB2`, 2 comptes sélectionnés | texte PDF des 2 comptes seulement | `.src/Tests/Compta/FRelCompteTest.test` (`T04EditionSelection`) | implémenté (gb.test : écran instancié sans affichage, période posée, RB2, 411001 seul sélectionné par `Item.Selected` sur 2 comptes, `Button1_Click` ; texte pdftotext du PDF comparé : une seule page, le seul compte sélectionné) |
 | FRELCOMPTE-T05 | replay | Contrôle de période | début modifié au 15, fin au 10 ; fin = début | avertissement selon `dte1` initial (A02 figée) | `tests/controle_periode/` | implémenté |
 | FRELCOMPTE-T06 | replay | Compte sans fiche tiers | écriture 411 sans `Fiches_Cli` | comportement actuel figé (erreur) | `tests/sans_fiche/` | implémenté |
 

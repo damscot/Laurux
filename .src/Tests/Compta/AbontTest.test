@@ -1,6 +1,10 @@
 ' Gambas test file
 
-''Tests de Abont (.hidden/reference/.src/Compta/Tables/Abont.class/test.md, ABONT-T06).
+''Tests de Abont (.hidden/reference/.src/Compta/Tables/Abont.class/test.md, ABONT-T03, T04, T06).
+''ABONT-T03 (bloqué au rejeu : lignes de Colecr non sélectionnables) : l'écran est instancié sans être affiché, les
+''lignes rendues courantes par la propriété Key, puis Colabt_Click, Colecr_Activate (Entrée), Button7_Click
+''(Enregistrer ligne), Supprim_ligne (suite de Suppr après « Oui » ; le Message.Question lui-même, bloquant en
+''gb.test, n'est pas joué) et Button3_Click (Enregistrer) sont appelés directement.
 ''Prévu en replay par la saisie d'écriture (Saisecrit) : Compteur_Incr est appelé ici directement sur
 ''l'auto-instance (comme le fait Saisecrit), jeu abont_masque. Valeurs attendues : assets/AbontTest/expected.txt
 ''(clone de référence).
@@ -8,6 +12,8 @@
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T03Lignes", "Ligne 2 reprise (Entrée), montant changé, Enregistrer ligne ; ligne 1 supprimée ; Enregistrer")
+  TestKit.Desc("T04Abandon", "Entrée sur la ligne 2 puis Quitter (Button4_Click) : ligne supprimée en base (A02)")
   TestKit.Desc("T06Compteur", "`Compteur_Incr` sur l'auto-instance")
 
 End
@@ -44,5 +50,111 @@ Public Sub T06Compteur()
   Try Abont.Compteur_Incr("99")
   TestKit.Check("T06/absent_erreur", Error)
   TestKit.Check("T06/absent", Compteur("99"))
+
+End
+
+Private Sub Lignes(sCle As String, hF As Abont)
+  ''Grille Colecr (curseur interne conservé) et table Fiches_Ligabon du masque 1.
+
+  Dim hV As Object = hF.Controls["Colecr"]
+  Dim r As Result
+  Dim i As Integer
+  Dim sK As String
+
+  If hV.Available Then sK = hV.Item.Key
+  TestKit.Check(sCle & "/grille_nb", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check(sCle & "/grille" & i, hV.Item.Key & "|" & hV.Item[0] & "|" & hV.Item[2] & "|" & hV.Item[3] & "|" & hV.Item[4] & "|" & hV.Item[5])
+      Inc i
+    Until hV.MoveNext()
+  Endif
+  If sK Then hV.MoveTo(sK)
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " WHERE numero = &1 ORDER BY lind", "1")
+  TestKit.Check(sCle & "/base_nb", r.Count)
+  i = 0
+  If r.Available Then
+    Repeat
+      TestKit.Check(sCle & "/base" & i, r!lind & "|" & r!lig & "|" & r!compte & "|" & r!intitule & "|" & r!debit & "|" & r!credit & "|" & r!libelle)
+      Inc i
+    Until r.MoveNext()
+  Endif
+
+End
+
+Private Sub Courante(hV As Object, sKey As String)
+
+  hV.Key = sKey
+  hV.MoveTo(sKey)
+
+End
+
+Public Sub T03Lignes()
+
+  Dim hF As Abont
+  Dim hE As Object
+
+  Try hF = New Abont
+  If Error Then
+    TestKit.Check("T03/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hE = hF.Controls["Colecr"]
+  Courante(hF.Controls["Colabt"], "1")
+  Try hF.Colabt_Click()
+  If Error Then TestKit.Check("T03/colabt_err", "ERREUR: " & Error.Text)
+  Lignes("T03/masque", hF)
+  ' Entrée sur la ligne 2 : zones remplies, ligne supprimée de la table, lignes renumérotées
+  Courante(hE, "2")
+  Try hF.Colecr_Activate()
+  If Error Then TestKit.Check("T03/activate_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T03/zones", Object.GetProperty(hF.Controls["compte"], "Text") & "|" & Object.GetProperty(hF.Controls["Intitule"], "Text") & "|" & Object.GetProperty(hF.Controls["Montant"], "Text") & "|" & Object.GetProperty(hF.Controls["Debit"], "Value"))
+  Lignes("T03/reprise", hF)
+  ' Montant changé puis Enregistrer ligne : la ligne revient en fin
+  Object.SetProperty(hF.Controls["Montant"], "Text", "($montant * 0.3)")
+  Try hF.Button7_Click()
+  If Error Then TestKit.Check("T03/enrligne_err", "ERREUR: " & Error.Text)
+  Lignes("T03/enrligne", hF)
+  ' Suppr sur la ligne 1 (après « Oui ») : Supprim_ligne
+  Courante(hE, "1")
+  Try hF.Supprim_ligne(Object.GetProperty(hF.Controls["Code"], "Text"), hE.Current[5])
+  If Error Then TestKit.Check("T03/suppr_err", "ERREUR: " & Error.Text)
+  Lignes("T03/suppression", hF)
+  ' Enregistrer l'écriture
+  Try hF.Button3_Click()
+  If Error Then TestKit.Check("T03/enr_err", "ERREUR: " & Error.Text)
+  Lignes("T03/enregistre", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T04Abandon()
+  ''ABONT-T04 : Entrée sur la ligne 2 (Colecr_Activate, ligne rendue courante par Key) puis Quitter.
+
+  Dim hF As Abont
+  Dim r As Result
+  Dim i As Integer
+
+  Try hF = New Abont
+  If Error Then
+    TestKit.Check("T04/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Courante(hF.Controls["Colabt"], "1")
+  Try hF.Colabt_Click()
+  Courante(hF.Controls["Colecr"], "2")
+  Try hF.Colecr_Activate()
+  If Error Then TestKit.Check("T04/activate_err", "ERREUR: " & Error.Text)
+  Try hF.Button4_Click()
+  If Error Then TestKit.Check("T04/quitter_err", "ERREUR: " & Error.Text)
+  ' fenêtre fermée : seule la table Fiches_Ligabon du masque 1 est relevée
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabLigabon") & " WHERE numero = &1 ORDER BY lind", "1")
+  TestKit.Check("T04/base_nb", r.Count)
+  If r.Available Then
+    Repeat
+      TestKit.Check("T04/base" & i, r!lind & "|" & r!lig & "|" & r!compte & "|" & r!debit & "|" & r!credit)
+      Inc i
+    Until r.MoveNext()
+  Endif
 
 End

@@ -17,7 +17,7 @@ table `Ctrln`. Valeurs attendues produites dans le clone **Laurux non modifié**
 | EDITCOMPTE-T06 | replay | Export avec compte centralisé | compte `cent_cc = 1` avec écritures sur 3 mois et 2 journaux | lignes « Centralisation » mensuelles ; dump : contenu final de `Ctrln` | `tests/export_centralise/` | implémenté |
 | EDITCOMPTE-T07 | replay | Export grand livre général | `Bgen`, 10000 → 99999999 | comptes `B` puis `G`, ordre `type_cc, compte` | `tests/export_general/` | implémenté |
 | EDITCOMPTE-T08 | replay | Export sans compte | plage vide, puis un export normal | message « Aucune ecriture… » ; le second export réussit malgré le fichier resté ouvert (A05) | `tests/export_vide/` | implémenté |
-| EDITCOMPTE-T09 | replay | `TriCpt` | F2 sur `cpt` en `Bgen` puis en `Bclient` | `TriCpt` en mode `Tous` puis `Client` ; `cpt` rempli | `tests/tricpt/` | à faire : touche F2 non rejouée |
+| EDITCOMPTE-T09 | replay | `TriCpt` | F2 sur `cpt` en `Bgen` puis en `Bclient` | `TriCpt` en mode `Tous` puis `Client` ; `cpt` rempli | `tests/tricpt/` | à faire : touche F2 non rejouée ; en gb.test, Button4_Click/Button5_Click ouvrent TriCpt par ShowModal (bloquant) |
 | EDITCOMPTE-T10 | replay | Export sur exercice archivé | `N2`, **Exporter** | lecture de `Fiches_Mvt2` | `tests/export_n2/` | implémenté |
 
 ## Détail des tests

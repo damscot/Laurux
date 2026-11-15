@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Cresultat (.hidden/reference/.src/Reports/Cresultat.class/test.md, CRESULTAT-T01, T02).
+''Tests de Cresultat (.hidden/reference/.src/Reports/Cresultat.class/test.md, CRESULTAT-T01 à T03).
 ''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
 ''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
 ''Valeurs attendues : assets/CresultatTest/expected.txt, produites dans le clone de référence. Pas de base.
@@ -10,6 +10,7 @@ Public Sub _Desc()
 
   TestKit.Desc("T01Niveaux", "Level0, Level3, Level1 (p5 vide / X ; 1234, 1234.56, -5, vide), Level7, Level2, BasPage")
   TestKit.Desc("T02MultiPages", "2 × (Level0, Level3, 44 Level1, BasPage) : Page 1/2 et 2/2")
+  TestKit.Desc("T03RubImp", "Séquence de RubImp (compte de résultat) : rubriques T/E/L/S/O/C/D/R/G avec centimes, détail oui/non, saut p > 44")
 
 End
 
@@ -94,5 +95,120 @@ Public Sub T02MultiPages()
     pdf.BasPage()
   Next
   Verifie("T02", pdf)
+
+End
+
+' CRESULTAT-T03 : appels de Cresultat dans l'ordre de RubImp (impression du compte de résultat). Chaque rubrique
+' du tableau suit la table de travail de RubImp : type|intitulé|col3|col4|détail|compte. Les montants passent par
+' le même formatage que RubImp (arrondi à l'unité, signe inversé après la rubrique R, zéro imprimé vide).
+Private Sub RubImp(pdf As Cresultat, aRub As String[], sDetail As String)
+
+  Dim sRub As String
+  Dim aC As String[]
+  Dim sType, intitrub, intitrubT, imp1, imp2, Det, p5 As String
+  Dim PosY, p, p1, sens As Integer
+
+  For Each sRub In aRub
+    aC = Split(sRub, "|")
+    sType = aC[0]
+    intitrub = aC[1]
+    Det = aC[4]
+    imp1 = ""
+    imp2 = ""
+    If sType = "T" Then intitrubT = intitrub
+    If aC[2] <> "" Then
+      imp1 = Format$(Val(Utils.cpoint(aC[2])), "0")
+      If sens = 1 And Val(imp1) < 0 Then
+        imp1 = Format$(Abs(Val(imp1)), "0")
+      Else
+        If sens = 1 And sType <> "G" Then imp1 = Format$(Val("-" & Val(imp1)), "0")
+      Endif
+      If Val(imp1) = 0 Then imp1 = ""
+    Endif
+    If aC[3] <> "" Then
+      imp2 = Format$(Val(Utils.cpoint(aC[3])), "0")
+      If sens = 1 And Val(imp2) < 0 Then imp2 = Format$(Abs(Val(imp2)), "########")
+      If Val(imp2) = 0 Then imp2 = ""
+    Endif
+    Select Case sType
+      Case "T"
+        If p1 = 1 Then pdf.Baspage()
+        pdf.Level0(intitrubT, "du 01/01/2018 au 31/12/2018", sDetail, "SOCIETE TEST")
+        PosY = 32
+        pdf.level3("Exercice N", "Exercice N -1", PosY)
+        PosY += 12
+        p = 8
+        p1 = 1
+      Case "E"
+        Inc p
+        If Det = "O" Then
+          pdf.level1(intitrub, p5, imp1, imp2, PosY)
+        Else
+          pdf.level1(intitrub, p5, p5, p5, PosY)
+        Endif
+        PosY += 6
+      Case "L"
+        If Det = "N" Then
+          pdf.level7(intitrub, imp1, imp2, PosY)
+        Else
+          pdf.level2("Intitule du compte " & aC[5], aC[5], "", p5, imp1, imp2, PosY)
+        Endif
+        PosY += 6
+        Inc p
+      Case "S", "O", "R", "G"
+        pdf.level1(intitrub, p5, imp1, imp2, PosY)
+        PosY += 6
+        p += 2
+        If sType = "R" Then sens = 1
+      Case "C", "D"
+        If sType = "C" Then
+          Try imp1 = Abs(Val(imp1))
+          Try imp2 = Abs(Val(imp2))
+        Endif
+        pdf.level1(intitrub, p5, imp1, imp2, PosY)
+        PosY += 6
+        Inc p
+    End Select
+    If p > 44 Then
+      If p1 = 1 Then pdf.Baspage()
+      pdf.Level0(intitrubT, "du 01/01/2018 au 31/12/2018", sDetail, "SOCIETE TEST")
+      PosY = 32
+      pdf.level3("Exercice N", "Exercice N -1", PosY)
+      PosY += 12
+      p = 8
+      p1 = 1
+    Endif
+  Next
+  pdf.Baspage()
+
+End
+
+Public Sub T03RubImp()
+
+  Dim aRub As New String[]
+  Dim pdf As Cresultat
+  Dim i As Integer
+
+  aRub.Add("T|Compte de résultat|||N|")
+  aRub.Add("E|Produits d'exploitation|1234.56|987.40|O|")
+  aRub.Add("L|Ventes de marchandises|1000.49|800.51|N|707000")
+  aRub.Add("L|Prestations de services|234.07|186.89|O|706000")
+  For i = 1 To 40
+    aRub.Add("L|Autre produit " & i & "|" & (i * 10.5) & "|" & (i * 9.25) & "|O|7080" & Format$(i, "00"))
+  Next
+  aRub.Add("S|Total produits d'exploitation|1234.56|987.40|N|")
+  aRub.Add("C|Charges externes|-450.75|-300.25|N|")
+  aRub.Add("D|Dotations|0|12.5|N|")
+  aRub.Add("O|Résultat d'exploitation|783.81|687.15|N|")
+  aRub.Add("R|Total des produits|1234.56|987.40|N|")
+  aRub.Add("E|Charges|450.75|300.25|N|")
+  aRub.Add("L|Achats|-120.4|80.6|N|607000")
+  aRub.Add("G|Bénéfice ou perte|783.81|687.15|N|")
+  pdf = Nouveau()
+  RubImp(pdf, aRub, "Détaillé")
+  Verifie("T03/detail", pdf)
+  pdf = Nouveau()
+  RubImp(pdf, aRub, "")
+  Verifie("T03/simple", pdf)
 
 End

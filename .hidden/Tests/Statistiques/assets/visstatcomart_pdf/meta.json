@@ -1,0 +1,24 @@
+{
+ "id": "VISSTATCOMART-T05",
+ "objet": "Impression (> 50 lignes) et fermeture",
+ "classe": "VisStatComArt",
+ "description": "Jeu + 55 articles P001-P055 sur F18101 (commercial 01) ; StatComArt Facn, Traitement, Imprimer : texte du PDF sur 2 pages et total ; Quitter : ~/tmp/Statcli.pdf supprimé (<fichier absent>).",
+ "dataset": "visstatcomart_pdf/visstatcomart_pdf",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt",
+  "tmp/Statcli.pdf"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -7,7 +7,7 @@
 |---|---|---|---|---|---|---|
 | IMPRESSION-T01 | gbtest | `Ticket` | `lpr` factice journalisé ; `/Soc01/caisse/Cimp` vide/renseigné, `CmdImp` vide/renseigné, `TKpdf` 0/1, `nb` 1 et 2 | commandes journalisées (et appel du visualiseur factice) | `tests/ticket/` | implémenté |
 | IMPRESSION-T02 | gbtest | `Facture` | `lpr` factice ; clés globales `/CmdImp`, `/Cimp`, `/choiximp2`, `/FACpdf` absentes/présentes ; paramètre `Imprimante` ; `nb` = 2 | commandes journalisées ; aucune commande si `/choiximp2` (figé) | `tests/facture/` | implémenté |
-| IMPRESSION-T03 | replay | Impression d'un ticket en caisse | `./Laurux -p`, vente simple sur `Laurux01.sql`, `lpr` factice | commande `lpr` journalisée, tables de tickets comparées | `tests/replay_ticket/` | à faire : vente en caisse (touches ImageButton non rejouées) et lpr factice impossible dans l'environnement du rejeu (PATH fixé par le runner) |
+| IMPRESSION-T03 | replay | Impression d'un ticket en caisse | `./Laurux -p`, vente simple sur `Laurux01.sql`, `lpr` factice | commande `lpr` journalisée, tables de tickets comparées | `tests/replay_ticket/` | à faire : passe par Caisse (écran complexe exclu) : vente en caisse par touches ImageButton non rejouées ; le lpr factice n'est plus un obstacle (règles des outils externes, clé `outils` de meta.json) ; la logique d'Impression.Ticket est couverte par T01 |
 
 ## Détail des tests
 

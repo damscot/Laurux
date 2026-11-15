@@ -8,13 +8,16 @@
  "objet": "Journal de ventes (VE)",
  "dataset": "jourcent_shared/jourcent_collectifs",
  "fichiers": [
-  "@ouvrir.trace"
+  "edition.txt"
  ],
- "description": "Journaux > Imprimer (JournauxM.Imprime, jeu jourcent_collectifs : journaux 60 AC et 70 VE avec collectifs 401000/411000 et détails) : centralisation alimentée (INSERT/UPDATE dans sql.log, libellés de collectif), ouverture du PDF tracée ; texte du PDF non comparé ; Quitter.",
+ "description": "Journaux > Imprimer (JournauxM.Imprime, jeu jourcent_collectifs : journaux 60 AC et 70 VE avec collectifs 401000/411000 et détails) : centralisation alimentée (INSERT/UPDATE dans sql.log, libellés de collectif), ouverture du PDF tracée ; texte du PDF non comparé ; Quitter. Vague 7 : le texte de chaque PDF (pdftotext -layout via /Soc01/caisse/CmdVis) est ajouté à ~/edition.txt et comparé ; cela remplace @ouvrir.trace et les mentions « PDF ouvert / non comparé » ci-dessus.",
  "cadence": {
   "frappe": 50,
   "focus": 100,
   "traitement": 1000,
   "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
  }
 }

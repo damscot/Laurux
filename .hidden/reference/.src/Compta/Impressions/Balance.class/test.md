@@ -12,13 +12,13 @@ produites dans le clone **Laurux non modifié** (anomalies comprises).
 |---|---|---|---|---|---|---|
 | BALANCE-T01 | replay | Bornes d'exercice | ouverture, puis clic sur `E1`, `N1` … `N5`, `E0` | contenu de `dteN0`/`dteN1` après chaque clic (log des contrôles) | `tests/bornes_exercice/` | implémenté (bornes et table lues dans sql.log via Exporter) |
 | BALANCE-T02 | replay | `Ex1` avec début d'exercice futur | jeu dont `dteclec` est postérieur à aujourd'hui ; ouverture | bascule sur `Exo` (dates de l'exercice précédent) | `tests/ex1_debut_futur/` | à faire : jeu à dteclec futur + date figée à prévoir ; seul effet = TextBox (à observer par Exporter) |
-| BALANCE-T03 | replay | Choix de la nature | clic `Bclient`, `Bfournisseur`, `Bgestion` puis **Imprimer** | `Cpt`, visibilité de `TypeClient1`, titre du PDF (« Balance client » / « Client ») | `tests/nature_balance/` | à faire : sortie PDF non comparée (Imprimer) ; nature Cpt/Type couverte par T06/T07 (requêtes) |
+| BALANCE-T03 | replay | Choix de la nature | clic `Bclient`, `Bfournisseur`, `Bgestion` puis **Imprimer** | `Cpt`, visibilité de `TypeClient1`, titre du PDF (« Balance client » / « Client ») | `tests/nature_balance/` | implémenté (balance_nature_balance : client, fournisseur, générale imprimées à la suite ; titres et comptes comparés par pdftotext) |
 | BALANCE-T04 | replay | Contrôle des dates | `dteN0` avant le début, puis `dteN1` après la fin, puis `dteN1 < dteN0` (Entrée) | messages, période remise sur `Exo`, `E0` coché (A04 figée), `Tab0` vu par l'impression suivante | `tests/controle_dates/` | implémenté (cas dteN0 et dteN1 avant le début ; cas dteN1 < dteN0 non couvert) |
 | BALANCE-T05 | replay | Saisie de date abrégée | `dteN0` = `0101`, `010119`, `1.1` | texte normalisé par `Cdate_calc`/`Cdate_aff` | `tests/date_abregee/` | implémenté (0302 et 3004 ; 010119 et 1.1 non couverts) |
 | BALANCE-T06 | replay | Export balance générale | `Bgestion`, plage 6… à 7…, **Exporter** | `~/balances.txt` (tous les comptes `B` présents : A02 figée) | `tests/export_generale/` | implémenté |
 | BALANCE-T07 | replay | Export client / fournisseur | `Bclient` puis `Bfournisseur`, **Exporter** | `Message.Error` SQL `cli_code` (A01 figée), fichier vide | `tests/export_client/` | implémenté (A01 figée) |
 | BALANCE-T08 | replay | Export avec comptes non mouvementés | `Bgestion`, `Impc` coché puis décoché | lignes `compte;intitulé;;;` présentes / absentes | `tests/export_non_mouvementes/` | implémenté (Impc coché seulement) |
-| BALANCE-T09 | replay | Sélection de compte par `TriCpt` | F2 sur `Cpt` puis `Cpt2`, sélection d'une ligne ; idem en balance générale | `Cpt`/`Cpt2` remplis, `TriCpt` ouvert en mode `General` pour `G/B` | `tests/tricpt/` | à faire : touche F2 non rejouée |
+| BALANCE-T09 | replay | Sélection de compte par `TriCpt` | F2 sur `Cpt` puis `Cpt2`, sélection d'une ligne ; idem en balance générale | `Cpt`/`Cpt2` remplis, `TriCpt` ouvert en mode `General` pour `G/B` | `tests/tricpt/` | à faire : touche F2 non rejouée ; Button4/5_Click ouvrent TriCpt en ShowModal (bloquant en gb.test), Cpt/Cpt2 renseignés seulement après la fenêtre modale |
 | BALANCE-T10 | replay | Export sans écriture | plage sans compte | message « Aucune ecriture pour cette demande » | `tests/export_vide/` | implémenté |
 
 ## Détail des tests
@@ -46,3 +46,4 @@ produites dans le clone **Laurux non modifié** (anomalies comprises).
   par la configuration (`/CmdEditor0`, `/Soc01/caisse/CmdVis` pointant vers un script de capture).
 - **Non testable automatiquement** : son (`Music.Play`), coloration du focus (`SetEditColor`), aide
   HTML (`Doc.Open`).
+- **Vague 7** : T03 → `balance_nature_balance` (trois natures imprimées, texte des PDF ajouté à `~/edition.txt` par `/Soc01/caisse/CmdVis` = pdftotext).

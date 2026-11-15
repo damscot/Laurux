@@ -1,0 +1,20 @@
+{
+ "id": "FACTUREFMA-T05",
+ "objet": "Retraits (client puis BL)",
+ "classe": "FacturefmA",
+ "description": "Jeu facturefma_shared/retraits, date 15.06.2018. Traitement : 411961 (2 BL), 411962, 411963 retenus. Clic sur 411962 dans Colbl, Suppr : client retiré de Facturefm et Bl. Clic sur 411961, clic sur son BL retenu A00401 dans Coldetail (seul le 1er BL de chaque client est sélectionné), Suppr : BL retiré de Bl (Facturefm non modifiée ; colonne Ville de Colbl remplacée par le TTC à l'écran, A01, non comparée). Comparé : tables de travail Facturefm/Bl (dump).",
+ "dataset": "facturefma_shared/retraits",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Faca": 0
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -84,7 +84,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   au lieu des observations · tests : T02 · sources : [ImpJdv.class:277](../../../../../../.src/Compta/Utils/ImpJdv.class#L277)
 - [ ] IMPJDV-A03 — [anomalie] `Maj_Client` inverse `cli_tel_dom` et `cli_tel_bur` par rapport à la
   création et à l'export · tests : T01 · sources : [ImpJdv.class:305](../../../../../../.src/Compta/Utils/ImpJdv.class#L305)
-- [ ] IMPJDV-A04 — [anomalie] (confirmée phase 2, vague 5 : `pdf.Level2` à 12 arguments → « Not enough arguments » (`ImpJdv.Import.205`) après l'insertion du premier client, figée par T02 (code 125)) `pdf.Level2` appelé avec 12 arguments alors que
+- [ ] IMPJDV-A04 — [anomalie] (confirmée phase 2, vague 7 : aussi figée par CCLIENTS-T04 (`Reports/cclients_impjdv`)) (confirmée phase 2, vague 5 : `pdf.Level2` à 12 arguments → « Not enough arguments » (`ImpJdv.Import.205`) après l'insertion du premier client, figée par T02 (code 125)) `pdf.Level2` appelé avec 12 arguments alors que
   `Cclients.Level2` en exige 13 (paramètre `reglt` non optionnel) : erreur d'exécution attendue à
   la première création de client, avant l'import des écritures (à confirmer) · tests : T02 · sources : [ImpJdv.class:205](../../../../../../.src/Compta/Utils/ImpJdv.class#L205), [Cclients.class:Level2](../../../../../../.src/Reports/Cclients.class#L64-L83)
 - [ ] IMPJDV-A05 — [anomalie] (confirmée phase 2, vague 5 : aller-retour avec ExportJdv : « Out of bounds » sur `Lig2[1]` (`ImpJdv.Import.169`), figée par T06 (code 125)) Incompatibilité avec ExportJdv : la 1re ligne de `clients.txt` et
@@ -105,3 +105,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   tous les cas, `hFile2` de `Controle` toujours) ; `hFile3` ouvre le fichier PDF lui-même et `footer` y écrit
   avant `pdf.Output` (fichier vide laissé si « Non ») ; message « ecritures.txt » et libellé du
   `.form` (« ecrituresXX.txt ») alors que le fichier lu est `ecritures<JJ>.csv` · tests : T07, T08 · sources : [ImpJdv.class:162](../../../../../../.src/Compta/Utils/ImpJdv.class#L162), [ImpJdv.class:footer](../../../../../../.src/Compta/Utils/ImpJdv.class#L613-L617), [ImpJdv.class:525](../../../../../../.src/Compta/Utils/ImpJdv.class#L525)
+- [ ] IMPJDV-A11 — [amélioration][tests] alléger le scénario `Compta/impjdv_creation_clients` (IMPJDV-T02) : sa vérification d'édition est désormais portée par `Reports/cclients_impjdv` (CCLIENTS-T04, classe Cclients) (règle « les tests d'une classe sont portés par la classe » : éviter le double comptage) (phase 2, vague 7, 2026-11-15, décision utilisateur du 2026-11-14) · tests : IMPJDV-T02 → CCLIENTS-T04 · sources : [test.md](test.md), [Cclients/rework.md](../../../Reports/Cclients.class/rework.md)

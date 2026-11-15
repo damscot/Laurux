@@ -86,3 +86,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] JOURNAUXM-A04 — [anomalie] (confirmée phase 2, vague 3 : 421000 imprimé sous « Collectif clients ») Libellé de collectif : `Type` n'est pas réinitialisé, un collectif
   qui n'est ni `40…`, ni `41…`, ni `453` reprend le libellé du collectif précédent (ou une chaîne
   vide) · tests : T11 · sources : [JournauxM.module:225-235](../../../../../../.src/Compta/Impressions/JournauxM.module#L225-L235)
+- [ ] JOURNAUXM-A05 — [anomalie] Avec « Impressions des totaux » (`CheckBox1`), `Imprime` appelle `pdf.BasPage2(ipage)` (l. 300) sur la dernière page de journal dont le pied a déjà été imprimé (l. 286 ou 292, `iPage` remis à 1) : « Page N° 1 » imprimé par-dessus « 2 » (phase 2, vague 7, 2026-11-15) · tests : T05 · sources : [JournauxM.module:284-306](../../../../../../.src/Compta/Impressions/JournauxM.module#L284-L306)

@@ -1,0 +1,155 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(cd_cent Char(8) NOT NULL,intitule Char(50),db_cent Decimal(12,2),crd_cent Decimal(12,2),njournal Char(2),PRIMARY KEY (cd_cent)) ENGINE = InnoDB
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT dtepc FROM Fiches_Parametres
+SELECT * FROM Fiches_Journaux WHERE code_jo >= '01'  and code_jo <= '99' order by code_jo
+SELECT * FROM Fiches_Mvt WHERE jour = '10' and validee = 1 order by dte, numero, compte
+SELECT * FROM Fiches_Mvt WHERE jour = '50' and validee = 1 order by dte, numero, compte
+SELECT * FROM Fiches_Mvt WHERE jour = '53' and validee = 1 order by dte, numero, compte
+SELECT * FROM Fiches_Mvt WHERE jour = '60' and validee = 1 order by dte, numero, compte
+SELECT * FROM Fiches_Mvt WHERE jour = '70' and validee = 1 order by dte, numero, compte
+SELECT * FROM centralisation WHERE cd_cent = '706001'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706001', 'Produits 01', 0, 5, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706002'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706002', 'Produits 02', 0, 10, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706003'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706003', 'Produits 03', 0, 15, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706004'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706004', 'Produits 04', 0, 20, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706005'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706005', 'Produits 05', 0, 25, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706006'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706006', 'Produits 06', 0, 30, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706007'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706007', 'Produits 07', 0, 35, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706008'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706008', 'Produits 08', 0, 40, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706009'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706009', 'Produits 09', 0, 45, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706010'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706010', 'Produits 10', 0, 50, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706011'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706011', 'Produits 11', 0, 55, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706012'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706012', 'Produits 12', 0, 60, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706013'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706013', 'Produits 13', 0, 65, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706014'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706014', 'Produits 14', 0, 70, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706015'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706015', 'Produits 15', 0, 75, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706016'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706016', 'Produits 16', 0, 80, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706017'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706017', 'Produits 17', 0, 85, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706018'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706018', 'Produits 18', 0, 90, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706019'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706019', 'Produits 19', 0, 95, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706020'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706020', 'Produits 20', 0, 100, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706021'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706021', 'Produits 21', 0, 105, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706022'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706022', 'Produits 22', 0, 110, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706023'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706023', 'Produits 23', 0, 115, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706024'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706024', 'Produits 24', 0, 120, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706025'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706025', 'Produits 25', 0, 125, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706026'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706026', 'Produits 26', 0, 130, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706027'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706027', 'Produits 27', 0, 135, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706028'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706028', 'Produits 28', 0, 140, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706029'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706029', 'Produits 29', 0, 145, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706030'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706030', 'Produits 30', 0, 150, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706031'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706031', 'Produits 31', 0, 155, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706032'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706032', 'Produits 32', 0, 160, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706033'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706033', 'Produits 33', 0, 165, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706034'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706034', 'Produits 34', 0, 170, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706035'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706035', 'Produits 35', 0, 175, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706036'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706036', 'Produits 36', 0, 180, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706037'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706037', 'Produits 37', 0, 185, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706038'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706038', 'Produits 38', 0, 190, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706039'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706039', 'Produits 39', 0, 195, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706040'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706040', 'Produits 40', 0, 200, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706041'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706041', 'Produits 41', 0, 205, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706042'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706042', 'Produits 42', 0, 210, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706043'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706043', 'Produits 43', 0, 215, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706044'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706044', 'Produits 44', 0, 220, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706045'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706045', 'Produits 45', 0, 225, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706046'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706046', 'Produits 46', 0, 230, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706047'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706047', 'Produits 47', 0, 235, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706048'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706048', 'Produits 48', 0, 240, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706049'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706049', 'Produits 49', 0, 245, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706050'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706050', 'Produits 50', 0, 250, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706051'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706051', 'Produits 51', 0, 255, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706052'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706052', 'Produits 52', 0, 260, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706053'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706053', 'Produits 53', 0, 265, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706054'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706054', 'Produits 54', 0, 270, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706055'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706055', 'Produits 55', 0, 275, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706056'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706056', 'Produits 56', 0, 280, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706057'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706057', 'Produits 57', 0, 285, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706058'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706058', 'Produits 58', 0, 290, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706059'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706059', 'Produits 59', 0, 295, '70')
+SELECT * FROM centralisation WHERE cd_cent = '706060'
+INSERT INTO centralisation (cd_cent, intitule, db_cent, crd_cent, njournal) Values ('706060', 'Produits 60', 0, 300, '70')
+SELECT * FROM centralisation where njournal = '70' order by cd_cent
+DROP TABLE IF EXISTS centralisation
+CREATE TABLE centralisation(cd_cent Char(8) NOT NULL,intitule Char(50),db_cent Decimal(12,2),crd_cent Decimal(12,2),njournal Char(2),PRIMARY KEY (cd_cent)) ENGINE = InnoDB
+SELECT * FROM Fiches_Mvt WHERE jour = '90' and validee = 1 order by dte, numero, compte

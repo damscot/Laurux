@@ -2,13 +2,16 @@
  "id": "JOURCENT-T04",
  "objet": "Journal OD",
  "classe": "Jourcent",
- "description": "Jourcent (jeu jourcent_journal_od : journal 10 de type OD, deux pièces) : Imprimer : le journal OD est centralisé comme les autres (A04 figée, écart avec JournauxM) ; Quitter.",
+ "description": "Jourcent (jeu jourcent_journal_od : journal 10 de type OD, deux pièces) : Imprimer : le journal OD est centralisé comme les autres (A04 figée, écart avec JournauxM) ; Quitter. Vague 7 : le texte de chaque PDF (pdftotext -layout via /Soc01/caisse/CmdVis) est ajouté à ~/edition.txt et comparé ; cela remplace @ouvrir.trace et les mentions « PDF ouvert / non comparé » ci-dessus.",
  "dataset": "jourcent_shared/jourcent_journal_od",
  "date": "2018-06-15 10:00:00",
  "args": [],
  "societe": "01",
  "timeout": 20,
  "fichiers": [
-  "@ouvrir.trace"
- ]
+  "edition.txt"
+ ],
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
 }

@@ -62,7 +62,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDBR-A01 — [anomalie] Validation de plusieurs BR (`ValidBR`) : l'archivage GED utilise `nbl`
   et `Totalbl` du **dernier** BR de la boucle (un seul document GED, numéro et HT du dernier BR,
   pour un PDF qui les contient tous) · tests : T03 · sources : [Edbr.module:230](../../../../../../.src/Gestion/Impressions/Edbr.module#L230), [Edbr.module:236](../../../../../../.src/Gestion/Impressions/Edbr.module#L236), [ValidBR.class:693](../../../../../../.src/Gestion/Stock/ValidBR.class#L693)
-- [ ] EDBR-A02 — [anomalie] En-tête des pages suivantes : `Level1br` reçoit `dater` (date de
+- [ ] EDBR-A02 — [anomalie] (confirmée phase 2, vague 7 : en-tête de page 2 avec le paramètre `dater` et non la date de réception de la page 1, figée par CDOCUMENTS-T07 (`T07EdbrMultipage`)) En-tête des pages suivantes : `Level1br` reçoit `dater` (date de
   validation ou texte transmis par `Edbl`) au lieu de la date de réception de la première page ·
   tests : T04 · sources : [Edbr.module:173](../../../../../../.src/Gestion/Impressions/Edbr.module#L173), [Edbr.module:200](../../../../../../.src/Gestion/Impressions/Edbr.module#L200)
 - [ ] EDBR-A03 — [anomalie] `son` déclaré `String` et jamais affecté : le signal sonore du message

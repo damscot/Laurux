@@ -55,3 +55,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDITTIPP-A03 — [anomalie] Raison sociale et adresse du déclarant en dur dans
   `Edittipp.report` (une société précise) : correction hors périmètre (`.report` intouchable),
   décision utilisateur · tests : T01 · sources : [Edittipp.class:_new](../../../../../../.src/Gestion/option/Edittipp.class#L6-L15)
+- [ ] EDITTIPP-A04 — [anomalie] `_new` ne pose `ligne.DataCount` que si `$res.Available` (l. 11-13) : pour un mois sans ligne la section garde `DataCount` = 1 et chaque gestionnaire `_Data` (`$res.MoveTo(Index)`, l. 17-…) lève « Result is not available » (phase 2, vague 7, 2026-11-15) · tests : T02 · sources : [Edittipp.class:_new](../../../../../../.src/Gestion/option/Edittipp.class#L6-L15), [Edittipp.class:num_Data](../../../../../../.src/Gestion/option/Edittipp.class#L17-L22)

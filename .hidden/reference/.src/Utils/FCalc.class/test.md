@@ -15,8 +15,8 @@ l'intégration dans les écrans appelants.
 | FCALC-T03 | gbtest | Retour arrière et `C` | `12B`, `C` | formule `1` ; `$sResult = "0."` | `tests/edition/` | implémenté (C seul ; retour arrière « B » sans bouton, non simulable) |
 | FCALC-T04 | gbtest | Export | `$sResult` = `12.5`, `0`, `-3` | `Resultat` = `12,50000`, `0,00000`, `-3,00000` (locale fr) | `tests/export/` | implémenté |
 | FCALC-T05 | gbtest | `Resultat` non remis à zéro | export `5` puis 2ᵉ ouverture fermée sans export | `Resultat` toujours `5,00000` (A01 figée) | `tests/resultat_persistant/` | implémenté |
-| FCALC-T06 | replay | Intégration saisie d'écritures | Saisecrit, F5 dans `Montant`, `12+3`, Entrée, Entrée, validation | dump `Fiches_Mvt` avec montant 15,00 | `tests/replay_saisecrit/` | à faire : rejeu suspendu (collision de lock entre bacs), attendus non produits ; scénario Saisecrit + F5 à synthétiser |
-| FCALC-T07 | replay | Intégration caisse | Caisse (`-p`), F5 dans `Qte`, `3*2`, export | ligne de ticket qté 6 (dump `Fiches_LigTickets*`) | `tests/replay_caisse/` | à faire : rejeu suspendu (collision de lock entre bacs), attendus non produits ; caisse (-p), touches ImageButton non rejouées |
+| FCALC-T06 | replay | Intégration saisie d'écritures | Saisecrit, F5 dans `Montant`, `12+3`, Entrée, Entrée, validation | dump `Fiches_Mvt` avec montant 15,00 | `tests/replay_saisecrit/` | à faire : passe par Saisecrit (écran complexe exclu) ; ouverture par la touche F5, non rejouable (touches de fonction) |
+| FCALC-T07 | replay | Intégration caisse | Caisse (`-p`), F5 dans `Qte`, `3*2`, export | ligne de ticket qté 6 (dump `Fiches_LigTickets*`) | `tests/replay_caisse/` | à faire : passe par Caisse (écran complexe exclu) ; ouverture par F5 non rejouable, touches ImageButton non rejouées |
 
 ## Détail des tests
 

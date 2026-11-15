@@ -1,0 +1,73 @@
+' Gambas test file
+
+''Tests de FRelCompte (.hidden/reference/.src/Compta/Relances/FRelCompte.class/test.md, FRELCOMPTE-T04).
+''Prévu en replay, bloqué au rejeu (sélection de comptes dans CompteRel, ColumnView sans CompteRel_Click) :
+''l'écran est instancié sans être affiché (jeu Compta/frelcompte_shared/frel_base, période du 01.06.2018 au
+''15.06.2018 posée), RB2 (sélection) coché, les comptes sélectionnés par Item.Selected, puis Button1_Click
+''(Éditer → Releves) appelé directement. Le PDF ~/tmp/RelCompte.pdf est converti par pdftotext -layout via
+''/Soc01/caisse/CmdVis (Visualiseur.Prog). Valeurs attendues : assets/FRelCompteTest/expected.txt.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04EditionSelection", "RB2, compte 411001 seul sélectionné (sur 2) : texte PDF de ce seul compte")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "FRelCompteTest")
+  TestKit.OuvreBase("frelcompte_shared/frel_base")
+
+End
+
+Public Sub T04EditionSelection()
+
+  Dim hF As FRelCompte
+  Dim hV As Object
+  Dim sTxt As String = Temp$() & ".txt"
+  Dim i As Integer
+  Dim aL As String[]
+
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = "sh -c 'pdftotext -layout \"$0\" " & sTxt & "'"
+  Try hF = New FRelCompte
+  If Error Then
+    TestKit.Check("T04/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Object.SetProperty(hF.Controls["DteN0"], "Text", "01.06.2018")
+  Object.SetProperty(hF.Controls["Dten1"], "Text", "15.06.2018")
+  Object.SetProperty(hF.Controls["RB2"], "Value", True)
+  Try hF.MajTab()
+  If Error Then TestKit.Check("T04/majtab_err", "ERREUR: " & Error.Text)
+  hV = hF.Controls["CompteRel"]
+  TestKit.Check("T04/comptes", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check("T04/compte_" & hV.Item.Key, hV.Item[2] & "|" & hV.Item[5] & "|" & hV.Item[6])
+    Until hV.MoveNext()
+  Endif
+  hV["411001"].Selected = True
+  hV.MoveLast()
+  Try hF.Button1_Click()
+  If Error Then TestKit.Check("T04/editer_err", "ERREUR: " & Error.Text)
+  ' Shell asynchrone : attente du texte (5 s au plus)
+  For i = 1 To 50
+    If Exist(sTxt) Then
+      If Stat(sTxt).Size > 0 Then Break
+    Endif
+    Wait 0.1
+  Next
+  Wait 0.2
+  If Not Exist(sTxt) Then
+    TestKit.Check("T04/pdf", "<absent>")
+  Else
+    aL = Split(File.Load(sTxt), "\n")
+    TestKit.Check("T04/pdf_lignes", aL.Count)
+    For i = 0 To aL.Max
+      TestKit.Check("T04/pdf" & Format(i, "000"), RTrim(aL[i]))
+    Next
+  Endif
+  Object.Lock(hF)
+
+End

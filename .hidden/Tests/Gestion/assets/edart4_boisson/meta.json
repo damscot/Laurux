@@ -1,0 +1,20 @@
+{
+ "id": "EDART4-T05",
+ "objet": "Option boisson (colonnes droits et S.S)",
+ "classe": "Edart4",
+ "description": "Option boisson (/Soc01/bois = -1, Utils.Option = B), jeu Gestion/editstkdepart_shared/cmat_base (colonnes et tables de modfichier.fichierboisson, régies A1 alcool pur et B1 volume ; articles 001/002 en A1, 003 en B1) : Tarif > Client sans type, Imprimer : TarArt lit les droits (art_dra, art_volm, art_deg) de chaque article ; requêtes comparées (sql.log ordonné). Édition gb.report : edition.txt vide (pdftotext), colonnes « droits » / « S.S » non vérifiées. Sans les colonnes boisson (Laurux01 seul), TarArt._new.25 échoue sur art_dra (Unknown column).",
+ "dataset": "Gestion/editstkdepart_shared/cmat_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'",
+  "/Soc01/bois": -1
+ },
+ "fichiers": [
+  "edition.txt",
+  "tmp/tarif.pdf"
+ ],
+ "compare_sql_log": "ordered"
+}

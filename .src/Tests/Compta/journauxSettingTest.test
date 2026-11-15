@@ -1,0 +1,74 @@
+' Gambas test file
+
+''Tests de journauxSetting (.hidden/reference/.src/Compta/Impressions/journauxSetting.class/test.md, JOURNAUXSETTING-T04).
+''Écran instancié sans affichage (New journauxSetting), Form_Open et gestionnaires des ListBox appelés directement
+''(le double-clic n'est pas rejoué) ; configuration /ExportJournal01 posée par le test. Pas de base.
+''Valeurs attendues : assets/journauxSettingTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04ListeVide", "Configuration Compte/Debit, retrait des 2 colonnes (ListBox2_DblClick), Valider : configuration inchangée (A01)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "journauxSettingTest")
+
+End
+
+Private Sub Config(sCle As String)
+
+  Dim i As Integer
+  Dim sPre As String
+
+  sPre = "/ExportJournal" & Start.Societe
+  For i = 0 To 2
+    TestKit.Check(sCle & "/Entete" & i, Start.LocalSettings[sPre & "/Entete" & i])
+    TestKit.Check(sCle & "/Titre" & i, Start.LocalSettings[sPre & "/Titre" & i])
+  Next
+
+End
+
+Private Sub Liste(sCle As String, hForm As Object, sNom As String)
+
+  Dim hList As ListBox
+  Dim i As Integer
+  Dim sRes As String
+
+  hList = hForm.Controls[sNom]
+  For i = 0 To hList.Count - 1
+    sRes &= "[" & hList[i].Text & "]"
+  Next
+  TestKit.Check(sCle & "/" & sNom, sRes)
+
+End
+
+Public Sub T04ListeVide()
+
+  Dim hForm As Object
+  Dim hList As ListBox
+  Dim sPre As String
+
+  sPre = "/ExportJournal" & Start.Societe
+  Start.LocalSettings[sPre & "/Entete0"] = "1"
+  Start.LocalSettings[sPre & "/Titre0"] = "Compte"
+  Start.LocalSettings[sPre & "/Entete1"] = "7"
+  Start.LocalSettings[sPre & "/Titre1"] = "Debit"
+  Start.LocalSettings[sPre & "/Entete2"] = " "
+  Start.LocalSettings[sPre & "/Titre2"] = " "
+  hForm = New journauxSetting
+  hForm.Form_Open()
+  Liste("T04/ouverture", hForm, "ListBox1")
+  Liste("T04/ouverture", hForm, "ListBox2")
+  hList = hForm.Controls["ListBox2"]
+  hList.Index = 0
+  hForm.ListBox2_DblClick()
+  hList.Index = 0
+  hForm.ListBox2_DblClick()
+  Liste("T04/retrait", hForm, "ListBox2")
+  hForm.BtnValider_Click()
+  Config("T04/apres_valider")
+
+End

@@ -1,0 +1,26 @@
+{
+ "id": "ECRM-T09",
+ "objet": "datem nul",
+ "classe": "EcrM",
+ "description": "Jeu ecrm_datem_nul (MvtM 411001 collectif et 512000 avec datem NULL) : Imprimer (Toutes) ; erreur fatale Type mismatch EcrM.Button1_Click:531 sur la ligne 512 (A04 figée, code 125), aucun PDF (~/edition.txt absent, pdftotext via /Soc01/caisse/CmdVis) ; Quitter.",
+ "dataset": "ecrm_datem_nul",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "code_sortie": 125,
+ "xfail": "Format$(datem NULL) sur la ligne 512 (trésorerie) : Type mismatch (EcrM.Button1_Click:531), boîte d'erreur Gambas fatale ; la ligne 411 (collectif) est sautée sans erreur (l.527)",
+ "xfail_attendu": "datem NULL traité sur toutes les branches (date vide), PDF produit (A04)"
+}

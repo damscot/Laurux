@@ -1,0 +1,23 @@
+{
+ "id": "CIELIMP-T10",
+ "objet": "Montants avec virgule et point",
+ "classe": "Cielimp",
+ "description": "Import Ciel (Menu182), Lcpt = 6 : facture FAC002 dont les montants sont écrits avec virgule (120,50 / 100,25) et avec point (20.25) ; jeu cielimp_nominal. Importer ; Message.Info « Aucun compte créé » (Entrée) ; Message.Warning « Vous allez lancer l'import » bouton 1 (Entrée) : erreur fatale « Type mismatch: wanted Float, got String » (Cielimp.Compta.327, Mtd = Mid$ d'un montant à virgule au débit, A04) figée, code 125 ; aucune écriture importée.",
+ "dataset": "cielimp_shared/cielimp_nominal",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "tmp/FCompte",
+  "tmp/FJournaux",
+  "tmp/FClients"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "code_sortie": 125
+}

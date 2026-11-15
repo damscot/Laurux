@@ -66,7 +66,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   ni `Rollback`** : sous MySQL, les tables restent verrouillées pour la session (toute requête sur
   une autre table échoue ensuite) et la transaction reste ouverte ; les lignes déjà écrites de
   l'écriture ne sont pas annulées · tests : T09 · sources : [EcrAuto.class:394-399](../../../../../../.src/Compta/Utils/EcrAuto.class#L394-L399), [EcrAuto.class:317](../../../../../../.src/Compta/Utils/EcrAuto.class#L317)
-- [ ] ECRAUTO-A02 — [anomalie] `Lettrage` modifie `var.compte` (compte de régularisation) sans le
+- [ ] ECRAUTO-A02 — [anomalie] (confirmée phase 2, vague 7 : régularisation sur `cptrsmoins` (129000), `var.compte` modifié en cours, figée par T04) `Lettrage` modifie `var.compte` (compte de régularisation) sans le
   restaurer : `traite` et `collectif` s'appliquent ensuite au mauvais compte et l'impression affiche
   ce compte · tests : T04 · sources : [EcrAuto.class:623-628](../../../../../../.src/Compta/Utils/EcrAuto.class#L623-L628), [EcrAuto.class:445-450](../../../../../../.src/Compta/Utils/EcrAuto.class#L445-L450)
 - [ ] ECRAUTO-A03 — [anomalie] Abandon après consommation des compteurs (`numecriture`,

@@ -12,11 +12,11 @@ comparaison du dump. Valeurs attendues produites dans le clone Laurux non modifi
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | ATRIBVIGNETTE-T01 | replay | Affichage de l'arbre et des manquants | jeu `cmat_base` (régie suspendue + régie acquittée ; BL, facture, réception, mouvement exceptionnel ; vignettes 1, 2, 5) | lignes `Exec_SQL` ; manquants 3 et 4 | `tests/affichage/` | implémenté |
-| ATRIBVIGNETTE-T02 | replay | Attribution d'un numéro à une ligne de BL | activer un nœud BL → saisir `3` → Entrée | `vignette` = `000…03` sur les lignes `numlig LIKE bl%` du document | `tests/attribution_bl/` | à faire : `TreeView1_Activate` non rejouable (le harnais fait `MoveTo` sans positionner `Current` ; Entrée sur l'arbre sans effet, essai vague 6) |
-| ATRIBVIGNETTE-T03 | replay | Attribution sur une réception | nœud « Réception B.R » → `4` → Tab | toutes les lignes non clôturées du document mises à jour | `tests/attribution_reception/` | à faire : `TreeView1_Activate` non rejouable |
-| ATRIBVIGNETTE-T04 | replay | Numéro déjà utilisé, saisie non numérique | saisir `1` sur une autre ligne ; saisir `abc` | aucun `UPDATE` ; ballon | `tests/refus/` | à faire : `TreeView1_Activate` non rejouable |
-| ATRIBVIGNETTE-T05 | replay | Mise à blanc | nœud avec vignette → `Button1` | `vignette = ''` sur les lignes visées | `tests/mise_a_blanc/` | à faire : `TreeView1_Activate` non rejouable |
-| ATRIBVIGNETTE-T06 | replay | Ligne déjà clôturée d'un même BL (A02) | jeu avec une ligne clôturée et une non clôturée sur le même `num`/BL | figer : la ligne clôturée est aussi modifiée | `tests/ligne_cloturee/` | à faire : `TreeView1_Activate` non rejouable |
+| ATRIBVIGNETTE-T02 | replay | Attribution d'un numéro à une ligne de BL | activer un nœud BL → saisir `3` → Entrée | `vignette` = `000…03` sur les lignes `numlig LIKE bl%` du document | `tests/attribution_bl/` | implémenté (gb.test `AtribvignetteTest.T02AttributionBl` : nœud sélectionné puis TreeView1_Activate et Textvig_LostFocus appelés directement) |
+| ATRIBVIGNETTE-T03 | replay | Attribution sur une réception | nœud « Réception B.R » → `4` → Tab | toutes les lignes non clôturées du document mises à jour | `tests/attribution_reception/` | implémenté (gb.test `AtribvignetteTest.T03AttributionReception`) |
+| ATRIBVIGNETTE-T04 | replay | Numéro déjà utilisé, saisie non numérique | saisir `1` sur une autre ligne ; saisir `abc` | aucun `UPDATE` ; ballon | `tests/refus/` | implémenté (gb.test `AtribvignetteTest.T04Refus` : numéro existant → valeur rétablie, abc → zone vidée, aucun UPDATE) |
+| ATRIBVIGNETTE-T05 | replay | Mise à blanc | nœud avec vignette → `Button1` | `vignette = ''` sur les lignes visées | `tests/mise_a_blanc/` | implémenté (gb.test `AtribvignetteTest.T05MiseABlanc`) |
+| ATRIBVIGNETTE-T06 | replay | Ligne déjà clôturée d'un même BL (A02) | jeu avec une ligne clôturée et une non clôturée sur le même `num`/BL | figer : la ligne clôturée est aussi modifiée | `tests/ligne_cloturee/` | implémenté (gb.test `AtribvignetteTest.T06LigneCloturee`, jeu `atribvignette_shared/vign_cloture` : ligne clôturée modifiée, A02 figée) |
 | ATRIBVIGNETTE-T07 | replay | Document de type `C` non clôturé (A01) | jeu avec une ligne `type='C'` en régie suspendue | figer le comportement (erreur ou libellé erroné) | `tests/type_c/` | implémenté (code 125 figé) |
 | ATRIBVIGNETTE-T08 | gbtest | Calcul des manquants (après ATRIBVIGNETTE-003) | listes de vignettes : `[1,2,5]`, `[]`, `[7]`, numéros > 2^53 | listes attendues (caractérisation du `Float`) | `tests/manquants/` | à faire : exige une extraction (après ATRIBVIGNETTE-003) |
 
@@ -41,3 +41,5 @@ comparaison du dump. Valeurs attendues produites dans le clone Laurux non modifi
   acquittée) et `vign_type_c` (+ ligne type C). Scénarios `atribvignette_affichage` (T01, sql.log ordonné) et
   `atribvignette_type_c` (T07 : « Result is not available » `affiche` ligne 54, code 125 ; le libellé du document
   C reprend le `res` du document précédent).
+
+- **gb.test (vague 7)** : `.src/Tests/Gestion/AtribvignetteTest.test` (T02 à T06) ; le double-clic non rejouable est remplacé par `TreeView1[clé].Selected = True` puis l'appel de `TreeView1_Activate`, la sortie de zone par `Textvig_LostFocus`. Le ballon « N° vignette existant » s'affiche sans bloquer.

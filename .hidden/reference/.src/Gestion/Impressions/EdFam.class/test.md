@@ -13,7 +13,7 @@ produites dans le clone **Laurux non modifié**.
 | EDFAM-T02 | replay | Sélection par liste | `ToggleButton1`, clic sur une ligne de `Colfam` ; `ToggleButton2`, Entrée dans `Colfam2` ; Imprimer | `Fam`/`Fam2` remplis, PDF limité à la plage | `tests/selection_liste/` | implémenté (`Gestion/edfam_selection_liste` : clics ; Entrée dans `Colfam2` non rejouée) |
 | EDFAM-T03 | replay | Plage vide | `Fam` > `Fam2` | message « Aucune Famille » | `tests/plage_vide/` | implémenté (`Gestion/edfam_plage_vide`) |
 | EDFAM-T04 | replay | Saut de page | jeu > 52 familles | 2 pages | `tests/saut_page/` | implémenté (`Gestion/edfam_saut_page`) |
-| EDFAM-T05 | replay | Clavier | Échap/F2 dans la liste, Entrée/Tab dans les champs | focus et visibilité des listes (log des contrôles) | `tests/clavier/` | à faire : Échap/F2 non rejoués (Entrée/Tab dans les champs couverts par T03) |
+| EDFAM-T05 | replay | Clavier | Échap/F2 dans la liste, Entrée/Tab dans les champs | focus et visibilité des listes (log des contrôles) | `tests/clavier/` | à faire : Échap/F2 non rejoués (Entrée/Tab dans les champs couverts par T03) ; pas d'équivalent gb.test : le traitement est écrit dans `Colfam_KeyPress`/`ColFam2_KeyPress` sous `If Key.Code = …` (aucun événement clavier en gb.test) |
 
 ## Détail des tests
 

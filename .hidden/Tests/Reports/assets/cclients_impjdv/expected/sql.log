@@ -1,0 +1,25 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Cli where cli_code = '411901'
+SELECT dnc FROM Fiches_Parametres
+INSERT INTO Fiches_Cli (cli_code,cli_rs_soc,cli_nom,cli_pnm,cli_adr1,cli_adr2,cli_cd_ptl,cli_ville,cli_email,cli_tel_bur,cli_tel_dom,cli_tel_poste,cli_pble,cli_fx1,cli_fx2,cli_plaf_ecrs,cli_cd_bq,cli_cd_gch,cli_dmln,cli_cle_rib,cli_num_cpt,cli_cd_ent,cli_cd_acc,cli_ref_tir,cli_id_tva,cli_rlvc,cli_rlvf,cli_obs,cli_collectif,cli_rmo,cli_rart, cli_copie, cli_actif, cli_div) VALUES ('411901', NULL, 'Nouveau Un', 'Jean', '10 rue Neuve', 'Bat A', '44000', 'Nantes', 'n1@exemple.fr', '0240000001', '0240000002', '12', '0600000001', '0240000003', NULL, '500', '30004', '00001', '12', '0001234567', 'Agence', '0', '0', 'Tireur', 'FR00123', '1', '1', '411901', '411000', '5', '2', 0, 0, 0)
+insert into Fiches_Comptes (compte_cc,intitule_cc,type_cc,coll,coll_cc, solde,cent_cc,comptr_cc, gen_tv, gen_ta, soldep) values ( '411901','Nouveau Un','C',0,'411000',0,0,0,0,0,0)
+Update Fiches_Parametres set dnc = '411901'

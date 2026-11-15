@@ -6,7 +6,7 @@
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | CARCH-T01 | gbtest | Compilation sans la classe | suppression de `Carch.class` + `Carch.form` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : vérification par gbc3 -agt après suppression (phase 3, CARCH-A02 à valider) |
-| CARCH-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Facts`, `/Coul/Avs` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire : Laurux.conf non comparé par le runner ; double-clic de SetColors non rejoué |
+| CARCH-T02 | replay | Réglages équivalents via `SetColors` | modifier `/Coul/Facts`, `/Coul/Avs` dans « Couleurs » (`SetColors`) | `Laurux.conf` de référence (mêmes clés) | `tests/setcolors_equivalent/` | à faire : Carch.Coul_Dblclick / Btn_Click lisent Last.Tag (double-clic réel) et SetColors.Coul_DblClick lit Last puis ouvre FSetFormat.Run (modal) : ni rejouable (double-clic) ni atteignable en gb.test ; à noter : SetColors écrit /Coul/Facts au format CFormat (« Background: … ») et Carch au format « &H…& » |
 
 ## Détail des tests
 

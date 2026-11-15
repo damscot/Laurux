@@ -123,3 +123,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `ObjFac`, `Stockmvt`, `Articles`… · tests : T03, T04, T12 (deux locales) · sources : [Utils.module:1422-1424](../../../../../.src/Utils/Utils.module#L1422-L1424), [Utils.module:1388-1389](../../../../../.src/Utils/Utils.module#L1388-L1389), [Utils.module:603](../../../../../.src/Utils/Utils.module#L603)
 - [ ] UTILS-A12 — [anomalie] `Accent` remplace `ô` par `e` au lieu de `o` · appelants : `SaiTableau`
   et 2 fichiers via `With Utils` · tests : T10 · sources : [Utils.module:1205](../../../../../.src/Utils/Utils.module#L1205)
+- [ ] UTILS-A13 — [anomalie] `ObsLstf` : une couleur d'origine 0 (noir) est traitée comme absente (`If IsNull(coul) Or coul = 0`, l. 1090) et remplacée par la couleur de zone (mineur) (phase 2, vague 7, 2026-11-15) · tests : T23 · sources : [Utils.module:ObsLstf](../../../../../.src/Utils/Utils.module#L1082-L1096)

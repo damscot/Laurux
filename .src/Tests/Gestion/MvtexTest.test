@@ -1,0 +1,162 @@
+' Gambas test file
+
+''Tests de Mvtex (.hidden/reference/.src/Gestion/Stock/Mvtex.class/test.md, MVTEX-T04, T07).
+''Écran instancié sans affichage (New Mvtex) ; le double-clic / Entrée sur une ligne de Colrcp (non rejouable) est
+''remplacé par l'appel de Colrcp_Activate sur la ligne rendue courante. Jeu mvtex_shared/stock_mvtex, complété
+''d'un 3e article stocké A3 (inséré par le test). Visualiseur neutralisé (/Soc01/caisse/CmdVis = true).
+''Valeurs attendues : assets/MvtexTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T07Regie", "Option boissons (bois=-1), jeu atribvignette_shared/vign_base : sortie 6 de 001 (régie 01 suspendue) : Fiches_ligregie, nvign +1")
+  TestKit.Desc("T04Rappel", "3 lignes A1/A2/A3 en entrée, rappel de A2 (Colrcp_Activate), qté 5, Enregistrer, Valider : Fiches_Mvtexp et art_qte")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "MvtexTest")
+  TestKit.OuvreBase("mvtex_shared/stock_mvtex")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "true"
+
+End
+
+Private Sub Lignes(sCle As String, hForm As Object)
+
+  Dim hCol As ColumnView
+  Dim sRes As String
+
+  hCol = hForm.Controls["Colrcp"]
+  TestKit.Check(sCle & "/nb_lignes", hCol.Count)
+  If hCol.Count = 0 Then Return
+  hCol.MoveFirst()
+  Repeat
+    sRes &= "[" & hCol.Item[0] & "|" & hCol.Item[1] & "|" & hCol.Item[2] & "|" & hCol.Item[3] & "|" & hCol.Item[4] & "]"
+  Until hCol.MoveNext()
+  TestKit.Check(sCle & "/lignes", sRes)
+
+End
+
+Private Sub Saisit(hForm As Object, sCode As String, sQte As String)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls["Cart"]
+  hCtrl.Text = sCode
+  hForm.art_man()
+  hCtrl = hForm.Controls["Qterecue"]
+  hCtrl.Text = sQte
+  hForm.qterecue_LF()
+  hForm.Maj_colrcp()
+  hForm.CleanChamps()
+
+End
+
+Private Sub Zone(sCle As String, hForm As Object, sNom As String)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls[sNom]
+  TestKit.Check(sCle & "/" & sNom, hCtrl.Text)
+
+End
+
+Public Sub T04Rappel()
+
+  Dim hForm As Mvtex
+  Dim hCol As ColumnView
+  Dim hCtrl As Object
+  Dim rResult As Result
+
+  Utils.db.Exec("INSERT INTO Fiches_Art (art_code, art_design, art_fam, art_dec, art_stocke, art_qte, art_prdcomp, art_pvht, art_pvttc, art_tva) VALUES ('A3', 'Article trois', '01', '0', 1, 30, 0, 2, 2.4, '1')")
+  hForm = New Mvtex
+  hCtrl = hForm.Controls["Entree"]
+  hCtrl.Value = True
+  Saisit(hForm, "A1", "1")
+  Saisit(hForm, "A2", "2")
+  Saisit(hForm, "A3", "3")
+  Lignes("T04/saisie", hForm)
+  hCol = hForm.Controls["Colrcp"]
+  hCol["A2"].Selected = True
+  TestKit.Check("T04/courante", hCol.Current.Key)
+  hForm.Colrcp_Activate()
+  Zone("T04/rappel", hForm, "Cart")
+  Zone("T04/rappel", hForm, "Dart")
+  Zone("T04/rappel", hForm, "Qterecue")
+  Lignes("T04/rappel", hForm)
+  hCtrl = hForm.Controls["Qterecue"]
+  hCtrl.Text = "5"
+  hForm.qterecue_LF()
+  hForm.Maj_colrcp()
+  hForm.CleanChamps()
+  Lignes("T04/modifiee", hForm)
+  Try hForm.Enrgbl()
+  If Error Then
+    TestKit.Check("T04/valider", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T04/valider", "ok")
+  Endif
+  rResult = Utils.db.Exec("SELECT code, qtep, qtem, Com FROM Fiches_Mvtexp ORDER BY code")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check("T04/mvtexp_" & rResult.Index, rResult!code & "|" & rResult!qtep & "|" & rResult!qtem & "|" & rResult!Com)
+    Until rResult.MoveNext()
+  Else
+    TestKit.Check("T04/mvtexp", "<aucune>")
+  Endif
+  rResult = Utils.db.Exec("SELECT art_code, art_qte FROM Fiches_Art WHERE art_code IN ('A1', 'A2', 'A3') ORDER BY art_code")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check("T04/art_" & rResult!art_code, rResult!art_qte)
+    Until rResult.MoveNext()
+  Endif
+  Object.Lock(hForm)
+
+End
+
+Public Sub T07Regie()
+
+  Dim hForm As Mvtex
+  Dim hCtrl As Object
+  Dim rResult As Result
+
+  TestKit.OuvreBase("atribvignette_shared/vign_base")
+  Start.LocalSettings["/Soc" & Start.Societe & "/bois"] = -1
+  Utils.db.Exec("UPDATE Fiches_Art SET art_dra = '01', art_stocke = 1 WHERE art_code = '001'")
+  Utils.db.Exec("UPDATE Fiches_Parametres SET arrete = '01.2018', nvign = '0000000000000000000000041'")
+  Utils.db.Exec("DELETE FROM Fiches_ligregie")
+  rResult = Utils.db.Exec("SELECT nvign FROM Fiches_Parametres")
+  If rResult.Available Then TestKit.Check("T07/nvign_avant", rResult!nvign)
+  hForm = New Mvtex
+  hCtrl = hForm.Controls["Sortie"]
+  hCtrl.Value = True
+  Object.SetProperty(hForm.Controls["Datej"], "Text", "15.06.2018")
+  hCtrl = Object.GetProperty(hForm.Controls["Datej"], "dte")
+  hCtrl.G = Date(2018, 6, 15)
+  Saisit(hForm, "001", "6")
+  Lignes("T07/saisie", hForm)
+  Try hForm.Enrgbl()
+  If Error Then
+    TestKit.Check("T07/valider", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T07/valider", "ok")
+  Endif
+  rResult = Utils.db.Exec("SELECT numlig, type, codeart, coderegie, qte, volume, degres, volumeap, montdr, txtvadr, montss, txtvass, vignette, cloture, volumess FROM Fiches_ligregie WHERE codeart = '001' AND qte = 6")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check("T07/ligregie_" & rResult.Index, rResult!numlig & "|" & rResult!type & "|" & rResult!codeart & "|" & rResult!coderegie & "|" & rResult!qte & "|" & rResult!volume & "|" & rResult!degres & "|" & rResult!volumeap & "|" & rResult!montdr & "|" & rResult!txtvadr & "|" & rResult!montss & "|" & rResult!txtvass & "|" & rResult!vignette & "|" & rResult!cloture & "|" & rResult!volumess)
+    Until rResult.MoveNext()
+  Else
+    TestKit.Check("T07/ligregie", "<aucune>")
+  Endif
+  rResult = Utils.db.Exec("SELECT nvign FROM Fiches_Parametres")
+  If rResult.Available Then TestKit.Check("T07/nvign_apres", rResult!nvign)
+  rResult = Utils.db.Exec("SELECT art_qte FROM Fiches_Art WHERE art_code = '001'")
+  If rResult.Available Then TestKit.Check("T07/art_qte", rResult!art_qte)
+  Object.Lock(hForm)
+
+End

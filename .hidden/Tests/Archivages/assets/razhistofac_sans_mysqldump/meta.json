@@ -1,0 +1,30 @@
+{
+ "id": "RAZHISTOFAC-T06",
+ "classe": "RazHistoFac",
+ "objet": "Purge sans mysqldump (sauvegarde impossible)",
+ "description": "Comme RAZHISTOFAC-T01, mais mysqldump introuvable (règle « outils » : code 127, message sh) : la purge a lieu quand même (A03) ; la redirection du Shell crée ~/Sauve/Laurux01EffaceF.sql vide ; appel tracé dans outils.trace, mot de passe masqué. Le dump vérifie les lignes purgées et conservées.",
+ "dataset": "razhistofac_shared/factures_archives",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "outils": {
+  "mysqldump": {
+   "rc": 127,
+   "erreur": "sh: 1: mysqldump: not found",
+   "hidden_argv": [
+    "-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace",
+  "Sauve/Laurux01EffaceF.sql"
+ ]
+}

@@ -88,7 +88,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] PARAMETRE-A06 — [anomalie] Toute fermeture enregistre et la fenêtre ne peut pas être fermée
   sans saisie valide (`Stop Event`), même pour abandonner les modifications (le double
   enregistrement, lui, est traité sans changement de comportement par PARAMETRE-008) · tests : T03 · sources : [Parametre.class:Form_Close](../../../../../.src/Communs/Parametre.class#L313-L323)
-- [ ] PARAMETRE-A07 — [anomalie] `Dnbon_LostFocus`, `Dnfac_LostFocus`, `Dnclient_LostFocus`
+- [ ] PARAMETRE-A07 — [anomalie] (à confirmer phase 2, vague 7 : `Dnfournisseur_LostFocus` appelé directement avec « 601000 » : `Border` relu False alors que le code le pose à True (l. 462) ; non élucidé (widget non affiché ?) (T07)) `Dnbon_LostFocus`, `Dnfac_LostFocus`, `Dnclient_LostFocus`
   (préfixe 411) et `Dnfournisseur_LostFocus` (préfixe 401) ne sont jamais déclenchés : les
   contrôles appartiennent au groupe `Par` (à confirmer par replay). Les rebrancher (dans
   `Par_lostfocus`, selon le `Tag`) active des contrôles aujourd'hui absents · tests : T07 · sources : [Parametre.class:Dnclient_LostFocus](../../../../../.src/Communs/Parametre.class#L444-L456), [Parametre.class:Dnfournisseur_LostFocus](../../../../../.src/Communs/Parametre.class#L458-L472), [Parametre.class:Dnbon_LostFocus](../../../../../.src/Communs/Parametre.class#L358-L369), [Parametre.class:Dnfac_LostFocus](../../../../../.src/Communs/Parametre.class#L371-L382)

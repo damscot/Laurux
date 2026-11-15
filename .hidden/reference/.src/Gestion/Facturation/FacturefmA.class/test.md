@@ -11,10 +11,10 @@ d'abonnement (`type = "A"`) et des clients de chaque périodicité. Comparaisons
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | FACTUREFMA-T01 | replay | Sélection mensuelle | clients « 1- Mensuel » : jamais facturé, facturé le mois précédent avant/après `cli_datab`, facturé ce mois | clients retenus dans `Facturefm`/`Bl` | `tests/mensuel/` | implémenté (`Gestion/facturefma_mensuel`) |
-| FACTUREFMA-T02 | replay | Bimensuel, trimestriel, semestriel | dates saisies en janvier, février, juillet | figer la sélection (A03 en début d'année) | `tests/periodicites/` | à faire |
-| FACTUREFMA-T03 | replay | Annuel | client facturé il y a un an jour pour jour | figer la sélection (A02) | `tests/annuel/` | à faire |
+| FACTUREFMA-T02 | replay | Bimensuel, trimestriel, semestriel | dates saisies en janvier, février, juillet | figer la sélection (A03 en début d'année) | `tests/periodicites/` | implémenté (`Gestion/facturefma_periodicites_janvier`, `_fevrier`, `_juillet` ; A03 figée : en janvier, bimensuel facturé le 05.11.2017 non retenu et semestriel facturé le 05.10.2017 retenu) |
+| FACTUREFMA-T03 | replay | Annuel | client facturé il y a un an jour pour jour | figer la sélection (A02) | `tests/annuel/` | implémenté (`Gestion/facturefma_annuel` ; A02 figée : aucun client annuel retenu, même facturé il y a un an jour pour jour) |
 | FACTUREFMA-T04 | replay | Client sans périodicité, client unique | `cli_aban` nul ; `RadioButton2` + code | avertissement ; sélection limitée au client | `tests/sans_periodicite/` | implémenté (`Gestion/facturefma_sans_periodicite`) |
-| FACTUREFMA-T05 | replay | Retraits | Suppr client, Suppr BL | tables de travail ; colonne Ville modifiée (A01 figée) | `tests/retraits/` | à faire |
+| FACTUREFMA-T05 | replay | Retraits | Suppr client, Suppr BL | tables de travail ; colonne Ville modifiée (A01 figée) | `tests/retraits/` | implémenté (`Gestion/facturefma_retraits` : Suppr client, Suppr BL ; tables de travail dans le dump ; colonne Ville (A01) à l'écran seulement, non comparée) |
 | FACTUREFMA-T06 | replay | Édition | `Imprimer`, date du panneau modifiée, `OK` | factures émises (dump complet) ; date utilisée = `Datej` (A05 figée) | `tests/edition/` | à faire : édition par `OptFac` → `ObjFac` (classe complexe exclue) |
 | FACTUREFMA-T07 | replay | Client divers abonné | client `cli_div = 1` | figer l'erreur SQL de `ObjFac.calcul` (colonne `nom` absente, A04) | `tests/client_divers/` | à faire : l'erreur est levée dans `ObjFac.calcul` (édition, classe complexe exclue) |
 | FACTUREFMA-T08 | gbtest | Conversion de `dtefac` | `Date` → `String` implicite pour des dates à 00:00 (été, hiver, 1er du mois) | chaînes de référence ; `Left$(…, 2)`, `Right$(…, 4)` | `tests/conversion_dtefac/` | à faire : expression dans `recup_bl` (non publique), extraction de phase 4 |
@@ -34,5 +34,8 @@ d'abonnement (`type = "A"`) et des clients de chaque périodicité. Comparaisons
   `"/Soc01/Faca": 0` (entier : la chaîne « 0 » est vraie pour `If`) : avec `/Faca` = 1, `Fmenu.Form_Open` appelle
   `Abonnement()` qui ouvre une boîte avant le démarrage du rejeu (START-A09) ; le menu masqué `Menu299` reste
   cliquable par le rejeu.
-- T02, T03, T05 non commencés (vague 4, durée écoulée) : le même jeu peut être étendu (clients bimensuel,
-  trimestriel, annuel ; retraits comme `Gestion/facturefm_retraits`, avec `Focus` avant Suppr).
+- T02, T03, T05 (vague 7) : jeux `facturefma_shared/periodicites_01|02|07.sql` (clients bimensuels 41192x,
+  trimestriels 41193x, semestriels 41194x, facturés les 05.07, 05.10, 05.11 et 05.12.2017 ; `dtepec` du mois du
+  scénario, date du scénario le 15 de ce mois), `annuel.sql` (41195x), `retraits.sql` (41196x, dont un client à deux
+  BL : seul le premier est retenu par `recup_bl`). Générateur : `facturefma_shared/gen_facturefma.py`. Dates de
+  facturation au 5 du mois pour éviter le décalage UTC de la conversion `dtefac` → chaîne.

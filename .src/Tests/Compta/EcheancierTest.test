@@ -1,0 +1,62 @@
+' Gambas test file
+
+''Tests de Echeancier (.hidden/reference/.src/Compta/Impressions/Echeancier.class/test.md, ECHEANCIER-T08).
+''Écran instancié sans affichage (New Echeancier), gestionnaires appelés directement (double-clic et DateChooser non
+''rejoués), contrôles lus par Controls ; base Laurux01. L'année courante est masquée.
+''Valeurs attendues : assets/EcheancierTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T08SaisieDates", "3112 + LostFocus dans Dten0 ; double-clic Dten1 puis choix du 20.05.2018 dans DateChooser1")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EcheancierTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Texte(hForm As Object, sNom As String) As String
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls[sNom]
+  Return Replace(hCtrl.Text, Format$(Now, "yyyy"), "<an>")
+
+End
+
+Private Sub Etat(sCle As String, hForm As Object)
+
+  Dim hCal As Object
+
+  hCal = hForm.Controls["DateChooser1"]
+  TestKit.Check(sCle & "/Dten0", Texte(hForm, "Dten0"))
+  TestKit.Check(sCle & "/Dten1", Texte(hForm, "Dten1"))
+  TestKit.Check(sCle & "/calendrier_visible", hCal.Visible)
+
+End
+
+Public Sub T08SaisieDates()
+
+  Dim hForm As Object
+  Dim hCtrl As Object
+  Dim hCal As Object
+
+  hForm = New Echeancier
+  Etat("T08/ouverture", hForm)
+  hCtrl = hForm.Controls["Dten0"]
+  hCtrl.Text = "3112"
+  hForm.dteN0_LostFocus()
+  Etat("T08/saisie_3112", hForm)
+  hForm.Dten1_DblClick()
+  Etat("T08/double_clic", hForm)
+  hCal = hForm.Controls["DateChooser1"]
+  hCal.Value = Date(2018, 5, 20)
+  hForm.DateChooser1_Activate()
+  Etat("T08/calendrier", hForm)
+  Object.Lock(hForm)
+
+End

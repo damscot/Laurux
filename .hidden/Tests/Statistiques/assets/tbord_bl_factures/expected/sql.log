@@ -1,0 +1,37 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(brutfac Decimal(12,2),rmfac Decimal(12,2),totfac Decimal(12,2),marge_art Decimal(12,2),marge_mo Decimal(12,2),margepart Decimal(12,2),margepmo Decimal(12,2),date Datetime,nb integer , PRIMARY KEY (date)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20170701' and datefac <= '20180615' order by datefac
+SELECT * FROM Total where MONTH(date) = MONTH('2017-09-10 00:00:00')
+INSERT INTO Total(brutfac, rmfac, totfac, marge_art, margepart, marge_mo, margepmo, date, nb) VALUES ('1000', '0', '1000', '200', '20', '100', '10', '2017-09-10 00:00:00', 1)
+SELECT * FROM Total where MONTH(date) = MONTH('2017-10-05 00:00:00')
+INSERT INTO Total(brutfac, rmfac, totfac, marge_art, margepart, marge_mo, margepmo, date, nb) VALUES ('500', '0', '500', '50', '10', '25', '5', '2017-10-05 00:00:00', 1)
+SELECT * FROM Fiches_Bl where dtefac >= '20170701' and dtefac <= '20180615' and type = 'F' and imp = 1 order by dtefac
+SELECT * FROM Total where MONTH(date) = MONTH('2017-09-20 00:00:00')
+UPdate Total set brutfac = '1310', rmfac = '10', totfac = '1300', marge_art = '260', margepart = '20', marge_mo = '130', margepmo = '10', nb = 2 Where MONTH(date) = MONTH('2017-09-20 00:00:00')
+SELECT * FROM Total where MONTH(date) = MONTH('2017-11-12 00:00:00')
+INSERT INTO Total(brutfac, rmfac, totfac, marge_art, margepart, marge_mo, margepmo, date, nb) VALUES ('405', '5', '400', '80', '20', '40', '10', '2017-11-12 00:00:00', 1)
+SELECT * FROM Total where MONTH(date) = MONTH('2017-11-13 00:00:00')
+UPdate Total set brutfac = '505', rmfac = '5', totfac = '500', marge_art = '100', margepart = '20', marge_mo = '50', margepmo = '10', nb = 2 Where MONTH(date) = MONTH('2017-11-13 00:00:00')
+SELECT * FROM Total 
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Bl where totalht is not NULL order by type

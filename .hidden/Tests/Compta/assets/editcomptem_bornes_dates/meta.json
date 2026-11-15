@@ -1,0 +1,23 @@
+{
+ "id": "EDITCOMPTEM-T10",
+ "objet": "Bornes de la période",
+ "classe": "EditcompteM",
+ "description": "Grands livres (Menu38), écritures de 31.12.2017 12:00 à 01.01.2019 (deux par jour aux bornes de l'exercice 2018 et au 15.06.2018), bouton Général, période par défaut, Imprimer : lignes présentes / absentes selon le filtre SQL actuel (edition.txt, sql.log non comparé).",
+ "dataset": "bornes_dates",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

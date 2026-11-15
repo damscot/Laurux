@@ -56,7 +56,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] JOURNAUXSETTING-A01 — [anomalie] Valider avec une liste vide n'efface pas la configuration :
+- [ ] JOURNAUXSETTING-A01 — [anomalie] (confirmée phase 2, vague 7 : retirer toutes les colonnes puis Valider laisse la configuration inchangée, figée par T04) Valider avec une liste vide n'efface pas la configuration :
   l'ancien ordre de colonnes reste actif pour l'export · tests : T04 · sources : [journauxSetting.class:13-51](../../../../../../.src/Compta/Impressions/journauxSetting.class#L13-L51)
 - [ ] JOURNAUXSETTING-A02 — [anomalie] Dépôt sur `ListBox1` : ajout sans contrôle (doublons dans
   la liste des champs) et sans retrait de `ListBox2` · tests : T05 · sources : [journauxSetting.class:ListBox1_Drop](../../../../../../.src/Compta/Impressions/journauxSetting.class#L78-L82)

@@ -50,9 +50,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ANOMALIES-A01 — [anomalie] Clé recalculée affichée sur `"Fiches_Mvt"` en dur au lieu de
+- [ ] ANOMALIES-A01 — [anomalie] (confirmée phase 2, vague 7 : clé calculée vide en N-1 (cherchée dans `Fiches_Mvt`, l. 56), figée par T03) Clé recalculée affichée sur `"Fiches_Mvt"` en dur au lieu de
   `Tab` : rapport faux pour les exercices N-1…N-5 · tests : T03 · sources : [Anomalies.class:54](../../../../../../.src/Compta/Impressions/Anomalies.class#L54)
 - [ ] ANOMALIES-A02 — [anomalie] Message d'erreur trompeur (« pas de somme de control ») pour toute
   erreur SQL (table d'exercice absente, date invalide) · tests : T04 · sources : [Anomalies.class:40](../../../../../../.src/Compta/Impressions/Anomalies.class#L40)
 - [ ] ANOMALIES-A03 — [anomalie] Aucun message quand la plage ne contient aucune écriture ·
   tests : T04 · sources : [Anomalies.class:45](../../../../../../.src/Compta/Impressions/Anomalies.class#L45)
+- [ ] ANOMALIES-A04 — [anomalie, à confirmer] Signalement en cascade : la clé de contrôle étant chaînée, une clé altérée fait signaler toutes les écritures suivantes (3 altérations → 8 lignes) ; le rapport ne distingue pas l'écriture altérée de celles invalidées par le chaînage (intention à confirmer) (phase 2, vague 7, 2026-11-15) · tests : T02 · sources : [Anomalies.class:55-56](../../../../../../.src/Compta/Impressions/Anomalies.class#L55-L56), [Sha1Calc.module:CalcSha1_Verify](../../../../../../.src/Utils/Sha1Calc.module#L96-L119)

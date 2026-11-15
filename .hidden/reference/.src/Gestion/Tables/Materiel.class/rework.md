@@ -109,11 +109,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   interceptée : fournisseur dans `art_man`, client et bon `Fiches_BlM` dans `Colventes_click`,
   fournisseur dans `Histo_Achat`/`Colachat_click` ; `Fam2` affiche « Cette famille n'existe pas »
   quand c'est le code TVA qui manque · tests : T04, T06, T07 · sources : [Materiel.class:418](../../../../../../.src/Gestion/Tables/Materiel.class#L418), [Materiel.class:2187](../../../../../../.src/Gestion/Tables/Materiel.class#L2187), [Materiel.class:2215](../../../../../../.src/Gestion/Tables/Materiel.class#L2215), [Materiel.class:2381](../../../../../../.src/Gestion/Tables/Materiel.class#L2381), [Materiel.class:2433](../../../../../../.src/Gestion/Tables/Materiel.class#L2433), [Materiel.class:708](../../../../../../.src/Gestion/Tables/Materiel.class#L708)
-- [ ] MATERIEL-A08 — [anomalie, à confirmer] Garantie : la date de fin (`DateG2`) n'est ni chargée
+- [ ] MATERIEL-A08 — [anomalie, à confirmer] (précisée phase 2, vague 7 : `TestenrgMat` (l. 1924) : pour un matériel non vendu, l'`Update` n'écrit ni `mat_chkgarantie` ni `mat_dateg1` ; en outre `mat_dateg1` 15.06.2018 est relu `06/14/2018 23:00:00` (conversion en temps universel) (T09)) Garantie : la date de fin (`DateG2`) n'est ni chargée
   ni enregistrée (aucune colonne) ; l'`Update` d'un matériel non vendu ignore les champs de
   garantie ; la date de vente n'est enregistrée à la création que si la garantie est cochée ·
   tests : T09 · sources : [Materiel.class:1909](../../../../../../.src/Gestion/Tables/Materiel.class#L1909), [Materiel.class:1924](../../../../../../.src/Gestion/Tables/Materiel.class#L1924), [Materiel.class:DateChooser1_Activate](../../../../../../.src/Gestion/Tables/Materiel.class#L2609-L2622)
-- [ ] MATERIEL-A09 — [anomalie] `ToggleButton3_Click` remet `Variables.Bsel` à `False` au lieu de
+- [ ] MATERIEL-A09 — [anomalie] (confirmée phase 2, vague 7 : annulation dans `TriCpt` : le client précédent est réappliqué (`Bsel` reste vrai), figée par T12) `ToggleButton3_Click` remet `Variables.Bsel` à `False` au lieu de
   `Me.Bsel` ; `TriCpt` ne réinitialise pas `Bsel` : une annulation réapplique la dernière valeur
   sélectionnée (article ou client) · tests : T12 · sources : [Materiel.class:2527](../../../../../../.src/Gestion/Tables/Materiel.class#L2527), [Materiel.class:2530](../../../../../../.src/Gestion/Tables/Materiel.class#L2530)
 - [ ] MATERIEL-A10 — [anomalie, à confirmer] Ouvrir une fiche dont la réception est verrouillée

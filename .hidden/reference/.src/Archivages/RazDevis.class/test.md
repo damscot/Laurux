@@ -15,7 +15,7 @@ attendues produites dans le clone **Laurux non modifié**.
 | RAZDEVIS-T01 | replay | Purge nominale | jeu `devis_base` : devis `D` avant, le jour même et après la date ; BL `B` et factures `F` antérieurs ; « Oui » | seuls les devis strictement antérieurs et leurs lignes supprimés ; BL/F intacts ; `Fiches_AdrlivBL` du devis conservée (A01 figée) | `tests/razdevis_nominal/` | implémenté |
 | RAZDEVIS-T02 | replay | Option matériel cochée / décochée | `/Soc01/Materiel = 1` ; devis `BlM` antérieurs | purgés seulement si la case est cochée | `tests/razdevis_materiel/` | implémenté |
 | RAZDEVIS-T03 | replay | Abandon | « Non » | tables inchangées | `tests/razdevis_abandon/` | implémenté |
-| RAZDEVIS-T04 | replay | Sauvegarde | T01 puis `RAZCLIENTD-T01` ; T01 sans `mysqldump` | `EffaceD.sql` écrasé par le second écran ; purge sans sauvegarde (A02) | `tests/razdevis_sauvegarde/` | à faire : collision couverte par razclientd_sauvegarde (durée 29 s) ; « sans mysqldump » demande un PATH réduit (outillage) |
+| RAZDEVIS-T04 | replay | Sauvegarde | T01 puis `RAZCLIENTD-T01` ; T01 sans `mysqldump` | `EffaceD.sql` écrasé par le second écran ; purge sans sauvegarde (A02) | `tests/razdevis_sauvegarde/` | implémenté partiellement (sans mysqldump : `razdevis_sans_mysqldump`, règle « outils » mysqldump code 127, purge faite, EffaceD.sql vide, appel tracé ; collision : `razdevis_collision` écrit et attendus produits, durée accordée 35 s par l'utilisateur le 2026-11-15 (27,8 s mesurées à vide)) |
 | RAZDEVIS-T05 | replay | SQLite | T01 sur `Laurux01.sqlite` | comportement figé (A04, à confirmer) | `tests/razdevis_sqlite/` | à faire : base SQLite non prise en charge par le runner |
 
 ## Détail des tests

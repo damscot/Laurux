@@ -55,7 +55,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VISSTATCOMM-A01 — [anomalie] Tris inopérants : les handlers réagissent à `MouseDown` (avant
+- [ ] VISSTATCOMM-A01 — [anomalie] (confirmée phase 2, vague 7 : tri forcé sur `commercial` sauf juste après `Bnom` (l. 117, 124, 183), figée par T03) Tris inopérants : les handlers réagissent à `MouseDown` (avant
   le changement de valeur du RadioButton) et `Affichage` force `Tri = "commercial"` quand
   `Bnom.value` est faux → tris Brut/Remise/Net jamais appliqués, tri par nom au second clic
   seulement (à confirmer par replay) · tests : T03 · sources : [VisStatComm.class:117](../../../../../.src/Statistiques/VisStatComm.class#L117), [VisStatComm.class:124](../../../../../.src/Statistiques/VisStatComm.class#L124), [VisStatComm.class:Bbrut_MouseDown](../../../../../.src/Statistiques/VisStatComm.class#L198-L203)

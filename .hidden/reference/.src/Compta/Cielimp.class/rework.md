@@ -72,18 +72,18 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] CIELIMP-A02 — [anomalie] Fichiers non fermés : sortie anticipée l. 148 (4 fichiers ouverts,
   souris non rétablie) ; fichier d'import jamais fermé dans `controle_comptes` ni `Compta` ;
   table `Cptabs` laissée en base · tests : T06 · sources : [Cielimp.class:148](../../../../../.src/Compta/Cielimp.class#L148), [Cielimp.class:126](../../../../../.src/Compta/Cielimp.class#L126), [Cielimp.class:308](../../../../../.src/Compta/Cielimp.class#L308), [Cielimp.class:122-125](../../../../../.src/Compta/Cielimp.class#L122-L125)
-- [ ] CIELIMP-A03 — [anomalie] `Compta` : compte de tiers traduit absent de `Fiches_Comptes` →
+- [ ] CIELIMP-A03 — [anomalie] (confirmée phase 2, vague 7 : tiers associé à un compte absent → « Result is not available » à `Compta` l. 351 (`rResult!coll_cc`), import partiel, figée par T11) `Compta` : compte de tiers traduit absent de `Fiches_Comptes` →
   `rResult!coll_cc` sans `Available` → erreur en cours d'import, sans transaction : import
   partiel, `imp_ciel` non positionné, un réimport crée des doublons · tests : T11 ·
   sources : [Cielimp.class:350-351](../../../../../.src/Compta/Cielimp.class#L350-L351), [Cielimp.class:365-366](../../../../../.src/Compta/Cielimp.class#L365-L366)
-- [ ] CIELIMP-A04 — [anomalie] Montants : `Mtd` converti implicitement (`Mtd = Mid$(…)`) alors que
+- [ ] CIELIMP-A04 — [anomalie] (confirmée phase 2, vague 7 : montant à virgule au débit : « Type mismatch » fatal rapporté à `Compta.327` (conversion implicite `Mtd = Mid$(lig, 75, 10)` l. 328, sans `Val(cpoint)`), figée par T10 (code 125) ; motif transverse « `Val()` / `Format$` / conversion implicite sur un décimal (point ou virgule selon la source) ou une valeur Null → Type mismatch fatal » : voir aussi [EDCOM-A05](../../Gestion/Impressions/Edcom.class/rework.md), [MATERIEL-A13](../../Gestion/Tables/Materiel.class/rework.md), [EDBR-A05](../../Gestion/Impressions/Edbr.module/rework.md), [CLCR-A01](../../Gestion/Lcr/CLcr.class/rework.md), [MAJFBTARIF2-A04](../../Gestion/Stock/Tarifs/MajFbtarif2.class/rework.md), [CCOMPTA-A03](../../Reports/Ccompta.class/rework.md), [CBALANCES-A01](../../Reports/Cbalances.class/rework.md), [AFACTURE-A03](../../Affichages/AFacture.class/rework.md), [STATCLIMO-A04](../../Statistiques/StatClimo.class/rework.md)) Montants : `Mtd` converti implicitement (`Mtd = Mid$(…)`) alors que
   `Mtc` passe par `Val(Utils.cpoint(…))` ; `Mtd` inséré sans `PointBase` sur la ligne de tiers
   (résultat dépendant du séparateur décimal du fichier, à confirmer) · tests : T10 ·
   sources : [Cielimp.class:328](../../../../../.src/Compta/Cielimp.class#L328), [Cielimp.class:331](../../../../../.src/Compta/Cielimp.class#L331), [Cielimp.class:364](../../../../../.src/Compta/Cielimp.class#L364)
-- [ ] CIELIMP-A05 — [anomalie] (confirmée phase 2, vague 3 : `tresorerie` = 0 sur toutes les lignes importées, même pour le journal 50 de type TR, figé par T01) Trésorerie : `Tresor` (booléen) reçoit `type_jo` puis est comparé à
+- [ ] CIELIMP-A05 — [anomalie] (confirmée phase 2, vague 7 : `tresorerie`/`datee` mis à jour par numéro, figée par T09) (confirmée phase 2, vague 3 : `tresorerie` = 0 sur toutes les lignes importées, même pour le journal 50 de type TR, figé par T01) Trésorerie : `Tresor` (booléen) reçoit `type_jo` puis est comparé à
   `"TR"` (comparaison booléen/chaîne, probablement toujours fausse, à confirmer) · tests : T09 ·
   sources : [Cielimp.class:337-342](../../../../../.src/Compta/Cielimp.class#L337-L342)
-- [ ] CIELIMP-A06 — [anomalie] Compte de trésorerie `51210000` en dur ; `UPDATE … where numero =
+- [ ] CIELIMP-A06 — [anomalie] (confirmée phase 2, vague 7 : mise à jour par numéro, figée par T09) Compte de trésorerie `51210000` en dur ; `UPDATE … where numero =
   &3` sans borne de date (touche toute écriture de même numéro) · tests : T09 ·
   sources : [Cielimp.class:380-385](../../../../../.src/Compta/Cielimp.class#L380-L385)
 - [ ] CIELIMP-A07 — [anomalie] DDL de `Ciel_Lrx` divergent : `Cciel Char(10)` ici, `Char(15)` dans

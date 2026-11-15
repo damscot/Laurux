@@ -19,13 +19,13 @@ puis compare :
 | EXPORTJDV-T03 | replay | Format 3 « Ciel » | idem | `.txt` windows-1252 de référence | `tests/format3_ciel/` | implémenté |
 | EXPORTJDV-T04 | replay | Format 4 « CCMX Winner » | idem | `.txt` de référence (compteur figé) | `tests/format4_winner/` | implémenté (figé A11 : export interrompu après la 1re ligne collectif) |
 | EXPORTJDV-T05 | replay | Format 5 « Cador » | idem | enregistrements `1`/`2`/`3` de référence | `tests/format5_cador/` | implémenté |
-| EXPORTJDV-T06 | replay | Format 6 « Sage », tous clients avec `cli_sage` | `/Soc01/Sage` vrai, codes Sage renseignés | `ecrituresVE.pnm`, `clients.pnc` ; copie `JDV….txt` absente (figé, A05) | `tests/format6_sage/` | à faire : non commencé (vague 3, faute de temps ; nécessite /Soc01/Sage et cli_sage) |
-| EXPORTJDV-T07 | replay | Sage avec clients sans `cli_sage` (A04) | un client du journal sans code Sage | liste écrite dans `ecritures*.pnm`, message, aucun `export = '1'` | `tests/sage_controle/` | à faire : non commencé (vague 3, faute de temps) |
+| EXPORTJDV-T06 | replay | Format 6 « Sage », tous clients avec `cli_sage` | `/Soc01/Sage` vrai, codes Sage renseignés | `ecrituresVE.pnm`, `clients.pnc` ; copie `JDV….txt` absente (figé, A05) | `tests/format6_sage/` | implémenté (Compta/exportjdv_format6_sage, jeu exportjdv_sage ; /CmdEditor0 = laurux-ouvrir) |
+| EXPORTJDV-T07 | replay | Sage avec clients sans `cli_sage` (A04) | un client du journal sans code Sage | liste écrite dans `ecritures*.pnm`, message, aucun `export = '1'` | `tests/sage_controle/` | implémenté (Compta/exportjdv_sage_controle, jeu exportjdv_sage_partiel : liste 411002 dans ecritures70.pnm, aucun export = 1) |
 | EXPORTJDV-T08 | replay | Ré-export | T01 puis nouvel export « non exportées », puis « ensemble des écritures » | message « Aucune écriture… » puis fichier complet | `tests/reexport/` | à faire : rejeu en délai dépassé (code 124, console vide) après le 1er export et la question « Voulez-vous ouvrir » (Oui comme Non), lors de la réouverture de l'écran ; à analyser |
 | EXPORTJDV-T09 | replay | Erreurs de saisie | journal inexistant, code vide, chemin inaccessible | messages ; réglages et copie `cp` tout de même exécutés (figé, A05) | `tests/erreurs_saisie/` | implémenté |
 | EXPORTJDV-T10 | replay | Journal déséquilibré (A01) | base dérivée : une écriture VE à débit ≠ crédit | export réalisé sans message (figé) | `tests/desequilibre/` | implémenté |
-| EXPORTJDV-T11 | replay | Journal sans ligne collectif, formats 4 et 6 (A03) | base dérivée : journal OD sans collectif | message « Aucune écriture » malgré les lignes écrites et marquées (figé) | `tests/sans_collectif/` | à faire : non commencé (vague 3, faute de temps) |
-| EXPORTJDV-T12 | replay | Saisie des dates | dates partielles `05`, `05.03`, date hors période, fin < début, E0/E1 | textes des champs et messages de référence | `tests/saisie_dates/` | à faire : non commencé (vague 3, faute de temps) |
+| EXPORTJDV-T11 | replay | Journal sans ligne collectif, formats 4 et 6 (A03) | base dérivée : journal OD sans collectif | message « Aucune écriture » malgré les lignes écrites et marquées (figé) | `tests/sans_collectif/` | implémenté (Compta/exportjdv_sans_collectif, jeu exportjdv_od, format 6 seulement : message « Aucune écriture » malgré lignes écrites et export = 1, A03 figée ; format 4 interrompu par A11, voir T04) |
+| EXPORTJDV-T12 | replay | Saisie des dates | dates partielles `05`, `05.03`, date hors période, fin < début, E0/E1 | textes des champs et messages de référence | `tests/saisie_dates/` | implémenté pour E0/E1 et les dates partielles (gb.test `ExportJdvTest.T12SaisieDates`, 050318 → année courante comme EDITCOMPTEA-A03) ; à faire : date hors période et fin < début (Message.Warning bloquant en gb.test ; texte des champs non comparé en rejeu) |
 | EXPORTJDV-T13 | replay | Intitulé de collectif avec apostrophe (A08) | compte collectif `Clients d'Europe` | erreur SQL attrapée par le `Catch`, export interrompu (figé) | `tests/apostrophe_collectif/` | implémenté |
 | EXPORTJDV-T14 | gbtest | Fonctions de ligne par format (après EXPORTJDV-009) | lignes `Fiches_Mvt` de T01-T06 en entrée | chaînes identiques aux lignes des fichiers de référence | `tests/lignes_formats/` | à faire : après extraction EXPORTJDV-009 |
 | EXPORTJDV-T15 | replay | Aller-retour avec ImpJdv | fichiers de T01 importés dans une seconde base | voir IMPJDV-T06 | `tests/aller_retour_impjdv/` | à faire : dépend de IMPJDV-T06 (seconde base) |
@@ -54,3 +54,10 @@ puis compare :
   « Voulez-vous ouvrir … » : Oui (Entrée, xdg-open factice). T10 : export réalisé sans message (contrôle
   `totsld = totdeb - totdeb` toujours nul, A01). T13 : INSERT `centralisations` cassé par l'apostrophe, erreur
   attrapée (Message.Error). T09 : chemin inaccessible obtenu en ajoutant `/x` au champ `Chmexport`.
+- **Vague 7** : T06/T07 (format 6 Sage, Tpj index 5, `/Soc01/Sage` = -1) avec `"/CmdEditor0": "laurux-ouvrir"` : sans
+  éditeur configuré, `Editeur.Prog_Editeur` fait `Desktop.Open` d'un `.pnm` (type MIME sans association factice) et le
+  rejeu ne se termine pas (code 124). Jeux `exportjdv_format6_sage/exportjdv_sage.sql` et
+  `exportjdv_sage_controle/exportjdv_sage_partiel.sql` (copies de `exportjdv_jeu` + `cli_sage`).
+- **Vague 7 (T12)** : module `.src/Tests/Compta/ExportJdvTest.test` ; `New ExportJdv` sans affichage, `dteclec` porté au
+  31.12.2099 pour que les saisies restent dans la période E1. Constat : E1 affiche une fin d'exercice au 30.12.2018
+  (`dte` String reçoit `dteclec`, conversion UTC), cohérent avec la requête « 20180101 à 20181230 » des scénarios.

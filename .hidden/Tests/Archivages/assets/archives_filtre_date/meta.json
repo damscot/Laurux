@@ -1,0 +1,21 @@
+{
+ "id": "ARCHIVES-T04",
+ "classe": "Archives",
+ "objet": "Filtre par date et pagination",
+ "description": "/Soc01/Materiel = 0 : focus DA (tri datefac), frappe « 1005 » (like %-05-10 : factures du 10 mai), puis « 2018 » (8 chiffres : like %18-05-10%, qui retrouve aussi le 10 mai 2018), Descendre (aucune requête : page du filtre incomplète), Quitter (Button5) : requêtes comparées (sql.log ordonné). Grille non comparée ; molette non rejouable.",
+ "dataset": "archives_shared/factures_liste",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

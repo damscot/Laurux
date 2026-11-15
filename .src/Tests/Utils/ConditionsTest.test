@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Conditions (.hidden/reference/.src/Utils/Conditions.class/test.md, CONDITIONS-T02 et T03).
+''Tests de Conditions (.hidden/reference/.src/Utils/Conditions.class/test.md, CONDITIONS-T02, T03 et T04).
 ''Valeurs attendues : assets/ConditionsTest/expected.txt, produites dans le clone de référence.
 ''Le Result vient de la base de test : SELECT 5 AS n, 'abc' AS s.
 
@@ -10,6 +10,7 @@ Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T02Operateurs", "`Compute` : 7 opérateurs (si conservé)")
+  TestKit.Desc("T04RemisecGrille", "Non-régression Remisec : textes de la grille RichDataGrid (3 remises insérées), écran instancié sans affichage")
   TestKit.Desc("T03Combinaisons", "Combinaison ET, liste vide, champ inconnu, opérateur inconnu")
 
 End
@@ -81,5 +82,35 @@ Public Sub T03Combinaisons()
   hC.IfTrue = "oui"
   hC.IfFalse = "non"
   TestKit.Check("T03/iftrue_ecrit", Calcule(hC) & " IfTrue=" & hC.IfTrue & " IfFalse=" & hC.IfFalse)
+
+End
+
+Public Sub T04RemisecGrille()
+
+  Dim hForm As Remisec
+  Dim hGrid As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Utils.db.Exec("INSERT INTO Fiches_RemTypec (coder, codef, remise) VALUES ('01', '01', 7.5)")
+  Utils.db.Exec("INSERT INTO Fiches_RemTypec (coder, codef, remise) VALUES ('02', '02', 12.345)")
+  Utils.db.Exec("INSERT INTO Fiches_RemTypec (coder, codef, remise) VALUES ('03', '03', 0)")
+  hForm = New Remisec
+  hForm.Form_Open()
+  hGrid = hForm.Controls["Tabtypec"]
+  TestKit.Check("T04/colonnes", hGrid.Columns.Count)
+  For i = 0 To hGrid.Columns.Count - 1
+    sRes &= "[" & hGrid.Columns[i].Text & "|" & hGrid.Columns[i].Width & "]"
+  Next
+  TestKit.Check("T04/entetes", sRes)
+  TestKit.Check("T04/lignes", hGrid.Rows.Count)
+  sRes = ""
+  For i = 0 To hGrid.Rows.Count - 1
+    sRes &= "[" & hGrid[i, 0].Text & "|" & hGrid[i, 1].Text & "|" & hGrid[i, 2].Text & "|" & hGrid[i, 3].Text & "]"
+  Next
+  TestKit.Check("T04/textes", sRes)
+  Object.Lock(hForm)
 
 End

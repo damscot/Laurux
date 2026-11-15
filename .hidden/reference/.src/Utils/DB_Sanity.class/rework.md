@@ -58,7 +58,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   correction du moteur produit un SQL invalide · tests : T02, T04 · sources : [DB_Sanity.class:487](../../../../../.src/Utils/DB_Sanity.class#L487)
 - [ ] DB_SANITY-A02 — [anomalie] Schéma reconstruit en `"Laurux" & Start.Societe` (lignes 485, 487,
   516, 518, 521, 526) : faux si `/dbase/Prefixe` est renseigné ; utiliser `DB_Con.Name` · tests : T04 · sources : [DB_Sanity.class:485](../../../../../.src/Utils/DB_Sanity.class#L485), [DB_Sanity.class:516](../../../../../.src/Utils/DB_Sanity.class#L516), [DB_Sanity.class:526](../../../../../.src/Utils/DB_Sanity.class#L526)
-- [ ] DB_SANITY-A03 — [anomalie] Les libellés OK/ERR/ABS/SUP ne sont écrits dans `Data` que par
+- [ ] DB_SANITY-A03 — [anomalie] (confirmée phase 2, vague 7 : CSV exporté : seules les 14 lignes affichées portent un libellé OK, figée par T01) Les libellés OK/ERR/ABS/SUP ne sont écrits dans `Data` que par
   `GridView1_Data` : l'export CSV dépend des lignes affichées · tests : T01, T02 · sources : [DB_Sanity.class:GridView1_Data](../../../../../.src/Utils/DB_Sanity.class#L309-L351), [DB_Sanity.class:73-90](../../../../../.src/Utils/DB_Sanity.class#L73-L90)
 - [ ] DB_SANITY-A04 — [anomalie] `Refresh_Data_Missing` ligne 267 : `Valid = New Integer[]` pour un
   `Integer[][]` (erreur de type probable, à confirmer) · tests : T03 · sources : [DB_Sanity.class:267](../../../../../.src/Utils/DB_Sanity.class#L267)

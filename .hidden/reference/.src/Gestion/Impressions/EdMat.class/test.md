@@ -14,7 +14,7 @@ dans le clone **non modifié**.
 | EDMAT-T03 | replay | Aucune case | décocher les deux | « Votre demande n'est pas cohérente » | `tests/edmat_incoherent/` | implémenté |
 | EDMAT-T04 | replay | Tris et marques | `RadioButton1..3` ; plage de marques par `ColMarque` | ordre des lignes ; `Marque` = intitulé | `tests/edmat_tris_marques/` | implémenté |
 | EDMAT-T05 | replay | Pagination | > 1 page | pages suivantes titrées « Liste des marériels » (figé) | `tests/edmat_pagination/` | implémenté |
-| EDMAT-T06 | replay | Sélection du propriétaire | `ToggleButton3`, choix d'un client | `Cli` vidé (A01 figée) | `tests/edmat_proprietaire/` | à faire : sélection d'une ligne de la grille TriGen de TriCpt non rejouable |
+| EDMAT-T06 | replay | Sélection du propriétaire | `ToggleButton3`, choix d'un client | `Cli` vidé (A01 figée) | `tests/edmat_proprietaire/` | implémenté (gb.test EdMatModalTest.T06Proprietaire : Timer pendant le ShowModal de TriCpt, Bval = 411001 mais Cli vidé (A01 figée) ; annulation sans effet) |
 | EDMAT-T07 | replay | Sélection de matériel | `ToggleButton1` (`TriMat`), choix | `Mat` ← `CodeMat` | `tests/edmat_trimat/` | implémenté |
 | EDMAT-T08 | replay | Saisie manuelle | `Mat` = code existant (Entrée) ; code inconnu (Entrée) | focus suivant ; erreur SQL `mat_refcentrale` (A02 figée) | `tests/edmat_mat_man/` | implémenté |
 
@@ -34,3 +34,4 @@ dans le clone **non modifié**.
   Constat : les bornes par défaut des marques (`AAAAAAAAAAAA`/`ZZZZZZZZZZZZ`) sont tronquées à 8 caractères
   par le champ (`'AAAAAAAA'`/`'ZZZZZZZZ'` dans la requête).
 - **Non testable automatiquement** : son, couleur du focus, aide F1.
+- **Implémentation (phase 2, vague 7)** : module séparé `.src/Tests/Gestion/EdMatModalTest.test` (sélection modale : un Timer du module retrouve la fenêtre de sélection ouverte en ShowModal parmi `Windows` et simule le choix ou la fermeture), distinct du module principal de la classe pour la fusion.

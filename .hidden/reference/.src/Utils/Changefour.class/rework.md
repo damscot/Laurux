@@ -61,7 +61,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `codeart`) → erreur SQL au lieu du message « déjà saisi » · tests : T05 · sources : [Changefour.class:138](../../../../../.src/Utils/Changefour.class#L138), [Changefour.class:AjoutArt](../../../../../.src/Utils/Changefour.class#L132-L150)
 - [ ] CHANGEFOUR-A02 — [anomalie] `Change2` : messages « ancien »/« nouveau fournisseur » inversés et
   focus sur `Nfour` au lieu de `Nfour2` · tests : T03 · sources : [Changefour.class:363-378](../../../../../.src/Utils/Changefour.class#L363-L378), [Changefour.class:Change2](../../../../../.src/Utils/Changefour.class#L345-L380)
-- [ ] CHANGEFOUR-A03 — [anomalie] `Bsel` n'est pas remis à `False` avant `TriCpt` : une annulation
+- [ ] CHANGEFOUR-A03 — [anomalie] (confirmée phase 2, vague 7 : 401001 repris après une 2e ouverture annulée, figée par T07) `Bsel` n'est pas remis à `False` avant `TriCpt` : une annulation
   reprend l'ancien `Bval` · tests : T07 · sources : [Changefour.class:SelectionFour](../../../../../.src/Utils/Changefour.class#L168-L183), [Changefour.class:SelectionFour2](../../../../../.src/Utils/Changefour.class#L185-L200), [Changefour.class:SelectionFour3](../../../../../.src/Utils/Changefour.class#L202-L218)
 - [ ] CHANGEFOUR-A04 — [anomalie] Aucun contrôle du fournisseur saisi au clavier (cas `Tag 2..5`
   commentés) ni dans `Change`/`Change2` : un code fournisseur inexistant est écrit dans

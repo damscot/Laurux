@@ -1,0 +1,23 @@
+{
+ "classe": "Anomalies",
+ "dataset": "anomalies_shared/anomalies_mvt_cles",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "ANOMALIES-T02",
+ "objet": "Exercice en cours",
+ "description": "Compta > Impressions > Anomalies des clés (Menu324), jeu anomalies_shared/anomalies_mvt_cles (Fiches_Mvt : libellé de lind 6 et clés de lind 1 et 9 altérés), exercice en cours par défaut (01.01.2018-31.12.2018), Traitement (Button2), « Traitement terminé. » validé par Entrée (écran fermé) ; Anomalies.pdf converti par pdftotext -layout via /Soc01/caisse/CmdVis dans ~/edition.txt, comparé (numéros, clés mémorisée et calculée).",
+ "date": "2018-06-15 10:00:00",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

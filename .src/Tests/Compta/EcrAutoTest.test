@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de EcrAuto (.hidden/reference/.src/Compta/Utils/EcrAuto.class/test.md, ECRAUTO-T01, T05, T06).
+''Tests de EcrAuto (.hidden/reference/.src/Compta/Utils/EcrAuto.class/test.md, ECRAUTO-T01, T03-T05, T06, T10, T11).
 ''Instanciation directe avec un VarEcr construit dans le test, base Laurux01 (Fiches_Mvt vide, numecriture = 0).
 ''Valeurs attendues : assets/EcrAutoTest/expected.txt (clone de référence).
 
@@ -10,6 +10,10 @@ Public Sub _Desc()
   TestKit.Desc("T01EcritureSimple", "Écriture « Autre » équilibrée sur le journal OD : lignes Fiches_Mvt, soldes, numecriture")
   TestKit.Desc("T06ModifSup", "Écriture 1 modifiée : ligne 606100 modifiée (L_modif), 512000 supprimée (L_sup), nouvelle ligne 512000 (L_ajou) ; Fiches_Mvt, Fiches_MvtM, soldes")
   TestKit.Desc("T05Collectif", "Compte 401001 (coll_cc 401000) : ligne collective ajoutée (collectif = 1), soldes")
+  TestKit.Desc("T03TresoLettrage", "Facture 411001 puis règlement Treso 512000/411001 avec Tlettrage : numlot reporté, lignes lettrées")
+  TestKit.Desc("T04Regularisation", "Règlement inférieur de 0,01 à la facture, ecart = 0.05 : écriture de régularisation sur jrnod (A02 figée)")
+  TestKit.Desc("T10Impression", "Impression/FinImp avant (numecr = 0, Provisoire) puis après l'écriture : libellés du Report")
+  TestKit.Desc("T11Ged", "/Soc01/FactcheminC renseigné : Docs_Ged, tags = comptes, PDF présent")
 
 End
 
@@ -172,5 +176,191 @@ Public Sub T06ModifSup()
     TestKit.Check("T06/mvtm_nombre", 0)
   Endif
   Soldes("T06", ["606100", "512000"])
+
+End
+
+Private Sub Exercice2025()
+  ''Listextcpt (lettrage) ne lit que les lignes datées de Now - 8 ans à Now + 8 ans : l'exercice de Fiches_Mvt est
+  ''porté à 2025 et les lignes datées du 2025-06-15 (indépendant de la date du jour jusqu'en 2033).
+
+  Utils.db.Exec("UPDATE Fiches_Parametres SET dteclec = &1", Date(2025, 12, 31))
+
+End
+
+Private Sub Ligne25(sCompte As String, fDebit As Float, fCredit As Float, sLot As String, iType As Integer) As VarEcr
+
+  Dim hL As VarEcr
+
+  hL = Ligne(sCompte, fDebit, fCredit)
+  hL.dte = New LDate(Date(2025, 6, 15))
+  hL.numlot = sLot
+  hL.type = iType
+  Return hL
+
+End
+
+Private Sub EcritType(sJournal As String, hV As VarEcr, iType As Integer, sCle As String)
+
+  Dim hE As EcrAuto
+  Dim bRet As Boolean
+
+  hV.type = iType
+  hV.etat = VarEcr.L_ajou
+  hV.dte = New LDate(Date(2025, 6, 15))
+  Try hE = New EcrAuto(sJournal, hV)
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try bRet = hE.ecriture()
+  If Error Then
+    TestKit.Check(sCle & "/ecriture", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(sCle & "/ecriture", bRet)
+  Endif
+  TestKit.Check(sCle & "/numecr", hE.numecr)
+
+End
+
+Private Sub Facture411(sCle As String, fMontant As Float) As Integer
+  ''Facture 411001 / 707000 sur le journal 70 ; renvoie le lind de la ligne 411001.
+
+  Dim hV As New VarEcr
+  Dim rResult As Result
+
+  hV.plus(Ligne25("411001", fMontant, 0, "FAC1", VarEcr.Autre))
+  hV.plus(Ligne25("707000", 0, fMontant, "FAC1", VarEcr.Autre))
+  EcritType("70", hV, VarEcr.Autre, sCle & "/facture")
+  rResult = Utils.db.Exec("SELECT lind FROM Fiches_Mvt WHERE compte = &1 AND numdoc = &2", "411001", "DOC1")
+  If Not rResult.Available Then Return 0
+  Return rResult!lind
+
+End
+
+Private Sub Reglement(sCle As String, iLind As Integer, fMontant As Float)
+
+  Dim hV As New VarEcr
+  Dim hL As VarEcr
+
+  hV.plus(Ligne25("512000", fMontant, 0, "", VarEcr.Treso))
+  hL = Ligne25("411001", 0, fMontant, "", VarEcr.Treso)
+  hL.newTbl()
+  hL.Tbl.lind = iLind
+  hL.Tbl.compte = "411001"
+  hL.Tlettrage.Add(hL.Tbl)
+  hV.plus(hL)
+  EcritType("50", hV, VarEcr.Treso, sCle)
+
+End
+
+Public Sub T03TresoLettrage()
+
+  Dim iLind As Integer
+
+  Exercice2025()
+  iLind = Facture411("T03", 100)
+  TestKit.Check("T03/lind_facture", iLind)
+  Reglement("T03/reglement", iLind, 100)
+  Lignes("T03")
+  Soldes("T03", ["411001", "411000", "512000", "707000"])
+
+End
+
+Public Sub T04Regularisation()
+
+  Dim iLind As Integer
+
+  Exercice2025()
+  Utils.db.Exec("UPDATE Fiches_Parametres SET ecart = &1", 0.05)
+  iLind = Facture411("T04", 100)
+  Reglement("T04/reglement", iLind, 99.99)
+  Lignes("T04")
+  Soldes("T04", ["411001", "411000", "512000", "707000", "120000", "129000"])
+
+End
+
+Private Sub Libelles(hCont As Object, aL As Object[])
+
+  Dim hC As Object
+
+  For Each hC In Object.GetProperty(hCont, "Children")
+    If Object.Type(hC) = "ReportLabel" Then
+      aL.Add(hC)
+    Else
+      Libelles(hC, aL)
+    Endif
+  Next
+
+End
+
+Private Sub Textes(sPre As String, hRep As Report)
+
+  Dim aL As New Object[]
+  Dim i As Integer
+  Dim s As String
+
+  Libelles(hRep, aL)
+  TestKit.Check(sPre & "/nb_panneaux", hRep.Children.Count)
+  TestKit.Check(sPre & "/nb_libelles", aL.Count)
+  For i = 0 To aL.Max
+    s = Object.GetProperty(aL[i], "Text")
+    If s = "Impression demandée par : " & User.Name Then s = "Impression demandée par : <utilisateur>"
+    TestKit.Check(sPre & "/libelle" & Format(i, "00"), s)
+  Next
+
+End
+
+Public Sub T10Impression()
+
+  Dim hV As New VarEcr
+  Dim hE As EcrAuto
+  Dim hRep As Report
+
+  hV.plus(Ligne("606100", 100, 0))
+  hV.plus(Ligne("512000", 0, 100))
+  hV.type = VarEcr.Autre
+  hV.etat = VarEcr.L_ajou
+  hV.dte = New LDate(Date(2018, 6, 15))
+  hE = New EcrAuto("10", hV)
+  hRep = hE.Impression(Null)
+  hRep = hE.FinImp(hRep)
+  Textes("T10/provisoire", hRep)
+  TestKit.Check("T10/ecriture", hE.ecriture())
+  hRep = hE.Impression(Null)
+  hRep = hE.FinImp(hRep)
+  Textes("T10/reelle", hRep)
+
+End
+
+Public Sub T11Ged()
+
+  Dim hV As New VarEcr
+  Dim rResult As Result
+  Dim sRep As String
+
+  sRep = User.Home & "/gedcompta"
+  Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminC"] = sRep
+  hV.plus(Ligne("606100", 100, 0))
+  hV.plus(Ligne("512000", 0, 100))
+  hV.dte = New LDate(Date(2018, 6, 15))
+  Ecrit("10", hV, "T11")
+  TestKit.Check("T11/pdf_tmp", Exist(User.Home & "/tmp/Ecriture.pdf"))
+  rResult = Utils.db.Exec("SELECT * FROM Docs_Ged ORDER BY lind")
+  TestKit.Check("T11/docs_nombre", rResult.Count)
+  If Not rResult.Available Then Return
+  TestKit.Check("T11/type", rResult!type)
+  TestKit.Check("T11/code", rResult!code)
+  TestKit.Check("T11/compte", rResult!compte)
+  TestKit.Check("T11/origin", rResult!origin)
+  TestKit.Check("T11/mime", rResult!mime)
+  TestKit.Check("T11/url_sous_rep", rResult!url Begins sRep)
+  TestKit.Check("T11/filename_debut", Left(rResult!filename, 2))
+  TestKit.Check("T11/pdf_archive", Exist(Replace(rResult!url, "file://", "")))
+  rResult = Utils.db.Exec("SELECT t.tag FROM Docs_Tag d, Fiches_Tag t WHERE d.tag_lind = t.lind ORDER BY t.tag")
+  TestKit.Check("T11/tags_nombre", rResult.Count)
+  If Not rResult.Available Then Return
+  Repeat
+    TestKit.Check("T11/tag_" & rResult.Index, rResult!tag)
+  Until rResult.MoveNext()
 
 End

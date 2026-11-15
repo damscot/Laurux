@@ -65,7 +65,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] RUBRESULT-A01 — [anomalie, perte de données] Le contrôle d'existence teste deux fois
   `Bcr.txt` et jamais `Bcrcpt.txt` : sans `Bcrcpt.txt`, `Fiches_RubCompt` est supprimée et recréée
   vide avant l'erreur d'ouverture · tests : T05 · sources : [Rubresult.class:305](../../../../../../.src/Compta/Utils/Rubresult.class#L305), [Rubresult.class:358](../../../../../../.src/Compta/Utils/Rubresult.class#L358)
-- [ ] RUBRESULT-A02 — [anomalie] Import sans transaction ni gestion d'erreur : toute erreur
+- [ ] RUBRESULT-A02 — [anomalie] (confirmée phase 2, vague 7 : une ligne vide de `Bcr.txt` fait échouer l'INSERT (`numrub` Null, l. 343) après le DROP/CREATE (l. 312-313) : table laissée partielle (T07)) Import sans transaction ni gestion d'erreur : toute erreur
   (ligne mal formée, valeur trop longue) laisse les tables vidées ou partielles · tests : T05, T07 ·
   sources : [Rubresult.class:BcrSelect_Activate](../../../../../../.src/Compta/Utils/Rubresult.class#L284-L392)
 - [ ] RUBRESULT-A03 — [anomalie, SQLite] `Truncate` n'est pas traduit par `DB_Connection` : import
@@ -80,3 +80,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sources : [Rubresult.class:135](../../../../../../.src/Compta/Utils/Rubresult.class#L135), [Rubresult.class:CleanChamps](../../../../../../.src/Compta/Utils/Rubresult.class#L95-L102)
 - [ ] RUBRESULT-A06 — [anomalie] `Btn_KeyPress` enregistre sur toute touche pressée sur
   « Enregistrer » · tests : T02 · sources : [Rubresult.class:Btn_KeyPress](../../../../../../.src/Compta/Utils/Rubresult.class#L149-L158)
+- [ ] RUBRESULT-A07 — [anomalie] `BcrSelect_Activate` : découpage par `InStr(Lig, ";")` (l. 325-327, idem `Bcrcpt.txt` l. 362) : une ligne sans « ; » final perd son dernier caractère (`Left$(Lig, 0 - 1)` quand `InStr` = 0) et les champs suivants sont décalés ; même construction que [IMPCPOSTAUX-A01](../../../Utils/Exports-Imports/Impcpostaux.class/rework.md) (phase 2, vague 7, 2026-11-15) · tests : T07 · sources : [Rubresult.class:324-339](../../../../../../.src/Compta/Utils/Rubresult.class#L324-L339), [Rubresult.class:362](../../../../../../.src/Compta/Utils/Rubresult.class#L362)

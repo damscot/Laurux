@@ -1,0 +1,23 @@
+{
+ "id": "VISHITCARTES-T02",
+ "objet": "Tri par visites, 100 premiers, 2 pages",
+ "classe": "VisHitCartes",
+ "description": "Jeu de 60 cartes (1 à 3 visites) ; HitCarte : 100 premiers (RadioButton6), tri par visites (RadioButton2), Traitement ; Imprimer : texte du PDF sur 2 pages (saut à 283 mm ; titre de la 2e page « hit parade » au singulier, figé).",
+ "dataset": "vishitcartes_visites/vishitcartes_visites",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

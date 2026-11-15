@@ -1,0 +1,28 @@
+{
+ "id": "FSAUVE-T04",
+ "classe": "FSauve",
+ "objet": "Contrôle des processus (> 7 connexions)",
+ "description": "Règle « outils » : gksu (absent du poste) répond une liste de 9 lignes (en-tête + 8 connexions) : lg > 7, Hbox1 affichée, aucun mysqldump (outils.trace : seul gksu, mot de passe masqué) ; « 3- Revenir au menu » (Button6) la masque ; Quitter.",
+ "dataset": "fusers_shared/fusers_base",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "outils": {
+  "gksu": {
+   "sortie": "+----+--------+-----------+---------+---------+------+-------+------------------+\n| 1  | laurux | db:40001 | Laurux01 | Sleep   | 1    |       |                  |\n| 2  | laurux | db:40002 | Laurux01 | Sleep   | 1    |       |                  |\n| 3  | laurux | db:40003 | Laurux01 | Sleep   | 1    |       |                  |\n| 4  | laurux | db:40004 | Laurux01 | Sleep   | 1    |       |                  |\n| 5  | laurux | db:40005 | Laurux01 | Sleep   | 1    |       |                  |\n| 6  | laurux | db:40006 | Laurux01 | Sleep   | 1    |       |                  |\n| 7  | laurux | db:40007 | Laurux01 | Sleep   | 1    |       |                  |\n| 8  | laurux | db:40008 | Laurux01 | Sleep   | 1    |       |                  |",
+   "hidden_argv": [
+    "*-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace"
+ ]
+}

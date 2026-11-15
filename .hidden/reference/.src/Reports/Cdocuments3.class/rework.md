@@ -56,7 +56,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CDOCUMENTS3-A01 — [anomalie, à confirmer par T03] Saut de page dans la boucle des
+- [ ] CDOCUMENTS3-A01 — [anomalie, à confirmer par T03] (confirmée phase 2, vague 7 : saut dans les commentaires sans nouvelle page : en-tête réimprimé en surimpression (1 seule page), figée par T03) Saut de page dans la boucle des
   commentaires de `EdPrep` : la séquence de la ligne 267 n'appelle pas `Entete`, seule méthode
   qui fait `AddPage` ; l'en-tête, les cadres et les lignes suivantes sont imprimés **sur la même
   page**, par-dessus le contenu. Correction proposée : utiliser `EntetePage` (CDOCUMENTS3-004)

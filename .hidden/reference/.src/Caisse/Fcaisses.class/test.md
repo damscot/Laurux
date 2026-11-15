@@ -16,7 +16,7 @@
 | FCAISSES-T04 | replay | Dépôt | `/Soc01/Depots` = 1, dépôt `02` puis dépôt de code long `DEP003` | liste sans `01` ; `depot = "02"` puis `"DE"` (A04 figée) | `tests/depot/` | implémenté (gb.test `FcaissesTest.T04Depot` : liste sans `01`, dépôt `02` puis `DEP003` → `DE`, A04 figée) |
 | FCAISSES-T05 | replay | Suppression refusée | caisse `1` connectée ; caisse `2` avec `tkz = 0` | deux messages, base inchangée | `tests/suppression_refusee/` | à faire : messages `Message.Error` (bloquant en gb.test) ; à écrire en scénario |
 | FCAISSES-T06 | replay | Suppression acceptée et cible | caisse `2` avec `tkz = 1` et tickets ; code `2` saisi mais caisse `1` sélectionnée dans la liste | figer : suppression de la ligne sélectionnée malgré les tickets (A01, A02) | `tests/suppression_cible/` | à faire : `Message.Question` puis `Message.Delete` (bloquant en gb.test) ; à écrire en scénario |
-| FCAISSES-T07 | replay | Échap dans la liste | Échap sur la liste puis enregistrement | liste masquée jusqu'à la réouverture (A05 figée) | `tests/echap_liste/` | à faire : Échap non rejouable |
+| FCAISSES-T07 | replay | Échap dans la liste | Échap sur la liste puis enregistrement | liste masquée jusqu'à la réouverture (A05 figée) | `tests/echap_liste/` | à faire : Échap non rejouable ; en gb.test, Caisse_KeyPress lit Key.Code (indisponible hors événement clavier) |
 
 ## Détail des tests
 

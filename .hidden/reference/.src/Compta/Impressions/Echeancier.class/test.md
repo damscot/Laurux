@@ -16,7 +16,7 @@ log en complément.
 | ECHEANCIER-T05 | replay | Fournisseurs | `Rfour`, tri échéance puis compte | signes inversés côté débit ; filtre de mode ignoré | `tests/fournisseurs/` | implémenté (tri échéance seul) |
 | ECHEANCIER-T06 | replay | Multipage | > 60 échéances dont un lot avec 10 règlements en bas de page | en-têtes répétés ; règlements débordant la page (A04 figée) | `tests/multipage/` | implémenté |
 | ECHEANCIER-T07 | replay | Règlement négatif | règlement client au débit négatif | comportement figé (erreur de conversion ou montant, A01) | `tests/reglement_negatif/` | implémenté |
-| ECHEANCIER-T08 | replay | Saisie des dates | « 3112 » + Entrée dans `Dten0` ; double-clic + calendrier dans `Dten1` | dates normalisées ; calendrier masqué après choix | `tests/saisie_dates/` | à faire : double-clic et DateChooser non rejoués ; dates saisies non visibles dans le PDF (dateedition jamais renseignée) |
+| ECHEANCIER-T08 | replay | Saisie des dates | « 3112 » + Entrée dans `Dten0` ; double-clic + calendrier dans `Dten1` | dates normalisées ; calendrier masqué après choix | `tests/saisie_dates/` | implémenté (gb.test `EcheancierTest.T08SaisieDates` : dteN0_LostFocus, Dten1_DblClick et DateChooser1_Activate appelés directement ; dates du PDF non concernées) |
 | ECHEANCIER-T09 | gbtest | `Montant_Signe` (après ECHEANCIER-007) | matrice client/fournisseur × débit/crédit × facture/règlement × signe | valeurs produites par le clone non modifié | `tests/montant_signe/` | à faire : après extraction ECHEANCIER-007 (Montant_Signe) |
 | ECHEANCIER-T10 | replay | SQLite | T02 sur `Laurux01.sqlite` + jeu | même texte que MySQL (`left()` traduit par `DB_Connection`) | `tests/sqlite/` | à faire : runner sans base SQLite |
 
@@ -42,3 +42,5 @@ log en complément.
 - Constats figés : T06 produit 6 pages dont 3 sans contenu, le pied de page n'apparaît que sur la dernière,
   les règlements du lot 22 débordent le bas de la page 1 ; T07 affiche -30 et -20 sous une facture de 150 mais
   « Total échéance » 130 (le débit négatif n'est pas soustrait).
+- **Vague 7 (T08)** : module `.src/Tests/Compta/EcheancierTest.test` ; `New Echeancier` sans affichage, année courante
+  masquée (« 3112 » → 31.12.<année courante>), `DateChooser1.Value` posé avant `DateChooser1_Activate`.

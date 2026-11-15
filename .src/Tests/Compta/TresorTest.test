@@ -1,0 +1,271 @@
+' Gambas test file
+
+''Tests de Tresor (.hidden/reference/.src/Compta/Tresor.class/test.md, TRESOR-T06, T07, T10, T15).
+''Prévu en replay, bloqué au rejeu (masque d'abonnement ouvert par F7, touche non rejouée) : l'écran est instancié
+''sans être affiché (jeu tresor_masque : masque de trésorerie n° 2, compteur 4), journal 50 et date du 15.06.2018
+''posés puis Datej_LF (numéro d'écriture), Aff_Mask (gestionnaire de F7), masque rendu courant par la propriété Key,
+''Colabt_Click, montant 250 puis ToggleButton4_Click (→ LignAbt) appelés directement, puis validation par
+''Button2_Click (écritures du journal 50 relevées). Valeurs attendues : assets/TresorTest/expected.txt (clone de
+''référence).
+
+Private $hTimer As Timer
+Private $sBouton As String
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06RappelOui", "New Tresor(num), « Oui » (Timer) : écriture rappelée dans Ecrit1 (partiel)")
+  TestKit.Desc("T15bCompteF2", "Gestionnaire de F2 sur le compte : TriCpt (ShowModal) choisi par un Timer, compte recopié")
+  TestKit.Desc("T07RefusModification", "New Tresor(num), Message.Question « Vous allez modifier… » → Non (Timer)")
+  TestKit.Desc("T15ListesF2", "Gestionnaires de F2 : liste des journaux de trésorerie, liste des libellés (bascule)")
+  TestKit.Desc("T10MasqueAbonnement", "Masque d'abonnement T, montant 250 : lignes calculées dans Ecrit1, compteur + 1")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "TresorTest")
+  TestKit.OuvreBase("tresor_masque")
+
+End
+
+Private Sub Compteur(sCle As String)
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT compteur FROM " & Cbase.Table("TabNumabon") & " WHERE numero = &1", "2")
+  If Not r.Available Then
+    TestKit.Check(sCle, "<absent>")
+  Else
+    TestKit.Check(sCle, r!compteur)
+  Endif
+
+End
+
+Private Sub Ecritures(sCle As String)
+  ''Écritures du journal 50 au 15.06.2018 (numéro d'écriture masqué : compteur de Laurux01).
+
+  Dim r As Result
+  Dim i As Integer
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE jour = &1 AND dte = &2 ORDER BY lind", "50", "2018-06-15")
+  TestKit.Check(sCle & "_nb", r.Count)
+  If Not r.Available Then Return
+  Repeat
+    TestKit.Check(sCle & i, r!compte & "|" & r!intitule & "|" & r!libelle & "|" & r!montantd & "|" & r!montantc & "|" & r!collectif & "|" & r!validee & "|" & r!provisoire & "|" & r!tresorerie)
+    Inc i
+  Until r.MoveNext()
+
+End
+
+Public Sub T10MasqueAbonnement()
+
+  Dim hF As Tresor
+  Dim hV As Object
+  Dim i As Integer
+
+  Try hF = New Tresor("")
+  If Error Then
+    TestKit.Check("T10/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Compteur("T10/compteur_avant")
+  Object.SetProperty(hF.Controls["Journal"], "Text", "50")
+  Object.SetProperty(hF.Controls["Datej"], "Text", "15.06.2018")
+  Try hF.Datej_LF()
+  If Error Then TestKit.Check("T10/datej_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T10/numecrit", Object.GetProperty(hF.Controls["Numecrit"], "Text") <> "")
+  Try hF.Aff_Mask()
+  If Error Then TestKit.Check("T10/masque_err", "ERREUR: " & Error.Text)
+  hV = hF.Controls["Colabt"]
+  TestKit.Check("T10/masques", hV.Count)
+  If hV.Count = 0 Then Return
+  hV.Key = "2"
+  hV.MoveTo("2")
+  Try hF.Colabt_Click()
+  If Error Then TestKit.Check("T10/colabt_err", "ERREUR: " & Error.Text)
+  TestKit.Check("T10/compte", Object.GetProperty(hF.Controls["Numcompte"], "Text"))
+  Object.SetProperty(hF.Controls["Montant"], "Text", "250")
+  hV.MoveTo("2")
+  Try hF.ToggleButton4_Click()
+  If Error Then TestKit.Check("T10/ligne_err", "ERREUR: " & Error.Text)
+  hV = hF.Controls["Ecrit1"]
+  TestKit.Check("T10/lignes", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check("T10/l" & i, hV.Item.Key & "|" & hV.Item[0] & "|" & hV.Item[1] & "|" & hV.Item[4] & "|" & hV.Item[5] & "|" & hV.Item[6] & "|" & hV.Item[8])
+      Inc i
+    Until hV.MoveNext()
+  Endif
+  Compteur("T10/compteur_apres")
+  ' Validation (Button2_Click : DelMvt2 puis Enrg_Ecr, contrepartie banque automatique)
+  Try hF.Button2_Click()
+  If Error Then TestKit.Check("T10/valider_err", "ERREUR: " & Error.Text)
+  Ecritures("T10/mvt")
+  Object.Lock(hF)
+
+End
+
+Private Sub Liste(sCle As String, hV As Object)
+
+  Dim i As Integer
+
+  TestKit.Check(sCle & "/visible", hV.Visible)
+  TestKit.Check(sCle & "/nb", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check(sCle & "/l" & i, hV.Item.Key & "|" & hV.Item[1])
+      Inc i
+    Until hV.MoveNext()
+  Endif
+
+End
+
+Public Sub T15ListesF2()
+  ''TRESOR-T15 (partiel) : F2 n'est pas rejouable ; ses gestionnaires sont appelés directement : Journaux (F2 dans
+  ''Journal), Libutton2_Click (F2 dans le libellé), deux fois (bascule). F2 sur le compte (ToggleButton8_Click →
+  ''compte) ouvre TriCpt en ShowModal et F5 ouvre FCalc en ShowModal (bloquants en gb.test) : non joués.
+
+  Dim hF As Tresor
+
+  Try hF = New Tresor("")
+  If Error Then
+    TestKit.Check("T15/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hF.Journaux()
+  If Error Then TestKit.Check("T15/journaux_err", "ERREUR: " & Error.Text)
+  Liste("T15/journaux", hF.Controls["Jour"])
+  Try hF.Libutton2_Click()
+  If Error Then TestKit.Check("T15/libelles_err", "ERREUR: " & Error.Text)
+  Liste("T15/libelles", hF.Controls["Libview"])
+  Try hF.Libutton2_Click()
+  Liste("T15/libelles_bascule", hF.Controls["Libview"])
+  Object.Lock(hF)
+
+End
+
+Public Sub _Rep_Timer()
+  ''Pendant une boîte Message (fenêtre FMessage de gb.gui.base) : relève son texte et clique le bouton $sBouton.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" Or InStr(Object.Type(hW), "Message") Then
+      $hTimer.Enabled = False
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If Replace(Object.GetProperty(hC, "Text"), "&", "") = $sBouton Then
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Public Sub T07RefusModification()
+  ''TRESOR-T07 : rappel de l'écriture n° 2 (jeu Compta/extrait_shared/extrait_base, journal 50) par New Tresor("2") ;
+  ''le Message.Question de Ecrit3 reçoit « Non » d'un Timer du module (technique LDateCTest).
+
+  Dim hF As Tresor
+  Dim r As Result
+
+  TestKit.OuvreBase("Compta/extrait_shared/extrait_base")
+  $sBouton = "Non"
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF = New Tresor("2")
+  If Error Then TestKit.Check("T07/new_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T07/message", $sVu)
+  TestKit.Check("T07/fenetre_valide", Object.IsValid(hF))
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1", 2)
+  TestKit.Check("T07/mvt_nb", r!nb)
+  If Object.IsValid(hF) Then Object.Lock(hF)
+
+End
+
+Public Sub T06RappelOui()
+  ''TRESOR-T06 (partiel) : rappel de l'écriture n° 2 (jeu extrait_base) par New Tresor("2"), « Oui » au
+  ''Message.Question (Timer du module) ; lignes rappelées dans Ecrit1 et zones relevées. Le changement de montant et
+  ''la revalidation ne sont pas joués.
+
+  Dim hF As Tresor
+  Dim hV As Object
+  Dim i As Integer
+
+  TestKit.OuvreBase("Compta/extrait_shared/extrait_base")
+  $sBouton = "Oui"
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF = New Tresor("2")
+  If Error Then TestKit.Check("T06/new_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T06/message", $sVu)
+  TestKit.Check("T06/fenetre_valide", Object.IsValid(hF))
+  If Not Object.IsValid(hF) Then Return
+  TestKit.Check("T06/zones", Object.GetProperty(hF.Controls["Journal"], "Text") & "|" & Object.GetProperty(hF.Controls["Numecrit"], "Text") & "|" & Object.GetProperty(hF.Controls["Datej"], "Text"))
+  hV = hF.Controls["Ecrit1"]
+  TestKit.Check("T06/lignes", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check("T06/l" & i, hV.Item.Key & "|" & hV.Item[0] & "|" & hV.Item[1] & "|" & hV.Item[2] & "|" & hV.Item[4] & "|" & hV.Item[5])
+      Inc i
+    Until hV.MoveNext()
+  Endif
+  Object.Lock(hF)
+
+End
+
+Public Sub _Tri_Timer()
+  ''Pendant le ShowModal de TriCpt : choix du compte 411001 (Bsel puis ColTri_MajSel, comme une sélection).
+
+  Dim hW As Window
+
+  For Each hW In Windows
+    If Object.Type(hW) = "TriCpt" Then
+      $hTimer.Enabled = False
+      $sVu = "TriCpt"
+      Object.SetProperty(hW, "Bsel", True)
+      Object.Call(hW, "ColTri_MajSel", ["411001"])
+      Return
+    Endif
+  Next
+
+End
+
+Public Sub T15bCompteF2()
+  ''TRESOR-T15 (suite) : F2 sur le compte (ToggleButton8_Click → compte → TriCpt.ShowModal) après validation de la
+  ''date ; la sélection dans TriCpt est faite par un Timer du module (technique LDateCTest).
+
+  Dim hF As Tresor
+
+  Try hF = New Tresor("")
+  If Error Then
+    TestKit.Check("T15b/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Object.SetProperty(hF.Controls["Journal"], "Text", "50")
+  Object.SetProperty(hF.Controls["Datej"], "Text", "15.06.2018")
+  Try hF.Datej_LF()
+  $hTimer = New Timer As "_Tri"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF.ToggleButton8_Click()
+  If Error Then TestKit.Check("T15b/f2_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T15b/tricpt", $sVu)
+  TestKit.Check("T15b/compte", Object.GetProperty(hF.Controls["Numcompte"], "Text"))
+  Object.Lock(hF)
+
+End

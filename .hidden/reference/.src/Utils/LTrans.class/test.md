@@ -9,7 +9,7 @@
 | LTRANS-T02 | gbtest | Copie à l'écriture | `t.List = a` puis modification de `a` ; affectation d'un `String[]` | `t.List` inchangé ; conversion acceptée | `tests/copie_liste/` | implémenté |
 | LTRANS-T03 | gbtest | Auto-instance | `LTrans.List = ["1","2"]` puis lecture depuis un autre module | même contenu | `tests/auto_instance/` | implémenté |
 | LTRANS-T04 | replay | Règlement de bons de caisse | caisse (`./Laurux -p`) : bon de caisse → choix 2 « Régler des bons » → sélection de 2 BL dans `TriFacture` → validation ; table `Fiches_Bl` (`numtick`) | `numtick` positionné sur les 2 BL | `tests/replay_caisse_bons/` | à faire : caisse (touches ImageButton non rejouables) et jeu de BL de caisse |
-| LTRANS-T05 | replay | Suppression de tags en masse | GED (`GedR`) : 2 documents sélectionnés → Supprimer tags → annuler, puis valider un tag ; tables `Docs_Tag`, `Fiches_Tag` | annulation : aucune modification ; validation : tag retiré | `tests/replay_ged_tags/` | à faire : GED (jeu Docs_Ged avec fichiers, sélection multiple dans GedR) non synthétisé |
+| LTRANS-T05 | replay | Suppression de tags en masse | GED (`GedR`) : 2 documents sélectionnés → Supprimer tags → annuler, puis valider un tag ; tables `Docs_Tag`, `Fiches_Tag` | annulation : aucune modification ; validation : tag retiré | `tests/replay_ged_tags/` | implémenté (scénarios `Utils/ltrans_suppression_tags_annulee` (Annuler : aucune requête de suppression) et `Utils/ltrans_suppression_tags_validee` (filtre « fourn », Valider : Docs_Tag tag 3 retiré des documents 1 et 2) ; jeu `gedr_shared/ged`) |
 
 ## Détail des tests
 

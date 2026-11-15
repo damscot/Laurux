@@ -1,0 +1,30 @@
+{
+ "id": "RAZDEVIS-T04",
+ "classe": "RazDevis",
+ "objet": "Purge sans mysqldump (sauvegarde impossible)",
+ "description": "Comme RAZDEVIS-T01, mais mysqldump introuvable (règle « outils » : code 127, message sh) : la purge a lieu quand même (A02) ; la redirection du Shell crée ~/Sauve/Laurux01EffaceD.sql vide ; appel tracé dans outils.trace, mot de passe masqué. Le dump vérifie les lignes purgées et conservées.",
+ "dataset": "razdevis_shared/devis_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "outils": {
+  "mysqldump": {
+   "rc": 127,
+   "erreur": "sh: 1: mysqldump: not found",
+   "hidden_argv": [
+    "-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace",
+  "Sauve/Laurux01EffaceD.sql"
+ ]
+}

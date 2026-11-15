@@ -7,7 +7,7 @@
 |---|---|---|---|---|---|---|
 | CRESULTAT-T01 | gbtest | Niveaux et formatage | `Level0`, `Level3`, `Level1` (`p5` vide puis `"X"` ; montants `"1234"`, `"1234.56"`, `"-5"`, `""`), `Level7`, `Level2`, `BasPage` | texte `pdftotext` de référence (chaîne brute pour `"1234.56"`, A01 figée ; `p5` imprimé deux fois) | `tests/niveaux/` | implémenté (gb.test CresultatTest.T01Niveaux) |
 | CRESULTAT-T02 | gbtest | Multi-pages | `AliasNbPages`, 2 × (`Level0`, `Level3`, 44 `Level1`, `BasPage`) | `Page 1/2`, `Page 2/2` | `tests/multipages/` | implémenté (gb.test CresultatTest.T02MultiPages) |
-| CRESULTAT-T03 | replay | Compte de résultat (`RubImp`, bouton d'impression du résultat) | jeu comptable dérivé (classes 6 et 7 avec centimes), avec et sans détail des comptes | `pdftotext` de `~/tmp/Resultat.pdf` identique entre clones | `tests/replay_resultat/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par Compta/rubimp_resultat_benefice et rubimp_resultat_perte_detail (RUBIMP-T01/T02, resultat_pdf.txt) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| CRESULTAT-T03 | replay | Compte de résultat (`RubImp`, bouton d'impression du résultat) | jeu comptable dérivé (classes 6 et 7 avec centimes), avec et sans détail des comptes | `pdftotext` de `~/tmp/Resultat.pdf` identique entre clones | `tests/replay_resultat/` | implémenté (gb.test CresultatTest.T03RubImp : appels de RubImp, rubriques T/E/L/S/O/C/D/R/G avec centimes, détaillé et simple, 2 pages ; texte pdftotext) |
 
 ## Détail des tests
 
@@ -20,3 +20,4 @@
 - **Données** : jeu dérivé de [Balance/test.md](../../Compta/Impressions/Balance.class/test.md) ;
   le scénario de `RubImp` est décrit dans [RubImp/test.md](../../Compta/Impressions/RubImp.class/test.md).
 - **Couverture visée** : 100 %.
+- **Implémentation (phase 2, vague 7)** : T03 dans `CresultatTest.T03RubImp` (dispatch des types de rubrique de RubImp reproduit sur un tableau figé, détaillé et simple).

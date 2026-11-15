@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RENAN-T01 | replay | Lancement par `Prgm` | `Laurux01.sql`, saisie `RenAN` | message d'erreur SQL (table `Fiches_Mvtoc` inexistante) figé ; dump inchangé | `tests/renan_prgm/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par Communs/prgm_scripts_renan, PRGM-T06 : Query failed fatal figé, code 125) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| RENAN-T01 | replay | Lancement par `Prgm` | `Laurux01.sql`, saisie `RenAN` | message d'erreur SQL (table `Fiches_Mvtoc` inexistante) figé ; dump inchangé | `tests/renan_prgm/` | implémenté (Compta/renan_prgm, code 125 figé) |
 
 ## Détail des tests
 

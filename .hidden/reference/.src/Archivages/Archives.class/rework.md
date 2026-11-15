@@ -88,13 +88,13 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ARCHIVES-A02 — [anomalie, à confirmer] Pagination après un filtre par date : `Deplacement`
   recharge par `Deb2` avec `sel` (chiffres saisis) au lieu de `Deb2b` avec `sel2` → page vide ;
   avec l'ordre inversé et `Dat = 0`, aucun rechargement · tests : T04 · sources : [Archives.class:Deplacement](../../../../../.src/Archivages/Archives.class#L1127-L1157)
-- [ ] ARCHIVES-A03 — [anomalie] Facture suivante / précédente : bornes de page codées en dur (26 et
+- [ ] ARCHIVES-A03 — [anomalie] (confirmée phase 2, vague 7 : bornes 26/25 en dur (`Button1_Click` l. 1471, `Button2_Click` l. 1484) pour 21 lignes par page, figée par T08) Facture suivante / précédente : bornes de page codées en dur (26 et
   25) au lieu de `lg` ; `Deplacement` borne `NbEnreg` à `NbEnregTot` (factures hors entretien seules,
   sans retrancher `lg`) → dernière page vide possible · tests : T05, T08 · sources : [Archives.class:1473](../../../../../.src/Archivages/Archives.class#L1473), [Archives.class:1488](../../../../../.src/Archivages/Archives.class#L1488), [Archives.class:1130](../../../../../.src/Archivages/Archives.class#L1130)
 - [ ] ARCHIVES-A04 — [anomalie] Mode « Toutes les factures » : la partie entretien de l'union
   filtre par préfixe (`like "<sel>%"`) et la partie normale par sous-chaîne (`"%<sel>%"`) ·
   tests : T03 · sources : [Archives.class:307](../../../../../.src/Archivages/Archives.class#L307), [Archives.class:309](../../../../../.src/Archivages/Archives.class#L309), [Archives.class:406](../../../../../.src/Archivages/Archives.class#L406), [Archives.class:408](../../../../../.src/Archivages/Archives.class#L408)
-- [ ] ARCHIVES-A05 — [anomalie, à confirmer] `rmail!cli_id_tva` lu sans test `Available` : pour une
+- [ ] ARCHIVES-A05 — [anomalie, à confirmer] (confirmée phase 2, vague 7 : `rmail!cli_id_tva` (l. 1228) hors `Try` sur un résultat vide, figée par T12) `rmail!cli_id_tva` lu sans test `Available` : pour une
   facture dont le client a été supprimé, erreur attrapée par `Catch` et détail non affiché ;
   `TvaCli` n'est d'ailleurs jamais relu · tests : T12 · sources : [Archives.class:1225-1232](../../../../../.src/Archivages/Archives.class#L1225-L1232)
 - [ ] ARCHIVES-A06 — [anomalie] (confirmée phase 2, vague 6 : guillemet tapé dans `NO` → Query failed non attrapée (`Deb2` l. 295 depuis `NO_KeyPress`), T13 en xfail ; le même cas est attrapé dans ArchivesTck) Filtres et recherches construits par concaténation
@@ -113,3 +113,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   critère n'est pris en compte que s'il est affiché par la ComboBox `NM` au moment où elle prend le
   focus (pas de `NM_Click`) ; sinon la frappe filtre par nom. Les recherches ignorent les factures
   entretien · tests : T09 · sources : [Archives.class:NM_Gotfocus](../../../../../.src/Archivages/Archives.class#L809-L850), [Archives.class:NM_KeyPress](../../../../../.src/Archivages/Archives.class#L858-L885)
+- [ ] ARCHIVES-A11 — [anomalie] `_New` : avec une clé `/Soc<XX>/Col/LcolH` partielle, les colonnes absentes de la clé gardent la largeur Gambas (56/67) et non les largeurs par défaut (`Else` l. 169-…, appliqué seulement sans clé) (phase 2, vague 7, 2026-11-15) · tests : T15 · sources : [Archives.class:142-170](../../../../../.src/Archivages/Archives.class#L142-L170)

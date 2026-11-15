@@ -11,12 +11,12 @@ créditeur, un client sans courriel). Comparaisons : dump de `Fiches_relances` e
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | LIGCLI-T01 | replay | Construction des lignes | `FEditrel` : générer à la date du jour | une ligne par compte ; solde, niveau de lettre proposé | `tests/construction/` | implémenté |
-| LIGCLI-T02 | replay | Navigation clavier/souris | flèches haut/bas, clic sur une ligne | extrait affiché (`visext`) du bon client | `tests/navigation/` | à faire : flèches non rejouées et extrait (`visext`) sans effet en base |
+| LIGCLI-T02 | replay | Navigation clavier/souris | flèches haut/bas, clic sur une ligne | extrait affiché (`visext`) du bon client | `tests/navigation/` | à faire : flèches non rejouées et extrait (`visext`) sans effet en base ; navigation portée par FEditrel (`Lig_up`/`lig_Down`) ; en gb.test, `visext` lit les écritures entre Now − 8 ans et Now + 8 ans (date non figée en gb.test : contenu non stable) |
 | LIGCLI-T03 | replay | Désélection d'un client | décocher `Checkselec` d'un client | dump `Fiches_relances` : écritures du client supprimées | `tests/deselection/` | implémenté |
 | LIGCLI-T04 | replay | Édition individuelle, lettre de niveau 2 | `Radiolet`, lettre 2, `Buttonedit` | texte PDF de référence ; `Fiches_Mvt.relance` mis à jour | `tests/edition_lettre/` | implémenté (relance écrite = niveau de Fiches_relances, pas la lettre choisie : candidat anomalie) |
 | LIGCLI-T05 | replay | Édition individuelle, relevé, solde créditeur | `RadioRel`, client créditeur | texte PDF (solde non négativé, comportement figé) | `tests/edition_releve/` | à faire : jeu avec client créditeur à créer (non commencé, vague 4) |
 | LIGCLI-T06 | replay | Saut de page | client avec plus de 40 écritures | PDF de 2 pages, en-têtes répétés | `tests/saut_page/` | à faire : jeu de plus de 40 écritures à créer (non commencé, vague 4) |
-| LIGCLI-T07 | replay | Client sans compte `Fiches_Comptes` | compte 411 présent dans `Fiches_Mvt` et `Fiches_Cli` seulement | comportement actuel figé (erreur à la construction) | `tests/sans_compte/` | à faire : non commencé (vague 4) |
+| LIGCLI-T07 | replay | Client sans compte `Fiches_Comptes` | compte 411 présent dans `Fiches_Mvt` et `Fiches_Cli` seulement | comportement actuel figé (erreur à la construction) | `.src/Tests/Compta/LigcliTest.test` (`T07SansCompte`) | implémenté (gb.test, jeu ligcli_sans_compte : 411002 retiré de Fiches_Comptes ; `New Ligcli` avec les arguments de FEditrel.affiche : erreur « Result is not available » (Ligcli._new.61) figée ; en replay, l'erreur fatale survient dès l'ouverture de FEditrel et le code de sortie alterne 125/124 (délai dépassé après la boîte d'erreur) : scénario non retenu) |
 
 ## Détail des tests
 

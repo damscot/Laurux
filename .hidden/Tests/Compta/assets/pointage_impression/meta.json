@@ -1,0 +1,23 @@
+{
+ "id": "POINTAGE-T11",
+ "objet": "Impression",
+ "classe": "Pointage",
+ "description": "Rapprochement (jeu pointage_rappro, 2018-06-15) : 512000, trois impressions (Imprimer) : pointées sans relevé (Ep), non pointées (Enp), relevé 2 rappelé ; PDF ~/tmp/Pointage.pdf converti par pdftotext -layout via /Soc01/caisse/CmdVis (ajouté à ~/edition.txt), comparé ; Quitter.",
+ "dataset": "pointage_shared/pointage_rappro",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

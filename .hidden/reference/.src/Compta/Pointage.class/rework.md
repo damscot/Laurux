@@ -86,7 +86,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] POINTAGE-A05 — [anomalie] `Update_Req` : `IF(pointee=TRUE, …)` (MySQL) non traduit pour
   SQLite (à confirmer) ; sortie sans liste si `Fiches_Mvt` est vide alors que des exercices
   antérieurs existent · tests : T13 · sources : [Pointage.class:94-96](../../../../../.src/Compta/Pointage.class#L94-L96)
-- [ ] POINTAGE-A06 — [anomalie] Impression « non pointées » : le filtre `dte <= date du relevé` ne
+- [ ] POINTAGE-A06 — [anomalie] (confirmée phase 2, vague 7 : le mode « non pointées » inclut le report à nouveau, total 1345,00, figée par T11) Impression « non pointées » : le filtre `dte <= date du relevé` ne
   porte que sur la branche `pointee is null` du `or` ; branche « sans relevé » avec `nrlv <= ''` ;
   `Fiches_Societes` lu sans test `Available` ; impression limitée à l'exercice courant · tests : T11 · sources : [Pointage.class:795](../../../../../.src/Compta/Pointage.class#L795), [Pointage.class:807](../../../../../.src/Compta/Pointage.class#L807), [Pointage.class:774-775](../../../../../.src/Compta/Pointage.class#L774-L775)
 - [ ] POINTAGE-A07 — [anomalie] `Dépointer` met aussi à jour `Fiches_Comptes.soldep` avec le solde

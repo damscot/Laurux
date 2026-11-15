@@ -44,3 +44,4 @@
 
 - [ ] EXPBASE-A01 — [anomalie] Existence du fichier de sauvegarde non vérifiée ; le message « La base
   n'existe pas ! » est pratiquement inatteignable · tests : T03 · sources : [Expbase.class:50](../../../../../../.src/Utils/Exports-Imports/Expbase.class#L50), [Expbase.class:64](../../../../../../.src/Utils/Exports-Imports/Expbase.class#L64)
+- [ ] EXPBASE-A02 — [anomalie, à confirmer] `button2_Click` : le corps du message est « … de la société » suivi de la clé globale `/intitule` (l. 43), écrite par `Fsoc` à l'ouverture d'une société, et non de l'intitulé de la société exportée ; sans cette clé, le texte se termine par « société   » vide (phase 2, vague 7, 2026-11-15) · tests : T03 · sources : [Expbase.class:43](../../../../../../.src/Utils/Exports-Imports/Expbase.class#L43)

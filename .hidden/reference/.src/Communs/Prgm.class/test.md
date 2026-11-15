@@ -16,7 +16,7 @@ que le **bon** script est déclenché.
 | PRGM-T03 | replay | `RazDocactif` | `Laurux01.sql` + jeu dérivé avec 3 verrous dans `Fiches_Docactif` | `Fiches_Docactif` vide ; `Message.Info` | `tests/raz_docactif/` | implémenté |
 | PRGM-T04 | replay | `CalcSha1` avec et sans suffixe | `CalcSha1`, `CalcSha1 1`, `CalcSha1 9` (table inexistante) | colonne `control` de `Fiches_Mvt`/`Fiches_Mvt1` dans le dump ; message d'erreur SQL pour `9` (A04 figée) | `tests/calcsha1/` | implémenté |
 | PRGM-T05 | replay | `MajEqu` | jeu dérivé `Fiches_Cequ` avec une chaîne d'équivalences A→B→C | dump `Fiches_Cequ` ; `Message.Warning` | `tests/majequ/` | implémenté |
-| PRGM-T06 | replay | Scripts destructeurs (déclenchement) | `RecupN`, `Epurfour`, `Papmp` (Oui), `HistoCom`, `RenumBl`, `RenMvt`, `Renech` (avec `~/Dtech.txt`), `RecupDech`, `RenAN`, `Exprub` (Oui) | dump identique à celui du test propre de chaque script ; message de fin ; erreur SQL pour `RenAN` (A06 figée) | `tests/scripts/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (partiel : Renech à faire, il lit ~/Dtech.txt que le HOME de test vide ne contient pas ; RecupN, Epurfour, Papmp couverts par les scénarios Utils recupn_*, epurfour_effacement, papmp_*) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| PRGM-T06 | replay | Scripts destructeurs (déclenchement) | `RecupN`, `Epurfour`, `Papmp` (Oui), `HistoCom`, `RenumBl`, `RenMvt`, `Renech` (avec `~/Dtech.txt`), `RecupDech`, `RenAN`, `Exprub` (Oui) | dump identique à celui du test propre de chaque script ; message de fin ; erreur SQL pour `RenAN` (A06 figée) | `tests/scripts/` | implémenté |
 | PRGM-T07 | replay | Nom inconnu, casse différente, champ vide | `inconnu`, `raz`, `""` | fermeture sans effet ; comportement du champ vide figé (A05) | `tests/nom_inconnu/` | implémenté |
 | PRGM-T08 | replay | `Fsoc` | `Fsoc` | erreur d'exécution figée (A03) ou ouverture, selon la capture | `tests/fsoc/` | implémenté |
 | PRGM-T09 | gbtest | Découpage de la commande (après PRGM-004) | `"CalcSha1 1"`, `"Raz"`, `""`, `"a  b"` | tableau nom + arguments | `tests/decoupage/` | à faire : exige l'extraction PRGM-004 (phase 3) |
@@ -42,7 +42,9 @@ Scénarios sous `.hidden/Tests/Communs/assets/` (Appel programme : `Fmenu#Menu66
 - T03 `prgm_raz_docactif` (jeu `docactif_trois`) ; T04 `prgm_calcsha1` (jeu `sha1calc_ecritures` réutilisé :
   « CalcSha1 » puis « CalcSha1 3 », Mvt3 au lieu de Mvt1) et `prgm_calcsha1_table_absente` (« CalcSha1 9 ») ;
   T05 `prgm_majequ` (jeu `prgm_majequ`) ; T06 `prgm_scripts_histocom`, `_renumbl`, `_renmvt` (jeu
-  `prgm_renmvt`), `_recupdech`, `_renan`, `_exprub` ; T07 `prgm_nom_inconnu` ; T08 `prgm_fsoc`.
+  `prgm_renmvt`), `_recupdech`, `_renan`, `_exprub`, `_recupn` (jeu `Utils/recupn_shared/recupn_mvt1`), `_epurfour`
+  (jeu `prgm_epurfour`), `_papmp`, `_renech` (jeu `Compta/recupdech_shared/recupdech_echeances`, `~/Dtech.txt` déposé par
+  `entrees`) ; T07 `prgm_nom_inconnu` ; T08 `prgm_fsoc`.
 - Erreurs fatales figées (`code_sortie` 125) : RazDocactif et HistoCom (`Me.Close` puis second `Me.Close`
   l. 114 sur l'auto-instance détruite : « Invalid object », candidat anomalie), CalcSha1 9 et RenAN (table
   absente), champ vide (`Arga[0]` « Out of bounds », A05), Fsoc (« Not enough arguments », A03).

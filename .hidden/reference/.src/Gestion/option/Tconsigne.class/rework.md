@@ -52,7 +52,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TCONSIGNE-A01 — [anomalie] (confirmée phase 2, vague 5 : « Not enough arguments » (`form_Close.158`), figée par T06 (code 125)) `form_Close` appelle `bar1_valide` sans ses deux arguments
   obligatoires : « Not enough arguments » (vérifié `gbs3`) quand l'utilisateur répond « Oui » à
   l'enregistrement avant fermeture · tests : T06 · sources : [Tconsigne.class:158](../../../../../../.src/Gestion/option/Tconsigne.class#L158)
-- [ ] TCONSIGNE-A02 — [anomalie] Transaction ouverte pendant toute la saisie ; fermeture avec
+- [ ] TCONSIGNE-A02 — [anomalie] (à confirmer phase 2, vague 7 : processus tué par le délai (code 124) : la consigne `PX` validée est absente du dump malgré le `Commit` (transaction englobante ouverte à l'ouverture ?) (T02)) Transaction ouverte pendant toute la saisie ; fermeture avec
   « Non » : ni `Commit` ni `Rollback` sur la connexion partagée (même défaut que MREGLEMENT-A01) ·
   tests : T06 · sources : [Tconsigne.class:51](../../../../../../.src/Gestion/option/Tconsigne.class#L51), [Tconsigne.class:70](../../../../../../.src/Gestion/option/Tconsigne.class#L70), [Tconsigne.class:form_Close](../../../../../../.src/Gestion/option/Tconsigne.class#L155-L162)
 - [ ] TCONSIGNE-A03 — [anomalie] Bouton Supprimer affiché (`"111111111"`) mais `bar1_suprimer` vide :

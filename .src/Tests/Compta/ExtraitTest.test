@@ -1,0 +1,144 @@
+' Gambas test file
+
+''Tests de Extrait (.hidden/reference/.src/Compta/Extrait.class/test.md, EXTRAIT-T05, T09, T11).
+''Prévus en replay mais bloqués au rejeu (clic d'en-tête TextLabel _MouseDown, sélection d'une ligne de Colcli,
+''redimensionnement de colonnes) : l'écran est instancié ici sans être affiché (Org vide : premier compte client,
+''période E0), puis les gestionnaires publics sont appelés directement. Jeu Compta/extrait_shared/extrait_base
+''(lecture seule) ; période posée au 01.01.2018-31.12.2018 (la période E0 dépend de Now). Les cas qui ouvrent un Message.Error (écriture clôturée, pointée, centralisée, exercice clos)
+''ne sont pas joués (boîte modale bloquante en gb.test). Valeurs attendues : assets/ExtraitTest/expected.txt
+''(clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05Tris", "Tris par en-tête (_MouseDown), deux fois chacun : ordre des lignes de Colcli")
+  TestKit.Desc("T09Modification", "Colcli_Activate sur une écriture modifiable : bouton Modifier (Necrit) visible")
+  TestKit.Desc("T11LargeursColonnes", "/Col/LcolE relu à l'ouverture, réécrit par Quitter (Button6_Click)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "ExtraitTest")
+  TestKit.OuvreBase("extrait_shared/extrait_base")
+
+End
+
+Private Function Ouvre(sCle As String) As Extrait
+
+  Dim hF As Extrait
+
+  Try hF = New Extrait("", "", "", "")
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  ' Période E0 calculée d'après Now (non figé en gb.test) : bornes de l'exercice 2018 posées, puis réaffichage
+  ' du compte courant (Toutes_Click)
+  Object.SetProperty(hF.Controls["DteN0"], "Text", "01.01.2018")
+  Object.SetProperty(hF.Controls["Dten1"], "Text", "31.12.2018")
+  Try hF.Toutes_Click()
+  If Error Then TestKit.Check(sCle & "/periode", "ERREUR: " & Error.Text)
+  Return hF
+
+End
+
+Private Sub Grille(sCle As String, hF As Extrait)
+  ''Lignes de Colcli dans l'ordre d'affichage : date, libellé, document, débit, crédit, numéro, journal, lettrée.
+
+  Dim hV As Object = hF.Controls["Colcli"]
+  Dim i As Integer
+
+  TestKit.Check(sCle & "/compte", Object.GetProperty(hF.Controls["Cpt"], "Text"))
+  TestKit.Check(sCle & "/lignes", hV.Count)
+  If hV.MoveFirst() Then Return
+  Repeat
+    TestKit.Check(sCle & "/l" & i, hV.Item[0] & "|" & hV.Item[2] & "|" & hV.Item[3] & "|" & hV.Item[4] & "|" & hV.Item[5] & "|" & hV.Item[6] & "|" & hV.Item[7] & "|" & hV.Item[8] & "|" & hV.Item[9])
+    Inc i
+  Until hV.MoveNext()
+
+End
+
+Public Sub T05Tris()
+
+  Dim hF As Extrait
+  Dim sEnt As String
+  Dim k As Integer
+
+  hF = Ouvre("T05")
+  If Not hF Then Return
+  Grille("T05/initial", hF)
+  For Each sEnt In ["Tdate", "Tlibelle", "Tdoc", "Tnumero", "Tdebit", "Tcredit", "Tjournal", "Tlettree"]
+    For k = 1 To 2
+      Try Object.Call(hF, sEnt & "_MouseDown")
+      If Error Then
+        TestKit.Check("T05/" & sEnt & k & "/erreur", Error.Text)
+      Else
+        Grille("T05/" & sEnt & k, hF)
+      Endif
+    Next
+  Next
+  Object.Lock(hF)
+
+End
+
+Public Sub T09Modification()
+
+  Dim hF As Extrait
+  Dim hV As Object
+  Dim sCle As String
+
+  hF = Ouvre("T09")
+  If Not hF Then Return
+  hV = hF.Controls["Colcli"]
+  TestKit.Check("T09/necrit_avant", Object.GetProperty(hF.Controls["Necrit"], "Visible"))
+  ' Écriture modifiable du 411001 : facture non lettrée, ni clôturée ni pointée (numéro lu dans la colonne 7)
+  If Not hV.MoveFirst() Then
+    Repeat
+      If hV.Item[7] <> "" And If hV.Item[7] <> "0" Then
+        If InStr(hV.Item[2], "Report") = 0 Then sCle = hV.Item.Key
+      Endif
+    Until hV.MoveNext()
+  Endif
+  TestKit.Check("T09/ligne", sCle)
+  If sCle Then
+    hV[sCle].Selected = True
+    TestKit.Check("T09/numero", hV.Current[7])
+    Try hF.Colcli_Activate()
+    If Error Then TestKit.Check("T09/erreur", Error.Text)
+    TestKit.Check("T09/necrit_apres", Object.GetProperty(hF.Controls["Necrit"], "Visible"))
+  Endif
+  Object.Lock(hF)
+
+End
+
+Public Sub T11LargeursColonnes()
+
+  Dim hF As Extrait
+  Dim hV As Object
+  Dim i As Integer
+
+  ' Valeur posée avant l'ouverture : relue dans _New (col1 par Val, colonne inconnue ignorée)
+  Start.LocalSettings["/Soc01/Col/LcolE"] = "col0:81;col1:91;col2:201;col9:61;colx:5;"
+  hF = Ouvre("T11")
+  If Not hF Then Return
+  hV = hF.Controls["Colcli"]
+  For i = 0 To 9
+    TestKit.Check("T11/ouverture/col" & i, hV.Columns[i].Width)
+  Next
+  ' Redimensionnement puis Quitter (Button6_Click : écriture de /Col/LcolE et fermeture)
+  hV.Columns[3].Width = 133
+  hV.Columns[8].Width = 44
+  Try hF.Button6_Click()
+  If Error Then TestKit.Check("T11/quitter/erreur", Error.Text)
+  TestKit.Check("T11/LcolE", Start.LocalSettings["/Soc01/Col/LcolE"])
+  ' Réouverture : largeurs relues
+  hF = Ouvre("T11b")
+  If Not hF Then Return
+  hV = hF.Controls["Colcli"]
+  For i = 0 To 9
+    TestKit.Check("T11/reouverture/col" & i, hV.Columns[i].Width)
+  Next
+  Object.Lock(hF)
+
+End

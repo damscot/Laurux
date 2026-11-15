@@ -18,7 +18,7 @@ couvre l'impression `EdRup` de bout en bout.
 | CRUPT-T06 | gbtest | Cumuls multi-fournisseurs | jeu dérivé : même article commandé chez 2 fournisseurs, commandes clients multiples | dumps (figer l'effet de la mise à jour l. 117 sans `four`) | `tests/multi_fournisseurs/` | implémenté |
 | CRUPT-T07 | gbtest | Cas limites | `art_txconv = 0` ; `art_stkmin` NULL ; `stkmini = 0` ; branche l. 181 (`codec <> "0"`) | erreur ou dump figé | `tests/cas_limites/` | implémenté |
 | CRUPT-T08 | gbtest | Performance | jeu volumineux (5 000 lignes de commandes) | durée de référence (`gbx3 -p`) | `tests/perf_rupture/` | à faire : mesure de performance (gbx3 -p) hors du runner actuel |
-| CRUPT-T09 | replay | Impression des ruptures | Gestion → Impressions → Ruptures (`EdRup`), cases cochées ou non | PDF généré (texte extrait) ; tables `Rupture`/`RuptureC` | `tests/edrup_impression/` | à faire : PDF produit non capturé par le runner (dump + SQL seulement) |
+| CRUPT-T09 | replay | Impression des ruptures | Gestion → Impressions → Ruptures (`EdRup`), cases cochées ou non | PDF généré (texte extrait) ; tables `Rupture`/`RuptureC` | `tests/edrup_impression/` | implémenté (`Utils/crupt_impression`, `Utils/crupt_impression_options` : texte du PDF par pdftotext et tables Rupture/RuptureC) |
 
 ## Détail des tests
 

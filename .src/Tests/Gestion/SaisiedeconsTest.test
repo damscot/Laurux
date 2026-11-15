@@ -1,0 +1,77 @@
+' Gambas test file
+
+''Tests de Saisiedecons (.hidden/reference/.src/Gestion/option/Saisiedecons.class/test.md, SAISIEDECONS-T03).
+''GridView1 n'a pas de _Click : le double-clic sur une ligne (GridView1_Activate) n'est pas rejouable. L'écran est
+''instancié sans affichage (événement Data de GridView1 non levé : GridView1_Data appelé pour la ligne 0) avec le fournisseur, la réception et sa date (comme l'appel depuis la saisie de réception :
+''_new lance selectionbr), GridView1.Row posé, GridView1_Activate appelé, quantité modifiée, puis Butval_Click.
+''Jeu saisiedecons_shared/decons_base (réception R0001 du 401001 du 10.06.2018, ligne D de 6 bouteilles 01).
+''Valeurs attendues : assets/SaisiedeconsTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03Modification", "Ligne D (6 bouteilles 01) activée, quantité 10, Valider : UPDATE de la ligne, totaux et Fiches_Entrecpt")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "SaisiedeconsTest")
+  TestKit.OuvreBase("saisiedecons_shared/decons_base")
+
+End
+
+Private Sub Libelles(hForm As Object, sCle As String)
+
+  Dim sNom As String
+  Dim hCtrl As Object
+
+  For Each sNom In ["Labelcm", "Textbout", "Textqtebout", "Labelbout", "Labelht", "Labelttc", "Labelcons", "Labeldec"]
+    hCtrl = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, hCtrl.Text)
+  Next
+
+End
+
+Private Sub EtatBase(sCle As String)
+
+  Dim rResult As Result
+
+  rResult = Utils.db.Exec("SELECT code, num, numlig, codecons, nb, montant, bloc FROM Fiches_ligcons ORDER BY code")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check(sCle & "/ligcons" & rResult!code, rResult!num & "|" & rResult!numlig & "|" & rResult!codecons & "|" & rResult!nb & "|" & rResult!montant & "|" & rResult!bloc)
+    Until rResult.MoveNext()
+  Endif
+  rResult = Utils.db.Exec("SELECT montant, mttc FROM Fiches_Entrecpt WHERE four = &1 AND numrecpt = &2", "401001", "R0001")
+  If rResult.Available Then TestKit.Check(sCle & "/entrecpt", rResult!montant & "|" & rResult!mttc)
+
+End
+
+Public Sub T03Modification()
+
+  Dim hForm, hGrid, hCtrl As Object
+  Dim iCol As Integer
+
+  hForm = New Saisiedecons(Null, Null, "401001", "R0001", "10.06.2018")
+  hGrid = hForm.Controls["GridView1"]
+  TestKit.Check("T03/lignes", hGrid.Rows.Count)
+  Libelles(hForm, "T03/avant")
+  ' Fenêtre non affichée : l'événement Data n'est pas levé, la ligne 0 est remplie par l'appel direct du gestionnaire
+  For iCol = 0 To 4
+    hForm.GridView1_Data(0, iCol)
+  Next
+  TestKit.Check("T03/ligne0", hGrid[0, 0].Text & "|" & hGrid[0, 1].Text & "|" & hGrid[0, 2].Text & "|" & hGrid[0, 3].Text & "|" & hGrid[0, 4].Text)
+  hGrid.Row = 0
+  Try hForm.GridView1_Activate()
+  If Error Then TestKit.Check("T03/activate", "ERREUR: " & Error.Text)
+  Libelles(hForm, "T03/activee")
+  hCtrl = hForm.Controls["Textqtebout"]
+  hCtrl.Text = "10"
+  Try hForm.Butval_Click()
+  If Error Then TestKit.Check("T03/valider", "ERREUR: " & Error.Text)
+  Libelles(hForm, "T03/apres")
+  EtatBase("T03")
+  Object.Lock(hForm)
+
+End

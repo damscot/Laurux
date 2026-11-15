@@ -1,0 +1,22 @@
+{
+ "id": "TBORD-T06",
+ "objet": "Division par zéro",
+ "classe": "TBord",
+ "description": "/Soc01/Materiel = 0 : facture historisée à totfac = 0 seule en mars 2018, puis BL F à 0 dans le même mois : comportement actuel figé (A05, TBord.class:168/172) ; puis Quitter. Observé : « Division by zero » TBord.Traitement.170 (calcul de margepart après cumul du BL à 0 avec la facture à 0), figée en code 125.",
+ "dataset": "tbord_shared/zero",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Materiel": 0
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered",
+ "code_sortie": 125
+}

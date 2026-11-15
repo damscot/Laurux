@@ -8,7 +8,7 @@
 | RAZCLOS-T01 | replay | Déblocage d'une écriture clôturée | `Laurux01.sql` + écriture clôturée à 3 lignes ; saisie du numéro, Débloquer | dump `Fiches_Mvt` (`cloturee`, `control`) ; message | `tests/razclos_deblocage/` | implémenté (Compta/razclos_deblocage) |
 | RAZCLOS-T02 | replay | Numéro inexistant ou vide | `999999`, `""`, `abc` | dump inchangé ; « Ecriture débloquée ! » figé (A02) | `tests/razclos_numero_invalide/` | implémenté (Compta/razclos_numero_invalide) |
 | RAZCLOS-T03 | replay | Effet sur le contrôle des clés | après T01, modification de la ligne puis `Anomalies` | rapport « Aucune anomalie » figé si la modification passe par une écriture re-scellée (A01) | `tests/razclos_inalterabilite/` | implémenté (Compta/razclos_inalterabilite ; altération portée par le jeu, pas par Saisecrit) |
-| RAZCLOS-T04 | replay | Lancement par `Prgm` | saisie `RazClos` | fenêtre `RazClos` ouverte | `tests/razclos_prgm/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par Communs/prgm_dispatch_ecrans_6, PRGM-T02) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| RAZCLOS-T04 | replay | Lancement par `Prgm` | saisie `RazClos` | fenêtre `RazClos` ouverte | `tests/razclos_prgm/` | implémenté (Compta/razclos_prgm) |
 
 ## Détail des tests
 

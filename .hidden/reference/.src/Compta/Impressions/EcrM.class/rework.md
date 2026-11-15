@@ -79,15 +79,16 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ECRM-A02 — [anomalie] `Journaux.Mouse` au lieu de `Me.Mouse` : le curseur d'EcrM ne change
   pas et l'auto-instance du formulaire `Journaux` est créée en mémoire (son `_New` interroge la
   base) ; le curseur n'est pas restauré après `Message.Error` · tests : T06, T13 · sources : [EcrM.class:419](../../../../../../.src/Compta/Impressions/EcrM.class#L419), [EcrM.class:465-466](../../../../../../.src/Compta/Impressions/EcrM.class#L465-L466), [EcrM.class:570](../../../../../../.src/Compta/Impressions/EcrM.class#L570)
-- [ ] ECRM-A03 — [anomalie] Après un saut de page, le titre est toujours « Impression des
+- [ ] ECRM-A03 — [anomalie] (confirmée phase 2, vague 7 : en-tête « modifiées » après saut de page, figée par T05) Après un saut de page, le titre est toujours « Impression des
   écritures modifiées… », même pour « Toutes » ou « Supprimées » · tests : T05 · sources : [EcrM.class:544](../../../../../../.src/Compta/Impressions/EcrM.class#L544)
-- [ ] ECRM-A04 — [anomalie] `datem` nul : ligne 401/411/453 non imprimée mais espace consommé ;
+- [ ] ECRM-A04 — [anomalie] (confirmée phase 2, vague 7 : `Format$(rResult!datem, "dd.mm.yy")` sur `datem` NULL (l. 531) : « Type mismatch » fatal à `Button1_Click`, T09 en xfail) `datem` nul : ligne 401/411/453 non imprimée mais espace consommé ;
   autres comptes : `Format$(Null, "dd.mm.yy")` (erreur ou chaîne vide, à confirmer) · tests :
   T09 · sources : [EcrM.class:527](../../../../../../.src/Compta/Impressions/EcrM.class#L527), [EcrM.class:531-533](../../../../../../.src/Compta/Impressions/EcrM.class#L531-L533)
-- [ ] ECRM-A05 — [anomalie] Numérotation des pages : `ipage` non initialisé (0) → « Page N° 0 »
+- [ ] ECRM-A05 — [anomalie] (confirmée phase 2, vague 7 : « Page N° 0 » en page 1 (T05) ; qualificatif jamais imprimé (T10)) Numérotation des pages : `ipage` non initialisé (0) → « Page N° 0 »
   sur la première page, décalage d'une unité ensuite ; le qualificatif « Edition provisoire »
   (`Qual`) est calculé mais jamais imprimé · tests : T05, T10 · sources : [EcrM.class:400](../../../../../../.src/Compta/Impressions/EcrM.class#L400), [EcrM.class:543](../../../../../../.src/Compta/Impressions/EcrM.class#L543), [EcrM.class:431-435](../../../../../../.src/Compta/Impressions/EcrM.class#L431-L435)
 - [ ] ECRM-A06 — [anomalie] Le PDF `~/tmp/Journaux.pdf` porte le même nom que celui de l'édition
   des journaux (écrasement mutuel ; « Quitter » le supprime) ; aide `Doc.Open("Editjournaux")`
   héritée de `Journaux` · tests : T03 · sources : [EcrM.class:418](../../../../../../.src/Compta/Impressions/EcrM.class#L418), [EcrM.class:204](../../../../../../.src/Compta/Impressions/EcrM.class#L204), [EcrM.class:Button3_Click](../../../../../../.src/Compta/Impressions/EcrM.class#L611-L615)
 - [ ] ECRM-A07 — [amélioration] Testabilité et ergonomie : boîte `Message.*` ouverte depuis un `LostFocus` : non vue comme fenêtre active au rejeu (code 3) et dépendante de l'ordre des changements de focus. Proposition : déplacer le contrôle de saisie du `LostFocus` vers la validation (bouton Enregistrer/Valider) (phase 2, 2026-11-12, décision utilisateur : scénarios adaptés pour éviter ces chemins) · tests : ECRM-T08 · sources : [EcrM.class:247](../../../../../../.src/Compta/Impressions/EcrM.class#L247)
+- [ ] ECRM-A08 — [anomalie, à confirmer] En édition définitive (`Qual` vide), le numéro imprimé reste `numero` alors que `copt = rResult!numerodef` (l. 451-456, 509-514) ; cause non analysée (numéro passé à `level2M` ou jeu de données) (phase 2, vague 7, 2026-11-15) · tests : T10 · sources : [EcrM.class:451-456](../../../../../../.src/Compta/Impressions/EcrM.class#L451-L456), [EcrM.class:509-514](../../../../../../.src/Compta/Impressions/EcrM.class#L509-L514)

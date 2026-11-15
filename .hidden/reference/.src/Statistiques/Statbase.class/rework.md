@@ -46,8 +46,8 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATBASE-A01 — [anomalie] « Nombre de tickets de caisse archivés » compte
+- [ ] STATBASE-A01 — [anomalie] (confirmée phase 2, vague 7 : compteur de tickets archivés à 2 au lieu de 3 (tickets en cours comptés), figée par T02) « Nombre de tickets de caisse archivés » compte
   `Fiches_EntTicketz` (`TabEntTck`, tickets en cours) au lieu de `Fiches_HisEntTickets`
   (`TabHEntTck`) · tests : T02 · sources : [Statbase.class:32](../../../../../.src/Statistiques/Statbase.class#L32)
-- [ ] STATBASE-A02 — [anomalie] « Nombre de factures archivées » ne compte pas les factures
+- [ ] STATBASE-A02 — [anomalie] (confirmée phase 2, vague 7 : factures d'entretien non comptées, figée par T02) « Nombre de factures archivées » ne compte pas les factures
   d'entretien `Fiches_HistoFacM` (à confirmer avec l'utilisateur) · tests : T02 · sources : [Statbase.class:29](../../../../../.src/Statistiques/Statbase.class#L29)

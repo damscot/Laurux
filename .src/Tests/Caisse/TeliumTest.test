@@ -1,0 +1,94 @@
+' Gambas test file
+
+''Tests de Telium (.hidden/reference/.src/Caisse/Telium.class/test.md, TELIUM-T01).
+''Classe morte (TELIUM-001) : comportement actuel figé. T02/T03 : paire de pseudo-terminaux socat (ttyA ouvert par la
+''classe, ttyB lu par un faux TPE Python lancé avec -I) ; le faux TPE répond ACK, ACK puis ENQ et note les octets reçus.
+''Valeurs attendues : assets/TeliumTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01PortAbsent", "New Telium sur /dev/inexistant : erreur levée par _new (Raise Error, A01)")
+  TestKit.Desc("T02Paiement", "demanderPaiement(12.5) sur faux TPE (paire pty socat) : retour et octets reçus par le TPE (A02, A03)")
+  TestKit.Desc("T03Modes", "Combinaisons unModeReponse × forcerAutorisation : retour et octets reçus pour chacune")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "TeliumTest")
+
+End
+
+Public Sub T01PortAbsent()
+
+  Dim hTpe As Telium
+  Dim sRes As String
+
+  Try hTpe = New Telium(1, True, False, "/dev/inexistant")
+  If Error Then
+    sRes = "ERREUR: " & Error.Text
+  Else
+    sRes = "objet créé"
+  Endif
+  TestKit.Check("T01/new", sRes)
+  TestKit.Check("T01/objet", Object.IsValid(hTpe))
+
+End
+
+Private Const FAUX_TPE As String = "import os, sys, time, select\nfd = os.open(sys.argv[1], os.O_RDWR | os.O_NOCTTY)\nrecu = b''\nrep = [b'\\x06', b'\\x06', b'\\x05']\nfin = time.time() + 6\nwhile time.time() < fin:\n    r, _, _ = select.select([fd], [], [], 1.0)\n    if not r:\n        if recu:\n            break\n        continue\n    d = os.read(fd, 256)\n    recu += d\n    if rep and (b'\\x06' in d or b'\\x02' in d or b'\\x04' in d):\n        os.write(fd, rep.pop(0))\nopen(sys.argv[2], 'w').write(' '.join('%02x' % b for b in recu))\n"
+
+' Lance socat et le faux TPE, exécute demanderPaiement, renvoie « retour | octets reçus »
+Private Sub Paiement(bModeRep As Boolean, bForcer As Boolean, fMontant As Float) As String
+
+  Dim sDir As String = Temp$()
+  Dim hTpe As Telium
+  Dim bRet As Boolean
+  Dim sRes As String
+  Dim i As Integer
+
+  Mkdir sDir
+  File.Save(sDir & "/faux_tpe.py", FAUX_TPE)
+  Shell "timeout 12 socat pty,raw,echo=0,link=" & sDir & "/ttyA pty,raw,echo=0,link=" & sDir & "/ttyB >/dev/null 2>&1 &"
+  For i = 1 To 50
+    If Exist(sDir & "/ttyA") And If Exist(sDir & "/ttyB") Then Break
+    Wait 0.1
+  Next
+  Shell "timeout 10 python3 -I " & sDir & "/faux_tpe.py " & sDir & "/ttyB " & sDir & "/recu.txt >/dev/null 2>&1 &"
+  Wait 0.5
+  Try hTpe = New Telium(1, bModeRep, bForcer, sDir & "/ttyA")
+  If Error Then Return "ERREUR new: " & Error.Text
+  Try bRet = hTpe.demanderPaiement(fMontant)
+  If Error Then
+    sRes = "ERREUR: " & Error.Text
+  Else
+    sRes = IIf(bRet, "True", "False")
+  Endif
+  For i = 1 To 100
+    If Exist(sDir & "/recu.txt") Then Break
+    Wait 0.1
+  Next
+  If Exist(sDir & "/recu.txt") Then
+    sRes &= " | " & File.Load(sDir & "/recu.txt")
+  Else
+    sRes &= " | <aucun octet noté>"
+  Endif
+  hTpe = Null
+  Return sRes
+
+End
+
+Public Sub T02Paiement()
+
+  TestKit.Check("T02/paiement", Paiement(True, False, 12.5))
+
+End
+
+Public Sub T03Modes()
+
+  TestKit.Check("T03/rep_vrai.forcer_faux", Paiement(True, False, 12.5))
+  TestKit.Check("T03/rep_vrai.forcer_vrai", Paiement(True, True, 12.5))
+  TestKit.Check("T03/rep_faux.forcer_faux", Paiement(False, False, 12.5))
+  TestKit.Check("T03/rep_faux.forcer_vrai", Paiement(False, True, 12.5))
+
+End

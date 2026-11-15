@@ -1,0 +1,56 @@
+' Gambas test file
+
+''Tests de ExportA47 (.hidden/reference/.src/Compta/Impressions/ExportA47.class/test.md, EXPORTA47-T09).
+''Écran instancié sans affichage (New ExportA47), gestionnaires des boutons radio appelés directement, contrôles lus par
+''Controls ; base Laurux01 (dteclec 2018-12-31 … dteclec5 2013-12-31). EC dépend de la date du jour : années masquées.
+''Valeurs attendues : assets/ExportA47Test/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T09Periodes", "Ouverture puis EC, EN, E1 à E5 : DteN0/Dten1 (EC : A02, années relatives à la date du jour)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "ExportA47Test")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Masque(s As String) As String
+
+  s = Replace(s, Format$(DateAdd(Now, gb.Year, 2), "yyyy"), "<an+2>")
+  s = Replace(s, Format$(DateAdd(Now, gb.Year, 1), "yyyy"), "<an+1>")
+  s = Replace(s, Format$(Now, "yyyy"), "<an>")
+  Return s
+
+End
+
+Private Sub Zones(sCle As String, hForm As Object)
+
+  Dim sNom As String
+  Dim hCtrl As Object
+
+  For Each sNom In ["DteN0", "Dten1"]
+    hCtrl = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, Masque(hCtrl.Text))
+  Next
+
+End
+
+Public Sub T09Periodes()
+
+  Dim hForm As Object
+  Dim sBouton As String
+
+  hForm = New ExportA47
+  Zones("T09/ouverture", hForm)
+  For Each sBouton In ["EC", "EN", "E1", "E2", "E3", "E4", "E5"]
+    Object.Call(hForm, sBouton & "_Click")
+    Zones("T09/" & sBouton, hForm)
+  Next
+  Object.Lock(hForm)
+
+End

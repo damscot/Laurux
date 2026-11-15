@@ -24,7 +24,7 @@ isolé (`HOME=$(mktemp -d)`, `Laurux.conf` de test passé par `-c` **et** copié
 | ENVMAIL-T07 | gbtest | `Envoi2` Thunderbird, 1 et 2 pièces | corps avec `,` `;` `(` `)` `'` et sauts de ligne | `argv.txt` du faux `thunderbird` identique à la référence | `tests/compose_thunderbird/` | implémenté (faux thunderbird, trace) |
 | ENVMAIL-T08 | gbtest | `Envoi2` Icedove / Evolution / Kmail | mêmes entrées, `/Soc01/Prgmail` variant | `argv.txt` de référence ; `piece2` ignorée (figé) | `tests/compose_autres/` | implémenté |
 | ENVMAIL-T09 | gbtest | `Envoi3` (appel direct à 4 arguments) | Thunderbird et Icedove, `/Soc01/Pdfchemin` renseigné | `argv.txt` : pièce + CGV | `tests/compose_envoi3/` | implémenté |
-| ENVMAIL-T10 | replay | `ExportJdv` → `Envoi3` à 5 arguments | écran Export journal, format 2 pièces, adresse renseignée | message « Le fichier n'a pas pu être envoyé » ; aucun lancement du client (figé, ENVMAIL-A01) | `tests/exportjdv_envoi3/` | à faire : non commencé en vague 5 (replay ExportJdv) |
+| ENVMAIL-T10 | replay | `ExportJdv` → `Envoi3` à 5 arguments | écran Export journal, format 2 pièces, adresse renseignée | message « Le fichier n'a pas pu être envoyé » ; aucun lancement du client (figé, ENVMAIL-A01) | `tests/exportjdv_envoi3/` | implémenté (`Gestion/envmail_exportjdv_envoi3` : 2e boîte FMessage = message d'échec d'envoi (une 3e réponse échoue, code 3), `outils.trace` absent : aucun client lancé) |
 | ENVMAIL-T11 | gbtest | Corps avec `"`, `$(…)`, `` ` `` | `Envoi2` Thunderbird, faux binaire | figer la commande effectivement exécutée (preuve de l'injection, ENVMAIL-A04) ; aucun effet hors `HOME` de test | `tests/compose_injection/` | implémenté (le guillemet casse la commande sh : client non lancé) |
 
 ## Détail des tests

@@ -17,8 +17,8 @@ clone **Laurux non modifié**.
 | RAZHISTOFAC-T02 | replay | Option matériel, case cochée | `/Soc01/Materiel = 1`, case cochée | les deux familles purgées ; message = total | `tests/razhistofac_materiel/` | implémenté |
 | RAZHISTOFAC-T03 | replay | Option matériel, case décochée | `/Soc01/Materiel = 1`, case décochée | seule `HistoFac` purgée | `tests/razhistofac_materiel_non/` | implémenté |
 | RAZHISTOFAC-T04 | replay | Abandon | « Non » | tables inchangées | `tests/razhistofac_abandon/` | implémenté |
-| RAZHISTOFAC-T05 | replay | Interruption | arrêt de la 1re `ProgBar`, case cochée | purge partielle des factures, purge complète des factures entretien (comportement figé) | `tests/razhistofac_interruption/` | à faire : bouton d'arrêt de la ProgBar non rejouable (fenêtre ProgBar non instrumentée) |
-| RAZHISTOFAC-T06 | replay | Sauvegarde et SQLite | T01 sans `mysqldump` ; T01 sur `Laurux01.sqlite` | purge sans sauvegarde (A03) ; SQLite figé (A04) | `tests/razhistofac_sauvegarde_sqlite/` | à faire : « sans mysqldump » demande un PATH réduit (outillage) ; SQLite non pris en charge par le runner |
+| RAZHISTOFAC-T05 | replay | Interruption | arrêt de la 1re `ProgBar`, case cochée | purge partielle des factures, purge complète des factures entretien (comportement figé) | `tests/razhistofac_interruption/` | à faire : bouton d'arrêt de la ProgBar non rejouable (fenêtre ProgBar non instrumentée) ; en gb.test, Button1_Click commence par Message.Question (bloquant) |
+| RAZHISTOFAC-T06 | replay | Sauvegarde et SQLite | T01 sans `mysqldump` ; T01 sur `Laurux01.sqlite` | purge sans sauvegarde (A03) ; SQLite figé (A04) | `tests/razhistofac_sauvegarde_sqlite/` | implémenté partiellement (sans mysqldump : `razhistofac_sans_mysqldump`, règle « outils » mysqldump code 127, purge faite (dump identique au nominal), EffaceF.sql vide, appel tracé ; SQLite à faire : base SQLite non prise en charge par le runner) |
 
 ## Détail des tests
 

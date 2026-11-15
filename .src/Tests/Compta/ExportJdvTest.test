@@ -1,0 +1,79 @@
+' Gambas test file
+
+''Tests de ExportJdv (.hidden/reference/.src/Compta/Utils/ExportJdv.class/test.md, EXPORTJDV-T12).
+''Écran instancié sans affichage (New ExportJdv), gestionnaires appelés directement, contrôles lus par Controls ;
+''base Laurux01. La date du jour et l'année/le mois courants sont masqués.
+''Valeurs attendues : assets/ExportJdvTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T12SaisieDates", "Ouverture, E1, E0 : DteN0/Dten1 ; dates partielles 05, 05.03, 0503, 050318, 05.03.18 (début et fin)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "ExportJdvTest")
+  TestKit.OuvreBase()
+
+End
+
+Private Function Masque(s As String) As String
+
+  s = Replace(s, Format$(Now, "dd.mm.yyyy"), "<jour>")
+  s = Replace(s, Format$(Now, "mm.yyyy"), "<mois>.<an>")
+  s = Replace(s, Format$(Now, "yyyy"), "<an>")
+  Return s
+
+End
+
+Private Sub Zones(sCle As String, hForm As Object)
+
+  Dim sNom As String
+  Dim hCtrl As Object
+
+  For Each sNom In ["DteN0", "Dten1"]
+    hCtrl = hForm.Controls[sNom]
+    TestKit.Check(sCle & "/" & sNom, Masque(hCtrl.Text))
+  Next
+
+End
+
+Public Sub T12SaisieDates()
+  ''Les dates hors période et la fin antérieure au début ouvrent un Message.Warning (bloquant en gb.test) : non joués.
+  ''Exercice porté au 31.12.2099 puis E1 (01.01.2018 au 31.12.2099) : toutes les saisies restent dans la période.
+
+  Dim hForm As Object
+  Dim hCtrl As Object
+  Dim sSaisie As String
+
+  hForm = New ExportJdv
+  Zones("T12/ouverture", hForm)
+  hForm.E1_Click()
+  Zones("T12/E1", hForm)
+  hForm.E0_Click()
+  Zones("T12/E0", hForm)
+  Object.Lock(hForm)
+  Utils.db.Exec("UPDATE Fiches_Parametres SET dteclec = &1", Date(2099, 12, 31))
+  hForm = New ExportJdv
+  hForm.E1_Click()
+  Zones("T12/periode", hForm)
+  For Each sSaisie In ["05", "05.03", "0503", "050318", "05.03.18"]
+    hCtrl = hForm.Controls["DteN0"]
+    hCtrl.Text = sSaisie
+    hForm.dteN0_LostFocus()
+    TestKit.Check("T12/debut/" & sSaisie, Masque(hCtrl.Text))
+  Next
+  hCtrl = hForm.Controls["DteN0"]
+  hCtrl.Text = "01.01.2018"
+  hForm.dteN0_LostFocus()
+  For Each sSaisie In ["05", "05.03", "0503", "050318", "05.03.18"]
+    hCtrl = hForm.Controls["Dten1"]
+    hCtrl.Text = sSaisie
+    hForm.dteN1_LostFocus()
+    TestKit.Check("T12/fin/" & sSaisie, Masque(hCtrl.Text))
+  Next
+  Object.Lock(hForm)
+
+End

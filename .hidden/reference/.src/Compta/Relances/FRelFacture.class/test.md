@@ -13,7 +13,7 @@ de `Fiches_RelFacture`, texte du PDF.
 | FRELFACTURE-T01 | replay | Liste clients | période, `RB3` | dump `Fiches_RelFacture` (journaux VE, `cli_rlvf`, doublon ignoré) | `tests/liste_clients/` | implémenté |
 | FRELFACTURE-T02 | replay | Liste fournisseurs | période, `RB4` | dump (journaux AC) ; erreur figée en cas de doublon | `tests/liste_fournisseurs/` | implémenté |
 | FRELFACTURE-T03 | replay | Édition de tous les comptes | `RB1`, Éditer | texte PDF : dates de ligne (A01 figée), solde en lettres | `tests/edition_tous/` | implémenté |
-| FRELFACTURE-T04 | replay | Édition de la sélection, solde négatif | `RB2`, un compte créditeur | texte PDF « - … » | `tests/edition_selection/` | à faire : sélection de comptes dans `CompteRel` non rejouable (ColumnView sans `CompteRel_Click`) |
+| FRELFACTURE-T04 | replay | Édition de la sélection, solde négatif | `RB2`, un compte créditeur | texte PDF « - … » | `.src/Tests/Compta/FRelFactureTest.test` (`T04EditionSelection`) | implémenté (gb.test, jeu frelfacture_avoir : avoir AV101 rendant 411001 créditeur, RB2, 411001 seul sélectionné, `Button1_Click` ; texte pdftotext : « - cent soixante quinze Euros », dates de ligne A01) |
 | FRELFACTURE-T05 | replay | Contrôle de période | comme FRELCOMPTE-T05 | avertissement (A02 de `FRelCompte` figée) | `tests/controle_periode/` | implémenté |
 | FRELFACTURE-T06 | gbtest | Conversion de date de ligne | `CStr` + découpage sur dates à 00:00 locales (été, hiver) | chaînes de référence produites par le code actuel | `tests/date_ligne/` | implémenté |
 

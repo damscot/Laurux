@@ -1,0 +1,28 @@
+{
+ "id": "EXPORTJDV-T11",
+ "objet": "Journal sans ligne collectif (format 6)",
+ "classe": "ExportJdv",
+ "description": "Menu133, /Soc01/Exp et /Soc01/Sage actifs, jeu exportjdv_od (journal OD 10 sans ligne collectif, proposé par défaut) : format 6 Sage (Tpj index 5), Exporter ; boîte de fin (Entrée) : comportement actuel figé (A03 : NbEcritures décrémenté à chaque ligne, message « Aucune écriture » attendu malgré les lignes écrites). /CmdEditor0 = laurux-ouvrir. Format 4 non joué : erreur Donnees4 (A11, couverte par T04).",
+ "dataset": "exportjdv_od",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Exp": -1,
+  "/Soc01/Sage": -1,
+  "/CmdEditor0": "laurux-ouvrir"
+ },
+ "fichiers": [
+  "ecritures10.pnm",
+  "clients.pnc",
+  "@Laurux.conf",
+  "@ouvrir.trace"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

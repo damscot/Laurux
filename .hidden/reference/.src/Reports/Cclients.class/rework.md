@@ -51,7 +51,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CCLIENTS-A01 — [anomalie] `Level2` exige 13 arguments (`reglt` obligatoire) alors
+- [ ] CCLIENTS-A01 — [anomalie] (confirmée phase 2, vague 7 : « Not enough arguments » à `ImpJdv.Import` l. 205 (`pdf.Level2` à 12 arguments), figée par T04 (`Reports/cclients_impjdv`, code 125)) `Level2` exige 13 arguments (`reglt` obligatoire) alors
   qu'`ImpJdv` en passe 12 : « Not enough arguments » à la première création de client d'un import
   du journal des ventes. Correction côté gabarit : `Optional reglt As String = ""` (alternative :
   IMPJDV-A04 côté appelant ; n'en valider qu'une) · tests : T04, IMPJDV-T02 · sources : [Cclients.class:64](../../../../../.src/Reports/Cclients.class#L64), [ImpJdv.class:205](../../../../../.src/Compta/Utils/ImpJdv.class#L205)

@@ -2,19 +2,22 @@
  "id": "EDNLETTREES-T02",
  "objet": "Clients, exercice en cours",
  "classe": "EdNlettrees",
- "description": "Jeu ednl_lettrage : Imprimer (clients 41100001-41199999, lettrable <> false) : comptes lus, ecritures par Listextcpt (Fiches_Mvt), PDF Enlettrees.pdf ouvert (ouvrir.trace ; texte non compare).",
+ "description": "Jeu ednl_lettrage : Imprimer (clients 41100001-41199999, lettrable <> false) : comptes lus, ecritures par Listextcpt (Fiches_Mvt), PDF Enlettrees.pdf ouvert (ouvrir.trace ; texte non compare). Vague 7 : le texte de chaque PDF (pdftotext -layout via /Soc01/caisse/CmdVis) est ajouté à ~/edition.txt et comparé ; cela remplace @ouvrir.trace et les mentions « PDF ouvert / non comparé » ci-dessus.",
  "dataset": "ednlettrees_shared/ednl_lettrage",
  "date": "2018-06-15 10:00:00",
  "args": [],
  "societe": "01",
  "timeout": 20,
  "fichiers": [
-  "@ouvrir.trace"
+  "edition.txt"
  ],
  "cadence": {
   "frappe": 50,
   "focus": 100,
   "traitement": 1000,
   "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
  }
 }

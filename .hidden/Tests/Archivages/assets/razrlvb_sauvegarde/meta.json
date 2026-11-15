@@ -1,0 +1,20 @@
+{
+ "id": "RAZRLVB-T04",
+ "classe": "RazRlvb",
+ "objet": "Sauvegarde avant purge (mysqldump disponible)",
+ "description": "Comme RAZRLVB-T01 avec le vrai mysqldump : ~/Sauve/Laurux01EffaceR.sql contient le dump complet pris avant la purge (relevés 512000/1 et 512100/1 encore présents) ; purge faite ensuite (dump de base identique au nominal). Cas « sans mysqldump » : razrlvb_sans_mysqldump.",
+ "dataset": "razrlvb_shared/rappro_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "Sauve/Laurux01EffaceR.sql"
+ ]
+}

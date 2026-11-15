@@ -7,7 +7,7 @@
 |---|---|---|---|---|---|---|
 | MENUOPT-T01 | replay | Menus selon les options | `/Soc01/bois` et `/Soc01/pp` à 0/1 (4 combinaisons) | entrées présentes, `Menu306` masqué si une option (log des menus) | `tests/menus_options/` | à faire : présence des entrées de menu non comparée (log des menus) ; chemin des menus dynamiques validé par les scénarios Tregie/Tregion |
 | MENUOPT-T02 | replay | Ouverture des écrans | chaque entrée de menu | écran ouvert (titre dans le log), aucune écriture | `tests/ouverture_ecrans/` | implémenté (Régie, Tipp régionale, Consignes ; autres entrées non couvertes, voir meta.json) |
-| MENUOPT-T03 | replay | Édition de la TIPP | mois 13 puis 03, année courante, OK | refus du mois invalide ; PDF `~/tmp/tipce.pdf` (texte) | `tests/edition_tipp/` | à faire : boîte construite dynamiquement (TextReg « mois » validé au LostFocus) et édition gb.report non rejouées |
+| MENUOPT-T03 | replay | Édition de la TIPP | mois 13 puis 03, année courante, OK | refus du mois invalide ; PDF `~/tmp/tipce.pdf` (texte) | `tests/edition_tipp/` | à faire : boîte construite dynamiquement et ouverte en ShowModal par edtipp_click (TextReg « mois » validé au LostFocus) et édition gb.report non rejouées ; en gb.test, edtipp_click bloque (ShowModal), mois_lostfocus lit `Last` (contexte d'événement) et btn_Click ferme `$win` (Null sans la boîte) : pas d'équivalent sans la boîte (vague 7). L'édition elle-même est couverte par EdittippTest (classe Edittipp) |
 
 ## Détail des tests
 

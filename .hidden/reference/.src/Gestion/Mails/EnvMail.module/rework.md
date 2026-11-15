@@ -63,7 +63,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] ENVMAIL-A01 — [anomalie] `ExportJdv.export` appelle `Envoi3` avec 5 arguments (4 attendus) :
+- [ ] ENVMAIL-A01 — [anomalie] (confirmée phase 2, vague 7 : via ExportJdv, `Envoi3` à 5 arguments : « Le fichier n'a pas pu être envoyé », aucun client mail lancé, figée par T10) `ExportJdv.export` appelle `Envoi3` avec 5 arguments (4 attendus) :
   « Too many arguments » à l'exécution, l'export en deux fichiers n'est jamais envoyé par
   courriel. Correction proposée : `EnvMail.Envoi2(Email, stext, sText2, Fle1, Fle2)` dans
   `ExportJdv`, puis suppression d'`Envoi3` devenu sans appelant (sinon, `Envoi3` joindrait les

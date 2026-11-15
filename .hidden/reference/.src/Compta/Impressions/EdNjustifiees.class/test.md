@@ -9,13 +9,13 @@ utilisateur du pied de page) ; lignes `Exec_SQL` du log en complément.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDNJUSTIFIEES-T01 | replay | Clients, écarts | jeu avec 3 clients : justifié, solde mémorisé faux, sans écriture non lettrée mais solde ≠ 0 | seuls les comptes en écart, avec leurs lignes et solde progressif | `tests/clients/` | implémenté (requêtes comptes/écritures, ouverture du PDF ; comptes en écart visibles seulement dans le PDF non comparé) |
-| EDNJUSTIFIEES-T02 | replay | Fournisseurs | `Bfournisseur` | idem côté 401 | `tests/fournisseurs/` | implémenté (requêtes, ouverture du PDF ; texte PDF non comparé) |
-| EDNJUSTIFIEES-T03 | replay | Type de clients | sélection dans `TypeClient1` | filtre `cli_typec IN (…)` (rejouabilité de `TypeClient` à valider) | `tests/type_client/` | à faire : sélection dans TypeClient1 (TreeView) non rejouable |
-| EDNJUSTIFIEES-T04 | replay | Tous justifiés / aucun compte | plage sans écart ; plage vide | PDF sans ligne ; message « Aucune ecriture » | `tests/vide/` | implémenté |
-| EDNJUSTIFIEES-T05 | replay | F2 sur `Cpt` | F2 dans `Cpt` puis `Cpt2` | aucune sélection ouverte (A01 figée) ; boutons `ToggleButton1/2` fonctionnels | `tests/f2/` | à faire : touche F2 non rejouée |
-| EDNJUSTIFIEES-T06 | replay | Arrondi de la comparaison | solde mémorisé 100,005 vs écritures 100,00 | décision figée de la comparaison formatée | `tests/arrondi/` | à faire : sortie PDF non comparée (décision visible dans le PDF seulement ; cas 411004 présent dans ednj_soldes) |
-| EDNJUSTIFIEES-T07 | replay | Multipage | > 60 lignes sur un compte en écart | en-têtes répétés | `tests/multipage/` | à faire : sortie PDF non comparée (en-têtes répétés) |
+| EDNJUSTIFIEES-T01 | replay | Clients, écarts | jeu avec 3 clients : justifié, solde mémorisé faux, sans écriture non lettrée mais solde ≠ 0 | seuls les comptes en écart, avec leurs lignes et solde progressif | `tests/clients/` | implémenté (requêtes et texte du PDF comparé par pdftotext, vague 7 : seul 411002 en écart ; 411003 sans écriture non lettrée mais solde 25 absent, candidat anomalie) |
+| EDNJUSTIFIEES-T02 | replay | Fournisseurs | `Bfournisseur` | idem côté 401 | `tests/fournisseurs/` | implémenté (requêtes et texte du PDF comparé par pdftotext, vague 7) |
+| EDNJUSTIFIEES-T03 | replay | Type de clients | sélection dans `TypeClient1` | filtre `cli_typec IN (…)` (rejouabilité de `TypeClient` à valider) | `tests/type_client/` | implémenté (gb.test EdNjustifieesTest.T03TypeClient, jeu ednj_types : sélection posée dans TypeClient1, where cli_typec IN('02') → 411002 seul ; type 01 → édition sans ligne) |
+| EDNJUSTIFIEES-T04 | replay | Tous justifiés / aucun compte | plage sans écart ; plage vide | PDF sans ligne ; message « Aucune ecriture » | `tests/vide/` | implémenté (texte du PDF sans ligne comparé par pdftotext, vague 7) |
+| EDNJUSTIFIEES-T05 | replay | F2 sur `Cpt` | F2 dans `Cpt` puis `Cpt2` | aucune sélection ouverte (A01 figée) ; boutons `ToggleButton1/2` fonctionnels | `tests/f2/` | à faire : touche F2 non rejouée ; ToggleButton1/2_Click ouvrent TriCpt en ShowModal (bloquant en gb.test), logique Bsel/Bval atteignable seulement après la fenêtre modale |
+| EDNJUSTIFIEES-T06 | replay | Arrondi de la comparaison | solde mémorisé 100,005 vs écritures 100,00 | décision figée de la comparaison formatée | `tests/arrondi/` | implémenté (par ednjustifiees_clients, texte PDF : 411004 solde 100,005 contre 100,00 jugé justifié, absent de l'édition) |
+| EDNJUSTIFIEES-T07 | replay | Multipage | > 60 lignes sur un compte en écart | en-têtes répétés | `tests/multipage/` | implémenté (ednjustifiees_multipage, gen_ednj_multipage.py : en-têtes répétés en page 2, pied de page sur la dernière page seulement) |
 | EDNJUSTIFIEES-T08 | gbtest | `Compte_Non_Justifie` (après EDNJUSTIFIEES-005) | comptes de T01, T06 | même décision et mêmes lignes que T01/T06 | `tests/non_justifie/` | à faire : extraction EDNJUSTIFIEES-005 non réalisée |
 
 ## Détail des tests
@@ -35,3 +35,4 @@ utilisateur du pied de page) ; lignes `Exec_SQL` du log en complément.
   `fournisseurs`, `vide`), jeu partagé `ednjustifiees_shared/ednj_soldes.sql` (soldes mémorisés justes/faux,
   411004 à 100,005). L'ouverture du PDF est vérifiée par `@ouvrir.trace` ; la décision « compte en écart » n'est
   visible que dans le PDF (non comparé). T04 : PDF sans ligne sur Laurux01, puis `Cpt2` = « 1 » → message.
+- **Vague 7** : texte des PDF comparé (`~/edition.txt`) dans les scénarios existants ; T06 couvert par `ednjustifiees_clients` ; T07 `ednjustifiees_multipage` (`gen_ednj_multipage.py`) ; T03 `.src/Tests/Compta/EdNjustifieesTest.test` (formulaire non affiché, sélection posée dans TypeClient1, PDF lu par pdftotext, jeu `assets/EdNjustifieesTest/ednj_types.sql`).

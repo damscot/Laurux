@@ -1,0 +1,23 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "JOURNAUXM-T05",
+ "classe": "JournauxM",
+ "objet": "Totaux",
+ "dataset": "extrait_shared/extrait_base",
+ "fichiers": [
+  "edition.txt"
+ ],
+ "description": "Journaux (jeu extrait_shared/extrait_base, journaux 01-99) : case « Impression des totaux » (CheckBox1) cochée puis Imprimer : lignes « Total journal » et page « Totaux impressions » lues dans le texte du PDF (pdftotext -layout via /Soc01/caisse/CmdVis, ~/edition.txt) ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
+}

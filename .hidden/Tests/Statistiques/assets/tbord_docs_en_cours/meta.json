@@ -1,0 +1,21 @@
+{
+ "id": "TBORD-T04",
+ "objet": "Documents en cours",
+ "classe": "TBord",
+ "description": "/Soc01/Materiel = 0 : Fiches_Bl de types P, D, C, B, F (2 par type) et un B à totalht NULL ; requête « where totalht is not NULL order by type » et totaux par type (sql.log ordonné, les zones de l'écran ne sont pas comparées) ; puis Quitter.",
+ "dataset": "tbord_shared/docs_en_cours",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Materiel": 0
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered"
+}

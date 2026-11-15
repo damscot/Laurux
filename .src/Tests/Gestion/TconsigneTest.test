@@ -1,0 +1,61 @@
+' Gambas test file
+
+''Tests de Tconsigne (.hidden/reference/.src/Gestion/option/Tconsigne.class/test.md, TCONSIGNE-T05).
+''La recherche (bar1_recherche) ouvre Rechcons en ShowModal et le choix s'y fait par double-clic (GridView1_Activate,
+''non rejouable) : l'écran est instancié sans affichage, form_Open appelé directement, puis une Rechcons("T") est
+''attachée à l'écran sous le nom d'événement « rech » (comme dans bar1_recherche) et GridView1_Activate appelé sur
+''une ligne : l'événement trouver parvient à Tconsigne.rech_trouver. Jeu consigne_shared/consigne_base (B1, C1, P1).
+''Valeurs attendues : assets/TconsigneTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T05Recherche", "Rechcons(\"T\") attachée (« rech ») ; lignes 2 puis 0 activées : fiche choisie affichée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "TconsigneTest")
+  TestKit.OuvreBase("consigne_shared/consigne_base")
+
+End
+
+Private Sub Fiche(hForm As Object, sCle As String)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls["Textcode"]
+  TestKit.Check(sCle & "/code", hCtrl.Text)
+  hCtrl = hForm.Controls["Textlib"]
+  TestKit.Check(sCle & "/libelle", hCtrl.Text)
+  hCtrl = hForm.Controls["Valueprix"]
+  TestKit.Check(sCle & "/prix", hCtrl.Value)
+
+End
+
+Private Sub Choisit(hForm As Object, iLigne As Integer, sCle As String)
+
+  Dim hR As Object
+
+  hR = New Rechcons("T")
+  Object.Attach(hR, hForm, "rech")
+  Object.SetProperty(hR.Controls["GridView1"], "Row", iLigne)
+  Try hR.GridView1_Activate()
+  If Error Then TestKit.Check(sCle & "/activate", "ERREUR: " & Error.Text)
+  Fiche(hForm, sCle)
+
+End
+
+Public Sub T05Recherche()
+
+  Dim hForm As Object
+
+  hForm = New Tconsigne
+  hForm.form_Open()
+  Fiche(hForm, "T05/ouverture")
+  Choisit(hForm, 2, "T05/ligne2")
+  Choisit(hForm, 0, "T05/ligne0")
+  Object.Lock(hForm)
+
+End

@@ -1,0 +1,212 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdartfac Char(15) NOT NULL,lbartfac Char(35),nethtfac Decimal(12,2),qte Decimal(12,2),totfac Decimal(12,2),commercial Char(2),PRIMARY KEY (cdartfac, commercial)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' order by datefac 
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411001'
+SELECT * FROM Fiches_HistoLigfac Where num_ligfac = 'F18101' and typel_ligfac = 'A'
+SELECT * FROM Total Where cdartfac = 'ART1' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART1', 'Article un', 100, '01', 2)
+SELECT * FROM Total Where cdartfac = 'P001' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P001', 'Produit 001', 2, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P002' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P002', 'Produit 002', 3, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P003' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P003', 'Produit 003', 4, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P004' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P004', 'Produit 004', 5, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P005' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P005', 'Produit 005', 6, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P006' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P006', 'Produit 006', 7, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P007' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P007', 'Produit 007', 8, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P008' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P008', 'Produit 008', 9, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P009' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P009', 'Produit 009', 10, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P010' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P010', 'Produit 010', 11, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P011' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P011', 'Produit 011', 12, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P012' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P012', 'Produit 012', 13, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P013' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P013', 'Produit 013', 14, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P014' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P014', 'Produit 014', 15, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P015' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P015', 'Produit 015', 16, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P016' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P016', 'Produit 016', 17, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P017' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P017', 'Produit 017', 18, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P018' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P018', 'Produit 018', 19, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P019' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P019', 'Produit 019', 20, '01', 1)
+SELECT * FROM Total Where cdartfac = 'ART2' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART2', 'Article deux', 30.5, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P020' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P020', 'Produit 020', 21, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P021' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P021', 'Produit 021', 22, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P022' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P022', 'Produit 022', 23, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P023' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P023', 'Produit 023', 24, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P024' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P024', 'Produit 024', 25, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P025' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P025', 'Produit 025', 26, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P026' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P026', 'Produit 026', 27, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P027' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P027', 'Produit 027', 28, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P028' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P028', 'Produit 028', 29, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P029' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P029', 'Produit 029', 30, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P030' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P030', 'Produit 030', 31, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P031' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P031', 'Produit 031', 32, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P032' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P032', 'Produit 032', 33, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P033' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P033', 'Produit 033', 34, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P034' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P034', 'Produit 034', 35, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P035' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P035', 'Produit 035', 36, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P036' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P036', 'Produit 036', 37, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P037' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P037', 'Produit 037', 38, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P038' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P038', 'Produit 038', 39, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P039' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P039', 'Produit 039', 40, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P040' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P040', 'Produit 040', 41, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P041' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P041', 'Produit 041', 42, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P042' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P042', 'Produit 042', 43, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P043' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P043', 'Produit 043', 44, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P044' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P044', 'Produit 044', 45, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P045' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P045', 'Produit 045', 46, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P046' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P046', 'Produit 046', 47, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P047' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P047', 'Produit 047', 48, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P048' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P048', 'Produit 048', 49, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P049' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P049', 'Produit 049', 50, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P050' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P050', 'Produit 050', 51, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P051' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P051', 'Produit 051', 52, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P052' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P052', 'Produit 052', 53, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P053' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P053', 'Produit 053', 54, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P054' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P054', 'Produit 054', 55, '01', 1)
+SELECT * FROM Total Where cdartfac = 'P055' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('P055', 'Produit 055', 56, '01', 1)
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411002'
+SELECT * FROM Fiches_HistoLigfac Where num_ligfac = 'F18102' and typel_ligfac = 'A'
+SELECT * FROM Total Where cdartfac = 'ART1' and commercial = '01'
+UPdate Total set cdartfac = 'ART1', lbartfac = 'Article un', nethtfac = 250, qte = '01' Where cdartfac = 'ART1' and commercial = '01'
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411003'
+SELECT * FROM Fiches_HistoLigfac Where num_ligfac = 'F18103' and typel_ligfac = 'A'
+SELECT * FROM Total Where cdartfac = 'ART1' and commercial = '02'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART1', 'Article un', 60, '02', 1)
+SELECT * FROM Total Where cdartfac = 'ART3' and commercial = '02'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART3', 'Article trois', 80, '02', 4)
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411004'
+SELECT * FROM Total 
+SELECT * FROM Fiches_Commerciaux order by code
+SELECT * FROM Total order by lpad(cdartfac, 12, ' ') asc
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '02'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '02'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'
+SELECT * FROM Fiches_Commerciaux where code = '01'

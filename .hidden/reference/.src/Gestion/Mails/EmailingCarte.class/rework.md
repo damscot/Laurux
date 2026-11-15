@@ -64,7 +64,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EMAILINGCARTE-A02 — [anomalie] Pièce jointe : chemin complet passé comme répertoire à
   `EnvMail.Envoi` (`chemin & FileN` introuvable), envoi interrompu au premier porteur ; `piece`
   jamais remis à `False` · tests : T04 · sources : [EmailingCarte.class:534](../../../../../../.src/Gestion/Mails/EmailingCarte.class#L534), [EmailingCarte.class:546](../../../../../../.src/Gestion/Mails/EmailingCarte.class#L546), [EmailingCarte.class:btnopen_Click](../../../../../../.src/Gestion/Mails/EmailingCarte.class#L587-L603), [EnvMail.module:30](../../../../../../.src/Gestion/Mails/EnvMail.module#L30)
-- [ ] EMAILINGCARTE-A03 — [anomalie] `Btn_KeyPress` : toute touche sur le bouton Envoyer lance
+- [ ] EMAILINGCARTE-A03 — [anomalie] (confirmée phase 2, vague 7 : Tab sur Envoyer déclenche un traitement ; Espace un seul traitement (et non deux), figée par T07) `Btn_KeyPress` : toute touche sur le bouton Envoyer lance
   l'envoi, Espace probablement deux fois (à confirmer) · tests : T07 · sources : [EmailingCarte.class:Btn_KeyPress](../../../../../../.src/Gestion/Mails/EmailingCarte.class#L381-L388)
 - [ ] EMAILINGCARTE-A04 — [anomalie] Table de travail `Cli_Mailing` hors `Cbase`, partagée avec
   `Emailing` et entre postes ; laissée en base si l'écran est fermé en mode liste (voir

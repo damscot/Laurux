@@ -71,7 +71,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   MO de même code sont comptées · tests : T03 · sources : [Histovmo.class:803](../../../../../.src/Statistiques/Histovmo.class#L803)
 - [ ] HISTOVMO-A03 — [anomalie] La plage fournisseur (`Four`–`Four2`) n'est appliquée qu'avec le tri
   par code (`RadioButton1`) · tests : T02 · sources : [Histovmo.class:761](../../../../../.src/Statistiques/Histovmo.class#L761), [Histovmo.class:764](../../../../../.src/Statistiques/Histovmo.class#L764)
-- [ ] HISTOVMO-A04 — [anomalie] `Btn_KeyPress` lance l'impression pour toute touche sur **Imprimer**
+- [ ] HISTOVMO-A04 — [anomalie] (confirmée phase 2, vague 7 : Espace sur Imprimer : deux impressions (Tab : une), figée par T08) `Btn_KeyPress` lance l'impression pour toute touche sur **Imprimer**
   (Tab compris) ; Espace imprime deux fois (`KeyPress` puis `Click`, à confirmer au rejeu) · tests : T08 ·
   sources : [Histovmo.class:Btn_KeyPress](../../../../../.src/Statistiques/Histovmo.class#L614-L621)
 - [ ] HISTOVMO-A05 — [anomalie] Échap/F2 sur `Colfam2`/`Colfour2` donne le focus à `fam`/`four` mais

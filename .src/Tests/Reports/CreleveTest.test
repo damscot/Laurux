@@ -12,6 +12,8 @@ Public Sub _Desc()
   TestKit.Desc("T02Logo", "Entete avec glogo : image 200 × 100, image de 5 px (A02), chemin absent")
   TestKit.Desc("T03Releve", "EnteteN, Entete, Entete2, Level1 org 1 et 2, Level2, 40 Level3, Lines, Level4, Level9 sur 2 pages")
   TestKit.Desc("T04Relance", "Level5, Level6, Level7, Level8 : texte de 300 caractères et texte à retours à la ligne")
+  TestKit.Desc("T06Relances", "Séquence de FEditrel : lettre de relance (45 écritures, saut à 273, solde débiteur) puis relevé de compte (solde créditeur)")
+  TestKit.Desc("T05RelFacture", "Séquence de FRelFacture : 2 clients (40 écritures sur 2 pages, solde débiteur ; 3 écritures, solde créditeur), Level9 en lettres")
 
 End
 
@@ -154,5 +156,133 @@ Public Sub T02Logo()
   EnteteLogo("T02/normal", ImageJpg(200, 100))
   EnteteLogo("T02/etroit", ImageJpg(5, 100))
   EnteteLogo("T02/absent", "/tmp/laurux-test/logo-absent.png")
+
+End
+
+' Relevé d'un client dans l'ordre de FRelFacture.Imprime : en-tête, écritures (saut à PosY >= 283 sans BasPage),
+' Lines, Level4 (totaux), Level9 (solde en lettres par Numtostring, préfixé de « - » s'il est créditeur).
+Private Sub RelFacture(pdf As Creleve, sClient As String, aMtd As Float[], aMtc As Float[])
+
+  Dim PosY As Integer
+  Dim i As Integer
+  Dim Totmtd, Totmtc, Soldes As String
+  Dim Mtd, Mtc As String
+  Dim fSolde As Float
+  Dim bSens As Boolean
+
+  pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "0240000000", "0600000000", "0240000001", "test@exemple.fr", "www.exemple.fr", "France", "IBAN FR76", False)
+  pdf.Entete2(sClient, "2 rue des Lilas", "", "75001  PARIS", "France", "", False)
+  pdf.Level1("15.06.2018", "01.01.2018 au 30.06.2018", "1")
+  pdf.Level2()
+  PosY = 120
+  For i = 0 To aMtd.Max
+    Mtd = Format$(aMtd[i], "0.00")
+    Mtc = Format$(aMtc[i], "0.00")
+    Totmtd = Format$(Val(Utils.cpoint(Totmtd)) + aMtd[i], "0.00")
+    Totmtc = Format$(Val(Utils.cpoint(Totmtc)) + aMtc[i], "0.00")
+    pdf.Level3(Format$(i Mod 28 + 1, "00") & "." & Format$(i \ 28 + 1, "00") & ".2018", "F" & Format$(i + 1, "0000"), "Facture numero " & (i + 1), Mtd, Mtc, PosY)
+    PosY += 5
+    If PosY >= 283 Then
+      pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "0240000000", "0600000000", "0240000001", "test@exemple.fr", "www.exemple.fr", "France", "IBAN FR76", False)
+      pdf.Entete2(sClient, "2 rue des Lilas", "", "75001  PARIS", "France", "", False)
+      pdf.Level1("15.06.2018", "01.01.2018 au 30.06.2018", "1")
+      pdf.Level2()
+      PosY = 120
+    Endif
+  Next
+  pdf.lines(PosY)
+  PosY += 4
+  pdf.Level4(Totmtd, Totmtc, PosY)
+  PosY += 5
+  fSolde = Val(Utils.cpoint(Totmtd)) - Val(Utils.cpoint(Totmtc))
+  bSens = fSolde < 0
+  Soldes = Numtostring.Convertir(Abs(fSolde), "Euro")
+  If bSens Then Soldes = " - " & Soldes
+  pdf.Level9(" Arrété le présent relevé à la somme de " & Soldes, PosY)
+
+End
+
+' CRELEVE-T05 : relevé de factures (appels de FRelFacture) pour deux clients dans le même document.
+Public Sub T05RelFacture()
+
+  Dim pdf As Creleve = Nouveau()
+  Dim aMtd As New Float[]
+  Dim aMtc As New Float[]
+  Dim i As Integer
+
+  For i = 1 To 40
+    aMtd.Add(IIf(i Mod 4 = 0, 0, i * 10.25))
+    aMtc.Add(IIf(i Mod 4 = 0, i * 3.5, 0))
+  Next
+  RelFacture(pdf, "SARL CLIENT UN", aMtd, aMtc)
+  RelFacture(pdf, "M. CLIENT DEUX", [12.5, 0, 0], [0, 100.0, 7.25])
+  Verifie("T05", pdf)
+
+End
+
+' Lettre de relance d'un client dans l'ordre de FEditrel.Imprime : Entete, Entete2, Level5, Level8 (texte haut),
+' Level6, écritures Level7 (saut à PosY >= 273 sans Level8), soldes de la sélection et du compte, Level8 (texte bas).
+Private Sub Relance(pdf As Creleve, sClient As String, sTxt1 As String, sTxt2 As String, aMtd As Float[], aMtc As Float[], fSolde As Float)
+
+  Dim PosY, i As Integer
+  Dim totsel As Float
+  Dim Mtd, Mtc As String
+
+  pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "0240000000", "0600000000", "0240000001", "test@exemple.fr", "www.exemple.fr", "France", "IBAN FR76", False)
+  pdf.Entete2(sClient, "2 rue des Lilas", "", "75001  PARIS", "France", "", False)
+  pdf.Level5("15.06.2018")
+  PosY = 110
+  pdf.Level8(sTxt1, PosY)
+  PosY += 30
+  pdf.Level6()
+  PosY += 6
+  For i = 0 To aMtd.Max
+    Mtd = Format$(aMtd[i], "0.00")
+    Mtc = Format$(aMtc[i], "0.00")
+    totsel += aMtd[i] - aMtc[i]
+    pdf.Level7(Format$(i Mod 28 + 1, "00") & "/" & Format$(i \ 28 + 1, "00") & "/2018", "F" & Format$(i + 1, "0000"), "Facture numero " & (i + 1), Mtd, Mtc, PosY)
+    PosY += 4
+    If PosY >= 273 Then
+      pdf.Entete("SOCIETE TEST", "1 rue du Port", "Zone B", "44000 NANTES", "Capital 1000", "RCS NANTES", "SIRET 123", "APE 4520A", "FR12345", "0240000000", "0600000000", "0240000001", "test@exemple.fr", "www.exemple.fr", "France", "IBAN FR76", False)
+      pdf.Entete2(sClient, "2 rue des Lilas", "", "75001  PARIS", "France", "", False)
+      pdf.Level5("15.06.2018")
+      PosY = 110
+      PosY += 30
+      pdf.Level6()
+      PosY += 6
+    Endif
+  Next
+  PosY += 6
+  If totsel > 0 Then
+    pdf.Level7(" ", " ", "Solde de la sélection ", " ", Format(totsel, "0.00"), PosY)
+  Else
+    pdf.Level7(" ", " ", "Solde de la sélection ", Format(-totsel, "0.00"), " ", PosY)
+  Endif
+  PosY += 4
+  If fSolde > 0 Then
+    pdf.Level7(" ", " ", "Solde du compte ", " ", Format(fSolde, "0.00"), PosY)
+  Else
+    pdf.Level7(" ", " ", "Solde du compte ", Format(-fSolde, "0.00"), " ", PosY)
+  Endif
+  PosY += 8
+  pdf.Level8(sTxt2, PosY)
+
+End
+
+' CRELEVE-T06 : lettre de relance de niveau 1 (texte de Fiches_Txt_Relances figé) sur 2 pages puis relevé de compte.
+Public Sub T06Relances()
+
+  Dim pdf As Creleve = Nouveau()
+  Dim aMtd As New Float[]
+  Dim aMtc As New Float[]
+  Dim i As Integer
+
+  For i = 1 To 45
+    aMtd.Add(i * 10.25)
+    aMtc.Add(IIf(i Mod 5 = 0, i * 2, 0))
+  Next
+  Relance(pdf, "SARL CLIENT UN", "Madame, Monsieur, sauf erreur de notre part, les factures ci-dessous restent impayées.", "Veuillez agréer nos salutations distinguées.", aMtd, aMtc, 9876.5)
+  Relance(pdf, "M. CLIENT DEUX", "          Relevé de compte", "  ", [12.5, 0], [0, 100.0], -87.5)
+  Verifie("T06", pdf)
 
 End

@@ -1,0 +1,25 @@
+{
+ "id": "HISTOVMO-T08",
+ "classe": "Histovmo",
+ "objet": "Touche sur le bouton Imprimer",
+ "description": "Focus sur Imprimer (Button2, groupe Btn) puis Tab : Btn_KeyPress imprime une fois ; focus de nouveau sur Imprimer puis Espace : Btn_KeyPress imprime puis le clic d'Espace imprime une seconde fois (A04). Chaque impression ajoute son texte (pdftotext, >>) à edition.txt : 3 éditions attendues. Fermeture.",
+ "dataset": "histovmo_shared/ventes_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0,
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,25 @@
+{
+ "id": "HISTOVMO-T07",
+ "classe": "Histovmo",
+ "objet": "Saisie des dates",
+ "description": "DteN0 = « 0103 » + Entrée : normalisée en 01.03.2018 ; Dten1 = 01.02.2018 + Entrée : Message.Warning « sélection n'est pas possible » (Entrée ; ouvert par dte_KeyPress, rejouable) ; Dten1 = « 3006 » + Entrée : normalisée en 30.06.2018 ; Imprimer : titre du PDF « du 01.03.2018 au 30.06.2018 » ; fermeture.",
+ "dataset": "histovmo_shared/ventes_mo",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0,
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,106 @@
+' Gambas test file
+
+''Tests de Histocliart (.hidden/reference/.src/Statistiques/Histocliart.class/test.md, HISTOCLIART-T09, partiel).
+''Valeurs attendues : assets/HistocliartTest/expected.txt, produites dans le clone de référence.
+''Le choix d'un tiers passe par TriCpt en ShowModal (non rejouable) ; le test construit l'écran sans l'afficher, pose
+''le code choisi dans Cli/Cli2 comme le font Butcli_Click/Butcli2_Click après la liste, puis appelle Cli_man.
+''Seuls les cas sans Message.Warning (bloquant en gb.test) sont joués. T09b : Butcli_Click/Butcli2_Click ouvrent TriCpt en
+''ShowModal ; un Timer du module (« _Choix », ignoré comme test) agit pendant la boucle modale comme TriCpt : il pose
+''Bsel/Bval de l'appelant (choix) ou ne pose rien (annulation), puis ferme la fenêtre TriCpt. Base Laurux01.
+
+Private $hTimer As Timer
+Private $hEcran As Histocliart
+Private $sChoix As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T09bChoixTriCpt", "Butcli puis Butcli2 avec choix dans TriCpt (ShowModal), puis Butcli2 annulé : ancien choix repris (A04)")
+  TestKit.Desc("T09Tiers", "Cli_man : Cli existant accepté ; Cli2 inexistant accepté car Cli est contrôlé à sa place (A03)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Statistiques", "HistocliartTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub T09Tiers()
+
+  Dim hF As Histocliart
+  Dim hCli, hCli2 As Object
+
+  Try hF = New Histocliart
+  If Error Then
+    TestKit.Check("T09/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hCli = hF.Controls["Cli"]
+  hCli2 = hF.Controls["Cli2"]
+  hCli.Text = "411001"
+  Try hF.Cli_man("Cli")
+  If Error Then TestKit.Check("T09/cli/erreur", Error.Text)
+  TestKit.Check("T09/cli/Cli", hCli.Text)
+  hCli2.Text = "411999"
+  Try hF.Cli_man("Cli2")
+  If Error Then TestKit.Check("T09/cli2/erreur", Error.Text)
+  TestKit.Check("T09/cli2/Cli", hCli.Text)
+  TestKit.Check("T09/cli2/Cli2", hCli2.Text)
+  Object.Lock(hF)
+
+End
+
+' Programme le choix (ou l'annulation si sChoix est vide) fait dans TriCpt pendant la boucle modale.
+Private Sub Programme(hF As Histocliart, sChoix As String)
+
+  $hEcran = hF
+  $sChoix = sChoix
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hW As Window
+
+  $hTimer.Enabled = False
+  If $sChoix Then
+    $hEcran.Bsel = True
+    $hEcran.Bval = $sChoix
+  Endif
+  For Each hW In Windows
+    If Object.Type(hW) = "TriCpt" Then hW.Close()
+  Next
+
+End
+
+Public Sub T09bChoixTriCpt()
+
+  Dim hF As Histocliart
+  Dim hCli, hCli2 As Object
+
+  Try hF = New Histocliart
+  If Error Then
+    TestKit.Check("T09b/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  hCli = hF.Controls["Cli"]
+  hCli2 = hF.Controls["Cli2"]
+  Programme(hF, "411001")
+  hF.Butcli_Click()
+  TestKit.Check("T09b/butcli/Cli", hCli.Text)
+  Programme(hF, "411002")
+  hF.Butcli2_Click()
+  TestKit.Check("T09b/butcli2/Cli2", hCli2.Text)
+  hCli2.Text = "411005"
+  Programme(hF, "")
+  hF.Butcli2_Click()
+  TestKit.Check("T09b/annulation/Cli2", hCli2.Text)
+  TestKit.Check("T09b/annulation/Bsel", hF.Bsel)
+  Object.Lock(hF)
+
+End

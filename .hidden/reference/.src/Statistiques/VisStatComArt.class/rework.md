@@ -51,13 +51,13 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VISSTATCOMART-A01 — [anomalie] Tris sur `MouseDown` : `Bnom.value` lu avant le changement
+- [ ] VISSTATCOMART-A01 — [anomalie] (confirmée phase 2, vague 7 : tri sur `MouseDown` (l. 155-176) avec la valeur précédente, figée par T03) Tris sur `MouseDown` : `Bnom.value` lu avant le changement
   du RadioButton, le mode de tri (brut ou `lpad`) est décalé d'un clic (à confirmer par replay)
   · tests : T03 · sources : [VisStatComArt.class:110](../../../../../.src/Statistiques/VisStatComArt.class#L110), [VisStatComArt.class:Bnom_MouseDown](../../../../../.src/Statistiques/VisStatComArt.class#L162-L167)
-- [ ] VISSTATCOMART-A02 — [anomalie] Remplissage de `Comm` : « Tous les commerciaux » inséré à
+- [ ] VISSTATCOMART-A02 — [anomalie] (confirmée phase 2, vague 7 : « Tous les commerciaux » en tête (l. 68), figée par T01) Remplissage de `Comm` : « Tous les commerciaux » inséré à
   l'index 0 (`"00"` pris comme index) et `Comm_Change` possiblement levé pendant `_New` : filtre
   initial incertain (à confirmer par replay) · tests : T01 · sources : [VisStatComArt.class:66](../../../../../.src/Statistiques/VisStatComArt.class#L66), [VisStatComArt.class:68](../../../../../.src/Statistiques/VisStatComArt.class#L68)
-- [ ] VISSTATCOMART-A03 — [anomalie] Lignes dont le commercial n'existe plus masquées et exclues
+- [ ] VISSTATCOMART-A03 — [anomalie] (confirmée phase 2, vague 7 : commercial absent de `Fiches_Commerciaux` masqué et exclu de `NetHT`, figée par T04) Lignes dont le commercial n'existe plus masquées et exclues
   de `NetHT`, sans signalement · tests : T04 · sources : [VisStatComArt.class:128](../../../../../.src/Statistiques/VisStatComArt.class#L128)
 - [ ] VISSTATCOMART-A04 — [anomalie] PDF `~/tmp/Statcli.pdf` partagé avec `VisStatComm` : la
   fermeture d'un écran supprime le PDF de l'autre (= VISSTATCOMM-A03) · tests : T05 · sources : [VisStatComArt.class:191](../../../../../.src/Statistiques/VisStatComArt.class#L191), [VisStatComm.class:235](../../../../../.src/Statistiques/VisStatComm.class#L235)

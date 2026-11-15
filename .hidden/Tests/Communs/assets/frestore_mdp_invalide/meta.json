@@ -1,0 +1,28 @@
+{
+ "id": "FRESTORE-T08",
+ "classe": "FRestore",
+ "objet": "Mot de passe invalide",
+ "description": "Restauration depuis /tmp/laurux-test ; règle « outils » : gksu répond une ligne contenant « incorrecte » (synthétique, MMYSQL-A01) : lg = 0, « Mot de passe invalide ! » (Entrée) ; aucune restauration (base fusers_base inchangée).",
+ "dataset": "fusers_shared/fusers_base",
+ "date": "2026-01-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "outils": {
+  "gksu": {
+   "sortie": "mysqladmin: connexion au serveur 'db' impossible : identification incorrecte",
+   "hidden_argv": [
+    "*-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace"
+ ]
+}

@@ -64,11 +64,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FACTUREFMA-A01 — [anomalie] `Coldetail_Keypress` écrit le TTC de chaque BL dans
   `Colbl.Item[3]` (Ville du client) au lieu de `Coldetail.Item[3]` ; même défaut dans
   `Facturergbl` · tests : T05 · sources : [FacturefmA.class:381](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L381), [Facturergbl.class:334](../../../../../../.src/Gestion/Facturation/Facturergbl.class#L334)
-- [ ] FACTUREFMA-A02 — [anomalie, à confirmer] `dtefac` (datetime) est converti implicitement en
+- [ ] FACTUREFMA-A02 — [anomalie, à confirmer] (confirmée phase 2, vague 7 : aucun client annuel retenu, même facturé il y a un an jour pour jour, figée par T03) `dtefac` (datetime) est converti implicitement en
   « mm/jj/aaaa hh:nn:ss » en temps universel : `Left$(…, 2)` peut donner le mois précédent pour
   une facture du 1er à 00:00, et `Right$(…, 4)` (cas annuel) contient l'heure, pas l'année :
   l'abonnement annuel n'est pas sélectionné comme prévu · tests : T03, T08 · sources : [FacturefmA.class:210](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L210), [FacturefmA.class:252-253](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L252-L253)
-- [ ] FACTUREFMA-A03 — [anomalie] Mois de référence négatif corrigé par `12 - n` au lieu de
+- [ ] FACTUREFMA-A03 — [anomalie] (confirmée phase 2, vague 7 : en janvier, bimensuel facturé le 05.11.2017 non retenu et semestriel du 05.10.2017 retenu (mois de référence 13/17), figée par T02) Mois de référence négatif corrigé par `12 - n` au lieu de
   `12 + n` pour les périodicités bimensuelle, trimestrielle et semestrielle (janvier bimensuel →
   13 au lieu de 11) : clients non facturés ou facturés à tort en début d'année · tests : T02 ·
   sources : [FacturefmA.class:227](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L227), [FacturefmA.class:235](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L235), [FacturefmA.class:243](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L243)
@@ -79,3 +79,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (date de sélection) et non la date `Dtef` saisie dans le panneau d'édition, et en mode
   `ObjFac.finmois` plutôt que `ObjFac.abonnement` ; la sélection utilise `Now` et non `datej`
   (`dtefac <= aujourd'hui`) · tests : T06, T01 · sources : [FacturefmA.class:640](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L640), [FacturefmA.class:199](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L199)
+- [ ] FACTUREFMA-A06 — [anomalie, à confirmer] `recup_bl` ne retient que le premier document de chaque client (garde `codecli`, l. 214 et 284, sur une requête triée `dtefac desc`, l. 204) ; décrit comme règle dans architecture.md, intention à confirmer (phase 2, vague 7, 2026-11-15) · tests : T01, T02 · sources : [FacturefmA.class:204](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L204), [FacturefmA.class:214](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L214), [FacturefmA.class:284](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L284)

@@ -1,0 +1,18 @@
+{
+ "id": "CCLIENTS-T05",
+ "objet": "Édition des fournisseurs : texte du PDF",
+ "classe": "Cclients",
+ "description": "RadioButton2, Imprimer : tri par fo_nom. Dérivé de Gestion/edfour_tri_nom (EDFOUR-T02) : test propre à Cclients.",
+ "dataset": null,
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered"
+}

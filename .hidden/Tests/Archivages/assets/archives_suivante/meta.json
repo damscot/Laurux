@@ -1,0 +1,21 @@
+{
+ "id": "ARCHIVES-T08",
+ "classe": "Archives",
+ "objet": "Facture suivante / précédente",
+ "description": "/Soc01/Materiel = 0 (pages de 21 lignes) : clic 1re ligne (000060), Suivante (Button1 : 000059), Précédente (Button2 : 000060), Précédente en bord haut (Remonter relit la 1re page, MoveTo(row + 25) hors grille : 000060 réaffichée, comportement figé A03), Suivante (000059), Quitter : requêtes comparées (sql.log ordonné). Bord bas (ligne 26 alors que la page compte 21 lignes, A03) non atteignable par les boutons.",
+ "dataset": "archives_shared/factures_liste",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/Materiel": 0
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

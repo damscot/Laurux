@@ -12,11 +12,11 @@ avec des écritures de classes 6 et 7 couvrant chaque rubrique, validées et non
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| IMP_SIG-T01 | replay | SIG exercice courant | jeu dérivé, SIG, `E1` | PDF (texte normalisé) et dump `centralisation` identiques à la référence | `tests/sig_e1/` | implémenté (requêtes et dump centralisation ; PDF non comparé) |
-| IMP_SIG-T02 | replay | Exercice antérieur et écritures non validées | `N2` (`Fiches_Mvt2`), écritures non validées incluses | idem ; montants incluant les non validées (A01 figée) | `tests/sig_n2/` | à faire : non traité (vague 3, temps) |
-| IMP_SIG-T03 | replay | Signes : comptes 709 et 609, résultat exceptionnel négatif | 709 en dernière écriture d'une rubrique avec cumul positif ; 609 ; charges exceptionnelles > produits | PDF figé (le cas 709 à cumul négatif est joué à part : erreur figée, A02) | `tests/signes/` | à faire : sortie PDF non comparée |
-| IMP_SIG-T04 | replay | Débordement de page | jeu avec un grand nombre de rubriques `L` actives | changement de colonne/page (`Lines3`, `Level0`) figé | `tests/pagination/` | à faire : sortie PDF non comparée |
-| IMP_SIG-T05 | replay | Deux éditions successives | T01 puis T02 sans quitter | second PDF identique à T02 seul | `tests/editions_successives/` | à faire : sortie PDF non comparée |
+| IMP_SIG-T01 | replay | SIG exercice courant | jeu dérivé, SIG, `E1` | PDF (texte normalisé) et dump `centralisation` identiques à la référence | `tests/sig_e1/` | implémenté (requêtes, dump centralisation et texte du PDF comparé par pdftotext, vague 7) |
+| IMP_SIG-T02 | replay | Exercice antérieur et écritures non validées | `N2` (`Fiches_Mvt2`), écritures non validées incluses | idem ; montants incluant les non validées (A01 figée) | `tests/sig_n2/` | implémenté (imp_sig_sig_n2, jeu imp_sig_shared/imp_sig_n2 : ventes 350 et achats -150 incluant les non validées, A01 figée) |
+| IMP_SIG-T03 | replay | Signes : comptes 709 et 609, résultat exceptionnel négatif | 709 en dernière écriture d'une rubrique avec cumul positif ; 609 ; charges exceptionnelles > produits | PDF figé (le cas 709 à cumul négatif est joué à part : erreur figée, A02) | `tests/signes/` | implémenté (imp_sig_signes : production vendue imprimée -470 pour un cumul de 470 quand 709 est le dernier compte (A02), coût d'achat 180 positif avec 609 en dernier, résultat exceptionnel -200 ; cas 709 à cumul négatif non joué) |
+| IMP_SIG-T04 | replay | Débordement de page | jeu avec un grand nombre de rubriques `L` actives | changement de colonne/page (`Lines3`, `Level0`) figé | `tests/pagination/` | implémenté (imp_sig_pagination, gen_imp_sig_pagination.py : 40 rubriques L ajoutées → PDF de 27 pages dont 25 vides, figé) |
+| IMP_SIG-T05 | replay | Deux éditions successives | T01 puis T02 sans quitter | second PDF identique à T02 seul | `tests/editions_successives/` | implémenté (imp_sig_editions_successives : la seconde édition est identique à celle de T02 seule) |
 | IMP_SIG-T06 | replay | Rien à imprimer | aucune rubrique `S` | `Message.Info`, pas de PDF | `tests/rien_a_imprimer/` | implémenté |
 | IMP_SIG-T07 | gbtest | Chaîne des soldes (après IMP_SIG-004) | cumuls `TotP`/`TotA` fournis pour chaque entête | valeurs `marge`, `prodexo`, `Valajout`, `excexpl`, `resexpl`, `rescour`, `resexcept` identiques à T01 | `tests/chaine_soldes/` | à faire : extraction IMP_SIG-004 requise |
 
@@ -29,3 +29,4 @@ avec des écritures de classes 6 et 7 couvrant chaque rubrique, validées et non
 - **Implémentation (phase 2, vague 3)** : T01 → `.hidden/Tests/Compta/assets/imp_sig_sig_e1/` (jeu `extrait_shared/extrait_base`,
   table `centralisation` du dump : S0030 Ventes 707000 = 175) ; T06 → `imp_sig_rien_a_imprimer/` (jeu `imp_sig_sans_rubrique`,
   `SIG.pdf` absent). Rejeu par RubImp (Menu124), case `Sig`, `Button2`, boîte « traitement long » validée par Entrée.
+- **Vague 7** : texte des PDF comparé (`~/edition.txt`) ; T01 complété ; T02 `imp_sig_sig_n2` et T05 `imp_sig_editions_successives` (jeu `imp_sig_shared/imp_sig_n2`), T03 `imp_sig_signes`, T04 `imp_sig_pagination` (`gen_imp_sig_pagination.py`).

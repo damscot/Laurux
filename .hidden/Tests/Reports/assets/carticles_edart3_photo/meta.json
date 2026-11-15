@@ -1,0 +1,23 @@
+{
+ "id": "CARTICLES-T08",
+ "objet": "Édition des articles avec photo (Edart3)",
+ "classe": "Carticles",
+ "description": "/Soc01/Photart = ~/photos (ph101.png déposé) ; Cdt = 01, Art 100 à 103, Phot coché, Imprimer : Level7bis/Level6bis ; 101 avec photo et ligne ; 102 photo absente (ligne omise) ; 100 et 103 sans photo. Comportement actuel figé : erreur fatale « Undefined font: hel8vetica » dans Carticles.Level6bis:202 (police mal orthographiée) dès la première ligne en mode photo → code 125. Dérivé de Gestion/edart3_photo (EDART3-T03) : test propre à Carticles.",
+ "dataset": "Gestion/edart1_shared/editions_articles",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'",
+  "/Soc01/Photart": "{home}/photos"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "code_sortie": 125,
+ "entrees": {
+  "ph101.png": "~/photos/ph101.png"
+ }
+}

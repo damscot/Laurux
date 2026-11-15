@@ -45,4 +45,4 @@
 
 Aucune.
 
-- [ ] TRITEST-A01 — [anomalie] Le banc d'essai échoue à la construction : `Col` reçoit des `ResultField` (`Col.Add(f, …)` avec `f = Res.Fields[…]`) alors que `TriGen._new` attend des `ObjProp` → « Type mismatch: wanted ObjProp, got ResultField » (phase 2, vague 6, 2026-11-14) · tests : TRITEST-T01 à T03 (à faire) · sources : [TriTest.class:25-34](../../../../../.src/Tests/TriTest.class#L25-L34), [TriGen.class:_new](../../../../../.src/Affichages/TriGen.class#L50-L54)
+- [ ] TRITEST-A01 — [anomalie] (confirmée phase 2, vague 7 : « Type mismatch: wanted ObjProp, got ResultField » à `TriGen._new` l. 96, figée par T01) Le banc d'essai échoue à la construction : `Col` reçoit des `ResultField` (`Col.Add(f, …)` avec `f = Res.Fields[…]`) alors que `TriGen._new` attend des `ObjProp` → « Type mismatch: wanted ObjProp, got ResultField » (phase 2, vague 6, 2026-11-14) · tests : TRITEST-T01 à T03 (à faire) · sources : [TriTest.class:25-34](../../../../../.src/Tests/TriTest.class#L25-L34), [TriGen.class:_new](../../../../../.src/Affichages/TriGen.class#L50-L54)

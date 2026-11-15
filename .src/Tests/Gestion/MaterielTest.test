@@ -1,0 +1,97 @@
+' Gambas test file
+
+''Tests de Materiel (.hidden/reference/.src/Gestion/Tables/Materiel.class/test.md, MATERIEL-T09).
+''Écran instancié sans affichage (New Materiel(""), Form_Open appelé) ; le choix des dates dans le calendrier
+''(DateChooser, non rejouable) est remplacé par Value + DateChooser1_Activate, et le bouton Enregistrer (Btn_Click,
+''aiguillé par Last.Tag) par TestenrgMat. Jeu materiel_shared/materiel_base (SN001 non vendu, SN002 vendu).
+''Valeurs attendues : assets/MaterielTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T09GarantieNonVendu", "SN001 non vendu : garantie cochée, dates 01.06.2018 et 01.06.2020 par le calendrier, Enregistrer : mat_chkgarantie, mat_dateg1, DateG2 perdue (A08)")
+  TestKit.Desc("T09GarantieVendu", "SN002 vendu : garantie cochée, dates 15.06.2018 et 15.06.2019 par le calendrier, Enregistrer : mat_chkgarantie, mat_dtevte, mat_dateg1")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "MaterielTest")
+  TestKit.OuvreBase("materiel_shared/materiel_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Zone(sCle As String, hForm As Object, sNom As String)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls[sNom]
+  TestKit.Check(sCle & "/" & sNom, hCtrl.Text)
+
+End
+
+Private Sub Calendrier(hForm As Object, sBouton As String, dDate As Date)
+
+  Dim hCal As Object
+
+  If sBouton = "Button10" Then
+    hForm.Button10_Click()
+  Else
+    hForm.ToggleButton4_Click()
+  Endif
+  hCal = hForm.Controls["DateChooser1"]
+  hCal.Value = dDate
+  hForm.DateChooser1_Activate()
+
+End
+
+Private Sub Garantie(sCle As String, iLigne As Integer, sSerie As String, dDeb As Date, dFin As Date)
+
+  Dim hForm As Materiel
+  Dim hGrid As Object
+  Dim hChk As Object
+  Dim rResult As Result
+
+  hForm = New Materiel("")
+  hForm.Form_Open()
+  hGrid = hForm.Controls["Colmat"]
+  hGrid.Row = iLigne
+  hForm.colmat_Click()
+  Zone(sCle & "/fiche", hForm, "Code")
+  hChk = hForm.Controls["ChkGarantie"]
+  hChk.Value = True
+  Calendrier(hForm, "Button10", dDeb)
+  Calendrier(hForm, "ToggleButton4", dFin)
+  Zone(sCle & "/saisie", hForm, "DateG1")
+  Zone(sCle & "/saisie", hForm, "DateG2")
+  Zone(sCle & "/saisie", hForm, "Datevte")
+  Try hForm.TestenrgMat()
+  If Error Then
+    TestKit.Check(sCle & "/enregistrer", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check(sCle & "/enregistrer", "ok")
+  Endif
+  rResult = Utils.db.Exec("SELECT mat_serie, mat_code, mat_vendu, mat_chkgarantie, mat_dtevte, mat_dateg1, mat_cli FROM Fiches_Materiels ORDER BY mat_serie, mat_code")
+  If rResult.Available Then
+    Repeat
+      TestKit.Check(sCle & "/base_" & rResult.Index, rResult!mat_serie & "|" & rResult!mat_code & "|" & CStr(rResult!mat_vendu) & "|" & CStr(rResult!mat_chkgarantie) & "|" & CStr(rResult!mat_dtevte) & "|" & CStr(rResult!mat_dateg1) & "|" & rResult!mat_cli)
+    Until rResult.MoveNext()
+  Endif
+  Object.Lock(hForm)
+
+End
+
+Public Sub T09GarantieNonVendu()
+
+  Garantie("T09a", 0, "SN001", Date(2018, 6, 1), Date(2020, 6, 1))
+
+End
+
+Public Sub T09GarantieVendu()
+
+  Garantie("T09b", 1, "SN002", Date(2018, 6, 15), Date(2019, 6, 15))
+
+End

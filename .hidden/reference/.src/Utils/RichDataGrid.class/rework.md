@@ -47,7 +47,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] RICHDATAGRID-A01 — [anomalie] `Refresh:112` : texte de recherche concaténé dans le SQL
+- [ ] RICHDATAGRID-A01 — [anomalie] (précisée phase 2, vague 7 : recherche avec apostrophe : l'erreur SQL est avalée par le `Catch` de `Refresh` (l. 122) et le résultat précédent reste affiché (pas de grille vide, contrairement au test.md) (T03)) `Refresh:112` : texte de recherche concaténé dans le SQL
   (`LIKE '<texte>%'`) ; une apostrophe casse la requête (erreur masquée par `Catch`). Correction :
   `Utils.db.Subst("… LIKE &1", texte & "%")` · tests : T03 · sources : [RichDataGrid.class:112](../../../../../.src/Utils/RichDataGrid.class#L112)
 - [ ] RICHDATAGRID-A02 — [anomalie] `Refresh:116` : `db.Exec` (connexion courante gb.db) au lieu

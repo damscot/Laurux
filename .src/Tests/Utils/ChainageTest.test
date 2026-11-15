@@ -18,6 +18,7 @@ Public Sub _Desc()
   TestKit.Desc("T01GestionListe", "gestion liste")
   TestKit.Desc("T02Construction", "construction")
   TestKit.Desc("T03Modif", "modif")
+  TestKit.Desc("T06CouleurFocus", "GotFocus/LostFocus levés par Object.Raise : couleur /Coul/Focus puis couleur d'origine ; champ en lecture seule inchangé")
 
 End
 
@@ -118,5 +119,34 @@ Public Sub T03Modif()
   Endif
   TestKit.Check("T03/modif", v)
   TestKit.Check("T03/modif/liste", Liste(hC))
+
+End
+
+' CHAINAGE-T06 : sous xvfb aucun GotFocus n'est reçu (essai vague 6) ; les événements sont levés par Object.Raise, ce
+' qui positionne Last comme pour une vraie prise de focus. Couleurs /Coul/Focus et /Coul/Znss posées par le test.
+Public Sub T06CouleurFocus()
+
+  Dim hC As Chainage
+
+  Start.LocalSettings["/Coul/Focus"] = "background: 255;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 65280;"
+  $a.Background = 123456
+  $c.ReadOnly = True
+  $c.Background = 654321
+  hC = New Chainage(Tab($a, $b, $c))
+  TestKit.Check("T06/a initial", $a.Background)
+  Object.Raise($a, "GotFocus")
+  TestKit.Check("T06/a GotFocus", $a.Background)
+  Object.Raise($a, "LostFocus")
+  TestKit.Check("T06/a LostFocus", $a.Background)
+  TestKit.Check("T06/b initial", $b.Background)
+  Object.Raise($b, "GotFocus")
+  TestKit.Check("T06/b GotFocus", $b.Background)
+  Object.Raise($b, "LostFocus")
+  TestKit.Check("T06/b LostFocus", $b.Background)
+  Object.Raise($c, "GotFocus")
+  TestKit.Check("T06/c lecture seule GotFocus", $c.Background)
+  Object.Raise($c, "LostFocus")
+  TestKit.Check("T06/c lecture seule LostFocus", $c.Background)
 
 End

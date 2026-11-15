@@ -1,0 +1,62 @@
+' Gambas test file
+
+''Tests de Archives (.hidden/reference/.src/Archivages/Archives.class/test.md, ARCHIVES-T15).
+''Écran instancié sans affichage (New Archives), contrôles lus par Controls ; jeu archives_shared/factures_liste.
+''Le redimensionnement d'une colonne (non rejouable) est remplacé par l'affectation de Columns[i].Width.
+''Valeurs attendues : assets/ArchivesTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T15Largeurs", "Largeurs du détail : défaut sans clé, colonne 2 élargie puis Button5 : clé /Soc01/Col/LcolH écrite et relue à la réouverture")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Archivages", "ArchivesTest")
+  TestKit.OuvreBase("archives_shared/factures_liste")
+
+End
+
+Private Function Largeurs(hForm As Object) As String
+
+  Dim hGrid As Object
+  Dim i As Integer
+  Dim sRes As String
+
+  hGrid = hForm.Controls["Coldetail"]
+  For i = 0 To hGrid.Columns.Count - 1
+    sRes &= "[" & hGrid.Columns[i].Width & "]"
+  Next
+  Return sRes
+
+End
+
+Public Sub T15Largeurs()
+
+  Dim hForm As Object
+  Dim hGrid As Object
+
+  ' Couleurs lues par _New, absentes de Laurux-test.conf
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Coulfonds"] = "background: 16777215;"
+  Start.LocalSettings["/Soc01/Col/LcolH"] = Null
+  hForm = New Archives
+  TestKit.Check("T15/defaut", Largeurs(hForm))
+  hGrid = hForm.Controls["Coldetail"]
+  hGrid.Columns[2].Width = 321
+  hGrid.Columns[8].Width = 45
+  hForm.Button5_Click()
+  TestKit.Check("T15/cle", Start.LocalSettings["/Soc01/Col/LcolH"])
+  hForm = New Archives
+  TestKit.Check("T15/relue", Largeurs(hForm))
+  Object.Lock(hForm)
+  Start.LocalSettings["/Soc01/Col/LcolH"] = "col2:150;col0:40;"
+  hForm = New Archives
+  TestKit.Check("T15/cle_partielle", Largeurs(hForm))
+  Object.Lock(hForm)
+  Start.LocalSettings["/Soc01/Col/LcolH"] = Null
+
+End

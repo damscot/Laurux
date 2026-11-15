@@ -83,7 +83,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FCLIENTCARTE-A01 — [anomalie] (confirmée phase 2, vague 6 : après modification, `tel_dom` et `tel_bur` enregistrés inversés (T02)) `Button4_Click` (modification) : `tel_dom = &{10}, tel_bur =
   &{11}` reçoivent `Telbur`, `Teldom` → **les téléphones domicile et bureau sont inversés à chaque
   enregistrement d'une carte existante** (l'INSERT est correct) · tests : T02 · sources : [FClientcarte.class:597](../../../../../.src/Caisse/FClientcarte.class#L597), [FClientcarte.class:585](../../../../../.src/Caisse/FClientcarte.class#L585)
-- [ ] FCLIENTCARTE-A02 — [anomalie] Sélection du code postal cassée : `Cpman` ouvre
+- [ ] FCLIENTCARTE-A02 — [anomalie] (précisée phase 2, vague 7 : `Cpman` (l. 924) ne reprend pas le CP (`Tricp` mode Client renseigne `FClient.Bsel`, l'écran lit `Variables.Bsel`) ; `ToggleButton5` (l. 1015) : l'erreur est « 'FClientcarte.Bsel' is not a property » dans `Tricp.colco_Click` (l. 140), et non « Unknown symbol », figée par T07) Sélection du code postal cassée : `Cpman` ouvre
   `Tricp("Client")`, qui écrit dans l'auto-instance de `FClient` (instanciée en mémoire) alors que
   l'écran lit `Variables.*`, jamais remis à `False` (valeur périmée d'une sélection `Facture`
   recopiée) ; `ToggleButton5_Click` ouvre `Tricp("Clientcarte")`, qui fait `FClientcarte.Bsel = True`

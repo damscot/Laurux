@@ -56,11 +56,12 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] BORDEREAUX-A01 — [anomalie, à confirmer] Aucun filtre sur la caisse, la date, le statut ni
+- [ ] BORDEREAUX-A01 — [anomalie, à confirmer] (confirmée phase 2, vague 7 : règlements d'un ticket supprimé et d'un ticket `statut = E` présents dans le bordereau, figée par T06) Aucun filtre sur la caisse, la date, le statut ni
   la suppression du ticket : les règlements des tickets supprimés ou en erreur et de toutes les
   journées non moulinées figurent dans le bordereau « du <date du jour> » ; tri par numéro de
   ligne seul (tickets mélangés) · tests : T01, T06 · sources : [Bordereaux.class:44](../../../../../.src/Caisse/Bordereaux.class#L44), [Bordereaux.class:48](../../../../../.src/Caisse/Bordereaux.class#L48), [Bordereaux.class:52](../../../../../.src/Caisse/Bordereaux.class#L52)
-- [ ] BORDEREAUX-A02 — [anomalie] Mise en page : premier en-tête à `PosY = 0` (6 ensuite), totaux
+- [ ] BORDEREAUX-A02 — [anomalie] (confirmée phase 2, vague 7 : total du premier type aligné par `Space$(90)` (l. 80), du dernier par `Space$(50)` (l. 117), figée par T01) Mise en page : premier en-tête à `PosY = 0` (6 ensuite), totaux
   intermédiaire et final alignés différemment (`Space$(90)` / `Space$(50)`), société lue sans test
   `Available` (erreur si la société courante est absente de `Fiches_Societes`) · tests : T01, T05,
   T07 · sources : [Bordereaux.class:42](../../../../../.src/Caisse/Bordereaux.class#L42), [Bordereaux.class:78](../../../../../.src/Caisse/Bordereaux.class#L78), [Bordereaux.class:115](../../../../../.src/Caisse/Bordereaux.class#L115), [Bordereaux.class:144-145](../../../../../.src/Caisse/Bordereaux.class#L144-L145)
+- [ ] BORDEREAUX-A03 — [anomalie, à confirmer] Sans SIRET local (`/Soc<XX>/Siret`), l'en-tête du bordereau imprime « Siret :Siret : … » ; la chaîne est construite l. 148 par `"Siret :" & /Soc<XX>/Siret & " : " & siret_sc` ; origine du libellé doublé non analysée (phase 2, vague 7, 2026-11-15) · tests : T01, T07 · sources : [Bordereaux.class:148](../../../../../.src/Caisse/Bordereaux.class#L148), [Bordereaux.class:Imp_Entete](../../../../../.src/Caisse/Bordereaux.class#L136-L150)

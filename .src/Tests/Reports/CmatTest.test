@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Cmat (.hidden/reference/.src/Reports/Cmat.class/test.md, CMAT-T01).
+''Tests de Cmat (.hidden/reference/.src/Reports/Cmat.class/test.md, CMAT-T01, T02).
 ''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
 ''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
 ''Valeurs attendues : assets/CmatTest/expected.txt, produites dans le clone de référence. Pas de base.
@@ -9,6 +9,7 @@ Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T01Liste", "Entete, Level1, 3 Level2, Ligne, Ligne2, Footer sur 2 pages")
+  TestKit.Desc("T02EdmatListe", "Séquence d'EdMat : 60 matériels (prix à 2 et 3 décimales), saut à PosY >= 283 (2 pages), entête de suite")
 
 End
 
@@ -72,5 +73,39 @@ Public Sub T01Liste()
   pdf.Entete("Liste des matériels")
   pdf.Footer()
   Verifie("T01", pdf)
+
+End
+
+' CMAT-T02 : appels de Cmat dans l'ordre d'EdMat.Button1_Click (liste de tous les matériels) : 60 matériels,
+' prix complétés d'une espace à 2 décimales comme EdMat, saut à PosY >= 283 avec l'en-tête de suite d'EdMat.
+Public Sub T02EdmatListe()
+
+  Dim pdf As Cmat = Nouveau()
+  Dim PosY As Integer
+  Dim i As Integer
+  Dim pvht, pvttc As String
+
+  pdf.Entete("Liste de tous les matériels au 15.06.2018")
+  pdf.Level1()
+  PosY = 26
+  For i = 1 To 60
+    If i Mod 2 = 0 Then
+      pvht = Format$(i * 10.5, "0.00") & " "
+      pvttc = Format$(i * 12.6, "0.00") & " "
+    Else
+      pvht = Format$(i * 10.125, "0.000")
+      pvttc = Format$(i * 12.15, "0.000")
+    Endif
+    pdf.Level2("MAT" & Format$(i, "000"), Left$("MATERIEL DE TEST AU LIBELLE LONG NUMERO " & i, 36), "MARQUE" & (i Mod 4), "TYPE" & (i Mod 3), "SERIE" & i, "CLI" & (i Mod 5), pvht, pvttc, PosY)
+    PosY += 5
+    If PosY >= 283 Then
+      pdf.Footer()
+      pdf.Entete("Liste des marériels au 15.06.2018")
+      pdf.Level1()
+      PosY = 26
+    Endif
+  Next
+  pdf.Footer()
+  Verifie("T02", pdf)
 
 End

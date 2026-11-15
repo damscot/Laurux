@@ -9,7 +9,7 @@ inchangé). Valeurs attendues produites dans le clone **Laurux non modifié**.
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | EDCOM-T01 | replay | Choix à la souris | liste, clic sur la 1re commande (3 commandes de dates différentes), Imprimer | texte du PDF ; date = celle de la **dernière** commande listée (A02 figée) | `tests/choix_souris/` | implémenté |
-| EDCOM-T02 | replay | Choix au clavier | liste, Entrée sur une commande, Imprimer | « Aucun mouvement » (`Codefour` vide, A01 figée) | `tests/choix_clavier/` | à faire : Entrée vers une ColumnView non rejouable |
+| EDCOM-T02 | replay | Choix au clavier | liste, Entrée sur une commande, Imprimer | « Aucun mouvement » (`Codefour` vide, A01 figée) | `tests/choix_clavier/` | à faire : Entrée vers une ColumnView non rejouable ; pas d'équivalent gb.test : le choix (`Ncom.Text = Colcom.Item[2]`) est écrit dans `Colcom_KeyPress` sous `If Key.Code = Key.Enter` (aucun événement clavier en gb.test) |
 | EDCOM-T03 | replay | Numéro saisi | numéro tapé dans `Ncom`, Imprimer | « Aucun mouvement » (A01) | `tests/numero_saisi/` | implémenté |
 | EDCOM-T04 | replay | Réimpression | deux impressions successives | 2e PDF identique (fichier `.kdf`/PDF rouvert : sans effet visible) | `tests/reimpression/` | implémenté |
 | EDCOM-T05 | replay | Saut de page | commande de 40 lignes | en-têtes répétés | `tests/saut_page/` | implémenté |

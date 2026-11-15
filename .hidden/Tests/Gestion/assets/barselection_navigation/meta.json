@@ -1,0 +1,21 @@
+{
+ "id": "BARSELECTION-T01",
+ "objet": "Navigation (barre « 111111111 » de Tconsigne)",
+ "classe": "barselection",
+ "description": "Tconsigne (option boisson, menu dynamique Consignes), jeu consigne_shared/consigne_base (B1, C1, P1) : boutons de Barselection par Focus sur le 1er « bout », Tab × (n-1), Espace : suivant, suivant, premier, suivant, suivant (fin : sans effet), précédent, dernier, précédent, Sortie (8e bouton : événement quitter, fermeture de l'écran). Lecture seule (sql.log ordonné).",
+ "dataset": "consigne_shared/consigne_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/bois": true
+ },
+ "compare_sql_log": "ordered"
+}

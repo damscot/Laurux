@@ -1,0 +1,95 @@
+' Gambas test file
+
+''Tests de VisStatComm (.hidden/reference/.src/Statistiques/VisStatComm.class/test.md, VISSTATCOMM-T03).
+''Valeurs attendues : assets/VisStatCommTest/expected.txt, produites dans le clone de référence.
+''Les tris sont déclenchés sur MouseDown des RadioButton, que le rejeu ne sait pas jouer : la table Total est remplie
+''par le test (contenu de STATCOMM-T01, détail par client), l'écran est construit par New VisStatComm sans être
+''affiché, puis chaque gestionnaire _MouseDown est appelé avant le changement de Value du bouton (ordre réel des
+''événements, A01). Jeu : statcomm_shared/statistiques_ventes.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03Tris", "Tris Bnom, Bnom, Bbrut, Brem, Bnet, Bcode en détail (A01 : tri forcé sur commercial)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Statistiques", "VisStatCommTest")
+  TestKit.OuvreBase("statcomm_shared/statistiques_ventes")
+  ' Clés de couleur lues par _New, absentes de Laurux-test.conf
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+  Utils.db.Exec("DROP TABLE IF EXISTS Total")
+  Utils.db.Exec("CREATE TABLE Total (cdclifac Char(8) NOT NULL, nmclifac Char(25), pnmclifac Char(25), brutfac Decimal(12,2), rmfac Decimal(12,2), totfac Decimal(12,2), totfacn1 Decimal(12,2), commercial Char(2), PRIMARY KEY (cdclifac))" & Utils.db.Engine())
+  Ligne("411001", "A Divers", "Alain", 320, 20, 300, 100, "01")
+  Ligne("411002", "B Divers", "Bruno", 50, 0, 50, Null, "01")
+  Ligne("411003", "C Divers", "Claire", 315, 15, 300, 150, "02")
+  Ligne("411004", "D Divers", "Denis", 40, 0, 40, Null, Null)
+
+End
+
+Private Sub Ligne(sCode As String, sNom As String, sPnm As String, fBrut As Float, fRm As Float, fTot As Float, vN1 As Variant, vComm As Variant)
+
+  Utils.db.Exec("INSERT INTO Total (cdclifac, nmclifac, pnmclifac, brutfac, rmfac, totfac, totfacn1, commercial) VALUES (&1, &2, &3, &4, &5, &6, &7, &8)", sCode, sNom, sPnm, fBrut, fRm, fTot, vN1, vComm)
+
+End
+
+Private Sub Releve(sT As String, hF As VisStatComm)
+
+  Dim hL As Object
+  Dim sLignes As String
+
+  hL = hF.Controls["Liste"]
+  If hL.MoveFirst() = False Then
+    Repeat
+      sLignes &= "[" & hL.Item[0] & "|" & hL.Item[5] & "|" & hL.Item[8] & "]"
+    Until hL.MoveNext()
+  Endif
+  TestKit.Check(sT & "/lignes", sLignes)
+  TestKit.Check(sT & "/tri", hF.Tri & " " & hF.sens)
+
+End
+
+Private Sub Coche(hF As VisStatComm, sNom As String)
+
+  Dim hR As Object
+
+  hR = hF.Controls[sNom]
+  hR.Value = True
+
+End
+
+Public Sub T03Tris()
+
+  Dim hF As VisStatComm
+
+  Try hF = New VisStatComm(Null, "01", 0, "01.01.2018", "15.06.2018", True)
+  If Error Then
+    TestKit.Check("T03/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Releve("T03/initial", hF)
+  hF.Bnom_MouseDown()
+  Coche(hF, "Bnom")
+  Releve("T03/nom1", hF)
+  hF.Bnom_MouseDown()
+  Releve("T03/nom2", hF)
+  hF.Bbrut_MouseDown()
+  Coche(hF, "Bbrut")
+  Releve("T03/brut", hF)
+  hF.Brem_MouseDown()
+  Coche(hF, "Brem")
+  Releve("T03/rem", hF)
+  hF.Bnet_MouseDown()
+  Coche(hF, "Bnet")
+  Releve("T03/net", hF)
+  hF.Bcode_MouseDown()
+  Coche(hF, "Bcode")
+  Releve("T03/code", hF)
+  Object.Lock(hF)
+
+End

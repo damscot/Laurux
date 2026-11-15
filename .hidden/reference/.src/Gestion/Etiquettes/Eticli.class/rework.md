@@ -73,6 +73,6 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ETICLI-A03 — [anomalie] (confirmée phase 2, vague 4 : type masqué : « Null object » figé par T08) `RadioButton2` coché puis `CheckType` décoché : aucune requête,
   `rCli` `Null` (ou résultat précédent) → erreur ou impression du jeu précédent ; `Imprime` lit
   `rCli` sans test `Available` · tests : T08 · sources : [Eticli.class:776](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L776), [Eticli.class:Imprime](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L834-L860)
-- [ ] ETICLI-A04 — [anomalie] `colinit` appelle toujours `AffClients` : un tri sur `Colcli2`
+- [ ] ETICLI-A04 — [anomalie] (confirmée phase 2, vague 7 : tri sur `Colcli2` réinitialise `Colcli` (`colinit` l. 209), sens de tri partagé, figée par T06) `colinit` appelle toujours `AffClients` : un tri sur `Colcli2`
   réinitialise les colonnes et le focus de `Colcli` ; format lu par `code` seul et PDF toujours en
   A4 Portrait (page du modèle ignorée) · tests : T06, T07 · sources : [Eticli.class:colinit](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L209-L227), [Eticli.class:750](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L750), [Eticli.class:769](../../../../../../.src/Gestion/Etiquettes/Eticli.class#L769)

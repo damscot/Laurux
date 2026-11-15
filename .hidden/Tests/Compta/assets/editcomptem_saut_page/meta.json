@@ -1,0 +1,23 @@
+{
+ "id": "EDITCOMPTEM-T08",
+ "objet": "Saut de page",
+ "classe": "EditcompteM",
+ "description": "Grands livres (Menu38), 70 écritures 411001/707000 en mai 2018, bouton Général, Imprimer : pages 2+ titrées « Grand livre », pied « Page n/N » (edition.txt).",
+ "dataset": "saut_page",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

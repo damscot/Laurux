@@ -1,0 +1,18 @@
+{
+ "id": "RAZHISTOFBL-T05",
+ "classe": "RazHistoFbl",
+ "objet": "Effet de la purge sur le stock recalculé",
+ "description": "Jeu receptions_stock (article 001 : stock de départ 10, R1001 du 2018-05-02 de 4 unités, R1002 du jour de 3 unités) : purge des réceptions (Oui, Info), Quitter ; puis Gestion › Outils › Recalcul des stocks, tous les produits, Lancer, « Traitement terminé ». Attendu figé (A03) : R1001 purgée, art_qte recalculé sans elle. Inventaire Fiches_HisInvT non abordé.",
+ "dataset": "receptions_stock",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 28,
+ "timeout_accord": "utilisateur, 2026-11-15 : 22,9 s mesurées sous charge (vague 7) ; purge des réceptions puis recalcul des stocks (Calcstock, tous les produits)",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -8,7 +8,7 @@
 | CONDITIONS-T01 | gbtest | Compilation après suppression | suppression de `Conditions`, `Condition` et de `CondFormats` dans `RichDataGrid` | `gbc3 -agt` sans erreur | `tests/suppression/` | à faire : relève de la phase 4 (suppression de la classe) |
 | CONDITIONS-T02 | gbtest | `Compute` : 7 opérateurs (si conservé) | `Result` `SELECT 5 AS n, 'abc' AS s` ; conditions sur `n` et `s` | booléens et `Value` de référence | `tests/operateurs/` | implémenté |
 | CONDITIONS-T03 | gbtest | Combinaison ET, liste vide, champ inconnu, opérateur inconnu | idem | `False`/`True` figés ; `Value` inchangée après `Catch` | `tests/combinaisons/` | implémenté |
-| CONDITIONS-T04 | replay | Non-régression `Remisec` | ouverture de la table des remises (`Remisec`) | affichage identique de la grille (log GUI) | `tests/remisec_grille/` | à faire : affichage de la grille non comparé par le runner (dump + SQL seulement) |
+| CONDITIONS-T04 | replay | Non-régression `Remisec` | ouverture de la table des remises (`Remisec`) | affichage identique de la grille (log GUI) | `tests/remisec_grille/` | implémenté (gb.test `ConditionsTest.T04RemisecGrille` : `Remisec` instancié sans affichage, 3 remises insérées ; en-têtes, largeurs et textes des cellules de `Tabtypec` relevés) |
 
 ## Détail des tests
 

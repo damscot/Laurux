@@ -13,7 +13,7 @@ temporaire). Références capturées dans le clone **Laurux non modifié**.
 | ETICLI-T03 | replay | Code postal | `CheckCp` ; CP `44000`–`44999` ; tri CP | PDF **non filtré** par CP, trié (A01 figée) | `tests/eticli_cp/` | implémenté |
 | ETICLI-T04 | replay | Bornes texte / numérique | clients `5`, `9000`, `41100005`, `411000050` ; bornes `41100001`–`411999999` | sélection figée (A02) | `tests/eticli_bornes/` | implémenté |
 | ETICLI-T05 | replay | Mode liste | `Liste` ; 3 codes, un doublon, un inconnu ; Imprimer | `ListCli` (log), PDF ; code inconnu refusé | `tests/eticli_liste/` | implémenté |
-| ETICLI-T06 | replay | Grilles et tri | F2 sur `client1` ; clic en-tête Nom deux fois ; clic ligne ; idem `client2` | sélection, tri (log), A04 figée | `tests/eticli_grilles/` | à faire : F2, clic d'en-tête de colonne et grilles ouvertes par F2 non rejouables |
+| ETICLI-T06 | replay | Grilles et tri | F2 sur `client1` ; clic en-tête Nom deux fois ; clic ligne ; idem `client2` | sélection, tri (log), A04 figée | `tests/eticli_grilles/` | implémenté (gb.test `EticliTest.T06Grilles` : `ToggleButton1_Click`/`ToggleButton2_Click` à la place de F2, `Colcli_ColumnClick(1)`, `ColCli_Click` ; 1er tri en `Desc` ; tri de `Colcli2` réinitialise les colonnes de `Colcli`, A04 figée) |
 | ETICLI-T07 | replay | Position de départ | `Posetiq` = 4 ; planche 3 × 8 ; 30 clients | positions V1, pages | `tests/eticli_position/` | implémenté |
 | ETICLI-T08 | replay | Tri par type sans filtre | cocher `CheckType`, `RadioButton2`, décocher `CheckType` ; Imprimer | erreur `Null object` figée (A03) | `tests/eticli_type_masque/` | implémenté |
 

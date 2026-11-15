@@ -12,13 +12,13 @@ deux clones avant capture, ou pilotage après BORDEREAUX-004 par un test appelan
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| BORDEREAUX-T01 | replay | Bordereau « Tous » | jeu `caisse_base` : chèques et cartes sur 2 caisses et 2 jours ; `Tous`, `Imptk` coché, Imprimer | PDF `Bordereau_<date>.pdf` : cartes puis chèques, totaux par type (largeurs 90/50 figées), dump inchangé | `tests/bordereau_tous/` | à faire |
-| BORDEREAUX-T02 | replay | Chèques seuls, sans numéros | `Cheques`, `Imptk` décoché | `Bordereau_Cheques_<date>.pdf`, intitulés sans « Ticket N° » | `tests/bordereau_cheques/` | à faire |
-| BORDEREAUX-T03 | replay | Cartes seules | `Cartes` | `Bordereau_Cartes_<date>.pdf` | `tests/bordereau_cartes/` | à faire |
-| BORDEREAUX-T04 | replay | Aucune donnée | base sans ligne `U`/`V` | `Message.Info` « Il n'existe pas de donnée… », aucun PDF | `tests/bordereau_vide/` | à faire |
-| BORDEREAUX-T05 | replay | Pagination | 80 chèques | sauts de page à `PosY >= 240`, en-tête répété (premier à `PosY = 0`) | `tests/bordereau_pages/` | à faire |
-| BORDEREAUX-T06 | replay | Tickets supprimés / en erreur | ticket supprimé et ticket `statut = E` réglés par chèque | lignes présentes dans le bordereau (A01 figée) | `tests/bordereau_tickets_supprimes/` | à faire |
-| BORDEREAUX-T07 | replay | En-tête société | société avec logo (`/glogo`) puis sans ; SIRET local | en-tête PDF de référence | `tests/bordereau_entete/` | à faire |
+| BORDEREAUX-T01 | replay | Bordereau « Tous » | jeu `caisse_base` : chèques et cartes sur 2 caisses et 2 jours ; `Tous`, `Imptk` coché, Imprimer | PDF `Bordereau_<date>.pdf` : cartes puis chèques, totaux par type (largeurs 90/50 figées), dump inchangé | `tests/bordereau_tous/` | implémenté |
+| BORDEREAUX-T02 | replay | Chèques seuls, sans numéros | `Cheques`, `Imptk` décoché | `Bordereau_Cheques_<date>.pdf`, intitulés sans « Ticket N° » | `tests/bordereau_cheques/` | implémenté |
+| BORDEREAUX-T03 | replay | Cartes seules | `Cartes` | `Bordereau_Cartes_<date>.pdf` | `tests/bordereau_cartes/` | implémenté |
+| BORDEREAUX-T04 | replay | Aucune donnée | base sans ligne `U`/`V` | `Message.Info` « Il n'existe pas de donnée… », aucun PDF | `tests/bordereau_vide/` | implémenté |
+| BORDEREAUX-T05 | replay | Pagination | 80 chèques | sauts de page à `PosY >= 240`, en-tête répété (premier à `PosY = 0`) | `tests/bordereau_pages/` | implémenté |
+| BORDEREAUX-T06 | replay | Tickets supprimés / en erreur | ticket supprimé et ticket `statut = E` réglés par chèque | lignes présentes dans le bordereau (A01 figée) | `tests/bordereau_tickets_supprimes/` | implémenté |
+| BORDEREAUX-T07 | replay | En-tête société | société avec logo (`/glogo`) puis sans ; SIRET local | en-tête PDF de référence | `tests/bordereau_entete/` | implémenté (avec logo et SIRET local ; variante sans logo couverte par T01) |
 
 ## Détail des tests
 
@@ -31,3 +31,4 @@ deux clones avant capture, ou pilotage après BORDEREAUX-004 par un test appelan
   configuration de test), `Music.Play`, `Doc.Open`.
 - **Couverture visée** : 100 % de `Imp_Bordereaux` et `Imp_Entete` (branches radio, `Imptk`,
   changement de type, pagination, logo).
+- **Phase 2 (vague 7)** : scénarios `.hidden/Tests/Caisse/assets/bordereaux_{tous,cheques,cartes,vide,pages,entete}/` (Gestion › Bordereaux, `Menu214` ; l'écran est désormais journalisé par `Utils.ReplayObservers`) ; texte du PDF par `/Soc01/caisse/CmdVis` = pdftotext (`edition.txt`). Jeux `bordereaux_shared/{remises,vide,pages,supprimes}` (caisse activée par le blob conf). T07 : logo PNG **sans canal alpha** (`PdfWriter._parsepng` refuse l'alpha : erreur fatale « Alpha channel not supported » avec un PNG RGBA). Observé : la ligne de total du premier type utilise `Space$(90)`, celle du dernier `Space$(50)`.

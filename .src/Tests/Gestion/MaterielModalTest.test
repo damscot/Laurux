@@ -1,0 +1,79 @@
+' Gambas test file
+
+''Tests de Materiel ouvrant TriCpt en ShowModal (.hidden/reference/.src/Gestion/Tables/Materiel.class/test.md, MATERIEL-T12).
+''Module séparé de MaterielTest (vague 7, fusion). Un Timer du module agit pendant la boucle modale : il retrouve la
+''fenêtre TriCpt ouverte (Windows) et simule la sélection d'une ligne (Bsel = True puis ColTri_MajSel(code), ce
+''que fait TriGen au double-clic) ou la fermeture sans choix. Materiel("") est instanciée sans être affichée.
+''Valeurs attendues : assets/MaterielModalTest/expected.txt, produites dans le clone de référence.
+
+Private $hTimer As Timer
+Private $sChoix As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T12Client", "ToggleButton3 : choix du client 411001 dans TriCpt (Cd et coordonnées), puis réouverture fermée sans choix (A09)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "MaterielModalTest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+' Programme l'action de l'utilisateur dans TriCpt : code choisi, ou "" pour fermer sans choix.
+Private Sub Programme(sChoix As String)
+
+  $sChoix = sChoix
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "TriCpt" Then Continue
+    $hTimer.Enabled = False
+    If $sChoix Then
+      Object.SetProperty(hWin, "Bsel", True)
+      Object.Call(hWin, "ColTri_MajSel", [$sChoix])
+    Else
+      hWin.Close()
+    Endif
+    Return
+  Next
+
+End
+
+Public Sub T12Client()
+
+  Dim hF As New Materiel("")
+  Dim sNom As String
+
+  Programme("411001")
+  Try hF.ToggleButton3_Click()
+  TestKit.Check("T12/choix/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T12/choix/Bsel", hF.Bsel)
+  For Each sNom In ["Cd", "CV", "Nm", "Pnm", "Adresse1", "Cp", "Burdist", "Telbur"]
+    TestKit.Check("T12/choix/" & sNom, Object.GetProperty(hF.Controls[sNom], "Text"))
+  Next
+  Object.SetProperty(hF.Controls["Cd"], "Text", "")
+  Object.SetProperty(hF.Controls["Nm"], "Text", "")
+  Programme("")
+  Try hF.ToggleButton3_Click()
+  TestKit.Check("T12/annule/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T12/annule/Bsel", hF.Bsel)
+  TestKit.Check("T12/annule/Cd", Object.GetProperty(hF.Controls["Cd"], "Text"))
+  TestKit.Check("T12/annule/Nm", Object.GetProperty(hF.Controls["Nm"], "Text"))
+  Object.Lock(hF)
+
+End

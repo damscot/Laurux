@@ -69,9 +69,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] HISTOCLIART-A02 — [anomalie] Familles : `Checktfam` décochée sans nœud sélectionné →
   `Utils.fam` renvoie `" AND champ IN)"` (SQL invalide, UTILS-A02 ; à corriger dans `Utils` ou à
   contrôler ici avec un message) · tests : T08 · sources : [Histocliart.class:369](../../../../../.src/Statistiques/Histocliart.class#L369), [Utils.module:fam](../../../../../.src/Utils/Utils.module#L1439-L1452)
-- [ ] HISTOCLIART-A03 — [anomalie] `Cli_man` contrôle toujours `Cli.Text`, même pour `Cli2` : le code
+- [ ] HISTOCLIART-A03 — [anomalie] (confirmée phase 2, vague 7 : `Cli_man("Cli2")` (l. 124) contrôle `Cli` : 411999 accepté, figée par T09) `Cli_man` contrôle toujours `Cli.Text`, même pour `Cli2` : le code
   de fin n'est jamais vérifié · tests : T09 · sources : [Histocliart.class:128](../../../../../.src/Statistiques/Histocliart.class#L128)
-- [ ] HISTOCLIART-A04 — [anomalie] `Butcli2_Click` et `butfour_click` ne remettent pas `Bsel` à
+- [ ] HISTOCLIART-A04 — [anomalie] (confirmée phase 2, vague 7 : `Butcli2_Click` (l. 170) ne remet pas `Bsel` à False : l'annulation reprend l'ancien choix, figée par T09) `Butcli2_Click` et `butfour_click` ne remettent pas `Bsel` à
   `False` : après une sélection précédente, une annulation de `TriCpt` réécrit l'ancienne valeur ·
   tests : T09 · sources : [Histocliart.class:Butcli2_Click](../../../../../.src/Statistiques/Histocliart.class#L170-L183), [Histocliart.class:butfour_click](../../../../../.src/Statistiques/Histocliart.class#L209-L230)
 - [ ] HISTOCLIART-A05 — [anomalie] (confirmée phase 2, vague 6 : figée par T10 (`histocliart_vide`)) `Butexp_Click` ne vérifie ni le nombre de sources (`nbfic`) ni

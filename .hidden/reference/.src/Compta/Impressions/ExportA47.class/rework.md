@@ -78,7 +78,7 @@ l'expert-comptable et l'outil de contrôle de la DGFiP avant toute correction.
 - [ ] EXPORTA47-A01 — [anomalie] (confirmée phase 2, vague 3 : après `Message.Error` + `Me.Close`, « Result is not available » (`Button2_Click.441`), fichier partiel) Compte absent du plan comptable : `Message.Error` puis
   `Me.Close` sans `Return` ; la lecture de `type_cc` sur un résultat vide lève une erreur, le
   fichier reste ouvert et partiel · tests : T07 · sources : [ExportA47.class:436-441](../../../../../../.src/Compta/Impressions/ExportA47.class#L436-L441)
-- [ ] EXPORTA47-A02 — [anomalie] « Exercice en cours » calculé sur `Now + 1 an` : pour un
+- [ ] EXPORTA47-A02 — [anomalie] (confirmée phase 2, vague 7 : période EC du 01.01.<an+1> au 31.12.<an+2>, figée par T09) « Exercice en cours » calculé sur `Now + 1 an` : pour un
   exercice civil, période proposée N+1 à N+2 au lieu de l'exercice courant (à confirmer, dépend
   de LDATE-A03) · tests : T09 · sources : [ExportA47.class:69-70](../../../../../../.src/Compta/Impressions/ExportA47.class#L69-L70)
 - [ ] EXPORTA47-A03 — [anomalie] Annulation de la barre de progression : fichier tronqué mais
@@ -87,13 +87,13 @@ l'expert-comptable et l'outil de contrôle de la DGFiP avant toute correction.
   `Journallib`, `credit`, `MontantDevise` (norme : `JournalLib`, `Credit`, `Montantdevise`) ;
   séparateur `|` final sur chaque ligne (19e champ vide) ; nom de fichier
   `<SIREN>FEC<fin>-<début>` au lieu de `<SIREN>FEC<date de clôture>` · tests : T01 · sources : [ExportA47.class:376](../../../../../../.src/Compta/Impressions/ExportA47.class#L376), [ExportA47.class:412](../../../../../../.src/Compta/Impressions/ExportA47.class#L412), [ExportA47.class:561](../../../../../../.src/Compta/Impressions/ExportA47.class#L561)
-- [ ] EXPORTA47-A05 — [anomalie] Conformité de contenu (à confirmer) : champs bourrés d'espaces
+- [ ] EXPORTA47-A05 — [anomalie] (précisée phase 2, vague 7 : FEC : « ô » et « é » → « e », retour à la ligne supprimé, libellé tronqué à 30 caractères (T06)) Conformité de contenu (à confirmer) : champs bourrés d'espaces
   dans un format délimité ; apostrophes exportées `\'` et `ô` → `e` (`Utils.Accent`, UTILS-A12) ;
   `CompAuxNum`/`CompAuxLib` toujours vides et comptes de tiers exportés en `CompteNum` ;
   séparateur décimal dépendant de la locale · tests : T01, T06 · sources : [ExportA47.class:487-501](../../../../../../.src/Compta/Impressions/ExportA47.class#L487-L501), [ExportA47.class:520](../../../../../../.src/Compta/Impressions/ExportA47.class#L520)
-- [ ] EXPORTA47-A06 — [anomalie] Case « Envoi par Mail » sans effet : `export()` n'est jamais
+- [ ] EXPORTA47-A06 — [anomalie] (confirmée phase 2, vague 7 : case « Envoi par Mail » non enregistrée, figée par T12) Case « Envoi par Mail » sans effet : `export()` n'est jamais
   appelée et viserait `ecritures.<extension>` avec `extension` vide · tests : T12 · sources : [ExportA47.class:49-53](../../../../../../.src/Compta/Impressions/ExportA47.class#L49-L53), [ExportA47.class:export](../../../../../../.src/Compta/Impressions/ExportA47.class#L338-L356)
-- [ ] EXPORTA47-A07 — [anomalie] Borne de fin `yyyy-mm-dd` sur `dte datetime` : écritures du
+- [ ] EXPORTA47-A07 — [anomalie] (confirmée phase 2, vague 7 : écriture du 31/12 à 14:00 absente du FEC, figée par T11) Borne de fin `yyyy-mm-dd` sur `dte datetime` : écritures du
   dernier jour avec une heure non nulle exclues (à confirmer selon les données réelles) · tests :
   T11 · sources : [ExportA47.class:415](../../../../../../.src/Compta/Impressions/ExportA47.class#L415)
 - [ ] EXPORTA47-A08 — [anomalie] Bourrage `String$(n - Len(x))` avec une longueur négative quand

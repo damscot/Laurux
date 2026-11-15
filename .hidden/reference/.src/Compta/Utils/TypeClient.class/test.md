@@ -7,7 +7,7 @@
 |---|---|---|---|---|---|---|
 | TYPECLIENT-T01 | gbtest | Chargement | `Laurux01.sql` + 3 types dans `Fiches_Typec` ; `New TypeClient(fenêtre de test)` (Xvfb) | clés et libellés des éléments dans l'ordre | `tests/typeclient_chargement/` | implémenté (Compta/TypeClientTest.T01Chargement, jeu typeclient_types) |
 | TYPECLIENT-T02 | gbtest | Propriété `where` | aucune sélection ; 1 type ; 3 types ; code avec apostrophe | `""`, `cli_typec IN('A')`, `cli_typec IN('A','B','C')`, quote échappée | `tests/typeclient_where/` | implémenté (Compta/TypeClientTest.T02Where ; aucune sélection : chaîne vide affichée <Null>) |
-| TYPECLIENT-T03 | replay | Balance filtrée par type | écran Balance, sélection de 2 types, impression | lignes `Exec_SQL` et texte PDF de référence | `tests/typeclient_balance/` | à faire : sélection dans le TreeView TypeClient non rejouée (clic ListView/TreeView) et sortie PDF non comparée |
+| TYPECLIENT-T03 | replay | Balance filtrée par type | écran Balance, sélection de 2 types, impression | lignes `Exec_SQL` et texte PDF de référence | `.src/Tests/Compta/TypeClientTest.test` (`T03Balance`) | implémenté (gb.test, jeu typeclient_balance : écran Balance instancié sans affichage, exercice 2018 posé, types 01 et 03 sélectionnés, `Button1_Click` ; `where` et texte pdftotext du PDF (411001 et 411003 seuls) comparés ; requêtes non comparées) |
 
 ## Détail des tests
 

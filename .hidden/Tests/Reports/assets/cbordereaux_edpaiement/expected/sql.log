@@ -1,0 +1,32 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+drop Table IF exists Paiements
+CREATE  TABLE Paiements(numero Char(10),type Char(15),montant Char(15),lind INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (lind)) ENGINE = InnoDB
+SELECT * FROM Fiches_Bl WHERE dtefac = '20180615'  Union SELECT * FROM Fiches_BlM WHERE dtefac = '20180615'  order by reg, numfac
+INSERT INTO Paiements (numero, type, montant) Values ('B00101', 'Cheque', '120')
+INSERT INTO Paiements (numero, type, montant) Values ('M00201', 'Cheque', '80')
+INSERT INTO Paiements (numero, type, montant) Values ('B00102', 'Especes', '30')
+INSERT INTO Paiements (numero, type, montant) Values ('M00202', 'Especes', '10')
+SELECT * FROM Paiements order by type, numero
+SELECT * FROM Fiches_Bl WHERE numbl = 'B00101'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'B00101'
+SELECT * FROM Fiches_Bl WHERE numbl = 'M00201'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'M00201'
+SELECT * FROM Fiches_Bl WHERE numbl = 'B00102'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'B00102'
+SELECT * FROM Fiches_Bl WHERE numbl = 'M00202'  Union SELECT * FROM Fiches_BlM WHERE numbl = 'M00202'

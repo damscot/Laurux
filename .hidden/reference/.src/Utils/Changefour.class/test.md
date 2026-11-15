@@ -8,13 +8,13 @@ normalisé de `Fiches_Art` (et de `Fiches_Four` pour contrôle) et diff des lign
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CHANGEFOUR-T01 | replay | Un article | Menu Gestion → Changement de fournisseur ; `Code` existant, `Nfour` via `TriCpt`, « Lancer » | `art_four` modifié pour l'article | `tests/article/` | à faire : scénario prêt, attendus ref enregistrés ; compare rework suspendu (collision des bacs) |
-| CHANGEFOUR-T02 | replay | Champs manquants | « Lancer » avec `Code` vide puis `Nfour` vide | messages, aucune écriture | `tests/champs_vides/` | à faire : scénario prêt, attendus ref enregistrés ; compare rework suspendu (collision des bacs) |
-| CHANGEFOUR-T03 | replay | Fournisseur entier | `Afour2` → `Nfour2`, bouton `Tag 6` ; puis `Afour2` vide, puis `Nfour2` vide | dump ; figer les messages inversés (A02) | `tests/fournisseur_global/` | à faire : scénario prêt, attendus ref enregistrés ; compare rework suspendu (collision des bacs) |
+| CHANGEFOUR-T01 | replay | Un article | Menu Gestion → Changement de fournisseur ; `Code` existant, `Nfour` via `TriCpt`, « Lancer » | `art_four` modifié pour l'article | `tests/article/` | implémenté (`changefour_article`) |
+| CHANGEFOUR-T02 | replay | Champs manquants | « Lancer » avec `Code` vide puis `Nfour` vide | messages, aucune écriture | `tests/champs_vides/` | implémenté (`changefour_champs_vides`) |
+| CHANGEFOUR-T03 | replay | Fournisseur entier | `Afour2` → `Nfour2`, bouton `Tag 6` ; puis `Afour2` vide, puis `Nfour2` vide | dump ; figer les messages inversés (A02) | `tests/fournisseur_global/` | implémenté (`changefour_fournisseur_global`) |
 | CHANGEFOUR-T04 | replay | Liste d'articles | case `Liste`, 3 articles, « Lancer » | 3 articles modifiés | `tests/liste_articles/` | implémenté (`changefour_liste_articles`) |
 | CHANGEFOUR-T05 | replay | Liste : doublon | même article ajouté 2 fois | figer l'erreur SQL (`code` inexistant, A01) | `tests/liste_doublon/` | implémenté (`.hidden/Tests/Utils/assets/changefour_liste_doublon/`, erreur fatale « Unknown column 'code' » Changefour.AjoutArt.138 figée, code 125) |
-| CHANGEFOUR-T06 | replay | Import fichier | fichier `code;four` (2 valides, 1 fournisseur inconnu) | dump ; avertissement pour la ligne inconnue | `tests/import_fichier/` | à faire : formulaire créé par code ($hForm) non observé, chemin choisi par Dialog.OpenFile |
-| CHANGEFOUR-T07 | replay | Sélection `TriCpt` annulée | sélection valide puis 2ᵉ ouverture annulée | figer la reprise de l'ancien `Bval` (A03) | `tests/selection_annulee/` | à faire : sélection dans la grille de TriCpt non synthétisée |
+| CHANGEFOUR-T06 | replay | Import fichier | fichier `code;four` (2 valides, 1 fournisseur inconnu) | dump ; avertissement pour la ligne inconnue | `tests/import_fichier/` | à faire : formulaire créé par code ($hForm) non observé, chemin choisi par Dialog.OpenFile ; pas d'équivalent gb.test : `Bouton2_Click` (traitement du fichier) ouvre `Message.Question` puis `Message.Warning`/`Message.Info` (bloquants en gb.test) |
+| CHANGEFOUR-T07 | replay | Sélection `TriCpt` annulée | sélection valide puis 2ᵉ ouverture annulée | figer la reprise de l'ancien `Bval` (A03) | `tests/selection_annulee/` | implémenté (gb.test ChangefourModalTest.T07SelectionAnnulee : Timer pendant le ShowModal de TriCpt, choix 401001 puis 2e ouverture fermée sans choix : 401001 repris (A03 figée)) |
 | CHANGEFOUR-T08 | replay | Saisie code-barres | `Code` = `*<code-barres>` | article retrouvé | `tests/code_barre/` | implémenté (`changefour_code_barre`, code-barres 2148413200001 de l'article 001) |
 
 ## Détail des tests
@@ -28,3 +28,4 @@ normalisé de `Fiches_Art` (et de `Fiches_Four` pour contrôle) et diff des lign
   Laurux01.sql) : le code-barres de `CF5` du jeu `changefour.sql` n'existe que dans `art_cbarre`, or
   `Utils.Find_cbarre` ne consulte que `Fiches_CdBarre` puis `art_code`. En mode Liste, `Nfour` n'est pas vidé après
   « Ajouter » : il n'est saisi que pour le premier article (sinon concaténation `401005401005`).
+- **Implémentation (phase 2, vague 7)** : module séparé `.src/Tests/Utils/ChangefourModalTest.test` (sélection modale : un Timer du module retrouve la fenêtre de sélection ouverte en ShowModal parmi `Windows` et simule le choix ou la fermeture), distinct du module principal de la classe pour la fusion.

@@ -1,0 +1,25 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Art where art_code = '001'
+SELECT dtepc,dtepec,arrete,dtefedec FROM Fiches_Parametres
+SELECT dtmouv FROM Fiches_ligregie,Fiches_regie WHERE Fiches_regie.code=coderegie AND (Fiches_ligregie.type='I' or Fiches_ligregie.type='M') AND  suspendu= True ORDER BY dtmouv DESC LIMIT 1
+SELECT dtmouv FROM Fiches_ligregie,Fiches_regie WHERE Fiches_regie.code=coderegie AND (Fiches_ligregie.type='I' or Fiches_ligregie.type='M') AND  suspendu= False ORDER BY dtmouv DESC LIMIT 1
+SELECT art_dra FROM Fiches_Art WHERE art_code='001'
+SELECT * FROM Fiches_regie WHERE code='01'

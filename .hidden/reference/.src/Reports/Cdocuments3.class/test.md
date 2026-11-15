@@ -6,8 +6,8 @@
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | CDOCUMENTS3-T01 | gbtest | Bon de préparation élémentaire | `Entete`, `Entete2`, `cadre`, `adresse` (8 lignes), `adresse2`, `Level1`, 3 × `Level2`/`carre` (i = 0, 1, 2), `Level2b`, `Basep`, `BasPage` avec valeurs figées | texte `pdftotext -layout` et positions (`-bbox`) de référence ; fond alterné | `tests/bon_preparation/` | implémenté (gb.test Cdocuments3Test.T01BonPreparation ; texte seulement, pas de -bbox) |
-| CDOCUMENTS3-T02 | replay | Bons de préparation `EdPrep` **multi-pages** | jeu `editions_gestion` : 2 commandes client (type `C`), dont une de 45 articles (saut à `PosY >= 266`), adresse de livraison `Fiches_AdrlivBL` ; écran EdPrep, détail désactivé | `Filename2` : 3 pages (2 + 1), en-têtes complets répétés, « Page n/3 » | `tests/edprep_bons_multipage/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par Gestion/edprep_saut_page (EDPREP-T05, bons.txt 3 pages) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
-| CDOCUMENTS3-T03 | replay | Saut de page dans les commentaires (A01) | commande avec un article suivi d'un commentaire de 60 lignes, détail activé | caractérisation : en-tête réimprimé sur la même page (surimpression, nombre de pages inchangé) | `tests/edprep_commentaires/` | à faire : jeu commande à commentaire de 60 lignes non écrit |
+| CDOCUMENTS3-T02 | replay | Bons de préparation `EdPrep` **multi-pages** | jeu `editions_gestion` : 2 commandes client (type `C`), dont une de 45 articles (saut à `PosY >= 266`), adresse de livraison `Fiches_AdrlivBL` ; écran EdPrep, détail désactivé | `Filename2` : 3 pages (2 + 1), en-têtes complets répétés, « Page n/3 » | `tests/edprep_bons_multipage/` | implémenté (gb.test Cdocuments3Test.T02EdprepMultipage : appels d'EdPrep, commandes de 45 et 3 articles, 3 pages ; texte pdftotext) |
+| CDOCUMENTS3-T03 | replay | Saut de page dans les commentaires (A01) | commande avec un article suivi d'un commentaire de 60 lignes, détail activé | caractérisation : en-tête réimprimé sur la même page (surimpression, nombre de pages inchangé) | `tests/edprep_commentaires/` | implémenté (gb.test Cdocuments3Test.T03EdprepCommentaire : commentaire de 60 lignes, saut sans Entete : 1 seule page, surimpression (A01 figée) ; texte et pdfinfo) |
 
 ## Détail des tests
 
@@ -23,3 +23,4 @@
   complété par des commandes client (`Fiches_Bl` type `C`, `Fiches_Ligbl`, `Fiches_AdrlivC`,
   `Fiches_AdrlivBL`).
 - **Non testé** : `Lines` et `Level3` (code mort, suppression vérifiée par `gbc3 -agt`).
+- **Implémentation (phase 2, vague 7)** : T02 dans `Cdocuments3Test.T02EdprepMultipage` (appels de la partie bons d'EdPrep, détail désactivé, 3 pages).

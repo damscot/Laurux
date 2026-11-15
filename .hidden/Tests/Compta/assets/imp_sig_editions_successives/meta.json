@@ -1,0 +1,23 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "IMP_SIG-T05",
+ "classe": "Imp_Sig",
+ "objet": "Deux éditions successives",
+ "dataset": "imp_sig_shared/imp_sig_n2",
+ "description": "Impressions comptables (RubImp, Menu124), jeu imp_sig_shared/imp_sig_n2 : Sig, E1, Imprimer (Entrée sur « traitement long »), puis N2, Imprimer (Entrée) sans quitter ; texte des deux PDF (pdftotext -layout via /Soc01/caisse/CmdVis) ajoutés à ~/edition.txt : la seconde édition doit égaler celle de IMP_SIG-T02 seule ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

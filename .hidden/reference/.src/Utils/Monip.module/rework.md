@@ -40,6 +40,6 @@
 
 ### Anomalies : changement de comportement, validation utilisateur requise
 
-- [ ] MONIP-A01 — [anomalie] (confirmée phase 2, vague 6 : `curl ifconfig.me > monip` écrit dans le répertoire courant (racine du clone au rejeu), puis `Message.Warning` (MONIP-T01, laissé à faire)) `curl` écrit `monip` dans le répertoire courant mais le fichier est lu
+- [ ] MONIP-A01 — [anomalie] (précisée phase 2, vague 7 : `curl ifconfig.me > monip` (l. 25) écrit dans le répertoire courant alors que Laurux lit `~/monip` (l. 26) : `Message.Warning` (l. 32) même avec `curl` présent) (confirmée phase 2, vague 6 : `curl ifconfig.me > monip` écrit dans le répertoire courant (racine du clone au rejeu), puis `Message.Warning` (MONIP-T01, laissé à faire)) `curl` écrit `monip` dans le répertoire courant mais le fichier est lu
   dans `$HOME` : IP absente ou périmée si Laurux n'est pas lancé depuis `$HOME` ; le fichier n'est
   jamais supprimé. Correction : `Shell … To` · tests : T01 (variante `cwd_autre`) · sources : [Monip.module:25-26](../../../../../.src/Utils/Monip.module#L25-L26)

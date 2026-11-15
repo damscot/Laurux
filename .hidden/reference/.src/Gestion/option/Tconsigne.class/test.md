@@ -12,7 +12,7 @@ diff du dump de `Fiches_consigne`. Valeurs attendues produites dans le clone **L
 | TCONSIGNE-T02 | replay | Création | Création ; code `PX`, libellé, prix 1,50, type palette ; Valider | INSERT dans `Fiches_consigne` | `tests/creation/` | implémenté |
 | TCONSIGNE-T03 | replay | Création refusée | Création ; code existant puis code vide ; Valider ; Annuler | aucune écriture, `Rollback` | `tests/creation_refusee/` | implémenté |
 | TCONSIGNE-T04 | replay | Modification | fiche 2 ; Modification ; prix 2,00 ; Valider | UPDATE ; fiche affichée après validation (index `$ind` figé) | `tests/modification/` | implémenté |
-| TCONSIGNE-T05 | replay | Recherche | Recherche ; saisie de code dans `rechcons` ; double-clic | fiche choisie affichée | `tests/recherche/` | à faire : choix dans Rechcons par double-clic (GridView1_Activate, pas de GridView1_Click : non rejouable) |
+| TCONSIGNE-T05 | replay | Recherche | Recherche ; saisie de code dans `rechcons` ; double-clic | fiche choisie affichée | `tests/recherche/` | implémenté (gb.test `TconsigneTest.T05Recherche` : Rechcons("T") attachée sous « rech », GridView1_Activate appelé sur les lignes 2 puis 0 ; ShowModal de bar1_recherche non exercé) |
 | TCONSIGNE-T06 | replay | Fermeture pendant une saisie | Création ; code ; fermer la fenêtre ; « Oui » | erreur « Not enough arguments » figée (A01) ; état de la transaction | `tests/fermeture_saisie/` | implémenté |
 
 ## Détail des tests

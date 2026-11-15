@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Test de DB_Log (.hidden/reference/.src/Utils/DB_Log.class/test.md, DB_LOG-T02).
+''Tests de DB_Log (.hidden/reference/.src/Utils/DB_Log.class/test.md, DB_LOG-T02 et T04).
 ''Journal préparé écrit au chemin du journal local de Utils.db (Get_Localfile_Path, HOME de test), puis écran
 ''instancié sans affichage (New DB_Log(Utils.db), Refresh dans _new) ; relevé : erreur éventuelle et nombre de
 ''lignes de GridView1 (une ligne par ligne physique du fichier). Valeurs attendues : assets/DB_LogTest/expected.txt.
@@ -9,6 +9,7 @@ Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T02LignesAtypiques", "Journal avec SQL contenant « ; » et SQL multiligne : erreur éventuelle et nombre de lignes de la grille")
+  TestKit.Desc("T04Sauvegarde", "Sauvegarder, DirChooser1_Change, Enregistrer : visibilités, nom proposé, <app>_log.csv copié dans le HOME de test")
 
 End
 
@@ -46,6 +47,43 @@ Public Sub T02LignesAtypiques()
   If Not Object.IsValid(hForm) Then Return
   hGrille = hForm.Controls["GridView1"]
   TestKit.Check("T02/lignes", hGrille.Rows.Count)
+  Object.Lock(hForm)
+
+End
+
+
+' DB_LOG-T04 : le DirChooser n'est pas rejoué ; gestionnaires appelés directement sur l'écran non affiché. User.Home est
+' le HOME de test isolé (remplacé par « ~ » dans les valeurs relevées).
+Public Sub T04Sauvegarde()
+
+  Dim sChemin As String
+  Dim hForm As Object
+  Dim sJournal As String
+  Dim sCible As String
+  Dim hC As Object
+
+  sChemin = Utils.db.Get_Localfile_Path()
+  sJournal = "01/02/2018 10:00:00.000;Info;Exec_SQL;laurux;h;m;1;Trace;SELECT * FROM Fiches_Art\n"
+  File.Save(sChemin, sJournal)
+  Try Kill User.Home &/ Application.Name & "_log.csv"
+  hForm = New DB_Log(Utils.db)
+  hForm.Sauvegarder_Click()
+  For Each sCible In ["GridView1", "MAJ", "Sauvegarder", "Vider", "DirChooser1", "Enregistrer", "Filtres"]
+    hC = hForm.Controls[sCible]
+    TestKit.Check("T04/Sauvegarder/" & sCible & ".Visible", hC.Visible)
+  Next
+  hForm.DirChooser1_Change()
+  hC = hForm.Controls["Savename"]
+  ' Application.Name vaut le nom du répertoire du clone (ref, rework) : remplacé par <app>
+  TestKit.Check("T04/SaveName", Replace(Replace(hC.Text, User.Home, "~"), "/" & Application.Name & "_", "/<app>_"))
+  hForm.Enregistrer_Click()
+  For Each sCible In ["GridView1", "DirChooser1", "Enregistrer"]
+    hC = hForm.Controls[sCible]
+    TestKit.Check("T04/Enregistrer/" & sCible & ".Visible", hC.Visible)
+  Next
+  sCible = User.Home &/ Application.Name & "_log.csv"
+  TestKit.Check("T04/copie présente", Exist(sCible))
+  If Exist(sCible) Then TestKit.Check("T04/copie identique", File.Load(sCible) = File.Load(sChemin))
   Object.Lock(hForm)
 
 End

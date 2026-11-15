@@ -1,0 +1,76 @@
+' Gambas test file
+
+''Tests de Changefour ouvrant TriCpt en ShowModal (.hidden/reference/.src/Utils/Changefour.class/test.md, CHANGEFOUR-T07).
+''Module séparé de ChangefourTest (vague 7, fusion). Un Timer du module agit pendant la boucle modale : il retrouve la
+''fenêtre TriCpt ouverte (Windows) et simule la sélection d'une ligne (Bsel = True puis ColTri_MajSel(code), ce
+''que fait TriGen au double-clic) ou la fermeture sans choix. Changefour est instanciée sans être affichée.
+''Valeurs attendues : assets/ChangefourModalTest/expected.txt, produites dans le clone de référence.
+
+Private $hTimer As Timer
+Private $sChoix As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T07SelectionAnnulee", "SelectionFour : choix de 401001 dans TriCpt, puis 2e ouverture fermée sans choix (A03 : ancien Bval repris)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Utils", "ChangefourModalTest")
+  TestKit.OuvreBase()
+
+End
+
+' Programme l'action de l'utilisateur dans TriCpt : code choisi, ou "" pour fermer sans choix.
+Private Sub Programme(sChoix As String)
+
+  $sChoix = sChoix
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "TriCpt" Then Continue
+    $hTimer.Enabled = False
+    If $sChoix Then
+      Object.SetProperty(hWin, "Bsel", True)
+      Object.Call(hWin, "ColTri_MajSel", [$sChoix])
+    Else
+      hWin.Close()
+    Endif
+    Return
+  Next
+
+End
+
+Public Sub T07SelectionAnnulee()
+
+  Dim hF As New Changefour
+  Dim hNf As Object = hF.Controls["Nfour"]
+  Dim hLib As Object = hF.Controls["LibelFour2"]
+
+  Programme("401001")
+  Try hF.SelectionFour()
+  TestKit.Check("T07/choix/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T07/choix/Bsel", hF.Bsel)
+  TestKit.Check("T07/choix/nfour", hNf.Text)
+  TestKit.Check("T07/choix/libelle", hLib.Text)
+  hNf.Text = ""
+  hLib.Text = ""
+  Programme("")
+  Try hF.SelectionFour()
+  TestKit.Check("T07/annule/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T07/annule/Bsel", hF.Bsel)
+  TestKit.Check("T07/annule/nfour", hNf.Text)
+  TestKit.Check("T07/annule/libelle", hLib.Text)
+  Object.Lock(hF)
+
+End

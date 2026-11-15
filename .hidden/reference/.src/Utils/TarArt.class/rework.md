@@ -54,10 +54,11 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TARART-A01 — [anomalie] `_new:27` lit `art_prvt` avant le test `Available` : article inconnu →
   erreur levée chez l'appelant ; retours anticipés sans arrondi de `prixht` ni configuration de la
   grille · tests : T09 · sources : [TarArt.class:27-28](../../../../../.src/Utils/TarArt.class#L27-L28), [TarArt.class:42](../../../../../.src/Utils/TarArt.class#L42)
-- [ ] TARART-A02 — [anomalie] (précisée phase 2, vague 5 : sans client ni type, `rescli!libelle` (l. 77) → « Null object » dès que la famille a des coefficients `Fiches_CoeffTypec` (via Edart4 → Imprimer ; EDART4-T01 laissé à faire)) Bloc `Fiches_CoeffTypec` : `rescli` peut être `Null` (ni client ni
+- [ ] TARART-A02 — [anomalie] (confirmée phase 2, vague 7 : « Null object » à `_new` l. 77 (`rescli!libelle`), figée par T09) (précisée phase 2, vague 5 : sans client ni type, `rescli!libelle` (l. 77) → « Null object » dès que la famille a des coefficients `Fiches_CoeffTypec` (via Edart4 → Imprimer ; EDART4-T01 laissé à faire)) Bloc `Fiches_CoeffTypec` : `rescli` peut être `Null` (ni client ni
   type) et toutes les lignes portent le libellé du type courant au lieu de celui de `res!coder`
   · tests : T03, T09 · sources : [TarArt.class:75](../../../../../.src/Utils/TarArt.class#L75), [TarArt.class:80](../../../../../.src/Utils/TarArt.class#L80)
 - [ ] TARART-A03 — [anomalie] Promotion en options B/T : `pxprom` (brut) comparé à `prixht` (déjà
   diminué des droits), à confirmer avec l'utilisateur · tests : T08 · sources : [TarArt.class:125-128](../../../../../.src/Utils/TarArt.class#L125-L128)
 - [ ] TARART-A04 — [anomalie] `Edart4` crée une fenêtre cachée `TarArt` par article sans la détruire
   (fuite de ressources sur une grosse édition) · tests : T12 · sources : [Edart4.class:141](../../../../../.src/Gestion/Impressions/Edart4.class#L141)
+- [ ] TARART-A05 — [anomalie] Option boisson active (`Utils.Option()` = B ou T) sans les colonnes créées par `modfichier.fichierboisson` : la requête de `_new` l. 25 (`art_dra`, `art_volm`, `art_deg`) lève « Unknown column 'art_dra' » fatal (aucune garde sur le schéma) (phase 2, vague 7, 2026-11-15) · tests : EDART4-T05 (constat, jeu sans colonnes boisson non conservé) · sources : [TarArt.class:25](../../../../../.src/Utils/TarArt.class#L25)

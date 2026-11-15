@@ -53,7 +53,7 @@ Toute correction touche le schéma : elle relève d'une future migration `Laurux
 - [ ] MODFICHIER-A02 — [anomalie] Syntaxe MySQL non traduite (`ADD (col)`, `MODIFY`,
   `COLLATE`) : sous SQLite une partie des colonnes n'est pas créée, sans message (`Try`) ·
   tests : T05 · sources : [modfichier.module:71](../../../../../../.src/Gestion/option/modfichier.module#L71), [modfichier.module:138](../../../../../../.src/Gestion/option/modfichier.module#L138), [modfichier.module:143](../../../../../../.src/Gestion/option/modfichier.module#L143)
-- [ ] MODFICHIER-A03 — [anomalie] `modiffrais` écrit `art_trspr` avant sa création (jamais créée
+- [ ] MODFICHIER-A03 — [anomalie] (confirmée phase 2, vague 7 : `modiffrais` écrit `art_trspr` (l. 209) avant que `fichierboisson` crée la colonne, transaction ouverte par `Begin` (l. 204), figée par T03) `modiffrais` écrit `art_trspr` avant sa création (jamais créée
   par `fichiercarbu`) → erreur d'exécution si un article a des frais et que l'utilisateur répond
   OUI ; sans article concerné, `Begin` sans `Commit` · tests : T03 · sources : [modfichier.module:modiffrais](../../../../../../.src/Gestion/option/modfichier.module#L196-L216), [modfichier.module:68](../../../../../../.src/Gestion/option/modfichier.module#L68)
 - [ ] MODFICHIER-A04 — [anomalie, à confirmer] `numadr_ligbl`/`numadr_ligfac` déclarées

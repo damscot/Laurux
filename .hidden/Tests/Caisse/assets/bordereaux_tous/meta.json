@@ -1,0 +1,18 @@
+{
+ "id": "BORDEREAUX-T01",
+ "objet": "Bordereau « Tous » avec numéros de tickets",
+ "classe": "Bordereaux",
+ "description": "Gestion › Bordereaux (Menu214) ; Tous (défaut), Imptk coché (défaut), Imprimer (Button2) : PDF Bordereau_15.06.2018.pdf lu par pdftotext (edition.txt) : cartes puis chèques, totaux par type, tri numérique de numlig ; ligne Espèces (E) exclue ; base inchangée.",
+ "dataset": "bordereaux_shared/remises",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "compare_sql_log": "ordered",
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

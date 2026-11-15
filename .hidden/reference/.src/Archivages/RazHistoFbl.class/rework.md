@@ -52,7 +52,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] RAZHISTOFBL-A02 — [anomalie] Sauvegarde non fiable : code retour de `mysqldump` ignoré, mot de
   passe en clair, fichier écrasé ; libellés incohérents des messages de fin (« Bons de réception » /
   « BL fournisseurs ») · tests : T06 · sources : [RazHistoFbl.class:27](../../../../../.src/Archivages/RazHistoFbl.class#L27), [RazHistoFbl.class:41-42](../../../../../.src/Archivages/RazHistoFbl.class#L41-L42)
-- [ ] RAZHISTOFBL-A03 — [anomalie, à confirmer] (confirmée phase 2, vague 6 : réception non validée supprimée (dump, T04)) Aucun garde-fou : les réceptions non validées
+- [ ] RAZHISTOFBL-A03 — [anomalie, à confirmer] (confirmée phase 2, vague 7 : le recalcul du stock ne compte plus les réceptions purgées (T05, `razhistofbl_stock`, durée accordée 28 s le 2026-11-15)) (confirmée phase 2, vague 6 : réception non validée supprimée (dump, T04)) Aucun garde-fou : les réceptions non validées
   (`validee = 0`, pas encore rapprochées d'une facture) sont purgées, et une date postérieure au
   dernier inventaire fausse le recalcul de stock (`Cstock` somme `Fiches_Ligrecpt` depuis
   l'inventaire). Correction proposée : exclure `validee = 0` et refuser une date postérieure au

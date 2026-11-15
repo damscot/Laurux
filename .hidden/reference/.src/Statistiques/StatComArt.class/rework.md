@@ -53,13 +53,13 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STATCOMART-A01 — [anomalie] `UPdate` du cumul : `qte = &4` reçoit le code du commercial au
+- [ ] STATCOMART-A01 — [anomalie] (confirmée phase 2, vague 7 : `qte` reçoit le code du commercial (`UPdate` l. 202, `qte = &4`), figée par T02) `UPdate` du cumul : `qte = &4` reçoit le code du commercial au
   lieu de la quantité cumulée (`&5` jamais utilisé) → la colonne « Quantité » est fausse pour
   tout article vendu plus d'une fois au même commercial · tests : T02 · sources : [StatComArt.class:202](../../../../../.src/Statistiques/StatComArt.class#L202)
-- [ ] STATCOMART-A02 — [anomalie] Factures d'entretien (`Face`/`Fact`) : leurs lignes sont
+- [ ] STATCOMART-A02 — [anomalie] (confirmée phase 2, vague 7 : avec `Face`, `HistoLigfacM` jamais lue, figée par T03) Factures d'entretien (`Face`/`Fact`) : leurs lignes sont
   cherchées dans `Fiches_HistoLigfac` au lieu de `Fiches_HistoLigfacM` → lignes absentes ou
   lignes d'une autre facture de même numéro · tests : T03 · sources : [StatComArt.class:193](../../../../../.src/Statistiques/StatComArt.class#L193), [StatComArt.class:173](../../../../../.src/Statistiques/StatComArt.class#L173)
 - [ ] STATCOMART-A03 — [anomalie] Table de travail `Total` partagée entre postes et écrans de
   structures différentes (= STATCOMM-A05, STATCAI-A04) · tests : T01 · sources : [StatComArt.class:176](../../../../../.src/Statistiques/StatComArt.class#L176), [StatComArt.class:177](../../../../../.src/Statistiques/StatComArt.class#L177)
-- [ ] STATCOMART-A04 — [anomalie] `cliResult!cli_comm` lu sans test `Available` : facture d'un
+- [ ] STATCOMART-A04 — [anomalie] (confirmée phase 2, vague 7 : facture d'un client supprimé → « Result is not available » à `Traitement` l. 192, figée par T04 (code 125)) `cliResult!cli_comm` lu sans test `Available` : facture d'un
   client supprimé → erreur d'exécution, traitement interrompu · tests : T04 · sources : [StatComArt.class:191](../../../../../.src/Statistiques/StatComArt.class#L191), [StatComArt.class:192](../../../../../.src/Statistiques/StatComArt.class#L192)

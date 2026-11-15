@@ -65,10 +65,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] IMP_SIG-A01 — [anomalie] Les écritures sont lues sans filtre `validee = 1`, contrairement au
   bilan et au compte de résultat : les SIG incluent les écritures non validées · tests : T02 ·
   sources : [Imp_Sig.module:193](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L193)
-- [ ] IMP_SIG-A02 — [anomalie] Compte `709` : `Otot3 = "-" & otot3` produit `--x` si le cumul est
+- [ ] IMP_SIG-A02 — [anomalie] (confirmée phase 2, vague 7 : `709` dernier compte d'une rubrique à cumul positif (l. 333, `Otot3 = "-" & otot3`) : production vendue -470 au lieu de 470, figée par T03) Compte `709` : `Otot3 = "-" & otot3` produit `--x` si le cumul est
   négatif → erreur de conversion (édition interrompue, à confirmer) ; utiliser `-otot3` comme pour
   `609` · tests : T03 · sources : [Imp_Sig.module:333](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L333), [Imp_Sig.module:347](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L347)
-- [ ] IMP_SIG-A03 — [anomalie] La ligne de rubrique garde le **dernier** compte lu (`UPdate … WHERE
+- [ ] IMP_SIG-A03 — [anomalie] (confirmée phase 2, vague 7 : `609` dernier compte (l. 347, `Otot4 * -1`) : coût d'achat 180 et marge commerciale 180 au lieu de -180, figée par T03) La ligne de rubrique garde le **dernier** compte lu (`UPdate … WHERE
   numrub = &1`) : la règle de signe `709`/`609` dépend de l'ordre des écritures, pas de la
   composition de la rubrique · tests : T03 · sources : [Imp_Sig.module:204-210](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L204-L210)
 - [ ] IMP_SIG-A04 — [anomalie] Résultat exceptionnel négatif non imprimé (branche commentée) ;
@@ -79,3 +79,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sans message · tests : T01 · sources : [Imp_Sig.module:288-320](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L288-L320), [Imp_Sig.module:364-401](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L364-L401)
 - [ ] IMP_SIG-A06 — [anomalie] Table de travail `centralisation` recréée par `DROP`/`CREATE` sous un
   nom partagé avec six autres éditions (voir IMP_BILAN-A06) · tests : T01 · sources : [Imp_Sig.module:149-161](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L149-L161)
+- [ ] IMP_SIG-A07 — [anomalie] Pagination : 40 rubriques `L` actives produisent un PDF de 27 pages dont 25 vides ; sauts `Posy >= 162` → `Posy = 186` (l. 425-428) puis `Posy >= 186` → nouvelle page (l. 457-468) ; mécanisme exact non analysé (phase 2, vague 7, 2026-11-15) · tests : T04 · sources : [Imp_Sig.module:425-428](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L425-L428), [Imp_Sig.module:457-468](../../../../../../.src/Compta/Impressions/Imp_Sig.module#L457-L468)

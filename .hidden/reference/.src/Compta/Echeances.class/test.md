@@ -13,10 +13,10 @@ les valeurs affichées (`Dateech`, messages) sont comparées dans le log GUI.
 | ECHEANCES-T02 | replay | Création | code `99`, libellé, durée `30`, jours `10`, `Finm` décoché, Enregistrer | 1 ligne `Fiches_Echeances` ajoutée ; champs **non** vidés (figé) ; valeur stockée de `finmois` | `tests/creation/` | implémenté |
 | ECHEANCES-T03 | replay | Modification | sélection d'une échéance existante, libellé et `Finm` modifiés, Enregistrer | ligne modifiée ; champs vidés après enregistrement | `tests/modification/` | implémenté |
 | ECHEANCES-T04 | replay | Suppression | sélection, Supprimer, « Non » puis « Oui » | « Non » : base inchangée ; « Oui » : ligne supprimée, message « echéance supprimée » | `tests/suppression/` | implémenté |
-| ECHEANCES-T05 | replay | Simulateur (`Button5`) | échéances 30 j, 45 j fin de mois, 60 j le 10 ; dates 15.01, 31.01, 28.02 | `Dateech` de référence (calcul `Utils.Calcech`) ; aucune écriture en base | `tests/simulateur/` | à faire : résultat affiché seulement (Dateech), ni écrit en base ni dans un fichier comparé |
+| ECHEANCES-T05 | replay | Simulateur (`Button5`) | échéances 30 j, 45 j fin de mois, 60 j le 10 ; dates 15.01, 31.01, 28.02 | `Dateech` de référence (calcul `Utils.Calcech`) ; aucune écriture en base | `tests/simulateur/` | implémenté (gb.test `EcheancesTest.T05Simulateur` : zones posées, `Button5_Click`, `Dateech` lu ; 31.01 + 30 j → 28.02, 31.01 + 45 j fin de mois → 15.03 ; base inchangée) |
 | ECHEANCES-T06 | replay | Contrôles de saisie | code vide, libellé vide, durée `5` (1 car.), durée `0`, jours vides sans `Finm` | messages et focus attendus ; `"0"` devient `"00"` | `tests/controles_saisie/` | implémenté |
 | ECHEANCES-T07 | replay | Rappel par code (`echman`) | saisie d'un code existant + Entrée | champs remplis depuis la base, `Finm` cohérent | `tests/rappel_code/` | implémenté |
-| ECHEANCES-T08 | replay | Date du simulateur | `Datej` = `310299`, `0`, vide | date normalisée ; sentinelle → date du jour (masquée dans le dump du log) | `tests/date_simulateur/` | à faire : date normalisée affichée seulement (Datej), ni écrite en base ni dans un fichier comparé |
+| ECHEANCES-T08 | replay | Date du simulateur | `Datej` = `310299`, `0`, vide | date normalisée ; sentinelle → date du jour (masquée dans le dump du log) | `tests/date_simulateur/` | implémenté partiellement (gb.test `EcheancesTest.T08DateSimulateur` : vide → date du jour, `1502`, `150218`) ; à faire : `310299` et `0` ouvrent `Message.Error` dans `Utils.Cdate_calc` (bloquant en gb.test) |
 
 ## Détail des tests
 

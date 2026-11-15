@@ -13,7 +13,7 @@ produit. Un replay vérifie le bilan complet sur le jeu comptable dérivé.
 | CBILAN-T02 | gbtest | Net de `Level1` | `Sens = "A"` : (`"100"`, `"30"`), (`"100"`, `"0"`), (`"100"`, `""`), (`"100"`, `"100"`), (`"1234.5"`, `"0.5"`), (`""`, `""`) ; `Sens = "P"` : (`"100"`, `"0"`) | colonnes brut / N de référence ; net nul → brut affiché (A01 figée) | `tests/level1_net/` | implémenté |
 | CBILAN-T03 | gbtest | Net de `Level1L` et `Level1S` | mêmes couples + brut négatif (`"-100"`, `"30"`) | valeurs de référence (A02 figée : `Abs` du brut dans `Level1L`) | `tests/level1L_level1S/` | implémenté |
 | CBILAN-T04 | gbtest | Multi-pages | `AliasNbPages`, 2 × (`Level0`, `Level3`, 40 `Level1`, `BasPage`) | `Page 1/2`, `Page 2/2` | `tests/multipages/` | implémenté |
-| CBILAN-T05 | replay | Bilan complet (`RubImp` → `Imp_Bilan`) | jeu comptable dérivé (comptes 1 à 5, une immobilisation totalement amortie), exercice courant | `pdftotext` de `~/tmp/Bilan.pdf` identique entre clones ; tables de travail exclues du dump | `tests/replay_bilan/` | à faire : test propre à la classe à écrire ; aujourd'hui couvert seulement par des tests d'autres classes (couvert par les scénarios existants Compta/imp_bilan_* (texte pdftotext comparé) — règle du 2026-11-14 : les tests d'une classe sont portés par la classe |
+| CBILAN-T05 | replay | Bilan complet (`RubImp` → `Imp_Bilan`) | jeu comptable dérivé (comptes 1 à 5, une immobilisation totalement amortie), exercice courant | `pdftotext` de `~/tmp/Bilan.pdf` identique entre clones ; tables de travail exclues du dump | `tests/replay_bilan/` | implémenté (scénario Reports/cbilan_replay_bilan, dérivé de imp_bilan_bilan_e1 : edition.txt pdftotext, BilanDetail.csv, BilanRub.csv et dump comparés) |
 
 ## Détail des tests
 

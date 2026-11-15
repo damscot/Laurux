@@ -7,11 +7,17 @@
  "classe": "Imp_Sig",
  "objet": "SIG de l'exercice courant (E1)",
  "dataset": "extrait_shared/extrait_base",
- "description": "Impressions comptables (RubImp, Menu124), jeu extrait_base (écritures 2018), Sig, exercice E1 par défaut, Imprimer ; Message.Info « traitement long » (Entrée) ; requêtes et table centralisation du dump comparées ; SIG.pdf non comparé ; Quitter (Button3).",
+ "description": "Impressions comptables (RubImp, Menu124), jeu extrait_base (écritures 2018), Sig, exercice E1 par défaut, Imprimer ; Message.Info « traitement long » (Entrée) ; requêtes et table centralisation du dump comparées ; Quitter (Button3). Vague 7 : le texte de chaque PDF (pdftotext -layout via /Soc01/caisse/CmdVis) est ajouté à ~/edition.txt et comparé ; cela remplace @ouvrir.trace et les mentions « PDF ouvert / non comparé » ci-dessus.",
  "cadence": {
   "frappe": 50,
   "focus": 100,
   "traitement": 1000,
   "fenetre": 1000
- }
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
 }

@@ -17,9 +17,9 @@ d'architecture.md). Critère : dump normalisé de `Fiches_Mvt`, `Fiches_Comptes`
 | CIELIMP-T06 | replay | Écriture déséquilibrée | une écriture débit ≠ crédit (au milieu, puis en dernier) | message d'erreur ; fichiers laissés ouverts (A02 figée) | `tests/desequilibre/` | implémenté (replays `.hidden/Tests/Compta/assets/cielimp_desequilibre/` et `cielimp_desequilibre_fin/`) |
 | CIELIMP-T07 | replay | Import déjà fait | `imp_ciel = "1"` | message « déjà effectué » | `tests/deja_importe/` | implémenté (replay `.hidden/Tests/Compta/assets/cielimp_deja_importe/`) |
 | CIELIMP-T08 | replay | Fichier inexistant | `Fimport` vers un chemin absent | message « fichier défini n'existe pas » | `tests/fichier_absent/` | implémenté (replay `.hidden/Tests/Compta/assets/cielimp_fichier_absent/`, Fimport vide) |
-| CIELIMP-T09 | replay | Trésorerie | écriture sur `51210000` et journal `TR` | `tresorerie`, `datee` mis à jour par numéro (A05/A06 figées) | `tests/tresorerie/` | à faire : non commencé (vague 3, temps écoulé) ; générateur réutilisable |
-| CIELIMP-T10 | replay | Montants et longueurs de compte | `Lcpt` = 6 puis 8 ; montants avec point et avec virgule | valeurs `montantd`/`montantc` figées (A04) | `tests/montants_longueurs/` | à faire : non commencé (vague 3, temps écoulé) ; Lcpt par Click=<index>@Lcpt à valider |
-| CIELIMP-T11 | replay | Tiers sans compte Laurux | correspondance vers un compte absent de `Fiches_Comptes` | erreur en cours d'import, import partiel (A03 figée) | `tests/tiers_sans_compte/` | à faire : non commencé (vague 3, temps écoulé) |
+| CIELIMP-T09 | replay | Trésorerie | écriture sur `51210000` et journal `TR` | `tresorerie`, `datee` mis à jour par numéro (A05/A06 figées) | `tests/tresorerie/` | implémenté (Compta/cielimp_tresorerie, jeu cielimp_treso, Lcpt = 8 par Click=2@Lcpt : tresorerie/datee mis à jour par numéro, A05/A06) |
+| CIELIMP-T10 | replay | Montants et longueurs de compte | `Lcpt` = 6 puis 8 ; montants avec point et avec virgule | valeurs `montantd`/`montantc` figées (A04) | `tests/montants_longueurs/` | implémenté (Compta/cielimp_montants : montant à virgule au débit, Type mismatch fatal Cielimp.Compta.327 figé, code 125 ; Lcpt 8 couvert par T09) |
+| CIELIMP-T11 | replay | Tiers sans compte Laurux | correspondance vers un compte absent de `Fiches_Comptes` | erreur en cours d'import, import partiel (A03 figée) | `tests/tiers_sans_compte/` | implémenté (Compta/cielimp_tiers_sans_compte, jeu cielimp_tiers_absent : Result is not available Cielimp.Compta.351 figé, code 125, import partiel) |
 | CIELIMP-T12 | gbtest | Découpage d'une ligne (après CIELIMP-005) | lignes de T01, T10 | collection des champs attendus | `tests/ligne_ciel/` | à faire : exige l'extraction CIELIMP-005 (phase 4) |
 
 ## Détail des tests
@@ -41,3 +41,7 @@ d'architecture.md). Critère : dump normalisé de `Fiches_Mvt`, `Fiches_Comptes`
   T06 : deux scénarios (`cielimp_desequilibre` au milieu, `cielimp_desequilibre_fin` en dernier).
   Constat T01 : `tresorerie` = 0 sur toutes les lignes, y compris le journal 50 de type TR (`Tresor` est un Boolean
   comparé à "TR", Cielimp.class `Compta`).
+- **Vague 7** : T09 `cielimp_tresorerie` (fichier d'une écriture journal 50 : 51210000 / 411DUP, jeu `cielimp_tresorerie/cielimp_treso.sql`
+  = nominal + compte 51210000), T10 `cielimp_montants` (120,50 / 100,25 / 20.25 : erreur fatale dès la 1re ligne au débit
+  à virgule), T11 `cielimp_tiers_sans_compte` (3e écriture sur 411ABS → 411999 absent, jeu `cielimp_tiers_absent.sql`).
+  Fichiers d'entrée générés au format du tableau d'architecture.md (vérifié identique à la 1re ligne de `cielimp_import_nominal/ciel.txt`).

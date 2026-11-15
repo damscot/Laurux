@@ -1,0 +1,41 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+DROP TABLE IF EXISTS  Total
+CREATE TABLE Total(cdartfac Char(15) NOT NULL,lbartfac Char(35),nethtfac Decimal(12,2),qte Decimal(12,2),totfac Decimal(12,2),commercial Char(2),PRIMARY KEY (cdartfac, commercial)) ENGINE = InnoDB
+SELECT * FROM Fiches_HistoFac where datefac >= '20180101' and datefac <= '20180615' order by datefac 
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411001'
+SELECT * FROM Fiches_HistoLigfac Where num_ligfac = 'F18101' and typel_ligfac = 'A'
+SELECT * FROM Total Where cdartfac = 'ART1' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART1', 'Article un', 100, '01', 2)
+SELECT * FROM Total Where cdartfac = 'ART2' and commercial = '01'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART2', 'Article deux', 30.5, '01', 1)
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411002'
+SELECT * FROM Fiches_HistoLigfac Where num_ligfac = 'F18102' and typel_ligfac = 'A'
+SELECT * FROM Total Where cdartfac = 'ART1' and commercial = '01'
+UPdate Total set cdartfac = 'ART1', lbartfac = 'Article un', nethtfac = 250, qte = '01' Where cdartfac = 'ART1' and commercial = '01'
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411003'
+SELECT * FROM Fiches_HistoLigfac Where num_ligfac = 'F18103' and typel_ligfac = 'A'
+SELECT * FROM Total Where cdartfac = 'ART1' and commercial = '02'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART1', 'Article un', 60, '02', 1)
+SELECT * FROM Total Where cdartfac = 'ART3' and commercial = '02'
+INSERT INTO Total(cdartfac, lbartfac, nethtfac, commercial, qte) VALUES ('ART3', 'Article trois', 80, '02', 4)
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411004'
+SELECT cli_comm FROM Fiches_Cli Where cli_code = '411999'

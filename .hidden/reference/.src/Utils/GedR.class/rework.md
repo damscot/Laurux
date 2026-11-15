@@ -69,3 +69,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] GEDR-A05 — [anomalie] `Ouvrir_Click` exécute une requête d'existence redondante avant le
   chargement `LGed` (sans effet visible ; à supprimer seulement si l'utilisateur accepte un log
   `Exec_SQL` différent) · tests : replay d'ouverture (manuel) · sources : [GedR.class:104](../../../../../.src/Utils/GedR.class#L104)
+- [ ] GEDR-A06 — [anomalie] `ChangerUrl_Click` : sans préfixe commun aux URL sélectionnées, `minurl` = "" → « Impossible de trouver une url commune » (l. 363-364) : des URL `file:///…` et des chemins `/ged/…` désignant le même répertoire ne sont pas rapprochées (phase 2, vague 7, 2026-11-15) · tests : T04 · sources : [GedR.class:343-366](../../../../../.src/Utils/GedR.class#L343-L366)
+- [ ] GEDR-A07 — [anomalie] `ChangerUrl_Click` inutilisable : la boîte `LBox` en mode `TextReg` (l. 373) échoue toujours à la construction (voir [LBOX-A02](../LBox.class/rework.md)) ; GEDR-A03 n'est donc pas atteignable (phase 2, vague 7, 2026-11-15) · tests : T04 (code 125) · sources : [GedR.class:373](../../../../../.src/Utils/GedR.class#L373)

@@ -1,0 +1,23 @@
+{
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "id": "JOURNAUX-T05",
+ "classe": "Journaux",
+ "objet": "Impression, tri par numéro",
+ "dataset": "journaux_tri",
+ "fichiers": [
+  "edition.txt"
+ ],
+ "description": "Journaux (jeu journaux_tri : numéro 1 en mai, numéro 2 en février) : Imprimer en tri par date (défaut), puis RadioButton2 (tri par numéro) et Imprimer ; texte des deux PDF (pdftotext -layout via /Soc01/caisse/CmdVis) ajouté à ~/edition.txt (A01 : même ordre attendu) ; Quitter.",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ }
+}

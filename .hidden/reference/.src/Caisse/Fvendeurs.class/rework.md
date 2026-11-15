@@ -53,11 +53,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FVENDEURS-A01 — [anomalie] Suppression : test sur `Code.Text` mais `DELETE` sur
+- [ ] FVENDEURS-A01 — [anomalie] (confirmée phase 2, vague 7 : code `12` saisi, vendeur `1` sélectionné : c'est le vendeur `1` qui est supprimé (`Button3_Click` l. 213, `Vendeur.Current[0]`) ; sans sélection, « Null object » fatal, figée par T04 (code 125)) Suppression : test sur `Code.Text` mais `DELETE` sur
   `Vendeur.Current[0]` (ligne sélectionnée), par concaténation ; sans sélection, erreur non
   interceptée (pas de `Catch`) ; aucun contrôle d'usage (vendeur connecté sur une caisse, dernier
   administrateur) · tests : T04 · sources : [Fvendeurs.class:213](../../../../../.src/Caisse/Fvendeurs.class#L213)
-- [ ] FVENDEURS-A02 — [anomalie] `Btn_KeyPress` : toute touche (Tab, flèches) sur « Enregistrer »
+- [ ] FVENDEURS-A02 — [anomalie] (confirmée phase 2, vague 7 : Tab sur « Enregistrer » enregistre, figée par T05) `Btn_KeyPress` : toute touche (Tab, flèches) sur « Enregistrer »
   enregistre · tests : T05 · sources : [Fvendeurs.class:Btn_KeyPress](../../../../../.src/Caisse/Fvendeurs.class#L138-L147)
 - [ ] FVENDEURS-A03 — [anomalie] Échap/F2 dans la liste la masque jusqu'à la réouverture de
   l'écran · tests : T05 · sources : [Fvendeurs.class:239](../../../../../.src/Caisse/Fvendeurs.class#L239)
