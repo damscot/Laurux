@@ -1,0 +1,67 @@
+' Gambas test file
+
+''Tests de Statut (.hidden/reference/.src/Gestion/Tables/Statut.class/test.md, STATUT-T04).
+''EmailingCarte.form n'a pas de bouton bstatut (EMAILINGCARTE-A06) : bstatut_Click est appelé directement. Dans
+''EmailingCarte, « Statut » ne désigne aucun contrôle : c'est l'instance automatique de la fenêtre Statut qui est
+''affichée puis masquée. Jeu statut_shared/statut_p1_p2 (P1, P2).
+''Valeurs attendues : assets/StatutTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04DepuisEmailing", "EmailingCarte.bstatut_Click deux fois : fenêtre Statut (instance automatique) affichée avec P1, P2, puis masquée")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "StatutTest")
+  TestKit.OuvreBase("statut_shared/statut_p1_p2")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Etat(sCle As String)
+
+  Dim hWin As Window
+  Dim hCol As Object
+  Dim sTxt As String
+  Dim iNb As Integer
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "Statut" Then Continue
+    Inc iNb
+    TestKit.Check(sCle & "/visible", hWin.Visible)
+    TestKit.Check(sCle & "/titre", hWin.Title)
+    hCol = hWin.Controls["Coltype"]
+    sTxt = ""
+    If Not hCol.MoveFirst() Then
+      Repeat
+        sTxt &= hCol.Item[0] & ":" & hCol.Item[1] & " "
+      Until hCol.MoveNext()
+    Endif
+    TestKit.Check(sCle & "/coltype", Trim(sTxt))
+  Next
+  TestKit.Check(sCle & "/fenetres_statut", iNb)
+
+End
+
+Public Sub T04DepuisEmailing()
+
+  Dim hF As Object = New EmailingCarte
+
+  Etat("T04/ouverture")
+  Try hF.bstatut_Click()
+  TestKit.Check("T04/affiche/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+  Wait 0.2
+  Etat("T04/affiche")
+  Try hF.bstatut_Click()
+  TestKit.Check("T04/masque/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+  Wait 0.2
+  Etat("T04/masque")
+  Try Statut.Close()
+  Object.Lock(hF)
+
+End

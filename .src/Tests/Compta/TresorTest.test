@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Tresor (.hidden/reference/.src/Compta/Tresor.class/test.md, TRESOR-T06, T07, T10, T15).
+''Tests de Tresor (.hidden/reference/.src/Compta/Tresor.class/test.md, TRESOR-T06 à T10, T14, T15, T17).
 ''Prévu en replay, bloqué au rejeu (masque d'abonnement ouvert par F7, touche non rejouée) : l'écran est instancié
 ''sans être affiché (jeu tresor_masque : masque de trésorerie n° 2, compteur 4), journal 50 et date du 15.06.2018
 ''posés puis Datej_LF (numéro d'écriture), Aff_Mask (gestionnaire de F7), masque rendu courant par la propriété Key,
@@ -11,6 +11,13 @@
 Private $hTimer As Timer
 Private $sBouton As String
 Private $sVu As String
+Private $aBoutons As New String[]
+Private $hVue As Window
+Private $hTimerGed As Timer
+Private $hTimerBox As Timer
+Private $sFichier As String
+Private $sGed As String
+Private $iEssais As Integer
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
@@ -19,6 +26,11 @@ Public Sub _Desc()
   TestKit.Desc("T15bCompteF2", "Gestionnaire de F2 sur le compte : TriCpt (ShowModal) choisi par un Timer, compte recopié")
   TestKit.Desc("T07RefusModification", "New Tresor(num), Message.Question « Vous allez modifier… » → Non (Timer)")
   TestKit.Desc("T15ListesF2", "Gestionnaires de F2 : liste des journaux de trésorerie, liste des libellés (bascule)")
+  TestKit.Desc("T08SuppressionEcriture", "Rappel de l'écriture n° 2 (« Oui » par Timer) puis Suppr : écriture supprimée")
+  TestKit.Desc("T17VerrouAutreUtilisateur", "Écriture verrouillée par un autre utilisateur : « Oui » puis « Sortir », rappel poursuivi")
+  TestKit.Desc("T09RepriseLigne", "Trois lignes saisies, reprise de la 2e (Key + MoveTo, Ecrit1_Activate)")
+  TestKit.Desc("T14FicheGed", "Button5 : fiche GED (ShowModal) relevée par un Timer puis fermée par Sortir")
+  TestKit.Desc("T14bValidationGed", "Button5 : fiche GED, Copier (LBox FileSelect par Timer), URL par défaut, Enregistrer : Docs_Ged créé")
   TestKit.Desc("T10MasqueAbonnement", "Masque d'abonnement T, montant 250 : lignes calculées dans Ecrit1, compteur + 1")
 
 End
@@ -267,5 +279,489 @@ Public Sub T15bCompteF2()
   TestKit.Check("T15b/tricpt", $sVu)
   TestKit.Check("T15b/compte", Object.GetProperty(hF.Controls["Numcompte"], "Text"))
   Object.Lock(hF)
+
+End
+
+Public Sub _Multi_Timer()
+  ''Plusieurs boîtes Message successives : chaque nouvelle FMessage reçoit le bouton suivant de $aBoutons ; la
+  ''dernière boîte traitée est mémorisée (clic différé : elle reste visible au tick suivant).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If $aBoutons.Count = 0 Then
+            ' Boîte imprévue : premier bouton, texte relevé
+            $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+            hC.Value = True
+            Return
+          Endif
+          If Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) = $aBoutons[0] Then
+            $aBoutons.Remove(0)
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub Reponses(aBoutons As String[])
+
+  $aBoutons = aBoutons
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Multi"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Private Sub MvtNumero(sCle As String, sNum As String)
+  ''Lignes de Fiches_Mvt de l'écriture sNum (compte, document, montants, provisoire).
+
+  Dim r As Result
+  Dim i As Integer
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numero = &1 ORDER BY compte, numdoc", sNum)
+  TestKit.Check(sCle & "_nb", r.Count)
+  If Not r.Available Then Return
+  Repeat
+    TestKit.Check(sCle & i, r!compte & "|" & r!numdoc & "|" & r!libelle & "|" & r!montantd & "|" & r!montantc & "|" & r!provisoire & "|" & r!validee)
+    Inc i
+  Until r.MoveNext()
+
+End
+
+Private Sub Grille(sCle As String, hF As Tresor)
+  ''Lignes de Ecrit1 (clé : compte, document, n° d'écriture, n° de ligne).
+
+  Dim hV As Object
+  Dim i As Integer
+
+  TestKit.Check(sCle & "_numecrit", Object.GetProperty(hF.Controls["Numecrit"], "Text"))
+  hV = hF.Controls["Ecrit1"]
+  TestKit.Check(sCle & "_nb", hV.Count)
+  If Not hV.MoveFirst() Then
+    Repeat
+      TestKit.Check(sCle & i, hV.Item.Key & "|" & hV.Item[0] & "|" & hV.Item[1] & "|" & hV.Item[2] & "|" & hV.Item[4] & "|" & hV.Item[5])
+      Inc i
+    Until hV.MoveNext()
+  Endif
+
+End
+
+Private Sub Ligne(hF As Tresor, sCle As String, sCompte As String, sDoc As String, sLib As String, sMontant As String, bDebit As Boolean)
+  ''Saisie d'une ligne : compte (numcompte_LF → compteman), libellé, document, montant, sens, ToggleButton4_Click.
+
+  Object.SetProperty(hF.Controls["Numcompte"], "Text", sCompte)
+  Try hF.numcompte_LF()
+  If Error Then TestKit.Check(sCle & "/compte_err", "ERREUR: " & Error.Text)
+  Object.SetProperty(hF.Controls["Libelecrit"], "Text", sLib)
+  Object.SetProperty(hF.Controls["Numdoc"], "Text", sDoc)
+  Object.SetProperty(hF.Controls["Numlot"], "Text", sDoc)
+  Object.SetProperty(hF.Controls["Montant"], "Text", sMontant)
+  If bDebit Then
+    Object.SetProperty(hF.Controls["Debit"], "Value", True)
+  Else
+    Object.SetProperty(hF.Controls["Credit"], "Value", True)
+  Endif
+  Try hF.ToggleButton4_Click()
+  If Error Then TestKit.Check(sCle & "/ligne_err", "ERREUR: " & Error.Text)
+
+End
+
+Private Function NouvelleSaisie(sCle As String) As Tresor
+  ''Écran instancié sans affichage, journal 50 et date du 15.06.2018 validée (numéro d'écriture réservé).
+
+  Dim hF As Tresor
+
+  Try hF = New Tresor("")
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  Object.SetProperty(hF.Controls["Journal"], "Text", "50")
+  ' Entrée dans le journal (Cmpt_KeyPress → Journauxman : compte de banque du journal, Cptt)
+  Try hF.Journauxman()
+  If Error Then TestKit.Check(sCle & "/journal_err", "ERREUR: " & Error.Text)
+  Object.SetProperty(hF.Controls["Datej"], "Text", "15.06.2018")
+  Try hF.Datej_LF()
+  If Error Then TestKit.Check(sCle & "/datej_err", "ERREUR: " & Error.Text)
+  Return hF
+
+End
+
+Public Sub T08SuppressionEcriture()
+  ''TRESOR-T08 : rappel de l'écriture validée n° 2 (jeu extrait_base, technique T06 : New Tresor("2") comme Extrait,
+  ''« Oui » par le Timer) puis bouton Suppr (Suppr_Click → DelMvt) : lignes supprimées sans confirmation (A08 figée),
+  ''Fiches_MvtM.supprimee, verrou DocActif et écran vidé relevés.
+
+  Dim hF As Tresor
+  Dim r As Result
+  Dim aVide As New String[]
+
+  TestKit.OuvreBase("Compta/extrait_shared/extrait_base")
+  Reponses(["Oui"])
+  Try hF = New Tresor("2")
+  If Error Then TestKit.Check("T08/new_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T08/message", $sVu)
+  If Not Object.IsValid(hF) Then Return
+  MvtNumero("T08/avant", "2")
+  Reponses(aVide)
+  Try hF.Suppr_Click()
+  If Error Then TestKit.Check("T08/suppr_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T08/message_suppr", $sVu)
+  MvtNumero("T08/apres", "2")
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM Fiches_MvtM WHERE numero = &1 AND supprimee = &2", "2", 1)
+  TestKit.Check("T08/mvtm_supprimee", r!nb)
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM " & Cbase.Table("TabActif") & " WHERE doc_type = &1 AND doc_num = &2", "Reglement", "2")
+  TestKit.Check("T08/verrou", r!nb)
+  TestKit.Check("T08/ecran", Object.GetProperty(hF.Controls["Numecrit"], "Text") & "|" & Object.GetProperty(hF.Controls["Ecrit1"], "Count") & "|" & Object.GetProperty(hF.Controls["Soldeecrit"], "Text"))
+  Object.Lock(hF)
+
+End
+
+Public Sub T17VerrouAutreUtilisateur()
+  ''TRESOR-T17 : écriture n° 2 (jeu extrait_base) verrouillée dans Fiches_Docactif par un autre utilisateur, rappel par
+  ''New Tresor("2") (comme Extrait) : « Oui » à la question, puis « Sortir » au message de DocActif.Get_Lock ; la
+  ''modification reste possible (A04 figée : retour de Get_Lock ignoré).
+
+  Dim hF As Tresor
+  Dim r As Result
+
+  TestKit.OuvreBase("Compta/extrait_shared/extrait_base")
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabActif") & " (doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES (&1, &2, &3, &4, &5, &6, &7)", "Reglement", "2", "autre", 1, "machine-autre", "hote-autre(0)", "autre")
+  Reponses(["Oui", "Sortir"])
+  Try hF = New Tresor("2")
+  If Error Then TestKit.Check("T17/new_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T17/messages", $sVu)
+  TestKit.Check("T17/reponses_restantes", $aBoutons.Count)
+  TestKit.Check("T17/fenetre_valide", Object.IsValid(hF))
+  If Not Object.IsValid(hF) Then Return
+  TestKit.Check("T17/zones", Object.GetProperty(hF.Controls["Journal"], "Text") & "|" & Object.GetProperty(hF.Controls["Numecrit"], "Text") & "|" & Object.GetProperty(hF.Controls["Datej"], "Text"))
+  Grille("T17/lignes", hF)
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabActif") & " WHERE doc_type = &1 AND doc_num = &2", "Reglement", "2")
+  TestKit.Check("T17/verrou_nb", r.Count)
+  If r.Available Then TestKit.Check("T17/verrou", r!user_name & "|" & r!machine_id & "|" & r!userdb_name)
+  Object.Lock(hF)
+
+End
+
+Public Sub T09RepriseLigne()
+  ''TRESOR-T09 (partiel) : trois lignes saisies (411001 crédit 120, 401001 débit 50, 411001 débit 30, documents D1 à
+  ''D3), 2e ligne rendue courante (Key + MoveTo) puis Ecrit1_Activate (gestionnaire d'Entrée : reprise de la ligne,
+  ''DelEcr). La suppression par Suppr (Ecrit1_Keypress) lit Key.Code : non jouable hors événement clavier.
+
+  Dim aVide As New String[]
+  Dim hF As Tresor
+  Dim hV As Object
+  Dim sCle As String
+  Dim sNum As String
+
+  TestKit.OuvreBase("tresor_masque")
+  Reponses(aVide)
+  hF = NouvelleSaisie("T09")
+  If Not Object.IsValid(hF) Then Return
+  sNum = Object.GetProperty(hF.Controls["Numecrit"], "Text")
+  Ligne(hF, "T09/l1", "411001", "D1", "Reglement A", "120", False)
+  Ligne(hF, "T09/l2", "401001", "D2", "Reglement B", "50", True)
+  Ligne(hF, "T09/l3", "411001", "D3", "Reglement C", "30", True)
+  TestKit.Check("T09/messages_saisie", $sVu)
+  Grille("T09/grille3", hF)
+  TestKit.Check("T09/solde3", Object.GetProperty(hF.Controls["Soldeecrit"], "Text"))
+  MvtNumero("T09/mvt3", sNum)
+  hV = hF.Controls["Ecrit1"]
+  If hV.Count < 2 Then
+    Object.Lock(hF)
+    Return
+  Endif
+  hV.MoveFirst()
+  hV.MoveNext()
+  sCle = hV.Item.Key
+  hV.Key = sCle
+  hV.MoveTo(sCle)
+  $sVu = ""
+  Try hF.Ecrit1_Activate()
+  If Error Then TestKit.Check("T09/reprise_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T09/messages_reprise", $sVu)
+  TestKit.Check("T09/reprise_zones", Object.GetProperty(hF.Controls["Numcompte"], "Text") & "|" & Object.GetProperty(hF.Controls["Numdoc"], "Text") & "|" & Object.GetProperty(hF.Controls["Montant"], "Text") & "|" & Object.GetProperty(hF.Controls["Debit"], "Value") & "|" & Object.GetProperty(hF.Controls["Soldeecrit"], "Text"))
+  Grille("T09/grille_reprise", hF)
+  MvtNumero("T09/mvt_reprise", sNum)
+  Object.Lock(hF)
+
+End
+
+Public Sub _Ged_Timer()
+  ''Pendant le ShowModal de la fiche GED (LGed), une fois affichée (form_Open exécuté) : relève ses zones et ses
+  ''tags, puis la ferme par Sortir.
+
+  Dim hW As Window
+  Dim hC As Object
+  Dim sTag As String
+
+  For Each hW In Windows
+    If Object.Type(hW) = "LGed" And If hW.Visible Then
+      $hTimer.Enabled = False
+      $sVu = ""
+      For Each sTag In ["ftype", "fcode", "fcompte", "forigin", "fdte", "fMttc", "fMht"]
+        hC = hW.Controls[sTag]
+        $sVu &= sTag & "=" & Object.GetProperty(hC, "Text") & "|"
+      Next
+      hC = hW.Controls["ListTags"]
+      $sVu &= "tags=" & hC.List.Join(",")
+      Object.Call(hW, "Sortir_Click")
+      Return
+    Endif
+  Next
+
+End
+
+Public Sub T14FicheGed()
+  ''TRESOR-T14 (partiel) : écriture d'une ligne (411001 crédit 120, journal 50), Button5_Click → fiche GED LGed
+  ''(ShowModal) relevée par un Timer du module puis fermée par Sortir. La validation de la fiche (Enregistrer) exige
+  ''un document copié par Copier (LBox FileSelect, ShowModal imbriqué) : non jouée ; aucun Docs_Ged attendu.
+
+  Dim aVide As New String[]
+  Dim hF As Tresor
+  Dim r As Result
+  Dim i As Integer
+
+  TestKit.OuvreBase("tresor_masque")
+  Reponses(aVide)
+  hF = NouvelleSaisie("T14")
+  If Not Object.IsValid(hF) Then Return
+  Ligne(hF, "T14/l1", "411001", "D1", "Reglement A", "120", False)
+  $hTimer.Enabled = False
+  TestKit.Check("T14/messages_saisie", $sVu)
+  Grille("T14/grille", hF)
+  $sVu = ""
+  $hTimer = New Timer As "_Ged"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF.Button5_Click()
+  If Error Then TestKit.Check("T14/ged_err", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T14/fiche", $sVu)
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM Docs_Ged")
+  TestKit.Check("T14/docs_ged", r!nb)
+  r = Utils.db.Exec("SELECT tag FROM Fiches_Tag ORDER BY tag")
+  TestKit.Check("T14/tags_nb", r.Count)
+  If r.Available Then
+    Repeat
+      TestKit.Check("T14/tag" & i, r!tag)
+      Inc i
+    Until r.MoveNext()
+  Endif
+  Object.Lock(hF)
+
+End
+
+Private Function VueFichiers(hCont As Object) As Object
+  ''FileView interne du FileChooser (recherche en profondeur).
+
+  Dim hC As Object
+  Dim hV As Object
+
+  For Each hC In hCont.Children
+    If Object.Type(hC) = "FileView" Then Return hC
+    If Object.Is(hC, "Container") Then
+      hV = VueFichiers(hC)
+      If hV Then Return hV
+    Endif
+  Next
+
+End
+
+Private Sub SaisieNom(hCont As Object, sNom As String)
+  ''Multi = True : SelectedPath du FileChooser change seulement le répertoire ; le fichier est rendu courant dans sa
+  ''FileView interne.
+
+  Dim hV As Object
+
+  hV = VueFichiers(hCont)
+  If Not hV Then Return
+  Try hV.Current = sNom
+
+End
+
+Public Sub _Box_Timer()
+  ''Pendant le ShowModal de LBox (mode FileSelect, ouvert par LGed.Copier_Click) : choix du fichier $sFichier, Valider.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "LBox" And If hW.Visible Then
+      hC = hW.Controls["FileChooser1"]
+      ' Chargement du répertoire asynchrone : chemin posé, validation au tick où la sélection est prise en compte
+      If hC.SelectedPaths.Count = 0 Then
+        Inc $iEssais
+        If $iEssais > 20 Then
+          $hTimerBox.Enabled = False
+          $sGed &= "lbox=sans selection (" & hC.SelectedPath & ", " & hC.Dir & ")|"
+          Object.Call(hW, "Annuler_Click")
+          Return
+        Endif
+        If $iEssais = 1 Then
+          hC.SelectedPath = $sFichier
+        Else
+          ' Multi = True : SelectedPath ne sélectionne pas le fichier ; il est rendu courant dans la FileView interne
+          SaisieNom(hC, File.Name($sFichier))
+        Endif
+        Return
+      Endif
+      $hTimerBox.Enabled = False
+      $sGed &= "lbox=" & File.Name(hC.SelectedPaths[0]) & "|"
+      Object.Call(hW, "Valider_Click")
+      Return
+    Endif
+  Next
+
+End
+
+Public Sub _Valide_Timer()
+  ''Pendant le ShowModal de la fiche GED (LGed), une fois affichée : Copier (LBox par le Timer _Box), URL par défaut
+  ''(DefUrl_Click), Enregistrer_Click, relevé de l'index, de l'URL et du type MIME, puis Sortir.
+
+  Dim hW As Window
+  Dim sNom As String
+
+  For Each hW In Windows
+    If Object.Type(hW) = "LGed" And If hW.Visible Then
+      $hTimerGed.Enabled = False
+      $iEssais = 0
+      $hTimerBox = New Timer As "_Box"
+      $hTimerBox.Delay = 300
+      $hTimerBox.Enabled = True
+      Try Object.Call(hW, "Copier_Click")
+      If Error Then $sGed &= "copier_err=" & Error.Text & "|"
+      $hTimerBox.Enabled = False
+      Try Object.Call(hW, "DefUrl_Click")
+      Try Object.Call(hW, "Enregistrer_Click")
+      If Error Then $sGed &= "enregistrer_err=" & Error.Text & "|"
+      For Each sNom In ["findex", "furl", "fmime", "fMttc"]
+        $sGed &= sNom & "=" & Replace(Object.GetProperty(hW.Controls[sNom], "Text"), Application.Env["HOME"], "~") & "|"
+      Next
+      Object.Call(hW, "Sortir_Click")
+      Return
+    Endif
+  Next
+
+End
+
+Public Sub T14bValidationGed()
+  ''TRESOR-T14 (suite) : ligne 411001 crédit 120, Button5_Click → fiche GED (ShowModal) ; un Timer du module y joue
+  ''Copier (LBox FileSelect en ShowModal imbriqué, fichier .src/Tests/Framework/ged/mime_file_test.pdf choisi par un
+  ''second Timer), l'URL par défaut (FactcheminC posé dans le HOME de test), Enregistrer puis Sortir ; document
+  ''Docs_Ged (Comptabilite/Treso, TTC 120) et ses tags relevés, fichier copié présent.
+
+  Dim hF As Tresor
+  Dim r As Result
+  Dim i As Integer
+  Dim aVide As New String[]
+
+  TestKit.OuvreBase("tresor_masque")
+  Start.LocalSettings["/Soc" & Start.Societe & "/FactcheminC"] = Application.Env["HOME"] &/ "ged/compta"
+  $sFichier = Application.Path &/ ".src/Tests/Framework/ged/mime_file_test.pdf"
+  Reponses(aVide)
+  hF = NouvelleSaisie("T14b")
+  If Not Object.IsValid(hF) Then Return
+  Ligne(hF, "T14b/l1", "411001", "D1", "Reglement A", "120", False)
+  $sGed = ""
+  $hTimerGed = New Timer As "_Valide"
+  $hTimerGed.Delay = 300
+  $hTimerGed.Enabled = True
+  Try hF.Button5_Click()
+  If Error Then TestKit.Check("T14b/ged_err", "ERREUR: " & Error.Text)
+  $hTimerGed.Enabled = False
+  $hTimer.Enabled = False
+  TestKit.Check("T14b/messages", $sVu)
+  TestKit.Check("T14b/fiche", $sGed)
+  r = Utils.db.Exec("SELECT * FROM Docs_Ged ORDER BY lind")
+  TestKit.Check("T14b/docs_ged_nb", r.Count)
+  If r.Available Then
+    TestKit.Check("T14b/doc", r!type & "|" & r!code & "|" & r!compte & "|" & r!origin & "|" & Replace(r!url, Application.Env["HOME"], "~") & "|" & r!filename & "|" & r!mime & "|" & r!ttc & "|" & r!ht & "|" & r!date)
+    TestKit.Check("T14b/fichier_copie", Exist(Replace(Replace(r!url, "file://", ""), "//", "/")))
+  Endif
+  r = Utils.db.Exec("SELECT tag FROM Docs_Tag INNER JOIN Fiches_Tag ON tag_lind = lind ORDER BY tag")
+  TestKit.Check("T14b/tags_nb", r.Count)
+  If r.Available Then
+    Repeat
+      TestKit.Check("T14b/tag" & i, r!tag)
+      Inc i
+    Until r.MoveNext()
+  Endif
+  Object.Lock(hF)
+
+End
+
+Public Sub _T09bSuppressionLigne()
+  ''TRESOR-T09 (suite) : trois lignes saisies comme T09RepriseLigne, fenêtre affichée sous Xvfb, 3e ligne rendue
+  ''courante (Key + MoveTo), focus sur Ecrit1 et vraie touche Suppr (Desktop.SendKeys : Ecrit1_Keypress lit
+  ''Key.Code), « Oui » au Message.Question par le Timer du module ; ligne retirée de Ecrit1 et de Fiches_Mvt (DelEcr).
+  ''BLOQUÉ (préfixe « _ » : non exécuté par gb.test) : hF.Show() ne rend jamais la main (aucun tick de Timer ensuite,
+  ''délai de 20 s dépassé) ; à reprendre avec l'outillage clavier du framework (Key.Code).
+
+  Dim hF As Tresor
+  Dim hV As Object
+  Dim sCle As String
+  Dim sNum As String
+  Dim aVide As New String[]
+  Dim i As Integer
+
+  TestKit.OuvreBase("tresor_masque")
+  Reponses(aVide)
+  hF = NouvelleSaisie("T09b")
+  If Not Object.IsValid(hF) Then Return
+  sNum = Object.GetProperty(hF.Controls["Numecrit"], "Text")
+  Ligne(hF, "T09b/l1", "411001", "D1", "Reglement A", "120", False)
+  Ligne(hF, "T09b/l2", "401001", "D2", "Reglement B", "50", True)
+  Ligne(hF, "T09b/l3", "411001", "D3", "Reglement C", "30", True)
+  $hTimer.Enabled = False
+  TestKit.Check("T09b/messages_saisie", $sVu)
+  hV = hF.Controls["Ecrit1"]
+  If hV.Count < 3 Then
+    Object.Lock(hF)
+    Return
+  Endif
+  Reponses(aVide)
+  hF.Show()
+  Wait 0.3
+  TestKit.Check("T09b/messages_affichage", $sVu)
+  hV.MoveLast()
+  sCle = hV.Item.Key
+  hV.Key = sCle
+  hV.MoveTo(sCle)
+  hV.Item.Selected = True
+  hV.SetFocus()
+  Wait 0.3
+  Reponses(["Oui"])
+  Desktop.SendKeys("[Delete]")
+  For i = 1 To 20
+    Wait 0.1
+    If hV.Count < 3 Then Break
+  Next
+  Wait 0.3
+  $hTimer.Enabled = False
+  TestKit.Check("T09b/message_suppr", $sVu)
+  Grille("T09b/grille_suppr", hF)
+  TestKit.Check("T09b/solde", Object.GetProperty(hF.Controls["Soldeecrit"], "Text"))
+  MvtNumero("T09b/mvt_suppr", sNum)
+  Object.Lock(hF)
+  hF.Hide()
 
 End

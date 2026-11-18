@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de barselection (.hidden/reference/.src/Gestion/option/barselection.class/test.md, BARSELECTION-T01 : Recherche).
+''Tests de barselection (.hidden/reference/.src/Gestion/option/barselection.class/test.md, BARSELECTION-T01 : Recherche, T04).
 ''Le 9e bouton de la barre (Recherche) lève l'événement recherche : Tconsigne.bar1_recherche ouvre Rechcons en ShowModal,
 ''non rejouable. Écran Tconsigne affiché (Show : form_Open ; le clic par Value = True n'agit pas sur une fenêtre non affichée), clic du 9e bouton « bout » de Panel2 par
 ''Value = True ; un Timer du module (« _Choix ») agit pendant la boucle modale : ligne 2 de Rechcons puis
@@ -8,10 +8,13 @@
 
 Private $hTimer As Timer
 Private $sVu As String
+Private $hDerniere As Window
+Private $aBoites As New String[]
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T04RefusAppelant", "Mreglement (barre 001110010) : Modification sans ligne sélectionnée puis Valider code vide : boîte, barre (mode validation) et Fiches_Reglements (A01)")
   TestKit.Desc("T01Recherche", "Bouton Recherche (9e) de la barre de Tconsigne : Rechcons modale, ligne 2 choisie, fiche affichée")
 
 End
@@ -68,6 +71,119 @@ Public Sub T01Recherche()
   TestKit.Check("T01/code", hCtrl.Text)
   hCtrl = hForm.Controls["Textlib"]
   TestKit.Check("T01/libelle", hCtrl.Text)
+  Object.Lock(hForm)
+  Try hForm.Hide()
+
+End
+
+' Répond aux boîtes Message (1er bouton) et relève leur texte.
+Public Sub _Boite_Timer()
+
+  Dim hWin As Window
+  Dim hCtrl As Object
+  Dim sTxt As String
+
+  For Each hWin In Windows
+    If Object.Type(hWin) = "FMessage" And If hWin <> $hDerniere Then
+      $hDerniere = hWin
+      sTxt = ""
+      For Each hCtrl In hWin.Controls
+        If Object.Type(hCtrl) = "TextLabel" Or If Object.Type(hCtrl) = "Label" Then sTxt &= Trim(hCtrl.Text) & " "
+      Next
+      $aBoites.Add(Trim(sTxt))
+      For Each hCtrl In hWin.Controls
+        If Object.Type(hCtrl) = "Button" Then
+          hCtrl.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+' Contenu de la barre : type et infobulle/texte/étiquette de chaque enfant du panneau.
+Private Sub Barre(sCle As String, hPanel As Object)
+
+  Dim hCtrl As Object
+  Dim sTxt As String
+
+  For Each hCtrl In hPanel.Children
+    sTxt &= Object.Type(hCtrl)
+    If Object.Type(hCtrl) = "Label" Then
+      sTxt &= "(" & Trim(hCtrl.Text) & ")"
+    Else
+      sTxt &= "(" & hCtrl.Tooltip & ":" & hCtrl.Tag & ")"
+    Endif
+    sTxt &= " "
+  Next
+  TestKit.Check(sCle & "/barre", Trim(sTxt))
+
+End
+
+Private Function Bouton(hPanel As Object, sInfo As String, Optional vTag As Variant) As Object
+
+  Dim hCtrl As Object
+
+  For Each hCtrl In hPanel.Children
+    If Object.Type(hCtrl) <> "Button" Then Continue
+    If sInfo And If hCtrl.Tooltip = sInfo Then Return hCtrl
+    If Not sInfo And If hCtrl.Tag = vTag Then Return hCtrl
+  Next
+
+End
+
+Private Sub Clic(hBtn As Object)
+
+  Dim i As Integer
+
+  hBtn.Value = True
+  For i = 1 To 10
+    Wait 0.1
+  Next
+
+End
+
+Public Sub T04RefusAppelant()
+
+  Dim hForm, hPanel, hGrid, hBtn As Object
+  Dim rResult As Result
+  Dim i As Integer
+
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  hForm = New Mreglement
+  hForm.Show()
+  Wait 0.2
+  hPanel = hForm.Controls["sel"]
+  hGrid = hForm.Controls["GridView1"]
+  Barre("T04/ouverture", hPanel)
+  hGrid.Row = -1
+  TestKit.Check("T04/ligne", hGrid.Row)
+  hBtn = Bouton(hPanel, "Modification")
+  Try Clic(hBtn)
+  TestKit.Check("T04/modif/erreur", IIf(Error, Error.Text, "<aucune>"))
+  Barre("T04/modif", hPanel)
+  Object.SetProperty(hForm.Controls["code"], "Text", "")
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  hBtn = Bouton(hPanel, "", 2)
+  If IsNull(hBtn) Then
+    TestKit.Check("T04/valider", "<bouton absent>")
+  Else
+    Try Clic(hBtn)
+    TestKit.Check("T04/valider/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+    For i = 1 To 10
+      Wait 0.1
+    Next
+  Endif
+  $hTimer.Enabled = False
+  TestKit.Check("T04/boites", $aBoites.Join(" / "))
+  Barre("T04/valider", hPanel)
+  rResult = Utils.db.Exec("SELECT code, libel FROM Fiches_Reglements ORDER BY code")
+  TestKit.Check("T04/reglements", rResult.Count)
   Object.Lock(hForm)
   Try hForm.Hide()
 

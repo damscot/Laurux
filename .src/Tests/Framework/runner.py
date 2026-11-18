@@ -1203,7 +1203,7 @@ def doc_tests(docdir):
         statut = l.rstrip().rstrip("|").rsplit("|", 1)[-1].strip()
         if m and not re.match(r"\s*hors périmètre", statut, re.I):
             tests[m[1]] = {"type": m[2].strip(), "objet": m[3].strip(), "statut": statut}
-    complexe = bool(re.search(r"(à faire valider|valider par l'utilisateur|module complexe)", txt[:3000], re.I))
+    complexe = bool(re.search(r"(à faire valider|valider par l'utilisateur|modules? complexes?)", txt[:3000], re.I))
     return tests, complexe
 
 
@@ -1211,14 +1211,15 @@ def doc_tests(docdir):
 # (« à faire : <raison> ») ; la première qui correspond l'emporte. « réalisable » : test simplement pas encore
 # écrit (temps, jeu de données à créer…), compté dans « Restant ».
 BLOCAGES = [
-    ("module complexe", r"(passe par|réévalué|via|depuis|scénario|écran|parcours|relève de|édition par)\b.{0,40}\b("
+    ("non retenu par l'utilisateur", r"non retenu"),
+    ("module complexe", r"(passe par|réévalué|via|depuis|scénario|écran|parcours|relève de|édition par|incrusté dans)\b.{0,40}\b("
      r"complexe|Facture|ObjFac\w*|Caisse|Achat|Articles|FClient|Saisecrit|SaiReg|commande1|Moulinage|ValidBR\w*|"
      r"Impart\b|MajTarifM|FFournisseur|inventaire|clôture)|écran complexe|module complexe|classe complexe|"
      r"exclus? \(complexe\)|auto-instance|lit Caisse"),
+    ("SQLite", r"SQLite"),
     ("réalisable", r"faute de temps|manque de temps|non commencé|non traité|non écrit|non scénarisé|non synthétisé|"
      r"non abordé|premier passage|fin de vague|temps écoulé|à écrire|à (créer|préparer)\b|durée de la vague|dans ce lot|"
      r"non tenté|durée mesurée|attendus non|rejeu suspendu|scénario prêt|hors liste|réalisable"),
-    ("SQLite", r"SQLite"),
     ("extraction / réécriture (phases 3-4)", r"extraction|après [A-Z0-9_]+-0\d\d|phase [34]|n'existe pas encore|"
      r"n'existe qu'après|absente? des sources|suppression|classe morte|« -t » retirée|contrôle statique"),
     ("harnais : démarrage, code de sortie", r"harnais|avant (le démarrage du rejeu|la création du timer|le timer|"

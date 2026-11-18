@@ -1,0 +1,17 @@
+{
+ "id": "TRICLIENTSD-T02",
+ "classe": "TriclientsD",
+ "objet": "Purge Fiches_Clid inchangée (TriclientsD n'intervient pas)",
+ "description": "Preuve de non-régression pour la suppression de TriclientsD (TRICLIENTSD-A01) : Archivages › RazClientd sur le jeu Archivages/razclientd_shared/clid_base (6 clients divers), Lancer, Message.Question « Oui » (Entrée), Message.Info « N clients » (Entrée), Quitter. Attendu : dump identique entre clones ; seuls les clients de ddate antérieure au 2018-06-15 sont supprimés de Fiches_Clid (table seulement purgée).",
+ "dataset": "Archivages/razclientd_shared/clid_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

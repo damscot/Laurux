@@ -1,6 +1,9 @@
 ' Gambas test file
 
-''Tests de LGed (.hidden/reference/.src/Utils/LGed.class/test.md, LGED-T01 à T09).
+''Tests de LGed (.hidden/reference/.src/Utils/LGed.class/test.md, LGED-T01 à T09, T12, T14, T15).
+''T12/T14 (fiche ouverte par GedR › Éditer) : fiche instanciée sans affichage, gestionnaires Enregistrer_Click /
+''Supprimer_Click appelés directement ; la boîte Message.Question reçoit sa réponse d'un Timer du module (technique
+''TresorTest) ; Visualiseur.Prog (appelé par form_Close) écrit l'URL ouverte dans ~/visu.txt (CmdVis).
 ''Valeurs attendues : assets/LGedTest/expected.txt, produites dans le clone de référence.
 ''Jeu de données : .hidden/Tests/Utils/assets/gedr_shared/ged.sql (4 documents, 5 tags, une liaison pendante).
 ''Les champs privés sont relus par l'API publique : form_Open() (remplit la fiche sans l'afficher) puis
@@ -20,6 +23,8 @@ Public Sub _Desc()
   TestKit.Desc("T07DefaultURL", "`Default_URL` / `Get_Default_Extension`")
   TestKit.Desc("T08Mime", "`Get_Mime`")
   TestKit.Desc("T09Supprime", "`Supprime`")
+  TestKit.Desc("T12DateModifiee", "Fiche du document 1 : date changée puis Enregistrer_Click : Docs_Ged.date inchangée (A01 figée)")
+  TestKit.Desc("T14SuppressionFiche", "Fiche du document 1 : Supprimer_Click, « Oui » (Timer) : lignes supprimées, fichier conservé, fermeture")
   TestKit.Desc("T15MimeUrl", "`Get_Mime` sur URL http(s) synthétiques laurux_ged_test.fr (faux curl) et file:/// d'un document de test")
 
 End
@@ -29,6 +34,10 @@ Public Sub _Setup()
   TestKit.Begin("Utils", "LGedTest")
 
 End
+
+Private $hTimer As Timer
+Private $sBouton As String
+Private $sVu As String
 
 Private Sub OuvreGed()
 
@@ -364,5 +373,120 @@ Public Sub T15MimeUrl()
   TestKit.Check("T15/hote_absent", hG.Get_Mime("https://serveur-absent.fr/doc.pdf"))
   ' file://<hôte>/… (non file:///) : forme non reconnue par Get_Mime
   TestKit.Check("T15/file_hote", hG.Get_Mime("file://laurux_ged_test.fr/mime_file_test.pdf"))
+
+End
+
+Public Sub _Rep_Timer()
+  ''Pendant une boîte Message (fenêtre FMessage) : relève son texte et clique le bouton $sBouton (modèle TresorTest).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" Or InStr(Object.Type(hW), "Message") Then
+      $hTimer.Enabled = False
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If Replace(Object.GetProperty(hC, "Text"), "&", "") = $sBouton Then
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+' Document 1 sur un fichier PDF du HOME de test ; Visualiseur.Prog tracé dans ~/visu.txt.
+Private Sub Doc1Local() As String
+
+  Dim sFic As String = Application.Env["HOME"] &/ "tmp/doc1.pdf"
+
+  OuvreGed()
+  Racines()
+  File.Save(sFic, "%PDF-1.4\n%%EOF\n")
+  Utils.db.Exec("UPDATE Docs_Ged SET url = &1 WHERE lind = 1", "file://" & sFic)
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "sh -c 'echo \"$0\" >> " & Application.Env["HOME"] &/ "visu.txt'"
+  Return sFic
+
+End
+
+Private Sub Visu() As String
+
+  Dim i As Integer
+
+  For i = 1 To 20
+    If Exist(Application.Env["HOME"] &/ "visu.txt") Then Break
+    Wait 0.1
+  Next
+  If Not Exist(Application.Env["HOME"] &/ "visu.txt") Then Return "<aucune>"
+  Return Norm(Trim(File.Load(Application.Env["HOME"] &/ "visu.txt")))
+
+End
+
+Private Sub DateDoc(Lind As Integer) As String
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT date FROM Docs_Ged WHERE lind = &1", Lind)
+  If Not r.Available Then Return "<absente>"
+  Return Format$(r!date, "yyyy-mm-dd hh:nn:ss")
+
+End
+
+Public Sub T12DateModifiee()
+  ''LGED-T12 : GedR › Éditer ouvre New LGed(Null, lind) en ShowModal ; ici la fiche est remplie par form_Open() sans
+  ''affichage, la date saisie dans fdte, puis Enregistrer_Click (URL inchangée : pas de déplacement).
+
+  Dim hG As LGed
+  Dim hC As Object
+
+  Doc1Local()
+  TestKit.Check("T12/date_avant", DateDoc(1))
+  hG = New LGed(Null, 1)
+  hG.form_Open()
+  hC = hG.Controls["fdte"]
+  hC.Text = "01/02/2021 08:30:00"
+  TestKit.Check("T12/fdte", hC.Text)
+  Try hG.Enregistrer_Click()
+  TestKit.Check("T12/enregistrer/erreur", IIf(Error, Error.Text, ""))
+  TestKit.Check("T12/DTE_objet", hG.DTE.DT)
+  TestKit.Check("T12/date_apres", DateDoc(1))
+  TestKit.Check("T12/ligne", Ligne(1))
+  TestKit.Check("T12/etat", Etat())
+  hC = hG.Controls["findex"]
+  TestKit.Check("T12/findex", hC.Text)
+  Object.Lock(hG)
+
+End
+
+Public Sub T14SuppressionFiche()
+  ''LGED-T14 : GedR › Éditer › Supprimer : Message.Question « Oui » (Timer) → Supprime(False) puis Me.Close()
+  ''(form_Close → Ouvrir → Visualiseur.Prog de l'URL du document supprimé).
+
+  Dim hG As LGed
+  Dim sFic As String
+
+  sFic = Doc1Local()
+  TestKit.Check("T14/etat_avant", Etat())
+  hG = New LGed(Null, 1)
+  hG.form_Open()
+  $sBouton = "Oui"
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hG.Supprimer_Click()
+  TestKit.Check("T14/supprimer/erreur", IIf(Error, Error.Text, ""))
+  $hTimer.Enabled = False
+  TestKit.Check("T14/message", $sVu)
+  TestKit.Check("T14/etat_apres", Etat())
+  TestKit.Check("T14/ligne1", Ligne(1))
+  TestKit.Check("T14/fichier_conserve", Exist(sFic))
+  TestKit.Check("T14/visualiseur", Visu())
+  TestKit.Check("T14/fenetre_valide", Object.IsValid(hG))
 
 End

@@ -1,0 +1,17 @@
+{
+ "id": "VALIDINVT-T10",
+ "objet": "Vente entre génération et validation (A03)",
+ "classe": "ValidinvT",
+ "description": "Jeu invt_mouvements (vente de 2 x 001 le 10/06, après la génération du 01/06) : Validation, « Oui », fin, puis recalcul de tous les stocks. Attendu : art_qte de 001 = 12 juste après la validation (vente ignorée), puis valeur recalculée figée (A03).",
+ "dataset": "validinvt_shared/invt_mouvements",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,80 @@
+' Gambas test file
+
+''Tests de EdArt1 ouvrant TriArticles en ShowModal (.hidden/reference/.src/Gestion/Impressions/EdArt1.class/test.md, EDART1-T09).
+''Module séparé (vague 8, modèle MaterielModalTest). Un Timer du module agit pendant la boucle modale : il retrouve la
+''fenêtre TriArticles ouverte (Windows) et simule la sélection d'une ligne (Bsel = True puis ColTri_MajSel(code), ce
+''que fait TriGen au double-clic) ou la fermeture sans choix. EdArt1 est instanciée sans être affichée.
+''Jeu : Laurux01 (articles 001 à 003). Valeurs attendues : assets/EdArt1ModalTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $sChoix As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T09TriArticles", "ToggleButton1 : choix de l'article 002 dans TriArticles (Art) ; ToggleButton2 fermé sans choix : Art2 et Bsel/Bval (A03)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EdArt1ModalTest")
+  TestKit.OuvreBase()
+
+End
+
+' Programme l'action de l'utilisateur dans TriArticles : code choisi, ou "" pour fermer sans choix.
+Private Sub Programme(sChoix As String)
+
+  $sChoix = sChoix
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "TriArticles" Then Continue
+    $hTimer.Enabled = False
+    If $sChoix Then
+      Object.SetProperty(hWin, "Bsel", True)
+      Object.Call(hWin, "ColTri_MajSel", [$sChoix])
+    Else
+      hWin.Close()
+    Endif
+    Return
+  Next
+
+End
+
+Private Sub Etat(hF As Object, sCle As String)
+
+  Dim sNom As String
+
+  TestKit.Check(sCle & "/Bsel", hF.Bsel)
+  TestKit.Check(sCle & "/Bval", IIf(IsNull(hF.Bval), "<null>", hF.Bval))
+  For Each sNom In ["Art", "Art2", "Fam"]
+    TestKit.Check(sCle & "/" & sNom, Object.GetProperty(hF.Controls[sNom], "Text"))
+  Next
+
+End
+
+Public Sub T09TriArticles()
+
+  Dim hF As New EdArt1
+
+  Programme("002")
+  Try hF.ToggleButton1_Click()
+  TestKit.Check("T09/choix/erreur", IIf(Error, Error.Text, "<aucune>"))
+  Etat(hF, "T09/choix")
+  Programme("")
+  Try hF.ToggleButton2_Click()
+  TestKit.Check("T09/annule/erreur", IIf(Error, Error.Text, "<aucune>"))
+  Etat(hF, "T09/annule")
+  Object.Lock(hF)
+
+End

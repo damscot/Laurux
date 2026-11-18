@@ -1,0 +1,84 @@
+' Gambas test file
+
+''Tests de BalanceM (.hidden/reference/.src/Compta/Impressions/BalanceM.module/test.md, BALANCEM-T06).
+''Les autres tests de la classe sont des scénarios (assets/balancem_*). Écran Balance instancié sans affichage,
+''sélection posée dans le TreeView TypeClient1 (non rejouable), Imprimer appelé directement. Valeurs attendues :
+''assets/BalanceMTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06TypeClient", "Balance client filtrée par 1 puis 2 types (TypeClient1), puis fournisseur avec la sélection active : texte des PDF")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "BalanceMTest")
+
+End
+
+'' Imprime (Button1_Click) et relève le texte du PDF (pdftotext via /Soc01/caisse/CmdVis), date et utilisateur masqués.
+Private Sub Imprime(hF As Balance, sCle As String)
+
+  Dim sTxt As String = Temp$() & ".txt"
+  Dim i As Integer
+  Dim aL As String[]
+  Dim sL As String
+
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = "sh -c 'pdftotext -layout \"$0\" " & sTxt & "'"
+  Try hF.Button1_Click()
+  If Error Then TestKit.Check(sCle & "/imprimer_err", "ERREUR: " & Error.Text)
+  ' Shell asynchrone : attente du texte (5 s au plus)
+  For i = 1 To 50
+    If Exist(sTxt) Then
+      If Stat(sTxt).Size > 0 Then Break
+    Endif
+    Wait 0.1
+  Next
+  Wait 0.2
+  If Not Exist(sTxt) Then
+    TestKit.Check(sCle & "/pdf", "<absent>")
+    Return
+  Endif
+  aL = Split(File.Load(sTxt), "\n")
+  TestKit.Check(sCle & "/pdf_lignes", aL.Count)
+  For i = 0 To aL.Max
+    sL = RTrim(aL[i])
+    sL = Replace(sL, Format(Now, "dd/mm/yyyy"), "<date du jour>")
+    sL = Replace(sL, "demandée par " & User.Name, "demandée par <utilisateur>")
+    TestKit.Check(sCle & "/pdf" & Format(i, "000"), sL)
+  Next
+
+End
+
+Public Sub T06TypeClient()
+  ''BALANCEM-T06, bloqué au rejeu (sélection dans le TreeView TypeClient1) : jeu balancem_types (411001 type 01,
+  ''411002 type 02, 411003 type 03, 401001 mouvementé), exercice 2018 posé ; balance client avec le type 01, puis
+  ''les types 01 et 03, puis Bfournisseur_Click avec la sélection restée active (filtre ignoré pour Type = "F").
+
+  Dim hF As Balance
+  Dim hT As Object
+
+  TestKit.OuvreBase("balancem_types")
+  Try hF = New Balance
+  If Error Then
+    TestKit.Check("T06/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Object.SetProperty(hF.Controls["DteN0"], "Text", "01.01.2018")
+  Object.SetProperty(hF.Controls["Dten1"], "Text", "31.12.2018")
+  hT = hF.Controls["TypeClient1"]
+  hF.Bclient_Click()
+  hT["01"].Selected = True
+  TestKit.Check("T06/where_un", hT.where)
+  Imprime(hF, "T06/un_type")
+  hT["03"].Selected = True
+  TestKit.Check("T06/where_deux", hT.where)
+  Imprime(hF, "T06/deux_types")
+  hF.Bfournisseur_Click()
+  TestKit.Check("T06/where_fournisseur", hT.where)
+  Imprime(hF, "T06/fournisseur")
+  Object.Lock(hF)
+
+End

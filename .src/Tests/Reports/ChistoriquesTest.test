@@ -3,7 +3,8 @@
 ''Tests de Chistoriques (.hidden/reference/.src/Reports/Chistoriques.class/test.md, CHISTORIQUES-T01 à T05).
 ''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
 ''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
-''Valeurs attendues : assets/ChistoriquesTest/expected.txt, produites dans le clone de référence. Pas de base.
+''Valeurs attendues : assets/ChistoriquesTest/expected.txt, produites dans le clone de référence. Pas de base pour
+''T01 à T05 ; T06/T07 lisent le jeu Statistiques/statcomm_shared/statistiques_ventes (factures N 2018 / N-1 2017).
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
@@ -13,6 +14,8 @@ Public Sub _Desc()
   TestKit.Desc("T03Stats", "Level1C/level2C/Level4C/Level5C, Level1AC/level2AC/Level5AC, Level1A/level2A/Level5A, Level1H/level2H")
   TestKit.Desc("T04PiecesMo", "Level1P, level2P (chaînes et Float 12.5), Level4P, Level5P")
   TestKit.Desc("T05CaFour", "Level1FO, level2FO (pourcent 12,50 / -3,20 / vide), Level4FO, Level5FO")
+  TestKit.Desc("T06Editions", "Jeu statistiques_ventes : CA clients N/N-1 (level2FO) et CA par commercial (level2A) imprimés")
+  TestKit.Desc("T07CaNul", "Jeu statistiques_ventes : client vendu en N-1 seulement, level2FO à CA nul et pourcentage vide")
 
 End
 
@@ -145,5 +148,114 @@ Public Sub T05CaFour()
   pdf.Level5FO("1234,5", "1000", "23,45", 65)
   pdf.Footer()
   Verifie("T05", pdf)
+
+End
+
+' CA par client sur N (2018) et N-1 (2017) du jeu statistiques_ventes, préparé comme la liste de VisStatFour
+' (montants formatés « 0.00 », pourcentage « 0.00 » ; clients de N-1 seul exclus : voir T07).
+Private Function CaClients(bNulSeul As Boolean) As Result
+
+  Dim sSql As String
+
+  sSql = "SELECT cdclifac, MAX(nmclifac) AS nom, " &
+    "SUM(CASE WHEN YEAR(datefac) = 2018 THEN totfac ELSE 0 END) AS ca, " &
+    "SUM(CASE WHEN YEAR(datefac) = 2017 THEN totfac ELSE 0 END) AS ca1 " &
+    "FROM " & Cbase.Table("TabHisFac") & " GROUP BY cdclifac "
+  If bNulSeul Then
+    sSql &= "HAVING ca = 0 "
+  Else
+    sSql &= "HAVING ca <> 0 "
+  Endif
+  Return Utils.db.Exec(sSql & "ORDER BY cdclifac")
+
+End
+
+Public Sub T06Editions()
+
+  Dim pdf As Chistoriques = Nouveau()
+  Dim rr As Result
+  Dim fCa, fCa1, fTot, fTot1 As Float
+  Dim iPosY As Integer = 32
+  Dim n As Integer
+
+  TestKit.OuvreBase("Statistiques/statcomm_shared/statistiques_ventes")
+  ' Édition 1 : CA clients N / N-1 (gabarit fournisseurs de VisStatFour)
+  pdf.Entete("Impression du CA fournisseurs")
+  pdf.Level0F("01/01/2018", "15/06/2018")
+  pdf.Level1FO()
+  rr = CaClients(False)
+  If Not rr.Available Then
+    TestKit.Check("T06/donnees", "aucune")
+    Return
+  Endif
+  Repeat
+    Inc n
+    fCa = rr!ca
+    fCa1 = rr!ca1
+    fTot += fCa
+    fTot1 += fCa1
+    Try pdf.level2FO(rr!cdclifac, rr!nom, Format$(fCa, "0.00"), Format$(fCa1, "0.00"), Format$(((fCa - fCa1) * 100) / fCa, " 0.00 "), iPosY)
+    TestKit.Check("T06/level2FO/" & rr!cdclifac & "/erreur", IIf(Error, Error.Text, ""))
+    iPosY += 5
+  Until rr.MoveNext()
+  TestKit.Check("T06/clients", n)
+  pdf.Lines(iPosY)
+  iPosY += 5
+  pdf.Level4FO(iPosY)
+  iPosY += 8
+  pdf.Level5FO(Format$(fTot, "0.00"), Format$(fTot1, "0.00"), Format$(((fTot - fTot1) * 100) / fTot, "0.00"), iPosY)
+  pdf.Footer()
+  ' Édition 2 : CA par commercial (gabarit articles / commerciaux)
+  pdf.Entete("CA par commercial")
+  pdf.Level0F("01/01/2018", "15/06/2018")
+  pdf.Level1A()
+  iPosY = 32
+  fTot = 0
+  rr = Utils.db.Exec("SELECT c.code, c.nom, SUM(h.totfac) AS ca, COUNT(*) AS nb FROM " & Cbase.Table("TabHisFac") & " h, " & Cbase.Table("TabCommerciaux") & " c, " & Cbase.Table("TabCli") &
+    " cl WHERE cl.cli_code = h.cdclifac AND cl.cli_comm = c.code AND YEAR(h.datefac) = &1 GROUP BY c.code, c.nom ORDER BY c.code", 2018)
+  If rr.Available Then
+    Repeat
+      fCa = rr!ca
+      fTot += fCa
+      pdf.level2A(rr!code, rr!nom, Format$(fCa, "0.00"), CStr(rr!nb), rr!code, rr!nom, iPosY)
+      iPosY += 5
+    Until rr.MoveNext()
+  Endif
+  pdf.Level5A(Format$(fTot, "0.00"), iPosY + 5)
+  pdf.Footer()
+  Verifie("T06", pdf)
+
+End
+
+Public Sub T07CaNul()
+
+  Dim pdf As Chistoriques = Nouveau()
+  Dim rr As Result
+  Dim sPc As String
+  Dim fCa, fCa1 As Float
+  Dim iPosY As Integer = 32
+
+  TestKit.OuvreBase("Statistiques/statcomm_shared/statistiques_ventes")
+  pdf.Entete("Impression du CA fournisseurs")
+  pdf.Level0F("01/01/2018", "15/06/2018")
+  pdf.Level1FO()
+  rr = CaClients(True)
+  If Not rr.Available Then
+    TestKit.Check("T07/donnees", "aucune")
+    Return
+  Endif
+  Repeat
+    fCa = rr!ca
+    fCa1 = rr!ca1
+    ' Comme VisStatFour.Affichage : la division par un CA nul échoue sous Try, le pourcentage reste vide.
+    sPc = ""
+    Try sPc = Format$(((fCa - fCa1) * 100) / fCa, " 0.00 ")
+    TestKit.Check("T07/" & rr!cdclifac & "/pourcent", sPc)
+    Try pdf.level2FO(rr!cdclifac, rr!nom, Format$(fCa, "0.00"), Format$(fCa1, "0.00"), sPc, iPosY)
+    TestKit.Check("T07/level2FO/" & rr!cdclifac & "/erreur", IIf(Error, Error.Text, ""))
+    iPosY += 5
+  Until rr.MoveNext()
+  pdf.Footer()
+  Verifie("T07", pdf)
 
 End

@@ -1,0 +1,23 @@
+{
+ "id": "BALANCEM-T10",
+ "objet": "Soldes nuls et arrondis du cumul en Float",
+ "classe": "BalanceM",
+ "description": "Écran Balance (jeu soldes_nuls : extrait_base + 411003 cumul 0,10+0,20-0,30, 411004 résidu négatif 0,30-0,10-0,20, 411005 soldé 50,00/50,00 ; 2018-06-15), balance client par défaut imprimée trois fois : Impc et Impcumul décochés, puis Impc coché, puis Impcumul coché ; les trois PDF ~/tmp/Balance.pdf sont convertis par pdftotext -layout et ajoutés à ~/balance_pdf.txt (CmdVis), comparé.",
+ "dataset": "soldes_nuls",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/balance_pdf.txt'"
+ },
+ "fichiers": [
+  "balance_pdf.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

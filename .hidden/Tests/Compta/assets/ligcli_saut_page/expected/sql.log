@@ -1,0 +1,134 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT compte FROM Fiches_relances GROUP BY compte ORDER BY compte ASC
+SELECT * FROM Fiches_Cli WHERE cli_code=411001
+SELECT solde FROM Fiches_Comptes WHERE compte_cc=411001
+SELECT * FROM Fiches_Txt_Relances ORDER BY niveau
+SELECT niveau FROM Fiches_relances WHERE compte=411001
+SELECT * FROM Fiches_Cli WHERE cli_code=411002
+SELECT solde FROM Fiches_Comptes WHERE compte_cc=411002
+SELECT * FROM Fiches_Txt_Relances ORDER BY niveau
+SELECT niveau FROM Fiches_relances WHERE compte=411002
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT  montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2010-06-15' AND '2026-06-15 23:59:59' AND provisoire=False  AND compte='411001'  AND lettree='0' AND jour<>'90' ORDER BY dte asc
+SELECT * FROM Fiches_relances WHERE lind=501
+SELECT * FROM Fiches_relances WHERE lind=502
+SELECT * FROM Fiches_relances WHERE lind=503
+SELECT * FROM Fiches_relances WHERE lind=504
+SELECT * FROM Fiches_relances WHERE lind=505
+SELECT * FROM Fiches_relances WHERE lind=506
+SELECT * FROM Fiches_relances WHERE lind=507
+SELECT * FROM Fiches_relances WHERE lind=508
+SELECT * FROM Fiches_relances WHERE lind=509
+SELECT * FROM Fiches_relances WHERE lind=510
+SELECT * FROM Fiches_relances WHERE lind=511
+SELECT * FROM Fiches_relances WHERE lind=512
+SELECT * FROM Fiches_relances WHERE lind=513
+SELECT * FROM Fiches_relances WHERE lind=514
+SELECT * FROM Fiches_relances WHERE lind=515
+SELECT * FROM Fiches_relances WHERE lind=516
+SELECT * FROM Fiches_relances WHERE lind=517
+SELECT * FROM Fiches_relances WHERE lind=518
+SELECT * FROM Fiches_relances WHERE lind=519
+SELECT * FROM Fiches_relances WHERE lind=520
+SELECT * FROM Fiches_relances WHERE lind=521
+SELECT * FROM Fiches_relances WHERE lind=522
+SELECT * FROM Fiches_relances WHERE lind=523
+SELECT * FROM Fiches_relances WHERE lind=524
+SELECT * FROM Fiches_relances WHERE lind=525
+SELECT * FROM Fiches_relances WHERE lind=526
+SELECT * FROM Fiches_relances WHERE lind=527
+SELECT * FROM Fiches_relances WHERE lind=528
+SELECT * FROM Fiches_relances WHERE lind=529
+SELECT * FROM Fiches_relances WHERE lind=530
+SELECT * FROM Fiches_relances WHERE lind=531
+SELECT * FROM Fiches_relances WHERE lind=532
+SELECT * FROM Fiches_relances WHERE lind=533
+SELECT * FROM Fiches_relances WHERE lind=534
+SELECT * FROM Fiches_relances WHERE lind=535
+SELECT * FROM Fiches_relances WHERE lind=536
+SELECT * FROM Fiches_relances WHERE lind=537
+SELECT * FROM Fiches_relances WHERE lind=538
+SELECT * FROM Fiches_relances WHERE lind=539
+SELECT * FROM Fiches_relances WHERE lind=540
+SELECT * FROM Fiches_relances WHERE lind=541
+SELECT * FROM Fiches_relances WHERE lind=542
+SELECT * FROM Fiches_relances WHERE lind=543
+SELECT * FROM Fiches_relances WHERE lind=544
+SELECT * FROM Fiches_relances WHERE lind=545
+SELECT * FROM Fiches_relances WHERE lind=401
+SELECT * FROM Fiches_relances WHERE lind=402
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_relances where compte = 411001 order by dte
+select * from Fiches_Txt_Relances where niveau = 1
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F501'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F502'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F503'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F504'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F505'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F506'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F507'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F508'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F509'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F510'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F511'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F512'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F513'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F514'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F515'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F516'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F517'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F518'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F519'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F520'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F521'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F522'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F523'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F524'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F525'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F526'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F527'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F528'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F529'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F530'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F531'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F532'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F533'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F534'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F535'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F536'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F537'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F538'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F539'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F540'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F541'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F542'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F543'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F544'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F545'
+UPdate  Fiches_Mvt  SET  relance = '1' WHERE compte = 411001 and numdoc = 'F401'
+SELECT solde, cli_email FROM Fiches_Comptes left join Fiches_Cli on cli_code = 411001 WHERE compte_cc=411001

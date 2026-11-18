@@ -1,15 +1,17 @@
 ' Gambas test file
 
-''Tests de Htickets (.hidden/reference/.src/Reports/Htickets.class/test.md, HTICKETS-T01, T02).
+''Tests de Htickets (.hidden/reference/.src/Reports/Htickets.class/test.md, HTICKETS-T01 à T03).
 ''Chaque test produit un PDF dans un fichier temporaire et compare le texte rendu par « pdftotext -layout »
 ''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
-''Valeurs attendues : assets/HticketsTest/expected.txt, produites dans le clone de référence. Pas de base.
+''Valeurs attendues : assets/HticketsTest/expected.txt, produites dans le clone de référence. Pas de base pour T01/T02 ;
+''T03 lit les tickets archivés du jeu Archivages/archivestck_shared/tickets_consult.
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T01Ticket", "Entete, 10 Entete2 (PosX 40 puis 0), 5 Level4, Footer")
   TestKit.Desc("T02TicketLong", "Entete, 10 Entete2 puis 70 Level4 de PosY 56 à 401 : pagination figée")
+  TestKit.Desc("T03Archives", "Réimpression des tickets archivés 1000061 (multi-taux, ligne C) et 1000062 (totaux BH/BC)")
 
 End
 
@@ -95,5 +97,56 @@ Public Sub T02TicketLong()
   Next
   TestKit.Check("T02/pages", pdf.PageNo())
   Verifie("T02", pdf)
+
+End
+
+' Réimprime un ticket archivé comme ArchivesTck (en-tête société, Entete2 à PosX 40, Level4 des lignes hors « K »,
+' Total TTC de l'entête) ; montants passés par Utils.cpoint comme l'appelant.
+Private Sub Reimprime(sCle As String, sCaisse As String, sNumero As String)
+
+  Dim pdf As Htickets = Nouveau()
+  Dim rSoc, rEnt, rLig As Result
+  Dim sEntete, sLigne As String
+  Dim iPosY As Integer = 6
+
+  rSoc = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabSoc") & " WHERE cd_sc = &1", Start.Societe)
+  rEnt = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisEntTck") & " WHERE caisse = &1 AND numero = &2", sCaisse, sNumero)
+  If Not rSoc.Available Or If Not rEnt.Available Then
+    TestKit.Check(sCle & "/donnees", "absentes")
+    Return
+  Endif
+  sEntete = rSoc!type_sc & " " & rSoc!int_sc & "\n" & rSoc!adr1_sc & "\n" & rSoc!adr2_sc & "\n" & rSoc!cp_sc & " " & rSoc!burdis_sc &
+    "\nSiret : " & rSoc!siret_sc & "\nTva intra : " & rSoc!tvaintra_sc & "\nTel : " & rSoc!tel_sc & "\n" & String$(40, "-") & "\n\n" &
+    "Caisse n° " & sCaisse & " Ticket n° " & sNumero & " Caissier(e) " & rEnt!vendeur
+  pdf.Entete()
+  For Each sLigne In Split(sEntete, "\n")
+    Try pdf.Entete2(sLigne, 40, iPosY)
+    TestKit.Check(sCle & "/entete2/" & iPosY & "/erreur", IIf(Error, Error.Text, ""))
+    iPosY += 5
+  Next
+  rLig = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabHisLigTck") & " WHERE numero = &1 ORDER BY CAST(numlig AS UNSIGNED)", sNumero)
+  If rLig.Available Then
+    Repeat
+      If IsNull(rLig!type) Or If rLig!type = "K" Then Continue
+      If Not IsNull(rLig!montant) Then
+        pdf.Level4(rLig!code, rLig!intitule, Format$(Val(Utils.cpoint(rLig!montant)), "0.00"), rLig!qte, iPosY)
+      Else
+        pdf.Level4(rLig!code, rLig!intitule, rLig!montant, rLig!qte, iPosY)
+      Endif
+      iPosY += 5
+    Until rLig.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/lignes_ticket", rLig.Count)
+  iPosY += 10
+  pdf.Level4("", "Total TTC", Format$(Val(Utils.cpoint(rEnt!mttc)), "0.00"), "", iPosY)
+  Verifie(sCle, pdf)
+
+End
+
+Public Sub T03Archives()
+
+  TestKit.OuvreBase("Archivages/archivestck_shared/tickets_consult")
+  Reimprime("T03/1000061", "01", "1000061")
+  Reimprime("T03/1000062", "01", "1000062")
 
 End

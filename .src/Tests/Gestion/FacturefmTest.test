@@ -1,0 +1,101 @@
+' Gambas test file
+
+''Tests de Facturefm (.hidden/reference/.src/Gestion/Facturation/Facturefm.class/test.md, FACTUREFM-T07).
+''Option boisson posée par Start.LocalSettings (/Soc01/bois) avant l'instanciation ; tables de l'option
+''(Fiches_ligcons, Fiches_ligregie, Fiches_Art.art_dra, Fiches_Parametres.arrete…, absentes de Laurux01) créées par
+''modfichier.fichierboisson appelé dans _Setup. Écran instancié sans affichage : date de fin 30.06.2018, Combotyp choisi, Button1_Click (Traiter) appelé
+''directement. Jeu facturefm_shared/bl_juin (DURAND et MARTIN, regroupement « Sans »).
+''Valeurs attendues : assets/FacturefmTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T07Boissons", "Type Boissons : DURAND (consigne sur B00001) gardé, MARTIN (sans consigne ni régie) retiré de Facturefm/Bl")
+  TestKit.Desc("T07Autres", "Type Autres : DURAND (consigne) retiré, MARTIN gardé")
+  TestKit.Desc("T07Regie", "Type Boissons : MARTIN gardé par la régie d'un article à droits (art_dra) sur B00004, DURAND par la consigne")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "FacturefmTest")
+  TestKit.OuvreBase("facturefm_shared/bl_juin")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Soc" & Start.Societe & "/bois"] = True
+  ' Colonne art_trsp posée d'avance : sinon commun() pose une Message.Question (recopie des frais), bloquante en gb.test
+  Utils.db.Exec("ALTER TABLE Fiches_Art ADD art_trsp decimal(7,3) DEFAULT 0.000")
+  modfichier.fichierboisson()
+  Try modfichier.supf()
+  ' Date d'arrêté exigée par VerifDate en option boisson
+  Utils.db.Exec("UPDATE Fiches_Parametres SET arrete = '12.2017'")
+  Utils.db.Exec("INSERT INTO Fiches_ligcons (num, numlig, type, codecons, nb, montant, envaleur, bloc) VALUES ('B00001', '1', 'B', 'C1', 2, 3.00, 1, '')")
+
+End
+
+Private Sub Traite(sCle As String, sType As String)
+
+  Dim hForm As Object
+  Dim hCombo, hCol As Object
+  Dim i As Integer
+  Dim sTxt As String
+  Dim rResult As Result
+
+  hForm = New Facturefm
+  hCombo = hForm.Controls["Combotyp"]
+  For i = 0 To hCombo.Count - 1
+    If hCombo[i].Text = sType Then hCombo.Index = i
+  Next
+  TestKit.Check(sCle & "/type", hCombo.Current.Text)
+  TestKit.Check(sCle & "/panel_boisson", Object.GetProperty(hForm.Controls["Panel2"], "Visible"))
+  Object.SetProperty(hForm.Controls["Datej"], "Text", "30.06.2018")
+  Try hForm.Button1_Click()
+  TestKit.Check(sCle & "/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+  hCol = hForm.Controls["Colbl"]
+  sTxt = ""
+  If Not hCol.MoveFirst() Then
+    Repeat
+      sTxt &= hCol.Item[0] & ":" & hCol.Item[1] & ":" & hCol.Item[4] & ":" & hCol.Item[5] & " "
+    Until hCol.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/colbl", Trim(sTxt))
+  sTxt = ""
+  Try rResult = Utils.db.Exec("SELECT code, nom, totf, tottc FROM Facturefm ORDER BY code")
+  If Not Error And If rResult.Available Then
+    Repeat
+      sTxt &= rResult!code & ":" & rResult!nom & ":" & rResult!totf & ":" & rResult!tottc & " "
+    Until rResult.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/facturefm", Trim(sTxt))
+  sTxt = ""
+  Try rResult = Utils.db.Exec("SELECT num, code FROM Bl ORDER BY num")
+  If Not Error And If rResult.Available Then
+    Repeat
+      sTxt &= rResult!num & ":" & rResult!code & " "
+    Until rResult.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/bl", Trim(sTxt))
+  Object.Lock(hForm)
+
+End
+
+Public Sub T07Boissons()
+
+  Traite("T07a", "Boissons")
+
+End
+
+Public Sub T07Autres()
+
+  Traite("T07b", "Autres")
+
+End
+
+Public Sub T07Regie()
+
+  Utils.db.Exec("UPDATE Fiches_Ligbl SET code_ligbl = '001' WHERE num_ligbl = 'B00004'")
+  Utils.db.Exec("UPDATE Fiches_Art SET art_dra = '01' WHERE art_code = '001'")
+  Traite("T07c", "Boissons")
+
+End

@@ -1,0 +1,83 @@
+' Gambas test file
+
+''Tests de impfec (.hidden/reference/.src/Compta/Utils/impfec.class/test.md, IMPFEC-T06).
+''Écran instancié sans affichage (New impfec), fichier posé dans FileChooser1, Buttontra_Click appelé directement ;
+''l'arrêt (Buttonstop_Click) est déclenché par un Timer du module pendant la boucle du contrôle (ProgBar.Avancement
+''rend la main par Wait toutes les 25 lignes). Valeurs attendues : assets/impfecTest/expected.txt (clone de référence).
+
+Private $hF As Object
+Private $hTimer As Timer
+Private $bArret As Boolean
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T06ArretControle", "FEC de 5 000 lignes, Arret pendant le contrôle : contrôle interrompu, aucune écriture, boutons réactivés")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "impfecTest")
+  TestKit.OuvreBase()
+
+End
+
+Public Sub _Arret_Timer()
+
+  $hTimer.Enabled = False
+  If Object.IsValid($hF) Then
+    $bArret = $hF.Controls["Buttonstop"].Visible
+    $hF.Buttonstop_Click()
+  Endif
+
+End
+
+Public Sub T06ArretControle()
+  ''IMPFEC-T06 : FEC construit à partir de impfec_shared/fec_nominal_tab.txt (en-tête + 7 lignes valides répétées
+  ''jusqu'à 5 000 lignes, CRLF), suivi d'une dernière ligne au journal inconnu « ZZ » (message « Journal ZZ
+  ''innexitant » si le contrôle allait au bout) ; Renuméroter coché (défaut) ; Arret 500 ms après Traitement.
+
+  Dim sSrc As String = Application.Path &/ ".hidden/Tests/Compta/assets/impfec_shared/fec_nominal_tab.txt"
+  Dim aL As String[]
+  Dim aCorps As New String[]
+  Dim sFec As String = Temp$("fec") & ".txt"
+  Dim i As Integer
+  Dim r As Result
+  Dim iAvant As Integer
+
+  aL = Split(Replace(File.Load(sSrc), "\r\n", "\n"), "\n", "", True)
+  aCorps.Add(aL[0])
+  While aCorps.Count < 5001
+    For i = 1 To aL.Max
+      aCorps.Add(aL[i])
+    Next
+  Wend
+  aCorps.Add(Replace(aL[1], "70\tJournal 70", "ZZ\tJournal ZZ"))
+  File.Save(sFec, aCorps.Join("\r\n") & "\r\n")
+  TestKit.Check("T06/lignes_fichier", aCorps.Count)
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM Fiches_Mvt")
+  iAvant = r!nb
+
+  $hF = New impfec
+  $hF.Controls["FileChooser1"].SelectedPath = sFec
+  TestKit.Check("T06/fichier_choisi", $hF.Controls["FileChooser1"].SelectedPath = sFec)
+  TestKit.Check("T06/renumeroter", $hF.Controls["Checkrnum"].Value)
+  $bArret = False
+  $hTimer = New Timer As "_Arret"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+  Try $hF.Buttontra_Click()
+  If Error Then TestKit.Check("T06/erreur", Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T06/arret_pendant_controle", $bArret)
+  TestKit.Check("T06/textarea", $hF.Controls["TextArea1"].Text)
+  TestKit.Check("T06/Buttontra_enabled", $hF.Controls["Buttontra"].Enabled)
+  TestKit.Check("T06/Buttonquit_enabled", $hF.Controls["Buttonquit"].Enabled)
+  TestKit.Check("T06/Buttonstop_visible", $hF.Controls["Buttonstop"].Visible)
+  TestKit.Check("T06/Panelpgb_visible", $hF.Controls["Panelpgb"].Visible)
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM Fiches_Mvt")
+  TestKit.Check("T06/mvt_ajoutees", r!nb - iAvant)
+  Object.Lock($hF)
+
+End

@@ -1,6 +1,8 @@
 ' Gambas test file
 
-''Tests de DB_Desktop (.hidden/reference/.src/Utils/DB_Desktop.class/test.md, DB_DESKTOP-T01 à T04).
+''Tests de DB_Desktop (.hidden/reference/.src/Utils/DB_Desktop.class/test.md, DB_DESKTOP-T01, T02, T04).
+''T04 : session X11 (Xvfb du runner) : fenêtre affichée, SendKey("[Return]") passe par Desktop.SendKeys et la touche
+''est reçue par le contrôle qui a le focus (TextBox puis TextReg), relevée par un Observer du module.
 ''« ydotool » et « apt » sont remplacés par des scripts factices en tête du PATH (le faux apt affiche une
 ''ligne « installed » pour que ydotool() n'ouvre pas de Message.Info). La session est choisie par
 ''XDG_SESSION_TYPE dans l'environnement du processus. Valeurs attendues : assets/DB_DesktopTest/expected.txt.
@@ -11,6 +13,7 @@ Public Sub _Desc()
 
   TestKit.Desc("T01DetectionSession", "Détection de session")
   TestKit.Desc("T02RoutageWayland", "Routage Wayland")
+  TestKit.Desc("T04EntreeX11", "Session X11 : SendKey(\"[Return]\") et SendKey(\"ab\") reçus par une TextBox puis un TextReg ayant le focus")
 
 End
 
@@ -114,5 +117,71 @@ Public Sub T02RoutageWayland()
     hD.SendKey(sTouche)
     TestKit.Check("T02/" & sTouche, Trace(1))
   Next
+
+End
+
+Private $aRecu As New String[]
+
+Public Sub _Recu_KeyPress()
+
+  $aRecu.Add(Object.Type(Last) & ":" & Key.Code & ":" & Key.Text)
+
+End
+
+Private Sub Attend(n As Integer)
+
+  Dim fFin As Float = Timer + 3
+
+  Repeat
+    Wait 0.05
+  Until $aRecu.Count >= n Or Timer > fFin
+
+End
+
+Public Sub T04EntreeX11()
+  ''DB_DESKTOP-T04 : en X11, SendKey délègue à Desktop.SendKeys (XTest) ; la touche Entrée arrive au contrôle
+  ''qui a le focus. Le parcours TextReg › grille de recherche (butb_click → SendKey) relève de TextReg.
+
+  Dim hD As DB_Desktop
+  Dim hW As Window
+  Dim hT As TextBox
+  Dim hR As TextReg
+  Dim hObs As Observer
+
+  TestKit.Init()
+  FauxBinaires(["ydotool"])
+  FauxApt()
+  Application.Env["XDG_SESSION_TYPE"] = "x11"
+  hD = New DB_Desktop
+  TestKit.Check("T04/wayland", hD.wayland)
+  hW = New Window
+  hW.Resize(300, 120)
+  hT = New TextBox(hW)
+  hT.Move(5, 5, 200, 30)
+  hR = New TextReg(hW)
+  hR.Move(5, 45, 200, 30)
+  hW.Show()
+  Wait 0.3
+  hObs = New Observer(hT) As "_Recu"
+  hT.SetFocus()
+  Wait 0.3
+  hD.SendKey("[Return]")
+  Attend(1)
+  hD.SendKey("ab")
+  Attend(3)
+  TestKit.Check("T04/textbox/recu", $aRecu.Join(" | "))
+  TestKit.Check("T04/textbox/texte", hT.Text)
+  $aRecu.Clear()
+  hObs = New Observer(hR) As "_Recu"
+  hR.SetFocus()
+  Wait 0.3
+  hD.SendKey("xy")
+  Attend(2)
+  hD.SendKey("[Return]")
+  Attend(3)
+  TestKit.Check("T04/textreg/recu", $aRecu.Join(" | "))
+  TestKit.Check("T04/textreg/texte", hR.Text)
+  TestKit.Check("T04/ydotool", Trace(0))
+  hW.Close()
 
 End

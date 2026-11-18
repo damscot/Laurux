@@ -1,0 +1,27 @@
+{
+ "id": "VALIDINV-T05",
+ "classe": "Validinv",
+ "objet": "Refus de la validation",
+ "description": "Jeu inv_fin_compte ; Lancer puis « Non » (Tab, Espace). Attendu : base inchangée, mais mysqldump déjà appelé avant la question (A03, appel tracé, mot de passe masqué).",
+ "dataset": "validinv_shared/inv_fin_compte",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "outils": {
+  "mysqldump": {
+   "hidden_argv": [
+    "-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}
