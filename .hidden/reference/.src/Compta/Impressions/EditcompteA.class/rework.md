@@ -59,7 +59,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDITCOMPTEA-A01 — [anomalie] (confirmée phase 2, vague 3 : `EditcompteA.Button1_Click.726: Not enough arguments` sur `pdf.level4C(...)`, erreur fatale, aucun PDF) `pdf.level4C(totdeb, totcred, totsld, Posy)` : 4 arguments pour 5
+- [ ] EDITCOMPTEA-A01 — [anomalie] (précisée phase 2, vague 8 : le cas « impression réussie puis Quitter » de T08 n'est pas testable tant que A01 n'est pas corrigée (l'impression est fatale)) (confirmée phase 2, vague 3 : `EditcompteA.Button1_Click.726: Not enough arguments` sur `pdf.level4C(...)`, erreur fatale, aucun PDF) `pdf.level4C(totdeb, totcred, totsld, Posy)` : 4 arguments pour 5
   paramètres (`Ccompta.Level4C(…, compte, posy)`) → erreur d'exécution non interceptée au premier
   compte mouvementé, l'extrait analytique n'aboutit jamais (à confirmer par T03). Correction :
   passer `Compt` ; débloque la fusion avec `EditcompteM` · tests : T03 · sources : [EditcompteA.class:726](../../../../../../.src/Compta/Impressions/EditcompteA.class#L726)

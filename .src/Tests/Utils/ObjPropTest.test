@@ -1,6 +1,8 @@
 ' Gambas test file
 
-''Tests d'ObjProp (OBJPROP-T01 à T06, .hidden/reference/.src/Utils/ObjProp.class/test.md).
+''Tests d'ObjProp (OBJPROP-T01 à T07, .hidden/reference/.src/Utils/ObjProp.class/test.md).
+''T07 : écran générique TriArticles (jeu Affichages/triarticles_shared/articles_selection) instancié sans affichage ;
+''colonnes de la grille et filtres TextReg créés par TriGen à partir des ObjProp relevés dans Panel2 (Achat exclu).
 ''Exécuté sous Xvfb par le runner (TextBox / TextReg dans une Window non affichée). Le fichier de paramètres
 ''(Laurux-AutoParams-01.conf) est lu dans le HOME temporaire du runner.
 ''Valeurs attendues : assets/ObjPropTest/expected.txt, produites dans le clone de référence.
@@ -16,6 +18,7 @@ Public Sub _Desc()
   TestKit.Desc("T04ParamLecture", "`Param` lecture")
   TestKit.Desc("T05ParamHistorique", "`EcriParam` historique")
   TestKit.Desc("T06Filter", "Propriété `filter`")
+  TestKit.Desc("T07EcransGeneriques", "TriArticles art_code (CB1 Équiv. puis Barre) et mo_code : colonnes et filtres créés depuis les ObjProp")
 
 End
 
@@ -163,5 +166,66 @@ Public Sub T06Filter()
   p.filter = hReg
   TestKit.Check("T06/textreg", Etat(hReg))
   TestKit.Check("T06/filter", p.filter = hReg)
+
+End
+
+' Colonnes de la grille et filtres TextReg créés par TriGen dans Panel2 (ordre des enfants).
+Private Function Generique(hF As Object) As String[]
+
+  Dim aRes As New String[]
+  Dim hP, hC As Object
+  Dim i As Integer
+  Dim s As String
+
+  hP = hF.Controls["Panel2"]
+  For Each hC In hP.Children
+    Select Case Object.Type(hC)
+      Case "GridView"
+        s = "GridView cols=" & hC.Columns.Count & " lignes=" & hC.Rows.Count
+        For i = 0 To hC.Columns.Count - 1
+          s &= " [" & hC.Columns[i].Text
+          If hC.Rows.Count > 0 Then s &= " | " & TestKit.Canonique(hC[0, i].Text) & " al=" & hC[0, i].Alignment
+          s &= "]"
+        Next
+        aRes.Add(s)
+      Case "TextReg"
+        aRes.Add("TextReg " & Etat(hC))
+      Default
+        aRes.Add(Object.Type(hC))
+    End Select
+  Next
+  Return aRes
+
+End
+
+Public Sub T07EcransGeneriques()
+  ''OBJPROP-T07 : TriArticles construit sa liste par une Collection d'ObjProp (AddChamp Alignment / format « 0.000 »)
+  ''passée à TriGen ; relevé des colonnes et filtres pour les articles (colonne variable CB1) et les mains d'oeuvre.
+
+  Dim hF As TriArticles
+  Dim hCB As Object
+
+  TestKit.OuvreBase("Affichages/triarticles_shared/articles_selection")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Try hF = New TriArticles(True, False, "art_code", "", "", Null, False, False, Null)
+  If Error Then
+    TestKit.Check("T07/art_code/ouverture", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T07/art_code", Generique(hF))
+  hCB = hF.Controls["CB1"]
+  hCB.Text = hCB.List[1]
+  hF.CB1_Click()
+  TestKit.Check("T07/art_code/barre", Generique(hF))
+  Object.Lock(hF)
+  Try hF = New TriArticles(True, False, "mo_code", "", "", Null, False, False, Null)
+  If Error Then
+    TestKit.Check("T07/mo_code/ouverture", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check("T07/mo_code", Generique(hF))
+  Object.Lock(hF)
 
 End

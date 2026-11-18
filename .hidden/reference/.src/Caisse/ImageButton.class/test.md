@@ -9,9 +9,9 @@ valeurs et images attendues sont produites par le même test dans le clone **Lau
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| IMAGEBUTTON-T01 | gbtest | Propriétés | `Text`, `BackGround`, `Picture` (PNG d'`Icones/`), puis `Picture = Null` | valeurs relues ; erreur figée pour `Null` | `tests/imagebutton_proprietes/` | à faire |
-| IMAGEBUTTON-T02 | gbtest | Événement `Click` | `View_MouseDown()` puis `View_MouseUp()` ; `View_MouseUp()` seul | un `Click` par `View_MouseUp` (A01 figée) | `tests/imagebutton_click/` | à faire |
-| IMAGEBUTTON-T03 | gbtest | Rendu | états normal, survol, focus, enfoncé, désactivé ; avec et sans image | captures (`Grab` de la fenêtre) identiques au pixel près aux références | `tests/imagebutton_rendu/` | à faire |
+| IMAGEBUTTON-T01 | gbtest | Propriétés | `Text`, `BackGround`, `Picture` (PNG d'`Icones/`), puis `Picture = Null` | valeurs relues ; erreur figée pour `Null` | `tests/imagebutton_proprietes/` | implémenté (gb.test `ImageButtonTest.T01Proprietes` : fenêtre non affichée, `Text`, `BackGround`, `Picture` = `Icones/ciel.png` (RGB, 32 × 32) relus ; `Picture = Null` → erreur figée « Null object » (Picture_Write lit `$hPicture.Image`), `Picture` relue `Null` ensuite) |
+| IMAGEBUTTON-T02 | gbtest | Événement `Click` | `View_MouseDown()` puis `View_MouseUp()` ; `View_MouseUp()` seul | un `Click` par `View_MouseUp` (A01 figée) | `tests/imagebutton_click/` | implémenté (gb.test `ImageButtonTest.T02Click` : Click comptés par `Object.Attach(hBtn, Me, "_Btn")` ; MouseDown seul → 0, puis MouseUp → 1 ; MouseUp seul → 1 (A01 figée)) |
+| IMAGEBUTTON-T03 | gbtest | Rendu | états normal, survol, focus, enfoncé, désactivé ; avec et sans image | captures (`Grab` de la fenêtre) identiques au pixel près aux références | `tests/imagebutton_rendu/` | hors périmètre (décision utilisateur du 2026-11-16 : rendu graphique dépendant du thème et des polices, vérification visuelle manuelle ; la logique de View_Draw sera couverte après son extraction en phase 4) |
 | IMAGEBUTTON-T04 | replay | Touches de la caisse | `./Laurux -p`, clic sur une touche de famille (`Clav2`) puis de sous-famille (`Clav3`) | **bloqué** : clics non journalisés (voir détail) ; à défaut, vérification manuelle des lignes de ticket créées | `tests/imagebutton_caisse/` | à faire |
 
 ## Détail des tests

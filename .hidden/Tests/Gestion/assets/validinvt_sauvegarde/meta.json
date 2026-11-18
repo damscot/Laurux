@@ -1,0 +1,28 @@
+{
+ "id": "VALIDINVT-T13",
+ "objet": "Sauvegarde mysqldump de la base Laurux en dur (A01)",
+ "classe": "ValidinvT",
+ "description": "Jeu invt_compte : Validation, « Oui », fin. Attendu : mysqldump appelé (trace, mot de passe masqué) sur la base « Laurux » écrite en dur et non sur la base de test Laurux01 : ~/Sauve/LauruxInvT.sql20180615 vide (base inconnue) (VALIDINVT-A01 figée) ; mises à jour comme T01.",
+ "dataset": "validinvt_shared/invt_compte",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "outils": {
+  "mysqldump": {
+   "hidden_argv": [
+    "-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace",
+  "Sauve/LauruxInvT.sql20180615"
+ ]
+}

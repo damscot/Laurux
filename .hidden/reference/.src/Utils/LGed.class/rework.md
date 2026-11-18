@@ -65,7 +65,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] LGED-A01 — [anomalie] Aucun report de `fdte` dans `$dte` : une date modifiée dans la fiche
+- [ ] LGED-A01 — [anomalie] (confirmée phase 2, vague 8 : date modifiée dans la fiche puis Enregistrer : `Docs_Ged.date` inchangée, figée par T12) Aucun report de `fdte` dans `$dte` : une date modifiée dans la fiche
   n'est jamais enregistrée · tests : T12 · sources : [LGed.class:558-559](../../../../../.src/Utils/LGed.class#L558-L559), [LGed.class:Enregistrer_Click](../../../../../.src/Utils/LGed.class#L712-L814)
 - [ ] LGED-A02 — [anomalie] `AddTag` sur un tag déjà porté par le document : `$tags.Add` sur clé
   existante (erreur de collection, à confirmer) ; cas réels : `Saisecrit.Lettrage` (même compte sur

@@ -44,7 +44,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] BARSELECTION-A01 — [anomalie] La barre passe en mode validation avant de lever
+- [ ] BARSELECTION-A01 — [anomalie] (confirmée phase 2, vague 8 : Mreglement : Modification sans ligne sélectionnée puis Valider à code vide : barre reconstruite après Valider (`bar1_valide` sans `Stop Event`, voir [Mreglement](../../Tables/Mreglement.class/rework.md)), figée par T04) La barre passe en mode validation avant de lever
   `creer`/`modif`/`suprimer` et ignore leur retour : un écran qui refuse l'action laisse
   l'utilisateur en mode validation sans opération en cours (cas MREGLEMENT-A02) ; correction
   proposée : tenir compte de `Stop Event` sur ces événements · tests : T04 · sources : [barselection.class:bout_click](../../../../../../.src/Gestion/option/barselection.class#L161-L190)

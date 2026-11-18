@@ -115,7 +115,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TRESOR-A03 — [anomalie] `Ecrit3` délettre le lot sur le **compte banque** (`Cptt.Text`) alors
   que le lettrage a été posé sur le compte tiers : les factures restent lettrées après modification
   ou suppression du règlement (à confirmer) · tests : T06, T08 · sources : [Tresor.class:2174](../../../../../.src/Compta/Tresor.class#L2174), [Tresor.class:1669](../../../../../.src/Compta/Tresor.class#L1669)
-- [ ] TRESOR-A04 — [anomalie] `DocActif.Get_lock` : résultat ignoré (modification possible d'une
+- [ ] TRESOR-A04 — [anomalie] (confirmée phase 2, vague 8 : écriture rappelée malgré le verrou d'un autre utilisateur, figée par T17 ; précisée : `Suppr_Click` (l. 2312-2319) → `DelMvt` (l. 292-308) supprime l'écriture rappelée sans libérer le verrou `DocActif` « Reglement n » (aucun `free_lock`, contrairement à `Movt` l. 377), figée par T08 (`T08/verrou` = 1)) `DocActif.Get_lock` : résultat ignoré (modification possible d'une
   écriture verrouillée par un autre poste) ; verrou non libéré si l'on quitte sans valider ou si l'on
   supprime · tests : T07, T08, T17 · sources : [Tresor.class:2050](../../../../../.src/Compta/Tresor.class#L2050), [Tresor.class:Button1_Click](../../../../../.src/Compta/Tresor.class#L1337-L1356), [Tresor.class:Suppr_Click](../../../../../.src/Compta/Tresor.class#L2312-L2319)
 - [ ] TRESOR-A05 — [anomalie] Réservation du numéro d'écriture sans verrou (`SELECT` puis `UPDATE`) :
@@ -124,7 +124,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TRESOR-A06 — [anomalie] Détection de la ligne banque différente entre `ecrit2` (préfixes
   `512`/`53`) et `Ecrit3` (`cde_banque` du journal) : avec un compte banque hors `512`/`53`, la ligne
   banque est rappelée comme une ligne ordinaire puis doublée à la validation · tests : T05 · sources : [Tresor.class:1961](../../../../../.src/Compta/Tresor.class#L1961), [Tresor.class:2080](../../../../../.src/Compta/Tresor.class#L2080)
-- [ ] TRESOR-A07 — [anomalie] `Movt` écrit une ligne banque provisoire avec les montants de la ligne
+- [ ] TRESOR-A07 — [anomalie] (précisée phase 2, vague 8 : contrepartie provisoire de banque (`Cptt`) de même sens que la ligne (411001 crédit 120 → 512000 crédit 120) ; le `SELECT` (l. 370, `numero`/`compte`) trouve la ligne banque mais l'`UPDATE` (l. 372) est filtré sur `numdoc`/`numlot` : la ligne banque ne suit que la 1re ligne ; effet limité aux lignes provisoires (la validation réécrit l'écriture), figée par T09) `Movt` écrit une ligne banque provisoire avec les montants de la ligne
   courante (et non le solde, ni le sens inverse) ; `SELECT` et `UPDATE` de cette ligne n'ont pas les
   mêmes critères : une écriture laissée en cours est déséquilibrée dans `Fiches_Mvt` · tests : T04 · sources : [Tresor.class:370-375](../../../../../.src/Compta/Tresor.class#L370-L375)
 - [ ] TRESOR-A08 — [anomalie] `Suppr` supprime l'écriture sans confirmation · tests : T08 · sources : [Tresor.class:Suppr_Click](../../../../../.src/Compta/Tresor.class#L2312-L2319), [Tresor.class:DelMvt](../../../../../.src/Compta/Tresor.class#L292-L308)

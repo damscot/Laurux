@@ -49,7 +49,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CALCSOLDE-A01 — [anomalie] `Pointage.class:728` appelle `Calcul(cpt, True)` sans le journal
+- [ ] CALCSOLDE-A01 — [anomalie] (confirmée phase 2, vague 8 : `solde`/`soldep` inchangés après la suppression d'un relevé depuis Pointage, figée par T07) `Pointage.class:728` appelle `Calcul(cpt, True)` sans le journal
   d'à-nouveaux : `soldep` n'est jamais recalculé après la suppression d'un relevé · tests : T04, T07 · sources : [Pointage.class:728](../../../../../.src/Compta/Pointage.class#L728), [Calcsolde.class:116](../../../../../.src/Utils/Calcsolde.class#L116)
 - [ ] CALCSOLDE-A02 — [anomalie] `soldep` non remis à jour quand le compte n'a plus d'écriture
   validée (`solde` Null) · tests : T03 · sources : [Calcsolde.class:111-112](../../../../../.src/Utils/Calcsolde.class#L111-L112)

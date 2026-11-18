@@ -1,0 +1,98 @@
+' Gambas test file
+
+''Tests de Editcompte (.hidden/reference/.src/Compta/Impressions/Editcompte.class/test.md, EDITCOMPTE-T04).
+''Écran instancié sans affichage (New Editcompte), contrôles posés par Controls, gestionnaires LostFocus appelés
+''directement ; les boîtes Message.Warning reçoivent « Ok » d'un Timer du module (technique TresorTest/EmailingTest).
+''Base Laurux01. La date du jour (fin de période de l'exercice en cours, Ex1) est masquée.
+''Valeurs attendues : assets/EditcompteTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $hDerniere As Window
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04ControleDates", "dteN0 avant / après la période, dteN1 avant / après la période, dteN1 < dteN0 : messages, période et E0 après la réponse Ok")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Compta", "EditcompteTest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Public Sub _Boite_Timer()
+  ''Boîte Message (FMessage) : relève son texte et clique « Ok » (clic différé : la dernière boîte traitée est mémorisée).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hDerniere Then
+      $hDerniere = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If Replace(Object.GetProperty(hC, "Text"), "&", "") = "Ok" Then
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Function Masque(s As String) As String
+
+  Return Replace(s, Format$(Now, "dd.mm.yyyy"), "<jour>")
+
+End
+
+'' Nouvel écran, saisie de sDate dans sZone puis LostFocus ; relève messages, période et E0.
+Private Sub Cas(sCle As String, sZone As String, sDate As String, Optional sDteN0 As String)
+
+  Dim hF As Object
+
+  hF = New Editcompte
+  TestKit.Check(sCle & "/avant", Masque(hF.Controls["DteN0"].Text & " → " & hF.Controls["Dten1"].Text))
+  If sDteN0 Then hF.Controls["DteN0"].Text = sDteN0
+  hF.Controls[sZone].Text = sDate
+  $sVu = ""
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 200
+  $hTimer.Enabled = True
+  If sZone = "DteN0" Then
+    Try hF.dteN0_LostFocus()
+  Else
+    Try hF.dteN1_LostFocus()
+  Endif
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/messages", $sVu)
+  TestKit.Check(sCle & "/apres", Masque(hF.Controls["DteN0"].Text & " → " & hF.Controls["Dten1"].Text))
+  TestKit.Check(sCle & "/E0", hF.Controls["E0"].Value)
+  Object.Lock(hF)
+
+End
+
+Public Sub T04ControleDates()
+  ''EDITCOMPTE-T04 (A04 : période remise sur Exo, l'exercice de bilan, et E0 coché ; A03 : focus sur dteN0 depuis
+  ''dteN1, non observable sans affichage). Laurux01 : période à l'ouverture 01.01.2019 → date du jour (Ex1), Exo = exercice 2018.
+
+  Cas("T04/dteN0_avant", "DteN0", "01.01.2010")
+  Cas("T04/dteN0_apres", "DteN0", "31.12.2099")
+  Cas("T04/dteN1_avant", "Dten1", "01.01.2010")
+  Cas("T04/dteN1_apres", "Dten1", "31.12.2099")
+  Cas("T04/dteN1_inf_dteN0", "Dten1", "01.03.2019", "01.06.2019")
+
+End

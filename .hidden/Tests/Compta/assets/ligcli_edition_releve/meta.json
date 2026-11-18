@@ -1,0 +1,23 @@
+{
+ "id": "LIGCLI-T05",
+ "objet": "Édition individuelle, relevé, solde créditeur",
+ "description": "Jeu ligcli_crediteur (FEditrel prêt + avoir AV406 180,00 de 411001, solde du compte -30,00) : première ligne Ligcli (411001), RadioRel, Buttonedit → relevé PDF converti par pdftotext via /Soc01/caisse/CmdVis dans ~/edition.txt (comparé : solde de la sélection et solde du compte créditeurs) ; Fiches_Mvt.relance mis à jour (dump).",
+ "classe": "Ligcli",
+ "dataset": "ligcli_crediteur",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

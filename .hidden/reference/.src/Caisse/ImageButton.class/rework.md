@@ -43,6 +43,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] IMAGEBUTTON-A01 — [anomalie] `Click` est levé au relâchement même si le pointeur a quitté
+- [ ] IMAGEBUTTON-A01 — [anomalie] (confirmée phase 2, vague 8 : `Click` levé par `View_MouseUp` seul, figée par T02) `Click` est levé au relâchement même si le pointeur a quitté
   le bouton ; aucune activation au clavier malgré `Focus = True` ; `Text`/`BackGround`/`Picture`
   ne redessinent pas le contrôle · tests : T02, T03 · sources : [ImageButton.class:View_MouseUp](../../../../../.src/Caisse/ImageButton.class#L66-L72), [ImageButton.class:Text_Write](../../../../../.src/Caisse/ImageButton.class#L147-L151), [ImageButton.class:BackGround_Write](../../../../../.src/Caisse/ImageButton.class#L159-L163)
+- [ ] IMAGEBUTTON-A02 — [anomalie] `Picture = Null` → « Null object » dans `Picture_Write` (`$hPicture.Image` l. 137) ; `$hPicture` est déjà affecté (l. 134) : la propriété relue vaut Null malgré l'erreur (phase 2, vague 8, 2026-11-16) · tests : T01 · sources : [ImageButton.class:Picture_Write](../../../../../.src/Caisse/ImageButton.class#L132-L139)

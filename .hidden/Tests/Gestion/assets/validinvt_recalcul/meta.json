@@ -1,0 +1,17 @@
+{
+ "id": "VALIDINVT-T09",
+ "objet": "Validation partielle « conservés » puis recalcul du stock",
+ "classe": "ValidinvT",
+ "description": "Jeu invt_partiel : RadioButton2, Validation, « Oui », fin ; puis Gestion › Outils › Recalcul des stocks, « Pour tous les produits », Lancer, « Traitement terminé ». Attendu : art_qte recalculé depuis Fiches_HisInvT + mouvements ; l'écart fictif (qtem 10) écrit pour 002 non compté est repris par le recalcul (A02 figée).",
+ "dataset": "validinvt_shared/invt_partiel",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

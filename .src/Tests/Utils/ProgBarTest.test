@@ -1,6 +1,9 @@
 ' Gambas test file
 
-''Tests de ProgBar (.hidden/reference/.src/Utils/ProgBar.class/test.md, PROGBAR-T01 à T05).
+''Tests de ProgBar (.hidden/reference/.src/Utils/ProgBar.class/test.md, PROGBAR-T01 à T06).
+''T06 : intégration par la purge RazDevis (jeu progbar_shared/devis_25) : écran instancié sans affichage,
+''Button1_Click appelé, boîtes Message (« Oui » puis « OK ») traitées par un Timer du module qui relève aussi la
+''barre restée en mémoire (Persistent) ; mysqldump factice (règle rc=0 : aucun vrai dump).
 ''Formulaire piloté sous Xvfb (runner) ; contrôles lus par leur nom (hForm["Nom"]), les contrôles du .form
 ''n'étant pas Public. Appel comme GedR : New ProgBar(Titre, nbelem, Null (parent), Stopable, unit, detail).
 ''Valeurs attendues : assets/ProgBarTest/expected.txt, produites dans le clone de référence.
@@ -13,6 +16,7 @@ Public Sub _Desc()
   TestKit.Desc("T03ArretPause", "Arrêt et pause")
   TestKit.Desc("T04Fermeture", "Fermeture")
   TestKit.Desc("T05CasLimites", "Cas limites")
+  TestKit.Desc("T06IntegrationRaz", "Purge RazDevis de 25 devis : barre « Suppression devis », journal à 40 % et 80 %, devis purgés")
 
 End
 
@@ -159,5 +163,93 @@ Public Sub T05CasLimites()
   TestKit.Check("T05/unite/elemdone", Object.GetProperty(hF["elemdone"], "Text"))
   hF.Finalize()
   hF.Close
+
+End
+
+Private $hTimer As Timer
+Private $aBoites As New String[]
+Private $hDerniere As Window
+Private $aBarres As New String[]
+
+Public Sub _Rep_Timer()
+  ''Boîte Message ouverte (FMessage) : relève son texte et clique « Oui » ou « OK » ; à la boîte de fin, relève les
+  ''fenêtres ProgBar présentes (fermées mais persistantes).
+
+  Dim hW As Window
+  Dim hC As Object
+  Dim sTxt As String
+
+  For Each hW In Windows
+    If (Object.Type(hW) = "FMessage" Or InStr(Object.Type(hW), "Message")) And hW <> $hDerniere Then
+      $hDerniere = hW
+      sTxt = ""
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then sTxt &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      $aBoites.Add(sTxt)
+      If InStr(sTxt, "Traitement terminé") Then
+        For Each hC In Windows
+          If Object.Type(hC) = "ProgBar" Then
+            $aBarres.Add(Object.GetProperty(hC["Title"], "Text") & " | " & Object.GetProperty(hC["elemdone"], "Text") & " | " &
+              Object.GetProperty(hC["ProgressionBar"], "Value") & " | visible=" & IIf(Object.GetProperty(hC, "Visible"), "oui", "non") & " | " & Replace(Object.GetProperty(hC["DetailLog"], "Text"), "\n", " \\n "))
+          Endif
+        Next
+      Endif
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If Replace(Object.GetProperty(hC, "Text"), "&", "") = "Oui" Or Replace(Object.GetProperty(hC, "Text"), "&", "") = "OK" Then
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Public Sub T06IntegrationRaz()
+  ''PROGBAR-T06 : RazDevis.Button1_Click crée New ProgBar("Suppression devis", 25, Null, True, "", True) et appelle
+  ''Avancement(…, 10) pour chaque devis antérieur à la date du DateChooser (posée au 2018-06-15).
+
+  Dim hF As RazDevis
+  Dim sBin As String = Application.Path &/ ".src/Tests/Framework/bin"
+  Dim sTrace As String = Temp$() & ".trace"
+  Dim r As Result
+  Dim aBl As String[]
+  Dim hD As Object
+
+  TestKit.OuvreBase("progbar_shared/devis_25")
+  If Application.Env["LAURUX_TEST_ROOT"] Then sBin = Application.Env["LAURUX_TEST_ROOT"] &/ ".src/Tests/Framework/bin"
+  If InStr(Application.Env["PATH"], "Framework/bin") = 0 Then Application.Env["PATH"] = sBin & ":" & Application.Env["PATH"]
+  Application.Env["LAURUX_FACTICE_TRACE"] = sTrace
+  Application.Env["LAURUX_TEST_MYSQLDUMP_RC"] = "0"
+  Application.Env["LAURUX_TEST_MYSQLDUMP_HIDDEN_ARGV"] = "-p*"
+  r = Utils.db.Exec("SELECT COUNT(*) AS nb FROM " & Cbase.Table("TabBl") & " WHERE type = 'D' AND datebl < &1", "20180615")
+  TestKit.Check("T06/devis_a_purger", r!nb)
+  hF = New RazDevis
+  ' Date limite posée (valeur par défaut du DateChooser : date du jour)
+  hD = hF.Controls["DateChooser1"]
+  hD.Value = Date(2018, 6, 15)
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 200
+  $hTimer.Enabled = True
+  Try hF.Button1_Click()
+  TestKit.Check("T06/erreur", IIf(Error, Error.Text, ""))
+  $hTimer.Enabled = False
+  TestKit.Check("T06/boites", $aBoites)
+  TestKit.Check("T06/barres", $aBarres)
+  r = Utils.db.Exec("SELECT numbl FROM " & Cbase.Table("TabBl") & " WHERE numbl LIKE '91%' ORDER BY numbl")
+  aBl = New String[]
+  If r.Available Then
+    Repeat
+      aBl.Add(r!numbl)
+    Until r.MoveNext()
+  Endif
+  TestKit.Check("T06/bl_restants", aBl)
+  r = Utils.db.Exec("SELECT COUNT(*) AS nb FROM " & Cbase.Table("TabLigbl") & " WHERE num_ligbl LIKE '91%'")
+  TestKit.Check("T06/lignes_restantes", r!nb)
+  TestKit.Check("T06/mysqldump", Exist(sTrace))
+  Object.Lock(hF)
 
 End

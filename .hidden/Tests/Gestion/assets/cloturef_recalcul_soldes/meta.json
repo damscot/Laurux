@@ -1,0 +1,17 @@
+{
+ "id": "CLOTUREF-T05",
+ "objet": "Recalcul des soldes",
+ "classe": "ClotureF",
+ "description": "Clôture de mai 2018 confirmée (bouton 1 « Oui » de Message.Question ClotureF.class:105), aucune facture imprimée (ObjFacB non sollicité) ; dtepp 05.2018 / dtepec 06.2018 ; Calc_solde : solde = Σ(débit − crédit) des écritures validées (411001 = 120, 401001 = -180, 512000 = 224.50, 706100 seulement non validées = 0) ; Message.Info « Traitement terminé » acquitté par Entrée.",
+ "dataset": "cloturef_shared/soldes_faux",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

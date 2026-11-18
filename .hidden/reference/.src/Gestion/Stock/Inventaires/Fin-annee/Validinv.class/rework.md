@@ -61,28 +61,29 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VALIDINV-A01 — [anomalie] `Cstock.Calc_stock("", "")` ne recalcule rien (CSTOCK-A01 : radios
+- [ ] VALIDINV-A01 — [anomalie] (confirmée phase 2, vague 8 : figée par T07) `Cstock.Calc_stock("", "")` ne recalcule rien (CSTOCK-A01 : radios
   de l'instance automatique de `Calcstock`) ; les mouvements postérieurs à `dteinv` ne sont pas
   réappliqués · tests : T07 · sources : [Validinv.class:190](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L190), [Cstock.module:28](../../../../../../../../.src/Utils/Cstock.module#L28)
 - [ ] VALIDINV-A02 — [anomalie] `son As String` jamais initialisé : aucun signal sonore, contrairement
   au paramétrage `Start.Son` des autres écrans · tests : aucun (non observable) · sources : [Validinv.class:27](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L27)
-- [ ] VALIDINV-A03 — [anomalie, sécurité] `mysqldump` lancé avant la confirmation, mot de passe en
+- [ ] VALIDINV-A03 — [anomalie, sécurité] (confirmée phase 2, vague 8 : figée par T05) `mysqldump` lancé avant la confirmation, mot de passe en
   clair dans la ligne de commande (visible par `ps`), arguments non échappés, sans port, résultat
   non contrôlé, inopérant en SQLite · tests : T05, T16 · sources : [Validinv.class:66](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L66)
-- [ ] VALIDINV-A04 — [anomalie] Pas de transaction : une erreur en cours de boucle (ex. article
+- [ ] VALIDINV-A04 — [anomalie] (confirmée phase 2, vague 8 : « Result is not available » à `Button2_click` l. 177 (`rarts!art_qte`), lignes 1-2 validées, 4-5 non, `dteinv` inchangé, figée par T11 (xfail)) Pas de transaction : une erreur en cours de boucle (ex. article
   supprimé, `rarts!art_qte` sans `Available`) laisse une validation partielle, `dteinv` non mis à
   jour · tests : T11 · sources : [Validinv.class:169](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L169), [Validinv.class:177](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L177)
-- [ ] VALIDINV-A05 — [anomalie] `Fiches_Inv` ni supprimée ni marquée validée (le `.form` annonce sa
+- [ ] VALIDINV-A05 — [anomalie] (confirmée phase 2, vague 8 : figée par T10) `Fiches_Inv` ni supprimée ni marquée validée (le `.form` annonce sa
   suppression) : revalidation possible sans alerte, `Geninv` n'affiche jamais « validé » · tests :
   T10 · sources : [Validinv.class:187](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L187)
 - [ ] VALIDINV-A06 — [anomalie] `Truncate table Fiches_HisInvT` non traduit pour SQLite : erreur
   non gérée en fin de traitement, après les mises à jour · tests : T12 · sources : [Validinv.class:193](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L193)
-- [ ] VALIDINV-A07 — [anomalie, règle métier à confirmer] Le stock par dépôt (`Fiches_StkDepots`)
+- [ ] VALIDINV-A07 — [anomalie, règle métier à confirmer] (confirmée phase 2, vague 8 : figée par T13) Le stock par dépôt (`Fiches_StkDepots`)
   n'est pas ajusté : après validation, le stock global ne correspond plus à la somme des dépôts ·
   tests : T13 · sources : [Validinv.class:171](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L171)
-- [ ] VALIDINV-A08 — [anomalie, à confirmer] Quantités comptées à `inv_date` mais `dteinv` = date
+- [ ] VALIDINV-A08 — [anomalie, à confirmer] (confirmée phase 2, vague 8 : figée par T08) Quantités comptées à `inv_date` mais `dteinv` = date
   saisie à la validation : les mouvements entre les deux dates ne sont plus corrigés (code commenté)
   · tests : T08 · sources : [Validinv.class:188](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L188)
 - [ ] VALIDINV-A09 — [anomalie, à confirmer] Compta matière : contrôle de clôture à `arrete + 13
   mois` mais création à `dtepec + 1 mois` ; transaction sans `Rollback` ; aucun message de fin ;
   erreur si `Fiches_Inv` absente · tests : T14, T15 · sources : [Validinv.class:231](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L231), [Validinv.class:239](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L239), [Validinv.class:269](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L269)
+- [ ] VALIDINV-A10 — [anomalie] `dteinv` est écrit avec l'horodatage complet de `dtinv.dte.G` (`LDate(Now)`, l. 40 et 188 : « 2018-06-15 10:00:02.996 »), tronqué par la colonne `date` (mineur) (phase 2, vague 8, 2026-11-16) · tests : T01 (sql.log) · sources : [Validinv.class:40](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L40), [Validinv.class:188](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Validinv.class#L188)

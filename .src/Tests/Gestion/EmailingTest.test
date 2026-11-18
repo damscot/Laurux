@@ -1,6 +1,7 @@
 ' Gambas test file
 
-''Tests de Emailing (.hidden/reference/.src/Gestion/Mails/Emailing.class/test.md, EMAILING-T01, T03, T07 partiel).
+''Tests de Emailing (.hidden/reference/.src/Gestion/Mails/Emailing.class/test.md, EMAILING-T01, T02, T03, T07 partiel).
+''T02 : statuts et types clients posés par le test (Fiches_Statut, cli_typec, cli_statut, cli_cd_ptl) sur Laurux01.
 ''T01/T03 : envoi SMTP vers le faux serveur (TestKit.SmtpFactice), Button2_Click appelé directement ; un Timer du module
 ''(« _Boite ») répond aux boîtes Message (1er bouton, comme Entrée) pendant leur boucle modale.
 ''F2 sur Client1/Client2 (KeyPress, Key non simulable) est remplacé par ToggleButton1/ToggleButton2 (même liste),
@@ -13,6 +14,7 @@ Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T01PlageCode", "Plage 411001..411004, tri par code : un message par client ayant un courriel (411001, 411003), Bcc /Adrmail de Settings")
+  TestKit.Desc("T02TypeStatut", "Filtre type A..B + statut 01, tri type puis CP (RadioButton2 + CheckCp) : destinataires et ordre (411004, 411002, 411001), CP sans effet de filtre")
   TestKit.Desc("T03ModeListe", "Liste cochée : 411001, 411001 (doublon), 411999 (inexistant), 411003 ; Envoyer : Cli_Mailing et messages")
   TestKit.Desc("T07Grilles", "Listes ouvertes (ToggleButton1/2), tri par en-tête Nom puis Code : ordre (rs1), colonnes de Colcli reconfigurées par le tri de Colcli2 (EMAILING-A07 figée)")
 
@@ -136,6 +138,49 @@ Public Sub T01PlageCode()
   Pose(hForm, "RadioButton1", True)
   Envoie(hForm, "T01")
   Recus("T01", sTrace)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T02TypeStatut()
+
+  Dim sTrace As String = Prepare()
+  Dim hForm As Object
+  Dim hStatut As Object
+  Dim i As Integer
+  Dim sLigne As String
+  Dim aV As String[]
+
+  Utils.db.Exec("DELETE FROM Fiches_Statut")
+  Utils.db.Exec("INSERT INTO Fiches_Statut (code, libelle) VALUES ('01', 'Actif'), ('02', 'Sommeil')")
+  Utils.db.Exec("UPDATE Fiches_Cli SET cli_statut = NULL, cli_typec = NULL")
+  ' code, type, statut, CP, courriel : 411003 exclu par le statut, 411005 par le type, 411006 sans statut
+  For Each sLigne In ["411001;B;01;75000;un@laurux-test.fr", "411002;A;01;44000;deux@laurux-test.fr", "411003;A;02;13000;trois@laurux-test.fr", "411004;A;01;01000;quatre@laurux-test.fr", "411005;C;01;33000;cinq@laurux-test.fr", "411006;A;;02000;six@laurux-test.fr"]
+    aV = Split(sLigne, ";")
+    Utils.db.Exec("UPDATE Fiches_Cli SET cli_typec = &1, cli_statut = &2, cli_cd_ptl = &3, cli_email = &4 WHERE cli_code = &5", aV[1], IIf(aV[2], aV[2], Null), aV[3], aV[4], aV[0])
+  Next
+  hForm = New Emailing("mail")
+  hStatut = hForm.Controls["Statut"]
+  For i = 0 To hStatut.Count - 1
+    TestKit.Check("T02/statut_" & i, hStatut[i].Text)
+  Next
+  Pose(hForm, "TextBox1", "Sujet T02")
+  Pose(hForm, "Stext", "Texte T02")
+  Pose(hForm, "CheckType", True)
+  Pose(hForm, "Type", "A")
+  Pose(hForm, "Type2", "B")
+  Pose(hForm, "bstatut", True)
+  TestKit.Check("T02/statut_visible", hStatut.Visible)
+  For i = 0 To hStatut.Count - 1
+    If Left$(hStatut[i].Text, 2) = "01" Then hStatut.Index = i
+  Next
+  TestKit.Check("T02/statut_choisi", hStatut.Text)
+  Pose(hForm, "CheckCp", True)
+  Pose(hForm, "Cp1", "40000")
+  Pose(hForm, "Cp2", "50000")
+  Pose(hForm, "RadioButton2", True)
+  Envoie(hForm, "T02")
+  Recus("T02", sTrace)
   Object.Lock(hForm)
 
 End

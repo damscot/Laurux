@@ -16,7 +16,7 @@
 | ETIQRECPT-T06 | replay | Orphelin | ligne de file sans article ni référence | erreur figée (A02) | `tests/etiqrecpt_orphelin/` | implémenté |
 | ETIQRECPT-T07 | replay | Position de départ | `Posetiq` = 2 puis 4 (premier passage) | 2 : aucune position sautée ; 4 : « Null object » figé (A01) | `tests/etiqrecpt_position/` | implémenté |
 | ETIQRECPT-T08 | replay | Zebra | `Impetiq = "2- Zebra"` | « Null object » figé (A03) | `tests/etiqrecpt_zebra/` | implémenté |
-| ETIQRECPT-T09 | replay | Enchaînement depuis une réception | `GesTar` : mise à jour tarif d'un article → écran ouvert | file alimentée, compteurs | `tests/etiqrecpt_depuis_gestar/` | à faire : enchaînement depuis GesTar (écran de réception, hors liste) ; ouverture par MajTarifP couverte par MAJTARIFP |
+| ETIQRECPT-T09 | replay | Enchaînement depuis une réception | `GesTar` : mise à jour tarif d'un article → écran ouvert | file alimentée, compteurs | `tests/etiqrecpt_depuis_gestar/` | à faire : passe par commande1 (écran complexe) : GesTar est le panneau tarifs instancié par commande1 (`New GesTar(Ptarif)`), la file est alimentée par `GesTar.EnrEtiqu(sl As Sailig)` qui reçoit une ligne de la saisie de commande1 ; `Etiqu_Click` se réduit à `EtiqRecpt.Show` (vérifié en vague 8) ; ouverture par MajTarifP couverte par MAJTARIFP |
 
 ## Détail des tests
 

@@ -1,6 +1,8 @@
 ' Gambas test file
 
-''Tests de Materiel (.hidden/reference/.src/Gestion/Tables/Materiel.class/test.md, MATERIEL-T09).
+''Tests de Materiel (.hidden/reference/.src/Gestion/Tables/Materiel.class/test.md, MATERIEL-T06, T09).
+''T06 : ventes et interventions de SN010 (BL facturé, facture, deux bons BlM, une facture HistoFacM, commentaires
+''Fiches_HisentMat) insérées par le test ; Histo_Ventes puis Colventes_click (Entrée/clic) appelés directement.
 ''Écran instancié sans affichage (New Materiel(""), Form_Open appelé) ; le choix des dates dans le calendrier
 ''(DateChooser, non rejouable) est remplacé par Value + DateChooser1_Activate, et le bouton Enregistrer (Btn_Click,
 ''aiguillé par Last.Tag) par TestenrgMat. Jeu materiel_shared/materiel_base (SN001 non vendu, SN002 vendu).
@@ -9,6 +11,7 @@
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T06HistoVentes", "SN010 vendu par BL 000010 facturé F00010, bons BlM M00001/M00002, facture FM0001 : Colventes (un seul BlM, A06), puis chaque ligne : client, n°, commentaire HisentMat, Colrcp3, total")
   TestKit.Desc("T09GarantieNonVendu", "SN001 non vendu : garantie cochée, dates 01.06.2018 et 01.06.2020 par le calendrier, Enregistrer : mat_chkgarantie, mat_dateg1, DateG2 perdue (A08)")
   TestKit.Desc("T09GarantieVendu", "SN002 vendu : garantie cochée, dates 15.06.2018 et 15.06.2019 par le calendrier, Enregistrer : mat_chkgarantie, mat_dtevte, mat_dateg1")
 
@@ -93,5 +96,79 @@ End
 Public Sub T09GarantieVendu()
 
   Garantie("T09b", 1, "SN002", Date(2018, 6, 15), Date(2019, 6, 15))
+
+End
+
+' Ventes de SN010 : BL facturé (lignes Ligbl codées par le n° de série), facture, bons et facture d'intervention.
+Private Sub JeuVentes()
+
+  Utils.db.Exec("UPDATE Fiches_Materiels SET mat_bl = '000010', mat_vendu = 1, mat_cli = '411001' WHERE mat_serie = 'SN010'")
+  Utils.db.Exec("INSERT INTO Fiches_Bl (numbl, type, imp, cdclibl, nmclibl, datebl, numfac, dtefac) VALUES ('000010', 'B', 1, '411001', 'A Divers', '2018-06-10', 'F00010', '2018-06-12')")
+  Utils.db.Exec("INSERT INTO Fiches_Ligbl (num_ligbl, numlig_ligbl, typel_ligbl, code_ligbl, libel_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl) VALUES ('000010', '1', 'A', 'SN010', 'Debroussailleuse', '400,00', '1', '400,00', '0', '400,00')")
+  Utils.db.Exec("INSERT INTO Fiches_HistoFac (numfac, cdclifac, nmclifac, datefac) VALUES ('F00010', '411001', 'A Divers', '2018-06-12')")
+  Utils.db.Exec("INSERT INTO Fiches_HistoLigfac (num_ligfac, numlig_ligfac, typel_ligfac, code_ligfac, libel_ligfac, pu_ligfac, qte_ligfac, brut_ligfac, rem_ligfac, netht_ligfac) VALUES ('F00010', '1', 'A', 'SN010', 'Debroussailleuse', '400,00', '1', '400,00', '0', '400,00')")
+  Utils.db.Exec("INSERT INTO Fiches_BlM (numbl, type, imp, numserie, codep, cdclibl, nmclibl, datebl) VALUES ('M00001', 'B', 0, 'SN010', '002', '411001', 'A Divers', '2018-06-20')")
+  Utils.db.Exec("INSERT INTO Fiches_BlM (numbl, type, imp, numserie, codep, cdclibl, nmclibl, datebl, numfac, dtefac) VALUES ('M00002', 'F', 1, 'SN010', '002', '411001', 'A Divers', '2018-06-30', 'FM0001', '2018-07-01')")
+  Utils.db.Exec("INSERT INTO Fiches_LigblM (num_ligbl, numlig_ligbl, typel_ligbl, code_ligbl, libel_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl) VALUES ('M00001', '1', 'A', '001', 'Entretien', '50,00', '1', '50,00', '0', '50,00')")
+  Utils.db.Exec("INSERT INTO Fiches_HistoFacM (numfac, numserie, codep, cdclifac, nmclifac, datefac) VALUES ('FM0001', 'SN010', '002', '411001', 'A Divers', '2018-07-01')")
+  Utils.db.Exec("INSERT INTO Fiches_HistoLigfacM (num_ligfac, numlig_ligfac, typel_ligfac, code_ligfac, libel_ligfac, pu_ligfac, qte_ligfac, brut_ligfac, rem_ligfac, netht_ligfac) VALUES ('FM0001', '1', 'A', '001', 'Revision', '80,00', '2', '80,00', '0', '80,00')")
+  Utils.db.Exec("INSERT INTO Fiches_HisentMat (numserie, codep, type, libelle, numfac) VALUES ('SN010', '002', 'Entretien', 'Revision complete', 'FM0001')")
+  Utils.db.Exec("INSERT INTO Fiches_HisentMat (numserie, codep, type, libelle, numfac) VALUES ('SN010', '002', 'Vente', 'Vente initiale', 'F00010')")
+
+End
+
+' Lignes d'une ColumnView (clé puis colonnes), curseur laissé en fin de parcours.
+Private Sub Lignes(sCle As String, hCol As Object, iCols As Integer) As String[]
+
+  Dim aCles As New String[]
+  Dim sTxt As String
+  Dim i As Integer
+
+  TestKit.Check(sCle & "/visible", hCol.Visible)
+  TestKit.Check(sCle & "/count", hCol.Count)
+  If hCol.MoveFirst() Then Return aCles
+  Repeat
+    aCles.Add(hCol.Item.Key)
+    sTxt = hCol.Item.Key
+    For i = 0 To iCols - 1
+      sTxt &= "|" & hCol.Item[i]
+    Next
+    TestKit.Check(sCle & "/" & aCles.Max, sTxt)
+  Until hCol.MoveNext()
+  Return aCles
+
+End
+
+Public Sub T06HistoVentes()
+
+  Dim hForm As Materiel
+  Dim hGrid, hVentes As Object
+  Dim aCles As String[]
+  Dim sNom, sKey As String
+  Dim i As Integer
+
+  JeuVentes()
+  hForm = New Materiel("")
+  hForm.Form_Open()
+  hGrid = hForm.Controls["Colmat"]
+  For i = 0 To hGrid.Rows.Count - 1
+    If hGrid[i, 2].Text = "SN010" Then hGrid.Row = i
+  Next
+  hForm.colmat_Click()
+  Zone("T06/fiche", hForm, "Code")
+  Try hForm.Histo_Ventes()
+  TestKit.Check("T06/histo/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+  hVentes = hForm.Controls["Colventes"]
+  aCles = Lignes("T06/colventes", hVentes, 8)
+  For Each sKey In aCles
+    hVentes.MoveTo(sKey)
+    Try hForm.Colventes_click()
+    TestKit.Check("T06/clic_" & sKey & "/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+    For Each sNom In ["Codecli", "Nomcli", "datef", "Numfac", "ComentMat", "Totalfac", "Nlgf"]
+      Zone("T06/clic_" & sKey, hForm, sNom)
+    Next
+    Lignes("T06/clic_" & sKey & "/colrcp3", hForm.Controls["Colrcp3"], 7)
+  Next
+  Object.Lock(hForm)
 
 End

@@ -1,0 +1,28 @@
+{
+ "id": "VALIDINV-T16",
+ "classe": "Validinv",
+ "objet": "Sauvegarde avant validation",
+ "description": "Jeu inv_fin_compte ; Lancer, Oui, Ok. Attendu : ~/Sauve/LauruxInv.sql20180615 produit par mysqldump (dump avant validation) et appel tracé, mot de passe masqué (A03).",
+ "dataset": "validinv_shared/inv_fin_compte",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "outils": {
+  "mysqldump": {
+   "hidden_argv": [
+    "-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace",
+  "Sauve/LauruxInv.sql20180615"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

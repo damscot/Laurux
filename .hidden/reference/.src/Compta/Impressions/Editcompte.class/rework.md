@@ -71,7 +71,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   (texte affiché) · tests : T03 · sources : [Editcompte.class:273](../../../../../../.src/Compta/Impressions/Editcompte.class#L273)
 - [ ] EDITCOMPTE-A03 — [anomalie] `dteN1_LostFocus` appelle `Compdate` (focus sur `dteN0`) pour une
   date de fin antérieure au début de période, au lieu de `compdate2` · tests : T04 · sources : [Editcompte.class:418](../../../../../../.src/Compta/Impressions/Editcompte.class#L418)
-- [ ] EDITCOMPTE-A04 — [anomalie] `Compdate`/`compdate2` remettent la période sur l'exercice
+- [ ] EDITCOMPTE-A04 — [anomalie] (confirmée phase 2, vague 8 : période remise sur l'exercice 2018 (`Compdate`/`compdate2` l. 439-462), figée par T04) `Compdate`/`compdate2` remettent la période sur l'exercice
   précédent (`Exo`) et cochent `E0` (même défaut que BALANCE-A04) · tests : T04 · sources : [Editcompte.class:445](../../../../../../.src/Compta/Impressions/Editcompte.class#L445), [Editcompte.class:458](../../../../../../.src/Compta/Impressions/Editcompte.class#L458)
 - [ ] EDITCOMPTE-A05 — [anomalie] Export : `Close #hFile` seulement si des comptes existent (fichier
   laissé ouvert sinon), aucun `Catch`, message « extrait.txt » pour `~/tmp/Glivre.txt` · tests : T08 · sources : [Editcompte.class:826](../../../../../../.src/Compta/Impressions/Editcompte.class#L826), [Editcompte.class:830](../../../../../../.src/Compta/Impressions/Editcompte.class#L830)

@@ -14,7 +14,7 @@ avec un affichage (`xvfb-run` en Docker, à confirmer).
 | PROGBAR-T03 | gbtest | Arrêt et pause | `Stop_Click` puis `Avancement` ; `Pause_Click` ×2 | `Avancement` renvoie `True` ; libellé `Pause`/`Reprendre` | `tests/arret_pause/` | implémenté |
 | PROGBAR-T04 | gbtest | Fermeture | `Close` avant fin (non stoppable), après `Finalize`, et avec Stop visible | fenêtre fermée ou non ; `$stopped` lu par `Avancement` | `tests/fermeture/` | implémenté |
 | PROGBAR-T05 | gbtest | Cas limites | `nbelem = 0` puis `Avancement` ; `unit = "lignes"` | figer l'erreur actuelle et l'absence d'unité (A01, A02) | `tests/cas_limites/` | implémenté |
-| PROGBAR-T06 | replay | Intégration | Purge `RazDevis` sur `Laurux01.sql` | même diff de tables que sans ProgBar modifiée ; journal de progression | `tests/integration_raz/` | à faire : RazDevis hors du lot, rejeu suspendu (collision de lock entre bacs), attendus non produits |
+| PROGBAR-T06 | replay | Intégration | Purge `RazDevis` sur `Laurux01.sql` | même diff de tables que sans ProgBar modifiée ; journal de progression | `tests/integration_raz/` | implémenté (gb.test ProgBarTest.T06IntegrationRaz : jeu `progbar_shared/devis_25` (25 devis antérieurs, 1 futur, 1 BL), RazDevis instancié sans affichage, date limite 15/06/2018, `Button1_Click` ; « Oui » puis « OK » par un Timer qui relève la barre persistante : « 20 / 25 », valeur 0,8, journal 40 % et 80 % seulement (refresh_increment 10, pas de rafraîchissement final), barre masquée ; 25 devis et lignes purgés ; mysqldump factice rc=0) |
 
 ## Détail des tests
 
@@ -23,4 +23,5 @@ avec un affichage (`xvfb-run` en Docker, à confirmer).
 - **Temps** : `Avancement` contient des `Wait` (0,05 s par rafraîchissement) ; T02 limite le
   nombre d'éléments pour rester rapide. La performance des traitements appelants est mesurée dans
   leurs propres tests.
+- **Jeu T06** : `.hidden/Tests/Utils/assets/progbar_shared/devis_25.sql`.
 - **Implémentation (phase 2)** : `.src/Tests/Utils/ProgBarTest.test` (formulaire sous Xvfb, contrôles lus par `hForm["Nom"]`). Appel réel : `New ProgBar(Titre, nbelem, Null, Stopable, unit, detail)` (le 3e argument est le parent du formulaire). Constat : passer `refresh_increment` de 3 à 1 en cours de route bloque l'affichage (le compteur interne dépasse 1 et n'est plus jamais égal).

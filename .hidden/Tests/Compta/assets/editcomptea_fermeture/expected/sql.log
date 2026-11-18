@@ -1,0 +1,94 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Societes Where cd_sc = '01'
+SELECT  compte_cc, intitule_cc, cent_cc  FROM Fiches_Comptes WHERE cast(compte_cc AS char) >= '60000'  and cast(compte_cc AS char) <= '69999999'  and type_cc = 'G' order by cast(compte_cc AS char)
+SELECT * FROM Fiches_Analytiques Where compte = '602100'
+SELECT * FROM Fiches_Analytiques Where compte = '603700'
+SELECT * FROM Fiches_Analytiques Where compte = '604000'
+SELECT * FROM Fiches_Analytiques Where compte = '605000'
+SELECT * FROM Fiches_Analytiques Where compte = '606100'
+SELECT * FROM Fiches_Analytiques Where compte = '606110'
+SELECT * FROM Fiches_Analytiques Where compte = '606120'
+SELECT * FROM Fiches_Analytiques Where compte = '606130'
+SELECT * FROM Fiches_Analytiques Where compte = '606150'
+SELECT * FROM Fiches_Analytiques Where compte = '606170'
+SELECT * FROM Fiches_Analytiques Where compte = '606300'
+SELECT * FROM Fiches_Analytiques Where compte = '606306'
+SELECT * FROM Fiches_Analytiques Where compte = '606400'
+SELECT * FROM Fiches_Analytiques Where compte = '606410'
+SELECT * FROM Fiches_Analytiques Where compte = '606800'
+SELECT * FROM Fiches_Analytiques Where compte = '606810'
+SELECT * FROM Fiches_Analytiques Where compte = '607000'
+SELECT * FROM Fiches_MvtA WHERE compte = '607000'  and validee = 1  and dte >= '20180101' and dte <= '20181231' order by dte 
+SELECT * FROM Fiches_Analytiques Where compte = '607010'
+SELECT * FROM Fiches_Analytiques Where compte = '607020'
+SELECT * FROM Fiches_Analytiques Where compte = '609700'
+SELECT * FROM Fiches_Analytiques Where compte = '612200'
+SELECT * FROM Fiches_Analytiques Where compte = '613200'
+SELECT * FROM Fiches_Analytiques Where compte = '622603'
+SELECT * FROM Fiches_Analytiques Where compte = '622604'
+SELECT * FROM Fiches_Analytiques Where compte = '622605'
+SELECT * FROM Fiches_Analytiques Where compte = '622700'
+SELECT * FROM Fiches_Analytiques Where compte = '623100'
+SELECT * FROM Fiches_Analytiques Where compte = '623400'
+SELECT * FROM Fiches_Analytiques Where compte = '623700'
+SELECT * FROM Fiches_Analytiques Where compte = '623705'
+SELECT * FROM Fiches_Analytiques Where compte = '623800'
+SELECT * FROM Fiches_Analytiques Where compte = '625100'
+SELECT * FROM Fiches_Analytiques Where compte = '625500'
+SELECT * FROM Fiches_Analytiques Where compte = '625600'
+SELECT * FROM Fiches_Analytiques Where compte = '626100'
+SELECT * FROM Fiches_Analytiques Where compte = '627000'
+SELECT * FROM Fiches_Analytiques Where compte = '627200'
+SELECT * FROM Fiches_Analytiques Where compte = '627800'
+SELECT * FROM Fiches_Analytiques Where compte = '631200'
+SELECT * FROM Fiches_Analytiques Where compte = '633300'
+SELECT * FROM Fiches_Analytiques Where compte = '635110'
+SELECT * FROM Fiches_Analytiques Where compte = '635120'
+SELECT * FROM Fiches_Analytiques Where compte = '635150'
+SELECT * FROM Fiches_Analytiques Where compte = '637100'
+SELECT * FROM Fiches_Analytiques Where compte = '637810'
+SELECT * FROM Fiches_Analytiques Where compte = '637820'
+SELECT * FROM Fiches_Analytiques Where compte = '641100'
+SELECT * FROM Fiches_Analytiques Where compte = '641110'
+SELECT * FROM Fiches_Analytiques Where compte = '641200'
+SELECT * FROM Fiches_Analytiques Where compte = '641400'
+SELECT * FROM Fiches_Analytiques Where compte = '644000'
+SELECT * FROM Fiches_Analytiques Where compte = '645000'
+SELECT * FROM Fiches_Analytiques Where compte = '645320'
+SELECT * FROM Fiches_Analytiques Where compte = '645500'
+SELECT * FROM Fiches_Analytiques Where compte = '645800'
+SELECT * FROM Fiches_Analytiques Where compte = '646200'
+SELECT * FROM Fiches_Analytiques Where compte = '646210'
+SELECT * FROM Fiches_Analytiques Where compte = '646300'
+SELECT * FROM Fiches_Analytiques Where compte = '647500'
+SELECT * FROM Fiches_Analytiques Where compte = '654100'
+SELECT * FROM Fiches_Analytiques Where compte = '658000'
+SELECT * FROM Fiches_Analytiques Where compte = '661100'
+SELECT * FROM Fiches_Analytiques Where compte = '671000'
+SELECT * FROM Fiches_Analytiques Where compte = '671800'
+SELECT * FROM Fiches_Analytiques Where compte = '678000'
+SELECT * FROM Fiches_Analytiques Where compte = '681120'
+SELECT * FROM Fiches_Analytiques Where compte = '681730'
+SELECT * FROM Fiches_Analytiques Where compte = '695100'

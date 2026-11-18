@@ -4,11 +4,20 @@
 ''Valeurs attendues : assets/FcaissesTest/expected.txt, produites dans le clone de référence.
 ''La fenêtre est instanciée sans être affichée, Form_Open est appelé à la main ; les caisses sont relues en base.
 ''Jeu fcaisses_shared/caisses_base (2 caisses au poste fixe « postetest », dépôt DEP003).
+''T05/T06 : les boîtes Message.* de Button3_Click sont relevées et validées par un Timer du module (fenêtre FMessage,
+''technique TresorTest / EmailingTest) ; tkz et tickets de la caisse 2 posés dans le test.
+
+Private $hTimer As Timer
+Private $sBouton As String
+Private $sVu As String
+Private $hDerniere As Window
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T02Modification", "Caisse 1 : imprimante /dev/ttyS0 + Tmu950, Enregistrer, puis /dev/ttyUSB0 : lignes en base (typeimp)")
+  TestKit.Desc("T05SuppressionRefusee", "Supprimer la caisse 1 connectée puis la caisse 2 sans Z (tkz = 0) : deux Message.Error, base inchangée")
+  TestKit.Desc("T06SuppressionCible", "Supprimer : « Non » puis code 2 saisi avec caisse 1 sélectionnée (A02) et caisse 2 avec tickets (A01)")
   TestKit.Desc("T04Depot", "Option Depots : liste des dépôts sans 01, dépôt 02 puis DEP003 sur la caisse 2 : depot en base (A04)")
 
 End
@@ -107,6 +116,111 @@ Public Sub T04Depot()
   Ct(hF, "Dep").Text = Ct(hF, "Dep").List[2]
   hF.Button1_Click()
   TestKit.Check("T04/depot_long", LigneCaisse("2"))
+  Object.Lock(hF)
+
+End
+
+Public Sub _Rep_Timer()
+  ''Boîte Message (fenêtre FMessage) : relève son texte et clique le bouton $sBouton (le premier si $sBouton est vide).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hDerniere Then
+      $hDerniere = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If $sBouton = "" Or If Replace(Object.GetProperty(hC, "Text"), "&", "") = $sBouton Then
+            $sVu &= "[" & Replace(Object.GetProperty(hC, "Text"), "&", "") & "] "
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub Supprime(hF As Fcaisses, sBouton As String) As String
+  ''Button3_Click avec réponse sBouton aux boîtes ; renvoie les textes des boîtes vues.
+
+  $sVu = ""
+  $sBouton = sBouton
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF.Button3_Click()
+  If Error Then $sVu &= "ERREUR: " & Error.Text
+  $hTimer.Enabled = False
+  Return $sVu
+
+End
+
+Private Sub Caisses() As String
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT code FROM " & Cbase.Table("TabCaisses") & " ORDER BY code")
+  If Not r.Available Then Return "<aucune>"
+  Repeat
+    s &= r!code & " "
+  Until r.MoveNext()
+  Return Trim(s)
+
+End
+
+Public Sub T05SuppressionRefusee()
+  ''FCAISSES-T05 : caisse 1 connectée, puis caisse 2 avec tkz = 0. Fige le comportement actuel : la caisse 2 reçoit
+  ''le Message.Error « bande Z » ; la caisse 1 connectée n'est pas refusée (connecte, tinyint(1), est lu True et
+  ''« rResult!connecte = 1 » est faux) : Message.Question puis suppression (candidat anomalie, Fcaisses.class:279).
+
+  Dim hF As Fcaisses
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabCaisses") & " SET tkz = 0 WHERE code = &1", "2")
+  hF = Ouvre()
+  If IsNull(hF) Then Return
+  Choisit(hF, "1")
+  TestKit.Check("T05/connectee", Supprime(hF, ""))
+  TestKit.Check("T05/connectee.caisses", Caisses())
+  Choisit(hF, "2")
+  TestKit.Check("T05/sans_z", Supprime(hF, ""))
+  TestKit.Check("T05/sans_z.caisses", Caisses())
+  TestKit.Check("T05/caisse2", LigneCaisse("2"))
+  Object.Lock(hF)
+
+End
+
+Public Sub T06SuppressionCible()
+  ''FCAISSES-T06 : caisse 2 (Z tirée, non connectée) avec 2 tickets. « Non » : rien n'est supprimé ; code 2 saisi
+  ''mais caisse 1 sélectionnée dans la liste : la caisse 1 est supprimée (A02) ; caisse 2 sélectionnée : supprimée
+  ''malgré ses tickets (A01, Moulinage = 1 rend le contrôle des tickets inopérant).
+
+  Dim hF As Fcaisses
+  Dim r As Result
+
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabEntTck") & " (caisse, numero, date) VALUES (&1, &2, &3)", "2", "0000001", Date(2018, 6, 15, 10, 0, 0))
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabEntTck") & " (caisse, numero, date) VALUES (&1, &2, &3)", "2", "0000002", Date(2018, 6, 15, 11, 0, 0))
+  hF = Ouvre()
+  If IsNull(hF) Then Return
+  Choisit(hF, "2")
+  TestKit.Check("T06/non", Supprime(hF, "Non"))
+  TestKit.Check("T06/non.caisses", Caisses())
+  Choisit(hF, "1")
+  Ct(hF, "Code").Text = "2"
+  TestKit.Check("T06/cible", Supprime(hF, "Oui"))
+  TestKit.Check("T06/cible.caisses", Caisses())
+  TestKit.Check("T06/cible.Code", Ct(hF, "Code").Text)
+  Choisit(hF, "2")
+  TestKit.Check("T06/tickets", Supprime(hF, "Oui"))
+  TestKit.Check("T06/tickets.caisses", Caisses())
+  r = Utils.db.Exec("SELECT count(*) AS nb FROM " & Cbase.Table("TabEntTck") & " WHERE caisse = &1", "2")
+  TestKit.Check("T06/tickets.restants", r!nb)
   Object.Lock(hF)
 
 End

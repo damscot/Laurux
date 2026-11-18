@@ -1,0 +1,81 @@
+' Gambas test file
+
+''Tests d'ImageButton (.hidden/reference/.src/Caisse/ImageButton.class/test.md, IMAGEBUTTON-T01, T02).
+''Le contrôle est créé dans une fenêtre de test non affichée ; les gestionnaires publics View_MouseDown/View_MouseUp
+''sont appelés directement et les Click sont comptés par Object.Attach(hBtn, Me, "_Btn") sur le module. Pas de base.
+''Valeurs attendues : assets/ImageButtonTest/expected.txt (clone de référence).
+
+Private $iClic As Integer
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Proprietes", "Text, Background, Picture (Icones/ciel.png) relus ; Picture = Null sous Try : erreur figée")
+  TestKit.Desc("T02Click", "View_MouseDown + View_MouseUp → 1 Click ; View_MouseUp seul → 1 Click (A01)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "ImageButtonTest")
+
+End
+
+Public Sub _Btn_Click()
+  ''Gestionnaire du Click (préfixe « _ » : ignoré comme test par gb.test).
+
+  Inc $iClic
+
+End
+
+Public Sub T01Proprietes()
+  ''IMAGEBUTTON-T01 : propriétés relues après écriture ; Picture = Null fige l'erreur de Picture_Write
+  ''($hPicture.Image sur un objet nul).
+
+  Dim hWin As Window
+  Dim hBtn As ImageButton
+  Dim hPic As Picture
+
+  hWin = New Window
+  hWin.Resize(200, 100)
+  hBtn = New ImageButton(hWin)
+  hBtn.Resize(120, 60)
+  TestKit.Check("T01/defaut", "[" & hBtn.Text & "]|" & IsNull(hBtn.Picture))
+  hBtn.Text = "Famille 1"
+  hBtn.BackGround = &H3080C0
+  TestKit.Check("T01/Text", hBtn.Text)
+  TestKit.Check("T01/BackGround", Hex$(hBtn.BackGround, 6))
+  hPic = Picture["Icones/ciel.png"]
+  hBtn.Picture = hPic
+  TestKit.Check("T01/Picture", Object.IsValid(hBtn.Picture) & "|" & (hBtn.Picture = hPic) & "|" & hBtn.Picture.Width & "x" & hBtn.Picture.Height)
+  Try hBtn.Picture = Null
+  If Error Then
+    TestKit.Check("T01/Picture_Null", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T01/Picture_Null", "sans erreur")
+  Endif
+  TestKit.Check("T01/Picture_apres_Null", IsNull(hBtn.Picture))
+  hWin.Delete
+
+End
+
+Public Sub T02Click()
+  ''IMAGEBUTTON-T02 : un Click par View_MouseUp, avec ou sans appui préalable (A01 figée).
+
+  Dim hWin As Window
+  Dim hBtn As ImageButton
+
+  hWin = New Window
+  hBtn = New ImageButton(hWin)
+  Object.Attach(hBtn, Me, "_Btn")
+  $iClic = 0
+  hBtn.View_MouseDown()
+  TestKit.Check("T02/apres_appui", $iClic)
+  hBtn.View_MouseUp()
+  TestKit.Check("T02/appui_relachement", $iClic)
+  $iClic = 0
+  hBtn.View_MouseUp()
+  TestKit.Check("T02/relachement_seul", $iClic)
+  hWin.Delete
+
+End

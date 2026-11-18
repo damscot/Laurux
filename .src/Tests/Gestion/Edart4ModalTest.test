@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Edart4 ouvrant TriCpt en ShowModal (.hidden/reference/.src/Gestion/Impressions/Edart4.class/test.md, EDART4-T01).
+''Tests de Edart4 ouvrant TriCpt en ShowModal (.hidden/reference/.src/Gestion/Impressions/Edart4.class/test.md, EDART4-T01, T06 partiel).
 ''Module séparé d'Edart4Test (vague 7, fusion). Un Timer du module agit pendant la boucle modale : il retrouve la
 ''fenêtre TriCpt ouverte (Windows) et simule la sélection d'une ligne (Bsel = True puis ColTri_MajSel(code), ce
 ''que fait TriGen au double-clic) ou la fermeture sans choix. Edart4 est instanciée sans être affichée ; l'impression
@@ -13,6 +13,7 @@ Private $sChoix As String
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
+  TestKit.Desc("T06Selection", "Famille 02 désélectionnée (TreeView1), fournisseur 401001 par TriCpt (ToggleButton5/6), articles 001..003 par TriArticles (ToggleButton1/2), article 003 suspendu, Imprimer : plages, familles et PDF")
   TestKit.Desc("T01ClientTriCpt", "Butclig : choix du client 411001 dans TriCpt (code, adresse, type), puis Imprimer : PDF produit et nombre de pages")
 
 End
@@ -40,7 +41,7 @@ Public Sub _Choix_Timer()
   Dim hWin As Window
 
   For Each hWin In Windows
-    If Object.Type(hWin) <> "TriCpt" Then Continue
+    If Object.Type(hWin) <> "TriCpt" And If Object.Type(hWin) <> "TriArticles" Then Continue
     $hTimer.Enabled = False
     If $sChoix Then
       Object.SetProperty(hWin, "Bsel", True)
@@ -74,6 +75,56 @@ Public Sub T01ClientTriCpt()
   If Exist(sPdf) Then
     Shell "pdfinfo " & Shell$(sPdf) & " | grep -E '^Pages'" To sTxt
     TestKit.Check("T01/impression/pages", Trim(sTxt))
+  Endif
+  Object.Lock(hF)
+
+End
+
+Private Sub Choisit(hF As Object, sMethode As String, sChoix As String, sCle As String)
+
+  Programme(sChoix)
+  Try Object.Call(hF, sMethode)
+  TestKit.Check(sCle & "/erreur", IIf(Error, Error.Text, "<aucune>"))
+
+End
+
+Public Sub T06Selection()
+
+  Dim hF As New Edart4
+  Dim hTree As Object = hF.Controls["TreeView1"]
+  Dim sNom, sTxt As String
+  Dim sPdf As String = User.Home &/ "tmp/tarif.pdf"
+
+  Utils.db.Exec("UPDATE Fiches_Art SET art_suspendu = 1 WHERE art_code = &1", "003")
+  If hTree.MoveFirst() = False Then
+    Repeat
+      sTxt &= hTree.Item.Key & ":" & hTree.Item.Selected & " "
+    Until hTree.MoveBelow()
+  Endif
+  TestKit.Check("T06/familles_ouverture", Trim(sTxt))
+  Try hTree["02"].Selected = False
+  TestKit.Check("T06/deselection/erreur", IIf(Error, Error.Text, "<aucune>"))
+  Choisit(hF, "ToggleButton5_Click", "401001", "T06/four")
+  Choisit(hF, "ToggleButton6_Click", "401001", "T06/four2")
+  Choisit(hF, "ToggleButton1_Click", "001", "T06/art")
+  Choisit(hF, "ToggleButton2_Click", "003", "T06/art2")
+  For Each sNom In ["Four", "Four2", "Art", "Art2"]
+    TestKit.Check("T06/" & sNom, Object.GetProperty(hF.Controls[sNom], "Text"))
+  Next
+  sTxt = ""
+  If hTree.MoveFirst() = False Then
+    Repeat
+      sTxt &= hTree.Item.Key & ":" & hTree.Item.Selected & " "
+    Until hTree.MoveBelow()
+  Endif
+  TestKit.Check("T06/familles_selection", Trim(sTxt))
+  Try Kill sPdf
+  Try hF.Butimp_Click()
+  TestKit.Check("T06/impression/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+  TestKit.Check("T06/impression/pdf", Exist(sPdf))
+  If Exist(sPdf) Then
+    Shell "pdfinfo " & Shell$(sPdf) & " | grep -E '^Pages'" To sTxt
+    TestKit.Check("T06/impression/pages", Trim(sTxt))
   Endif
   Object.Lock(hF)
 

@@ -1,0 +1,85 @@
+' Gambas test file
+
+''Tests de Rechcons ouverte en ShowModal par Tconsigne (.hidden/reference/.src/Gestion/option/rechcons.class/test.md,
+''RECHCONS-T04). Module séparé de RechconsTest (jeu différent : consigne_shared/consigne_base, option boisson).
+''Tconsigne affichée (Show : form_Open), recherche lancée par bar1_recherche (gestionnaire du bouton Recherche de la
+''barre) ; un Timer du module agit pendant la boucle modale : filtre Textcode puis GridView1_Activate (double-clic),
+''ou Button1_Click (Fermer). Valeurs attendues : assets/RechconsModalTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $sFiltre As String
+Private $bChoix As Boolean
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04DepuisTconsigne", "Tconsigne, Recherche : filtre code « C », ligne choisie (fiche C1 affichée) ; puis Recherche fermée sans choix (fiche inchangée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "RechconsModalTest")
+  TestKit.OuvreBase("consigne_shared/consigne_base")
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+  Dim hGrid As Object
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "Rechcons" Then Continue
+    $hTimer.Enabled = False
+    hGrid = hWin.Controls["GridView1"]
+    $sVu = "lignes=" & hGrid.Rows.Count
+    If $bChoix Then
+      Object.SetProperty(hWin.Controls["Textcode"], "Text", $sFiltre)
+      Object.Call(hWin, "Textcode_Change")
+      $sVu &= " filtre=" & hGrid.Rows.Count
+      hGrid.Row = 0
+      Object.Call(hWin, "GridView1_Activate")
+    Else
+      Object.Call(hWin, "Button1_Click")
+    Endif
+    Return
+  Next
+
+End
+
+Private Sub Recherche(hForm As Object, sCle As String, bChoix As Boolean, sFiltre As String)
+
+  Dim sNom As String
+
+  $bChoix = bChoix
+  $sFiltre = sFiltre
+  $sVu = ""
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hForm.bar1_recherche()
+  TestKit.Check(sCle & "/erreur", IIf(Error, Error.Text & " " & Error.Where, "<aucune>"))
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/modale", $sVu)
+  For Each sNom In ["Textcode", "Textlib"]
+    TestKit.Check(sCle & "/" & sNom, Object.GetProperty(hForm.Controls[sNom], "Text"))
+  Next
+
+End
+
+Public Sub T04DepuisTconsigne()
+
+  Dim hForm As Object
+
+  hForm = New Tconsigne
+  hForm.Show()
+  Wait 0.2
+  TestKit.Check("T04/ouverture/Textcode", Object.GetProperty(hForm.Controls["Textcode"], "Text"))
+  Recherche(hForm, "T04/choix", True, "C")
+  Recherche(hForm, "T04/fermeture", False, "")
+  Object.Lock(hForm)
+  Try hForm.Hide()
+
+End

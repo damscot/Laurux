@@ -1,0 +1,20 @@
+{
+ "id": "VALIDINV-T11",
+ "classe": "Validinv",
+ "objet": "Article supprimé, option laisser",
+ "description": "Jeu inv_fin_article_supprime (ligne 3 non comptée, article 999 absent de Fiches_Art) ; RadioButton2 ; Lancer, Oui. Attendu : erreur sur rarts!art_qte (Result non disponible) à la 3e ligne : lignes 1-2 validées, 4-5 non, dteinv inchangé, HisInvT non vidée (figé A04).",
+ "dataset": "validinv_shared/inv_fin_article_supprime",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "code_sortie": 125,
+ "xfail": "erreur non attrapée : Result is not available (Validinv.Button2_click.177, rarts!art_qte sans Available), boîte d'erreur Gambas fatale ; lignes 1-2 validées, 4-5 non, dteinv inchangé",
+ "xfail_attendu": "validation transactionnelle : article absent signalé, aucune mise à jour partielle (A04)",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

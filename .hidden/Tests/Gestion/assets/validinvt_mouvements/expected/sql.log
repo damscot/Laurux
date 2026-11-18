@@ -1,0 +1,55 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+CREATE TABLE if not exists Fiches_HisInvT (inv_num Int NOT NULL,inv_code Char(15) , inv_qtestock Decimal(12,2) , inv_qtecomptee Decimal(12,2) , inv_date date , PRIMARY KEY (inv_num, inv_code)) ENGINE = InnoDB
+SELECT * FROM Fiches_InvT
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_InvT
+SELECT * FROM Fiches_Art where art_code = '001' 
+UPdate  Fiches_Art  SET  art_qte = 12 where art_code = '001'
+UPdate  Fiches_InvT  SET  inv_valid = 1 where inv_code = '001'
+INSERT INTO Fiches_Mvtexp(code,daterecpt,qtep,qtem,Com) VALUES ('001', '20180601', 2, 0, 'Inentaire tournant du 01-06-2018')
+SELECT * FROM Fiches_Art where art_code = '002' 
+UPdate  Fiches_Art  SET  art_qte = 7 where art_code = '002'
+UPdate  Fiches_InvT  SET  inv_valid = 1 where inv_code = '002'
+INSERT INTO Fiches_Mvtexp(code,daterecpt,qtep,qtem,Com) VALUES ('002', '20180601', 0, 3, 'Inentaire tournant du 01-06-2018')
+SELECT * FROM Fiches_Art where art_code = '003' 
+UPdate  Fiches_Art  SET  art_qte = 0 where art_code = '003'
+UPdate  Fiches_InvT  SET  inv_valid = 1 where inv_code = '003'
+SELECT * FROM Fiches_InvT where inv_comptee = '1'
+SELECT inv_num, count(*) FROM Fiches_HisInvT group by inv_num order by inv_num desc
+INSERT INTO Fiches_HisInvT(inv_num, inv_code, inv_qtestock, inv_qtecomptee, inv_date) VALUES (1,'001','10.00','12.00','20180601')
+INSERT INTO Fiches_HisInvT(inv_num, inv_code, inv_qtestock, inv_qtecomptee, inv_date) VALUES (1,'002','10.00','7.00','20180601')
+INSERT INTO Fiches_HisInvT(inv_num, inv_code, inv_qtestock, inv_qtecomptee, inv_date) VALUES (1,'003','0.00','0.00','20180601')
+drop Table IF exists Fiches_InvT
+SELECT * FROM Fiches_Caisses
+SELECT * FROM Fiches_EntTicketz LIMIT 1
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Art  where art_stocke = 1 order by CAST(art_code AS char)
+LOCK TABLES Fiches_Art WRITE, Fiches_Bl WRITE, Fiches_Ligbl WRITE, Fiches_BlM Write, Fiches_LigblM WRITE, Fiches_HistoFac WRITE, Fiches_HistoLigfac WRITE, Fiches_HistoFacM WRITE, Fiches_HistoLigfacM WRITE, Fiches_Mvtexp WRITE, Fiches_Entrecpt WRITE, Fiches_Ligrecpt WRITE, Fiches_HisEntTickets  WRITE, Fiches_HisLigTickets  WRITE, Fiches_Sdepots WRITE, Fiches_HisInvT write, Fiches_Mvtexpdc WRITE 
+SELECT * FROM  Fiches_HisInvT WHERE inv_code = '001' and inv_date >= '20171231' order by inv_date desc
+SELECT DISTINCT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte FROM Fiches_Ligbl JOIN Fiches_Bl ON num_ligbl = numbl WHERE dte_ligbl >= '20180601' And (type = 'B' OR type = 'F') AND code_ligbl='001' AND typel_ligbl = 'A' UNION ALL(SELECT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte FROM Fiches_LigblM JOIN Fiches_BlM ON num_ligbl=numbl WHERE dte_ligbl >= '20180601' and (type = 'B' OR type = 'F') AND code_ligbl='001' AND typel_ligbl = 'A') UNION ALL(SELECT DISTINCT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte FROM Fiches_HistoFac JOIN Fiches_HistoLigfac ON num_ligfac=numfac WHERE dtligbl_ligfac >= '20180601' AND code_ligfac='001' AND typel_ligfac = 'A') UNION ALL(SELECT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte FROM Fiches_HistoFacM JOIN Fiches_HistoLigfacM ON num_ligfac=numfac WHERE dtligbl_ligfac >= '20180601' AND code_ligfac='001' AND typel_ligfac = 'A') UNION ALL(SELECT SUM(CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END ) * '1.0000' as qte FROM Fiches_Ligrecpt WHERE daterecpt>= '20180601' AND code='001') UNION ALL(SELECT SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte FROM Fiches_Mvtexp WHERE daterecpt>='20180601' AND code='001') UNION ALL(SELECT SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END  - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte FROM Fiches_Mvtexpdc WHERE daterecpt>='20180601' AND code='001') UNION ALL(SELECT SUM(CASE WHEN type='S' THEN CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * -1 ELSE CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END END) AS qte FROM Fiches_Sdepots WHERE code='01' AND date >= '20180601' AND cart='001')
+UPdate  Fiches_Art  SET  art_qte = 10 where art_code = '001'
+SELECT * FROM  Fiches_HisInvT WHERE inv_code = '002' and inv_date >= '20180601' order by inv_date desc
+SELECT DISTINCT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte FROM Fiches_Ligbl JOIN Fiches_Bl ON num_ligbl = numbl WHERE dte_ligbl >= '20180601' And (type = 'B' OR type = 'F') AND code_ligbl='002' AND typel_ligbl = 'A' UNION ALL(SELECT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte FROM Fiches_LigblM JOIN Fiches_BlM ON num_ligbl=numbl WHERE dte_ligbl >= '20180601' and (type = 'B' OR type = 'F') AND code_ligbl='002' AND typel_ligbl = 'A') UNION ALL(SELECT DISTINCT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte FROM Fiches_HistoFac JOIN Fiches_HistoLigfac ON num_ligfac=numfac WHERE dtligbl_ligfac >= '20180601' AND code_ligfac='002' AND typel_ligfac = 'A') UNION ALL(SELECT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte FROM Fiches_HistoFacM JOIN Fiches_HistoLigfacM ON num_ligfac=numfac WHERE dtligbl_ligfac >= '20180601' AND code_ligfac='002' AND typel_ligfac = 'A') UNION ALL(SELECT SUM(CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END ) * '1.0000' as qte FROM Fiches_Ligrecpt WHERE daterecpt>= '20180601' AND code='002') UNION ALL(SELECT SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte FROM Fiches_Mvtexp WHERE daterecpt>='20180601' AND code='002') UNION ALL(SELECT SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END  - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte FROM Fiches_Mvtexpdc WHERE daterecpt>='20180601' AND code='002') UNION ALL(SELECT SUM(CASE WHEN type='S' THEN CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * -1 ELSE CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END END) AS qte FROM Fiches_Sdepots WHERE code='01' AND date >= '20180601' AND cart='002')
+UPdate  Fiches_Art  SET  art_qte = 7 where art_code = '002'
+SELECT * FROM  Fiches_HisInvT WHERE inv_code = '003' and inv_date >= '20180601' order by inv_date desc
+SELECT DISTINCT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte FROM Fiches_Ligbl JOIN Fiches_Bl ON num_ligbl = numbl WHERE dte_ligbl >= '20180601' And (type = 'B' OR type = 'F') AND code_ligbl='003' AND typel_ligbl = 'A' UNION ALL(SELECT SUM(CASE WHEN qte_ligbl IS NULL THEN '0' ELSE REPLACE(qte_ligbl,',','.') END ) * -1 as qte FROM Fiches_LigblM JOIN Fiches_BlM ON num_ligbl=numbl WHERE dte_ligbl >= '20180601' and (type = 'B' OR type = 'F') AND code_ligbl='003' AND typel_ligbl = 'A') UNION ALL(SELECT DISTINCT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte FROM Fiches_HistoFac JOIN Fiches_HistoLigfac ON num_ligfac=numfac WHERE dtligbl_ligfac >= '20180601' AND code_ligfac='003' AND typel_ligfac = 'A') UNION ALL(SELECT SUM(CASE WHEN qte_ligfac IS NULL THEN '0' ELSE REPLACE(qte_ligfac,',','.') END ) * -1 as qte FROM Fiches_HistoFacM JOIN Fiches_HistoLigfacM ON num_ligfac=numfac WHERE dtligbl_ligfac >= '20180601' AND code_ligfac='003' AND typel_ligfac = 'A') UNION ALL(SELECT SUM(CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END ) * '1.0000' as qte FROM Fiches_Ligrecpt WHERE daterecpt>= '20180601' AND code='003') UNION ALL(SELECT SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte FROM Fiches_Mvtexp WHERE daterecpt>='20180601' AND code='003') UNION ALL(SELECT SUM(CASE WHEN qtep IS NULL THEN '0' ELSE REPLACE(qtep,',','.') END  - CASE WHEN qtem IS NULL THEN '0' ELSE REPLACE(qtem,',','.') END ) as qte FROM Fiches_Mvtexpdc WHERE daterecpt>='20180601' AND code='003') UNION ALL(SELECT SUM(CASE WHEN type='S' THEN CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END * -1 ELSE CASE WHEN qte IS NULL THEN '0' ELSE REPLACE(qte,',','.') END END) AS qte FROM Fiches_Sdepots WHERE code='01' AND date >= '20180601' AND cart='003')
+UPdate  Fiches_Art  SET  art_qte = 0 where art_code = '003'
+UNLOCK TABLES

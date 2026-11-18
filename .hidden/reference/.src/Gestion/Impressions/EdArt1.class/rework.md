@@ -75,7 +75,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sources : [EdArt1.class:623](../../../../../../.src/Gestion/Impressions/EdArt1.class#L623)
 - [ ] EDART1-A02 — [anomalie] `Cmpt_KeyPress` tag 2 (`Art2`) contrôle `Art.Text` au lieu de
   `Art2.Text` et renvoie le focus sur `Art` en cas d'échec · tests : T07 · sources : [EdArt1.class:479](../../../../../../.src/Gestion/Impressions/EdArt1.class#L479), [EdArt1.class:art_man](../../../../../../.src/Gestion/Impressions/EdArt1.class#L356-L382)
-- [ ] EDART1-A03 — [anomalie] `Bsel` jamais remis à `False` avant `TriArticles` : une sélection
+- [ ] EDART1-A03 — [anomalie] (non reproduite phase 2, vague 8 : `TriArticles._new` (l. 29-32) remet `Bsel`/`Bval` de l'appelant à `False`/`Null` : l'annulation ne recopie pas l'article précédent (T09) ; anomalie à réexaminer) `Bsel` jamais remis à `False` avant `TriArticles` : une sélection
   annulée recopie l'article choisi précédemment (même défaut que MATERIEL-A09) · tests : T09 ·
   sources : [EdArt1.class:SelectionArt](../../../../../../.src/Gestion/Impressions/EdArt1.class#L330-L351)
 - [ ] EDART1-A04 — [anomalie] `Btn_KeyPress` lance l'impression pour **toute** touche sur

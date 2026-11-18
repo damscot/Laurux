@@ -66,11 +66,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FCAISSES-A01 — [anomalie] Suppression : les contrôles portent sur `Code.Text` mais le
+- [ ] FCAISSES-A01 — [anomalie] (confirmée phase 2, vague 8 : code 2 saisi, caisse 1 sélectionnée : c'est la caisse 1 qui est supprimée, figée par T06) Suppression : les contrôles portent sur `Code.Text` mais le
   `DELETE` vise `Caisse.Current[0]` (ligne sélectionnée), construit **par concaténation** ; une
   caisse connectée ou sans bande Z peut être supprimée si elle est sélectionnée pendant qu'une
   autre est saisie ; sans sélection, erreur interceptée · tests : T06 · sources : [Fcaisses.class:301](../../../../../.src/Caisse/Fcaisses.class#L301), [Fcaisses.class:303](../../../../../.src/Caisse/Fcaisses.class#L303)
-- [ ] FCAISSES-A02 — [anomalie] `Not rTkt.Available Or If moulinage = 1` est toujours vrai (on est
+- [ ] FCAISSES-A02 — [anomalie] (confirmée phase 2, vague 8 : caisse à tickets supprimée, `Message.Delete` jamais affiché, figée par T06) `Not rTkt.Available Or If moulinage = 1` est toujours vrai (on est
   dans `If Moulinage = 1`) : le refus « il reste des tickets » n'est jamais appliqué ; à décider si
   la suppression doit être bloquée tant que des tickets non archivés existent · tests : T06 ·
   sources : [Fcaisses.class:302](../../../../../.src/Caisse/Fcaisses.class#L302)
@@ -84,3 +84,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   que la liste propose `/dev/ttyUSB*`/`/dev/ttyACM*` (valeur cachée conservée à l'enregistrement) ;
   Échap/F2 masque définitivement la liste jusqu'à la réouverture ; `Chkcaisse` refuse le chiffre
   `0` (aucun code `10`, cohérent avec OUVERTURE-A01) · tests : T02, T07 · sources : [Fcaisses.class:101](../../../../../.src/Caisse/Fcaisses.class#L101), [Fcaisses.class:245](../../../../../.src/Caisse/Fcaisses.class#L245), [Fcaisses.class:331](../../../../../.src/Caisse/Fcaisses.class#L331), [Fcaisses.class:342](../../../../../.src/Caisse/Fcaisses.class#L342)
+- [ ] FCAISSES-A06 — [anomalie] `Button3_Click` : `If rResult!connecte = 1` (l. 279) n'est jamais vrai (`connecte` `tinyint(1)` lu `True`) : une caisse connectée est supprimable (Message.Question puis suppression) ; motif transverse « colonne `tinyint(1)` lue en Booléen par le pilote MySQL (`True` = -1) comparée à `1` ou `"1"` → toujours faux » : voir aussi [EDDOCS-A05](../../Gestion/Impressions/EdDocs.class/rework.md), [TRIHISTOS-A06](../../Affichages/TriHistos.class/rework.md), [Materiel](../../Gestion/Tables/Materiel.class/rework.md), [Calcstock](../../Utils/Calcstock.class/rework.md) (phase 2, vague 8, 2026-11-16) · tests : T05 · sources : [Fcaisses.class:279](../../../../../.src/Caisse/Fcaisses.class#L279)

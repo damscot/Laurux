@@ -17,7 +17,7 @@ ordre) ; et des **replays** des écrans qui l'utilisent (Achat, GesTar, Parametr
 | SAITABLEAU-T05 | gbtest | `ligne_InsLig` en lecture | `etat = lecture` | figer la création du panneau orphelin (A01) | `tests/insertion_lecture/` | implémenté |
 | SAITABLEAU-T06 | gbtest | `Delete` | 3 lignes puis `Delete` | `Count = 0`, `ind = -1`, nouveau `Tableau` | `tests/delete/` | implémenté |
 | SAITABLEAU-T07 | replay | Saisie d'un achat | écran Achat : 3 lignes, Ins, Suppr, Alt+↑/↓, validation | dump `Fiches_Entrecpt`/`Fiches_Ligrecpt` et log identiques | `tests/replay_achat/` | à faire : touches Ins, Suppr + confirmation, Alt+↑/↓ non rejouables ; écran Achat non synthétisé |
-| SAITABLEAU-T08 | replay | Tarifs | écran GesTar : ajout/suppression de lignes de tarif, sauvegarde | dump `Fiches_Tarcli`/`Fiches_TarTypcli` | `tests/replay_gestar/` | à faire : GesTar n'est ouvert qu'incrusté dans commande1 (New GesTar(Ptarif)) ; saisie des lignes par SaiTableau (touches non rejouables) et suppression par Message.Question (bloquant en gb.test) ; non commencé faute de temps en vague 7 |
+| SAITABLEAU-T08 | replay | Tarifs | écran GesTar : ajout/suppression de lignes de tarif, sauvegarde | dump `Fiches_Tarcli`/`Fiches_TarTypcli` | `tests/replay_gestar/` | à faire : passe par commande1 (module complexe) — vérifié vague 8 : GesTar n'est instancié que par commande1 (`New GesTar(Ptarif)`, commande1.class:66, à côté de `New Achat`), ses lignes de tarif viennent de la `SaiLig` courante d'Achat (complexe) ; saisie par SaiTableau (touches) et suppression par Message.Question (GesTar.class:416) |
 
 ## Détail des tests
 

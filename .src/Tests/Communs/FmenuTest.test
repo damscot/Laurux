@@ -7,11 +7,19 @@
 ''scénario). /Faca n'est pas activée ici : Abonnement afficherait un Message.Info bloquant selon la date réelle
 ''(couvert par le scénario fmenu_abonnement à date figée, à faire). En fin de test, les événements de la fenêtre
 ''sont verrouillés : form_close appellerait Utils.Exit.
+''T04 (partiel) : /Faca activée, le Message.Info d'Abonnement (appelé par Form_Open) est relevé et validé par un
+''Timer du module (fenêtre FMessage, technique TresorTest). Gb.test ne fige pas la date : seuls des cas dont le
+''nombre ne dépend pas du jour d'exécution sont posés (dtefac relatives à Now, NULL, année 2000).
+
+Private $hTimer As Timer
+Private $sVu As String
+Private $hDerniere As Window
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T01DemarrageOptions", "Démarrage : visibilité des menus selon les options société (actives puis inactives)")
+  TestKit.Desc("T04AbonnementPartiel", "/Faca : Form_Open → Abonnement, Message.Info relevé par un Timer (cas indépendants de la date)")
 
 End
 
@@ -91,5 +99,68 @@ Public Sub T01DemarrageOptions()
 
   Releve("T01/actives", True)
   Releve("T01/inactives", False)
+
+End
+
+Public Sub _Rep_Timer()
+  ''Boîte Message (fenêtre FMessage) : relève son texte et clique son premier bouton.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hDerniere Then
+      $hDerniere = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub BlAbonnement(sNum As String, sType As String, sCli As String, fHt As Float, vDteFac As Variant)
+
+  Utils.db.Exec("INSERT INTO " & Cbase.Table("TabBl") & " (numbl, type, cdclibl, totalht, dtefac) VALUES (&1, &2, &3, &4, &5)", sNum, sType, sCli, fHt, vDteFac)
+
+End
+
+Public Sub T04AbonnementPartiel()
+  ''FMENU-T04 (partiel) : factures périodiques (Fiches_Bl type A) dont le décompte ne dépend pas du jour
+  ''d'exécution. 411001 annuel facturé en 2000 ; 411002 mensuel facturé il y a un mois ; 411003 trimestriel sans
+  ''dtefac ; 411004 sans dtefac mais totalht = 0 (exclu) ; 411005 BL de type B (exclu) ; 411006 mensuel, deux
+  ''documents (il y a 1 et 3 mois : seul le plus récent est examiné). Les cas datés (15 janvier, 15 juin,
+  ''31 décembre : A01/A02) demandent une date figée que gb.test n'offre pas.
+
+  Dim hF As Fmenu
+  Dim dJour As Date = Date(Now)
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabCli") & " SET cli_aban = &1 WHERE cli_code IN (411002, 411006)", "1- Mensuel")
+  Utils.db.Exec("UPdate " & Cbase.Table("TabCli") & " SET cli_aban = &1 WHERE cli_code = 411001", "5- Annuel")
+  Utils.db.Exec("UPdate " & Cbase.Table("TabCli") & " SET cli_aban = &1 WHERE cli_code IN (411003, 411004, 411005)", "3- Trimestriel")
+  BlAbonnement("A00001", "A", "411001", 100, Date(2000, 1, 10))
+  BlAbonnement("A00002", "A", "411002", 100, DateAdd(dJour, gb.Month, -1))
+  BlAbonnement("A00003", "A", "411003", 100, Null)
+  BlAbonnement("A00004", "A", "411004", 0, Null)
+  BlAbonnement("B00005", "B", "411005", 100, Null)
+  BlAbonnement("A00006", "A", "411006", 100, DateAdd(dJour, gb.Month, -1))
+  BlAbonnement("A00007", "A", "411006", 100, DateAdd(dJour, gb.Month, -3))
+  Start.LocalSettings["/Soc" & Start.Societe & "/Faca"] = 1
+  $sVu = ""
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  hF = New Fmenu
+  Try hF.Form_Open()
+  If Error Then TestKit.Check("T04/Form_Open", "ERREUR: " & Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T04/messages", $sVu)
+  Object.Lock(hF)
 
 End

@@ -13,7 +13,7 @@ modifié**.
 | RECHCONS-T01 | gbtest | Chargement par type | `New Rechcons("T")`, `"P"`, `"C"`, `"B"`, `"X"` (Xvfb) | `GridView1.Rows.Count` et contenu des cellules | `tests/chargement/` | implémenté |
 | RECHCONS-T02 | gbtest | Filtres | `Textcode.Text = "P"`, puis `Texlib.Text = "pal"` en mode `"T"` et `"C"` | nombre de lignes de référence | `tests/filtres/` | implémenté |
 | RECHCONS-T03 | gbtest | Sélection | `GridView1.Row = 1` ; `GridView1_Activate` | événement `trouver` reçu avec le code ; fenêtre fermée | `tests/selection/` | implémenté |
-| RECHCONS-T04 | replay | Recherche depuis `Tconsigne` | voir TCONSIGNE-T05 | fiche affichée | `tests/depuis_tconsigne/` | à faire : couvert par TCONSIGNE-T05 (hors liste) |
+| RECHCONS-T04 | replay | Recherche depuis `Tconsigne` | voir TCONSIGNE-T05 | fiche affichée | `tests/depuis_tconsigne/` | implémenté (gb.test `RechconsModalTest.T04DepuisTconsigne`, vague 8 : Tconsigne affichée, `bar1_recherche` ; Timer pendant le ShowModal : filtre code « C » puis GridView1_Activate → fiche C1 affichée ; seconde recherche fermée par Button1 → fiche inchangée) |
 
 ## Détail des tests
 

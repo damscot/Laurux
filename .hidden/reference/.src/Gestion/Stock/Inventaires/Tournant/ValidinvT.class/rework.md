@@ -53,23 +53,23 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] VALIDINVT-A01 — [anomalie, sécurité] `mysqldump` de la base `Laurux` en dur (et non
+- [ ] VALIDINVT-A01 — [anomalie, sécurité] (confirmée phase 2, vague 8 : mysqldump de la base « Laurux » en dur, fichier réduit à l'en-tête, figée par T13 ; précisée : lancé l. 71, avant la lecture de l'inventaire (l. 72) et la confirmation (l. 87) : exécuté même sur « Non », inventaire absent ou déjà validé) `mysqldump` de la base `Laurux` en dur (et non
   `Utils.db.Name`) : sauvegarde d'une autre base ou vide ; mêmes défauts que VALIDINV-A03 (mot de
   passe en clair, avant confirmation, résultat non contrôlé) · tests : T13 · sources : [ValidinvT.class:71](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L71)
-- [ ] VALIDINVT-A02 — [anomalie, grave] Non comptés avec « Laisser la valeur d'origine » : stock
+- [ ] VALIDINVT-A02 — [anomalie, grave] (confirmée phase 2, vague 8 : conséquence observée : non compté « conservé » non historisé mais sortie fictive `qtem` écrite → après recalcul, stock de 002 de 10 à −10, figée par T09) Non comptés avec « Laisser la valeur d'origine » : stock
   conservé mais sortie exceptionnelle `qtem = inv_qtestock` écrite dans `Fiches_Mvtexp` ; au
   prochain recalcul (`Cstock`), ces articles, non historisés, perdent leur stock théorique ;
   `Stockmvt` affiche une sortie fictive · tests : T03, T09 · sources : [ValidinvT.class:98](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L98), [ValidinvT.class:117](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L117)
-- [ ] VALIDINVT-A03 — [anomalie, à confirmer] Mouvements entre génération et comptage : inclus
+- [ ] VALIDINVT-A03 — [anomalie, à confirmer] (confirmée phase 2, vague 8 : figée par T10) Mouvements entre génération et comptage : inclus
   dans le comptage mais rajoutés par `Cstock` depuis `inv_date` (double comptage), alors que
   `art_qte` est écrasé immédiatement → stock différent avant et après recalcul · tests : T10 ·
   sources : [ValidinvT.class:107](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L107), [ValidinvT.class:117](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L117), [Cstock.module:46](../../../../../../../../.src/Utils/Cstock.module#L46)
 - [ ] VALIDINVT-A04 — [anomalie] Pas de transaction : validation interrompue = `inv_valid` partiel,
   `Fiches_Mvtexp` partiels ; le contrôle « déjà validé » ne lit que la 1re ligne · tests : T07 ·
   sources : [ValidinvT.class:75](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L75), [ValidinvT.class:114](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L114)
-- [ ] VALIDINVT-A05 — [anomalie] Libellé de mouvement « Inentaire tournant du … » (faute de frappe
+- [ ] VALIDINVT-A05 — [anomalie] (confirmée phase 2, vague 8 : libellé « Inentaire tournant du … » (l. 117), figée par T01) Libellé de mouvement « Inentaire tournant du … » (faute de frappe
   enregistrée en base) · tests : T01 · sources : [ValidinvT.class:117](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L117)
 - [ ] VALIDINVT-A06 — [anomalie] `son As String` jamais initialisé : aucun signal sonore · tests :
   aucun · sources : [ValidinvT.class:27](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L27)
-- [ ] VALIDINVT-A07 — [anomalie, règle métier à confirmer] Stock par dépôt (`Fiches_StkDepots`) non
+- [ ] VALIDINVT-A07 — [anomalie, règle métier à confirmer] (confirmée phase 2, vague 8 : figée par T12) Stock par dépôt (`Fiches_StkDepots`) non
   ajusté (comme VALIDINV-A07) · tests : T12 · sources : [ValidinvT.class:107](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/ValidinvT.class#L107)

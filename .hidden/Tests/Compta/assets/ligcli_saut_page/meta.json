@@ -1,0 +1,23 @@
+{
+ "id": "LIGCLI-T06",
+ "objet": "Saut de page",
+ "description": "Jeu ligcli_45_ecritures (FEditrel prêt + 45 factures échues de 411001, gen_ligcli_saut_page.py) : première ligne Ligcli (411001), Buttonedit (lettre par défaut) → PDF de deux pages converti par pdftotext via /Soc01/caisse/CmdVis dans ~/edition.txt (comparé) ; Fiches_Mvt.relance mis à jour (dump).",
+ "classe": "Ligcli",
+ "dataset": "ligcli_45_ecritures",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

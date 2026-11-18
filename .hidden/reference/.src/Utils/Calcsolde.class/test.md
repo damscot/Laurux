@@ -16,7 +16,7 @@ sont couverts par **replay** avec dump normalisé de `Fiches_Comptes` (`compte_c
 | CALCSOLDE-T04 | gbtest | Appel style `Pointage` | `Calcul(cpt, True)` sans `jan` | `soldep` non recalculé (A01 figée) | `tests/appel_pointage/` | implémenté |
 | CALCSOLDE-T05 | gbtest | Arrondi | montants à 3 décimales, négatifs | format `LPrix(...).D` | `tests/arrondi/` | implémenté |
 | CALCSOLDE-T06 | replay | Recalcul global | menu Compta → recalcul des soldes, « Lancer » | dump de `Fiches_Comptes` | `tests/replay_global/` | implémenté (`.hidden/Tests/Utils/assets/calcsolde_replay_global/`) |
-| CALCSOLDE-T07 | replay | Suppression d'un relevé | Pointage : supprimer un relevé | dump `Fiches_Mvt` (pointee, nrlv) + `Fiches_Comptes` | `tests/replay_pointage/` | à faire : scénario Pointage (suppression d'un relevé) non synthétisé dans ce lot |
+| CALCSOLDE-T07 | replay | Suppression d'un relevé | Pointage : supprimer un relevé | dump `Fiches_Mvt` (pointee, nrlv) + `Fiches_Comptes` | `.src/Tests/Utils/CalcsoldeTest.test` (`T07PointageSuppression`) | implémenté (gb.test au lieu du replay, jeu Compta/pointage_shared/pointage_rappro en lecture seule : Pointage instancié sans affichage, 512000 et relevé 2 posés, `SuppressionRlv_Click`, « Oui » par un Timer du module : relevé supprimé, `Fiches_Mvt` dépointé (pointee, nrlv), `Calcul(Cpt, True)` : solde 1345 recalculé, soldep 1100 inchangé (A01 figée)) |
 
 ## Détail des tests
 

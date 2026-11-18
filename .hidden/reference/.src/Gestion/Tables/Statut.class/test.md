@@ -11,7 +11,7 @@ produites dans le clone **Laurux non modifié**.
 | STATUT-T01 | replay | Création | menu Statut ; `P1`, `Prospect` ; Enregistrer | ligne insérée | `tests/creation/` | implémenté |
 | STATUT-T02 | replay | Modification | clic `P1` ; libellé modifié | UPDATE | `tests/modification/` | implémenté |
 | STATUT-T03 | replay | Suppression de la ligne sélectionnée | sélection `P1`, code saisi `P2` ; Supprimer | `P1` supprimée (A02 figée) | `tests/suppression_selection/` | implémenté |
-| STATUT-T04 | replay | Ouverture depuis l'emailing | sans objet en l'état : `EmailingCarte.form` n'a pas de bouton `bstatut` (`bstatut_Click` jamais levé, EMAILINGCARTE-A06) ; test à écrire seulement si l'anomalie est corrigée | fenêtre Statut affichée puis masquée | `tests/emailing_visible/` | bloqué |
+| STATUT-T04 | replay | Ouverture depuis l'emailing | sans objet en l'état : `EmailingCarte.form` n'a pas de bouton `bstatut` (`bstatut_Click` jamais levé, EMAILINGCARTE-A06) ; test à écrire seulement si l'anomalie est corrigée | fenêtre Statut affichée puis masquée | `tests/emailing_visible/` | implémenté (gb.test `StatutTest.T04DepuisEmailing`, vague 8 : `EmailingCarte.bstatut_Click` appelé directement deux fois, faute de bouton (A06) ; `Statut` y désigne l'instance automatique de la fenêtre Statut : affichée avec P1, P2 puis masquée, sans erreur) |
 
 ## Détail des tests
 

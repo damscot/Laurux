@@ -1,0 +1,40 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+CREATE TABLE if not exists Fiches_HisInvT (inv_num Int NOT NULL,inv_code Char(15) , inv_qtestock Decimal(12,2) , inv_qtecomptee Decimal(12,2) , inv_date date , PRIMARY KEY (inv_num, inv_code)) ENGINE = InnoDB
+SELECT * FROM Fiches_InvT
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_InvT
+SELECT * FROM Fiches_Art where art_code = '001' 
+UPdate  Fiches_Art  SET  art_qte = 12 where art_code = '001'
+UPdate  Fiches_InvT  SET  inv_valid = 1 where inv_code = '001'
+INSERT INTO Fiches_Mvtexp(code,daterecpt,qtep,qtem,Com) VALUES ('001', '20180601', 2, 0, 'Inentaire tournant du 01-06-2018')
+SELECT * FROM Fiches_Art where art_code = '002' 
+UPdate  Fiches_Art  SET  art_qte = 7 where art_code = '002'
+UPdate  Fiches_InvT  SET  inv_valid = 1 where inv_code = '002'
+INSERT INTO Fiches_Mvtexp(code,daterecpt,qtep,qtem,Com) VALUES ('002', '20180601', 0, 3, 'Inentaire tournant du 01-06-2018')
+SELECT * FROM Fiches_Art where art_code = '003' 
+UPdate  Fiches_Art  SET  art_qte = 0 where art_code = '003'
+UPdate  Fiches_InvT  SET  inv_valid = 1 where inv_code = '003'
+SELECT * FROM Fiches_InvT where inv_comptee = '1'
+SELECT inv_num, count(*) FROM Fiches_HisInvT group by inv_num order by inv_num desc
+INSERT INTO Fiches_HisInvT(inv_num, inv_code, inv_qtestock, inv_qtecomptee, inv_date) VALUES (2,'001','10.00','12.00','20180601')
+INSERT INTO Fiches_HisInvT(inv_num, inv_code, inv_qtestock, inv_qtecomptee, inv_date) VALUES (2,'002','10.00','7.00','20180601')
+INSERT INTO Fiches_HisInvT(inv_num, inv_code, inv_qtestock, inv_qtecomptee, inv_date) VALUES (2,'003','0.00','0.00','20180601')
+drop Table IF exists Fiches_InvT

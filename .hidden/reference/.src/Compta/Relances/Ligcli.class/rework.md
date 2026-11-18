@@ -61,7 +61,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LIGCLI-A01 — [anomalie] (confirmée phase 2, vague 7 : client sans fiche `Fiches_Comptes` → « Result is not available » à l'ouverture de Relances › Préparation (`_new` l. 61, `res!solde`), figée par T07) `_new` : `Fiches_Comptes` et `Fiches_Txt_Relances` lus sans test
   `Available` (erreur si le client n'a pas de compte ou si aucun texte n'est saisi) · tests : T07 ·
   sources : [Ligcli.class:58-64](../../../../../../.src/Compta/Relances/Ligcli.class#L58-L64)
-- [ ] LIGCLI-A02 — [anomalie] Solde du compte négatif imprimé sans changement de signe (colonne
+- [ ] LIGCLI-A02 — [anomalie] (confirmée phase 2, vague 8 : solde du compte créditeur imprimé « -30,00 » sous Débit (`Buttonedit_Click` l. 321-325), figée par T05) Solde du compte négatif imprimé sans changement de signe (colonne
   débit avec un « - »), contrairement à `FEditrel` · tests : T05 · sources : [Ligcli.class:322](../../../../../../.src/Compta/Relances/Ligcli.class#L322), [FEditrel.class:583](../../../../../../.src/Compta/Relances/FEditrel.class#L583)
 - [ ] LIGCLI-A03 — [anomalie] (confirmée phase 2, vague 4 : lettre de niveau 2 imprimée mais `Fiches_Mvt.relance` = 1 (valeur de `Fiches_relances.niveau`, l. 268 et 298), figée par T04) Le niveau écrit dans `Fiches_Mvt.relance` est celui de la première
   écriture (`Niv`), pas le numéro de lettre choisi dans `Combolettre` · tests : T04 · sources :
@@ -71,3 +71,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   T02 · sources : [Ligcli.class:37-49](../../../../../../.src/Compta/Relances/Ligcli.class#L37-L49)
 - [ ] LIGCLI-A05 — [anomalie] Décocher un client supprime sans confirmation toutes ses écritures de
   `Fiches_relances` ; les recocher ne les restaure pas · tests : T03 · sources : [Ligcli.class:Checkselec_Click](../../../../../../.src/Compta/Relances/Ligcli.class#L104-L114)
+- [ ] LIGCLI-A06 — [anomalie] `Buttonedit_Click` : colonnes du « Solde de la sélection » inversées (l. 312-316, `Creleve.Level7(dte, num, lib, mtd, mtc, …)`) : un solde débiteur (`totsel > 0`) est imprimé sous « Crédit », un solde créditeur est imprimé en positif sous « Débit » ; même inversion pour le « Solde du compte » débiteur (l. 321-322, sous « Crédit ») ; même construction que [FEDITREL-A08](../FEditrel.class/rework.md) (phase 2, vague 8, 2026-11-16) · tests : T05 · sources : [Ligcli.class:312-316](../../../../../../.src/Compta/Relances/Ligcli.class#L312-L316), [Ligcli.class:321-325](../../../../../../.src/Compta/Relances/Ligcli.class#L321-L325), [Creleve.class:Level7](../../../../../../.src/Reports/Creleve.class#L263)

@@ -13,7 +13,7 @@ produites dans le clone **Laurux non modifié**.
 | DB_DESKTOP-T01 | gbtest | Détection de session | `XDG_SESSION_TYPE` = `x11`, `wayland`, vide | valeur de `wayland` | `tests/detection_session/` | implémenté |
 | DB_DESKTOP-T02 | gbtest | Routage Wayland | `wayland` forcé ; faux `ydotool` ; `SendKey("[Return]")`, `"[Tab]"`, `"abc def"`, `"a;b"` | arguments reçus par le faux `ydotool` (figer l'absence de quotes) | `tests/routage_wayland/` | implémenté |
 | DB_DESKTOP-T03 | gbtest | Message d'installation | `wayland` + `PATH` sans `apt` / avec faux `apt` sans ydotool | `Message.Info` levé ou non (après DB_DESKTOP-003) | `tests/message_ydotool/` | à faire : Message.Info bloquant en gb.test (après DB_DESKTOP-003) |
-| DB_DESKTOP-T04 | replay | Validation par Entrée dans `TextReg` | écran utilisant un `TextReg` avec grille (ex. recherche client), sélection d'une ligne | la saisie est validée (X11) ; tables inchangées | `tests/textreg_entree/` | à faire : sélection d'une ligne de grille dans TextReg et effet de SendKeys non synthétisés ; rejeux suspendus |
+| DB_DESKTOP-T04 | replay | Validation par Entrée dans `TextReg` | écran utilisant un `TextReg` avec grille (ex. recherche client), sélection d'une ligne | la saisie est validée (X11) ; tables inchangées | `tests/textreg_entree/` | implémenté (gb.test DB_DesktopTest.T04EntreeX11 : session x11 sous Xvfb, fenêtre affichée ; `SendKey("[Return]")` et `SendKey("ab")` reçus (KeyPress relevés par Observer) par une TextBox puis un TextReg ayant le focus, ydotool non appelé ; la sélection d'une ligne de la grille de recherche de TextReg (`butb_click`) relève des tests de TextReg) |
 
 ## Détail des tests
 

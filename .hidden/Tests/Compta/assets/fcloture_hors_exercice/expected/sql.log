@@ -1,0 +1,38 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres 
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt WHERE  Mid(dte,6,2)  = '01' and left(dte, 4) = '2019' and provisoire = 1 
+SELECT * FROM Fiches_Mvt WHERE  Mid(dte,6,2)  = '01'  and left(dte, 4) = '2019' and provisoire = 0 order by numero
+SELECT numero,control,lind FROM Fiches_Mvt WHERE numero = '30' and lind = '1'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '30' and lind = '1'
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '30' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '30' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '30' order by lind desc limit 2
+UPdate  Fiches_Mvt  SET cloturee =  1,numerodef = 7, dteval ='20180615' where numero = '30' and compte = '411001' and lind = 1
+SELECT numero,control,lind FROM Fiches_Mvt WHERE numero = '30' and lind = '2'
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '30' and lind = '2'
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '30' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '30' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '30' order by lind desc limit 2
+UPdate  Fiches_Mvt  SET cloturee =  1,numerodef = 7, dteval ='20180615' where numero = '30' and compte = '707000' and lind = 2
+SELECT * FROM Fiches_Parametres
+UPdate  Fiches_Parametres  SET  dtepc  =  '20190131', numecriture2 = 7
+SELECT * FROM Fiches_Parametres 

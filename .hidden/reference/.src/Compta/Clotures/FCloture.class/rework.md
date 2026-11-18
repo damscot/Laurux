@@ -60,11 +60,11 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FCLOTURE-A01 — [anomalie] Interruption par la `ProgBar` (`Break`) ou clé SHA-1 invalide en
+- [ ] FCLOTURE-A01 — [anomalie] (confirmée phase 2, vague 8 : écritures des mois précédents déjà clôturées, figée par T03) Interruption par la `ProgBar` (`Break`) ou clé SHA-1 invalide en
   cours de boucle : les écritures déjà traitées restent clôturées, sans transaction ; après un
   `Break`, `dtepc` est **quand même avancé** (période déclarée clôturée alors que des écritures
   ne le sont pas) · tests : T03, T05 · sources : [FCloture.class:139](../../../../../../.src/Compta/Clotures/FCloture.class#L139), [FCloture.class:153](../../../../../../.src/Compta/Clotures/FCloture.class#L153)
-- [ ] FCLOTURE-A02 — [anomalie] Aucun contrôle de la fin d'exercice : `dteclec` est lu (`dtex`)
+- [ ] FCLOTURE-A02 — [anomalie] (confirmée phase 2, vague 8 : mois hors exercice accepté, figée par T07) Aucun contrôle de la fin d'exercice : `dteclec` est lu (`dtex`)
   mais jamais utilisé, des mois postérieurs à l'exercice peuvent être clôturés (intention à
   confirmer) · tests : T07 · sources : [FCloture.class:108](../../../../../../.src/Compta/Clotures/FCloture.class#L108)
 - [ ] FCLOTURE-A03 — [anomalie] `Fiches_Parametres` vide à l'ouverture : l'application entière
