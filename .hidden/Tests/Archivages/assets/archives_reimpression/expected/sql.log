@@ -1,0 +1,44 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT numfac FROM Fiches_HistoFac
+select pnmclifac, numfac, datefac, cdclifac, nmclifac, totfac, totfacttc, numserie from Fiches_HistoFac where numfac like  "%%" order by abs(lpad(numfac,10,' ')) desc limit 0, 21
+select * from Fiches_HistoFac where numfac = '000060'
+select cli_email, cli_pays, cli_id_tva from Fiches_Cli where cli_code = '411001'
+SELECT * FROM Fiches_HisentMat where numfac = '000060'
+select * from Fiches_HistoLigfac where num_ligfac = '000060'
+SELECT * FROM Fiches_HistoFac WHERE numfac='000060'
+SELECT * FROM Fiches_Tleg
+SELECT * from Fiches_LibelFac
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Cli WHERE cli_code='411001'
+SELECT * FROM Fiches_Echeances WHERE num='00'
+SELECT * FROM Fiches_AdrlivBL WHERE numbl = NULL
+SELECT * FROM Fiches_Reglements WHERE code=NULL
+SELECT * FROM Fiches_Cli WHERE cli_code='411001'
+SELECT * FROM Fiches_Echeances WHERE num='00'
+SELECT * FROM Fiches_AdrlivBL WHERE numbl = NULL
+SELECT  numfac AS numbl, 'F' AS type, cdclifac AS cdclibl, cvclifac AS cvclibl, nmclifac AS nmclibl, pnmclifac AS pnmclibl, adr1fac AS adr1bl, adr2fac AS adr2bl, cpfac AS cpbl, villefac AS villebl, datefac AS datebl, rmofac AS rmobl, rartfac AS rartbl, exofac AS exobl, remmofac AS remmobl, remartfac  AS remartbl, marge_art, marge_mo,  totfac AS totalht, 1 AS imp, acpt, mreg, reg, ech, numfac, datefac AS dtefac, numserie, codep, mtreg, totfacttc AS totalttc, cdep, False AS livraison, acquitte, gestfac AS gestbl, False  AS retro FROM Fiches_HistoFac WHERE numfac='000060'
+SELECT  num_ligfac AS num_ligbl, numlig_ligfac AS numlig_ligbl, code_ligfac AS code_ligbl, libel_ligfac AS libel_ligbl, fam_ligfac AS fam_ligbl, pu_ligfac AS pu_ligbl, qte_ligfac AS qte_ligbl, brut_ligfac AS brut_ligbl, rem_ligfac AS rem_ligbl, netht_ligfac AS netht_ligbl, typel_ligfac AS typel_ligbl, tm_ligfac AS tm_ligbl, com_ligfac AS com_ligbl, bloc, mtx_ligfac, mrgart_ligfac AS mrgart_ligbl, mrgmo_ligfac AS mrgmo_ligbl, tx_ligfac AS tx_ligbl, nettc_ligfac AS nettc_ligbl FROM Fiches_HistoLigfac WHERE num_ligfac='000060'
+SELECT * FROM Fiches_Art WHERE art_code='003'
+SELECT compt_fam,compt5_fam,intitule_cc FROM Fiches_Fam,Fiches_Comptes WHERE compt_fam=compte_cc AND code_fam=NULL
+SELECT art_prdcomp,art_impdetail FROM Fiches_Art WHERE art_code='003'
+SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva='1'
+SELECT * FROM Fiches_Societes WHERE cd_sc='01'

@@ -77,7 +77,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] OBJFACB-A01 — [anomalie] `transblfac`, sorties de dépôt : lit `Me.reslig!typel` et
+- [ ] OBJFACB-A01 — [anomalie] (confirmée phase 2, vague 9 : figée par T12) `transblfac`, sorties de dépôt : lit `Me.reslig!typel` et
   `Me.reslig!dtefac`, colonnes inexistantes de `Fiches_Ligbl` (`typel_ligbl`, date de
   `Fiches_Bl`) → erreur d'exécution dès que `cdep` est renseigné (multi-dépôt), transaction non
   validée, archivage interrompu · tests : T12 · sources : [ObjFacB.class:1077](../../../../../../.src/Gestion/option/ObjFacB.class#L1077), [ObjFacB.class:1081](../../../../../../.src/Gestion/option/ObjFacB.class#L1081)
@@ -85,22 +85,22 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `Commit` si `$borientation` est faux : toute facture non boisson éditée par `editef`/`editefm`,
   et toute facture magasin sans alcool (`Moulinage`) ; effet réel selon l'imbrication gb.db et les
   validations implicites MySQL · tests : T08, T09 · sources : [ObjFacB.class:422](../../../../../../.src/Gestion/option/ObjFacB.class#L422), [ObjFacB.class:464](../../../../../../.src/Gestion/option/ObjFacB.class#L464)
-- [ ] OBJFACB-A03 — [anomalie] TVA des droits et de la sécu (`cassise`, `cdroits`) : quand le
+- [ ] OBJFACB-A03 — [anomalie] (précisée phase 2, vague 9 : autre forme : `Me.lignetva` partagé, plusieurs clés de `tva` sur la même `Ltva` → écriture d'une facture boisson à régie suspendue déséquilibrée (solde 31,97), `editef` abandonne, figée par T13 (F00105)) TVA des droits et de la sécu (`cassise`, `cdroits`) : quand le
   code TVA de la régie est absent de `tva`, l'objet `Me.lignetva` existant est modifié sans
   `New Ltva` (corrompt une autre ligne de TVA), `num` reçoit un compte et `taux` un taux en
   fraction (ou un code TVA pour la sécu) ; droit et sécu non nuls → second `tva.Add` de la même
   clé (erreur) avec les montants du droit ; `calcul` réécrit ensuite `tva[lg.num]` sous une autre
   clé pendant le parcours · tests : T06 · sources : [ObjFacB.class:306-311](../../../../../../.src/Gestion/option/ObjFacB.class#L306-L311), [ObjFacB.class:359-364](../../../../../../.src/Gestion/option/ObjFacB.class#L359-L364), [ObjFacB.class:377-382](../../../../../../.src/Gestion/option/ObjFacB.class#L377-L382), [ObjFacB.class:258](../../../../../../.src/Gestion/option/ObjFacB.class#L258)
-- [ ] OBJFACB-A04 — [anomalie] `editef`/`editebl` : sorties `Return True` après
+- [ ] OBJFACB-A04 — [anomalie] (confirmée phase 2, vague 9 : figée par T14) `editef`/`editebl` : sorties `Return True` après
   `Application.Busy += 1` sans décrément (curseur occupé) · tests : T14 · sources : [ObjFacB.class:704](../../../../../../.src/Gestion/option/ObjFacB.class#L704), [ObjFacB.class:765](../../../../../../.src/Gestion/option/ObjFacB.class#L765), [ObjFacB.class:767](../../../../../../.src/Gestion/option/ObjFacB.class#L767)
-- [ ] OBJFACB-A05 — [anomalie] `editefm` : verrous `DocActif` des clients précédents jamais
+- [ ] OBJFACB-A05 — [anomalie] (confirmée phase 2, vague 9 : figée par T15) `editefm` : verrous `DocActif` des clients précédents jamais
   libérés (seuls ceux du dernier client le sont), ni en cas d'erreur (`ProgBar` non fermée l. 641) ;
   `Repeat … Until get_lock` boucle en réaffichant l'avertissement si un autre poste détient le
   verrou · tests : T15 · sources : [ObjFacB.class:641](../../../../../../.src/Gestion/option/ObjFacB.class#L641), [ObjFacB.class:645-648](../../../../../../.src/Gestion/option/ObjFacB.class#L645-L648), [ObjFacB.class:691-694](../../../../../../.src/Gestion/option/ObjFacB.class#L691-L694)
 - [ ] OBJFACB-A06 — [anomalie] `editefm` appelle `verifdat` avant tout `calcul` : `$borientation`
   est faux, la clôture des droits (`datebl`) n'est jamais contrôlée en fin de mois ; la branche
   prévue lit d'ailleurs tous les BL de la table `Bl` sans filtre client · tests : T17 · sources : [ObjFacB.class:624](../../../../../../.src/Gestion/option/ObjFacB.class#L624), [ObjFacB.class:909-917](../../../../../../.src/Gestion/option/ObjFacB.class#L909-L917)
-- [ ] OBJFACB-A07 — [anomalie] `mail` : en fin de mois `choix` est remis à `0` (`ch` jamais
+- [ ] OBJFACB-A07 — [anomalie] (confirmée phase 2, vague 9 : figée par T16) `mail` : en fin de mois `choix` est remis à `0` (`ch` jamais
   affecté) ; courriel vide → `Message.Error` sans `Return`, l'envoi se poursuit sans adresse ·
   tests : T16 · sources : [ObjFacB.class:850-852](../../../../../../.src/Gestion/option/ObjFacB.class#L850-L852), [ObjFacB.class:890](../../../../../../.src/Gestion/option/ObjFacB.class#L890)
 - [ ] OBJFACB-A08 — [anomalie, à confirmer] `transblfac` : la ligne `TD` (total en lettres,
@@ -116,7 +116,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   ligne qui a un code (composants `O`, MO), alors que les consignes ne le sont que sur les lignes
   `A` ; `comptmat` enregistre de même des lignes de régie pour les composants · tests : T03 ·
   sources : [ObjFacB.class:171](../../../../../../.src/Gestion/option/ObjFacB.class#L171), [ObjFacB.class:95](../../../../../../.src/Gestion/option/ObjFacB.class#L95), [ObjFacB.class:478-481](../../../../../../.src/Gestion/option/ObjFacB.class#L478-L481)
-- [ ] OBJFACB-A11 — [anomalie, à confirmer] Cumuls `$stotcons`/`$stotdecons` formatés
+- [ ] OBJFACB-A11 — [anomalie, à confirmer] (confirmée phase 2, vague 9 : figée par T07) Cumuls `$stotcons`/`$stotdecons` formatés
   `",0.00"` (séparateur de milliers) puis relus par `Val` : résultat à caractériser au-delà de
   1 000 € ; mélange `Str`/`Val` pour `$stotdr`, `$stotss`, `$stotasc` · tests : T07 · sources : [ObjFacB.class:112](../../../../../../.src/Gestion/option/ObjFacB.class#L112), [ObjFacB.class:236](../../../../../../.src/Gestion/option/ObjFacB.class#L236), [ObjFacB.class:154](../../../../../../.src/Gestion/option/ObjFacB.class#L154)
 - [ ] OBJFACB-A12 — [anomalie, à confirmer] Vignette : hors magasin, écrite si `$stotdr <> 0`

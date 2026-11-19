@@ -1,0 +1,289 @@
+' Gambas test file
+
+''Tests gb.test de Fondcaisse (.hidden/reference/.src/Caisse/Fondcaisse.class/test.md).
+''Valeurs attendues : assets/FondcaisseTest/expected.txt, produites dans le clone de référence.
+''Jeu Caisse/fondcaisse_shared/fondcaisse_tickets (caisse 1 connectée, fond 150,00, tickets non validés N 80.00 et
+''Q « 12,50 », tickets supprimé, validé et d'une autre caisse à exclure). Ncai posé dans Start.LocalSettings comme
+''après une connexion (Ouverture). La fenêtre est instanciée sans être affichée (Form_Open, qui charge les images
+''des coupures, n'est pas appelé) ; les zones sont lues par Controls[...]. Les boîtes Message.* sont relevées et
+''reçoivent le bouton voulu d'un Timer du module (technique TresorTest._Multi_Timer).
+
+Private $hTimer As Timer
+Private $sVu As String
+Private $hVue As Window
+Private $aBoutons As String[]
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ControleJuste", "Contrôle, tkz = 0 : FDC_The = 217,50 (150 + N 80 - Q 12,50) ; OK ferme sans écriture")
+  TestKit.Desc("T02ControleEcart", "Réel 200,00 : avertissement d'écart, « Annuler » puis « Sortir » ; base inchangée")
+  TestKit.Desc("T03DetailCoupures", "Détail caisse : quantités sur 5 coupures, pavé numérique, Correction : Mon* et Box1")
+  TestKit.Desc("T04CorrectionInitial", "Double-clic FDC_Ini, « Oui », 160,00 puis 160.00 : fndc, FDC_The (A04)")
+  TestKit.Desc("T05ModificationTkz", "tkz = 1 : saisie 200,00 et OK : fndc = 200.00 ; variante annuler : base inchangée")
+  TestKit.Desc("T06CaisseAbsente", "Ncai = \"9;1 \" (caisse inexistante) : erreur non interceptée du constructeur (A01)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "FondcaisseTest")
+  TestKit.OuvreBase("fondcaisse_shared/fondcaisse_tickets")
+  Start.LocalSettings["/Soc01/caisse/Ncai"] = "1;1 "
+
+End
+
+Public Sub _Multi_Timer()
+  ''Chaque nouvelle boîte FMessage : texte relevé, bouton suivant de $aBoutons cliqué (sinon le premier).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If $aBoutons.Count = 0 Then
+            $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+            hC.Value = True
+            Return
+          Endif
+          If Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) = $aBoutons[0] Then
+            $sVu &= "[" & $aBoutons[0] & "] / "
+            $aBoutons.Remove(0)
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub Reponses(aBoutons As String[])
+
+  If aBoutons Then
+    $aBoutons = aBoutons
+  Else
+    $aBoutons = New String[]
+  Endif
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Multi"
+  $hTimer.Delay = 200
+  $hTimer.Enabled = True
+
+End
+
+Private Sub Vu() As String
+
+  Dim s As String
+
+  Wait 0.5
+  $hTimer.Enabled = False
+  s = $sVu
+  $sVu = ""
+  If s = "" Then s = "<aucune boîte>"
+  Return s
+
+End
+
+Private Sub Ct(hF As Fondcaisse, sNom As String) As Object
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  Return hC
+
+End
+
+Private Sub Txt(hF As Fondcaisse, sNom As String) As String
+
+  Return Ct(hF, sNom).Text
+
+End
+
+Private Sub Caisse1() As String
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT fndc, tkz, connecte FROM " & Cbase.Table("TabCaisses") & " WHERE code = &1", "1")
+  If Not r.Available Then Return "<absente>"
+  Return "fndc=" & r!fndc & " tkz=" & r!tkz & " connecte=" & r!connecte
+
+End
+
+Private Sub Ouvre() As Fondcaisse
+
+  Dim hF As Fondcaisse
+
+  Try hF = New Fondcaisse
+  If Error Then
+    TestKit.Check("ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Zones(sCle As String, hF As Fondcaisse)
+
+  TestKit.Check(sCle & "/titre", Txt(hF, "TextLabel1"))
+  TestKit.Check(sCle & "/label2", Txt(hF, "Label2"))
+  TestKit.Check(sCle & "/fdc_ini", Txt(hF, "FDC_Ini"))
+  TestKit.Check(sCle & "/date_ini", Txt(hF, "Date_Ini"))
+  TestKit.Check(sCle & "/fdc_the", Txt(hF, "FDC_The"))
+  TestKit.Check(sCle & "/box1", Txt(hF, "Box1"))
+  TestKit.Check(sCle & "/devise", Txt(hF, "Label1"))
+
+End
+
+Public Sub T01ControleJuste()
+  ''FONDCAISSE-T01 : fond théorique 217,50 ; « OK » (Button2) avec réel = théorique ferme sans boîte ni écriture.
+
+  Dim hF As Fondcaisse
+
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  Zones("T01", hF)
+  Reponses(Null)
+  hF.Button2_Click()
+  TestKit.Check("T01/boites", Vu())
+  TestKit.Check("T01/fenetre_detruite", Not Object.IsValid(hF))
+  TestKit.Check("T01/caisse1", Caisse1())
+
+End
+
+Public Sub T02ControleEcart()
+  ''FONDCAISSE-T02 : réel 200,00 ; avertissement d'écart, « Annuler » (fenêtre maintenue) puis « Sortir ».
+
+  Dim hF As Fondcaisse
+
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  Ct(hF, "Box1").Text = "200,00"
+  Reponses(["Annuler"])
+  hF.Button2_Click()
+  TestKit.Check("T02/annuler_boites", Vu())
+  TestKit.Check("T02/annuler_fenetre_valide", Object.IsValid(hF))
+  Reponses(["Sortir"])
+  hF.Button2_Click()
+  TestKit.Check("T02/sortir_boites", Vu())
+  TestKit.Check("T02/sortir_fenetre_detruite", Not Object.IsValid(hF))
+  TestKit.Check("T02/caisse1", Caisse1())
+
+End
+
+Private Sub Coupures(hF As Fondcaisse) As String
+
+  Dim s As String
+  Dim aNoms As String[] = ["50000", "20000", "10000", "5000", "2000", "1000", "500", "200", "100", "50", "20", "10", "5", "2", "1"]
+  Dim sN As String
+
+  For Each sN In aNoms
+    If Txt(hF, "Qte" & sN) <> "" Or Txt(hF, "Mon" & sN) <> "" Then s &= sN & ":" & Txt(hF, "Qte" & sN) & "=" & Txt(hF, "Mon" & sN) & " "
+  Next
+  Return Trim(s) & " | Box1=" & Txt(hF, "Box1")
+
+End
+
+Public Sub T03DetailCoupures()
+  ''FONDCAISSE-T03 : « Détail caisse » (Button3), quantités sur 5 coupures (TotalFDC), pavé numérique (Object.Raise
+  ''Click sur « un » puis « cinq » : insérés dans la zone courante Qte50000), « Correction » (Raz), retour au fond.
+
+  Dim hF As Fondcaisse
+
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  Reponses(Null)
+  hF.Button3_Click()
+  TestKit.Check("T03/bouton", Txt(hF, "Button3"))
+  TestKit.Check("T03/box1_detail", Txt(hF, "Box1"))
+  Ct(hF, "Qte2000").Text = "3"
+  Ct(hF, "Qte1000").Text = "2"
+  Ct(hF, "Qte200").Text = "5"
+  Ct(hF, "Qte50").Text = "4"
+  Ct(hF, "Qte1").Text = "7"
+  hF.TotalFDC()
+  TestKit.Check("T03/cinq_coupures", Coupures(hF))
+  Object.Raise(Ct(hF, "un"), "Click")
+  Object.Raise(Ct(hF, "cinq"), "Click")
+  TestKit.Check("T03/pave", Coupures(hF))
+  hF.Raz_Click()
+  TestKit.Check("T03/correction", Coupures(hF))
+  hF.Button3_Click()
+  TestKit.Check("T03/retour_bouton", Txt(hF, "Button3"))
+  TestKit.Check("T03/retour_box1", Txt(hF, "Box1"))
+  TestKit.Check("T03/boites", Vu())
+  Try hF.Close()
+
+End
+
+Public Sub T04CorrectionInitial()
+  ''FONDCAISSE-T04 : double-clic sur FDC_Ini, « Oui », 160,00 (FDC_Ini_Update) puis variante 160.00 (A04).
+
+  Dim hF As Fondcaisse
+
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  Reponses(["Oui"])
+  hF.FDC_Ini_DblClick()
+  TestKit.Check("T04/oui_boites", Vu())
+  TestKit.Check("T04/fdc_ini_readonly", Ct(hF, "FDC_Ini").ReadOnly)
+  Ct(hF, "FDC_Ini").Text = "160,00"
+  Reponses(Null)
+  TestKit.Check("T04/virgule_retour", hF.FDC_Ini_Update())
+  TestKit.Check("T04/virgule_boites", Vu())
+  TestKit.Check("T04/virgule_caisse1", Caisse1())
+  TestKit.Check("T04/virgule_fdc_the", Txt(hF, "FDC_The"))
+  Ct(hF, "FDC_Ini").Text = "160.00"
+  Reponses(Null)
+  TestKit.Check("T04/point_retour", hF.FDC_Ini_Update())
+  TestKit.Check("T04/point_boites", Vu())
+  TestKit.Check("T04/point_caisse1", Caisse1())
+  TestKit.Check("T04/point_fdc_the", Txt(hF, "FDC_The"))
+  TestKit.Check("T04/point_box1", Txt(hF, "Box1"))
+  Try hF.Close()
+
+End
+
+Public Sub T05ModificationTkz()
+  ''FONDCAISSE-T05 : ticket Z tiré (tkz = 1) : mode modification ; variante « annuler » (Button1) puis 200,00 + OK.
+
+  Dim hF As Fondcaisse
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabCaisses") & " SET tkz = &1 WHERE code = &2", 1, "1")
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  Zones("T05", hF)
+  TestKit.Check("T05/bouton1_visible", Ct(hF, "Button1").Visible)
+  Ct(hF, "Box1").Text = "200,00"
+  hF.Button1_Click()
+  TestKit.Check("T05/annuler_caisse1", Caisse1())
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  Ct(hF, "Box1").Text = "200,00"
+  Reponses(Null)
+  hF.Button2_Click()
+  TestKit.Check("T05/ok_boites", Vu())
+  TestKit.Check("T05/ok_caisse1", Caisse1())
+
+End
+
+Public Sub T06CaisseAbsente()
+  ''FONDCAISSE-T06 : Ncai désigne une caisse absente : le constructeur lève une erreur (rResult!tkz, A01).
+
+  Dim hF As Fondcaisse
+
+  Start.LocalSettings["/Soc01/caisse/Ncai"] = "9;1 "
+  Reponses(Null)
+  Try hF = New Fondcaisse
+  TestKit.Check("T06/erreur", If(Error, Error.Text & " " & Error.Where, "<aucune erreur>"))
+  TestKit.Check("T06/boites", Vu())
+
+End

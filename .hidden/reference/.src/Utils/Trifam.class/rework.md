@@ -54,7 +54,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 
 - [ ] TRIFAM-A01 — [anomalie] Bornes `> fam & " "…` et `< fam & "z"…` : codes de famille contenant
   des caractères triés après `z` exclus de l'arbre (à confirmer selon la collation) · tests : T05 · sources : [Trifam.class:74-78](../../../../../.src/Utils/Trifam.class#L74-L78)
-- [ ] TRIFAM-A02 — [anomalie] Paramétrage `ipr` absent → `Quit` (arrêt brutal de l'application
+- [ ] TRIFAM-A02 — [anomalie] (précisée phase 2, vague 9 : `/Soc01/ipr` non tableau (valeur simple) : `Try i = $ipr.Count` en erreur (l. 35-36) → `Message.Error` puis `Quit` (l. 37-38) depuis `Edinv` : arrêt en code 0, sans PDF (EDINV, agent 3)) Paramétrage `ipr` absent → `Quit` (arrêt brutal de l'application
   depuis une édition) · tests : T06 · sources : [Trifam.class:36-38](../../../../../.src/Utils/Trifam.class#L36-L38)
 - [ ] TRIFAM-A03 — [anomalie] (performance, log SQL modifié) Construction en N+1 requêtes ; un
   chargement unique change le log `Exec_SQL` comparé par les replays · tests : T08 · sources : [Trifam.class:78](../../../../../.src/Utils/Trifam.class#L78), [Trifam.class:104](../../../../../.src/Utils/Trifam.class#L104)

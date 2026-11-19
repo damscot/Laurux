@@ -54,7 +54,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CALCULDROIT-A01 — [anomalie, à confirmer] `tauxtvadr_Read`/`tauxtvass_Read` formatent une
+- [ ] CALCULDROIT-A01 — [anomalie, à confirmer] (précisée phase 2, vague 9 : le taux est écrit « 0,20 » (virgule) dans `Fiches_ligregie.txtvadr` (`ObjFacB.comptmat` l. 449, 497, via `tauxtvadr_Read` l. 202), figée par T08) `tauxtvadr_Read`/`tauxtvass_Read` formatent une
   fraction sur 2 décimales (`0.055` → `"0,06"`) : un lecteur qui réécrit cette valeur
   (`tauxtvadr_Write`) arrondit le taux (`Mvtex:530` écrit la valeur formatée dans `Fiches_ligregie.txtvadr`, `ObjFacB:143` la relit dans `tauxtvadr`) · tests : T06 · sources : [calculdroit.class:tauxtvadr_Read](../../../../../../.src/Gestion/option/calculdroit.class#L200-L204), [calculdroit.class:tauxtvass_Read](../../../../../../.src/Gestion/option/calculdroit.class#L214-L218)
 - [ ] CALCULDROIT-A02 — [anomalie] TVA sécu absente des paramètres : `Message.Error` mais la sécu

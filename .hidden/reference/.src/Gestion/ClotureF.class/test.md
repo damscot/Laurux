@@ -3,16 +3,15 @@
 > Source : `.src/Gestion/ClotureF.class` · Types : `gbtest` (module gb.test, `gbx3 -T`) ou `replay` (log/replay + diff BDD).
 > Données de référence : `tests/<nom_du_test>/`.
 
-Module à risque (clôture) : la liste de scénarios ci-dessous est à **valider par l'utilisateur**
-avant la phase 2 (règle « modules complexes » de PLAN.md).
+Module à risque (clôture) : Décision utilisateur du 2026-11-18 : hors des 10 classes à revue manuelle, tests implémentés sans validation individuelle.
 
-Scénarios validés par l'utilisateur le 2026-11-16 : T04-T07 ; T01-T03 en attente de la validation d'ObjFacB ; T08 après extraction.
+Scénarios validés par l'utilisateur le 2026-11-16 : T04-T07 ; T01-T03 implémentés en vague 9 (décision du 2026-11-18) ; T08 après extraction.
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| CLOTUREF-T01 | replay | Clôture nominale | jeu dérivé : `dtepec = 03.2026`, 3 factures imprimées (`imp=1`, `type='F'`) dans `Fiches_Bl` datées de mars, 1 non imprimée, 1 d'avril ; Fmenu → Clôture mensuelle facturation → Lancer → Oui | dump de `Fiches_Bl`, `Fiches_Ligbl`, `Fiches_HistoFac`, `Fiches_HistoLigfac`, `Fiches_Parametres` (`dtepp`, `dtepec`), `Fiches_Comptes.solde` identique à la référence | `tests/cloture_nominale/` | à faire : passe par ObjFacB (module complexe, non validé par l'utilisateur le 2026-11-16) |
-| CLOTUREF-T02 | replay | Factures « entretien » et borne de fin de mois | facture `Fiches_BlM` datée du dernier jour du mois et une du jour précédent ; idem dans `Fiches_Bl` | dump identique (fige l'anomalie A01 : la `BlM` du dernier jour reste non archivée) | `tests/borne_fin_mois/` | à faire : passe par ObjFacB (module complexe, non validé par l'utilisateur le 2026-11-16) |
-| CLOTUREF-T03 | replay | Facture déjà archivée | même `numfac` présent dans `Fiches_HistoFac` et dans `Fiches_Bl` | avertissement de `transblfac` acquitté ; facture non transférée ; période avancée malgré tout | `tests/deja_archivee/` | à faire : passe par ObjFacB (module complexe, non validé par l'utilisateur le 2026-11-16) |
+| CLOTUREF-T01 | replay | Clôture nominale | jeu dérivé : `dtepec = 03.2026`, 3 factures imprimées (`imp=1`, `type='F'`) dans `Fiches_Bl` datées de mars, 1 non imprimée, 1 d'avril ; Fmenu → Clôture mensuelle facturation → Lancer → Oui | dump de `Fiches_Bl`, `Fiches_Ligbl`, `Fiches_HistoFac`, `Fiches_HistoLigfac`, `Fiches_Parametres` (`dtepp`, `dtepec`), `Fiches_Comptes.solde` identique à la référence | `tests/cloture_nominale/` | implémenté (scénario Gestion/cloturef_nominale, jeu propre : mai 2018, 3 factures archivées, non imprimée et facture de juin conservées ; dtepp 05.2018 / dtepec 06.2018 ; datefac de l'archive = date de clôture, voir candidat) |
+| CLOTUREF-T02 | replay | Factures « entretien » et borne de fin de mois | facture `Fiches_BlM` datée du dernier jour du mois et une du jour précédent ; idem dans `Fiches_Bl` | dump identique (fige l'anomalie A01 : la `BlM` du dernier jour reste non archivée) | `tests/borne_fin_mois/` | implémenté (scénario Gestion/cloturef_borne_fin_mois : A01 figée, la BlM du 31/05 reste non archivée) |
+| CLOTUREF-T03 | replay | Facture déjà archivée | même `numfac` présent dans `Fiches_HistoFac` et dans `Fiches_Bl` | avertissement de `transblfac` acquitté ; facture non transférée ; période avancée malgré tout | `tests/deja_archivee/` | implémenté (scénario Gestion/cloturef_deja_archivee : avertissement de transblfac acquitté, F00221 conservée, F00222 archivée, période avancée) |
 | CLOTUREF-T04 | replay | Refus de la confirmation | Lancer → Non | aucune modification de la base (dump identique au dump initial) ; fenêtre fermée | `tests/annulation/` | implémenté |
 | CLOTUREF-T05 | replay | Recalcul des soldes | écritures validées et non validées sur 3 comptes, solde initial faux | `Fiches_Comptes.solde` = Σ(débit − crédit) des écritures validées de `Fiches_Mvt` | `tests/recalcul_soldes/` | implémenté |
 | CLOTUREF-T06 | replay | Décembre → janvier | `dtepec = 12.2025` | `dtepp = 12.2025`, `dtepec = 01.2026` | `tests/changement_annee/` | implémenté |

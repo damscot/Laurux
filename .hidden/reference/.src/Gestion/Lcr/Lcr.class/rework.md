@@ -98,3 +98,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] LCR-A08 — [anomalie] Écran non instrumenté (`Utils.Observers(Me)` absent) : pas de journal ni
   de rejeu ; l'ajout modifie le log produit (nécessaire aux replays T01-T11) · tests : T01-T11 ·
   sources : [Lcr.class:_New](../../../../../../.src/Gestion/Lcr/Lcr.class#L57-L85)
+- [ ] LCR-A09 — [anomalie] `Button2_Click` : après suppression, `Refresh` puis `ColLcr.MoveTo(skey, 0)` (l. 444-447) replace le curseur sur la même rangée, occupée par une autre LCR : un 2e « Supprimer » sans nouvelle sélection supprime cette autre LCR (lind 2) (phase 2, vague 9, 2026-11-18) · tests : agent 8 · sources : [Lcr.class:Button2_Click](../../../../../../.src/Gestion/Lcr/Lcr.class#L433-L449)

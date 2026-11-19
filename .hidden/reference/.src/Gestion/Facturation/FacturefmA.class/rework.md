@@ -72,10 +72,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `12 + n` pour les périodicités bimensuelle, trimestrielle et semestrielle (janvier bimensuel →
   13 au lieu de 11) : clients non facturés ou facturés à tort en début d'année · tests : T02 ·
   sources : [FacturefmA.class:227](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L227), [FacturefmA.class:235](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L235), [FacturefmA.class:243](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L243)
-- [ ] FACTUREFMA-A04 — [anomalie] La table de travail `Bl` est créée sans colonne `nom` :
+- [ ] FACTUREFMA-A04 — [anomalie] (confirmée phase 2, vague 9 : « Unknown column 'nom' », figée par T07) La table de travail `Bl` est créée sans colonne `nom` :
   `ObjFac.calcul` (fin de mois) filtre sur `nom` pour un client divers → erreur SQL à l'édition ·
   tests : T07 · sources : [FacturefmA.class:192-198](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L192-L198), [ObjFac.class:481](../../../../../../.src/Gestion/Facturation/ObjFac.class#L481)
-- [ ] FACTUREFMA-A05 — [anomalie, à confirmer] `Button14_Click` édite avec la date `datej`
+- [ ] FACTUREFMA-A05 — [anomalie, à confirmer] (confirmée phase 2, vague 9 : factures datées de `datej`, figée par T06) `Button14_Click` édite avec la date `datej`
   (date de sélection) et non la date `Dtef` saisie dans le panneau d'édition, et en mode
   `ObjFac.finmois` plutôt que `ObjFac.abonnement` ; la sélection utilise `Now` et non `datej`
   (`dtefac <= aujourd'hui`) · tests : T06, T01 · sources : [FacturefmA.class:640](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L640), [FacturefmA.class:199](../../../../../../.src/Gestion/Facturation/FacturefmA.class#L199)

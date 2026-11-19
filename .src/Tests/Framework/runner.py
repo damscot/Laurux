@@ -1193,6 +1193,12 @@ def doc_index():
     return idx
 
 
+# Les 10 classes les plus complexes (CC totale) dont les scénarios sont validés un par un par l'utilisateur avant
+# implémentation (décision du 2026-11-18) ; les autres modules dits complexes sont testés comme les autres classes.
+REVUE_MANUELLE = {"Facture", "Caisse", "Articles", "FClient", "Saisecrit", "Moulinage", "Impart", "FFournisseur",
+                  "MajTarifM", "Achat"}
+
+
 def doc_tests(docdir):
     """Tests prévus dans test.md : {ID: {"type", "objet"}}, et drapeau « module complexe »."""
     txt = (docdir / "test.md").read_text(encoding="utf-8")
@@ -1203,7 +1209,8 @@ def doc_tests(docdir):
         statut = l.rstrip().rstrip("|").rsplit("|", 1)[-1].strip()
         if m and not re.match(r"\s*hors périmètre", statut, re.I):
             tests[m[1]] = {"type": m[2].strip(), "objet": m[3].strip(), "statut": statut}
-    complexe = bool(re.search(r"(à faire valider|valider par l'utilisateur|modules? complexes?)", txt[:3000], re.I))
+    # module complexe : l'une des 10 classes les plus complexes, à revue manuelle (décision utilisateur du 2026-11-18)
+    complexe = docdir.name.rsplit(".", 1)[0] in REVUE_MANUELLE
     return tests, complexe
 
 
@@ -1212,10 +1219,9 @@ def doc_tests(docdir):
 # écrit (temps, jeu de données à créer…), compté dans « Restant ».
 BLOCAGES = [
     ("non retenu par l'utilisateur", r"non retenu"),
-    ("module complexe", r"(passe par|réévalué|via|depuis|scénario|écran|parcours|relève de|édition par|incrusté dans)\b.{0,40}\b("
-     r"complexe|Facture|ObjFac\w*|Caisse|Achat|Articles|FClient|Saisecrit|SaiReg|commande1|Moulinage|ValidBR\w*|"
-     r"Impart\b|MajTarifM|FFournisseur|inventaire|clôture)|écran complexe|module complexe|classe complexe|"
-     r"exclus? \(complexe\)|auto-instance|lit Caisse"),
+    ("module complexe (revue manuelle)", r"(passe par|réévalué|via|depuis|scénario|écran|parcours|relève de|édition par|incrusté dans)\b.{0,40}\b("
+     r"Facture\b|Caisse\b|Achat\b|Articles\b|FClient\b|Saisecrit|Moulinage|Impart\b|MajTarifM|FFournisseur)|"
+     r"auto-instance|lit Caisse"),
     ("SQLite", r"SQLite"),
     ("réalisable", r"faute de temps|manque de temps|non commencé|non traité|non écrit|non scénarisé|non synthétisé|"
      r"non abordé|premier passage|fin de vague|temps écoulé|à écrire|à (créer|préparer)\b|durée de la vague|dans ce lot|"

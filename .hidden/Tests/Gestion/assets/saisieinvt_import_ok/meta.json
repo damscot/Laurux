@@ -1,0 +1,24 @@
+{
+ "id": "SAISIEINVT-T11",
+ "objet": "Import portable nominal",
+ "classe": "SaisieInvT",
+ "description": "~/Portable/inventaire.txt « 002;6 » et « 003;2,5 » (entrees) : Importer (Button3). Attendu : lignes 3 (6) et 1 (2.5) comptées ; « 2 produits ont été importés » (Entrée) ; aucun rejet (~/tmp/Inv.txt sans ligne de rejet, éditeur non ouvert).",
+ "dataset": "saisieinvt_shared/invt",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "entrees": {
+  "inventaire.txt": "~/Portable/inventaire.txt"
+ },
+ "fichiers": [
+  "tmp/Inv.txt",
+  "@ouvrir.trace"
+ ]
+}

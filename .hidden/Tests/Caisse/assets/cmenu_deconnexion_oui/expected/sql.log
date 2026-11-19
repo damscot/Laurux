@@ -1,0 +1,6 @@
+ALTER DATABASE Laurux01 DEFAULT COLLATE utf8mb4_unicode_ci
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET NAMES 'utf8mb4'
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Caisses where code = '1'
+UPdate  Fiches_Caisses  SET dtefm = '2018-06-15 10:00:04', connecte = 0, vdr_code = NULL WHERE code = '1'

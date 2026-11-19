@@ -1,0 +1,475 @@
+' Gambas test file
+
+''Tests de SaisieInv (.hidden/reference/.src/Gestion/Stock/Inventaires/Fin-annee/SaisieInv.class/test.md, SAISIEINV-T01
+''à T08, T10 à T15). Prévus en replay, écrits en gb.test : l'écran est instancié sans être affiché, les champs Nseq /
+''Cart / qtecomptee sont posés puis les gestionnaires Nseq_LostFocus, Cart_LostFocus, qtecomptee_LostFocus,
+''Colinv_Activate et Import_Portable appelés directement ; Enregistrer et Quitter par Value = True (Btn_Click lit
+''Last.Tag). Les boîtes Message.* sont relevées et répondues par un Timer du module (technique TresorTest).
+''Jeu : assets/saisieinv_shared/inv_saisie (inventaire de 6 lignes, ligne 1 comptée 5, ligne 3 comptée 0) ; fichiers
+''d'import inventaire_ok.txt / inventaire_rejets.txt copiés dans ~/Portable. Valeurs attendues :
+''assets/SaisieInvTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $aBoutons As New String[]
+Private $sVu As String
+Private $hVue As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Affichage", "Ouverture (références saisies) puis bascule non saisies : grille relevée, écart +stock pour 0 (A03)")
+  TestKit.Desc("T02SaisieNumero", "Saisie par n° de ligne 2, qté 4, Enregistrer, enchaînement ligne 3, qté 6")
+  TestKit.Desc("T03SaisieCode", "Saisie par code article, code équivalent, référence centrale et *code-barres")
+  TestKit.Desc("T04CodesInvalides", "N° de ligne inexistant, code inconnu, article non stocké : messages, base inchangée")
+  TestKit.Desc("T05DoublonCumul", "Ligne 1 déjà comptée 5, ressaisie 3, réponse « 1 » : quantité 8")
+  TestKit.Desc("T06DoublonRemplace", "Ligne 1 déjà comptée 5, ressaisie 3, réponse « 2 » : quantité 3")
+  TestKit.Desc("T07RappelCorrection", "Colinv_Activate sur la ligne 1, qté 9, Enregistrer : quantité 9 en base")
+  TestKit.Desc("T08RappelAbandon", "Colinv_Activate sur la ligne 1 puis Quitter : comptage remis à 0 (A01)")
+  TestKit.Desc("T10Quantites", "qtecomptee_LostFocus : abc rejeté, 2,5 / 2.5 normalisés selon art_dec 0 / 2 / 3")
+  TestKit.Desc("T11ImportNominal", "Import de ~/Portable/inventaire.txt (code-barres, code, décimales) : lignes comptées")
+  TestKit.Desc("T12ImportRejets", "Import avec rejets : ~/tmp/Inv.txt relevé, « Déjà saisit » (A06)")
+  TestKit.Desc("T13ImportAbsent", "Import sans ~/Portable/inventaire.txt : message d'erreur, base inchangée")
+  TestKit.Desc("T14SansInventaire", "Fiches_Inv absente : message à l'ouverture et fermeture")
+  TestKit.Desc("T15ArticleSupprime", "Ligne comptée dont l'article n'existe plus : erreur à l'ouverture (A04)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "SaisieInvTest")
+
+End
+
+Public Sub _Multi_Timer()
+  ''Chaque nouvelle boîte FMessage : texte relevé, bouton suivant de $aBoutons cliqué (premier bouton si la liste est
+  ''épuisée) ; la dernière boîte traitée est mémorisée (clic différé : elle reste visible au tick suivant).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Replace(Object.GetProperty(hC, "Text"), User.Home, "~") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If $aBoutons.Count = 0 Then
+            $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+            hC.Value = True
+            Return
+          Endif
+          If Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) = $aBoutons[0] Then
+            $sVu &= "[" & $aBoutons[0] & "] / "
+            $aBoutons.Remove(0)
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+      ' Bouton attendu absent (boîte imprévue) : premier bouton, texte relevé
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub Reponses(aBoutons As String[])
+
+  $aBoutons = aBoutons
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Multi"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Private Sub FinReponses(sCle As String)
+
+  Wait 0.5
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/messages", $sVu)
+
+End
+
+Private Sub Inventaire(sCle As String)
+  ''Lignes de Fiches_Inv dans l'ordre des numéros de ligne.
+
+  Dim r As Result
+
+  Try r = Utils.db.Exec("SELECT * FROM Fiches_Inv ORDER BY inv_nlig + 0")
+  If Error Then
+    TestKit.Check(sCle & "/table", "<absente>")
+    Return
+  Endif
+  TestKit.Check(sCle & "/lignes", r.Count)
+  If Not r.Available Then Return
+  Repeat
+    TestKit.Check(sCle & "/" & r!inv_nlig, r!inv_code & " | " & r!inv_qtestock & " | " & r!inv_qtecomptee & " | " & r!inv_comptee)
+  Until r.MoveNext()
+
+End
+
+Private Sub Grille(hF As SaisieInv, sCle As String)
+  ''Lignes de la ColumnView Colinv (6 colonnes).
+
+  Dim hG As ColumnView = hF.Controls["Colinv"]
+  Dim i As Integer
+  Dim s As String
+
+  TestKit.Check(sCle & "/grille_lignes", hG.Count)
+  If hG.Count = 0 Then Return
+  hG.MoveFirst
+  Repeat
+    s = ""
+    For i = 0 To 5
+      s &= hG.Item[i] & " | "
+    Next
+    TestKit.Check(sCle & "/grille_" & hG.Item.Key, s)
+  Until hG.MoveNext()
+
+End
+
+Private Sub Champs(hF As SaisieInv, sCle As String)
+
+  TestKit.Check(sCle & "/champs", Object.GetProperty(hF.Controls["Nseq"], "Text") & " | " & Object.GetProperty(hF.Controls["Cart"], "Text") & " | " & Object.GetProperty(hF.Controls["Dart"], "Text") & " | " & Object.GetProperty(hF.Controls["Artstock"], "Text") & " | " & Object.GetProperty(hF.Controls["qtecomptee"], "Text"))
+
+End
+
+Private Function Ecran(sCle As String, Optional aBoutons As String[]) As SaisieInv
+  ''Écran instancié sans affichage ; boîtes de l'ouverture relevées sous la clé « ouverture ».
+
+  Dim hF As SaisieInv
+
+  If aBoutons = Null Then aBoutons = []
+  Reponses(aBoutons)
+  Try hF = New SaisieInv
+  If Error Then TestKit.Check(sCle & "/ouverture/erreur", "ERREUR: " & Error.Text)
+  FinReponses(sCle & "/ouverture")
+  Return hF
+
+End
+
+Private Sub ParNumero(hF As SaisieInv, sLigne As String, sQte As String)
+  ''Saisie par n° de ligne : Nseq, Nseq_LostFocus (chargement), quantité, qtecomptee_LostFocus.
+
+  Dim hC As Object
+
+  hC = hF.Controls["Nseq"]
+  hC.Text = sLigne
+  hF.Nseq_LostFocus()
+  hC = hF.Controls["qtecomptee"]
+  hC.Text = sQte
+  Try hF.qtecomptee_LostFocus()
+
+End
+
+Private Sub ParCode(hF As SaisieInv, sCode As String, sQte As String)
+  ''Saisie par code : Cart, Cart_LostFocus (recherche), quantité, qtecomptee_LostFocus.
+
+  Dim hC As Object
+
+  hC = hF.Controls["Cart"]
+  hC.Text = sCode
+  hF.Cart_LostFocus()
+  hC = hF.Controls["qtecomptee"]
+  hC.Text = sQte
+  Try hF.qtecomptee_LostFocus()
+
+End
+
+Private Sub Enregistrer(hF As SaisieInv)
+  ''Bouton Enregistrer (Button1, Tag 1) : Btn_Click lit Last.Tag ; le clic par Value est différé à la boucle
+  ''d'événements (Wait).
+
+  Object.SetProperty(hF.Controls["Button1"], "Value", True)
+  Wait 0.3
+
+End
+
+Public Sub T01Affichage()
+  ''SAISIEINV-T01 : ouverture (références saisies : lignes 1 et 3), puis RadioButton2 (non saisies) ; écart de la
+  ''ligne 3 comptée 0 affiché +stock (A03, figé) ; base inchangée.
+
+  Dim hF As SaisieInv
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  hF = Ecran("T01")
+  Grille(hF, "T01/saisies")
+  Object.SetProperty(hF.Controls["RadioButton2"], "Value", True)
+  Grille(hF, "T01/non_saisies")
+  Inventaire("T01")
+  Object.Lock(hF)
+
+End
+
+Public Sub T02SaisieNumero()
+  ''SAISIEINV-T02 : ligne 2, qté 4, Enregistrer ; l'écran enchaîne sur la ligne 3 (Nseq + 1) ; qté 6, Enregistrer.
+
+  Dim hF As SaisieInv
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  hF = Ecran("T02")
+  Reponses([])
+  ParNumero(hF, "2", "4")
+  Enregistrer(hF)
+  Champs(hF, "T02/enchainement")
+  Try hF.qtecomptee_LostFocus()
+  Object.SetProperty(hF.Controls["qtecomptee"], "Text", "6")
+  Try hF.qtecomptee_LostFocus()
+  Enregistrer(hF)
+  FinReponses("T02")
+  Grille(hF, "T02")
+  Inventaire("T02")
+  Object.Lock(hF)
+
+End
+
+Public Sub T03SaisieCode()
+  ''SAISIEINV-T03 : saisie par code (radio Ca) : code article 006, code équivalent EQ004, référence centrale RC002
+  ''(ligne 1 déjà comptée : question « cumuler », réponse 2), *2000000000053 (code-barres de 005).
+
+  Dim hF As SaisieInv
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  hF = Ecran("T03")
+  Object.SetProperty(hF.Controls["Ca"], "Value", True)
+  Reponses(["2"])
+  ParCode(hF, "006", "1")
+  Champs(hF, "T03/code")
+  Enregistrer(hF)
+  ParCode(hF, "EQ004", "2")
+  Champs(hF, "T03/equivalent")
+  Enregistrer(hF)
+  ParCode(hF, "RC002", "3")
+  Champs(hF, "T03/centrale")
+  Enregistrer(hF)
+  ParCode(hF, "*2000000000053", "4")
+  Champs(hF, "T03/cbarre")
+  Enregistrer(hF)
+  FinReponses("T03")
+  Inventaire("T03")
+  Object.Lock(hF)
+
+End
+
+Public Sub T04CodesInvalides()
+  ''SAISIEINV-T04 : n° de ligne 99, code ZZZ inconnu, article 007 non stocké (hors inventaire) : messages, base inchangée.
+
+  Dim hF As SaisieInv
+  Dim hC As Object
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  hF = Ecran("T04")
+  Reponses([])
+  hC = hF.Controls["Nseq"]
+  hC.Text = "99"
+  hF.Nseq_LostFocus()
+  Champs(hF, "T04/ligne")
+  Object.SetProperty(hF.Controls["Ca"], "Value", True)
+  hC = hF.Controls["Cart"]
+  hC.Text = "ZZZ"
+  hF.Cart_LostFocus()
+  Champs(hF, "T04/inconnu")
+  hC.Text = "007"
+  hF.Cart_LostFocus()
+  Champs(hF, "T04/non_stocke")
+  Enregistrer(hF)
+  FinReponses("T04")
+  Inventaire("T04")
+  Object.Lock(hF)
+
+End
+
+Private Sub Doublon(sCle As String, sReponse As String)
+
+  Dim hF As SaisieInv
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  hF = Ecran(sCle)
+  Reponses([sReponse])
+  ParNumero(hF, "1", "3")
+  Enregistrer(hF)
+  FinReponses(sCle)
+  Grille(hF, sCle)
+  Inventaire(sCle)
+  Object.Lock(hF)
+
+End
+
+Public Sub T05DoublonCumul()
+  ''SAISIEINV-T05 : ligne 1 déjà comptée (5) + 3, réponse « 1 » (cumuler) : 8.
+
+  Doublon("T05", "1")
+
+End
+
+Public Sub T06DoublonRemplace()
+  ''SAISIEINV-T06 : ligne 1 déjà comptée (5) + 3, réponse « 2 » (remplacer) : 3.
+
+  Doublon("T06", "2")
+
+End
+
+Private Function Rappel(sCle As String) As SaisieInv
+  ''Ligne 1 rendue courante dans Colinv (Key + MoveTo) puis Colinv_Activate.
+
+  Dim hF As SaisieInv
+  Dim hG As ColumnView
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  hF = Ecran(sCle)
+  hG = hF.Controls["Colinv"]
+  hG.Key = "1"
+  hG.MoveTo("1")
+  hF.Colinv_Activate()
+  Champs(hF, sCle & "/rappel")
+  Inventaire(sCle & "/rappel")
+  Return hF
+
+End
+
+Public Sub T07RappelCorrection()
+  ''SAISIEINV-T07 : rappel de la ligne 1, nouvelle quantité 9, Enregistrer.
+
+  Dim hF As SaisieInv
+
+  hF = Rappel("T07")
+  Reponses([])
+  Object.SetProperty(hF.Controls["qtecomptee"], "Text", "9")
+  Try hF.qtecomptee_LostFocus()
+  Enregistrer(hF)
+  FinReponses("T07")
+  Champs(hF, "T07/apres")
+  Grille(hF, "T07")
+  Inventaire("T07")
+  Object.Lock(hF)
+
+End
+
+Public Sub T08RappelAbandon()
+  ''SAISIEINV-T08 : rappel de la ligne 1 puis Quitter (Button4, Tag 3) : comptage remis à 0, inv_comptee = 0 (A01, figé).
+
+  Dim hF As SaisieInv
+
+  hF = Rappel("T08")
+  Reponses([])
+  Object.SetProperty(hF.Controls["Button4"], "Value", True)
+  FinReponses("T08")
+  Inventaire("T08")
+
+End
+
+Private Sub Quantite(hF As SaisieInv, sCle As String, sLigne As String, sQte As String)
+
+  ParNumero(hF, sLigne, sQte)
+  Champs(hF, sCle)
+
+End
+
+Public Sub T10Quantites()
+  ''SAISIEINV-T10 : quantité « abc » (refusée par le filtre du TextReg : champ vide, Message.Error non atteint), puis 2,5 / 2.5 sur les lignes 3 (001, art_dec 0), 1 (002,
+  ''art_dec 2) et 6 (004, art_dec 3), chaque saisie enregistrée (lignes 3 et 1 déjà comptées : « 2 », remplacer).
+
+  Dim hF As SaisieInv
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  hF = Ecran("T10")
+  Reponses(["2", "2"])
+  Quantite(hF, "T10/abc", "2", "abc")
+  Object.SetProperty(hF.Controls["qtecomptee"], "Text", "")
+  Quantite(hF, "T10/dec0", "3", "2,5")
+  Enregistrer(hF)
+  Quantite(hF, "T10/dec2", "1", "2.5")
+  Enregistrer(hF)
+  Quantite(hF, "T10/dec3", "6", "2,5")
+  Enregistrer(hF)
+  FinReponses("T10")
+  Inventaire("T10")
+  Object.Lock(hF)
+
+End
+
+Private Sub Import(sCle As String, sFichier As String)
+  ''Copie du fichier d'import (vide : aucun fichier) dans ~/Portable, Importer (Button3, Tag 4), ~/tmp/Inv.txt relevé.
+
+  Dim hF As SaisieInv
+  Dim sInv As String = User.Home &/ "tmp/Inv.txt"
+
+  TestKit.OuvreBase("saisieinv_shared/inv_saisie")
+  Try Mkdir User.Home &/ "tmp"
+  Try Mkdir User.Home &/ "Portable"
+  Try Kill User.Home &/ "Portable/inventaire.txt"
+  If sFichier Then Copy Application.Path &/ ".hidden/Tests/Gestion/assets/saisieinv_shared" &/ sFichier To User.Home &/ "Portable/inventaire.txt"
+  Start.LocalSettings["/CmdEditor0"] = "true"
+  hF = Ecran(sCle)
+  Reponses([])
+  Object.SetProperty(hF.Controls["Button3"], "Value", True)
+  FinReponses(sCle)
+  If Exist(sInv) Then
+    TestKit.Check(sCle & "/inv_txt", File.Load(sInv))
+  Else
+    TestKit.Check(sCle & "/inv_txt", "<absent>")
+  Endif
+  Grille(hF, sCle)
+  Inventaire(sCle)
+  Object.Lock(hF)
+
+End
+
+Public Sub T11ImportNominal()
+  ''SAISIEINV-T11 : inventaire_ok.txt (code-barres de 005, code 006 qté 1,5, code 003 qté 0.75).
+
+  Import("T11", "inventaire_ok.txt")
+
+End
+
+Public Sub T12ImportRejets()
+  ''SAISIEINV-T12 : inventaire_rejets.txt (code-barres inconnu, ligne sans code, 002 déjà compté, ligne sans « ; »,
+  ''001 déjà compté sans quantité) : rejets dans ~/tmp/Inv.txt (A06 figé).
+
+  Import("T12", "inventaire_rejets.txt")
+
+End
+
+Public Sub T13ImportAbsent()
+  ''SAISIEINV-T13 : aucun ~/Portable/inventaire.txt : message d'erreur, base inchangée.
+
+  Import("T13", "")
+
+End
+
+Public Sub T14SansInventaire()
+  ''SAISIEINV-T14 : Fiches_Inv absente (Laurux01) : Message.Warning à l'ouverture puis Me.Close.
+
+  Dim hF As SaisieInv
+
+  TestKit.OuvreBase()
+  hF = Ecran("T14")
+  TestKit.Check("T14/instance", Object.IsValid(hF))
+  Inventaire("T14")
+
+End
+
+Public Sub T15ArticleSupprime()
+  ''SAISIEINV-T15 : ligne 2 comptée dont l'article 002 n'existe plus (jeu geninv_shared/inv_gen_supprime, inv_comptee
+  ''posé à 1) : rarts lu sans Available à l'ouverture (A04, figé).
+
+  Dim hF As SaisieInv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_supprime")
+  Utils.db.Exec("UPDATE Fiches_Inv SET inv_comptee = 1, inv_qtecomptee = 2")
+  hF = Ecran("T15")
+  TestKit.Check("T15/instance", Object.IsValid(hF))
+  If Object.IsValid(hF) Then Grille(hF, "T15")
+  Inventaire("T15")
+
+End

@@ -52,15 +52,15 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] MVTDEPOTS-A01 — [anomalie] **Grave** : `Maj_Qtedep` exécute l'`UPDATE` puis un `DELETE`
+- [ ] MVTDEPOTS-A01 — [anomalie] (confirmée phase 2, vague 9 : le `DELETE` suit toujours l'`UPDATE` du dépôt de départ : au 2e transfert depuis le magasin (01), la ligne (01, 001) est supprimée, figée par T02) **Grave** : `Maj_Qtedep` exécute l'`UPDATE` puis un `DELETE`
   inconditionnel de la ligne de stock du dépôt de départ (le `If qtec > 0` est commenté, pas le
   `DELETE`) : tout transfert efface le stock restant du dépôt de départ ; pour le dépôt `01`, une
   ligne négative est créée puis supprimée au transfert suivant · tests : T01, T02 · sources : [MvtDepots.class:436](../../../../../../.src/Gestion/Depots/MvtDepots.class#L436), [MvtDepots.class:438](../../../../../../.src/Gestion/Depots/MvtDepots.class#L438), [MvtDepots.class:443](../../../../../../.src/Gestion/Depots/MvtDepots.class#L443)
-- [ ] MVTDEPOTS-A02 — [anomalie] `Cman` relit toujours `Code.Text` : le libellé affiché pour le
+- [ ] MVTDEPOTS-A02 — [anomalie] (confirmée phase 2, vague 9 : figée par T03) `Cman` relit toujours `Code.Text` : le libellé affiché pour le
   dépôt d'arrivée est celui du départ · tests : T03 · sources : [MvtDepots.class:167](../../../../../../.src/Gestion/Depots/MvtDepots.class#L167)
-- [ ] MVTDEPOTS-A03 — [anomalie] `art_man` (dépôt `01`) : recherches par code-barres et référence
+- [ ] MVTDEPOTS-A03 — [anomalie] (confirmée phase 2, vague 9 : figée par T05) `art_man` (dépôt `01`) : recherches par code-barres et référence
   centrale inatteignables (imbrication `If`/`Else` erronée) · tests : T05 · sources : [MvtDepots.class:250](../../../../../../.src/Gestion/Depots/MvtDepots.class#L250), [MvtDepots.class:253](../../../../../../.src/Gestion/Depots/MvtDepots.class#L253)
-- [ ] MVTDEPOTS-A04 — [anomalie] Drapeau `b` à double sens : un article introuvable (`b` vrai)
+- [ ] MVTDEPOTS-A04 — [anomalie] (confirmée phase 2, vague 9 : figée par T04) Drapeau `b` à double sens : un article introuvable (`b` vrai)
   est transféré car `Maj_Colrcp` remet `b` à vrai ; dépôt d'arrivée et quantité non contrôlés ·
   tests : T04 · sources : [MvtDepots.class:274](../../../../../../.src/Gestion/Depots/MvtDepots.class#L274), [MvtDepots.class:362](../../../../../../.src/Gestion/Depots/MvtDepots.class#L362), [MvtDepots.class:335](../../../../../../.src/Gestion/Depots/MvtDepots.class#L335)
 - [ ] MVTDEPOTS-A05 — [anomalie] `db.Exec` (classe `DB`, connexion courante) au lieu de

@@ -92,7 +92,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   `- p`/`- e` mal formées, hôte sans `-h` ; le contrôle de réplication renvoie vraisemblablement
   toujours `False` (message « La réplication est inactive » au démarrage, `Start.module:113`, et
   dans `Fmenu`) · appelants : `Start`, `Fmenu`, `Facture` · tests : manuel (réplication) · sources : [Utils.module:254](../../../../../.src/Utils/Utils.module#L254)
-- [ ] UTILS-A02 — [anomalie] (précisée phase 2, vague 6 : le cas « IN) » n'est pas atteignable depuis Histocliart sans clic dans l'arbre (1re famille sélectionnée par défaut → `IN('01')`, HISTOCLIART-T08) : hypothèse du test.md à revoir) `fam` : sans nœud sélectionné, renvoie `" AND champ IN)"` (SQL invalide)
+- [ ] UTILS-A02 — [anomalie] (confirmée phase 2, vague 9 : familles sans sélection → `IN)`, figée par STOCKMVT-T06) (précisée phase 2, vague 6 : le cas « IN) » n'est pas atteignable depuis Histocliart sans clic dans l'arbre (1re famille sélectionnée par défaut → `IN('01')`, HISTOCLIART-T08) : hypothèse du test.md à revoir) `fam` : sans nœud sélectionné, renvoie `" AND champ IN)"` (SQL invalide)
   au lieu de `""` ou d'un filtre vide · appelants : `Histocliart`, `Stockmvt` · tests : T24 · sources : [Utils.module:1443-1449](../../../../../.src/Utils/Utils.module#L1443-L1449)
 - [ ] UTILS-A03 — [anomalie] `Obstch` : `Or` au lieu de `And`, la condition est toujours vraie ;
   Entrée/Retour ajoutent `Key.Text` au filtre · appelants : 10 écrans `Tri*`, `FComptes`, `Facture`… ·

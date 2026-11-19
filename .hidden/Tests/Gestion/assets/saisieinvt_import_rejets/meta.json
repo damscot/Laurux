@@ -1,0 +1,24 @@
+{
+ "id": "SAISIEINVT-T12",
+ "objet": "Import avec rejets et quantité vide",
+ "classe": "SaisieInvT",
+ "description": "~/Portable/inventaire.txt : « 002; » (quantité vide, cle <> 0 figé A10), « 999;2 » (code inconnu), « 001;1 » (déjà compté), « sans separateur » : Importer. Attendu : rejets écrits dans ~/tmp/Inv.txt, éditeur ouvert (Editeur.Prog_Editeur), message de fin (Entrée).",
+ "dataset": "saisieinvt_shared/invt",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "entrees": {
+  "inventaire.txt": "~/Portable/inventaire.txt"
+ },
+ "fichiers": [
+  "tmp/Inv.txt",
+  "@ouvrir.trace"
+ ]
+}

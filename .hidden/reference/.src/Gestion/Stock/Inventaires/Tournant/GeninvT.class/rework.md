@@ -63,13 +63,13 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] GENINVT-A01 — [anomalie] L'impression **renumérote `inv_nlig`** en base selon le tri choisi :
+- [ ] GENINVT-A01 — [anomalie] (confirmée phase 2, vague 9 : figée par T10) L'impression **renumérote `inv_nlig`** en base selon le tri choisi :
   réimprimer avec un autre tri après le début du comptage rend les feuilles déjà distribuées
   incohérentes avec la saisie par n° de ligne de `SaisieInvT` · tests : T10 · sources : [GeninvT.class:614](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L614), [GeninvT.class:618](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L618)
-- [ ] GENINVT-A02 — [anomalie] Flux par exception : table absente → erreur SQL puis `gen_Inv`
+- [ ] GENINVT-A02 — [anomalie] (confirmée phase 2, vague 9 : figée par T08) Flux par exception : table absente → erreur SQL puis `gen_Inv`
   dans le `Catch` ; une erreur dans `gen_Inv` après confirmation relance la génération · tests :
   T08 · sources : [GeninvT.class:100](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L100), [GeninvT.class:101](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L101)
-- [ ] GENINVT-A03 — [anomalie] Tri : quand « Code article » n'est pas coché, le tri choisi
+- [ ] GENINVT-A03 — [anomalie] (confirmée phase 2, vague 9 : figée par T01, T03, T04) Tri : quand « Code article » n'est pas coché, le tri choisi
   (Désignation/Casier) est ignoré à la génération (ordre `critère, art_design`) mais appliqué à
   l'impression ; `art_qte` Null non traité (`= ""` seulement, contrairement à `Geninv`) · tests :
   T01, T03, T04 · sources : [GeninvT.class:534](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L534), [GeninvT.class:551](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L551)
@@ -79,3 +79,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] GENINVT-A05 — [anomalie] Focus après les listes : `Colfour2_Click` place le focus sur
   « Quitter » (Entrée ferme l'écran), `Colfam2_Click` sur `four` (lecture seule en mode famille),
   `Colfam2_KeyPress` focalise `fam` mais sélectionne `fam2` · tests : T12 · sources : [GeninvT.class:482](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L482), [GeninvT.class:456](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L456), [GeninvT.class:297](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L297)
+- [ ] GENINVT-A06 — [anomalie] `Button3_Click` : `dater = Rinv!inv_date` (l. 623, `dater` chaîne) puis découpage `Left$`/`Mid$`/`Right$` (l. 624-625) : l'en-tête « Inventaire tournant du … » de la feuille de comptage porte la veille de la date d'inventaire ; motif transverse « date convertie implicitement en texte (UTC, décalage horaire courant) puis découpée par `Left$`/`Mid$`/`Right$` → la veille s'affiche » : voir aussi [Ecarts](../../Fin-annee/Ecarts.class/rework.md), [EcartsT](../EcartsT.class/rework.md), [EdinvT](../EdinvT.class/rework.md), [SHA1CALC-A01](../../../../../Utils/Sha1Calc.module/rework.md) (phase 2, vague 9, 2026-11-18) · tests : CSTOCKS-T07b · sources : [GeninvT.class:623-625](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L623-L625)

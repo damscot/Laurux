@@ -65,7 +65,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   commit**, sinon la TVA est multipliée deux fois par la quantité · tests : T02 · sources : [ValidBR1.class:419](../../../../../../.src/Gestion/Stock/ValidBR1.class#L419), [LTaxe.class:137](../../../../../../.src/Utils/LTaxe.class#L137)
 - [ ] VALIDBR1-A02 — [anomalie] `scanged` : montants inversés (`TTC = LPrix(ht)`,
   `HT = LPrix(ttc)`) sur le document GED · tests : T08 · sources : [ValidBR1.class:358-359](../../../../../../.src/Gestion/Stock/ValidBR1.class#L358-L359)
-- [ ] VALIDBR1-A03 — [anomalie, à confirmer] Après validation, `$selfo`/`$listbr` ne sont pas
+- [ ] VALIDBR1-A03 — [anomalie, à confirmer] (confirmée phase 2, vague 9 : écriture en double au 2e clic, figée par T05) Après validation, `$selfo`/`$listbr` ne sont pas
   vidés et `ValideSaisie` ne filtre pas sur `validee` : un second clic revalide les mêmes BR et
   génère des écritures en double · tests : T05 · sources : [ValidBR1.class:valide](../../../../../../.src/Gestion/Stock/ValidBR1.class#L276-L316), [ValidBR1.class:389](../../../../../../.src/Gestion/Stock/ValidBR1.class#L389)
 - [ ] VALIDBR1-A04 — [anomalie] Tags GED du fournisseur lus par `"… WHERE fo_code = " & four`
@@ -79,3 +79,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   change le log de rejeu et les couleurs ; `Panel1` (filtres) désactivé définitivement après la
   première sélection ; clé de BR = numéro seul (dates différentes confondues) · tests : T03, T04 ·
   sources : [ValidBR1.class:_new](../../../../../../.src/Gestion/Stock/ValidBR1.class#L17-L100), [ValidBR1.class:106](../../../../../../.src/Gestion/Stock/ValidBR1.class#L106), [ValidBR1.class:162](../../../../../../.src/Gestion/Stock/ValidBR1.class#L162)
+- [ ] VALIDBR1-A07 — [anomalie, à confirmer] `ValideSaisie` : ligne fournisseur avec le libellé de la dernière BR (« R00003 ») mais `numdoc` R00001 ; 401001 et son collectif 401000 tous deux crédités du total (même constat COMMANDE1-T04) (à vérifier : `vecr.libelle`/`numdoc` réaffectés à chaque BR l. 409-412) (phase 2, vague 9, 2026-11-18) · tests : T02, COMMANDE1-T04 · sources : [ValidBR1.class:ValideSaisie](../../../../../../.src/Gestion/Stock/ValidBR1.class#L372-L446)
+- [ ] VALIDBR1-A08 — [anomalie] `br_Click`/`brval_Click`/`Valid_Click` : après la sélection d'un fournisseur, `Stop Event` (l. 504, 517, 530) n'empêche pas le changement du bouton radio : le radio coché change mais le filtre n'est pas appliqué (phase 2, vague 9, 2026-11-18) · tests : T04 · sources : [ValidBR1.class:br_Click](../../../../../../.src/Gestion/Stock/ValidBR1.class#L496-L533)

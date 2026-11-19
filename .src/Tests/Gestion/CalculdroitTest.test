@@ -14,6 +14,7 @@ Public Sub _Desc()
   TestKit.Desc("T03SecuSeuil", "Régie 02 seuil 18 : deg 15 / 18 / 40, et régie sans degres (NULL) : secu, volumess, tvasec, tva")
   TestKit.Desc("T04QuantiteVariant", "qte 6, \"6\", \"1,5\", \"1.5\", 1.5 : vol obtenu")
   TestKit.Desc("T05Accesseurs", "Accesseurs de la régie 02 et objet construit avec dra vide")
+  TestKit.Desc("T08FactureDroits", "Option T, facture F00105 (jeu objfacb_shared/bois_bl) : ObjFacB.calcul, comptmat, transblfac : Fiches_ligregie et lignes de facture")
   TestKit.Desc("T06Ecritures", "Écriture de droit, secu, tauxtvadr, tauxtvass : tvadroit, tvasec, tva recalculés")
 
 End
@@ -118,5 +119,51 @@ Public Sub T06Ecritures()
   Montants("T06/tauxtvadr0.055", hD)
   hD.tauxtvass = "0.055"
   Montants("T06/tauxtvass0.055", hD)
+
+End
+
+Public Sub T08FactureDroits()
+  ''CALCULDROIT-T08 : intégration dans la facturation boissons (option T : bois + pp) ; droits et sécurité sociale
+  ''calculés par Calculdroit pour chaque ligne (ObjFacB.calcul puis comptmat), puis archivage (transblfac).
+
+  Dim hO As ObjFacB
+  Dim r As Result
+  Dim n As Integer
+
+  TestKit.OuvreBase("objfacb_shared/bois_bl")
+  Start.LocalSettings["/Soc" & Start.Societe & "/bois"] = True
+  Start.LocalSettings["/Soc" & Start.Societe & "/pp"] = True
+  Try hO = New ObjFacB("F00105", ObjFac.facture, New LDate("15/06/2018"))
+  If Error Then
+    TestKit.Check("T08/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hO.calcul()
+  If Error Then TestKit.Check("T08/calcul", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  TestKit.Check("T08/droit", hO.droit)
+  TestKit.Check("T08/secu", hO.secu)
+  TestKit.Check("T08/totvolume", hO.totvolume)
+  TestKit.Check("T08/totap", hO.totap)
+  Try hO.comptmat()
+  If Error Then TestKit.Check("T08/comptmat", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Try hO.transblfac()
+  If Error Then TestKit.Check("T08/transblfac", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  r = Utils.db.Exec("SELECT num,numlig,type,codeart,coderegie,qte,volume,degres,volumeap,montdr,txtvadr,montss,txtvass,volumess,vignette FROM Fiches_ligregie WHERE num = 'F00105' ORDER BY code")
+  TestKit.Check("T08/ligregie/count", r.Count)
+  If r.Available Then
+    Repeat
+      TestKit.Check("T08/ligregie/" & n, r!num & "|" & r!numlig & "|" & r!type & "|" & r!codeart & "|" & r!coderegie & "|" & r!qte & "|" & r!volume & "|" & r!degres & "|" & r!volumeap & "|" & r!montdr & "|" & r!txtvadr & "|" & r!montss & "|" & r!txtvass & "|" & r!volumess & "|" & r!vignette)
+      Inc n
+    Until r.MoveNext()
+  Endif
+  n = 0
+  r = Utils.db.Exec("SELECT num_ligfac,numlig_ligfac,code_ligfac,qte_ligfac,netht_ligfac,tipp_ligfac,numagri_ligfac,numadr_ligfac FROM Fiches_HistoLigfac WHERE num_ligfac = 'F00105' ORDER BY numlig_ligfac")
+  TestKit.Check("T08/histoligfac/count", r.Count)
+  If r.Available Then
+    Repeat
+      TestKit.Check("T08/histoligfac/" & n, r!num_ligfac & "|" & r!numlig_ligfac & "|" & r!code_ligfac & "|" & r!qte_ligfac & "|" & r!netht_ligfac & "|" & r!tipp_ligfac & "|" & r!numagri_ligfac & "|" & r!numadr_ligfac)
+      Inc n
+    Until r.MoveNext()
+  Endif
 
 End

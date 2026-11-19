@@ -61,10 +61,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] SUIVI-A01 — [anomalie] Prix de revient MO nul : le suivi enregistré n'est pas chargé (le
   `SELECT` est dans la branche `Else`) ; un enregistrement depuis cet écran vide écrase les
   valeurs existantes · tests : T05 · sources : [Suivi.class:86](../../../../../.src/Gestion/Suivi.class#L86), [Suivi.class:89](../../../../../.src/Gestion/Suivi.class#L89)
-- [ ] SUIVI-A02 — [anomalie] Conventions de signe opposées des écarts : `EmargeMO = prévu − réalisé`
+- [ ] SUIVI-A02 — [anomalie] (confirmée phase 2, vague 9 : figée par T02, T04) Conventions de signe opposées des écarts : `EmargeMO = prévu − réalisé`
   mais `EmargeArt = réalisé − prévu`, puis `EmargeTot` les additionne · tests : T02, T04 ·
   sources : [Suivi.class:Calc_Emarge](../../../../../.src/Gestion/Suivi.class#L366-L387)
-- [ ] SUIVI-A03 — [anomalie] Clé incohérente : chargement et suppression par `numdev` + `code`,
+- [ ] SUIVI-A03 — [anomalie] (confirmée phase 2, vague 9 : figée par T07) Clé incohérente : chargement et suppression par `numdev` + `code`,
   enregistrement par `numdev` seul (deux clients ayant le même n° de devis s'écrasent) · tests :
   T07 · sources : [Suivi.class:394](../../../../../.src/Gestion/Suivi.class#L394), [Suivi.class:410](../../../../../.src/Gestion/Suivi.class#L410)
 - [ ] SUIVI-A04 — [anomalie] Consultation depuis `Archives` (tout en lecture seule) : le bouton

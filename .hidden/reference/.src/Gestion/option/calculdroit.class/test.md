@@ -16,7 +16,7 @@ non modifié**.
 | CALCULDROIT-T05 | gbtest | Accesseurs de la régie | régie complète ; `dra` vide | `lib`, `type`, `cptreg`, `codetva`, `code`, `suspendu`, `drsurfac`, `famille` ; zéros si `dra` vide | `tests/accesseurs/` | implémenté (propriété `code` non déclarée : inaccessible) |
 | CALCULDROIT-T06 | gbtest | Écritures `droit`, `secu`, `tauxtvadr`, `tauxtvass` | valeurs 10 ; `"0.055"` | `tvadroit`, `tvasec`, `tva` recalculés ; `tauxtvadr` lu `"0,06"` (à figer) | `tests/ecritures/` | implémenté |
 | CALCULDROIT-T07 | gbtest | Régie ou TVA absente | code inconnu ; TVA de régie inconnue ; `tvass` absente | valeurs à 0 ; `Message.Error` (exécution sous Xvfb ou après CALCULDROIT-003) | `tests/erreurs_regie/` | à faire : Message.Error bloquant en gb.test (après CALCULDROIT-003) |
-| CALCULDROIT-T08 | replay | Intégration facture boissons | facture `facopt`/`ObjFacB` d'articles à droits (option T) | dump `Fiches_ligregie`, lignes de facture | `tests/facture_droits/` | à faire : passe par la facturation (ObjFacB, écran complexe) |
+| CALCULDROIT-T08 | replay | Intégration facture boissons | facture `facopt`/`ObjFacB` d'articles à droits (option T) | dump `Fiches_ligregie`, lignes de facture | `tests/facture_droits/` | implémenté (gb.test CalculdroitTest.T08FactureDroits, jeu Gestion objfacb_shared/bois_bl, option T : ObjFacB.calcul, comptmat, transblfac ; Fiches_ligregie et lignes de facture) |
 
 ## Détail des tests
 

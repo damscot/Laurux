@@ -63,7 +63,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] BORDRX-A01 — [anomalie] **Grave** : l. 383 `Impression.Prog_Editeur(… Start.Soc …)` —
+- [ ] BORDRX-A01 — [anomalie] (confirmée phase 2, vague 9 : `Prog_Editeur` inconnu (l. 383), LCR014 écrit, aucun mail, figée par T06) **Grave** : l. 383 `Impression.Prog_Editeur(… Start.Soc …)` —
   méthode et membre inexistants (IMPRESSION-A03) : l'envoi à une banque ayant un mail lève une
   erreur non interceptée **après** l'écriture du fichier et le passage à `etat = 1` ; le mail n'est
   jamais envoyé. Correction : supprimer l'ouverture (ou `Visualiseur.Prog`) avec `Start.Societe` ·
@@ -71,10 +71,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] BORDRX-A02 — [anomalie] Pièce jointe PDF `<Fichiers>/Lcr<société>.pdf` alors que le bordereau
   est écrit dans `Lcr<société><n°>.pdf` : PDF absent ou ancien (visible après A01) · tests : T06 ·
   sources : [Bordrx.class:518](../../../../../../.src/Gestion/Lcr/Bordrx.class#L518), [Bordrx.class:328](../../../../../../.src/Gestion/Lcr/Bordrx.class#L328)
-- [ ] BORDRX-A03 — [anomalie] Montant converti par `Val(montant)` sans `Utils.cpoint` : en locale
+- [ ] BORDRX-A03 — [anomalie] (confirmée phase 2, vague 9 : `Val("100.00")` → `Null` en locale fr (l. 489), figée par T08 ; motif transverse « `Val()` sur un décimal lu en base (point décimal) en locale française → `Null` → Type mismatch fatal » : voir aussi [EDBR-A05](../../Impressions/Edbr.module/rework.md), [EDCOM-A05](../../Impressions/Edcom.class/rework.md), [MATERIEL-A13](../../Tables/Materiel.class/rework.md), [CLCR-A01](../CLcr.class/rework.md), [ValidBR](../../Stock/ValidBR.class/rework.md)) Montant converti par `Val(montant)` sans `Utils.cpoint` : en locale
   française, un montant stocké avec un point donne `Null` → « Type mismatch » (vérifié) ; le total
   cumule les mêmes valeurs · tests : T08 · sources : [Bordrx.class:489](../../../../../../.src/Gestion/Lcr/Bordrx.class#L489), [Bordrx.class:507](../../../../../../.src/Gestion/Lcr/Bordrx.class#L507)
-- [ ] BORDRX-A04 — [anomalie] Complétions `String$(n - Len(x))` : erreur « Bad argument » si un champ
+- [ ] BORDRX-A04 — [anomalie] (confirmée phase 2, vague 9 : « Bad argument » (l. 497), fichier partiel, figée par T07) Complétions `String$(n - Len(x))` : erreur « Bad argument » si un champ
   dépasse sa longueur (SIREN complété à 5 alors qu'il compte 9 chiffres, adresses `varchar(35)` sur
   32, CP + ville) ; aucun `Catch`, fichier partiel. Tronquer/compléter avec un helper ; longueur du
   SIREN à confirmer selon la norme · tests : T07 · sources : [Bordrx.class:447](../../../../../../.src/Gestion/Lcr/Bordrx.class#L447), [Bordrx.class:497](../../../../../../.src/Gestion/Lcr/Bordrx.class#L497),
@@ -96,3 +96,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] BORDRX-A09 — [anomalie] Dates du fichier bancaire extraites du texte `Str(date)` de la grille :
   dépendent de la locale (`mmjjaa` en locale `C`, vérifié) · tests : T03 · sources :
   [Bordrx.class:434](../../../../../../.src/Gestion/Lcr/Bordrx.class#L434), [Bordrx.class:ColBrd_Data](../../../../../../.src/Gestion/Lcr/Bordrx.class#L134-L160)
+- [ ] BORDRX-A10 — [anomalie] `Button3_Click` (l. 390-539) sans `Catch` : toute erreur (A01, A03, A04) arrête l'application, laisse un fichier bancaire partiel et `etat` inchangé (phase 2, vague 9, 2026-11-18) · tests : T06, T07, T08 · sources : [Bordrx.class:Button3_Click](../../../../../../.src/Gestion/Lcr/Bordrx.class#L390-L539)

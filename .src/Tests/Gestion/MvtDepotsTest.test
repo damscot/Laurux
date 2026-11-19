@@ -1,0 +1,45 @@
+' Gambas test file
+
+''Tests de MvtDepots (.hidden/reference/.src/Gestion/Depots/MvtDepots.class/test.md, MVTDEPOTS-T03).
+''Le libellé du dépôt d'arrivée n'est visible qu'à l'écran : l'écran est instancié sans affichage, les codes posés
+''et Cman appelé comme le font Code_KeyPress / Code2_KeyPress (Entrée). Jeu : mvtdepots_shared/stock (dépôts 01
+''Magasin, 02 Dépot 1, 03 Depot 2). Valeurs attendues : assets/MvtDepotsTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03LibelleArrivee", "Départ 02 puis arrivée 03 : libellé d'arrivée = libellé du départ (A02 figée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "MvtDepotsTest")
+  TestKit.OuvreBase("mvtdepots_shared/stock")
+
+End
+
+Public Sub T03LibelleArrivee()
+
+  Dim hForm As Object
+  Dim hCtrl As Object
+
+  hForm = New MvtDepots
+  hCtrl = hForm.Controls["Code"]
+  hCtrl.Text = "02"
+  hForm.Cman("1")
+  hCtrl = hForm.Controls["Libelle"]
+  TestKit.Check("T03/libelle_depart", hCtrl.Text)
+  hCtrl = hForm.Controls["Code2"]
+  hCtrl.Text = "03"
+  hForm.Cman("2")
+  hCtrl = hForm.Controls["Libelle3"]
+  TestKit.Check("T03/libelle_arrivee_03", hCtrl.Text)
+  hCtrl = hForm.Controls["Code2"]
+  hCtrl.Text = "01"
+  hForm.Cman("2")
+  hCtrl = hForm.Controls["Libelle3"]
+  TestKit.Check("T03/libelle_arrivee_01", hCtrl.Text)
+  Object.Lock(hForm)
+
+End

@@ -55,7 +55,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDSDEPOTS-A01 — [anomalie] (confirmée phase 2, vague 6 : sorties seules : « Null object » sur `pdf.Entete` l. 237, figée par T02 ; avec entrées et sorties, la 1re page n'a pas de pied de page (`Entete` des sorties sans `BasPage` avant, seule « Page 2/2 », T01)) Le PDF n'est créé que s'il existe des entrées : sans entrée, la
+- [ ] EDSDEPOTS-A01 — [anomalie] (confirmée phase 2, vague 9 : pas de `BasPage` avant le saut de page des entrées (l. 226-227) ni avant l'`Entete` des sorties (l. 237) : page 1 sans pied « Page 1/2 », figée par CSTOCKS-T07c) (confirmée phase 2, vague 6 : sorties seules : « Null object » sur `pdf.Entete` l. 237, figée par T02 ; avec entrées et sorties, la 1re page n'a pas de pied de page (`Entete` des sorties sans `BasPage` avant, seule « Page 2/2 », T01)) Le PDF n'est créé que s'il existe des entrées : sans entrée, la
   boucle des sorties appelle `pdf.Entete` sur un objet nul (erreur) ; pas de `BasPage` aux sauts de
   page des entrées · tests : T02 · sources : [Edsdepots.class:208](../../../../../../.src/Gestion/Depots/Edsdepots.class#L208), [Edsdepots.class:237](../../../../../../.src/Gestion/Depots/Edsdepots.class#L237), [Edsdepots.class:227](../../../../../../.src/Gestion/Depots/Edsdepots.class#L227)
 - [ ] EDSDEPOTS-A02 — [anomalie] (confirmée phase 2, vague 6 : purge sur la colonne inexistante `datesortie` (l. 275) → Query failed, code 125 au lieu du message de succès (T04)) Purge : `DELETE … WHERE datesortie …` sur une colonne inexistante

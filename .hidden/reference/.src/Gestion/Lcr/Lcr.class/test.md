@@ -3,9 +3,8 @@
 > Source : `.src/Gestion/Lcr/Lcr.class` · Types : `gbtest` (module gb.test, `gbx3 -T`) ou `replay` (log/replay + diff BDD).
 > Données de référence : `tests/<nom_du_test>/`.
 
-> ⚠️ **Module complexe** (chaîne LCR menant au fichier bancaire de `Bordrx`) : la liste des
-> scénarios ci-dessous est **à faire valider par l'utilisateur avant la phase 2** (périmètre,
-> jeux de données, cas d'erreur à figer).
+> ⚠️ **Module complexe** (chaîne LCR menant au fichier bancaire de `Bordrx`) : Décision utilisateur du 2026-11-18 : hors des 10 classes à revue manuelle,
+> tests implémentés sans validation individuelle.
 
 Écran GUI. `Utils.Observers(Me)` n'est pas appelé : les replays supposent l'ajout de cet appel dans
 les **deux** clones (LCR-A08) ou un pilotage direct par le harnais. Jeu de données dérivé de
@@ -15,17 +14,17 @@ Dates figées par `faketime` (titres et pieds de page des PDF).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| LCR-T01 | replay | Ouverture, filtres et tris | ouverture ; radios `A`, `E`, `T` ; focus sur chaque en-tête | lignes `Exec_SQL` (`banque = 0`, `bordereau`, `order by`) | `tests/liste_filtres/` | à faire |
-| LCR-T02 | replay | Consultation | clic sur une ligne | fiche remplie (`lind = &1`) | `tests/consultation/` | à faire |
-| LCR-T03 | replay | Création | « Créer », code client via saisie, dates, n° facture, montant, acceptée, Valider | dump `Fiches_Lcr` (banque 0, bordereau 0, code entrée 0) | `tests/creation/` | à faire |
-| LCR-T04 | replay | Modification | sélection, changement d'échéance et « écartée », Valider | dump `Fiches_Lcr` | `tests/modification/` | à faire |
-| LCR-T05 | replay | Suppression | sélection, Supprimer, Oui ; puis Supprimer sans sélection | dump `Fiches_Lcr` ; erreur figée sans sélection | `tests/suppression/` | à faire |
-| LCR-T06 | replay | Import des traites, purge acceptée | « Importer », réponse « Oui » à la purge | dump `Fiches_Lcr` (+4), `Fiches_Traites` vide ; `~/Traites.pdf` par `pdftotext` (chevauchement figé) | `tests/import_purge/` | à faire |
-| LCR-T07 | replay | Import des traites, purge refusée puis réimport | « Importer », « Non », « Importer » | doublons dans `Fiches_Lcr` (LCR-A02 figée) | `tests/import_doublons/` | à faire |
-| LCR-T08 | replay | Import sans traite | `Fiches_Traites` vide, « Importer » | message « Aucune traite… », base inchangée | `tests/import_vide/` | à faire |
-| LCR-T09 | replay | Impression de liste | radios `T`, `A`, `E` puis « Imprimer » | `~/Lcr.pdf` par `pdftotext` (toutes les LCR pour `T`, LCR-A05 figée) | `tests/impression_liste/` | à faire |
-| LCR-T10 | replay | Recherche de compte | bouton de recherche (`Button7`), choix d'un client | code et nom remplis (`TriCpt`) | `tests/recherche_compte/` | à faire |
-| LCR-T11 | replay | SQLite : création et import | T03 et T06 sur `Laurux01.sqlite` | erreur SQL `value`/`TRUNCATE` figée (LCR-A03) | `tests/sqlite/` | à faire |
+| LCR-T01 | replay | Ouverture, filtres et tris | ouverture ; radios `A`, `E`, `T` ; focus sur chaque en-tête | lignes `Exec_SQL` (`banque = 0`, `bordereau`, `order by`) | `tests/liste_filtres/` | implémenté (`Gestion/lcr_liste_filtres`) |
+| LCR-T02 | replay | Consultation | clic sur une ligne | fiche remplie (`lind = &1`) | `tests/consultation/` | implémenté (`Gestion/lcr_consultation`) |
+| LCR-T03 | replay | Création | « Créer », code client via saisie, dates, n° facture, montant, acceptée, Valider | dump `Fiches_Lcr` (banque 0, bordereau 0, code entrée 0) | `tests/creation/` | implémenté (`Gestion/lcr_creation`) |
+| LCR-T04 | replay | Modification | sélection, changement d'échéance et « écartée », Valider | dump `Fiches_Lcr` | `tests/modification/` | implémenté (`Gestion/lcr_modification`) |
+| LCR-T05 | replay | Suppression | sélection, Supprimer, Oui ; puis Supprimer sans sélection | dump `Fiches_Lcr` ; erreur figée sans sélection | `tests/suppression/` | implémenté (`Gestion/lcr_suppression` : le 2e Supprimer sans nouvelle sélection efface la LCR de la ligne courante, figé) |
+| LCR-T06 | replay | Import des traites, purge acceptée | « Importer », réponse « Oui » à la purge | dump `Fiches_Lcr` (+4), `Fiches_Traites` vide ; `~/Traites.pdf` par `pdftotext` (chevauchement figé) | `tests/import_purge/` | implémenté (`Gestion/lcr_import_purge` : Traites.pdf dans edition.txt, TRUNCATE) |
+| LCR-T07 | replay | Import des traites, purge refusée puis réimport | « Importer », « Non », « Importer » | doublons dans `Fiches_Lcr` (LCR-A02 figée) | `tests/import_doublons/` | implémenté (`Gestion/lcr_import_doublons` : doublons, LCR-A02 figée) |
+| LCR-T08 | replay | Import sans traite | `Fiches_Traites` vide, « Importer » | message « Aucune traite… », base inchangée | `tests/import_vide/` | implémenté (`Gestion/lcr_import_vide`, jeu `sans_traite`) |
+| LCR-T09 | replay | Impression de liste | radios `T`, `A`, `E` puis « Imprimer » | `~/Lcr.pdf` par `pdftotext` (toutes les LCR pour `T`, LCR-A05 figée) | `tests/impression_liste/` | implémenté (`Gestion/lcr_impression_liste` : 3 PDF dans edition.txt, LCR-A05 figée) |
+| LCR-T10 | replay | Recherche de compte | bouton de recherche (`Button7`), choix d'un client | code et nom remplis (`TriCpt`) | `tests/recherche_compte/` | implémenté (gb.test `LcrTest.T10RechercheCompte` : TriCpt piloté par Timer) |
+| LCR-T11 | replay | SQLite : création et import | T03 et T06 sur `Laurux01.sqlite` | erreur SQL `value`/`TRUNCATE` figée (LCR-A03) | `tests/sqlite/` | à faire : SQLite (base Laurux01.sqlite non jouable par le harnais) |
 
 ## Détail des tests
 
@@ -39,3 +38,6 @@ Dates figées par `faketime` (titres et pieds de page des PDF).
   données utilisent le format produit par `EcrAuto` (`Format(tot, "0.00")`, virgule en locale fr).
 - Non testable automatiquement : `Doc.Open` (navigateur), `Visualiseur.Prog` (visionneuse PDF :
   le harnais la neutralise et récupère le fichier).
+
+- Phase 2 (vague 9) : jeu `Gestion/bordrx_shared/lcr_chaine` (voir Bordrx) ; T08 : `lcr_import_vide/sans_traite.sql`.
+  Dates des textreg saisies au format `jj.mm.aaaa`.

@@ -1,0 +1,20 @@
+{
+ "id": "MVTDEPOTS-T06",
+ "objet": "Doublon dans la saisie, cumul",
+ "classe": "MvtDepots",
+ "description": "Départ 01, arrivée 02 : 001 qté 2 Valider, puis 001 qté 3 Valider, « déjà été saisit » bouton 1 « 1 » Cumuler (Entrée, MvtDepots.class Maj_Colrcp). Attendu : mouvements des deux saisies en base (art_qte 10 -> 5, StkDepots 02 : 10, ligne 01 : -5, 4 lignes Sdepots).",
+ "dataset": "mvtdepots_shared/stock",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Depots": "-1"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

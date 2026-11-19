@@ -14,9 +14,13 @@ Public Sub _Desc()
   TestKit.Desc("T03RepliArrete", "Repli sur `arrete`")
   TestKit.Desc("T04ClotFacAccepte", "`ClotFac` accepté")
   TestKit.Desc("T05ClotDroiAccepte", "`ClotDroi` accepté")
+  TestKit.Desc("T06ClotComptableSaiReg", "SaiReg : date de règlement avant la clôture comptable (dtereg_LostFocus) : Message.Warning (Timer), aucune écriture")
   TestKit.Desc("T09ArreteVide", "`arrete` vide en B/T")
 
 End
+
+Private $hTimer As Timer
+Private $sVu As String
 
 Public Sub _Setup()
 
@@ -125,5 +129,60 @@ Public Sub T09ArreteVide()
   Utils.db.Exec("DELETE FROM Fiches_ligregie")
   Utils.db.Exec("UPDATE Fiches_Parametres SET arrete = NULL")
   Construit("T09", Date(2024, 6, 10))
+
+End
+
+Public Sub _Msg_Timer()
+  ''T06 : boîte Message.Warning relevée puis fermée par son bouton.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" Then
+      $hTimer.Enabled = False
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Public Sub T06ClotComptableSaiReg()
+  ''Écran SaiReg instancié sans affichage (Laurux01, clôture comptable au 31/12/2017) : mode 05, date 10.12.2017,
+  ''dtereg_LostFocus → VerifDate.ClotComptable → Message.Warning ; libellé de saisie non posé, aucune écriture.
+
+  Dim hF As SaiReg
+  Dim hC As Object
+  Dim r As Result
+
+  TestKit.OuvreBase()
+  hF = New SaiReg
+  hC = hF.Controls["nreg"]
+  hC.Text = "05"
+  hF.nreg_LostFocus()
+  hC = hF.Controls["dtereg"]
+  hC.Text = "10.12.2017"
+  $sVu = ""
+  $hTimer = New Timer As "_Msg"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  hF.dtereg_LostFocus()
+  $hTimer.Enabled = False
+  TestKit.Check("T06/message", $sVu)
+  hC = hF.Controls["libsaisi"]
+  TestKit.Check("T06/libelle", hC.Text)
+  Object.Lock(hF)
+  r = Utils.db.Exec("SELECT COUNT(*) AS nb FROM " & Cbase.Table("TabMvt"))
+  TestKit.Check("T06/ecritures", r!nb)
+  r = Utils.db.Exec("SELECT COUNT(*) AS nb FROM Fiches_Reglements")
+  TestKit.Check("T06/reglements", r!nb)
 
 End

@@ -16,7 +16,7 @@ appelants pour l'écriture complète.
 | ECRREG-T04 | gbtest | `L_sup` | écriture existante | toutes les lignes en `L_sup`, racine ajoutée | `tests/suppression/` | implémenté |
 | ECRREG-T05 | gbtest | `L_caisse` | 2 encaissements caisse | lignes `Treso`, ligne `L_caisse` du total arrondi | `tests/caisse/` | implémenté |
 | ECRREG-T06 | gbtest | Mode de règlement inexistant | `nreg = "ZZ"` | erreur levée (`Error.Raise`), message figé | `tests/reglement_inconnu/` | implémenté |
-| ECRREG-T07 | replay | Saisie et validation de bordereau | écran `SaiReg` : saisie de 2 règlements puis validation | dump `Fiches_Mvt`, `Fiches_Comptes` | `tests/bordereau/` | à faire : passe par SaiReg (écran complexe) |
+| ECRREG-T07 | replay | Saisie et validation de bordereau | écran `SaiReg` : saisie de 2 règlements puis validation | dump `Fiches_Mvt`, `Fiches_Comptes` | `tests/bordereau/` | implémenté (gb.test `EcrRegTest.T07Bordereau` : SaiReg instancié sans affichage, fenêtre de date par Timer) |
 
 ## Détail des tests
 
@@ -30,3 +30,8 @@ appelants pour l'écriture complète.
   libellé comme intitulé ; `L_ajou`, `L_modif`, `L_sup` et `L_caisse` ajoutent `Vecr` à sa propre liste (`plus(Me.Vecr)`),
   et en `L_caisse` la racine est elle-même convertie en ligne de trésorerie (compte remplacé) ; arrondi du total caisse
   `Round(-12.345, -2)` → 12,34 ; T06 : « Réglement innexistant ZZ\nImpossible d'enregistrer l'écriture ».
+- **T07 (vague 9)** : `EcrRegTest.T07Bordereau`, jeu `Gestion/saireg_shared/saireg_factures` (factures recalées à J-40/J-30) ;
+  mode 20 (sans cptint) : deux règlements (F101 60 €, F100 120 €), validation du bordereau en `L_valide` : lignes
+  411001 et collectif 411000 par règlement, ligne 512000 du total 180 € avec l'intitulé « Virement du <jour> » et le
+  libellé « Banque », `numdoc`/`numlot` = numéro d'écriture (3) ; factures lettrées. La fenêtre de date (Window sans
+  classe, nom « #nn ») n'est pas rejouable : Timer du module (`Close(0)`).

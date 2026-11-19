@@ -70,16 +70,16 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] OUVERTURE-A01 — [anomalie] Code caisse lu par `Left$(Combobox1.Text, 1)` alors que
+- [ ] OUVERTURE-A01 — [anomalie] (confirmée phase 2, vague 9 : caisse 10 : la caisse 1 est mise à jour (`UPdate … WHERE code = sNcai`, l. 214), figée par T07) Code caisse lu par `Left$(Combobox1.Text, 1)` alors que
   `Fiches_Caisses.code` est `char(2)` : la caisse `10` est connectée comme `1` (verrou, `Ncai`,
   `UPDATE`) ; même hypothèse dans `Fondcaisse` (`Left$($cai, 1)`) et `TestCaisses` (boucle 1 à 10) ;
   `Fcaisses.Chkcaisse` interdit le chiffre 0 · appelants : `Fondcaisse`, `TestCaisses`, `Cmenu` ·
   tests : T07 · sources : [Ouverture.class:109](../../../../../.src/Caisse/Ouverture.class#L109), [Ouverture.class:158](../../../../../.src/Caisse/Ouverture.class#L158), [Fondcaisse.class:29](../../../../../.src/Caisse/Fondcaisse.class#L29), [TestCaisses.module:13](../../../../../.src/Caisse/TestCaisses.module#L13)
-- [ ] OUVERTURE-A02 — [anomalie] Code vendeur incohérent : `Left$(…, 2)` pour la recherche, `Ncai`
+- [ ] OUVERTURE-A02 — [anomalie] (confirmée phase 2, vague 9 : vendeur 12 : « Bonjour 2 BRUNO » (`Mid$(Caissiere.Text, 2, …)`, l. 218), figée par T07, T10) Code vendeur incohérent : `Left$(…, 2)` pour la recherche, `Ncai`
   et `vdr_code` (avec espace final pour un code d'un caractère, introuvable sous SQLite, à
   confirmer), `Left$(…, 1)` pour `TestCai`, `Mid$(…, 2)` pour le nom affiché ; les vendeurs `10` et `11` se
   bloquent mutuellement dans `TestCai` (TESTCAISSES-A02) ; voir CONVENDEURS-A02 · tests : T07, T10 · sources : [Ouverture.class:130](../../../../../.src/Caisse/Ouverture.class#L130), [Ouverture.class:132](../../../../../.src/Caisse/Ouverture.class#L132), [Ouverture.class:200](../../../../../.src/Caisse/Ouverture.class#L200), [Ouverture.class:207](../../../../../.src/Caisse/Ouverture.class#L207), [Ouverture.class:218](../../../../../.src/Caisse/Ouverture.class#L218)
-- [ ] OUVERTURE-A03 — [anomalie] `Combobox1_Click` et `Caissiere_Click` lisent le `Result` sans
+- [ ] OUVERTURE-A03 — [anomalie] (confirmée phase 2, vague 9 : ligne vide de `Combobox1` : « Result is not available » (l. 110), figée par T02) `Combobox1_Click` et `Caissiere_Click` lisent le `Result` sans
   tester `Available` : le choix de la ligne vide de `Combobox1` affiche une erreur technique
   (`Catch`) au lieu d'effacer le fond et la date · tests : T02 · sources : [Ouverture.class:110](../../../../../.src/Caisse/Ouverture.class#L110), [Ouverture.class:131](../../../../../.src/Caisse/Ouverture.class#L131)
 - [ ] OUVERTURE-A04 — [anomalie] `button1_KeyPress` lance la connexion sur **n'importe quelle
@@ -90,8 +90,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] OUVERTURE-A06 — [anomalie, à confirmer] La connexion ne consulte que le verrou du compte
   Unix courant (`User.Home`) et ignore `Fiches_Caisses.connecte` : la même caisse peut être
   connectée depuis un autre compte du même poste · tests : T05 (variante second compte) · sources : [Ouverture.class:188](../../../../../.src/Caisse/Ouverture.class#L188)
-- [ ] OUVERTURE-A07 — [anomalie] `Button1_Click` ferme `Clavier` par son auto-instance
+- [ ] OUVERTURE-A07 — [anomalie] (confirmée phase 2, vague 9 : clavier virtuel resté affiché, figée par T09) `Button1_Click` ferme `Clavier` par son auto-instance
   (`Try Clavier.Close()`) alors que le clavier affiché est créé par `New Clavier`
   (`Button3_Click`) : le clavier visible reste ouvert après la connexion et une instance cachée est
   créée ; correction : mémoriser l'instance de `Button3_Click` · appelants : `Clavier` · tests : T09 ·
   sources : [Ouverture.class:157](../../../../../.src/Caisse/Ouverture.class#L157), [Ouverture.class:198](../../../../../.src/Caisse/Ouverture.class#L198), [Ouverture.class:267](../../../../../.src/Caisse/Ouverture.class#L267)
+- [ ] OUVERTURE-A08 — [anomalie] `Button1_Click`, branche « Cette caisse est déjà connectée » (l. 188-197) : la connexion est refusée mais `Start.$tcai` est modifié (`sNcai` avec `choixtouches`, sinon 0, l. 193-196) (phase 2, vague 9, 2026-11-18) · tests : agent 10 · sources : [Ouverture.class:188-197](../../../../../.src/Caisse/Ouverture.class#L188-L197)

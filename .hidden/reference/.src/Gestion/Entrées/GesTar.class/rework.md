@@ -69,7 +69,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] GESTAR-A01 — [anomalie] `SupTarTemp` n'a pas de paramètre et supprime les tarifs temporaires
+- [ ] GESTAR-A01 — [anomalie] (confirmée phase 2, vague 9 : figée par COMMANDE1-T06) `SupTarTemp` n'a pas de paramètre et supprime les tarifs temporaires
   de l'article courant `$resart` ; `commande1.suppr_Click` l'appelle une fois par ligne sans
   changer d'article → tarifs temporaires des autres articles orphelins. Correction : paramètre
   article (appelant `commande1` à modifier dans le même commit) · tests : T08 · sources : [GesTar.class:SupTarTemp](../../../../../../.src/Gestion/Entrées/GesTar.class#L718-L722), [commande1.class:508](../../../../../../.src/Gestion/Stock/commande1.class#L508)

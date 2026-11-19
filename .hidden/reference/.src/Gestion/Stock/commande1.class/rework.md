@@ -97,3 +97,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] COMMANDE1-A08 — [anomalie] Écran non instrumenté (`Utils.Observers` absent, ainsi que dans
   `Achat`/`GesTar`) : l'ajouter change le log de rejeu et les couleurs ; prérequis possible des
   replays ACHAT/GESTAR (à décider en phase 2) · tests : T01 · sources : [commande1.class:_new](../../../../../../.src/Gestion/Stock/commande1.class#L27-L86)
+- [ ] COMMANDE1-A09 — [anomalie, à confirmer] « Enregistrer » (`ValideS_Click` → `ValCom`) en état Réception sur un document ouvert depuis l'extérieur (`New Commande1(…, Réception)`) bloque la boucle d'événements plus de 20 s (à confirmer, lien possible avec A02) (phase 2, vague 9, 2026-11-18) · tests : T10 · sources : [commande1.class:ValideS_Click](../../../../../../.src/Gestion/Stock/commande1.class#L578-L586), [commande1.class:ValCom](../../../../../../.src/Gestion/Stock/commande1.class#L588)

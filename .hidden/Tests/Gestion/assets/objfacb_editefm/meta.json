@@ -1,0 +1,18 @@
+{
+ "id": "OBJFACB-T15",
+ "classe": "ObjFacB",
+ "objet": "editefm : factures fin de mois triées par nom",
+ "description": "Jeu objfacb_shared/bl_juin_tx (bl_juin avec taux de TVA des lignes). Factures fin de mois (Menu138), Traitement (Button1) pour tous les clients, Imprimer (Button9) : OptFac en mode fin de mois, tri par nom (Tnom), Éditer (edite) : ObjFacB.editefm calcule, écrit (Fiches_Mvt), archive (Fiches_HistoFac/HistoLigfac) et supprime les BL de chaque client ; impression par le faux lpr (@outils.trace).",
+ "dataset": "objfacb_shared/bl_juin_tx",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": ["@outils.trace"],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

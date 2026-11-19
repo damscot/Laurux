@@ -55,7 +55,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TRICP-A01 — [anomalie] Retour de la sélection écrit en dur selon `sOrg` : `"Clientcarte"`
+- [ ] TRICP-A01 — [anomalie] (confirmée phase 2, vague 9 : « 'FClientcarte.Bsel' is not a property » (l. 140), figée par T04) Retour de la sélection écrit en dur selon `sOrg` : `"Clientcarte"`
   écrit `FClientcarte.Bsel`, membre inexistant → erreur « Unknown symbol » ; `"Client"` depuis
   `FClientcarte` écrit dans l'auto-instance cachée de `FClient` (rien n'est repris) ;
   `"Fournisseur"` écrit l'auto-instance de `FFournisseur`, perdue pour la fiche ouverte par
@@ -66,7 +66,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] TRICP-A02 — [anomalie] Aucune remise à zéro de `Bsel` (ni à l'ouverture ni à l'annulation) :
   après une première sélection, Échap réapplique l'ancien code postal (`Variables.Bsel` pour
   `Facture`/`FClientcarte`, `FClient.Bsel`, `FFournisseur.Bsel`) · tests : T07 · sources : [Tricp.class:_new](../../../../../.src/Affichages/Tricp.class#L14-L34), [Tricp.class:144](../../../../../.src/Affichages/Tricp.class#L144)
-- [ ] TRICP-A03 — [anomalie] `Dbclk` inversé : le premier double-clic recharge en ordre croissant
+- [ ] TRICP-A03 — [anomalie] (confirmée phase 2, vague 9 : figée par T05) `Dbclk` inversé : le premier double-clic recharge en ordre croissant
   et passe `Dbl` à `True`, si bien que les pages suivantes sortent en ordre décroissant ; le tri
   décroissant n'apparaît qu'au second double-clic · tests : T05 · sources : [Tricp.class:Dbclk](../../../../../.src/Affichages/Tricp.class#L273-L283)
 - [ ] TRICP-A04 — [anomalie] Filtre concaténé dans le SQL (`like "<sel>%"`) ; `"`, `&`, `'` sont

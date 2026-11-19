@@ -65,13 +65,13 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] PREPARATION-A01 — [anomalie] **Grave** : l'`INSERT` de `Fiches_Bordereaux` passe `BQ.Text`
+- [ ] PREPARATION-A01 — [anomalie] (confirmée phase 2, vague 9 : libellés dans des colonnes entières (`Button12_Click`), figée par T06) **Grave** : l'`INSERT` de `Fiches_Bordereaux` passe `BQ.Text`
   (« 1 - Banque ») et `Entree3.Text` (« 1- Escompte ») dans des colonnes `int(1)` et utilise `value` :
   en MariaDB strict (et sous SQLite) il échoue **après** le marquage des LCR (pas de transaction) →
   LCR rattachées à un bordereau inexistant, invisibles partout (`bordereau <> 0`). Passer
   `Left$(…, 1)` et une transaction · tests : T06, T11 · sources : [Preparation.class:639](../../../../../../.src/Gestion/Lcr/Preparation.class#L639),
   [Preparation.class:630](../../../../../../.src/Gestion/Lcr/Preparation.class#L630)
-- [ ] PREPARATION-A02 — [anomalie] Sélection du bordereau (`Deb3`) : dates d'échéance concaténées
+- [ ] PREPARATION-A02 — [anomalie] (confirmée phase 2, vague 9 : `Deb3` : dates sans guillemets, figée par T07) Sélection du bordereau (`Deb3`) : dates d'échéance concaténées
   sans guillemets (filtre faux) et LCR écartées non exclues · tests : T07 · sources :
   [Preparation.class:395](../../../../../../.src/Gestion/Lcr/Preparation.class#L395), [Preparation.class:Deb3](../../../../../../.src/Gestion/Lcr/Preparation.class#L387-L405)
 - [ ] PREPARATION-A03 — [anomalie] Recherche par échéance : `Deb4` `And`/`Or` sans parenthèses
@@ -80,7 +80,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] PREPARATION-A04 — [anomalie] Marquage : premier clic droit sans effet visible (`""` → `"False"`)
   et boucle `For x = 0 To Enrg` d'une ligne au-delà de la grille · tests : T05 · sources :
   [Preparation.class:ColLcr_MouseUp](../../../../../../.src/Gestion/Lcr/Preparation.class#L507-L524), [Preparation.class:683](../../../../../../.src/Gestion/Lcr/Preparation.class#L683)
-- [ ] PREPARATION-A05 — [anomalie] `Button2_Click` supprime la LCR **sans confirmation** (et lève une
+- [ ] PREPARATION-A05 — [anomalie] (précisée phase 2, vague 9 : sans sélection ni confirmation, la LCR restée courante après `Total()` (lind 5) est supprimée, sans erreur, figée par T09) `Button2_Click` supprime la LCR **sans confirmation** (et lève une
   erreur sans sélection) · tests : T09 · sources : [Preparation.class:Button2_Click](../../../../../../.src/Gestion/Lcr/Preparation.class#L661-L672)
 - [ ] PREPARATION-A06 — [anomalie] `Imp_Lcr` imprime aussi les LCR écartées et déjà en bordereau ;
   pas d'en-tête de colonnes après un saut de page · tests : T10 · sources : [Preparation.class:787](../../../../../../.src/Gestion/Lcr/Preparation.class#L787),
@@ -93,3 +93,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   du dernier bordereau dans `Bordrx`, le numéro est réutilisé ; la fin de la boucle de marquage
   repose sur un `MoveTo` hors bornes (à confirmer) · tests : T08 · sources : [Preparation.class:619](../../../../../../.src/Gestion/Lcr/Preparation.class#L619),
   [Preparation.class:628](../../../../../../.src/Gestion/Lcr/Preparation.class#L628)
+- [ ] PREPARATION-A09 — [anomalie] `Button12_Click` : l'`INSERT` de `Fiches_Bordereaux` (l. 639) enregistre `Ech1.dte.G`/`Ech2.dte.G` : sans échéances saisies, `ech1`/`ech2` reçoivent la date et l'heure courantes (phase 2, vague 9, 2026-11-18) · tests : T06 · sources : [Preparation.class:639](../../../../../../.src/Gestion/Lcr/Preparation.class#L639)
+- [ ] PREPARATION-A10 — [anomalie] `DAE_KeyPress` : `sel` est réécrit dès 4 caractères (`%-mm-jj`, l. 207-209) puis complété : une date complète à 8 chiffres est impossible à rechercher (« 30062018 » → `like "%02-06-%-%"`) ; même code dans [Attribution](../Attribution.class/rework.md) (phase 2, vague 9, 2026-11-18) · tests : agent 8 · sources : [Preparation.class:DAE_KeyPress](../../../../../../.src/Gestion/Lcr/Preparation.class#L199-L217), [Attribution.class:DAE_KeyPress](../../../../../../.src/Gestion/Lcr/Attribution.class#L187-L205)

@@ -1,0 +1,202 @@
+' Gambas test file
+
+''Tests de Ecomptamat (.hidden/reference/.src/Gestion/option/Ecomptamat.class/test.md, ECOMPTAMAT-T01, T04 à T07).
+''Valeurs attendues : assets/EcomptamatTest/expected.txt, produites dans le clone de référence.
+''Le rapport (gb.report) est construit sans impression à partir d'une Collection de Declaration (structure publique de
+''Caleditcmat, ce que lui passe Caleditcmat.Edit) ; chaque méthode <champ>_Data(i) est appelée pour chaque ligne et on
+''relève Data des champs dans l'ordre de l'arbre, puis les textes des ReportLabel (pdftotext ne rend rien sur une
+''édition gb.report). Jeu visucmat_shared/cmat_base (lecture seule : régies 01 et 02, arrêté 05.2018, lignes de
+''régie de mai et juin 2018 non clôturées, vignettes '' et 000…01 en mai).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DeclarationSuspendu", "Régies 01 et 02, juin 2018, droits et sécurité sociale : volumes, tarifs, montants, total à payer")
+  TestKit.Desc("T04Reedition", "Réédition (edit = True) de juin 2018 sans ligne clôturée : plage de vignettes vide (CALEDITCMAT-A05)")
+  TestKit.Desc("T05VignetteVide", "Mai 2018 : une ligne à vignette '' et une à 000…01 : « à X » figé (A02)")
+  TestKit.Desc("T06Identifiant", "N° d'identification de la société absent puis renseigné (A01)")
+  TestKit.Desc("T07Convers", "convers avec arrondi initial : 0 ; 0,5 ; 99,994 ; 100 ; 199,996 ; -150 × h / l / c")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EcomptamatTest")
+  TestKit.OuvreBase("visucmat_shared/cmat_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Function Dcl(fDp As Float, fEn As Float, fSo As Float, fApDp As Float, fApEn As Float, fApSo As Float) As Object
+  ''Les structures publiques de Caleditcmat ne sont pas nommables hors de la classe : création par Object.New.
+
+  Dim hD As Object
+
+  Class.Load("Caleditcmat")
+  hD = Object.New("Declaration")
+  hD.totvol = Object.New("Stk")
+  hD.totvol.vae = Object.New("Volume")
+  hD.totvol.vap = Object.New("Volume")
+  hD.totvol.vae.vdp = fDp
+  hD.totvol.vae.ven = fEn
+  hD.totvol.vae.vso = fSo
+  hD.totvol.vae.vfp = fDp + fEn - fSo
+  hD.totvol.vap.vdp = fApDp
+  hD.totvol.vap.ven = fApEn
+  hD.totvol.vap.vso = fApSo
+  hD.totvol.vap.vfp = fApDp + fApEn - fApSo
+  hD.qteimp = IIf(fApSo <> 0, fApSo, fSo)
+  Return hD
+
+End
+
+Private Sub Textes(hObj As Object, aRes As String[])
+
+  Dim hChild As Object
+  Dim cChildren As Object
+
+  If Object.Type(hObj) = "ReportLabel" Then aRes.Add(Object.GetProperty(hObj, "Text"))
+  Try cChildren = Object.GetProperty(hObj, "Children")
+  If Error Then Return
+  If Not cChildren Then Return
+  For Each hChild In cChildren
+    Textes(hChild, aRes)
+  Next
+
+End
+
+Private Sub Parcours(hObj As Object, aData As Object[])
+  ''Les contrôles du rapport sont privés : on repère par parcours de Children ceux qui ont une propriété Data.
+
+  Dim hChild As Object
+  Dim cChildren As Object
+  Dim v As Variant
+
+  Try v = Object.GetProperty(hObj, "Data")
+  If Not Error Then aData.Add(hObj)
+  Try cChildren = Object.GetProperty(hObj, "Children")
+  If Error Then Return
+  If Not cChildren Then Return
+  For Each hChild In cChildren
+    Parcours(hChild, aData)
+  Next
+
+End
+
+Private Function Ligne(hR As Object, aData As Object[], i As Integer) As String
+  ''Appelle toutes les méthodes <champ>_Data(i) puis relève Data des champs dans l'ordre de l'arbre.
+
+  Dim sSym As String
+  Dim aRes As New String[]
+  Dim hObj As Object
+
+  For Each sSym In Class.Load("Ecomptamat").Symbols
+    If Right(sSym, 5) <> "_Data" Then Continue
+    Try Object.Call(hR, sSym, [i])
+    If Error Then aRes.Add(Left(sSym, -5) & "=ERREUR: " & Error.Text)
+  Next
+  For Each hObj In aData
+    aRes.Add("[" & CStr(Object.GetProperty(hObj, "Data")) & "]")
+  Next
+  Return aRes.Join(" ")
+
+End
+
+Private Sub Edition(sCle As String, cTabl As Collection, Optional sMois As String = "06", Optional sAnne As String = "2018", Optional bEdit As Boolean = False)
+
+  Dim hR As Object
+  Dim aRes As New String[]
+  Dim aData As New Object[]
+  Dim sDate As String
+  Dim i As Integer
+
+  Try hR = New Ecomptamat(cTabl, sMois, sAnne, bEdit)
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Parcours(hR, aData)
+  TestKit.Check(sCle & "/nb_champs_data", aData.Count)
+  For i = 0 To cTabl.Count - 1
+    TestKit.Check(sCle & "/ligne" & CStr(i), Ligne(hR, aData, i))
+  Next
+  Textes(hR, aRes)
+  sDate = Format(Now, "dd/mm/yyyy")
+  For i = 0 To aRes.Max
+    If aRes[i] = sDate Then aRes[i] = "<date du jour>"
+  Next
+  TestKit.Check(sCle & "/textes", aRes.Join(" | "))
+  TestKit.Check(sCle & "/busy", Application.Busy)
+
+End
+
+Private Function Droits(hD As Object, fTarifDr As Float, fTarifSs As Float, fDroit As Float, fSecu As Float, fVolSs As Float) As Object
+
+  hD.tarifdr = fTarifDr
+  hD.tarifss = fTarifSs
+  hD.droit = fDroit
+  hD.secu = fSecu
+  hD.volumess = fVolSs
+  Return hD
+
+End
+
+Public Sub T01DeclarationSuspendu()
+
+  Dim cTabl As New Collection
+
+  cTabl.Add(Droits(Dcl(120.5, 30.25, 12.75, 14.46, 3.63, 1.53), 0.018, 0, 0.23, 0, 0), "01")
+  cTabl.Add(Droits(Dcl(250, 8.4, 3.7, 100, 3.36, 1.63), 18, 5.9, 29.34, 9.62, 1.63), "02")
+  Edition("T01", cTabl)
+
+End
+
+Public Sub T04Reedition()
+
+  Dim cTabl As New Collection
+
+  cTabl.Add(Droits(Dcl(1.4, 0, 0.7, 0.56, 0, 0.28), 18, 5.9, 5.04, 1.65, 0.28), "02")
+  Edition("T04", cTabl, "06", "2018", True)
+
+End
+
+Public Sub T05VignetteVide()
+
+  Dim cTabl As New Collection
+
+  cTabl.Add(Droits(Dcl(0, 8.4, 3, 0, 3.36, 1.35), 18, 5.9, 24.3, 7.97, 1.35), "02")
+  Edition("T05", cTabl, "05", "2018", False)
+
+End
+
+Public Sub T06Identifiant()
+
+  Dim cTabl As New Collection
+
+  cTabl.Add(Droits(Dcl(1.4, 0, 0.7, 0.56, 0, 0.28), 18, 5.9, 5.04, 1.65, 0.28), "02")
+  Edition("T06/sans", cTabl)
+  Utils.db.Exec("UPDATE Fiches_Societes SET ident = &1", "FR12345678901")
+  Edition("T06/avec", cTabl)
+
+End
+
+Public Sub T07Convers()
+  ''Ligne 0 seule (stock de début = volume testé).
+
+  Dim cTabl As Collection
+  Dim hR As Object
+  Dim fVol As Float
+  Dim aData As Object[]
+
+  For Each fVol In [0.0, 0.5, 99.994, 100.0, 199.996, -150.0]
+    cTabl = New Collection
+    cTabl.Add(Dcl(fVol, 0, 0, 0, 0, 0), "01")
+    hR = New Ecomptamat(cTabl, "06", "2018", False)
+    aData = New Object[]
+    Parcours(hR, aData)
+    TestKit.Check("T07/" & CStr(fVol), Ligne(hR, aData, 0))
+  Next
+
+End

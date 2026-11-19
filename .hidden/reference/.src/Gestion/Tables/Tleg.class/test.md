@@ -10,7 +10,7 @@
 | TLEG-T01 | replay | Modification du texte | menu Réserve de propriété ; texte modifié avec `&` ; Enregistrer | UPDATE de `lind = 1`, `&` → `et` | `tests/modification/` | implémenté (jeu tleg_court) |
 | TLEG-T02 | replay | Texte vide | texte effacé ; Enregistrer | aucune écriture | `tests/texte_vide/` | implémenté |
 | TLEG-T03 | replay | Table sans ligne `lind = 1` | jeu dérivé avec une seule ligne `lind = 2` ; modification ; Enregistrer | nouvelle ligne insérée, affichage inchangé (A01 figée) | `tests/lind_absent/` | implémenté (lind auto = 9 : compteur AUTO_INCREMENT de Laurux01) |
-| TLEG-T04 | replay | Lecture en facturation | facture imprimée après T01 | texte modifié repris sur le PDF (via `ObjFac`) | `tests/lecture_facture/` | à faire : passe par la facturation (ObjFac, écran complexe) |
+| TLEG-T04 | replay | Lecture en facturation | facture imprimée après T01 | texte modifié repris sur le PDF (via `ObjFac`) | `tests/lecture_facture/` | implémenté (gb.test `TlegTest.T04LectureFacture` : texte enregistré par `Button2_Click` relu par `ObjFac.treserve` ; le PDF, imprimé par `ObjFacB`, n'est pas comparé) |
 
 ## Détail des tests
 

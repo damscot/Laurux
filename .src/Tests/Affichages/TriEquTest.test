@@ -1,0 +1,139 @@
+' Gambas test file
+
+''Tests de TriEqu (.hidden/reference/.src/Affichages/TriEqu.class/test.md, TRIEQU-T01 à T05).
+''Fenêtre instanciée sans affichage (New TriEqu("Facture", code équivalent, retro, client, type, tclient)), sans l'écran
+''Facture : la grille Colart (Utils.rs2) est relue par ses cellules (événement Data levé à la lecture). Les touches
+''(Échap, F2, PageDown : Key.Code) et la molette ne sont pas simulables : gestionnaires publics appelés directement.
+''Jeu assets/TriEquTest/equivalents (40 articles EQ001-EQ040 équivalents à EQUIV1, remise type 01 / famille 01).
+''Valeurs attendues : assets/TriEquTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ChoixEquivalent", "Clic sur le 2e article de la liste EQUIV1 : Variables.Bsel et $Codearticle")
+  TestKit.Desc("T02Annulation", "Fermeture sans choix (Form_Close) après une sélection précédente : Bsel faux, code article vidé")
+  TestKit.Desc("T03TriDoubleClic", "Clics sur Code, Qté, PA HT ; double-clics (toujours décroissant, A01) ; page suivante en croissant")
+  TestKit.Desc("T04Pagination", "Descendre ×2, Remonter, dernière page, Remonter sous 0")
+  TestKit.Desc("T05HtPro", "Colonne HT Pro (retro faux, client à remise par type) : toujours vide (A02) ; retro vrai")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriEquTest")
+  TestKit.OuvreBase("equivalents")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Page(sCle As String, hForm As Object)
+
+  Dim hGrd As Object
+  Dim sTxt As String
+  Dim i As Integer
+
+  hGrd = hForm.Controls["Colart"]
+  For i = 0 To hGrd.Rows.Count - 1
+    sTxt &= hGrd[i, 3].Text & "/" & hGrd[i, 5].Text & "/" & hGrd[i, 6].Text & " "
+  Next
+  TestKit.Check(sCle, "lignes=" & hGrd.Rows.Count & " " & Trim(sTxt) & " | CO=" & Object.GetProperty(hForm.Controls["CO"], "Text") & " CO2=" & Object.GetProperty(hForm.Controls["CO2"], "Text") & " CO3=" & Object.GetProperty(hForm.Controls["CO3"], "Text"))
+
+End
+
+Private Function Ouvre(Optional bRetro As Boolean) As Object
+
+  Return New TriEqu("Facture", "EQUIV1", bRetro, "411001", "01", False)
+
+End
+
+Public Sub T01ChoixEquivalent()
+
+  Dim hForm As Object
+
+  Variables.Bsel = False
+  Variables.$Codearticle = ""
+  hForm = Ouvre()
+  Page("T01/liste", hForm)
+  hForm.Controls["Colart"].Row = 1
+  hForm.Colart_Click()
+  TestKit.Check("T01/choix", Variables.Bsel & " " & Variables.$Codearticle)
+
+End
+
+Public Sub T02Annulation()
+
+  Dim hForm As Object
+
+  Variables.Bsel = True
+  Variables.$Codearticle = "EQ005"
+  hForm = Ouvre()
+  ' Fenêtre jamais affichée : Close ne lève pas l'événement, le gestionnaire est appelé directement
+  hForm.Form_Close()
+  TestKit.Check("T02/fermeture", Variables.Bsel & " <" & Variables.$Codearticle & ">")
+
+End
+
+Public Sub T03TriDoubleClic()
+
+  Dim hForm As Object
+
+  hForm = Ouvre()
+  Page("T03/initial_paht", hForm)
+  hForm.Co_MouseDown()
+  Page("T03/code", hForm)
+  hForm.Co2_MouseDown()
+  Page("T03/qte", hForm)
+  hForm.Co3_MouseDown()
+  Page("T03/paht", hForm)
+  hForm.Dbclk()
+  Page("T03/dblclic1", hForm)
+  hForm.Dbclk()
+  Page("T03/dblclic2", hForm)
+  hForm.Descendre_Click()
+  Page("T03/page2", hForm)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T04Pagination()
+
+  Dim hForm As Object
+  Dim i As Integer
+
+  hForm = Ouvre()
+  hForm.Co_MouseDown()
+  hForm.Descendre_Click()
+  Page("T04/page2", hForm)
+  hForm.Descendre_Click()
+  Page("T04/page3", hForm)
+  hForm.Remonter_Click()
+  Page("T04/retour_page2", hForm)
+  For i = 1 To 10
+    hForm.Descendre_Click()
+  Next
+  Page("T04/derniere_page", hForm)
+  For i = 1 To 10
+    hForm.Remonter_Click()
+  Next
+  Page("T04/sous_zero", hForm)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T05HtPro()
+
+  Dim hForm As Object
+  Dim hGrd As Object
+
+  hForm = Ouvre(False)
+  hGrd = hForm.Controls["Colart"]
+  TestKit.Check("T05/retro_faux", "col0=" & hGrd[0, 0].Text & " code=" & hGrd[0, 3].Text & " pvttc=" & hGrd[0, 7].Text & " fam=" & hGrd[0, 8].Text & " htpro=<" & hGrd[0, 10].Text & ">")
+  Object.Lock(hForm)
+  hForm = Ouvre(True)
+  hGrd = hForm.Controls["Colart"]
+  TestKit.Check("T05/retro_vrai", "code=" & hGrd[0, 3].Text & " htpro=<" & hGrd[0, 10].Text & ">")
+  Object.Lock(hForm)
+
+End

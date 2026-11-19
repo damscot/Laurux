@@ -17,7 +17,7 @@ non modifié**. Le replay passe par les écrans d'inventaire et de dépôts.
 | CSTOCKS-T04 | gbtest | Dépôts : `Level1D`/`Level2D`, `Level3D`/`Level4D`, `Level1M`/`Level2M` | `/Soc01/Taxe` = « TVA » | libellé de taxe dans l'en-tête ; flux de référence | `tests/cstocks_depots/` | implémenté (gb.test CstocksTest.T04Depots) |
 | CSTOCKS-T05 | gbtest | Pagination : 3 × (`Entete` + `BasPage`) | — | « Page 1/3 » à « Page 3/3 » | `tests/cstocks_pied/` | implémenté (gb.test CstocksTest.T05Pagination) |
 | CSTOCKS-T06 | gbtest | Squelette paginé (après CSTOCKS-006) : `DebutEdition` + 120 lignes + `SautDePageSi` aux seuils 270, 280, 283, 288 | mêmes lignes que les écrans | flux identique à la séquence d'appels actuelle (enregistrée dans le clone non modifié) | `tests/cstocks_squelette/` | à faire : après CSTOCKS-006 (extraction) |
-| CSTOCKS-T07 | replay | Éditions réelles | scénarios ECARTS-T01, ECARTST-T01, EDNSAISIS-T01, EDINV-T01/T02, GENINV-T01, GENINVT-T01, IMPDEPOTS-T01/T02, EDSDEPOTS-T01 (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump inchangé | `tests/cstocks_editions/` | à faire : inventaires exclus (complexe) ; ImpDepots/Edsdepots non encore scénarisés |
+| CSTOCKS-T07 | replay | Éditions réelles | scénarios ECARTS-T01, ECARTST-T01, EDNSAISIS-T01, EDINV-T01/T02, GENINV-T01, GENINVT-T01, IMPDEPOTS-T01/T02, EDSDEPOTS-T01 (voir leurs `test.md`) | texte PDF identique entre les deux clones ; dump inchangé | `tests/cstocks_editions/` | implémenté (gb.test `CstocksTest.T07EditionsInventaire`, `T07bEditionsTournant`, `T07cEditionsDepots`) |
 
 ## Détail des tests
 
@@ -32,3 +32,4 @@ non modifié**. Le replay passe par les écrans d'inventaire et de dépôts.
   de saut de page recopié de chaque écran (seuil, reprise, présence de `BasPage`).
 - **Non testable automatiquement** : rendu visuel (recouvrement de `level3fam`).
 - **Couverture visée** : 100 % des méthodes.
+- **CSTOCKS-T07 (vague 9)** : trois gb.test (prévus en replay) : les écrans appelants sont instanciés sans affichage et leur méthode d'impression appelée (visualiseur neutralisé), texte du PDF relevé ligne à ligne : `T07EditionsInventaire` (Geninv feuille, Edinv("F"), Ednsaisis, Ecarts sur `Gestion/validinv_shared/inv_fin_partiel`), `T07bEditionsTournant` (GeninvT, EdinvT, EdnsaisisT, EcartsT sur `Gestion/validinvt_shared/invt_partiel` ; `/Coul/Znss` posé pour `GeninvT._New`), `T07cEditionsDepots` (ImpDepots dépôt 02 sur `Gestion/impdepots_shared/impdepots_trois`, Edsdepots sur `Gestion/sdepots_shared/sdepots_stock`). Jeux d'autres classes en lecture seule.

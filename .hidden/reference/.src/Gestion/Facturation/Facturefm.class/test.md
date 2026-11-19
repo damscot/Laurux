@@ -20,7 +20,7 @@ contenu des tables de travail `Facturefm` et `Bl` (dump dédié, trié), contenu
 | FACTUREFM-T07 | replay | Type de facture Boissons / Autres | `Utils.Option` = B, clients paysage/portrait | clients retirés selon l'orientation | `tests/type_facture/` | implémenté (gb.test `FacturefmTest.T07Boissons`, `T07Autres`, `T07Regie`, vague 8 : jeu bl_juin, `/Soc01/bois` vrai, tables de l'option créées par `modfichier.fichierboisson` (colonne `art_trsp` posée d'avance pour éviter sa Message.Question), `arrete` = 12.2017 exigé par VerifDate ; consigne sur B00001 → DURAND boisson ; régie par article à droits `art_dra` sur B00004 → MARTIN boisson ; clients retirés de Facturefm/Bl et de Colbl selon le type) |
 | FACTUREFM-T08 | replay | Retraits | Suppr sur un client puis sur un BL | lignes supprimées de `Facturefm`/`Bl` ; totaux affichés recalculés | `tests/retraits/` | implémenté (`Gestion/facturefm_retraits`) |
 | FACTUREFM-T09 | replay | Entretien | case `Checentr` | sélection dans `Fiches_BlM`/`Fiches_LigblM` ; `OptFac` reçoit `"M"` | `tests/entretien/` | implémenté pour la sélection `Fiches_BlM` (`Gestion/facturefm_entretien`) ; à faire : `OptFac` avec « M » (édition, passe par `ObjFac`, écran complexe) |
-| FACTUREFM-T10 | replay | Édition | `Imprimer` → `OptFac` → `edite` | factures émises, écritures, `Fiches_Bl` (`numfac`, `imp`) : dump complet | `tests/edition_fin_de_mois/` | à faire : édition par `OptFac` → `ObjFac`/`ObjFacB` (classe complexe exclue) |
+| FACTUREFM-T10 | replay | Édition | `Imprimer` → `OptFac` → `edite` | factures émises, écritures, `Fiches_Bl` (`numfac`, `imp`) : dump complet | `tests/edition_fin_de_mois/` | implémenté (replay `Gestion/facturefm_edition_fin_de_mois` : Traiter, Imprimer, OptFac › Éditer ; factures émises, écritures, BL archivés dans le dump ; impression directe lpr non comparée) |
 | FACTUREFM-T11 | replay | Date en période close | date antérieure à la clôture de facturation | message de `VerifDate`, aucun traitement | `tests/periode_close/` | implémenté (`Gestion/facturefm_periode_close`) |
 
 ## Détail des tests
@@ -42,3 +42,4 @@ contenu des tables de travail `Facturefm` et `Bl` (dump dédié, trié), contenu
 - Comportements figés (candidats anomalies) : `Bl.nom` garde le nom du client précédent hors clients divers
   (B00004 de MARTIN enregistré « DURAND ») ; les frais TTC ne sont pas déduits du 2e BL quand `totfrais` ne
   trouve pas de TVA des frais (`tottc` = 228,00 au lieu de 222,00, `ht` B00003 = 30,00 mais `ttc` = 42,00).
+- **T10 (phase 2, vague 9)** : jeu `assets/facturefm_edition_fin_de_mois/edition_juin.sql`, copie de `facturefm_shared/bl_juin` complétée (article 003 à 20 %, `mtx_ligfac` renseigné : sans lui `ObjFac.calc` s'arrête, OBJFAC-A09 ; comptes clients 411901-411903).

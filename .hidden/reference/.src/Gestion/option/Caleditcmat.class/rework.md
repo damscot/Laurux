@@ -75,10 +75,10 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CALEDITCMAT-A01 — [anomalie] `ctrl` sort par `Return True` après l'échec de `calcdate` sans
+- [ ] CALEDITCMAT-A01 — [anomalie] (confirmée phase 2, vague 9 : `Edition_Click` sur refus de clôture : `Application.Busy` reste à 1, figée par T06, T11) `ctrl` sort par `Return True` après l'échec de `calcdate` sans
   `Application.Busy -= 1` : curseur d'attente persistant (Control, Edition, Rédition) · tests :
   T11 · sources : [Caleditcmat.class:66](../../../../../../.src/Gestion/option/Caleditcmat.class#L66), [Caleditcmat.class:68](../../../../../../.src/Gestion/option/Caleditcmat.class#L68)
-- [ ] CALEDITCMAT-A02 — [anomalie] Date invalide en édition provisoire, Rédition ou Detail : le
+- [ ] CALEDITCMAT-A02 — [anomalie] (confirmée phase 2, vague 9 : `Application.Busy` à 2 avec un mois invalide, figée par T11) Date invalide en édition provisoire, Rédition ou Detail : le
   résultat de `ctrl`/`calcdate` est ignoré et la période précédemment calculée (`$dteinf`) est
   éditée · tests : T11 · sources : [Caleditcmat.class:Edition_Click](../../../../../../.src/Gestion/option/Caleditcmat.class#L223-L257), [Caleditcmat.class:261](../../../../../../.src/Gestion/option/Caleditcmat.class#L261),
   [Caleditcmat.class:488](../../../../../../.src/Gestion/option/Caleditcmat.class#L488)
@@ -101,3 +101,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] CALEDITCMAT-A09 — [anomalie] Ligne `M` de clôture : `volumess` reçoit le volume SS des
   **sorties du mois** et non un stock (à confirmer avec la réglementation ; non relu par `Edit`) ·
   tests : T05 · sources : [Caleditcmat.class:Edition_Click](../../../../../../.src/Gestion/option/Caleditcmat.class#L223-L257)
+- [ ] CALEDITCMAT-A10 — [anomalie] `ctrl` : les en-têtes « FACTURES NON VALIDÉES / PÉRIODE EN COURS » et « … PÉRIODES PRÉCEDANTES » (l. 91, 98) sont écrits avant `ctrlachat`, même si aucune ligne n'est retenue ; le contrôle « Facture archive » (l. 125) n'a ni filtre de régime (`suspendu`) ni borne de fin de mois (phase 2, vague 9, 2026-11-18) · tests : T02 · sources : [Caleditcmat.class:ctrl](../../../../../../.src/Gestion/option/Caleditcmat.class#L59-L141), [Caleditcmat.class:ctrlachat](../../../../../../.src/Gestion/option/Caleditcmat.class#L144-L172)
+- [ ] CALEDITCMAT-A11 — [anomalie, à confirmer] `editinv` sans `Fiches_Inv`/`Fiches_InvT` : « Type mismatch: wanted Number, got Null » (`New EditStkDepart`, requêtes l. 30-32) ; ligne fautive non localisée (phase 2, vague 9, 2026-11-18) · tests : T10 · sources : [Caleditcmat.class:editinv](../../../../../../.src/Gestion/option/Caleditcmat.class#L922-L933), [EditStkDepart.class:_new](../../../../../../.src/Gestion/option/EditStkDepart.class#L21-L39)

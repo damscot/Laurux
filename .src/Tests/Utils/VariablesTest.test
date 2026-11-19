@@ -9,6 +9,7 @@ Public Sub _Desc()
 
   TestKit.Desc("T01InitReglages", "Initialisation depuis les réglages")
   TestKit.Desc("T01bSansReglage", "Réglages absents (complément de VARIABLES-T01)")
+  TestKit.Desc("T05CoefTypeC", "Articles → CoefTypeC : Variables.OrgCoefTypeCli/ArtCode/Artintitule/ArtTva/ArtHt posés comme Articles.Button9, valeurs affichées")
 
 End
 
@@ -57,5 +58,49 @@ Public Sub T01bSansReglage()
   ''Complément de T01 : réglages absents (valeurs par défaut des conversions).
 
   Lecture("T01b/absent")
+
+End
+
+Public Sub T05CoefTypeC()
+  ''VARIABLES-T05 : transmission des variables de l'article à CoefTypeC, posées comme le fait Articles.Button9_Click
+  ''(écran Articles en revue manuelle) ; CoefTypeC instancié sans affichage, Form_Open appelé, 1re ligne
+  ''(coefficient 1,500, type 01) puis 2e ligne choisies par MoveTo + Tabtypec_Click (calcul AffProduit). Jeu Gestion/coeftypec_shared/coeftypec_deux.
+
+  Dim hF As CoefTypeC
+  Dim hTab, hL As Object
+  Dim sCle, sNom As String
+
+  TestKit.OuvreBase("Gestion/coeftypec_shared/coeftypec_deux")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Variables.OrgCoefTypeCli = "Art"
+  Variables.ArtCode = "001"
+  Variables.Artintitule = "Produit 2.10"
+  Variables.ArtTva = "20"
+  Variables.ArtHt = "10,00"
+  Try hF = New CoefTypeC
+  If Error Then
+    TestKit.Check("T05/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hF.Form_Open()
+  If Error Then TestKit.Check("T05/open", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  hTab = hF.Controls["TabTypec"]
+  TestKit.Check("T05/panel1", hF.Controls["Panel1"].Visible)
+  For Each sCle In ["1", "2"]
+    Try hTab.MoveTo(sCle)
+    If Error Then
+      TestKit.Check("T05/" & sCle & "/moveto", "ERREUR: " & Error.Text)
+      Continue
+    Endif
+    Try hF.Tabtypec_Click()
+    If Error Then TestKit.Check("T05/" & sCle & "/click", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    For Each sNom In ["Cdt", "Cdf", "Coeff", "Label8", "Label2", "Label4", "Label6", "Label7"]
+      hL = hF.Controls[sNom]
+      TestKit.Check("T05/" & sCle & "/" & sNom, hL.Text)
+    Next
+  Next
+  Object.Lock(hF)
 
 End

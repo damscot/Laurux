@@ -1,0 +1,24 @@
+{
+ "id": "BORDRX-T07",
+ "objet": "Champ trop long (adresse de 35 caractères)",
+ "classe": "Bordrx",
+ "description": "Bordereau 2 (banque 2, option O) : adresse 1 du client 1002 de 35 caractères ; Envoyer (Button3) : String$(32 - 35) lève une erreur fatale à Bordrx.class (A04 figée, code 125), fichier ~/LCR012 partiel.",
+ "dataset": "adresse_longue",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Fichiers": "{home}"
+ },
+ "fichiers": [
+  "LCR012"
+ ],
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

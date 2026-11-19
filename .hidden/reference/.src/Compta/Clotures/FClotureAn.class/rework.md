@@ -87,7 +87,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FCLOTUREAN-A01 — [anomalie] **Sauvegarde impossible mais clôture poursuivie** : `Sauve`
+- [ ] FCLOTUREAN-A01 — [anomalie] (précisée phase 2, vague 9 : `Sauve` (l. 663-672) : la redirection `>` du `Shell` crée le `.sql` vide même si `mysqldump` échoue → `Exist()` vrai (l. 664), sauvegarde vide compressée, aucun message, clôture menée à terme (aggrave A01)) **Sauvegarde impossible mais clôture poursuivie** : `Sauve`
   affiche l'erreur et fait `Me.Close`, puis `Button1_Click` continue toute la clôture sans
   sauvegarde · tests : T10 · sources : [FClotureAn.class:300](../../../../../../.src/Compta/Clotures/FClotureAn.class#L300), [FClotureAn.class:670-672](../../../../../../.src/Compta/Clotures/FClotureAn.class#L670-L672)
 - [ ] FCLOTUREAN-A02 — [anomalie] `Sauve` : si la compression échoue, `Move` puis `Kill` du
@@ -97,7 +97,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sauvegarde), `ALTER TABLE x Rename y` sans `TO` (syntaxe SQLite, à confirmer), `CopieTable` qui
   ne crée pas la table (DB_CONNECTION-A04) ; la base est détruite. Bloquer la clôture sous
   SQLite ou corriger les trois points · tests : T12 · sources : [FClotureAn.class:351-371](../../../../../../.src/Compta/Clotures/FClotureAn.class#L351-L371), [DB_Connection.class:CopieTable](../../../../../../.src/Utils/DB_Connection.class#L646-L654)
-- [ ] FCLOTUREAN-A04 — [anomalie] Report des écritures postérieures : colonnes perdues (tous types :
+- [ ] FCLOTUREAN-A04 — [anomalie] (précisée phase 2, vague 9 : `Fiches_MvtA` : `validee` perdu (l. 442) ; `Fiches_MvtM` : `numerodef`, `collectif`, `numcol`, `lind2` perdus (l. 455) ; `Fiches_Mvt` : `numlot` vide → NULL et `numerodef` remis à 0 (l. 541)) Report des écritures postérieures : colonnes perdues (tous types :
   `control`, `lind2` ; C/F en plus : `datee`, `dteval`, `relance`, `export` ; G en plus : `nrlv`,
   `dateech`, `datee`, `dteval`, `relance`, `export`), `lind` renuméroté, `lettree` forcé à 0 pour G, `validee` à 0
   pour C/F/B puis à 1 (A06) · tests : T04 · sources : [FClotureAn.class:475](../../../../../../.src/Compta/Clotures/FClotureAn.class#L475), [FClotureAn.class:515](../../../../../../.src/Compta/Clotures/FClotureAn.class#L515), [FClotureAn.class:539](../../../../../../.src/Compta/Clotures/FClotureAn.class#L539)
@@ -120,3 +120,5 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FCLOTUREAN-A10 — [anomalie] `Form_Open` lit `Fiches_Parametres` sans test `Available` et
   `Aff_date` formate `datec3` avant son calcul (l. 67 vs l. 73) ; table vide → erreur
   non interceptée (à confirmer) · tests : manuel · sources : [FClotureAn.class:61-73](../../../../../../.src/Compta/Clotures/FClotureAn.class#L61-L73), [FClotureAn.class:92](../../../../../../.src/Compta/Clotures/FClotureAn.class#L92)
+- [ ] FCLOTUREAN-A11 — [anomalie, à confirmer] Reprise des écritures postérieures : `DELETE FROM <Mvt1> WHERE numero = &1 and compte = &2 and numcol = &3` (l. 480, 519, 543) devient `numcol = NULL` quand `numcol` est NULL, jamais vrai : l'écriture reportée reste aussi dans `Fiches_Mvt1` (en double dans N et N-1) ; `numerodef` remis à 0 pour une écriture non clôturée (l. 541) ; le contrôle de balance (l. 280-282) ne totalise que les comptes de gestion et de bilan (`G`, `B`) (constat de l'agent 3, à vérifier) (phase 2, vague 9, 2026-11-18) · tests : T04 (agent 3) · sources : [FClotureAn.class:480](../../../../../../.src/Compta/Clotures/FClotureAn.class#L480), [FClotureAn.class:519](../../../../../../.src/Compta/Clotures/FClotureAn.class#L519), [FClotureAn.class:543](../../../../../../.src/Compta/Clotures/FClotureAn.class#L543), [FClotureAn.class:541](../../../../../../.src/Compta/Clotures/FClotureAn.class#L541), [FClotureAn.class:280-282](../../../../../../.src/Compta/Clotures/FClotureAn.class#L280-L282)
+- [ ] FCLOTUREAN-A12 — [anomalie] Report des comptes de gestion : l'`UPdate` de la ligne 980000 de `Report` (l. 532) écrit `intitule = &6` (`cResult!compte_cc`, ex. « 707000 ») au lieu de `&2` (`rResult!intitule`, passé mais inutilisé) ; l'`INSERT` (l. 534) est correct (phase 2, vague 9, 2026-11-18) · tests : T04 (agent 6) · sources : [FClotureAn.class:532](../../../../../../.src/Compta/Clotures/FClotureAn.class#L532), [FClotureAn.class:534](../../../../../../.src/Compta/Clotures/FClotureAn.class#L534)

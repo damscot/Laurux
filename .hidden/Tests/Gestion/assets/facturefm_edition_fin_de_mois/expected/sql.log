@@ -1,0 +1,284 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Typec
+SELECT * FROM Fiches_Commerciaux
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),adr1 Char(35),adr2 Char(35),ville Char(35),totf Char(12),tottc Char(12),gestbl Decimal(6,2),PRIMARY KEY (code, nom))  ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),nom Char(35),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num))  ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where (type = 'B' or type='F') and totalht <> 0 and  cli_div = 0 and imp <> 1 and cli_div = 0 AND datebl<='20180630' AND cli_regr='S' order by cdclibl, numbl
+SELECT * FROM Facturefm WHERE code = '411901'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc,gestbl) Values ('411901', 'DURAND', '75001','PARIS','100,00', '120,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00001' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00001', '411901', 'DURAND', '2018-06-05 00:00:00', '100,00', '120,00')
+SELECT * FROM Facturefm WHERE code = '411901'
+UPdate Facturefm SET totf = '155,00', tottc = '186,00', gestbl=5 WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00002' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00002', '411901', 'DURAND', '2018-06-20 00:00:00', '55,00', '66,00')
+SELECT * FROM Facturefm WHERE code = '411901'
+SELECT tvafrais,taux_tva  FROM Fiches_Parametres,Fiches_Tvaav WHERE tvafrais=code_tva
+SELECT tvafrais,taux_tva  FROM Fiches_Parametres,Fiches_Tvaav WHERE tvafrais=code_tva
+UPdate Facturefm SET totf = '185,00', tottc = '222,00', gestbl=5 WHERE code = '411901'
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00003' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00003', '411901', 'DURAND', '2018-06-25 00:00:00', '30,00', '36,00')
+SELECT * FROM Facturefm WHERE code = '411902'
+INSERT INTO Facturefm (code, nom, cp, ville, totf, tottc,gestbl) Values ('411902', 'MARTIN', '69001','LYON','200,00', '240,00', 0)
+SELECT * FROM Fiches_Ligbl where num_ligbl = 'B00004' order by num_ligbl
+INSERT INTO Bl (num, code, nom, date, ht, ttc) Values ('B00004', '411902', 'DURAND', '2018-06-10 00:00:00', '200,00', '240,00')
+SELECT * FROM Facturefm order by nom
+SELECT * FROM Fiches_Tleg
+SELECT * from Fiches_LibelFac
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Cli WHERE cli_code=NULL
+SELECT * FROM Fiches_Cli WHERE cli_code=NULL
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+SELECT * FROM Facturefm
+SELECT * FROM Fiches_Cli WHERE cli_code='411901'
+SELECT * FROM Fiches_Echeances WHERE num='00'
+SELECT * FROM Fiches_AdrlivBL WHERE numbl = NULL
+SELECT * FROM Fiches_Reglements WHERE code=NULL
+SELECT * FROM Bl WHERE code='411901'
+SELECT * FROM Fiches_Bl WHERE numbl='B00001' OR numbl='B00002' OR numbl='B00003' ORDER BY numbl
+SELECT * FROM Fiches_Ligbl WHERE num_ligbl='B00001' OR num_ligbl='B00002' OR num_ligbl='B00003'ORDER BY  num_ligbl,numlig_ligbl
+SELECT * FROM Fiches_Echeances WHERE num='00'
+SELECT * FROM Fiches_Art WHERE art_code='003'
+SELECT compt_fam,compt5_fam,intitule_cc FROM Fiches_Fam,Fiches_Comptes WHERE compt_fam=compte_cc AND code_fam='03'
+SELECT art_prdcomp,art_impdetail FROM Fiches_Art WHERE art_code='003'
+SELECT * FROM Fiches_Art WHERE art_code='003'
+SELECT compt_fam,compt5_fam,intitule_cc FROM Fiches_Fam,Fiches_Comptes WHERE compt_fam=compte_cc AND code_fam='03'
+SELECT art_prdcomp,art_impdetail FROM Fiches_Art WHERE art_code='003'
+SELECT * FROM Fiches_Art WHERE art_code='003'
+SELECT compt_fam,compt5_fam,intitule_cc FROM Fiches_Fam,Fiches_Comptes WHERE compt_fam=compte_cc AND code_fam='03'
+SELECT art_prdcomp,art_impdetail FROM Fiches_Art WHERE art_code='003'
+SELECT cptfrais,tvafrais,taux_tva,cc_tva,intitule_cc,devise FROM Fiches_Parametres,Fiches_Tvaav,Fiches_Comptes WHERE tvafrais=code_tva AND cptfrais=compte_cc
+SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva='3'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00001'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00001', 'laurux', 99, '734e3c61922441158719b21e28cd8250', '99b3d1108c0e(17ac0300)', 'laurux')
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00002'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00002', 'laurux', 99, '734e3c61922441158719b21e28cd8250', '99b3d1108c0e(17ac0300)', 'laurux')
+UNLOCK TABLES
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00003'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00003', 'laurux', 99, '734e3c61922441158719b21e28cd8250', '99b3d1108c0e(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT jrnal FROM Fiches_Parametres
+SELECT * FROM Fiches_Journaux WHERE code_jo='70'
+LOCK TABLES Fiches_Parametres WRITE 
+Select numecriture FROM Fiches_Parametres
+Update Fiches_Parametres set numecriture = 1
+Select numecriture FROM Fiches_Parametres
+UNLOCK TABLES
+LOCK TABLES Fiches_Parametres WRITE 
+Select numecriture2 FROM Fiches_Parametres
+Update Fiches_Parametres set numecriture2 = 1
+Select numecriture2 FROM Fiches_Parametres
+UNLOCK TABLES
+LOCK TABLES Fiches_Parametres WRITE 
+Select dnfac FROM Fiches_Parametres
+Update Fiches_Parametres set dnfac = '1'
+Select dnfac FROM Fiches_Parametres
+UNLOCK TABLES
+SELECT nfac FROM Fiches_Parametres
+SELECT * FROM Fiches_Bl WHERE numfac = '2018000001'
+SELECT * FROM Fiches_BlM WHERE numfac = '2018000001'
+SELECT * FROM Fiches_HistoFac WHERE numfac = '2018000001'
+SELECT * FROM Fiches_HistoFacM WHERE numfac = '2018000001'
+SELECT * FROM Fiches_Comptes left join Fiches_Cli On cli_code = '411901' WHERE compte_cc Like '411901%' And coll <> 1 order by compte_cc
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='707020'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='707020' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=-180 WHERE compte_cc='707020'
+UNLOCK TABLES
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='706110'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='706110' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=-5 WHERE compte_cc='706110'
+UNLOCK TABLES
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='445730'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='445730' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=-37 WHERE compte_cc='445730'
+UNLOCK TABLES
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411901'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='411901' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=222 WHERE compte_cc='411901'
+UNLOCK TABLES
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Mvt WHERE dte <= '2010-06-14 23:59:59' AND compte='411901' AND provisoire=False LIMIT 1
+SELECT montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2010-06-15' AND '2026-06-15 23:59:59' AND provisoire=False  AND  compte='411901'  ORDER BY  dte
+SELECT montantd,montantc,dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM Fiches_Mvt WHERE compte = '411901' AND numlot = '2018000001' AND provisoire=False AND dte BETWEEN '2010-06-15' AND '2026-06-15'
+SELECT ecart,jrnod,cptrsplus,cptrsmoins FROM Fiches_Parametres
+SELECT * FROM Fiches_Cli WHERE cli_code='411901'
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411000'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='411000' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=222 WHERE compte_cc='411000'
+UNLOCK TABLES
+LOCK TABLES Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '1' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '1' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '1' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '1' order by lind desc limit 2
+update Fiches_Mvt set  control = 'uv4Fld+IDbMkO/2tnl+9Xn7fbgE=' where lind = 1
+update Fiches_Mvt set  control = 'ebDRmLCljR82Iez2oHDAoV1BECE=' where lind = 2
+update Fiches_Mvt set  control = 'FD6R7hNHYRUtiatX7WfV8y8vBAI=' where lind = 3
+update Fiches_Mvt set  control = 'zwWP8SUDDnSasGG3773Nmh1/W4k=' where lind = 4
+update Fiches_Mvt set  control = 'PmeHtm1yU7LwD3+B5/W0n66YsAI=' where lind = 5
+UNLOCK TABLES
+SELECT * FROM Fiches_Docactif where doc_type = 'Reglement' and doc_num = '1'
+SELECT * FROM Fiches_Societes WHERE cd_sc='01'
+select * FROM Fiches_HistoFac WHERE numfac='2018000001'
+select * FROM Fiches_HistoFacM WHERE numfac = '2018000001' 
+Create Fiches_HistoLigfac
+Create Fiches_HistoLigfac
+Create Fiches_HistoLigfac
+Create Fiches_HistoFac
+DELETE FROM Fiches_AdrlivBL WHERE numbl='B00001'
+DELETE FROM Fiches_Bl WHERE numbl = 'B00001'
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00001'
+DELETE FROM Fiches_AdrlivBL WHERE numbl='B00002'
+DELETE FROM Fiches_Bl WHERE numbl = 'B00002'
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00002'
+DELETE FROM Fiches_AdrlivBL WHERE numbl='B00003'
+DELETE FROM Fiches_Bl WHERE numbl = 'B00003'
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00003'
+SELECT * FROM Fiches_Cli WHERE cli_code='411902'
+SELECT * FROM Fiches_Echeances WHERE num='00'
+SELECT * FROM Fiches_AdrlivBL WHERE numbl = NULL
+SELECT * FROM Fiches_Reglements WHERE code=NULL
+SELECT * FROM Bl WHERE code='411902'
+SELECT * FROM Fiches_Bl WHERE numbl='B00004' ORDER BY numbl
+SELECT * FROM Fiches_Ligbl WHERE num_ligbl='B00004'ORDER BY  num_ligbl,numlig_ligbl
+SELECT * FROM Fiches_Echeances WHERE num='00'
+SELECT * FROM Fiches_Art WHERE art_code='003'
+SELECT compt_fam,compt5_fam,intitule_cc FROM Fiches_Fam,Fiches_Comptes WHERE compt_fam=compte_cc AND code_fam='03'
+SELECT art_prdcomp,art_impdetail FROM Fiches_Art WHERE art_code='003'
+SELECT compte_cc,intitule_cc FROM Fiches_Tvaav,Fiches_Comptes WHERE compte_cc=cc_tva AND code_tva='3'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00004'
+INSERT INTO Fiches_Docactif(doc_type, doc_num, user_name, process_id, machine_id, host_id, userdb_name) VALUES ('Facturation', 'B00004', 'laurux', 99, '734e3c61922441158719b21e28cd8250', '99b3d1108c0e(17ac0300)', 'laurux')
+UNLOCK TABLES
+SELECT jrnal FROM Fiches_Parametres
+SELECT * FROM Fiches_Journaux WHERE code_jo='70'
+LOCK TABLES Fiches_Parametres WRITE 
+Select numecriture FROM Fiches_Parametres
+Update Fiches_Parametres set numecriture = 2
+Select numecriture FROM Fiches_Parametres
+UNLOCK TABLES
+LOCK TABLES Fiches_Parametres WRITE 
+Select numecriture2 FROM Fiches_Parametres
+Update Fiches_Parametres set numecriture2 = 2
+Select numecriture2 FROM Fiches_Parametres
+UNLOCK TABLES
+LOCK TABLES Fiches_Parametres WRITE 
+Select dnfac FROM Fiches_Parametres
+Update Fiches_Parametres set dnfac = '2'
+Select dnfac FROM Fiches_Parametres
+UNLOCK TABLES
+SELECT nfac FROM Fiches_Parametres
+SELECT * FROM Fiches_Bl WHERE numfac = '2018000002'
+SELECT * FROM Fiches_BlM WHERE numfac = '2018000002'
+SELECT * FROM Fiches_HistoFac WHERE numfac = '2018000002'
+SELECT * FROM Fiches_HistoFacM WHERE numfac = '2018000002'
+SELECT * FROM Fiches_Comptes left join Fiches_Cli On cli_code = '411902' WHERE compte_cc Like '411902%' And coll <> 1 order by compte_cc
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='707020'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='707020' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=-380 WHERE compte_cc='707020'
+UNLOCK TABLES
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='445730'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='445730' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=-77 WHERE compte_cc='445730'
+UNLOCK TABLES
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411902'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='411902' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=240 WHERE compte_cc='411902'
+UNLOCK TABLES
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Mvt WHERE dte <= '2010-06-14 23:59:59' AND compte='411902' AND provisoire=False LIMIT 1
+SELECT montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2010-06-15' AND '2026-06-15 23:59:59' AND provisoire=False  AND  compte='411902'  ORDER BY  dte
+SELECT montantd,montantc,dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM Fiches_Mvt WHERE compte = '411902' AND numlot = '2018000002' AND provisoire=False AND dte BETWEEN '2010-06-15' AND '2026-06-15'
+SELECT ecart,jrnod,cptrsplus,cptrsmoins FROM Fiches_Parametres
+SELECT * FROM Fiches_Cli WHERE cli_code='411902'
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411000'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='411000' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=462 WHERE compte_cc='411000'
+UNLOCK TABLES
+LOCK TABLES Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '2' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '2' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 1 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '2' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '2' order by lind desc limit 2
+update Fiches_Mvt set  control = 'lSnN+nFhSuUKydbd3QXUlhySbIw=' where lind = 6
+update Fiches_Mvt set  control = 'ESKwumXYtRv5tUgfckPNDsIJDk8=' where lind = 7
+update Fiches_Mvt set  control = '5UAG3hOSPzV/FBbnIyTZV8R0KSQ=' where lind = 8
+update Fiches_Mvt set  control = '6l2GRhj89Ub36QDPBMsDDJqnJXU=' where lind = 9
+UNLOCK TABLES
+SELECT * FROM Fiches_Docactif where doc_type = 'Reglement' and doc_num = '2'
+SELECT * FROM Fiches_Societes WHERE cd_sc='01'
+select * FROM Fiches_HistoFac WHERE numfac='2018000002'
+select * FROM Fiches_HistoFacM WHERE numfac = '2018000002' 
+Create Fiches_HistoLigfac
+Create Fiches_HistoFac
+DELETE FROM Fiches_AdrlivBL WHERE numbl='B00004'
+DELETE FROM Fiches_Bl WHERE numbl = 'B00004'
+DELETE FROM Fiches_Ligbl where num_ligbl = 'B00004'
+LOCK TABLES Fiches_Docactif WRITE
+SELECT * FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00004'
+DELETE FROM Fiches_Docactif where doc_type = 'Facturation' and doc_num = 'B00004'
+UNLOCK TABLES
+SELECT dtepc,dtepec,dtefedec FROM Fiches_Parametres
+drop Table IF exists Facturefm
+CREATE TABLE Facturefm(code Char(8) NOT NULL,nom Char(35),cp Char(5),adr1 Char(35),adr2 Char(35),ville Char(35),totf Char(12),tottc Char(12),gestbl Decimal(6,2),PRIMARY KEY (code, nom))  ENGINE = InnoDB
+drop Table IF exists Bl
+CREATE TABLE Bl(num Char(12) NOT NULL,code Char(10),nom Char(35),date date,ht Char(12),ttc Char(12),PRIMARY KEY (num))  ENGINE = InnoDB
+SELECT * FROM Fiches_Bl Left join Fiches_Cli on cli_code = cdclibl where (type = 'B' or type='F') and totalht <> 0 and  cli_div = 0 and imp <> 1 and cli_div = 0 AND datebl<='20180630' AND cli_regr='S' order by cdclibl, numbl
+SELECT * FROM Facturefm order by nom

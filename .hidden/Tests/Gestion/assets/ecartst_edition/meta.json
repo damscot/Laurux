@@ -1,0 +1,24 @@
+{
+ "id": "ECARTST-T01",
+ "classe": "EcartsT",
+ "objet": "Édition nominale des écarts",
+ "description": "Jeu validinvt_shared/invt_partiel (lignes comptées +, 0, - et non comptées) ; Imprimer. Attendu : texte du PDF avec les seules lignes comptées, écarts, valeurs PA/PMP et totaux ; dump inchangé.",
+ "dataset": "validinvt_shared/invt_partiel",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

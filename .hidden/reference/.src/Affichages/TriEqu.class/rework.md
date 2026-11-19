@@ -57,9 +57,9 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TRIEQU-A01 — [anomalie] Tri par double-clic : `Dbclk` ne modifie jamais `Dbl` (toujours
+- [ ] TRIEQU-A01 — [anomalie] (confirmée phase 2, vague 9 : `Dbclk` toujours décroissant, la page suivante repart en ordre croissant, figée par T03) Tri par double-clic : `Dbclk` ne modifie jamais `Dbl` (toujours
   décroissant) et `Deplacement` ignore le sens (pages suivantes en croissant) · tests : T03 · sources : [TriEqu.class:Dbclk](../../../../../.src/Affichages/TriEqu.class#L358-L368), [TriEqu.class:Deplacement](../../../../../.src/Affichages/TriEqu.class#L136-L141)
-- [ ] TRIEQU-A02 — [anomalie] Colonne « HT Pro » toujours vide : `Tarifclient` calcule `pvpro`
+- [ ] TRIEQU-A02 — [anomalie] (confirmée phase 2, vague 9 : « HT Pro » vide malgré une remise par type, figée par T05) Colonne « HT Pro » toujours vide : `Tarifclient` calcule `pvpro`
   mais la cellule affiche `PvhtPro`, jamais affecté ; afficher le prix remisé (en réutilisant le
   calcul de `Facture`) change l'écran · tests : T05 · sources : [TriEqu.class:191](../../../../../.src/Affichages/TriEqu.class#L191), [TriEqu.class:Tarifclient](../../../../../.src/Affichages/TriEqu.class#L199-L228)
 - [ ] TRIEQU-A03 — [anomalie, à confirmer] Couleur de ligne déterminée par `art_stkmin` (colonne 0

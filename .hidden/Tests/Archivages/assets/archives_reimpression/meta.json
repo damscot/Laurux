@@ -1,0 +1,24 @@
+{
+ "id": "ARCHIVES-T10",
+ "objet": "Réimpression d'une facture archivée",
+ "classe": "Archives",
+ "description": "Jeu factures_tx (copie de archives_shared/factures_liste avec mtx_ligfac renseigné), /Soc01/Materiel = 0 : clic sur la 1re facture (000060), Imprimer (Button9) : OptFac ouvert en ShowModal en mode archive pour cette facture, Éditer (edite) : ObjFacB.editebl (calcul en archive, édition, impression par le faux lpr tracée) ; base inchangée hors effets de l'édition. Fin du rejeu sans fermer OptFac (A15 du harnais).",
+ "dataset": "factures_tx",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Materiel": 0
+ },
+ "fichiers": [
+  "@outils.trace"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered"
+}

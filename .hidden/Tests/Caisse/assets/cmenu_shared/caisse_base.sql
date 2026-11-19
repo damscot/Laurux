@@ -1,0 +1,13 @@
+-- Jeu caisse_base (agent 10, vague 9 ; Cmenu, Ouverture, Fondcaisse) : gestion des caisses activée (blob conf) ;
+-- caisses 1 (fond 150,00, fermée le 14/06/2018 18:30), 2 et 3 (école) au poste fixe « postetest » (un gb.test
+-- remplace le poste par System.Host, nom aléatoire du conteneur) et caisse 10 ; vendeurs 1 ALICE (abc1),
+-- 12 BRUNO (b123), 2 CHLOE administrateur (c234), mots de passe chiffrés par hexdblKey.crypt("en", …, "Laurux") ;
+-- client caisse 411027.
+UPDATE Fiches_Parametres SET conf = '[Soc01]\nCaisse=-1\nVendeurs=-1\n';
+INSERT INTO Fiches_Caisses (code, intitule, dtefm, fndc, tkz, connecte, imp, typeimp, type, ecole, poste, depot, fndtotp, fndtotg, vdr_code) VALUES
+('1', 'Caisse un', '2018-06-14 18:30:00', 150.00, 0, 0, 'Défaut80', '', 'Monoposte', 0, 'postetest', '', 0, 0, ''),
+('2', 'Caisse deux', '2018-06-13 18:00:00', 80.00, 0, 0, 'Défaut80', '', 'Monoposte', 0, 'postetest', '', 0, 0, ''),
+('3', 'Caisse ecole', '2018-06-12 18:00:00', 50.00, 0, 1, 'Défaut80', '', 'Monoposte', -1, 'postetest', '', 0, 0, '1'),
+('10', 'Caisse dix', '2018-06-11 18:00:00', 10.00, 0, 0, 'Défaut80', '', 'Monoposte', 0, 'autreposte', '', 0, 0, '');
+INSERT INTO Fiches_Vendeurs (code, nom, mdp, admin) VALUES ('1', 'ALICE', '200E1B4E', 0), ('12', 'BRUNO', '235D4A4C', 0), ('2', 'CHLOE', '225E4B4B', -1);
+INSERT INTO Fiches_ClientCaisse (code, nom) VALUES ('411027', 'Client caisse');

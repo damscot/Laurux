@@ -1,0 +1,298 @@
+' Gambas test file
+
+''Tests de ValidBR1 (.hidden/reference/.src/Gestion/Stock/ValidBR1.class/test.md, VALIDBR1-T01 à T05, T07, T09).
+''Écran instancié et affiché (New ValidBR1) ; le clic sur un fournisseur ou une BR de la liste TriGen est remplacé
+''par l'appel du gestionnaire qu'il déclenche (TriFou_majsel / TriBr_majsel, valeur construite comme TriGen.Coltri_Click).
+''Jeu validbr1_shared/receptions (BR de juin 2018 des fournisseurs 401001 à 401004).
+''Valeurs attendues : assets/ValidBR1Test/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $hVue As Window
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01ValidationSeule", "Fournisseur 401001 (3 BR) ; Validation Seule : validee = 2, aucune écriture")
+  TestKit.Desc("T02ValidationCompta", "401001 et 401002 (exonéré) ; date et libellé ; Validation + Compta : validee = 1, Fiches_Mvt, numéros")
+  TestKit.Desc("T03Deselection", "401001, R00002 retirée ; Validation Seule : 2 BR validées, 1 restante")
+  TestKit.Desc("T04Filtres", "Radios brval puis Valid avant sélection : fournisseurs listés ; radios désactivés après sélection")
+  TestKit.Desc("T05DoubleValidation", "Validation + Compta puis second clic sans fermer : écritures (A03)")
+  TestKit.Desc("T09Ecritures", "ValidBR1.Ecritures (auto-instance) comme commande1 « Avec écriture » sur R00001 : validee = 1, écriture, libellé par défaut")
+  TestKit.Desc("T07CompteInconnu", "Famille sans compte d'achat valide : erreur « Compte comptable inconnu », état de la base")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ValidBR1Test")
+  TestKit.OuvreBase("validbr1_shared/receptions")
+
+End
+
+Private Function Ouvre() As Object
+
+  Dim hF As Object
+
+  hF = New ValidBR1
+  hF.Show
+  Wait
+  Return hF
+
+End
+
+Private Sub Ferme(hF As Object)
+
+  Object.Lock(hF)
+  hF.Delete
+
+End
+
+Private Sub Etat(sCle As String)
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT four, numrecpt, validee FROM Fiches_Entrecpt ORDER BY four, numrecpt")
+  If Not r.Available Then Return
+  Repeat
+    TestKit.Check(sCle & "/br_" & r!four & "_" & r!numrecpt, r!validee)
+  Until r.MoveNext()
+  r = Utils.db.Exec("SELECT COUNT(*) AS n FROM Fiches_Mvt")
+  TestKit.Check(sCle & "/mvt_nombre", r!n)
+  r = Utils.db.Exec("SELECT jour, numero, compte, intitule, numdoc, numlot, libelle, montantd, montantc, DATE_FORMAT(dte, '%Y-%m-%d') AS d FROM Fiches_Mvt ORDER BY lind")
+  If r.Available Then
+    Repeat
+      TestKit.Check(sCle & "/mvt_" & Format(r.Index, "00"), r!jour & "|" & r!numero & "|" & r!compte & "|" & r!intitule & "|" & r!numdoc & "|" & r!numlot & "|" & r!libelle & "|" & r!montantd & "|" & r!montantc & "|" & r!d)
+    Until r.MoveNext()
+  Endif
+  r = Utils.db.Exec("SELECT numecriture FROM Fiches_Parametres")
+  TestKit.Check(sCle & "/numecriture", r!numecriture)
+  TestKit.Check(sCle & "/ecrbr_pdf", Exist(User.Home & "/tmp/EcrBr.pdf"))
+
+End
+
+Private Sub Lance(sCle As String, hF As Object, sBouton As String)
+
+  Dim sErr As String
+
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 200
+  $hTimer.Start
+  If sBouton = "clot" Then
+    Try hF.clot_Click()
+  Else
+    Try hF.Clotc_Click()
+  Endif
+  If Error Then sErr = "ERREUR: " & Error.Text Else sErr = "<aucune>"
+  $hTimer.Stop
+  TestKit.Check(sCle & "/erreur", sErr)
+  TestKit.Check(sCle & "/boites", IIf($sVu, $sVu, "<aucune>"))
+
+End
+
+Public Sub _Boite_Timer()
+  ''Boîte Message imprévue : texte relevé, premier bouton.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub PoseDate(hF As Object, sDate As String)
+
+  hF.Controls["datej"].Text = sDate
+
+End
+
+Public Sub T01ValidationSeule()
+  ''VALIDBR1-T01 : sélection de 401001 (3 BR non validées), « Validation Seule » (clot).
+
+  Dim hF As Object
+
+  hF = Ouvre()
+  hF.TriFou_majsel("401001")
+  TestKit.Check("T01/panel1_actif", hF.Controls["Panel1"].Enabled)
+  PoseDate(hF, "15.06.2018")
+  Lance("T01", hF, "clot")
+  Etat("T01")
+  Ferme(hF)
+
+End
+
+Public Sub T02ValidationCompta()
+  ''VALIDBR1-T02 : 401001 (familles 01/02, TVA 2,10 et 5,50 %) et 401002 exonéré ; date 15.06.2018, libellé saisi ;
+  ''« Validation + Compta » (Clotc).
+
+  Dim hF As Object
+
+  If Not Exist(User.Home & "/tmp") Then Mkdir User.Home & "/tmp"
+  hF = Ouvre()
+  hF.TriFou_majsel("401001")
+  hF.TriFou_majsel("401002")
+  PoseDate(hF, "15.06.2018")
+  hF.Controls["libel"].Text = "Receptions juin"
+  Lance("T02", hF, "Clotc")
+  Etat("T02")
+  Ferme(hF)
+
+End
+
+Public Sub T03Deselection()
+  ''VALIDBR1-T03 : 401001, la BR R00002 est retirée (clic sur la BR) ; « Validation Seule ».
+
+  Dim hF As Object
+  Dim cVal As New Collection
+
+  hF = Ouvre()
+  hF.TriFou_majsel("401001")
+  cVal.Add("R00002", "numrecpt")
+  cVal.Add("05.06.2018", "ddate")
+  cVal.Add("30,00", "montant")
+  cVal.Add("30,63", "mttc")
+  Try hF.TriBr_majsel(cVal)
+  TestKit.Check("T03/erreur_deselection", IIf(Error, "ERREUR: " & Error.Text, "<aucune>"))
+  PoseDate(hF, "15.06.2018")
+  Lance("T03", hF, "clot")
+  Etat("T03")
+  Ferme(hF)
+
+End
+
+Private Sub Liste(sCle As String, hF As Object, sPanel As String)
+
+  Dim hC, hG As Object
+  Dim r, c As Integer
+  Dim sLig, sTxt As String
+
+  For Each hC In hF.Controls
+    If Object.Type(hC) = "GridView" And If hC.Parent And If Object.IsValid(hC.Parent) Then
+      If InStr(sPanel, "|" & ChercheParent(hC) & "|") Then hG = hC
+    Endif
+  Next
+  If Not hG Then
+    TestKit.Check(sCle & "/" & sPanel, "<grille introuvable>")
+    Return
+  Endif
+  For r = 0 To hG.Rows.Count - 1
+    For c = 0 To hG.Columns.Count - 1
+      sTxt = hG[r, c].Text
+    Next
+  Next
+  TestKit.Check(sCle & "/lignes", hG.Rows.Count)
+  For r = 0 To hG.Rows.Count - 1
+    sLig = ""
+    For c = 0 To hG.Columns.Count - 1
+      sLig &= hG[r, c].Text & "|"
+    Next
+    TestKit.Check(sCle & "/l" & Format(r, "00"), sLig)
+  Next
+
+End
+
+Private Function ChercheParent(hC As Object) As String
+
+  Dim hP As Object
+
+  hP = hC.Parent
+  While hP
+    If hP.Name = "lesfour" Or hP.Name = "lesbr" Then Return hP.Name
+    Try hP = hP.Parent
+    If Error Then Return ""
+  Wend
+  Return ""
+
+End
+
+Public Sub T04Filtres()
+  ''VALIDBR1-T04 : radio brval puis Valid avant sélection (liste des fournisseurs) ; sélection d'un fournisseur ;
+  ''tentative de changer de radio (Panel1 désactivé, Stop Event).
+
+  Dim hF As Object
+
+  hF = Ouvre()
+  Liste("T04/br/fournisseurs", hF, "|lesfour|")
+  hF.Controls["brval"].Value = True
+  Liste("T04/brval/fournisseurs", hF, "|lesfour|")
+  hF.Controls["Valid"].Value = True
+  Liste("T04/valid/fournisseurs", hF, "|lesfour|")
+  hF.TriFou_majsel("401003")
+  Liste("T04/valid_401003/br", hF, "|lesbr|")
+  TestKit.Check("T04/panel1_actif", hF.Controls["Panel1"].Enabled)
+  hF.Controls["br"].Value = True
+  TestKit.Check("T04/apres_clic_br", "br=" & hF.Controls["br"].Value & " valid=" & hF.Controls["Valid"].Value)
+  Liste("T04/apres_clic_br/fournisseurs", hF, "|lesfour|")
+  Ferme(hF)
+
+End
+
+Public Sub T05DoubleValidation()
+  ''VALIDBR1-T05 : 401001 ; « Validation + Compta » puis second clic sans fermer l'écran.
+
+  Dim hF As Object
+
+  If Not Exist(User.Home & "/tmp") Then Mkdir User.Home & "/tmp"
+  hF = Ouvre()
+  hF.TriFou_majsel("401001")
+  PoseDate(hF, "15.06.2018")
+  Lance("T05/premier", hF, "Clotc")
+  Lance("T05/second", hF, "Clotc")
+  Etat("T05")
+  Ferme(hF)
+
+End
+
+Public Sub T07CompteInconnu()
+  ''VALIDBR1-T07 : 401004, BR R00030 sur l'article 003 (famille 03, compt3_fam = 999999) ; « Validation + Compta ».
+
+  Dim hF As Object
+
+  If Not Exist(User.Home & "/tmp") Then Mkdir User.Home & "/tmp"
+  hF = Ouvre()
+  hF.TriFou_majsel("401004")
+  PoseDate(hF, "15.06.2018")
+  Lance("T07", hF, "Clotc")
+  Etat("T07")
+  Ferme(hF)
+
+End
+
+
+Public Sub T09Ecritures()
+  ''VALIDBR1-T09 : appel de commande1.rececp_Click (« Avec écriture comptable », sort = 2) reproduit :
+  ''ValidBR1.Ecritures(15.06.2018, 01.06.2018, "R00001", "401001", 2, 50, 51.73) sur l'auto-instance (A05 : libellé et
+  ''date GED lus dans l'auto-instance jamais affichée).
+
+  Dim sErr As String
+
+  If Not Exist(User.Home & "/tmp") Then Mkdir User.Home & "/tmp"
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 200
+  $hTimer.Start
+  Try ValidBR1.Ecritures(LDate("15.06.2018"), LDate("01.06.2018"), "R00001", "401001", 2, 50, 51.73)
+  If Error Then sErr = "ERREUR: " & Error.Text Else sErr = "<aucune>"
+  $hTimer.Stop
+  TestKit.Check("T09/erreur", sErr)
+  TestKit.Check("T09/boites", IIf($sVu, $sVu, "<aucune>"))
+  Etat("T09")
+
+End

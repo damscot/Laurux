@@ -1,0 +1,24 @@
+{
+ "id": "LCR-T09",
+ "objet": "Impression de liste",
+ "classe": "Lcr",
+ "description": "Imprimer (Button9) en T, puis A, puis E : 3 Message.Info (Entrée), 3 PDF ~/Lcr.pdf, textes ajoutés dans edition.txt (toutes les LCR pour T, LCR-A05 figée).",
+ "dataset": "Gestion/bordrx_shared/lcr_chaine",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -62,7 +62,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] CLOTUREF-A01 — [anomalie] Borne de date incohérente : `dtefac <= fin de mois` pour
+- [ ] CLOTUREF-A01 — [anomalie] (confirmée phase 2, vague 9 : figée par T02) Borne de date incohérente : `dtefac <= fin de mois` pour
   `Fiches_Bl` mais `dtefac < fin de mois` pour `Fiches_BlM` ; les factures « entretien » du dernier
   jour du mois ne sont pas archivées · tests : T02 · sources : [ClotureF.class:128](../../../../../.src/Gestion/ClotureF.class#L128)
 - [ ] CLOTUREF-A02 — [anomalie] Pas de transaction ni de contrôle de réussite : la période est

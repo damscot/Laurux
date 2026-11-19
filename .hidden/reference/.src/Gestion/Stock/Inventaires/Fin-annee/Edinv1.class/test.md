@@ -5,7 +5,7 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EDINV1-T01 | replay | Non-régression de la suppression | parcours de tous les menus d'inventaire de `Fmenu` (81-100, 232, 233) | aucun écran ne référence `Edinv1` ; `gbc3 -agt` passe après suppression | `tests/suppression/` | à faire |
+| EDINV1-T01 | replay | Non-régression de la suppression | parcours de tous les menus d'inventaire de `Fmenu` (81-100, 232, 233) | aucun écran ne référence `Edinv1` ; `gbc3 -agt` passe après suppression | `tests/suppression/` | à faire : suppose la suppression de la classe (EDINV1-A01 non validée) ; aucun point d'entrée dans l'interface |
 
 ## Détail des tests
 

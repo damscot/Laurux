@@ -1,0 +1,21 @@
+{
+ "id": "SAISIEINVT-T15",
+ "objet": "Article compté supprimé après génération",
+ "classe": "SaisieInvT",
+ "description": "Jeu invt_sans_001 : ouverture ; Saisie_Inv lit Fiches_Art sans Available pour la ligne comptée 2 (SAISIEINVT-A04 figée, SaisieInvT.class:74) : erreur relevée (code de sortie figé).",
+ "dataset": "saisieinvt_shared/invt_sans_001",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered",
+ "code_sortie": 125,
+ "xfail": "erreur fatale « Result is not available » (SaisieinvT.Saisie_Inv.73 depuis _New), boîte d'erreur Gambas",
+ "xfail_attendu": "ligne affichée sans désignation ou message, écran utilisable (A04)"
+}

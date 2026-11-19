@@ -11,8 +11,8 @@ l'édition elle-même. Valeurs attendues produites dans le clone **Laurux non mo
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
 | EDREG-T01 | replay | Édition des règlements ajoutés | `SaiReg` : mode chèque, 2 règlements saisis ; `editions` | texte du PDF : 2 lignes, nombre, total, société, mode | `tests/edition_ajout/` | implémenté (gb.test EdRegTest.T01EditionAjout : état construit sans SaiReg) |
-| EDREG-T02 | replay | Édition de tous les règlements | idem + 1 règlement supprimé ; `editionb`, numéro de bordereau saisi dans l'`InputBox` | 2 lignes (supprimé exclu), « Bordereau n° … » | `tests/edition_tous/` | à faire : passe par SaiReg (écran complexe) ; InputBox modale en gb.test |
-| EDREG-T03 | replay | Bordereau sans numéro | `editionb`, `InputBox` annulée | pas de ligne « Bordereau n° » | `tests/sans_numero/` | à faire : passe par SaiReg (écran complexe) ; InputBox modale en gb.test |
+| EDREG-T02 | replay | Édition de tous les règlements | idem + 1 règlement supprimé ; `editionb`, numéro de bordereau saisi dans l'`InputBox` | 2 lignes (supprimé exclu), « Bordereau n° … » | `tests/edition_tous/` | implémenté (gb.test `EdRegTest.T02EditionTous` : état construit sans SaiReg, InputBox renseignée par un Timer) |
+| EDREG-T03 | replay | Bordereau sans numéro | `editionb`, `InputBox` annulée | pas de ligne « Bordereau n° » | `tests/sans_numero/` | implémenté (gb.test `EdRegTest.T03SansNumero` : InputBox annulée par un Timer) |
 | EDREG-T04 | replay | Multi-société | base avec deux lignes `Fiches_Societes`, société courante = la seconde | raison sociale de la **première** (A01 figée) | `tests/multi_societe/` | implémenté (gb.test EdRegTest.T04MultiSociete) |
 | EDREG-T05 | replay | Couleur du thème | `/Coul/…` avec une composante < 16 | couleur de bande (vérification visuelle ou extraction `pdfimages`/`mutool`) : A02 figée | `tests/couleur_theme/` | à faire : couleur de bande, vérification graphique |
 
@@ -33,3 +33,6 @@ l'édition elle-même. Valeurs attendues produites dans le clone **Laurux non mo
   la ligne précédente (`trouve` renvoie -1). T04 : jeu `edreg_shared/edreg_deux_societes.sql`, société
   courante 02, raison sociale « SARL Premiere » (première ligne) affichée (A01). Le PDF n'est pas produit.
 - La génération passe par `Printer` (gb.qt) : exécution sous Xvfb.
+- **T02/T03 (vague 9)** : l'`InputBox` (fenêtre `FInputBox` de gb.form) est servie par un Timer du module : `txtValue`
+  = « B42 » puis `btnOK`, ou `btnCancel`. Mode tous : lignes L_ajou et L_valide éditées, L_sup exclue (3 lignes,
+  total 99,75) ; « Bordereau n° : B42 » (T02) ou libellé vide (T03).

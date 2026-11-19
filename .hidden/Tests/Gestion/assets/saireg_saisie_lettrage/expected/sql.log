@@ -1,0 +1,103 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Reglements WHERE code = '05'
+SELECT * FROM Fiches_Journaux WHERE code_jo='50'
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT  montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2010-06-15' AND '2026-06-15 23:59:59' AND provisoire=False  AND compte='411001'  AND lettree='0' AND jour<>'90' ORDER BY dte DESC
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411001' AND (type_cc='C' OR type_cc='F')
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411001' AND (type_cc='C' OR type_cc='F')
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT  montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2010-06-15' AND '2026-06-15 23:59:59' AND provisoire=False  AND compte='411001'  AND lettree='0' AND jour<>'90' ORDER BY dte DESC
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411001' AND (type_cc='C' OR type_cc='F')
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Journaux WHERE code_jo='50'
+SELECT * FROM Fiches_Reglements WHERE code='05'
+LOCK TABLES Fiches_Parametres WRITE 
+Select numecriture FROM Fiches_Parametres
+Update Fiches_Parametres set numecriture = 3
+Select numecriture FROM Fiches_Parametres
+UNLOCK TABLES
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411001'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='411001' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=0 WHERE compte_cc='411001'
+UNLOCK TABLES
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Mvt5 LIMIT 1
+SELECT * FROM Fiches_Mvt4 LIMIT 1
+SELECT * FROM Fiches_Mvt3 LIMIT 1
+SELECT * FROM Fiches_Mvt2 LIMIT 1
+SELECT * FROM Fiches_Mvt1 LIMIT 1
+SELECT * FROM Fiches_Mvt LIMIT 1
+SELECT * FROM Fiches_Mvt WHERE dte <= '2010-06-14 23:59:59' AND compte='411001' AND provisoire=False LIMIT 1
+SELECT montantd,montantc,dte,compte,libelle,intitule,numero,jour,numdoc,tresorerie,lettree,pointee,CASE WHEN pointee=True THEN 'O' ELSE 'n' END AS parse_having_P,cloturee,dateech,collectif,numlot,relance,lind,nrlv ,Case WHEN lettree = 1 Then '&HDFFFBF' WHEN pointee = 1 Then '&HFFDFBF' WHEN cloturee = 1 Then '&H808080' WHEN provisoire = 1 Then '&HFFFFDC' ELSE '&HFFFFFF&' END as bgcolor FROM Fiches_Mvt WHERE dte BETWEEN '2010-06-15' AND '2026-06-15 23:59:59' AND provisoire=False  AND  compte='411001'  ORDER BY  dte
+UPDATE Fiches_Mvt SET numlot = 'L100' where lind = 3 
+UPDATE Fiches_Mvt SET numlot = 'L100' where lind = 1 
+SELECT montantd,montantc,dte,compte,libelle,numero,jour,numdoc,tresorerie,lettree,cloturee,dateech,collectif,numlot,relance,lind FROM Fiches_Mvt WHERE compte = '411001' AND numlot = 'L100' AND provisoire=False AND dte BETWEEN '2010-06-15' AND '2026-06-15'
+UPDATE Fiches_Mvt SET lettree = '1', numlot = 'L100' WHERE numlot = 'L100' AND compte = '411001' AND provisoire= False 
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='411000'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='411000' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=-180 WHERE compte_cc='411000'
+UNLOCK TABLES
+Create Fiches_Mvt
+LOCK TABLES Fiches_Comptes WRITE,Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT * FROM Fiches_Comptes WHERE compte_cc='580002'
+SELECT SUM(montantd) AS montantd,SUM(montantc) AS montantc FROM Fiches_Mvt WHERE compte='580002' AND provisoire=False
+UPDATE Fiches_Comptes SET solde=180 WHERE compte_cc='580002'
+UNLOCK TABLES
+LOCK TABLES Fiches_Mvt WRITE,Fiches_MvtM WRITE
+SELECT jour,numero,compte,intitule,dte,numdoc,libelle,montantd,montantc,collectif,lind,control FROM Fiches_Mvt WHERE numero = '3' order by lind asc
+SELECT numero,control FROM Fiches_Mvt WHERE numero < '3' order by numero desc, lind asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = 2 order by lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero < '3' order by numero desc, lind2 asc limit 1
+SELECT numero,control FROM Fiches_MvtM WHERE numero = '3' order by lind desc limit 2
+update Fiches_Mvt set  control = '83gQ5FMviT8vaDfkZ9e05CPeQ/g=' where lind = 5
+update Fiches_Mvt set  control = 'AVldySGXWEw868YLRp+8iTJ5jO8=' where lind = 6
+update Fiches_Mvt set  control = 'dZcbPXNZC913uI6EaLQKKHbHTtY=' where lind = 7
+UNLOCK TABLES
+SELECT * FROM Fiches_Docactif where doc_type = 'Reglement' and doc_num = '3'

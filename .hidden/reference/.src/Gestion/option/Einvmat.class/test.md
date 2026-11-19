@@ -10,11 +10,11 @@ comparée : texte du PDF `~/tmp/cmtmat.pdf` (`pdftotext -layout`, dates masquée
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| EINVMAT-T01 | replay | Déclaration provisoire, régime acquitté | jeu `cmat_base` ; Caleditcmat → mois du jeu, « Acquitté », « Edition provisoire » → Edition | texte PDF : en-tête société, exercice, une ligne par régie acquittée, totaux | `tests/declaration_acquitte/` | à faire |
-| EINVMAT-T02 | replay | Formatage hl/l/cl (A01) | régie dont le volume de fin vaut 199,996 l, une autre 0,5 l | figer « 1 / 99 / (vide) » et « (vide) / (vide) / 50 » | `tests/formatage_volumes/` | à faire |
-| EINVMAT-T03 | replay | Volume négatif (A03) | sorties > stock début + entrées (fin = -150 l) | figer la ligne imprimée | `tests/volume_negatif/` | à faire |
-| EINVMAT-T04 | replay | Multi-sociétés (A02) | base à deux sociétés, session sur la 2e | figer la société imprimée (la 1re) | `tests/multi_societes/` | à faire |
-| EINVMAT-T05 | gbtest | `Convers` (après EINVMAT-004) | volumes 0 ; 0,5 ; 99,994 ; 100 ; 199,996 ; -150 ; × `h`/`l`/`c`, avec et sans arrondi initial | chaînes de référence | `tests/convers/` | à faire |
+| EINVMAT-T01 | gbtest | Déclaration provisoire, régime acquitté | jeu `cmat_base` ; Caleditcmat → mois du jeu, « Acquitté », « Edition provisoire » → Edition | texte PDF : en-tête société, exercice, une ligne par régie acquittée, totaux | `tests/declaration_acquitte/` | implémenté (EinvmatTest.T01DeclarationAcquitte : rapport construit en gb.test avec la Collection de Declaration que lui passe Caleditcmat.Edit ; champs Data et textes relevés) |
+| EINVMAT-T02 | gbtest | Formatage hl/l/cl (A01) | régie dont le volume de fin vaut 199,996 l, une autre 0,5 l | figer « 1 / 99 / (vide) » et « (vide) / (vide) / 50 » | `tests/formatage_volumes/` | implémenté (T02FormatageVolumes ; A01 figée : 199,996 → 1 / 99 / vide, 0,5 → vide / vide / 50) |
+| EINVMAT-T03 | gbtest | Volume négatif (A03) | sorties > stock début + entrées (fin = -150 l) | figer la ligne imprimée | `tests/volume_negatif/` | implémenté (T03VolumeNegatif ; fin -150 l → -1 / 50) |
+| EINVMAT-T04 | gbtest | Multi-sociétés (A02) | base à deux sociétés, session sur la 2e | figer la société imprimée (la 1re) | `tests/multi_societes/` | implémenté (T04MultiSocietes ; A02 figée : la 1re société est imprimée) |
+| EINVMAT-T05 | gbtest | `Convers` (après EINVMAT-004) | volumes 0 ; 0,5 ; 99,994 ; 100 ; 199,996 ; -150 ; × `h`/`l`/`c`, avec et sans arrondi initial | chaînes de référence | `tests/convers/` | implémenté (T05Convers par les champs vae*dp, variante sans arrondi initial ; la variante avec arrondi est ECOMPTAMAT-T07) |
 
 ## Détail des tests
 

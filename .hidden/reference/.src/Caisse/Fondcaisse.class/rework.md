@@ -69,7 +69,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] FONDCAISSE-A01 — [anomalie] `_new` lit `rResult!tkz` sans tester `Available` et sans
+- [ ] FONDCAISSE-A01 — [anomalie] (confirmée phase 2, vague 9 : « Result is not available » à `_new` l. 35 (caisse absente), figée par T06 ; `If rResult!tkz = 1` (l. 35) n'est jamais vrai (`tkz` `tinyint(1)` lu `True`) : le mode « modification du fond après ticket Z » est inatteignable ; motif transverse « colonne `tinyint` lue en Booléen par le pilote MySQL (`True` = -1) comparée à `1` → toujours faux » : voir aussi [EDDOCS-A05](../../Gestion/Impressions/EdDocs.class/rework.md), [FCAISSES-A06](../Fcaisses.class/rework.md), [CALCSTOCK-A03](../../Utils/Calcstock.class/rework.md), [MATERIEL-A14](../../Gestion/Tables/Materiel.class/rework.md), [ObjFac](../../Gestion/Facturation/ObjFac.class/rework.md)) `_new` lit `rResult!tkz` sans tester `Available` et sans
   `Catch` : si la caisse de `Ncai` n'existe pas (ou est tronquée à un caractère, OUVERTURE-A01),
   `New Fondcaisse` lève une erreur non interceptée dans `Cmenu`/`Caisse`. De plus la comparaison
   `tkz = 1` est fausse si le pilote renvoie un `Boolean` (à confirmer) · appelants : `Cmenu`,
@@ -81,7 +81,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] FONDCAISSE-A03 — [anomalie] `Qte_KeyPress` : `Suppr` recule le curseur d'une position ;
   `Retour arrière` en début de champ supprime le **dernier** caractère (`Mid$(…, 1, -1)`) et fixe
   `Pos = -1` · tests : T07 · sources : [Fondcaisse.class:261](../../../../../.src/Caisse/Fondcaisse.class#L261), [Fondcaisse.class:265](../../../../../.src/Caisse/Fondcaisse.class#L265)
-- [ ] FONDCAISSE-A04 — [anomalie] Correction du fond initial : `IsNumber` refuse le point décimal
+- [ ] FONDCAISSE-A04 — [anomalie] (confirmée phase 2, vague 9 : `FDC_Ini_Update` (l. 406) : `IsNumber("160,00")` vrai, « 160.00 » refusé (« Vérifiez votre saisie! »), figée par T04) Correction du fond initial : `IsNumber` refuse le point décimal
   (`12.50`) alors que `ChkFDC` l'autorise ailleurs, et chaque perte de focus d'une saisie invalide
   réaffiche le message en reprenant le focus (impossible de sortir sans valeur valide) ·
   tests : T04 · sources : [Fondcaisse.class:FDC_Ini_Update](../../../../../.src/Caisse/Fondcaisse.class#L404-L421), [Fondcaisse.class:FDC_Ini_LostFocus](../../../../../.src/Caisse/Fondcaisse.class#L432-L439)

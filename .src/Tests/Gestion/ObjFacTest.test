@@ -1,0 +1,539 @@
+' Gambas test file
+
+''Tests d'ObjFac (.hidden/reference/.src/Gestion/Facturation/ObjFac.class/test.md, OBJFAC-T01 à T13, T16).
+''Objet de facturation instancié directement (New ObjFac(num, choix, date)), sans l'écran Facture ; date du document
+''figée au 15.06.2018. Jeu objfac_shared/facturation_base (clients 411801-411804, BL B10001-B10011, archives F00020/F00030).
+''Options posées par Start.LocalSettings avant l'instanciation. Collections sérialisées triées par clé.
+''Valeurs attendues : assets/ObjFacTest/expected.txt (clone de référence).
+
+Private $sEvt As String
+Private $hTimer As Timer
+Private $hBox As Window
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Options", "_new : lecture des options /Soc01/… (valeurs distinctes), devise, journal, sms lu sur /TxtF (A04)")
+  TestKit.Desc("T02Recherche", "_new : recherche du document (BL, BlM, n° facture, archive HistoFac/HistoFacM, fin de mois, inconnu)")
+  TestKit.Desc("T03FicheClient", "numcli : adresse, exemplaires, événements, échéance et texte de règlement selon le client ; client inexistant")
+  TestKit.Desc("T04CalculBl", "calcul d'un BL simple : 2 articles (20 % et 2,10 %) + 1 MO, remise ligne")
+  TestKit.Desc("T05TypesLignes", "calcul : lignes C multi-lignes, R, T (avec et sans ligne2), O (article composé), E/D/P")
+  TestKit.Desc("T05bArticleInexistant", "calcul : article inexistant (A08) puis taux de ligne mtx_ligfac NULL (A09) : erreurs de calc figées")
+  TestKit.Desc("T06Frais", "calcul : frais de gestion, client exonéré, auto-entrepreneur, les deux (A03 figée)")
+  TestKit.Desc("T07Avoir", "calcul : BL négatif (libellés AVOIR) ; total en lettres (doclet, ligne TD)")
+  TestKit.Desc("T08Archive", "calcul : facture archivée en Fiches_HistoFac et Fiches_HistoFacM")
+  TestKit.Desc("T09FinMois", "calcul en fin de mois : table Bl de 2 BL, option nblfac ; client divers (nom)")
+  TestKit.Desc("T10Ecotaxe", "Écotaxes HT et TTC (A01 figée), pxsdec, simpcond, remise ignorée sur BL")
+  TestKit.Desc("T11CumulRemises", "Deux calcul successifs sur le même objet (fin de mois) : remart/remmo cumulés (A02 figée)")
+  TestKit.Desc("T12EcritureCompt", "ecriturecompt sur une facture : Fiches_Mvt, Fiches_Bl (numfac, imp, reg), Fiches_Suivis")
+  TestKit.Desc("T12bTicketNonMouline", "ecriturecompt sur un BL réglé par un ticket non mouliné : message (Timer), aucune écriture")
+  TestKit.Desc("T12cCompteInexistant", "ecriturecompt pour un client sans compte (411803) : messages EcrAuto (Timer), écritures partielles dans Fiches_Mvt")
+  TestKit.Desc("T13Origine", "FactType2Orig et Orig2FactType : énumérations, -1, 99, BL, Facture, x")
+  TestKit.Desc("T15VerifDat", "verifdat : sans échéance, période close (messages par Timer), dtmouv vrai/faux, BL d'entretien (A06)")
+  TestKit.Desc("T16Performance", "calcul d'un BL de 500 lignes : nombre de lignes et totaux (durée non comparée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ObjFacTest")
+  TestKit.OuvreBase("objfac_shared/facturation_base")
+  $sEvt = ""
+
+End
+
+Public Sub _Obj_nombre(value As String)
+
+  $sEvt &= "nombre(" & value & ") "
+
+End
+
+Public Sub _Obj_fttc(value As Boolean)
+
+  $sEvt &= "fttc(" & value & ") "
+
+End
+
+Public Sub _Obj_echeance(value As LDate)
+
+  $sEvt &= "echeance(" & value.L & ") "
+
+End
+
+Public Sub _Obj_modreg(value As String)
+
+  $sEvt &= "modreg(" & value & ") "
+
+End
+
+Private Function Dte() As LDate
+
+  Return LDate(2018, 6, 15)
+
+End
+
+Private Sub Opt(sCle As String, vVal As Variant)
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/" & sCle] = vVal
+
+End
+
+Private Function Trie(aLig As String[]) As String
+
+  aLig.Sort()
+  Return aLig.Join(" | ")
+
+End
+
+Private Sub Totaux(sCle As String, hObj As ObjFac)
+
+  Dim hLig As Object
+  Dim hTva As Object
+  Dim hEcr As VarEcr
+  Dim aLig As String[]
+
+  TestKit.Check(sCle & "/montants", "ht=" & hObj.montht & " tva=" & hObj.monttva & " ttc=" & hObj.montttc & " art=" & hObj.montart & " mo=" & hObj.montmo & " remart=" & hObj.remart & " remmo=" & hObj.remmo & " gestion=" & hObj.gestion)
+  aLig = New String[]
+  If Object.IsValid(hObj.ligne) Then
+    For Each hLig In hObj.ligne
+      aLig.Add(hObj.ligne.Key & ":" & hLig.type & ":" & hLig.Index & ":" & hLig.code & ":" & hLig.libel & ":" & hLig.stk & ":" & hLig.unit & ":" & hLig.qte & ":" & hLig.puht & ":" & hLig.putc & ":" & hLig.brht & ":" & hLig.brtc & ":" & hLig.rem & ":" & hLig.neht & ":" & hLig.nettc & ":" & hLig.tx)
+    Next
+  Endif
+  TestKit.Check(sCle & "/ligne", Trie(aLig))
+  aLig = New String[]
+  If Object.IsValid(hObj.tva) Then
+    For Each hTva In hObj.tva
+      aLig.Add(hObj.tva.Key & ":" & hTva.num & ":" & hTva.taux & ":" & hTva.totht & ":" & hTva.tottc & ":" & hTva.tottva)
+    Next
+  Endif
+  TestKit.Check(sCle & "/tva", Trie(aLig))
+  aLig = New String[]
+  If Object.IsValid(hObj.ecrit) Then
+    For Each hEcr In hObj.ecrit
+      aLig.Add(hObj.ecrit.Key & ":" & hEcr.compte & ":" & hEcr.intitul & ":" & hEcr.libelle & ":" & hEcr.montantd & ":" & hEcr.montantc & ":" & hEcr.numdoc & ":" & IIf(Object.IsValid(hEcr.dte), hEcr.dte.L, "") & ":" & IIf(Object.IsValid(hEcr.dteech), hEcr.dteech.L, ""))
+    Next
+  Endif
+  TestKit.Check(sCle & "/ecrit", Trie(aLig))
+  TestKit.Check(sCle & "/eco", "tee=" & hObj.eco.tee & " tea=" & hObj.eco.tea)
+
+End
+
+Private Sub Calcule(sCle As String, sNum As String, iChoix As Integer)
+
+  Dim hObj As ObjFac
+
+  Try hObj = New ObjFac(sNum, iChoix, Dte())
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Try hObj.calcul()
+  TestKit.Check(sCle & "/erreur", IIf(Error, "ERREUR: " & Error.Text & " " & Error.Where, "<aucune>"))
+  TestKit.Check(sCle & "/doc", "numbl=" & hObj.numbl & " numfac=" & hObj.numfac & " numcli=" & hObj.numcli & " tab=" & hObj.tab & " dtedoc=" & IIf(Object.IsValid(hObj.dtedoc), hObj.dtedoc.L, "") & " dteech=" & IIf(Object.IsValid(hObj.dteech), hObj.dteech.L, ""))
+  Totaux(sCle, hObj)
+
+End
+
+Public Sub T01Options()
+
+  Dim hObj As ObjFac
+  Dim aCle As String[] = ["Recap", "Impttc", "Entete", "Conditions", "Pied", "Imp2L", "Col", "Impstocke", "ImpTotbl", "Poids", "TxtF", "Rglt", "Totstring", "Coupon", "Impbl", "AffArt", "AutoEnt", "Franchise", "Depots", "Prxdec", "Libdevis", "glogo3", "glogo", "Materiel", "Cheque", "Pdf5", "Pdf6", "AffClient", "Carte"]
+  Dim i As Integer
+
+  ' Booléens alternés (vrai pour les rangs pairs) ; /Sms faux pour distinguer A04
+  For i = 0 To aCle.Max
+    Opt(aCle[i], (i Mod 2) = 0)
+  Next
+  Opt("Sms", False)
+  Opt("LTxtF", "Texte de reglement")
+  Opt("Taxe", "TVA-T")
+  Opt("Siret", "SIRET-T")
+  Opt("Devis2", "Bas de devis")
+  Opt("Devis", "Valable 30 jours")
+  Opt("Factchemin", "/tmp/laurux-test/factures")
+  Opt("FactcheminV", "/tmp/laurux-test/cgv.txt")
+  Opt("Pdfchemin", "/tmp/laurux-test/joint.pdf")
+  hObj = New ObjFac("B10001", ObjFac.bl, Dte())
+  TestKit.Check("T01/booleens", "recap=" & hObj.recap & " ttc=" & hObj.ttc & " entete=" & hObj.entete & " reserve=" & hObj.reserve & " pied=" & hObj.pied & " ligne2=" & hObj.ligne2 & " colon=" & hObj.colon & " stock=" & hObj.Stock & " blrecap=" & hObj.blrecap & " poids=" & hObj.poids & " breg=" & hObj.breg & " saisreg=" & hObj.saisreg & " doclet=" & hObj.doclet & " coupon=" & hObj.coupon & " nblfac=" & hObj.nblfac & " affref=" & hObj.affref & " autoent=" & hObj.autoent & " franctva=" & hObj.franctva & " mdepo=" & hObj.mdepo & " pxsdec=" & hObj.pxsdec & " libdev=" & hObj.libdev & " adrlogo=" & hObj.adrlogo & " lgo=" & hObj.lgo & " gmateriel=" & hObj.gmateriel & " cheque=" & hObj.cheque & " joinfac=" & hObj.joinfac & " joinsms=" & hObj.joinsms & " affclient=" & hObj.AffClient & " intcheque=" & hObj.intcheque & " intcarte=" & hObj.intcarte & " sms=" & hObj.sms)
+  TestKit.Check("T01/textes", "treg=" & hObj.treg & " treserve=" & Left(hObj.treserve, 30) & " tpied=" & IIf(Object.IsValid(hObj.tpied), hObj.tpied.Count, -1) & " libtaxe=" & hObj.libtaxe & " libsire=" & hObj.libsire & " txtlibdev=" & hObj.txtlibdev & " txtvldev=" & hObj.txtvldev & " pdfchemin=" & hObj.pdfchemin & " condvent=" & hObj.condvent & " pdf=" & hObj.pdf)
+  TestKit.Check("T01/base", "devise=" & hObj.devise & " journal=" & hObj.journal & " choix=" & hObj.choix & " dtmouv=" & hObj.dtmouv & " blchif=" & hObj.blchif & " simpcond=" & hObj.simpcond)
+  ' Options inversées : textes par défaut (Taxe, Siret vides), Libdevis faux, Conditions faux
+  For i = 0 To aCle.Max
+    Opt(aCle[i], (i Mod 2) = 1)
+  Next
+  Opt("Taxe", "")
+  Opt("Siret", "")
+  hObj = New ObjFac("B10001", ObjFac.finmois, Dte())
+  TestKit.Check("T01/inverses", "recap=" & hObj.recap & " ttc=" & hObj.ttc & " reserve=" & hObj.reserve & " breg=" & hObj.breg & " treg=" & hObj.treg & " saisreg=" & hObj.saisreg & " libdev=" & hObj.libdev & " txtlibdev=" & hObj.txtlibdev & " libtaxe=" & hObj.libtaxe & " libsire=" & hObj.libsire & " sms=" & hObj.sms & " tab=" & hObj.tab)
+
+End
+
+Public Sub T02Recherche()
+
+  Dim hObj As ObjFac
+  Dim aCas As String[] = ["bl:B10001", "bl:B10007", "facture:F00010", "bl:XXXXXX", "archive:F00020", "archive:F00030", "archive:F99999", "finmois:", "finmois:M"]
+  Dim sCas As String
+  Dim aPart As String[]
+  Dim iChoix As Integer
+
+  For Each sCas In aCas
+    aPart = Split(sCas, ":")
+    Select Case aPart[0]
+      Case "bl"
+        iChoix = ObjFac.bl
+      Case "facture"
+        iChoix = ObjFac.facture
+      Case "archive"
+        iChoix = ObjFac.archive
+      Case "finmois"
+        iChoix = ObjFac.finmois
+    End Select
+    Try hObj = New ObjFac(aPart[1], iChoix, Dte())
+    If Error Then
+      TestKit.Check("T02/" & sCas, "ERREUR: " & Error.Text)
+    Else
+      TestKit.Check("T02/" & sCas, "numbl=" & hObj.numbl & " numfac=" & hObj.numfac & " tab=" & hObj.tab & " choix=" & hObj.choix)
+    Endif
+  Next
+
+End
+
+Private Sub Client(sCle As String, sNum As String, sCli As String, Optional bBreg As Boolean)
+
+  Dim hObj As ObjFac
+
+  Opt("TxtF", bBreg)
+  Opt("LTxtF", "Texte de reglement des preferences")
+  $sEvt = ""
+  hObj = New ObjFac(sNum, ObjFac.bl, Dte()) As "_Obj"
+  Try hObj.numcli = sCli
+  If Error Then
+    TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check(sCle & "/evenements", Trim($sEvt))
+  TestKit.Check(sCle & "/exemplaires", hObj.nbexplemplaire)
+  If Object.IsValid(hObj.adrfac) Then
+    TestKit.Check(sCle & "/adrfac", hObj.adrfac.nom & "|" & hObj.adrfac.adr1 & "|" & hObj.adrfac.adr2 & "|" & hObj.adrfac.cp & "|" & hObj.adrfac.ville & "|" & hObj.adrfac.pays)
+  Else
+    TestKit.Check(sCle & "/adrfac", "<null>")
+  Endif
+  TestKit.Check(sCle & "/autoent", hObj.autoent)
+  TestKit.Check(sCle & "/sauvpdf", hObj.sauvpdf)
+  TestKit.Check(sCle & "/tsaisreg", hObj.tsaisreg)
+  TestKit.Check(sCle & "/dteech", IIf(Object.IsValid(hObj.dteech), hObj.dteech.L, "<null>"))
+
+End
+
+Public Sub T03FicheClient()
+
+  Client("T03/standard", "B10001", "411801")
+  Client("T03/autoentrepreneur", "B10005", "411802")
+  Client("T03/reglement_inconnu", "B10001", "411803")
+  Client("T03/acquitte", "B10008", "411804")
+  Client("T03/breg", "B10001", "411801", True)
+  Client("T03/inexistant", "B10001", "999999")
+
+End
+
+Public Sub T04CalculBl()
+
+  Calcule("T04/bl", "B10001", ObjFac.bl)
+
+End
+
+Public Sub T05TypesLignes()
+
+  Opt("Imp2L", False)
+  Calcule("T05/sans_ligne2", "B10002", ObjFac.bl)
+  Opt("Imp2L", True)
+  Calcule("T05/avec_ligne2", "B10002", ObjFac.bl)
+
+End
+
+Public Sub T05bArticleInexistant()
+  ''OBJFAC-A08/A09 : ligne article dont le code n'existe plus dans Fiches_Art (comme ART1 du jeu facturefm_shared/bl_juin).
+
+  Utils.db.Exec("UPDATE Fiches_Ligbl SET code_ligbl = 'ART1' WHERE num_ligbl = 'B10003'")
+  Calcule("T05b/article_inexistant", "B10003", ObjFac.bl)
+  ' Taux de TVA de ligne (mtx_ligfac) NULL, comme dans le jeu facturefm_shared/bl_juin (A09)
+  Utils.db.Exec("UPDATE Fiches_Ligbl SET mtx_ligfac = NULL WHERE num_ligbl = 'B10004'")
+  Calcule("T05b/taux_null", "B10004", ObjFac.bl)
+
+End
+
+Public Sub T06Frais()
+
+  Opt("Impttc", False)
+  Calcule("T06/frais", "B10003", ObjFac.bl)
+  Calcule("T06/exonere", "B10004", ObjFac.bl)
+  Calcule("T06/autoentrepreneur", "B10005", ObjFac.bl)
+  Calcule("T06/exonere_autoentrepreneur", "B10010", ObjFac.bl)
+  Opt("Impttc", True)
+  Calcule("T06/frais_ttc", "B10003", ObjFac.bl)
+
+End
+
+Public Sub T07Avoir()
+
+  Opt("Totstring", False)
+  Calcule("T07/avoir", "B10006", ObjFac.bl)
+  Opt("Totstring", True)
+  Calcule("T07/lettres", "B10001", ObjFac.bl)
+
+End
+
+Public Sub T08Archive()
+
+  Calcule("T08/histofac", "F00020", ObjFac.archive)
+  Calcule("T08/histofacm", "F00030", ObjFac.archive)
+
+End
+
+Private Sub TableBl(aBl As String[])
+
+  Dim sBl As String
+  Dim aPart As String[]
+
+  Utils.db.Exec("DROP TABLE IF EXISTS Bl")
+  Utils.db.Exec("CREATE TABLE Bl (num Char(12) NOT NULL, code Char(10), nom Char(35), date date)" & Utils.db.Engine())
+  For Each sBl In aBl
+    aPart = Split(sBl, ":")
+    Utils.db.Exec("INSERT INTO Bl (num, code, nom, date) VALUES (&1, &2, &3, '2018-06-15')", aPart[0], aPart[1], aPart[2])
+  Next
+
+End
+
+Private Sub FinMois(sCle As String, sCli As String, Optional sNom As String)
+
+  Dim hObj As ObjFac
+
+  hObj = New ObjFac("", ObjFac.finmois, Dte())
+  hObj.numcli = sCli
+  Try hObj.calcul(sNom)
+  TestKit.Check(sCle & "/erreur", IIf(Error, "ERREUR: " & Error.Text & " " & Error.Where, "<aucune>"))
+  TestKit.Check(sCle & "/doc", "dteech=" & IIf(Object.IsValid(hObj.dteech), hObj.dteech.L, "") & " tsaisreg=" & hObj.tsaisreg)
+  Totaux(sCle, hObj)
+
+End
+
+Public Sub T09FinMois()
+
+  TableBl(["B10001:411801:MARTIN", "B10003:411801:MARTIN", "B10011:411001:CLIENT X"])
+  Opt("Impbl", True)
+  FinMois("T09/nblfac", "411801")
+  Opt("Impbl", False)
+  FinMois("T09/sans_nblfac", "411801")
+  FinMois("T09/divers", "411001", "CLIENT X")
+
+End
+
+Public Sub T10Ecotaxe()
+
+  Opt("Impttc", False)
+  Calcule("T10/ht", "B10001", ObjFac.bl)
+  Opt("Impttc", True)
+  Calcule("T10/ttc", "B10001", ObjFac.bl)
+  Opt("Impttc", False)
+  Opt("Prxdec", True)
+  Calcule("T10/pxsdec", "B10001", ObjFac.bl)
+  Opt("Prxdec", False)
+  Remise("T10/remise_simpcond")
+
+End
+
+Private Sub Remise(sCle As String)
+
+  Dim hObj As ObjFac
+
+  hObj = New ObjFac("B10001", ObjFac.bl, Dte())
+  hObj.remise = True
+  hObj.simpcond = True
+  Try hObj.calcul()
+  TestKit.Check(sCle & "/erreur", IIf(Error, "ERREUR: " & Error.Text & " " & Error.Where, "<aucune>"))
+  Totaux(sCle, hObj)
+
+End
+
+Public Sub T11CumulRemises()
+
+  Dim hObj As ObjFac
+
+  TableBl(["B10001:411801:MARTIN", "B10005:411802:PETIT"])
+  ' Remise de 1,00 sur la ligne de B10005 (2e client) pour rendre le cumul visible
+  Utils.db.Exec("UPDATE Fiches_Ligbl SET rem_ligbl = '10', netht_ligbl = '9', nettc_ligbl = '10.80' WHERE num_ligbl = 'B10005'")
+  hObj = New ObjFac("", ObjFac.finmois, Dte())
+  hObj.numcli = "411801"
+  hObj.calcul()
+  TestKit.Check("T11/client1", "remart=" & hObj.remart & " remmo=" & hObj.remmo & " ht=" & hObj.montht)
+  hObj.numcli = "411802"
+  hObj.calcul()
+  TestKit.Check("T11/client2", "remart=" & hObj.remart & " remmo=" & hObj.remmo & " ht=" & hObj.montht)
+
+End
+
+Public Sub _Box_Timer()
+  ''Boîte Message (FMessage) : relève son texte et clique son premier bouton ; une boîte n'est traitée qu'une fois.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And hW <> $hBox Then
+      $hBox = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          $sVu &= "[" & Replace(Object.GetProperty(hC, "Text"), "&", "") & "] "
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub EcritureCompt(sCle As String, sNum As String)
+
+  Dim hObj As ObjFac
+  Dim bErr As Boolean
+  Dim rResult As Result
+  Dim sTxt As String
+
+  $sVu = ""
+  $hTimer = New Timer As "_Box"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  hObj = New ObjFac(sNum, ObjFac.facture, Dte())
+  hObj.calcul()
+  hObj.dteech = LDate(2018, 7, 31)
+  Try bErr = hObj.ecriturecompt()
+  TestKit.Check(sCle & "/retour", IIf(Error, "ERREUR: " & Error.Text & " " & Error.Where, bErr))
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/messages", $sVu)
+  TestKit.Check(sCle & "/objet", "numfac=" & hObj.numfac & " journal=" & hObj.journal & " numeroecr=" & hObj.numeroecr & " numerodef=" & hObj.numerodef)
+  ' EcrAuto.ajout peut laisser LOCK TABLES posé après un abandon (lecture suivante non déterministe) : déverrouillage
+  Utils.db.Exec("UNLOCK TABLES")
+  rResult = Utils.db.Exec("SELECT numbl, numfac, imp, reg, dtefac, ech FROM Fiches_Bl WHERE numbl = &1", sNum)
+  TestKit.Check(sCle & "/bl", rResult!numfac & ":" & rResult!imp & ":" & rResult!reg & ":" & rResult!dtefac & ":" & rResult!ech)
+  rResult = Utils.db.Exec("SELECT numdev, numfac, datefac FROM Fiches_Suivis WHERE numdev = &1", sNum)
+  If rResult.Available Then TestKit.Check(sCle & "/suivis", rResult!numdev & ":" & rResult!numfac & ":" & rResult!datefac)
+  sTxt = ""
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Mvt ORDER BY compte, lind")
+  If rResult.Available Then
+    Repeat
+      sTxt &= rResult!jour & ":" & rResult!numero & ":" & rResult!compte & ":" & rResult!intitule & ":" & rResult!libelle & ":" & rResult!montantd & ":" & rResult!montantc & ":" & rResult!numdoc & ":" & rResult!dte & ":" & rResult!dateech & " | "
+    Until rResult.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/mvt", "n=" & rResult.Count & " " & sTxt)
+
+End
+
+Public Sub T12EcritureCompt()
+
+  EcritureCompt("T12/facture", "B10001")
+
+End
+
+Public Sub T12cCompteInexistant()
+
+  Utils.db.Exec("UPDATE Fiches_Bl SET cdclibl = '411803', nmclibl = 'DUPONT' WHERE numbl = 'B10003'")
+  EcritureCompt("T12c/sans_compte", "B10003")
+
+End
+
+Public Sub T12bTicketNonMouline()
+
+  EcritureCompt("T12b/ticket", "B10009")
+
+End
+
+Public Sub T13Origine()
+
+  Dim i As Integer
+  Dim sTxt As String
+  Dim sOrig As String
+
+  For Each i In [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 99]
+    sTxt &= i & "=" & ObjFac.FactType2Orig(i) & " "
+  Next
+  TestKit.Check("T13/FactType2Orig", Trim(sTxt))
+  sTxt = ""
+  For Each sOrig In ["BL", "Facture", "facture", "Archive", "Magasin", "x", ""]
+    Try sTxt &= sOrig & "=" & ObjFac.Orig2FactType(sOrig) & " "
+    If Error Then sTxt &= sOrig & "=ERREUR: " & Error.Text & " "
+  Next
+  TestKit.Check("T13/Orig2FactType", Trim(sTxt))
+
+End
+
+Private Sub VerifDat(sCle As String, sNum As String, iChoix As Integer, hDte As LDate, bSansEch As Boolean, bDtmouv As Boolean)
+
+  Dim hObj As ObjFac
+  Dim bRet As Boolean
+  Dim rResult As Result
+  Dim sTxt As String
+  Dim sTab As String = IIf(sNum = "B10007", "Fiches_LigblM", "Fiches_Ligbl")
+
+  $sVu = ""
+  $hBox = Null
+  Utils.db.Exec("UPDATE " & sTab & " SET dte_ligbl = NULL WHERE num_ligbl = &1", sNum)
+  hObj = New ObjFac(sNum, iChoix, hDte)
+  hObj.numcli = "411801"
+  If bSansEch Then hObj.dteech = Null
+  hObj.dtmouv = bDtmouv
+  $hTimer = New Timer As "_Box"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try bRet = hObj.verifdat()
+  TestKit.Check(sCle & "/retour", IIf(Error, "ERREUR: " & Error.Text & " " & Error.Where, bRet))
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/messages", $sVu)
+  rResult = Utils.db.Exec("SELECT numlig_ligbl, typel_ligbl, dte_ligbl FROM " & sTab & " WHERE num_ligbl = &1 ORDER BY numlig_ligbl", sNum)
+  If rResult.Available Then
+    Repeat
+      sTxt &= rResult!numlig_ligbl & ":" & rResult!typel_ligbl & ":" & rResult!dte_ligbl & " "
+    Until rResult.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/dte_ligbl", Trim(sTxt))
+
+End
+
+Public Sub T15VerifDat()
+
+  ' Facture sans échéance : message, aucune mise à jour
+  VerifDat("T15/sans_echeance", "B10001", ObjFac.facture, Dte(), True, True)
+  ' Date de facture dans une période close (gestion ouverte au 06.2018) : message de VerifDate
+  VerifDat("T15/periode_close", "B10001", ObjFac.facture, LDate(2018, 3, 15), False, True)
+  ' Date valide, dtmouv vrai : dates des lignes article mises à jour
+  VerifDat("T15/dtmouv", "B10001", ObjFac.facture, Dte(), False, True)
+  ' dtmouv faux : lignes inchangées
+  VerifDat("T15/sans_dtmouv", "B10001", ObjFac.facture, Dte(), False, False)
+  ' BL d'entretien (Fiches_BlM) : Fiches_Ligbl en dur (A06 figée), lignes de Fiches_LigblM inchangées
+  VerifDat("T15/entretien", "B10007", ObjFac.bl, Dte(), False, True)
+
+End
+
+Public Sub T16Performance()
+
+  Dim i As Integer
+  Dim hObj As ObjFac
+  Dim fDeb As Float
+
+  Utils.db.Begin
+  For i = 2 To 500
+    Utils.db.Exec("INSERT INTO Fiches_Ligbl (num_ligbl, numlig_ligbl, code_ligbl, libel_ligbl, fam_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, mtx_ligfac, nettc_ligbl, typel_ligbl) VALUES ('B10003', &1, '003', 'produit 20.00', '03', '10', '1', '10', '0', '10', '3', '20.00', '12', 'A')", CStr(i))
+  Next
+  Utils.db.Commit
+  hObj = New ObjFac("B10003", ObjFac.bl, Dte())
+  fDeb = Timer
+  hObj.calcul()
+  If Not TestKit.Recording() Then Print "OBJFAC-T16 durée calcul 500 lignes : "; Format(Timer - fDeb, "0.000"); " s"
+  TestKit.Check("T16/lignes", hObj.ligne.Count)
+  TestKit.Check("T16/montants", "ht=" & hObj.montht & " tva=" & hObj.monttva & " ttc=" & hObj.montttc & " art=" & hObj.montart)
+
+End

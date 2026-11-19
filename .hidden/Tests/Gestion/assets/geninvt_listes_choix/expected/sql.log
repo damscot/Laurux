@@ -1,0 +1,33 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_Fam order by code_fam
+SELECT * FROM Fiches_InvT
+drop Table IF exists Fiches_InvT
+CREATE TABLE Fiches_InvT (inv_nlig char(9) Not Null, inv_code Char(15) , inv_qtestock Decimal(12,2) , inv_qtecomptee Decimal(12,2) , inv_date date , inv_comptee TINYINT,inv_valid Integer , inv_design VARCHAR(50) , inv_casier Char(8) , lind INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (lind)) ENGINE = InnoDB
+SELECT * FROM Fiches_Art WHERE art_stocke = 1 and art_fam >= '02' and art_fam <= '02' order by art_fam, art_design
+INSERT INTO Fiches_InvT(inv_nlig,inv_code, inv_qtestock, inv_qtecomptee, inv_date, inv_comptee, inv_design, inv_casier) VALUES (1,'002',7,0,'20180615', 0, 'Produit 7.00', '10')
+SELECT * FROM Fiches_Four order by fo_code
+SELECT * FROM Fiches_Four order by fo_code
+SELECT * FROM Fiches_InvT
+drop Table IF exists Fiches_InvT
+CREATE TABLE Fiches_InvT (inv_nlig char(9) Not Null, inv_code Char(15) , inv_qtestock Decimal(12,2) , inv_qtecomptee Decimal(12,2) , inv_date date , inv_comptee TINYINT,inv_valid Integer , inv_design VARCHAR(50) , inv_casier Char(8) , lind INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (lind)) ENGINE = InnoDB
+SELECT * FROM Fiches_Art WHERE art_stocke = 1 and art_four >= '401002' and art_four <= '401002' order by art_four, art_design
+INSERT INTO Fiches_InvT(inv_nlig,inv_code, inv_qtestock, inv_qtecomptee, inv_date, inv_comptee, inv_design, inv_casier) VALUES (1,'002',7,0,'20180615', 0, 'Produit 7.00', '10')

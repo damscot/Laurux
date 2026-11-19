@@ -1,0 +1,270 @@
+' Gambas test file
+
+''Tests de Suivi (.hidden/reference/.src/Gestion/Suivi.class/test.md, SUIVI-T01 à T08).
+''Valeurs attendues : assets/SuiviTest/expected.txt, produites dans le clone de référence.
+''L'écran est instancié comme le font Facture (F12, revue manuelle) et Archives (F12, Key.Code non rejouable) :
+''New Suivi(code, civilité, nom, prénom, n° devis, date, n° facture, date facture, devis, facture, imprimée) ;
+''les saisies sont posées dans les champs puis les gestionnaires LostFocus / boutons sont appelés directement.
+''Taux de MO : /Soc01/CodeMO = 1 (Laurux01 : Fiches_Txtmo 1, taux 28, prix de revient 14).
+''Boîtes Message.* : Timer du module (technique TresorTest).
+
+Private $hTimer As Timer
+Private $sVu As String
+Private $sBouton As String
+Private $hDerniere As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CreationDevis", "Devis D00001 du client 411001 : Qte 10, Ach 100, Vtes 250, Enregistrer : ligne Fiches_Suivis et textes affichés")
+  TestKit.Desc("T02RealiseFacture", "Suivi existant, facture non imprimée : Qte2, Ach2, Vtes2 saisis, Enregistrer : UPDATE et écarts affichés")
+  TestKit.Desc("T03ConsultationArchive", "Ouverture comme Archives (n° de facture, facture imprimée) : champs en lecture seule et valeurs chargées par numfac")
+  TestKit.Desc("T05PrixRevientNul", "prvt_txtmo = 0 pour le code MO : avertissement, champs vides, aucune écriture")
+  TestKit.Desc("T06Suppression", "Suivi existant, Supprimer → Oui : ligne supprimée (numdev + code)")
+  TestKit.Desc("T07NumdevPartage", "Deux suivis de même numdev pour deux clients, modification de l'un : UPDATE des deux lignes (A03)")
+  TestKit.Desc("T08CodeMoAbsent", "/Soc01/CodeMO vide : avertissement « taux de MO non défini », aucun chargement")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "SuiviTest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Soc" & Start.Societe & "/CodeMO"] = "1"
+
+End
+
+Public Sub _Rep_Timer()
+  ''Boîte Message (FMessage) : relève son texte et clique le bouton $sBouton, sinon le 1er.
+
+  Dim hW As Window
+  Dim hC, hB As Object
+
+  For Each hW In Windows
+    If hW = $hDerniere Then Continue
+    If Object.Type(hW) = "FMessage" Or InStr(Object.Type(hW), "Message") Then
+      If Not hW.Visible Then Continue
+      $hDerniere = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      hB = Null
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If Not hB Then hB = hC
+          If $sBouton And If Replace(Object.GetProperty(hC, "Text"), "&", "") = $sBouton Then
+            hB = hC
+            Break
+          Endif
+        Endif
+      Next
+      If hB Then
+        $sVu &= "[" & Replace(Object.GetProperty(hB, "Text"), "&", "") & "] "
+        hB.Value = True
+        Return
+      Endif
+    Endif
+  Next
+
+End
+
+Private Sub Boite(sBouton As String)
+
+  $sVu = ""
+  $sBouton = sBouton
+  $hDerniere = Null
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Private Sub FinBoite(sT As String)
+
+  $hTimer.Enabled = False
+  TestKit.Check(sT & "/message", $sVu)
+
+End
+
+Private Function Ouvre(sT As String, sNumdev As String, sNumfac As String, bDevis As Boolean, bFac As Boolean, bImp As Boolean, Optional sCode As String = "411001") As Suivi
+
+  Dim hF As Suivi
+
+  Try hF = New Suivi(sCode, "M.", "A Divers", "", sNumdev, "15.06.2018", sNumfac, "", bDevis, bFac, bImp)
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Champs(sT As String, hF As Suivi)
+
+  Dim sNom, sRo As String
+  Dim hC As Object
+
+  For Each sNom In ["Code", "Nom", "Numdev", "Datedev", "Numfac", "Datefac", "Qte", "PUmo", "TotMo", "MargeMo", "Ach", "Vtes", "MargeArt", "TotMarge", "Qte2", "PuMo2", "TotMo2", "MargeMo2", "Ach2", "Vtes2", "MargeArt2", "TotMarge2", "EmargeMO", "EmargeArt", "EmargeTot"]
+    hC = hF.Controls[sNom]
+    If Not hC Then
+      TestKit.Check(sT & "/" & sNom, "<absent>")
+      Continue
+    Endif
+    sRo = ""
+    If Object.Type(hC) = "TextBox" Then
+      If hC.ReadOnly Then sRo = " [ro]"
+    Endif
+    TestKit.Check(sT & "/" & sNom, hC.Text & sRo)
+  Next
+
+End
+
+Private Sub Saisit(hF As Suivi, sNom As String, sVal As String)
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  hC.Text = sVal
+  Object.Raise(hC, "LostFocus")
+
+End
+
+Private Sub Suivis(sT As String)
+
+  Dim r As Result
+  Dim n As Integer
+
+  r = Utils.db.Exec("SELECT code,nom,numdev,datedev,numfac,datefac,qte,pu,total,margemo,ach,vtes,qte2,pu2,total2,margemo2,ach2,vtes2 FROM Fiches_Suivis ORDER BY lind")
+  TestKit.Check(sT & "/suivis/count", r.Count)
+  If Not r.Available Then Return
+  Repeat
+    TestKit.Check(sT & "/suivis/" & n, r!code & "|" & r!nom & "|" & r!numdev & "|" & r!datedev & "|" & r!numfac & "|" & r!datefac & "|" & r!qte & "|" & r!pu & "|" & r!total & "|" & r!margemo & "|" & r!ach & "|" & r!vtes & "|" & r!qte2 & "|" & r!pu2 & "|" & r!total2 & "|" & r!margemo2 & "|" & r!ach2 & "|" & r!vtes2)
+    Inc n
+  Until r.MoveNext()
+
+End
+
+Private Sub Existant(sCode As String, sNom As String, sNumfac As String)
+
+  Utils.db.Exec("INSERT INTO Fiches_Suivis (code, nom, numdev, datedev, numfac, datefac, qte, pu, total, margemo, ach, vtes, qte2, pu2, total2, margemo2, ach2, vtes2) VALUES (&1, &2, 'D00001', '2018-06-15', &3, NULL, 10, 28, 280, 140, 100, 250, 0, 28, 0, 0, 0, 0)", sCode, sNom, sNumfac)
+
+End
+
+Public Sub T01CreationDevis()
+
+  Dim hF As Suivi
+
+  Boite("")
+  hF = Ouvre("T01", "D00001", "", True, False, False)
+  If Not hF Then Return
+  Saisit(hF, "Qte", "10")
+  Saisit(hF, "Ach", "100")
+  Saisit(hF, "Vtes", "250")
+  Try hF.Button2_Click()
+  If Error Then TestKit.Check("T01/enregistrer", "ERREUR: " & Error.Text)
+  FinBoite("T01")
+  Champs("T01", hF)
+  Suivis("T01")
+  Object.Lock(hF)
+
+End
+
+Public Sub T02RealiseFacture()
+
+  Dim hF As Suivi
+
+  Existant("411001", "M. A Divers", "")
+  Boite("")
+  hF = Ouvre("T02", "D00001", "", False, True, False)
+  If Not hF Then Return
+  Saisit(hF, "Qte2", "12")
+  Saisit(hF, "Ach2", "120")
+  Saisit(hF, "Vtes2", "260")
+  Try hF.Button2_Click()
+  If Error Then TestKit.Check("T02/enregistrer", "ERREUR: " & Error.Text)
+  FinBoite("T02")
+  Champs("T02", hF)
+  Suivis("T02")
+  Object.Lock(hF)
+
+End
+
+Public Sub T03ConsultationArchive()
+
+  Dim hF As Suivi
+
+  Existant("411001", "M. A Divers", "F00001")
+  Boite("")
+  Try hF = New Suivi("411001", "", "", "", "", "", "F00001", "", False, True, True)
+  If Error Then TestKit.Check("T03/new", "ERREUR: " & Error.Text)
+  FinBoite("T03")
+  If Not hF Then Return
+  Champs("T03", hF)
+  Object.Lock(hF)
+
+End
+
+Public Sub T05PrixRevientNul()
+
+  Dim hF As Suivi
+
+  Existant("411001", "M. A Divers", "")
+  Utils.db.Exec("UPDATE Fiches_Txtmo SET prvt_txtmo = 0 WHERE code_txtmo = '1'")
+  Boite("")
+  hF = Ouvre("T05", "D00001", "", True, False, False)
+  FinBoite("T05")
+  If Not hF Then Return
+  Champs("T05", hF)
+  Try hF.Button3_Click()
+  Suivis("T05")
+
+End
+
+Public Sub T06Suppression()
+
+  Dim hF As Suivi
+
+  Existant("411001", "M. A Divers", "")
+  Existant("411002", "B Divers", "")
+  Boite("Oui")
+  hF = Ouvre("T06", "D00001", "", True, False, False)
+  If Not hF Then Return
+  Try hF.Button1_Click()
+  If Error Then TestKit.Check("T06/supprimer", "ERREUR: " & Error.Text)
+  FinBoite("T06")
+  Suivis("T06")
+
+End
+
+Public Sub T07NumdevPartage()
+
+  Dim hF As Suivi
+
+  Existant("411001", "M. A Divers", "")
+  Existant("411002", "B Divers", "")
+  Boite("")
+  hF = Ouvre("T07", "D00001", "", True, False, False, "411002")
+  If Not hF Then Return
+  Saisit(hF, "Qte", "5")
+  Try hF.Button2_Click()
+  If Error Then TestKit.Check("T07/enregistrer", "ERREUR: " & Error.Text)
+  FinBoite("T07")
+  Suivis("T07")
+  Object.Lock(hF)
+
+End
+
+Public Sub T08CodeMoAbsent()
+
+  Dim hF As Suivi
+
+  Existant("411001", "M. A Divers", "")
+  Start.LocalSettings["/Soc" & Start.Societe & "/CodeMO"] = ""
+  Boite("")
+  hF = Ouvre("T08", "D00001", "", True, False, False)
+  FinBoite("T08")
+  If Not hF Then Return
+  Champs("T08", hF)
+  Object.Lock(hF)
+
+End

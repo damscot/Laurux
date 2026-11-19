@@ -1,0 +1,175 @@
+' Gambas test file
+
+''Tests de Tricp (.hidden/reference/.src/Affichages/Tricp.class/test.md, TRICP-T04, T05, T06).
+''T04b : FClientcarte ouvre Tricp en ShowModal ; un Timer du module choisit la 1re ligne (modèle FClientcarteModalTest).
+''Fenêtre instanciée sans affichage (New Tricp(origine, cp)) : la grille Colco est remplie par Utils.Base2 (Utils.rs2),
+''relue directement (l'événement Data n'est levé qu'à l'affichage). Les frappes dans CO/INTIT (Key.Text) et la molette
+''(Mouse.Delta) ne sont pas simulables : les tris et la pagination sont pilotés par les gestionnaires publics.
+''Jeu assets/TricpTest/cpostaux_pages (120 codes 44xxx, 30 codes 75xxx).
+''Valeurs attendues : assets/TricpTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $sErreur As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04Clientcarte", "Origine Clientcarte : clic sur une ligne (A01 : erreur ou reprise figée), Variables inchangées")
+  TestKit.Desc("T04bFicheCarte", "FClientcarte : Cpman puis ToggleButton5, 1re ligne choisie (ShowModal, Timer) : rien de repris (A01)")
+  TestKit.Desc("T05FiltreTri", "Filtre initial 44, clic Intitulé (tri burdist), double-clics (ordre décroissant puis croissant, A03), retour au code")
+  TestKit.Desc("T06Pagination", "Descendre ×2, Remonter, Descendre jusqu'à la dernière page, Remonter sous 0 ; sélection reprise par Variables (origine Facture)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TricpTest")
+  TestKit.OuvreBase("cpostaux_pages")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Fnets"] = "background: 16777215;"
+
+End
+
+Private Sub Page(sCle As String, hForm As Object)
+
+  Dim hGrd As Object
+  Dim sTxt As String
+  Dim rs As Result
+
+  hGrd = hForm.Controls["Colco"]
+  rs = Utils.rs2
+  If rs.Available Then
+    rs.MoveFirst
+    sTxt = rs!cp & " " & rs!burdist
+    rs.MoveLast
+    sTxt &= " … " & rs!cp & " " & rs!burdist
+  Endif
+  TestKit.Check(sCle, "lignes=" & hGrd.Rows.Count & " rs=" & rs.Count & " " & sTxt & " | CO=" & Object.GetProperty(hForm.Controls["CO"], "Text") & " INTIT=" & Object.GetProperty(hForm.Controls["INTIT"], "Text"))
+
+End
+
+Public Sub T04Clientcarte()
+  ''TRICP-T04 (partie Tricp) : origine « Clientcarte » (ToggleButton5 de FClientcarte) ; la reprise par FClientcarte est
+  ''testée par FCLIENTCARTE-T07. Le chemin Cpman (origine « Client ») écrit dans FClient (revue manuelle) : non testé ici.
+
+  Dim hForm As Object
+
+  Variables.Bsel = False
+  Variables.codepostal = ""
+  hForm = New Tricp("Clientcarte", "")
+  hForm.Controls["Colco"].Row = 1
+  Try hForm.colco_Click()
+  TestKit.Check("T04/clic", IIf(Error, "ERREUR: " & Error.Text & " " & Error.Where, "<aucune>"))
+  TestKit.Check("T04/variables", Variables.Bsel & " <" & Variables.codepostal & ">")
+
+End
+
+Public Sub T05FiltreTri()
+
+  Dim hForm As Object
+
+  hForm = New Tricp("Facture", "44")
+  Page("T05/initial_44", hForm)
+  hForm.Intit_Click()
+  Page("T05/tri_intitule", hForm)
+  hForm.Dbclk()
+  Page("T05/dblclic1", hForm)
+  hForm.Dbclk()
+  Page("T05/dblclic2", hForm)
+  hForm.Descendre_Click()
+  Page("T05/dblclic2_page2", hForm)
+  hForm.Co_Click()
+  Page("T05/retour_code", hForm)
+  Object.Lock(hForm)
+
+End
+
+Public Sub T06Pagination()
+
+  Dim hForm As Object
+  Dim i As Integer
+
+  hForm = New Tricp("Facture", "")
+  Page("T06/page1", hForm)
+  hForm.Descendre_Click()
+  Page("T06/page2", hForm)
+  hForm.Descendre_Click()
+  Page("T06/page3", hForm)
+  hForm.Remonter_Click()
+  Page("T06/retour_page2", hForm)
+  For i = 1 To 20
+    hForm.Descendre_Click()
+  Next
+  Page("T06/derniere_page", hForm)
+  For i = 1 To 30
+    hForm.Remonter_Click()
+  Next
+  Page("T06/sous_zero", hForm)
+  ' Sélection de la 3e ligne (origine Facture) : CP et bureau repris par Variables
+  Variables.Bsel = False
+  hForm.Controls["Colco"].Row = 2
+  hForm.colco_Click()
+  TestKit.Check("T06/selection", Variables.Bsel & " " & Variables.codepostal & " " & Variables.Bureaudistributeur)
+
+End
+
+Public Sub _Choix_Timer()
+  ''Pendant la boucle modale : 1re ligne de Colco choisie puis colco_Click ; erreur relevée et fenêtre refermée.
+
+  Dim hWin As Window
+  Dim hGr As Object
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "Tricp" Then Continue
+    $hTimer.Enabled = False
+    hGr = hWin.Controls["Colco"]
+    Try hGr.Row = 0
+    Try Object.Call(hWin, "colco_Click")
+    If Error Then
+      $sErreur = Error.Text
+      Try hWin.Close()
+    Endif
+    Return
+  Next
+
+End
+
+Private Sub Programme()
+
+  $sErreur = "<aucune>"
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+
+End
+
+Public Sub T04bFicheCarte()
+  ''TRICP-T04 (depuis l'appelant) : FClientcarte.Cpman (Tricp origine « Client » : la sélection part vers FClient, rien
+  ''n'est repris dans la fiche carte) puis ToggleButton5_Click (origine « Clientcarte » : erreur sur FClientcarte.Bsel,
+  ''A01) ; 1re ligne choisie par le Timer.
+
+  Dim hF As New FClientcarte
+  Dim hCp As Object = hF.Controls["Cp"]
+  Dim hBur As Object = hF.Controls["Burdist"]
+
+  Variables.Bsel = False
+  hCp.Text = ""
+  hBur.Text = ""
+  Programme()
+  Try hF.Cpman()
+  TestKit.Check("T04b/cpman/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T04b/cpman/erreur_tricp", $sErreur)
+  TestKit.Check("T04b/cpman/variables_bsel", Variables.Bsel)
+  TestKit.Check("T04b/cpman/cp", hCp.Text)
+  TestKit.Check("T04b/cpman/burdist", hBur.Text)
+  Programme()
+  Try hF.ToggleButton5_Click()
+  TestKit.Check("T04b/toggle5/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T04b/toggle5/erreur_tricp", $sErreur)
+  TestKit.Check("T04b/toggle5/cp", hCp.Text)
+  TestKit.Check("T04b/toggle5/burdist", hBur.Text)
+  Object.Lock(hF)
+
+End

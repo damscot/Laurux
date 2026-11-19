@@ -53,7 +53,7 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] EDINV-A01 — [anomalie, à confirmer] Les articles comptés dont la famille n'est pas un nœud de
   l'arbre `Trifam` (famille absente de `Fiches_Fam`, vide) sont exclus de l'édition et du total :
   inventaire valorisé incomplet · tests : T04 · sources : [Edinv.class:94](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Edinv.class#L94)
-- [ ] EDINV-A02 — [anomalie, à confirmer] Sans inventaire, `_New` ferme la fenêtre puis `Fmenu`
+- [ ] EDINV-A02 — [anomalie, à confirmer] (confirmée phase 2, vague 9 : figée par T03) Sans inventaire, `_New` ferme la fenêtre puis `Fmenu`
   appelle `ed.Show` sur l'objet fermé · tests : T03 · sources : [Edinv.class:67](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Edinv.class#L67), [Edinv.class:71](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Edinv.class#L71)
-- [ ] EDINV-A03 — [anomalie] En-tête des pages 2 et suivantes `Me.Text & dte.Text` (« …inventaire25.10.2026 »,
+- [ ] EDINV-A03 — [anomalie] (confirmée phase 2, vague 9 : figée par T05) En-tête des pages 2 et suivantes `Me.Text & dte.Text` (« …inventaire25.10.2026 »,
   sans « du ») différent de la 1re page · tests : T05 · sources : [Edinv.class:139](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Edinv.class#L139), [Edinv.class:154](../../../../../../../../.src/Gestion/Stock/Inventaires/Fin-annee/Edinv.class#L154)

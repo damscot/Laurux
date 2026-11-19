@@ -1,0 +1,265 @@
+' Gambas test file
+
+''Tests de calculdroit1 (.hidden/reference/.src/Gestion/option/calculdroit1.class/test.md, CALCULDROIT1-T01 à T09).
+''Valeurs attendues : assets/Calculdroit1Test/expected.txt, produites dans le clone de référence.
+''Jeu : modfichier_shared/options_bois_pp (régie 01 : suspendue, volume, tauxa 1,8, degres 0 ; régie 02 : acquittée,
+''alcool pur, tauxa 1800, degres 18, tauxss 590 ; TVA 3 = 20 % ; Fiches_Parametres.tvass = 3), complété dans les tests
+''(régies 03 à 06). Option T (bois et pp) posée en mémoire sauf pour T01. T10 (moulinage) passe par Moulinage (revue
+''manuelle).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DrapeauOption", "Options N, B, P, T : opt de New calculdroit1(10, 6, Arr_0001, \"\", \"01\", 75, 12.5, \"\") (A01 figée)")
+  TestKit.Desc("T02VolumeTotal", "volume_total : vol 75 deg 12,5 qte 6 ; vol 0 ; deg 0 : PuBHT, PuNHT, TotBHT, TotNHT")
+  TestKit.Desc("T03TaxeDroit", "taxe_droit : tauxa 1800, ap vrai (régie 02) / ap faux (régie 04)")
+  TestKit.Desc("T04SecuSeuil", "secu_droit : régie 02 seuil 18 : deg 12,5 / 18 / 40 ; régie 03 degres NULL")
+  TestKit.Desc("T05Accise", "accise_droit : drfac vrai (régie 05) / faux (régie 02)")
+  TestKit.Desc("T06TaxesRegie", "Taxes posées par LecDra : régie suspendue 01 / acquittée 02 : Regie, SS, DA, TVA, TotNTC, Cpt")
+  TestKit.Desc("T07ErreursRegie", "LecDra : régie absente, TVA de régie absente, tvass absente : texte d'erreur (A02)")
+  TestKit.Desc("T08EcritureProprietes", "Écriture de code, volume, degre ; volume sur un objet sans régie (A03)")
+  TestKit.Desc("T09ProprietesLecture", "droit, secu, accise, suspendu, drsurfac, code : régie 02, régie 05, dra vide")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "Calculdroit1Test")
+  TestKit.OuvreBase("modfichier_shared/options_bois_pp")
+
+End
+
+Private Sub PoseOption(sOpt As String)
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/bois"] = IIf(sOpt = "B" Or sOpt = "T", -1, 0)
+  Start.LocalSettings["/Soc" & Start.Societe & "/pp"] = IIf(sOpt = "P" Or sOpt = "T", -1, 0)
+
+End
+
+Private Function Cree(sT As String, sDra As String, fVol As Float, fDeg As Float, Optional vQte As Variant = 6) As Calculdroit1
+
+  Dim hD As Calculdroit1
+
+  Try hD = New Calculdroit1(10, vQte, LPrix.Arr_0001, "", sDra, fVol, fDeg, "FAM")
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text)
+    Return Null
+  Endif
+  Return hD
+
+End
+
+Private Sub Taxe(sT As String, hT As LTaxe, hP As LPrix)
+
+  If IsNull(hT) Then
+    TestKit.Check(sT, Null)
+  Else
+    TestKit.Check(sT, hT.Montant(hP, True).G)
+  Endif
+
+End
+
+Private Sub Taxes(sT As String, hD As Calculdroit1)
+
+  Taxe(sT & "/Regie", hD.Lit_Taxe(LTaxe.Regie), hD)
+  Taxe(sT & "/SS", hD.Lit_Taxe(LTaxe.SS), hD)
+  Taxe(sT & "/DA", hD.Lit_Taxe(LTaxe.DA), hD)
+  Taxe(sT & "/TVA", hD.Lit_Taxe(LTaxe.TVA), hD)
+  Try TestKit.Check(sT & "/TotNTC", hD.TotNTC.G)
+  If Error Then TestKit.Check(sT & "/TotNTC", "ERREUR: " & Error.Text)
+  TestKit.Check(sT & "/Cpt", hD.Cpt)
+
+End
+
+Private Sub Regies()
+
+  Utils.db.Exec("INSERT INTO Fiches_regie VALUES ('03', 'Sans seuil', 1800, NULL, 590, 'A', 0, 1, 0, 445710, '3')")
+  Utils.db.Exec("INSERT INTO Fiches_regie VALUES ('04', 'Volume 1800', 1800, 18, 590, 'A', 0, 0, 0, 445711, '3')")
+  Utils.db.Exec("INSERT INTO Fiches_regie VALUES ('05', 'Droits facturés', 1800, 18, 590, 'A', 0, 1, 1, 445712, '3')")
+  Utils.db.Exec("INSERT INTO Fiches_regie VALUES ('06', 'TVA absente', 1800, 18, 590, 'A', 1, 1, 0, 445713, '9')")
+
+End
+
+Public Sub T01DrapeauOption()
+
+  Dim sOpt As String
+  Dim hD As Calculdroit1
+
+  For Each sOpt In ["N", "B", "P", "T"]
+    PoseOption(sOpt)
+    TestKit.Check("T01/" & sOpt & "/option", Utils.Option())
+    hD = Cree("T01/" & sOpt, "01", 75, 12.5)
+    If hD Then TestKit.Check("T01/" & sOpt & "/opt", hD.opt)
+  Next
+
+End
+
+Public Sub T02VolumeTotal()
+
+  Dim hD As Calculdroit1
+  Dim hV As LPrix
+  Dim aCas As Float[][] = [[75.0, 12.5, 6.0], [0.0, 12.5, 6.0], [75.0, 0.0, 6.0]]
+  Dim aC As Float[]
+  Dim sT As String
+
+  PoseOption("T")
+  For Each aC In aCas
+    sT = "T02/" & CStr(aC[0]) & "_" & CStr(aC[1]) & "_" & CStr(aC[2])
+    hD = Cree(sT, "", aC[0], aC[1], aC[2])
+    If Not hD Then Continue
+    Try hV = hD.volume_total()
+    If Error Then
+      TestKit.Check(sT & "/volume_total", "ERREUR: " & Error.Text)
+      Continue
+    Endif
+    TestKit.Check(sT & "/PuBHT", hV.PuBHT.G)
+    TestKit.Check(sT & "/PuNHT", hV.PuNHT.G)
+    TestKit.Check(sT & "/TotBHT", hV.TotBHT.G)
+    TestKit.Check(sT & "/TotNHT", hV.TotNHT.G)
+  Next
+
+End
+
+Public Sub T03TaxeDroit()
+
+  Dim hD As Calculdroit1
+  Dim sR As String
+
+  PoseOption("T")
+  Regies()
+  For Each sR In ["02", "04"]
+    hD = Cree("T03/" & sR, sR, 70, 40)
+    If hD Then Taxe("T03/" & sR & "/taxe_droit", hD.taxe_droit(), hD)
+  Next
+
+End
+
+Public Sub T04SecuSeuil()
+
+  Dim hD As Calculdroit1
+  Dim fDeg As Float
+
+  PoseOption("T")
+  Regies()
+  For Each fDeg In [12.5, 18.0, 40.0]
+    hD = Cree("T04/02_" & CStr(fDeg), "02", 70, fDeg)
+    If hD Then Taxe("T04/02_" & CStr(fDeg) & "/secu_droit", hD.secu_droit(), hD)
+  Next
+  hD = Cree("T04/03_40", "03", 70, 40)
+  If hD Then Taxe("T04/03_40/secu_droit", hD.secu_droit(), hD)
+
+End
+
+Public Sub T05Accise()
+
+  Dim hD As Calculdroit1
+  Dim sR As String
+
+  PoseOption("T")
+  Regies()
+  For Each sR In ["05", "02"]
+    hD = Cree("T05/" & sR, sR, 70, 40)
+    If hD Then Taxe("T05/" & sR & "/accise_droit", hD.accise_droit(), hD)
+  Next
+
+End
+
+Public Sub T06TaxesRegie()
+
+  Dim hD As Calculdroit1
+  Dim sR As String
+
+  PoseOption("T")
+  For Each sR In ["01", "02"]
+    hD = Cree("T06/" & sR, sR, 75, 12.5)
+    If hD Then Taxes("T06/" & sR, hD)
+  Next
+
+End
+
+Public Sub T07ErreursRegie()
+
+  PoseOption("T")
+  Regies()
+  Cree("T07/regie_absente", "99", 70, 40)
+  Cree("T07/tva_regie_absente", "06", 70, 40)
+  Utils.db.Exec("UPDATE Fiches_Parametres SET tvass = NULL")
+  Cree("T07/tvass_absente", "02", 70, 40)
+
+End
+
+Public Sub T08EcritureProprietes()
+
+  Dim hD As Calculdroit1
+
+  PoseOption("T")
+  hD = Cree("T08/01", "01", 75, 12.5)
+  If Not hD Then Return
+  Try hD.code = "02"
+  If Error Then TestKit.Check("T08/code/erreur", Error.Text)
+  TestKit.Check("T08/code/code", hD.code)
+  Taxes("T08/code", hD)
+  Try hD.volume = 70
+  If Error Then TestKit.Check("T08/volume/erreur", Error.Text)
+  TestKit.Check("T08/volume/volume", hD.volume)
+  Taxes("T08/volume", hD)
+  Try hD.degre = 40
+  If Error Then TestKit.Check("T08/degre/erreur", Error.Text)
+  TestKit.Check("T08/degre/degre", hD.degre)
+  Taxes("T08/degre", hD)
+  hD = Cree("T08/sansregie", "", 75, 12.5)
+  If Not hD Then Return
+  Try hD.volume = 70
+  If Error Then TestKit.Check("T08/sansregie/erreur", Error.Text)
+  TestKit.Check("T08/sansregie/volume", hD.volume)
+
+End
+
+Private Sub Lecture(sT As String, hD As Calculdroit1)
+
+  Dim hP As LPrix
+
+  Try hP = hD.droit
+  If Error Then
+    TestKit.Check(sT & "/droit", "ERREUR: " & Error.Text)
+  Else If IsNull(hP) Then
+    TestKit.Check(sT & "/droit", Null)
+  Else
+    TestKit.Check(sT & "/droit", hP.TotNTC.G)
+  Endif
+  Try hP = hD.secu
+  If Error Then
+    TestKit.Check(sT & "/secu", "ERREUR: " & Error.Text)
+  Else If IsNull(hP) Then
+    TestKit.Check(sT & "/secu", Null)
+  Else
+    TestKit.Check(sT & "/secu", hP.TotNTC.G)
+  Endif
+  Try hP = hD.accise
+  If Error Then
+    TestKit.Check(sT & "/accise", "ERREUR: " & Error.Text)
+  Else If IsNull(hP) Then
+    TestKit.Check(sT & "/accise", Null)
+  Else
+    TestKit.Check(sT & "/accise", hP.TotNTC.G)
+  Endif
+  TestKit.Check(sT & "/suspendu", hD.suspendu)
+  TestKit.Check(sT & "/drsurfac", hD.drsurfac)
+  TestKit.Check(sT & "/code", hD.code)
+  TestKit.Check(sT & "/famille", hD.famille)
+
+End
+
+Public Sub T09ProprietesLecture()
+
+  Dim hD As Calculdroit1
+  Dim sR As String
+
+  PoseOption("T")
+  Regies()
+  For Each sR In ["02", "05", ""]
+    hD = Cree("T09/" & sR, sR, 70, 40)
+    If hD Then Lecture("T09/" & IIf(sR, sR, "vide"), hD)
+  Next
+
+End

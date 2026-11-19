@@ -86,10 +86,10 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   sans test `Utils.db.IsType(Utils.db.type_mysql)` : sous SQLite l'erreur est propagée par
   `DB_Connection.Exec`, le `Catch` de `_new` affiche un message et ouvre `LauruxConf` ; le mode
   `-p` serait inutilisable sur SQLite (`Fmenu` est protégé) · tests : T14 · sources : [Cmenu.class:52](../../../../../.src/Caisse/Cmenu.class#L52), [Cmenu.class:53](../../../../../.src/Caisse/Cmenu.class#L53), [Cmenu.class:61](../../../../../.src/Caisse/Cmenu.class#L61), [Fmenu.class:168](../../../../../.src/Communs/Fmenu.class#L168)
-- [ ] CMENU-A03 — [anomalie] Avec `/caisse/admin2` actif, `Alt+L` (`mdp_admin3`) affiche le cadre
+- [ ] CMENU-A03 — [anomalie] (confirmée phase 2, vague 9 : Alt+L avec `admin2` ouvre `Preferences` au lieu de `DB_Log`, figée par T10) Avec `/caisse/admin2` actif, `Alt+L` (`mdp_admin3`) affiche le cadre
   de mot de passe commun et `Mdp_KeyPress` ouvre toujours `Preferences` : le journal `DB_Log`
   n'est jamais accessible quand la protection est active · tests : T10 · sources : [Cmenu.class:mdp_admin3](../../../../../.src/Caisse/Cmenu.class#L310-L323), [Cmenu.class:345](../../../../../.src/Caisse/Cmenu.class#L345)
-- [ ] CMENU-A04 — [anomalie] Caisse école : `init_ecole` exécute `Quit 1` avant la mise à jour
+- [ ] CMENU-A04 — [anomalie] (confirmée phase 2, vague 9 : `Quit 1` (l. 396), figée par T09) Caisse école : `init_ecole` exécute `Quit 1` avant la mise à jour
   `statut = 'E'` des tickets, la suppression du verrou et le message (lignes 397-403
   inatteignables) ; `Ncai` et `~/Caisse<n>.lock` restent, l'application sort en code 1. Réponse
   « Non » : `Efface` reste à 0 (plus aucune déconnexion aux fermetures suivantes) et
@@ -98,3 +98,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] CMENU-A05 — [anomalie] `form_close` lit `Cai!ecole` sans tester `Available` : si la caisse
   du paramètre `Ncai` n'existe plus, l'erreur part dans le `Catch` et la fenêtre se ferme **sans
   déconnecter** ni vider `Ncai` · tests : T08 (variante caisse supprimée) · sources : [Cmenu.class:195](../../../../../.src/Caisse/Cmenu.class#L195)
+- [ ] CMENU-A06 — [anomalie] `form_close` : la déconnexion écrit `vdr_code = &3` avec `""` (l. 198) ; `Subst` traduit la chaîne vide en `NULL` : `vdr_code` vaut NULL et non '' après déconnexion (mineur) (phase 2, vague 9, 2026-11-18) · tests : T08 (agent 10) · sources : [Cmenu.class:198](../../../../../.src/Caisse/Cmenu.class#L198)

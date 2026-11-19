@@ -1,0 +1,24 @@
+{
+ "id": "BORDRX-T08",
+ "objet": "Montants au format point et virgule",
+ "classe": "Bordrx",
+ "description": "Bordereau 1 : LCR 7 « 12,50 » et LCR 8 « 100.00 ». Envoyer (Button3) : Val(\"100.00\") rend Null en locale fr, erreur fatale « Type mismatch » à Bordrx.class:489 (A03 figée, code 125), fichier ~/LCR011 partiel.",
+ "dataset": "montants_point",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Fichiers": "{home}"
+ },
+ "fichiers": [
+  "LCR011"
+ ],
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

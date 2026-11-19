@@ -5,12 +5,12 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| ECARTST-T01 | replay | Édition nominale | `invt_saisi.sql` (écarts positifs, négatifs, nuls ; lignes non comptées) ; « Imprimer » | texte du PDF (`pdftotext`) : lignes comptées seulement, écarts, valeurs PA/PMP, totaux ; ordre des lignes figé | `tests/edition/` | à faire |
-| ECARTST-T02 | replay | Aucune ligne comptée | inventaire généré sans saisie | « Aucun article pour cette demande » | `tests/aucune_ligne/` | à faire |
-| ECARTST-T03 | replay | Sans inventaire | `Fiches_InvT` absente | erreur non gérée à l’ouverture (figé A01) | `tests/sans_inventaire/` | à faire |
-| ECARTST-T04 | replay | Pagination | jeu dérivé > 45 lignes comptées | sauts de page et en-têtes répétés | `tests/pagination/` | à faire |
-| ECARTST-T05 | replay | Article supprimé | ligne comptée dont l'article n'existe plus | erreur non gérée (figé A02) | `tests/article_supprime/` | à faire |
-| ECARTST-T06 | replay | Quantités décimales | articles `art_dec` 0/2/3, PA à 3 décimales | valeurs arrondies à 2 décimales | `tests/decimales/` | à faire |
+| ECARTST-T01 | replay | Édition nominale | `invt_saisi.sql` (écarts positifs, négatifs, nuls ; lignes non comptées) ; « Imprimer » | texte du PDF (`pdftotext`) : lignes comptées seulement, écarts, valeurs PA/PMP, totaux ; ordre des lignes figé | `tests/edition/` | implémenté (`Gestion/ecartst_edition`, jeu `validinvt_shared/invt_partiel`) |
+| ECARTST-T02 | replay | Aucune ligne comptée | inventaire généré sans saisie | « Aucun article pour cette demande » | `tests/aucune_ligne/` | implémenté (`Gestion/ecartst_aucune_ligne`, jeu `ecartst_shared/invt_non_compte`) |
+| ECARTST-T03 | replay | Sans inventaire | `Fiches_InvT` absente | erreur non gérée à l’ouverture (figé A01) | `tests/sans_inventaire/` | implémenté (`Gestion/ecartst_sans_inventaire`, jeu `validinvt_shared/invt_absent` ; code 125 figé) |
+| ECARTST-T04 | replay | Pagination | jeu dérivé > 45 lignes comptées | sauts de page et en-têtes répétés | `tests/pagination/` | implémenté (`Gestion/ecartst_pagination`, jeu `ecartst_shared/invt_pagination`) |
+| ECARTST-T05 | replay | Article supprimé | ligne comptée dont l'article n'existe plus | erreur non gérée (figé A02) | `tests/article_supprime/` | implémenté (`Gestion/ecartst_article_supprime`, jeu `ecartst_shared/invt_compte_supprime` ; code 125 figé) |
+| ECARTST-T06 | replay | Quantités décimales | articles `art_dec` 0/2/3, PA à 3 décimales | valeurs arrondies à 2 décimales | `tests/decimales/` | implémenté (`Gestion/ecartst_decimales`, jeu `ecartst_shared/invt_decimales`) |
 
 ## Détail des tests
 
@@ -20,3 +20,4 @@
 - Données : `Laurux01.sql` + inventaire saisi (`GENINVT-T02 + SAISIEINVT-T02`), jeux dérivés pour T04-T06.
 - Visualiseur PDF neutralisé par la configuration de test ; écran instrumenté par
   `Utils.Observers`.
+- Mise en œuvre (vague 9) : scénarios `Gestion/ecartst_*` (texte du PDF, `edition.txt`) ; jeux `.hidden/Tests/Gestion/assets/ecartst_shared/` (`invt_non_compte`, `invt_pagination`, `invt_compte_supprime`, `invt_decimales`) générés par `ecarts_shared/gen_editions_inv.py` ; `validinvt_shared/invt_partiel` et `invt_absent` (lecture seule).

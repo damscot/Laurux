@@ -58,7 +58,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] DATETAR-A01 — [anomalie] (non reproduite phase 2, vague 5 : aucune erreur d'indice au rejeu de T02 (planification de 2 articles)) `Enr_Click` et `Sup_Click` bouclent `For i = 0 To ListArt.Count`
+- [ ] DATETAR-A01 — [anomalie] (non reproduite phase 2, vague 9 : aucune erreur au rejeu de T03 (suppression d'un article)) (non reproduite phase 2, vague 5 : aucune erreur d'indice au rejeu de T02 (planification de 2 articles)) `Enr_Click` et `Sup_Click` bouclent `For i = 0 To ListArt.Count`
   (une itération de trop) : erreur d'indice probable après les mises à jour ; dans `Sup_Click`
   la transaction n'est ni validée ni annulée · tests : T02, T03 · sources : [DateTar.class:73](../../../../../../.src/Gestion/Entrées/DateTar.class#L73), [DateTar.class:104](../../../../../../.src/Gestion/Entrées/DateTar.class#L104)
 - [ ] DATETAR-A02 — [anomalie] (confirmée phase 2, vague 5 : figée par T04 (articles passés dans l'ordre inverse)) Recherche de l'article dans `$restar` : elle reprend au curseur

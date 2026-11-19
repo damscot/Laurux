@@ -1,0 +1,31 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_InvT
+SELECT LEFT(code_fam, 5) AS famille FROM Fiches_Fam GROUP BY famille ORDER BY famille
+SELECT * FROM Fiches_Fam WHERE code_fam='01'
+SELECT * FROM Fiches_Fam WHERE code_fam='02'
+SELECT * FROM Fiches_Fam WHERE code_fam='03'
+SELECT * FROM Fiches_Fam WHERE code_fam='10'
+SELECT * FROM Fiches_Fam WHERE code_fam='11'
+SELECT * FROM Fiches_InvT,Fiches_Art,Fiches_Fam WHERE inv_code=art_code AND art_fam=code_fam AND art_fam='01' AND  inv_comptee = '1'
+SELECT * FROM Fiches_InvT,Fiches_Art,Fiches_Fam WHERE inv_code=art_code AND art_fam=code_fam AND art_fam='02' AND  inv_comptee = '1'
+SELECT * FROM Fiches_InvT,Fiches_Art,Fiches_Fam WHERE inv_code=art_code AND art_fam=code_fam AND art_fam='03' AND  inv_comptee = '1'
+SELECT * FROM Fiches_InvT,Fiches_Art,Fiches_Fam WHERE inv_code=art_code AND art_fam=code_fam AND art_fam='10' AND  inv_comptee = '1'
+SELECT * FROM Fiches_InvT,Fiches_Art,Fiches_Fam WHERE inv_code=art_code AND art_fam=code_fam AND art_fam='11' AND  inv_comptee = '1'

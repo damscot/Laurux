@@ -1,0 +1,17 @@
+{
+ "id": "SAIREG-T01",
+ "classe": "SaiReg",
+ "objet": "Saisie d'un règlement avec lettrage",
+ "description": "Jeu saireg_shared/saireg_factures (factures F100 120 € et F101 60 € non lettrées du client 411001). Saisie des règlements (bouton rglmt de Fmenu), mode 05 Chèque (cptint 580002 : validation « Saisie »), client 411001 (Entrée), clic sur les 2 lignes de la sélection (selection_Click : lettrage), Valider la ligne (180 €), Valider (vldsaisie_Click). Attendu : écritures du règlement (411001 crédit 180, 580002 débit) et lettrage des factures (dump) ; le PDF EcrReg.pdf (gb.report) n'est pas lisible par pdftotext (texte vide), il n'est pas comparé. Fenêtre modale laissée ouverte (REPLAYOBSERVER-A15).",
+ "dataset": "saireg_shared/saireg_factures",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -15,8 +15,8 @@ d'abonnement (`type = "A"`) et des clients de chaque périodicité. Comparaisons
 | FACTUREFMA-T03 | replay | Annuel | client facturé il y a un an jour pour jour | figer la sélection (A02) | `tests/annuel/` | implémenté (`Gestion/facturefma_annuel` ; A02 figée : aucun client annuel retenu, même facturé il y a un an jour pour jour) |
 | FACTUREFMA-T04 | replay | Client sans périodicité, client unique | `cli_aban` nul ; `RadioButton2` + code | avertissement ; sélection limitée au client | `tests/sans_periodicite/` | implémenté (`Gestion/facturefma_sans_periodicite`) |
 | FACTUREFMA-T05 | replay | Retraits | Suppr client, Suppr BL | tables de travail ; colonne Ville modifiée (A01 figée) | `tests/retraits/` | implémenté (`Gestion/facturefma_retraits` : Suppr client, Suppr BL ; tables de travail dans le dump ; colonne Ville (A01) à l'écran seulement, non comparée) |
-| FACTUREFMA-T06 | replay | Édition | `Imprimer`, date du panneau modifiée, `OK` | factures émises (dump complet) ; date utilisée = `Datej` (A05 figée) | `tests/edition/` | à faire : édition par `OptFac` → `ObjFac` (classe complexe exclue) |
-| FACTUREFMA-T07 | replay | Client divers abonné | client `cli_div = 1` | figer l'erreur SQL de `ObjFac.calcul` (colonne `nom` absente, A04) | `tests/client_divers/` | à faire : l'erreur est levée dans `ObjFac.calcul` (édition, classe complexe exclue) |
+| FACTUREFMA-T06 | replay | Édition | `Imprimer`, date du panneau modifiée, `OK` | factures émises (dump complet) ; date utilisée = `Datej` (A05 figée) | `tests/edition/` | implémenté (replay `Gestion/facturefma_edition` : Dtef remplacée par 20.06.2018, OK, OptFac › Éditer ; factures datées de Datej (A05 figée) ; jeu `assets/facturefma_edition/edition_abonnements.sql`) |
+| FACTUREFMA-T07 | replay | Client divers abonné | client `cli_div = 1` | figer l'erreur SQL de `ObjFac.calcul` (colonne `nom` absente, A04) | `tests/client_divers/` | implémenté (replay `Gestion/facturefma_client_divers` : erreur fatale « Unknown column 'nom' » de `ObjFac.calcul` figée, code 125 ; jeu `client_divers.sql`) |
 | FACTUREFMA-T08 | gbtest | Conversion de `dtefac` | `Date` → `String` implicite pour des dates à 00:00 (été, hiver, 1er du mois) | chaînes de référence ; `Left$(…, 2)`, `Right$(…, 4)` | `tests/conversion_dtefac/` | à faire : expression dans `recup_bl` (non publique), extraction de phase 4 |
 
 ## Détail des tests
@@ -39,3 +39,4 @@ d'abonnement (`type = "A"`) et des clients de chaque périodicité. Comparaisons
   scénario, date du scénario le 15 de ce mois), `annuel.sql` (41195x), `retraits.sql` (41196x, dont un client à deux
   BL : seul le premier est retenu par `recup_bl`). Générateur : `facturefma_shared/gen_facturefma.py`. Dates de
   facturation au 5 du mois pour éviter le décalage UTC de la conversion `dtefac` → chaîne.
+- **T06 (phase 2, vague 9)** : jeu `edition_abonnements.sql`, copie de `facturefma_shared/abonnements` sans 411915, complétée (article 003, `mtx_ligfac`, comptes clients). `datefac` porte l'heure du rejeu (Datej = Now), comparée avec la tolérance des horodatages.

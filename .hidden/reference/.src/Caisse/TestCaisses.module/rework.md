@@ -50,7 +50,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] TESTCAISSES-A01 — [anomalie] Le message « Cette caissière est déjà utilisée sur la caisse »
+- [ ] TESTCAISSES-A01 — [anomalie] (confirmée phase 2, vague 9 : message « caisse 1 » pour un conflit sur la caisse 2, figée par T02) Le message « Cette caissière est déjà utilisée sur la caisse »
   affiche le premier caractère du code vendeur (`$Vdr`) au lieu du numéro de caisse `C` · tests :
   T02 · sources : [TestCaisses.module:22](../../../../../.src/Caisse/TestCaisses.module#L22)
 - [ ] TESTCAISSES-A02 — [anomalie] Comparaison sur le seul premier caractère du code vendeur

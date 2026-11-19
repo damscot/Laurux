@@ -3,8 +3,8 @@
 > Source : `.src/Gestion/Lcr/Preparation.class` · Types : `gbtest` (module gb.test, `gbx3 -T`) ou `replay` (log/replay + diff BDD).
 > Données de référence : `tests/<nom_du_test>/`.
 
-> ⚠️ **Module complexe** (création des bordereaux qui alimentent le fichier bancaire de `Bordrx`) :
-> la liste des scénarios ci-dessous est **à faire valider par l'utilisateur avant la phase 2**.
+> ⚠️ **Module complexe** (création des bordereaux qui alimentent le fichier bancaire de `Bordrx`) : Décision utilisateur du 2026-11-18 : hors des 10 classes à revue manuelle,
+> tests implémentés sans validation individuelle.
 
 Écran rejouable (`Utils.Observers(Me)`), mais `ColLcr` n'a pas de `ColLcr_Click` : les sélections
 dans la grille doivent passer par l'événement `MouseUp` journalisé, sinon le scénario est à
@@ -15,17 +15,17 @@ joués sur MariaDB en mode strict **et** non strict (A01).
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| PREPARATION-T01 | replay | Ouverture et totaux | ouverture | liste `banque <> 0 and ecartee <> 1 and bordereau = 0`, `Nb2`/`Mt2` | `tests/ouverture/` | à faire |
-| PREPARATION-T02 | replay | Filtres banque et code entrée | `BQ` = banque 1 ; `Entree` = 1 ; `Entree` sans banque | listes, totaux, message « Vous devez sélectionner une banque… » | `tests/filtres/` | à faire |
-| PREPARATION-T03 | replay | Tri et recherche par échéance | focus sur les en-têtes, tri montant ; frappe dans `DAE` | lignes `Exec_SQL` (`CAST`, `like`) | `tests/tri_recherche/` | à faire |
-| PREPARATION-T04 | replay | Modification d'une LCR | clic gauche sur une ligne, changement banque/code entrée, Valider | dump `Fiches_Lcr` | `tests/modification/` | à faire |
-| PREPARATION-T05 | replay | Code entrée sur lignes marquées | 2 clics droits sur 2 lignes, `Entree2`, Valider | dump `Fiches_Lcr` (`codeentree`) ; nombre de clics nécessaires figé (A04) | `tests/marquage/` | à faire |
-| PREPARATION-T06 | replay | Génération d'un bordereau sans échéances | banque 1, « Attribuer », code entrée 1, référence, dates, Générer | dump `Fiches_Lcr` (`bordereau`, `codeentree`) et `Fiches_Bordereaux` (valeurs `banque`/`codeentree`, A01 figée selon le mode SQL) | `tests/bordereau/` | à faire |
-| PREPARATION-T07 | replay | Génération avec échéances | `CheckBox1`, `Ech1`/`Ech2` | message « aucune LCR… » ou sélection figée (A02) | `tests/bordereau_echeances/` | à faire |
-| PREPARATION-T08 | replay | Second bordereau | T06 puis une autre banque | numéro = dernier `lind` + 1 | `tests/numerotation/` | à faire |
-| PREPARATION-T09 | replay | Suppression sans confirmation | sélection, Supprimer | dump `Fiches_Lcr` (A05 figée) | `tests/suppression/` | à faire |
-| PREPARATION-T10 | replay | Impression | sans banque, puis banque 1, « Imprimer » | `~/Lcr.pdf` par `pdftotext` (LCR écartées et remises incluses, A06) | `tests/impression/` | à faire |
-| PREPARATION-T11 | replay | SQLite | T06 sur `Laurux01.sqlite` | erreur `value` figée (A01) | `tests/sqlite/` | à faire |
+| PREPARATION-T01 | replay | Ouverture et totaux | ouverture | liste `banque <> 0 and ecartee <> 1 and bordereau = 0`, `Nb2`/`Mt2` | `tests/ouverture/` | implémenté (`Gestion/preparation_ouverture`) |
+| PREPARATION-T02 | replay | Filtres banque et code entrée | `BQ` = banque 1 ; `Entree` = 1 ; `Entree` sans banque | listes, totaux, message « Vous devez sélectionner une banque… » | `tests/filtres/` | implémenté (`Gestion/preparation_filtres`) |
+| PREPARATION-T03 | replay | Tri et recherche par échéance | focus sur les en-têtes, tri montant ; frappe dans `DAE` | lignes `Exec_SQL` (`CAST`, `like`) | `tests/tri_recherche/` | implémenté (`Gestion/preparation_tri_recherche`) |
+| PREPARATION-T04 | replay | Modification d'une LCR | clic gauche sur une ligne, changement banque/code entrée, Valider | dump `Fiches_Lcr` | `tests/modification/` | à faire : sélection de ligne par `ColLcr_MouseUp` (grille sans `_Click`, REPLAYOBSERVER-A14) |
+| PREPARATION-T05 | replay | Code entrée sur lignes marquées | 2 clics droits sur 2 lignes, `Entree2`, Valider | dump `Fiches_Lcr` (`codeentree`) ; nombre de clics nécessaires figé (A04) | `tests/marquage/` | à faire : clics droits sur la grille (`ColLcr_MouseUp`, `Mouse.Right`) non rejouables (REPLAYOBSERVER-A14) |
+| PREPARATION-T06 | replay | Génération d'un bordereau sans échéances | banque 1, « Attribuer », code entrée 1, référence, dates, Générer | dump `Fiches_Lcr` (`bordereau`, `codeentree`) et `Fiches_Bordereaux` (valeurs `banque`/`codeentree`, A01 figée selon le mode SQL) | `tests/bordereau/` | implémenté (`Gestion/preparation_bordereau` : banque 2, code entrée 1, bordereau 6 ; INSERT avec `banque`/`codeentree` en libellés, A01 figée en mode non strict) |
+| PREPARATION-T07 | replay | Génération avec échéances | `CheckBox1`, `Ech1`/`Ech2` | message « aucune LCR… » ou sélection figée (A02) | `tests/bordereau_echeances/` | implémenté (`Gestion/preparation_bordereau_echeances` : dates non quotées dans Deb3, aucune LCR, message figé, A02) |
+| PREPARATION-T08 | replay | Second bordereau | T06 puis une autre banque | numéro = dernier `lind` + 1 | `tests/numerotation/` | implémenté (`Gestion/preparation_numerotation`, jeu `second_bordereau` : n° 6 puis 7) |
+| PREPARATION-T09 | replay | Suppression sans confirmation | sélection, Supprimer | dump `Fiches_Lcr` (A05 figée) | `tests/suppression/` | implémenté (`Gestion/preparation_suppression` : Supprimer sans sélection, ligne courante laissée par Total(), A05 figée) |
+| PREPARATION-T10 | replay | Impression | sans banque, puis banque 1, « Imprimer » | `~/Lcr.pdf` par `pdftotext` (LCR écartées et remises incluses, A06) | `tests/impression/` | implémenté (`Gestion/preparation_impression` : 2 PDF dans edition.txt) |
+| PREPARATION-T11 | replay | SQLite | T06 sur `Laurux01.sqlite` | erreur `value` figée (A01) | `tests/sqlite/` | à faire : SQLite (base Laurux01.sqlite non jouable par le harnais) |
 
 ## Détail des tests
 
@@ -37,3 +37,7 @@ joués sur MariaDB en mode strict **et** non strict (A01).
   pour caractériser A01.
 - Le `Laurux.conf` de test est passé par `-c` ; `Settings` (l. 77) lit alors le fichier par défaut :
   prévoir le même fichier ou figer la couleur de fond (sans impact sur la base).
+
+- Phase 2 (vague 9) : jeu `Gestion/bordrx_shared/lcr_chaine` (voir Bordrx) ; T08 : `preparation_numerotation/second_bordereau.sql`.
+  Le mode SQL de la base de test n'est pas paramétrable par scénario : seul le mode de la base Docker est figé (A01).
+  Dates des textreg saisies au format `jj.mm.aaaa`.

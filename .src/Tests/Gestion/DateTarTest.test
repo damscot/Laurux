@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de DateTar (.hidden/reference/.src/Gestion/Entrées/DateTar.class/test.md, DATETAR-T01, T02, T04, T05, T06, T08).
+''Tests de DateTar (.hidden/reference/.src/Gestion/Entrées/DateTar.class/test.md, DATETAR-T01 à T06, T08).
 ''Écran instancié sans affichage (New DateTar(fournisseur)), contrôles lus par Controls ; jeu datetar_shared/tarifs_temp
 ''(articles 001-003 du fournisseur 401001, A4 du fournisseur 401002, tarifs temporaires planifiés au 01.12.2026 ou non).
 ''Valeurs attendues : assets/DateTarTest/expected.txt (clone de référence).
@@ -10,6 +10,7 @@ Public Sub _Desc()
 
   TestKit.Desc("T01ListeSelection", "Listes du fournisseur 401001 puis sans fournisseur ; sélection multiple, activation, désélection")
   TestKit.Desc("T02Planification", "2 articles à droite, date 01.12.2026, Enregistrer : Fiches_TarTemp et erreur d'indice (A01)")
+  TestKit.Desc("T03Suppression", "1 article à droite, Suppression, « Oui » (Timer) : Fiches_TarTemp, erreur et transaction (A01)")
   TestKit.Desc("T04OrdreSelection", "Articles passés à droite dans l'ordre inverse de la liste, Enregistrer : articles modifiés (A02)")
   TestKit.Desc("T05Demarrage", "EnrTouTar sur les tarifs échus de 001 (général + client) et 003 (général + type supprimé) : Fiches_Art, Fiches_Tarcli, Fiches_TarTypcli, Fiches_TarTemp")
   TestKit.Desc("T06DemarrageSansGeneral", "EnrTouTar sur A4 avec seulement un tarif client échu : art_pvht/art_pvttc (A04)")
@@ -227,5 +228,62 @@ Public Sub T06DemarrageSansGeneral()
   Tables("T06/avant", ["A4"])
   Demarrage("T06")
   Tables("T06/apres", ["A4"])
+
+End
+
+Private $hTimer As Timer
+Private $hVue As Window
+Private $sVu As String
+
+Public Sub _Boite_Timer()
+  ''Boîte Message.Delete : texte relevé, bouton « Oui ».
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" And If Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) = "Oui" Then
+          $sVu &= "[Oui] / "
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Public Sub T03Suppression()
+  ''DATETAR-T03 : article 001 passé à droite, Suppression, Message.Delete « Oui » (Timer du module) ; puis Rollback
+  ''pour constater si la transaction ouverte par Sup_Click est restée ouverte après l'erreur (DATETAR-A01).
+
+  Dim hForm As DateTar
+
+  hForm = New DateTar(Null, "401001")
+  Selectionne(hForm, [0])
+  hForm.selec_Click()
+  Listes("T03/avant", hForm)
+  $sVu = ""
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 200
+  $hTimer.Start
+  Try hForm.Sup_Click()
+  If Error Then
+    TestKit.Check("T03/supprimer", "ERREUR: " & Error.Text)
+  Else
+    TestKit.Check("T03/supprimer", "ok")
+  Endif
+  $hTimer.Stop
+  TestKit.Check("T03/boite", IIf($sVu, $sVu, "<aucune>"))
+  TarTemp("T03/apres")
+  Try Utils.db.Rollback
+  TarTemp("T03/apres_rollback")
+  Object.Lock(hForm)
 
 End

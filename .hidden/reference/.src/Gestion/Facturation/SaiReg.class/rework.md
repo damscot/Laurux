@@ -78,3 +78,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   texte formaté (`Format(…, "0.00")`, séparateur localisé) dans `selection_choose` et `testtbl`,
   alors que `affsel` utilise `Utils.cpoint` : comparaison et cumul dépendants de la locale ·
   tests : T01 (sous deux locales) · sources : [SaiReg.class:516-517](../../../../../../.src/Gestion/Facturation/SaiReg.class#L516-L517), [SaiReg.class:597](../../../../../../.src/Gestion/Facturation/SaiReg.class#L597)
+- [ ] SAIREG-A06 — [anomalie, à confirmer] `vldbordereau_Click` : après validation d'un bordereau repris, les lignes du compte interne 580003 ne sont pas lettrées (à confirmer) (phase 2, vague 9, 2026-11-18) · tests : agent 6 · sources : [SaiReg.class:vldbordereau_Click](../../../../../../.src/Gestion/Facturation/SaiReg.class#L1000-L1078)

@@ -1,0 +1,25 @@
+{
+ "id": "BORDRX-T02",
+ "objet": "Impression du bordereau",
+ "classe": "Bordrx",
+ "description": "Clic sur le bordereau 1, Imprimer (Button9) : Gen_Bordereau(1) écrit ~/Lcr011.pdf passé à Visualiseur.Prog ; texte comparé par pdftotext (edition.txt).",
+ "dataset": "bordrx_shared/lcr_chaine",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Fichiers": "{home}",
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

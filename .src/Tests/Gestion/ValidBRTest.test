@@ -1,0 +1,196 @@
+' Gambas test file
+
+''Tests de ValidBR (.hidden/reference/.src/Gestion/Stock/ValidBR.class/test.md, VALIDBR-T02, T03).
+''Écran sans point d'entrée dans l'interface (VALIDBR-A01) : instancié et affiché par le test (New ValidBR),
+''« Pour un fournisseur » 401001, date 30.06.2018, Traitement (Button1_Click), puis Gen_ecr avec le Tag du bouton
+''(0 Visualiser, 2 Cloture + Compta). Jeu validbr_shared/receptions (copie de validbr1_shared/receptions, toutes les familles avec un compte d'achat). Boîtes Message :
+''texte relevé, premier bouton. Valeurs attendues : assets/ValidBRTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $hVue As Window
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T02TraitementVisualisation", "401001, Traitement puis Visualiser : listes, tables BRfm/Br, fichiers produits, aucune BR validée")
+  TestKit.Desc("T03ClotureCompta", "401001, Traitement puis Cloture + Compta : validee, Fiches_Mvt, numecriture")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ValidBRTest")
+  TestKit.OuvreBase("validbr_shared/receptions")
+
+End
+
+Public Sub _Boite_Timer()
+  ''Boîte Message : texte relevé, premier bouton.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub Demarre()
+
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 200
+  $hTimer.Start
+
+End
+
+Private Sub Arrete(sCle As String)
+
+  $hTimer.Stop
+  TestKit.Check(sCle & "/boites", IIf($sVu, $sVu, "<aucune>"))
+
+End
+
+Private Sub Colonnes(sCle As String, hF As Object, sNom As String)
+
+  Dim hC As Object
+  Dim i As Integer
+  Dim sLig As String
+
+  hC = hF.Controls[sNom]
+  TestKit.Check(sCle & "/" & sNom & "_nombre", hC.Count)
+  If hC.MoveFirst() Then Return
+  Repeat
+    sLig = ""
+    For i = 0 To 4
+      sLig &= hC.Item[i] & "|"
+    Next
+    TestKit.Check(sCle & "/" & sNom & "_" & hC.Item.Key, sLig)
+  Until hC.MoveNext()
+  ' Curseur remis sur le premier élément (position laissée par Button1_Click), lu par Gen_ecr (Colbl.Item)
+  hC.MoveFirst()
+
+End
+
+Private Sub Table(sCle As String, sReq As String)
+
+  Dim r As Result
+  Dim hF As ResultField
+  Dim sLig As String
+
+  Try r = Utils.db.Exec(sReq)
+  If Error Then
+    TestKit.Check(sCle, "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check(sCle & "/nombre", r.Count)
+  If Not r.Available Then Return
+  Repeat
+    sLig = ""
+    For Each hF In r.Fields
+      sLig &= r[hF.Name] & "|"
+    Next
+    TestKit.Check(sCle & "/" & Format(r.Index, "00"), sLig)
+  Until r.MoveNext()
+
+End
+
+Private Sub Fichiers(sCle As String, sRep As String)
+
+  Dim sFic As String
+  Dim sListe As String
+
+  If Not Exist(User.Home & "/" & sRep) Then
+    TestKit.Check(sCle & "/" & sRep, "<absent>")
+    Return
+  Endif
+  For Each sFic In Dir(User.Home & "/" & sRep).Sort()
+    sListe &= sFic & " "
+  Next
+  TestKit.Check(sCle & "/" & sRep, IIf(sListe, sListe, "<vide>"))
+
+End
+
+Private Function Traite(sCle As String) As Object
+
+  Dim hF As Object
+  Dim sErr As String
+
+  If Not Exist(User.Home & "/tmp") Then Mkdir User.Home & "/tmp"
+  hF = New ValidBR
+  hF.Show
+  Wait
+  hF.Controls["RadioButton2"].Value = True
+  hF.Controls["CodeFour"].Text = "401001"
+  hF.Controls["Datej"].Text = "30.06.2018"
+  Demarre()
+  Try hF.Button1_Click()
+  If Error Then sErr = "ERREUR: " & Error.Text Else sErr = "<aucune>"
+  Arrete(sCle & "/traitement")
+  TestKit.Check(sCle & "/traitement/erreur", sErr)
+  TestKit.Check(sCle & "/libelle", hF.Controls["Libell"].Text)
+  Colonnes(sCle, hF, "Colbl")
+  Colonnes(sCle, hF, "Coldetail")
+  Table(sCle & "/BRfm", "SELECT code, nom, totf, tottc, anomalie FROM BRfm ORDER BY code")
+  Table(sCle & "/Br", "SELECT num, code, date, ht, ttc, anomalie FROM Br ORDER BY code, num")
+  Return hF
+
+End
+
+Private Sub Genere(sCle As String, hF As Object, iMode As Integer)
+
+  Dim sErr As String
+
+  Demarre()
+  Try hF.Gen_ecr(iMode)
+  If Error Then sErr = "ERREUR: " & Error.Text Else sErr = "<aucune>"
+  Arrete(sCle)
+  TestKit.Check(sCle & "/erreur", sErr)
+  Try Utils.db.Exec("UNLOCK TABLES")
+  Table(sCle & "/entrecpt", "SELECT four, numrecpt, validee FROM Fiches_Entrecpt ORDER BY four, numrecpt")
+  Table(sCle & "/mvt", "SELECT jour, numero, compte, intitule, numdoc, libelle, montantd, montantc, DATE_FORMAT(dte, '%Y-%m-%d') AS d FROM Fiches_Mvt ORDER BY lind")
+  Table(sCle & "/numecriture", "SELECT numecriture FROM Fiches_Parametres")
+  Fichiers(sCle, "BR")
+  Fichiers(sCle, "Impressions")
+  Fichiers(sCle, "tmp")
+
+End
+
+Public Sub T02TraitementVisualisation()
+  ''VALIDBR-T02 : « Pour un fournisseur » 401001, Traitement, Visualiser (Gen_ecr(0), Tag de Button2).
+
+  Dim hF As Object
+
+  hF = Traite("T02")
+  Genere("T02/visualiser", hF, 0)
+  Object.Lock(hF)
+  hF.Delete
+
+End
+
+Public Sub T03ClotureCompta()
+  ''VALIDBR-T03 : même jeu, « Cloture + Compta » (Gen_ecr(2), Tag de Button9).
+
+  Dim hF As Object
+
+  hF = Traite("T03")
+  Genere("T03/cloture_compta", hF, 2)
+  Object.Lock(hF)
+  hF.Delete
+
+End

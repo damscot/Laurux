@@ -88,3 +88,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] ATTRIBUTION-A06 — [anomalie] Écran non instrumenté (`Utils.Observers(Me)` absent) : pas de
   journal ni de rejeu ; l'ajout modifie le log produit (nécessaire aux replays) · tests : T01-T09 ·
   sources : [Attribution.class:_New](../../../../../../.src/Gestion/Lcr/Attribution.class#L53-L82)
+- [ ] ATTRIBUTION-A07 — [anomalie] `DAE_KeyPress` : `sel` est réécrit dès 4 caractères (l. 195-197) puis complété : une date complète à 8 chiffres est impossible à rechercher (« 30062018 » → `like "%02-06-%-%"`) ; même code dans [Preparation](../Preparation.class/rework.md) (phase 2, vague 9, 2026-11-18) · tests : agent 8 · sources : [Attribution.class:DAE_KeyPress](../../../../../../.src/Gestion/Lcr/Attribution.class#L187-L205)

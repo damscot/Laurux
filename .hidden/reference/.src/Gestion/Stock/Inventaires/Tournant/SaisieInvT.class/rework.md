@@ -61,9 +61,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   correction · tests : T08 · sources : [SaisieInvT.class:385](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L385)
 - [ ] SAISIEINVT-A02 — [anomalie, à confirmer] Comme SAISIEINV-A02 : Suppr supprime la ligne
   d'inventaire · tests : T09 · sources : [SaisieInvT.class:405](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L405)
-- [ ] SAISIEINVT-A03 — [anomalie] Comme SAISIEINV-A03 : écart `+inv_qtestock` pour une quantité
+- [ ] SAISIEINVT-A03 — [anomalie] (confirmée phase 2, vague 9 : colonne Écart : ligne non comptée affichée `+stock` (l. 77-81), figée par T01) Comme SAISIEINV-A03 : écart `+inv_qtestock` pour une quantité
   comptée nulle · tests : T01 · sources : [SaisieInvT.class:80](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L80)
-- [ ] SAISIEINVT-A04 — [anomalie] Comme SAISIEINV-A04 : `Fiches_Art` lu sans `Available` · tests :
+- [ ] SAISIEINVT-A04 — [anomalie] (confirmée phase 2, vague 9 : erreur à `Saisie_Inv` l. 73 (`rarts!art_dec`, appelée depuis `_New` l. 46) et à `Nseq_LostFocus` l. 179, figée par T15) Comme SAISIEINV-A04 : `Fiches_Art` lu sans `Available` · tests :
   T15 · sources : [SaisieInvT.class:74](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L74), [SaisieInvT.class:179](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L179)
 - [ ] SAISIEINVT-A05 — [anomalie, à confirmer] Comme SAISIEINV-A05 : doublon détecté par l'échec de
   `Colinv.Add` · tests : T05, T06 · sources : [SaisieInvT.class:321](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L321), [SaisieInvT.class:333](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L333)
@@ -74,8 +74,9 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
 - [ ] SAISIEINVT-A08 — [anomalie, à confirmer] `Colinv_Activate` lit `Colinv.Item` (curseur
   interne) mais supprime `Colinv.Current` : la ligne rechargée peut différer de la ligne retirée et
   remise à 0 · tests : T07 · sources : [SaisieInvT.class:378](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L378), [SaisieInvT.class:383](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L383)
-- [ ] SAISIEINVT-A09 — [anomalie] Import : pas de test d'erreur après `Try HFil = Open` → fichier
+- [ ] SAISIEINVT-A09 — [anomalie] (confirmée phase 2, vague 9 : sans fichier : erreur fatale, figée par T13) Import : pas de test d'erreur après `Try HFil = Open` → fichier
   absent = erreur non gérée sur `Eof(hFil)` (SaisieInv affiche un message) · tests : T13 · sources : [SaisieInvT.class:483](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L483), [SaisieInvT.class:489](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L489)
-- [ ] SAISIEINVT-A10 — [anomalie, à confirmer] Import : quantité testée par `cle <> 0` (chaîne
+- [ ] SAISIEINVT-A10 — [anomalie, à confirmer] (confirmée phase 2, vague 9 : « 002; » compté 0 avec `inv_comptee` = 1, figée par T12) Import : quantité testée par `cle <> 0` (chaîne
   comparée à un entier) au lieu de `cle <> ""` : quantité vide → conversion à vérifier (erreur ou
   quantité 0) · tests : T12 · sources : [SaisieInvT.class:514](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class#L514)
+- [ ] SAISIEINVT-A11 — [anomalie] `Fiches_InvT.inv_qtecomptee` est `Decimal(12,2)` (créée par `GeninvT.gen_Inv` l. 515) alors que `art_dec` peut valoir 3 : « 1.2345 » donne 1.235 par `Cdec` puis 1.24 en base (phase 2, vague 9, 2026-11-18) · tests : T07 (agent 2) · sources : [GeninvT.class:gen_Inv](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/GeninvT.class#L515)

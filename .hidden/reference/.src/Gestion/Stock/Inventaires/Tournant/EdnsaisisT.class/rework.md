@@ -48,7 +48,7 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] EDNSAISIST-A01 — [anomalie] `If Not Error And rResult.Available` sans court-circuit : table
+- [ ] EDNSAISIST-A01 — [anomalie] (confirmée phase 2, vague 9 : `_New` l. 46, même défaut qu'ECARTST-A01, figée par T03) `If Not Error And rResult.Available` sans court-circuit : table
   absente (après `ValidinvT`) → erreur non gérée à l'ouverture · tests : T03 · sources : [EdnsaisisT.class:46](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/EdnsaisisT.class#L46)
 - [ ] EDNSAISIST-A02 — [anomalie] `Fiches_Art` lu sans `Available` (article supprimé → erreur non
   gérée) ; lignes sans `ORDER BY` · tests : T01, T06 · sources : [EdnsaisisT.class:93](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/EdnsaisisT.class#L93), [EdnsaisisT.class:98](../../../../../../../../.src/Gestion/Stock/Inventaires/Tournant/EdnsaisisT.class#L98)

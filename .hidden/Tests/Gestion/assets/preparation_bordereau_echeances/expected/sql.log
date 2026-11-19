@@ -1,0 +1,33 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Lcr 
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by date 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by date 
+SELECT * FROM Fiches_Banques 
+SELECT * FROM Fiches_Banques where banques_code = '1'
+SELECT * FROM Fiches_Banques where banques_code = '2'
+SELECT * FROM Fiches_Lcr  where banque = 2 and codeentree = 0 and bordereau = 0
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque = 2 and codeentree = 0 and bordereau = 0
+SELECT * FROM Fiches_Banques where banques_code = '2'
+SELECT * FROM Fiches_Lcr  where banque = 2 and bordereau = 0 and datech >= 2018-08-01 and datech <= 2018-08-31  AND codeentree = 1
+SELECT Count(*) as nb  FROM Fiches_Lcr where banque = 2 and bordereau = 0 and datech >= 2018-08-01 and datech <= 2018-08-31  AND codeentree = 1
+LOCK TABLES Fiches_Lcr  WRITE, Fiches_Banques WRITE, Fiches_Bordereaux WRITE, Fiches_Comptes write
+select * from Fiches_Bordereaux order by lind
+UNLOCK TABLES

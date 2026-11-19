@@ -64,16 +64,16 @@
 Ces étapes ne sont **pas** exécutées en phase 4 autonome sans accord explicite. Les tests de
 caractérisation figent le comportement actuel et devront être mis à jour avec la correction.
 
-- [ ] STOCKMVT-A01 — [anomalie] Filtre marque/centrale : jointure `art_code = num_ligfac` (numéro
+- [ ] STOCKMVT-A01 — [anomalie] (confirmée phase 2, vague 9 : figée par T03) Filtre marque/centrale : jointure `art_code = num_ligfac` (numéro
   de facture) au lieu de `code_ligfac` pour les factures archivées et archivées entretien ·
   tests : T03 · sources : [Stockmvt.class:159](../../../../../.src/Gestion/Stockmvt.class#L159), [Stockmvt.class:161](../../../../../.src/Gestion/Stockmvt.class#L161)
-- [ ] STOCKMVT-A02 — [anomalie] Fournisseur seul + stock de départ ou théorique coché : le
+- [ ] STOCKMVT-A02 — [anomalie] (confirmée phase 2, vague 9 : figée par T04) Fournisseur seul + stock de départ ou théorique coché : le
   préfixe `UNION ALL` de la sous-requête réceptions est retiré alors qu'elle n'est pas en tête
   (SQL invalide) · tests : T04 · sources : [Stockmvt.class:474](../../../../../.src/Gestion/Stockmvt.class#L474)
 - [ ] STOCKMVT-A03 — [anomalie] Double-clic : « Factures en cours entretien » ouvre le document
   dans `Fiches_Bl` (`ObjFac.bl`) et « archives entretien » dans les archives non entretien (test
   `Match` trop large, à confirmer) · tests : T09 · sources : [Stockmvt.class:672](../../../../../.src/Gestion/Stockmvt.class#L672), [Stockmvt.class:GridView1_Activate](../../../../../.src/Gestion/Stockmvt.class#L664-L684)
-- [ ] STOCKMVT-A04 — [anomalie] Export CSV en mode regroupé : lecture de `$res!nom`, absent hors
+- [ ] STOCKMVT-A04 — [anomalie] (confirmée phase 2, vague 9 : figée par T08) Export CSV en mode regroupé : lecture de `$res!nom`, absent hors
   détail (erreur) ; `mrgmo` non exporté · tests : T08 · sources : [Stockmvt.class:Butexp_Click](../../../../../.src/Gestion/Stockmvt.class#L940-L959)
 - [ ] STOCKMVT-A05 — [anomalie] Définition des mouvements divergente de `Cstock` (BL de type `A`
   inclus, réceptions sans `art_txconv`, tickets de caisse inclus, dépôts et inventaire tournant
@@ -81,3 +81,4 @@ caractérisation figent le comportement actuel et devront être mis à jour avec
   chiffres affichés · tests : T01, T05 · sources : [Stockmvt.class:95](../../../../../.src/Gestion/Stockmvt.class#L95), [Stockmvt.class:226](../../../../../.src/Gestion/Stockmvt.class#L226), [Stockmvt.class:123](../../../../../.src/Gestion/Stockmvt.class#L123), [Cstock.module:Calc_stock](../../../../../.src/Utils/Cstock.module#L11-L134)
 - [ ] STOCKMVT-A06 — [anomalie] `Radiofam` sans famille sélectionnée : `Utils.fam` produit
   `IN)` (UTILS-A02), erreur SQL ; à corriger avec UTILS-A02 · tests : T06 · sources : [Stockmvt.class:287](../../../../../.src/Gestion/Stockmvt.class#L287), [Utils.module:fam](../../../../../.src/Utils/Utils.module#L1439-L1452)
+- [ ] STOCKMVT-A07 — [anomalie] `Buttrait_Click` : `ORDER BY dte,code` (l. 78, 496) n'est pas un ordre total : ordre des mouvements d'un même jour et d'un même article instable (écran, PDF, CSV) ; `Butexp_Click` : champs vides et nombres sans format homogène (`Str` + `Replace`, l. 951) (phase 2, vague 9, 2026-11-18) · tests : T01, T07, T08 · sources : [Stockmvt.class:78](../../../../../.src/Gestion/Stockmvt.class#L78), [Stockmvt.class:496](../../../../../.src/Gestion/Stockmvt.class#L496), [Stockmvt.class:Butexp_Click](../../../../../.src/Gestion/Stockmvt.class#L940-L959)

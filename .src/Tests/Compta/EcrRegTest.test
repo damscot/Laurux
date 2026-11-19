@@ -13,9 +13,12 @@ Public Sub _Desc()
   TestKit.Desc("T03Validation", "L_valide : 3 règlements d'un bordereau, mode 05 : comptes remplacés par cptint, ligne de banque du total")
   TestKit.Desc("T04Suppression", "L_sup : écriture client + banque : toutes les lignes en L_sup, racine ajoutée")
   TestKit.Desc("T05Caisse", "L_caisse : 2 encaissements, mode 10 (cptint 580001), journal 53 : lignes Treso, ligne du total arrondi")
+  TestKit.Desc("T07Bordereau", "Écran SaiReg (sans affichage), mode 20 : 2 règlements, validation du bordereau (fenêtre de date par Timer) : Fiches_Mvt")
   TestKit.Desc("T06ReglementInconnu", "Mode de règlement ZZ inexistant : erreur levée, message figé")
 
 End
+
+Private $hTimer As Timer
 
 Public Sub _Setup()
 
@@ -135,5 +138,77 @@ End
 Public Sub T06ReglementInconnu()
 
   Reg("T06", "ZZ", "50", Ligne("411001", 0, 100, VarEcr.L_ajou))
+
+End
+
+Public Sub _Win_Timer()
+  ''T07 : fenêtre de date de SaiReg.vldbordereau_Click (Window construite à la volée) fermée par Close(0) = OK.
+
+  Dim hW As Window
+
+  For Each hW In Windows
+    If Object.Type(hW) = "Window" Then
+      $hTimer.Enabled = False
+      hW.Close(0)
+      Return
+    Endif
+  Next
+
+End
+
+Private Sub SrRegle(hF As SaiReg, iLigne As Integer)
+
+  Dim hC As Object
+
+  hC = hF.Controls["client"]
+  hC.Text = "411001"
+  hF.client_LostFocus()
+  hF.sel_LostFocus()
+  hF.selection_choose(iLigne)
+  hF.butvalide_Click()
+
+End
+
+Public Sub T07Bordereau()
+  ''Saisie de 2 règlements dans SaiReg (instancié sans affichage, gestionnaires Public) puis validation du bordereau :
+  ''EcrReg en L_valide écrit les lignes clients, collectifs et la ligne de banque du total. Jeu
+  ''Gestion/saireg_shared/saireg_factures, factures recalées à J-40 / J-30 (sélection Now ± 8 ans, date du jour
+  ''écrite par la validation : dates relevées en écart au jour, date du libellé masquée, clés présentes/absentes).
+
+  Dim hF As SaiReg
+  Dim hC As Object
+  Dim r As Result
+  Dim sJ As String
+
+  TestKit.OuvreBase("Gestion/saireg_shared/saireg_factures")
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "true"
+  Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET dte = &1 WHERE numero = 1", DateAdd(Date(Now), gb.Day, -40))
+  Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET dte = &1 WHERE numero = 2", DateAdd(Date(Now), gb.Day, -30))
+  hF = New SaiReg
+  hC = hF.Controls["nreg"]
+  hC.Text = "20"
+  hF.nreg_LostFocus()
+  SrRegle(hF, 0)
+  SrRegle(hF, 1)
+  $hTimer = New Timer As "_Win"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF.valide_Click()
+  If Error Then TestKit.Check("T07/erreur", Error.Text)
+  $hTimer.Enabled = False
+  Object.Lock(hF)
+  sJ = LDate(Now).L
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " WHERE numero = 3 ORDER BY lind")
+  If Not r.Available Then
+    TestKit.Check("T07/mvt", "<aucune écriture>")
+    Return
+  Endif
+  Repeat
+    TestKit.Check("T07/mvt/" & r!lind, r!jour & ";" & r!compte & ";" & r!collectif & ";" & Replace(r!intitule, sJ, "<jour>") & ";J" & CStr(DateDiff(Date(Now), Date(r!dte), gb.Day)) & ";" & r!numdoc & ";" & r!numlot & ";" & Replace(r!libelle, sJ, "<jour>") & ";" & r!montantd & ";" & r!montantc & ";" & r!validee & ";" & r!lettree & ";" & r!tresorerie & ";" & If(IsNull(r!control), "clé NULL", "clé posée"))
+  Until r.MoveNext()
+  r = Utils.db.Exec("SELECT lind, lettree FROM " & Cbase.Table("TabMvt") & " WHERE compte = &1 AND numero < 3 ORDER BY lind", "411001")
+  Repeat
+    TestKit.Check("T07/lettree/" & r!lind, r!lettree)
+  Until r.MoveNext()
 
 End

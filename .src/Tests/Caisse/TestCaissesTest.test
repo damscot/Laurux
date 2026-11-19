@@ -1,13 +1,20 @@
 ' Gambas test file
 
-''Tests de TestCaisses (.hidden/reference/.src/Caisse/TestCaisses.module/test.md, TESTCAISSES-T01).
-''TestCai lit les verrous ~/Caisse<n>.lock du HOME de test (jetable) ; cas sans conflit seulement (le conflit ouvre
-''un Message.Warning modal, bloquant en gb.test). Valeurs attendues : assets/TestCaissesTest/expected.txt.
+''Tests de TestCaisses (.hidden/reference/.src/Caisse/TestCaisses.module/test.md, TESTCAISSES-T01, T02, T03).
+''TestCai lit les verrous ~/Caisse<n>.lock du HOME de test (jetable) ; cas sans conflit (T01) et faux conflit (T03 : le conflit ouvre
+''un Message.Warning modal : T03 le relève et le valide par un Timer du module, technique TresorTest).
+''Valeurs attendues : assets/TestCaissesTest/expected.txt.
+
+Private $hTimer As Timer
+Private $sVu As String
+Private $hVue As Window
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T01SansConflit", "TestCai sans verrou, verrou de la même caisse, verrou d'un autre vendeur : \"0\"")
+  TestKit.Desc("T02Conflit", "Vendeur 12 sur la caisse 2, TestCai(\"1\", \"1\") (même vendeur, caisse 1) : avertissement « caisse 1 » (A01 figée), pas de verrou Caisse1")
+  TestKit.Desc("T03FauxConflit", "Vendeur 10 sur la caisse 2, TestCai(\"1\", \"1\") (vendeur 11) : avertissement sur le 1er caractère (A02 figée)")
 
 End
 
@@ -36,6 +43,70 @@ Public Sub T01SansConflit()
   EffaceVerrous()
   File.Save(User.Home & "/Caisse2.lock", "23 Anne O\n")
   TestKit.Check("T01/autre_vendeur", TestCaisses.TestCai("1", "1"))
+  EffaceVerrous()
+
+End
+
+Public Sub _Box_Timer()
+  ''Boîte FMessage : texte relevé, premier bouton cliqué (boîte mémorisée : clic différé).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Public Sub T02Conflit()
+  ''TESTCAISSES-T02 : vendeur 12 connecté sur la caisse 2 (~/Caisse2.lock) ; connexion du même vendeur sur la caisse 1
+  ''(Ouverture passe Left$(Caissiere.Text, 1) = "1") : retour 1 et avertissement « … sur la caisse 1 » alors que la
+  ''caisse occupée est la 2 (le message affiche le 1er caractère du vendeur, A01). TestCai n'écrit aucun verrou.
+  ''Le parcours dans l'écran Ouverture est couvert par OuvertureTest.T06VendeurOccupe.
+
+  EffaceVerrous()
+  File.Save(User.Home & "/Caisse2.lock", "12 BRUNOO\n")
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Box"
+  $hTimer.Delay = 200
+  $hTimer.Enabled = True
+  TestKit.Check("T02/retour", TestCaisses.TestCai("1", Left$("12 BRUNO", 1)))
+  $hTimer.Enabled = False
+  TestKit.Check("T02/message", $sVu)
+  TestKit.Check("T02/verrou1", If(Exist(User.Home & "/Caisse1.lock"), "présent", "absent"))
+  TestKit.Check("T02/verrou2", File.Load(User.Home & "/Caisse2.lock"))
+  EffaceVerrous()
+
+End
+
+Public Sub T03FauxConflit()
+  ''TESTCAISSES-T03 : vendeur 10 connecté sur la caisse 2 ; connexion du vendeur 11 sur la caisse 1 (Ouverture passe
+  ''Left$(Caissiere.Text, 1) = "1") : TestCai compare le premier caractère seulement, avertissement affiché (A02).
+  ''Le conflit est ici atteint directement par TestCai (Ouverture : voir OuvertureTest.T06VendeurOccupe).
+
+  EffaceVerrous()
+  File.Save(User.Home & "/Caisse2.lock", "10 Paul O\n")
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Box"
+  $hTimer.Delay = 200
+  $hTimer.Enabled = True
+  TestKit.Check("T03/retour", TestCaisses.TestCai("1", Left$("11 Anne", 1)))
+  $hTimer.Enabled = False
+  TestKit.Check("T03/message", $sVu)
   EffaceVerrous()
 
 End

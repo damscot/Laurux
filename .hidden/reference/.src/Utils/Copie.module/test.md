@@ -7,7 +7,7 @@
 |---|---|---|---|---|---|---|
 | COPIE-T01 | gbtest | `Dupli`, répertoire existant | `HOME` de test avec `Impressions/`, PDF source | fichier copié, `spiece`/`schemin` de référence | `tests/dupli_existant/` | implémenté |
 | COPIE-T02 | gbtest | `Dupli`, répertoire absent | `HOME` sans `Impressions/` | répertoire créé, **pas** de copie, `spiece` inchangé (anomalie A01 figée) | `tests/dupli_absent/` | implémenté |
-| COPIE-T03 | replay | Validation d'un bon de réception (`Edbr` via `ValidBR`) | `Laurux01.sql`, BR d'un fournisseur | PDF présent dans `~/Impressions/BonReception-<four>.pdf` | `tests/replay_br_copie/` | à faire : scénario ValidBR/Edbr ; le PDF produit dans le HOME n'est pas comparé par le runner |
+| COPIE-T03 | replay | Validation d'un bon de réception (`Edbr` via `ValidBR`) | `Laurux01.sql`, BR d'un fournisseur | PDF présent dans `~/Impressions/BonReception-<four>.pdf` | `tests/replay_br_copie/` | implémenté (gb.test `CopieTest.T03BonReception` : `Edbr.Ed(…, "ValidBR")` appelé comme `ValidBR.Gen_ecr`, jeu `Gestion/validbr_shared/receptions` ; EDBR-A05 figée : « Type mismatch » avant `pdf.Output`, aucune copie dans `~/Impressions`) |
 
 ## Détail des tests
 

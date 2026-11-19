@@ -5,9 +5,9 @@
 
 | Id | Type | Objet | Entrées | Résultat attendu | Répertoire | Statut |
 |---|---|---|---|---|---|---|
-| RAZINV-T01 | replay | Suppression confirmée | base avec `Fiches_Inv` générée (Geninv) ; Gestion > Stock > Inventaire > Suppression ; « Supprimer » ; « Oui » | `Fiches_Inv` absente du dump ; message « Inventaire effacé ! » | `tests/raz_oui/` | à faire |
-| RAZINV-T02 | replay | Suppression refusée | idem, réponse « Non » | dump identique à l'entrée | `tests/raz_non/` | à faire |
-| RAZINV-T03 | replay | Table absente | base sans `Fiches_Inv` ; « Supprimer » ; « Oui » | dump inchangé ; message de succès (comportement actuel figé) | `tests/raz_absente/` | à faire |
+| RAZINV-T01 | replay | Suppression confirmée | base avec `Fiches_Inv` générée (Geninv) ; Gestion > Stock > Inventaire > Suppression ; « Supprimer » ; « Oui » | `Fiches_Inv` absente du dump ; message « Inventaire effacé ! » | `tests/raz_oui/` | implémenté (`Gestion/razinv_raz_oui`, jeu `validinv_shared/inv_fin_partiel`) |
+| RAZINV-T02 | replay | Suppression refusée | idem, réponse « Non » | dump identique à l'entrée | `tests/raz_non/` | implémenté (`Gestion/razinv_raz_non`, jeu `validinv_shared/inv_fin_partiel`) |
+| RAZINV-T03 | replay | Table absente | base sans `Fiches_Inv` ; « Supprimer » ; « Oui » | dump inchangé ; message de succès (comportement actuel figé) | `tests/raz_absente/` | implémenté (`Gestion/razinv_raz_absente`, jeu `Laurux01 seul`) |
 
 ## Détail des tests
 
@@ -17,3 +17,4 @@
   du test).
 - Écran instrumenté (`Utils.Observers` dans `_new`) : rejouable.
 - Non testable automatiquement : l'échec du `DROP` masqué par `Try` (nécessite un verrou externe).
+- Mise en œuvre (vague 9) : scénarios `Gestion/razinv_*` ; jeu `validinv_shared/inv_fin_partiel` (lecture seule) pour T01/T02, Laurux01 seul pour T03 ; générateur `ecarts_shared/gen_editions_inv.py`.
