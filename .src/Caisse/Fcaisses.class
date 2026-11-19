@@ -276,7 +276,7 @@ Public Sub Button3_Click()
     rResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabCaisses") & " where code = &1", Code.text)
     If rResult.Available Then
       If Not rResult!ecole Then
-        If rResult!connecte = 1 Then
+        If rResult!connecte Then
           Message.Error("Cette caisse est connectée!\n Veuillez déconnecter votre caisse avant de faire votre suppression SVP")
           Moulinage = 0
         Else

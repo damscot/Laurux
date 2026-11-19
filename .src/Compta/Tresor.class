@@ -2095,7 +2095,7 @@ Public Sub Ecrit3()
                   Libelecrit.Text = rResult!libelle
                   montantdb = rResult!montantd
                   montantcd = rResult!montantc
-                  Try iLet = rResult!lettree
+                  Try iLet = IIf(rResult!lettree, 1, 0)
                   If Error Then iLet = False
                   numlot.Text = rResult!numlot
                   numdoc.Text = rResult!numdoc

@@ -57,7 +57,7 @@ Public Sub Button2_Click()
   rResult = Utils.db.Exec("SELECT * FROM " & Tab & "")
   If rResult.Available Then
     Repeat
-      If rResult!connecte = "1" Then
+      If rResult!connecte Then
         message.Warning("Traitement impossible, la caisse numéro " & rResult!code & "est connectée !")
         Return
       Endif

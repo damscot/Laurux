@@ -46,7 +46,7 @@ Static Public Sub run()
           Repeat
             cpt1 = Tab3Rslt!compte1
             cpt2 = Tab3Rslt!compte2
-            Amort = Tab3Rslt!amortissement
+            Amort = Serveur.TexteBool(Tab3Rslt!amortissement)
             Print #HFil2, Rub & ";" & cpt1 & ";" & cpt2 & ";" & Amort & ";"
           Until Tab3Rslt.MoveNext()
         Endif

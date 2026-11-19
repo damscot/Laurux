@@ -370,7 +370,7 @@ Public Sub BcrSelect_Activate()
         Case 3
           Compt2 = skey
         Case 4
-          Amort = skey
+          Amort = (skey = "1" Or skey = "T" Or LCase(skey) = "true") ' 1/0 (export), T/vide (3.69) : une chaîne non vide vaudrait True
       End Select
     Next
     rResult = Utils.db.Exec("SELECT * FROM " & Tab & " WHERE numrub= &1 and compte1 = &2", numrub2, Compt1)

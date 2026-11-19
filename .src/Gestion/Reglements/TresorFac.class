@@ -358,7 +358,7 @@ Public Sub ecritv()
           Ecrit3.Item[4] = Format$(rResult!montantd, "0.00")
           Ecrit3.Item[5] = Format$(rResult!montantc, "0.00")
           Ecrit3.Item[6] = rResult!libelle
-          iLet = rResult!lettree
+          iLet = IIf(rResult!lettree, 1, 0)
         Endif
       Until rResult.MoveNext()
     Endif
@@ -1089,7 +1089,7 @@ Public Sub Ecrit3_Click()
               Libelecrit.Text = rResult!libelle
               montantdb = rResult!montantd
               montantcd = rResult!montantc
-              iLet = rResult!lettree
+              iLet = IIf(rResult!lettree, 1, 0)
               numlot = rResult!numlot
               numdoc.Text = rResult!numdoc
               montantdb = Val(Ecrit1.Item[4])

@@ -149,7 +149,7 @@ Public Sub Button1_Click()
         Try CliTotal = Format$(rResult!totalttc + Val(Utils.cpoint(CliTotal)), "0.00")
         clic2 = clic
       Endif
-      If Type = "F" And rResult!imp = 1 Then
+      If Type = "F" And rResult!imp Then
         pdf.level2d(Type, intitule, Adr1, Adr2, Burdis, Datefac, Numfac, Total, posy, TypeD, RadioButton7.value, rResult!livraison)
       Else
         pdf.level2d(Type, intitule, Adr1, Adr2, Burdis, Datebl, Numbl, Total, posy, TypeD, RadioButton7.value, rResult!livraison)

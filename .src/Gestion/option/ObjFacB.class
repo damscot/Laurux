@@ -768,7 +768,7 @@ Public Function editebl() As Boolean        ''Edite un bl
     Endif
   Endif
   ch = Me.choix
-  If Me.resent!imp = 1 Then Me.choix = ObjFac.facture
+  If Me.resent!imp Then Me.choix = ObjFac.facture
   
   Me.edit = New EditfacB(Me, Me)
   Me.CopieGedFac()
@@ -793,10 +793,10 @@ Public Sub visualisation()        ''Visualisation d'un bl ou d'une facture
   calcul()
   Me.resent.MoveFirst
   ch = Me.choix
-  If Me.choix = ObjFac.facture And Me.resent!imp = "0" Then
+  If Me.choix = ObjFac.facture And Not Me.resent!imp Then
     Me.choix = ObjFac.bl
   Endif
-  If Me.resent!imp = 1 Then Me.choix = ObjFac.facture
+  If Me.resent!imp Then Me.choix = ObjFac.facture
   Me.edit = New EditfacB(Me, Me)
   Me.imp.OutputFile = Filename
   Me.imp.NumCopies = 1
@@ -860,14 +860,14 @@ Public Sub mail(courriel As String)       ''Envois de facture par mail
       calcul
       Me.resent.MoveFirst()
       ch = Me.choix
-      If Me.choix = ObjFac.facture And Me.resent!imp = "0" Then
+      If Me.choix = ObjFac.facture And Not Me.resent!imp Then
         Me.choix = ObjFac.bl
       Endif
       Me.edit = New EditfacB(Me, Me)
       Me.imp.OutputFile = User.Home & "/tmp/Facture.pdf"
       Me.edit.Print(Me.imp)
       Me.resent.MoveFirst
-      If (Me.choix = ObjFac.facture And Me.resent!imp = 1) Or Me.choix = ObjFac.archive Then sText = "Facture " Else sText = "Bon "
+      If (Me.choix = ObjFac.facture And Me.resent!imp) Or Me.choix = ObjFac.archive Then sText = "Facture " Else sText = "Bon "
       If Me.choix = ObjFac.commande Then sText = "Commande "
       If Me.choix = ObjFac.bl Then sText = "Bon "
       If Me.choix = ObjFac.devis Then sText = "Devis "
