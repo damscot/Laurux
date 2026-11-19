@@ -88,7 +88,7 @@ Public Sub Histo_ventes()
           BlResult = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabBl") & " where numbl = &1 and (datebl >= &2 or dtefac >= &2)", LigblResult!num_ligbl, Dtejour)
           If BlResult.Available Then
             If BlResult!type = "B" Or BlResult!type = "F" Then
-              If BlResult!imp = "1" Then
+              If BlResult!imp Then
                 Document = BlResult!numfac
                 Else
                 Document = BlResult!numbl

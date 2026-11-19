@@ -9472,11 +9472,11 @@ Public Sub Bl_Suppr()
     If Bannul Then
       Blrslt = Utils.db.Exec("SELECT * FROM " & tab & " where numbl = &1", num.Text)
       If Blrslt.Count > 0 Then
-        If (Blrslt!imp = "1") Or (Blrslt!numtick <> Null) Then
+        If (Blrslt!imp) Or (Blrslt!numtick <> Null) Then
           If start.son Then
             Music.Play
           Endif
-          If (Blrslt!imp = "1")
+          If (Blrslt!imp)
             Try Message.Warning("Suppression impossible, la facture a été imprimée !")
           Else
             Try Message.Warning("Suppression impossible, le bon est règlé en caisse... attente de moulinage!")

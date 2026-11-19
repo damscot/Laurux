@@ -32,7 +32,7 @@ Public Sub _new()
   Try fdcbase = Format$(rResult!fndc, "0.00")
   If Error Then fdcbase = "0,00"
   Box1.Select
-  If rResult!tkz = 1 Then
+  If rResult!tkz Then
     TextLabel1.Text = "Modification du fond de caisse initial numéro " & Ncaisse & " (" & $vdr & ")"
     ModifFDC = True
     Label2.Text = "Nouveau FDC"

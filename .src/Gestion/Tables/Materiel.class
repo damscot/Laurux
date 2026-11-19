@@ -2069,7 +2069,7 @@ Public Sub Histo_Ventes()
             If BlResult.Available Then
               If BlResult!type = "B" Or BlResult!type = "F" Then
                 Colventes.Add(LigblResult!num_ligbl & LigblResult!numlig_ligbl, LigblResult!num_ligbl & LigblResult!numlig_ligbl)
-                If BlResult!imp = "1" Then
+                If BlResult!imp Then
                   Colventes.Item[0] = .Cdate_Aff(blResult!dtefac)
                 Else
                   Colventes.Item[0] = .Cdate_Aff(blResult!datebl)
@@ -2082,7 +2082,7 @@ Public Sub Histo_Ventes()
                 Colventes.Item[5] = LigblResult!netht_ligbl
                 If Len(Colventes.Item[5]) - InStr(Colventes.Item[5], ",") = 2 Then Colventes.Item[5] = Colventes.Item[5] & " "
                 Colventes.Item[6] = LigblResult!qte_ligbl
-                If BlResult!imp = "1" Then
+                If BlResult!imp Then
                   Colventes.Item[7] = BlResult!numfac
                 Else
                   Colventes.Item[7] = BlResult!numbl
@@ -2117,14 +2117,14 @@ Public Sub Histo_Ventes()
         If BlResult.Available Then
           If BlResult!type = "B" Or BlResult!type = "F" Then
             Colventes.Add(blResult!numserie & blResult!codep, blResult!numserie & blResult!codep)
-            If BlResult!imp = "1" Then
+            If BlResult!imp Then
               Colventes.Item[0] = .Cdate_Aff(blResult!dtefac)
             Else
               Colventes.Item[0] = .Cdate_Aff(blResult!datebl)
             Endif
             Colventes.Item[1] = BlResult!cdclibl
             Colventes.Item[2] = BlResult!nmclibl
-            If BlResult!imp = "1" Then
+            If BlResult!imp Then
               Colventes.Item[7] = BlResult!numfac
             Else
               Colventes.Item[7] = BlResult!numbl
