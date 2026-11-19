@@ -1,0 +1,30 @@
+{
+ "id": "FCLOTUREAN-T10",
+ "classe": "FClotureAn",
+ "objet": "Échec de la sauvegarde avant clôture",
+ "description": "Jeu fcloturean_shared/cloturean_base ; mysqldump forcé en erreur (règle « outils » : code 127, message sh, mot de passe masqué). Mêmes réponses que T01 (Oui, Entrée, Entrée, Oui, Entrée sur « Traitement terminé ! »). Constat : la redirection « > » du Shell crée ~/Laurux01_<date>.sql vide avant l'échec de mysqldump : Exist() est vrai, la sauvegarde vide est compressée dans ~/Sauve/Laurux01AvCL_15062018.sql.gz, AUCUN message (le Message.Error de Sauve n'est jamais atteint) et la clôture est complète (A01 aggravée). Dump identique à T01, appel tracé dans outils.trace.",
+ "dataset": "fcloturean_shared/cloturean_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "outils": {
+  "mysqldump": {
+   "rc": 127,
+   "erreur": "sh: 1: mysqldump: not found",
+   "hidden_argv": [
+    "-p*"
+   ]
+  }
+ },
+ "fichiers": [
+  "@outils.trace",
+  "Sauve/Laurux01AvCL_15062018.sql.gz"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

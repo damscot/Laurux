@@ -1,0 +1,24 @@
+{
+ "id": "PREPARATION-T10",
+ "objet": "Impression",
+ "classe": "Preparation",
+ "description": "Imprimer (Button9) sans banque, puis BQ = banque 1 et Imprimer : 2 Message.Info (Entrée), 2 PDF ~/Lcr.pdf, textes ajoutés dans edition.txt par pdftotext (LCR écartées et remises incluses, A06).",
+ "dataset": "Gestion/bordrx_shared/lcr_chaine",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

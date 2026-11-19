@@ -1,0 +1,17 @@
+{
+ "id": "SAISIEINVT-T03",
+ "objet": "Saisie par code, code équivalent, référence centrale",
+ "classe": "SaisieInvT",
+ "description": "Code article : 002 qté 5 Valider ; EQ3 (art_cequ de 003) qté 4 Valider ; RC1 (art_refcentrale de 001, déjà compté 12) qté 1 Valider, « déjà été saisit » bouton 1 cumuler (Entrée). Attendu : 002 = 5, 003 = 4, 001 = 13, toutes comptées. Le code-barres « *code » (Wait 0.2, REPLAYOBSERVER-A18) n'est pas joué.",
+ "dataset": "saisieinvt_shared/invt",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

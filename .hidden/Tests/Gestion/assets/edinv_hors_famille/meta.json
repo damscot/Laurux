@@ -1,0 +1,24 @@
+{
+ "id": "EDINV-T04",
+ "classe": "Edinv",
+ "objet": "Article hors arbre de familles",
+ "description": "Jeu ecarts_shared/inv_hors_famille (002 compté, famille 99 absente de Fiches_Fam) ; menu 85 ; Imprimer. Attendu : 002 absent de l'édition et du total (figé A01).",
+ "dataset": "ecarts_shared/inv_hors_famille",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

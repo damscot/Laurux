@@ -1,0 +1,331 @@
+' Gambas test file
+
+''Tests de SaiReg (.hidden/reference/.src/Gestion/Facturation/SaiReg.class/test.md, SAIREG-T03).
+''Les autres tests de la classe sont des scénarios (Gestion/saireg_*). T03 : la fenêtre de date du bordereau est
+''une Window construite par vldbordereau_Click (nom automatique « #nn », non adressable par le rejeu) : l'écran est
+''instancié sans être affiché, piloté par ses gestionnaires Public, et la fenêtre de date est validée par un Timer
+''du module (Close(0), comme btval_click). Jeu saireg_shared/saireg_factures, dates des factures recalées sur le jour
+''(J-40, J-30 : la sélection dépend de Now, gb.test ne fige pas la date). Valeurs attendues :
+''assets/SaiRegTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T04Editions", "Éditer en mode Saisie (EdReg ajout) puis en mode Bordereau (EdReg tous, InputBox annulée par Timer) : Bordereau.pdf produit")
+  TestKit.Desc("T11PeriodeClose", "Date de règlement en période comptable close (dtereg_LostFocus) : Message.Warning (Timer), libellé non mis à jour ; date ouverte : libellé posé")
+  TestKit.Desc("T02ModifSuppression", "Bordereau repris (mode 40) : ligne 0 modifiée (30 €), ligne 1 supprimée (borderaux_Activate), validation de la saisie")
+  TestKit.Desc("T03bReprise", "Mode 40 en bordereaux (cptint 580003) avec un règlement en attente : reprise dans le bordereau, validation (Timer)")
+  TestKit.Desc("T03Bordereau", "Mode 20 (bordereau) : 2 règlements, Valider, fenêtre de date validée (Timer) : écritures et lettrage")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "SaiRegTest")
+  TestKit.OuvreBase("saireg_shared/saireg_factures")
+  ' Visualiseur.Prog : commande neutre au lieu de Desktop.Open
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "true"
+  ' la sélection couvre Now ± 8 ans et la validation date les écritures du jour : factures replacées à J-40 (F100)
+  ' et J-30 (F101), dates relevées en écart au jour (J+n) et clés control seulement présentes/absentes
+  Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET dte = &1 WHERE numero = 1", DateAdd(Date(Now), gb.Day, -40))
+  Utils.db.Exec("UPdate " & Cbase.Table("TabMvt") & " SET dte = &1 WHERE numero = 2", DateAdd(Date(Now), gb.Day, -30))
+
+End
+
+Public Sub _Msg_Timer()
+  ''Boîte Message.* : texte relevé puis premier bouton.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" Then
+      $hTimer.Enabled = False
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Public Sub T11PeriodeClose()
+
+  Dim hF As SaiReg
+  Dim hC As Object
+  Dim hL As Object
+
+  hF = New SaiReg
+  hC = hF.Controls["nreg"]
+  hC.Text = "05"
+  hF.nreg_LostFocus()
+  hL = hF.Controls["libsaisi"]
+  hC = hF.Controls["dtereg"]
+  hC.Text = "10.12.2017"
+  $sVu = ""
+  $hTimer = New Timer As "_Msg"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  hF.dtereg_LostFocus()
+  $hTimer.Enabled = False
+  TestKit.Check("T11/close/message", $sVu)
+  TestKit.Check("T11/close/libelle", hL.Text)
+  hC.Text = "20.06.2018"
+  $sVu = ""
+  $hTimer = New Timer As "_Msg"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  hF.dtereg_LostFocus()
+  $hTimer.Enabled = False
+  TestKit.Check("T11/ouverte/message", $sVu)
+  TestKit.Check("T11/ouverte/libelle", hL.Text)
+  Object.Lock(hF)
+
+End
+
+Public Sub _Inp_Timer()
+  ''InputBox de EdReg (mode tous) : titre relevé puis Annuler.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FInputBox" Then
+      $hTimer.Enabled = False
+      $sVu &= hW.Title & " / "
+      hC = hW.Controls["btnCancel"]
+      hC.Value = True
+      Return
+    Endif
+  Next
+
+End
+
+Private Sub Edition(sPre As String, sMode As String)
+
+  Dim hF As SaiReg
+  Dim hC As Object
+  Dim sPdf As String
+  Dim bOk As Boolean
+
+  sPdf = User.Home & "/tmp/Bordereau.pdf"
+  Try Kill sPdf
+  hF = New SaiReg
+  hC = hF.Controls["nreg"]
+  hC.Text = sMode
+  hF.nreg_LostFocus()
+  hC = hF.Controls["Labvalide"]
+  TestKit.Check(sPre & "/mode", hC.Text)
+  Regle(hF, 0)
+  Regle(hF, 1)
+  $sVu = ""
+  $hTimer = New Timer As "_Inp"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF.edite_Click()
+  If Error Then TestKit.Check(sPre & "/erreur", Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check(sPre & "/inputbox", $sVu)
+  bOk = False
+  If Exist(sPdf) Then bOk = Stat(sPdf).Size > 0
+  TestKit.Check(sPre & "/pdf_produit", bOk)
+  Object.Lock(hF)
+
+End
+
+Public Sub T04Editions()
+  ''Le texte de Bordereau.pdf (gb.report) n'est pas lisible par pdftotext : le contenu de l'état est vérifié par
+  ''EdRegTest ; ici, aiguillage de edite_Click selon Labvalide et production du PDF.
+
+  If Not Exist(User.Home & "/tmp") Then Mkdir User.Home & "/tmp"
+  Edition("T04/saisie", "05")
+  Edition("T04/bordereau", "20")
+
+End
+
+Public Sub _Win_Timer()
+  ''Fenêtre de date de vldbordereau_Click : relevé des textes puis Close(0) (= bouton OK).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "Window" Then
+      $hTimer.Enabled = False
+      For Each hC In hW.Children
+        $sVu &= Object.Type(hC) & " / "
+      Next
+      hW.Close(0)
+      Return
+    Endif
+  Next
+
+End
+
+Private Sub Regle(hF As SaiReg, iLigne As Integer)
+
+  Dim hC As Object
+
+  hC = hF.Controls["client"]
+  hC.Text = "411001"
+  hF.client_LostFocus()
+  hF.sel_LostFocus()
+  hC = hF.Controls["selection"]
+  TestKit.Check("lignes_selection" & iLigne, hC.Rows.Count)
+  hF.selection_choose(iLigne)
+  hC = hF.Controls["montsaisi"]
+  TestKit.Check("montant_ligne" & iLigne, hC.Value)
+  hF.butvalide_Click()
+
+End
+
+Private Sub Ecritures(sPre As String)
+
+  Dim r As Result
+
+  r = Utils.db.Exec("SELECT * FROM " & Cbase.Table("TabMvt") & " ORDER BY lind")
+  If Not r.Available Then Return
+  Repeat
+    TestKit.Check(sPre & "/" & r!lind, r!jour & ";" & r!numero & ";" & r!compte & ";" & r!collectif & ";" & Replace(r!intitule, LDate(Now).L, "<jour>") & ";" & "J" & CStr(DateDiff(Date(Now), Date(r!dte), gb.Day)) & ";" & r!numdoc & ";" & r!numlot & ";" & Replace(r!libelle, LDate(Now).L, "<jour>") & ";" & r!montantd & ";" & r!montantc & ";" & r!validee & ";" & r!lettree & ";" & r!tresorerie & ";" & If(IsNull(r!control), "clé NULL", "clé posée"))
+  Until r.MoveNext()
+
+End
+
+Public Sub T03Bordereau()
+
+  Dim hF As SaiReg
+  Dim hC As Object
+
+  hF = New SaiReg
+  hC = hF.Controls["nreg"]
+  hC.Text = "20"
+  hF.nreg_LostFocus()
+  hC = hF.Controls["Labvalide"]
+  TestKit.Check("T03/mode", hC.Text)
+  Regle(hF, 0)
+  Regle(hF, 1)
+  hC = hF.Controls["borderaux"]
+  TestKit.Check("T03/lignes_bordereau", hC.Rows.Count)
+  $sVu = ""
+  $hTimer = New Timer As "_Win"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF.valide_Click()
+  If Error Then TestKit.Check("T03/erreur", Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T03/fenetre_date", $sVu)
+  Ecritures("T03/mvt")
+  Object.Lock(hF)
+
+End
+
+Private Sub Attente()
+  ''Mode 40 passé en « bordereaux » (cptint 580003) et deux règlements en attente (n° 3 de 50 € sur F100 à J-5,
+  ''n° 4 de 20 € sur F101 à J-4), non lettrés.
+
+  Dim sIns As String
+
+  Utils.db.Exec("UPdate Fiches_Reglements SET bordereaux = 1 WHERE code = &1", "40")
+  sIns = "INSERT INTO " & Cbase.Table("TabMvt") & " (jour,numero,numerodef,compte,collectif,intitule,dte,numcol,numdoc,numlot,libelle,montantd,montantc,validee,provisoire,tresorerie,pointee,lettree,cloturee,lind) VALUES ('50',&7,&7,&1,0,&2,&3,'0',&8,&9,'Autre en attente',&4,&5,1,0,1,0,0,0,&6)"
+  Utils.db.Exec(sIns, "411001", "A Divers", DateAdd(Date(Now), gb.Day, -5), 0, 50, 5, 3, "F100", "L100")
+  Utils.db.Exec(sIns, "580003", "Autre en attente", DateAdd(Date(Now), gb.Day, -5), 50, 0, 6, 3, "F100", "L100")
+  Utils.db.Exec(sIns, "411001", "A Divers", DateAdd(Date(Now), gb.Day, -4), 0, 20, 7, 4, "F101", "L101")
+  Utils.db.Exec(sIns, "580003", "Autre en attente", DateAdd(Date(Now), gb.Day, -4), 20, 0, 8, 4, "F101", "L101")
+
+End
+
+Private Sub Bordereau(sPre As String, hF As SaiReg)
+
+  Dim hC As Object
+  Dim i As Integer
+
+  hC = hF.Controls["borderaux"]
+  TestKit.Check(sPre & "/lignes_bordereau", hC.Rows.Count)
+  For i = 0 To hC.Rows.Max
+    TestKit.Check(sPre & "/ligne" & i, hC[i, 1].Text & ";" & hC[i, 2].Text & ";" & hC[i, 3].Text & ";" & hC[i, 4].Text & ";" & hC[i, 5].Text)
+  Next
+
+End
+
+Public Sub T02ModifSuppression()
+
+  Dim hF As SaiReg
+  Dim hC As Object
+  Dim hB As Object
+  Dim rM As Result
+
+  Attente()
+  hF = New SaiReg
+  hC = hF.Controls["nreg"]
+  hC.Text = "40"
+  hF.nreg_LostFocus()
+  Bordereau("T02/repris", hF)
+  hB = hF.Controls["borderaux"]
+  hB.Row = 0
+  hF.borderaux_Activate()
+  hC = hF.Controls["montsaisi"]
+  TestKit.Check("T02/montant_rappele", hC.Value)
+  hC.Value = 30
+  hF.butvalide_Click()
+  hB.Row = 1
+  hF.borderaux_Activate()
+  hF.butsup_Click()
+  Bordereau("T02/modifie", hF)
+  hC = hF.Controls["Labvalide"]
+  TestKit.Check("T02/mode", hC.Text)
+  Try hF.valide_Click()
+  If Error Then TestKit.Check("T02/erreur", Error.Text)
+  Ecritures("T02/mvt")
+  rM = Utils.db.Exec("SELECT numero, compte, montantd, montantc, supprimee FROM Fiches_MvtM ORDER BY lind")
+  TestKit.Check("T02/mvtm/nb", rM.Count)
+  If rM.Available Then
+    Repeat
+      TestKit.Check("T02/mvtm/" & rM.Index, rM!numero & ";" & rM!compte & ";" & rM!montantd & ";" & rM!montantc & ";" & rM!supprimee)
+    Until rM.MoveNext()
+  Endif
+  Object.Lock(hF)
+
+End
+
+Public Sub T03bReprise()
+  ''Reprise d'un bordereau : mode 40 passé en « bordereaux » (cptint 580003), règlement en attente n° 3 (J-5) :
+  ''411001 crédit 50 / 580003 débit 50, non lettré ; nreg_LostFocus garnit le bordereau ; Valider ; date du jour.
+
+  Dim hF As SaiReg
+  Dim hC As Object
+  Dim sIns As String
+
+  Utils.db.Exec("UPdate Fiches_Reglements SET bordereaux = 1 WHERE code = &1", "40")
+  sIns = "INSERT INTO " & Cbase.Table("TabMvt") & " (jour,numero,numerodef,compte,collectif,intitule,dte,numcol,numdoc,numlot,libelle,montantd,montantc,validee,provisoire,tresorerie,pointee,lettree,cloturee,lind) VALUES ('50',3,3,&1,0,&2,&3,'0','F100','L100','Autre en attente',&4,&5,1,0,1,0,0,0,&6)"
+  Utils.db.Exec(sIns, "411001", "A Divers", DateAdd(Date(Now), gb.Day, -5), 0, 50, 5)
+  Utils.db.Exec(sIns, "580003", "Autre en attente", DateAdd(Date(Now), gb.Day, -5), 50, 0, 6)
+  hF = New SaiReg
+  hC = hF.Controls["nreg"]
+  hC.Text = "40"
+  hF.nreg_LostFocus()
+  hC = hF.Controls["Labvalide"]
+  TestKit.Check("T03b/mode", hC.Text)
+  hC = hF.Controls["borderaux"]
+  TestKit.Check("T03b/lignes_bordereau", hC.Rows.Count)
+  If hC.Rows.Count > 0 Then TestKit.Check("T03b/ligne0", hC[0, 1].Text & ";" & hC[0, 2].Text & ";" & hC[0, 3].Text & ";" & hC[0, 4].Text & ";" & hC[0, 5].Text)
+  $sVu = ""
+  $hTimer = New Timer As "_Win"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hF.valide_Click()
+  If Error Then TestKit.Check("T03b/erreur", Error.Text)
+  $hTimer.Enabled = False
+  TestKit.Check("T03b/fenetre_date", $sVu)
+  Ecritures("T03b/mvt")
+  Object.Lock(hF)
+
+End

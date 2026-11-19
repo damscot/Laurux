@@ -1,0 +1,27 @@
+{
+ "id": "CMENU-T13",
+ "objet": "Attribution des touches, caisse connectée",
+ "classe": "Cmenu",
+ "description": "Mode PDV, jeu caisse_connectee, Ncai = \"1;1 \", choixtouches = -1 (Start.$tcai = \"1\") : libellé « CTRL + F12 » (Label3) : Attrib (ShowModal) ouvert, laissé ouvert (REPLAYOBSERVER-A15).",
+ "dataset": "cmenu_shared/caisse_connectee",
+ "date": "2018-06-15 10:00:00",
+ "args": [
+  "-p"
+ ],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/Ncai": "1;1 ",
+  "/Soc01/caisse/choixtouches": -1
+ },
+ "entrees": {
+  "cmenu_shared/Caisse1.lock": "~/Caisse1.lock"
+ },
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

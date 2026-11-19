@@ -4,15 +4,22 @@
 ''Valeurs attendues : assets/EdRegTest/expected.txt, produites dans le clone de référence.
 ''L'état gb.report est construit directement (sans SaiReg, écran complexe exclu) avec une liste VarEcr et le
 ''règlement 05 (Chèque) de Laurux01 ; on lit les libellés de l'état (Children) et les données des lignes
-''(dte_Data, cde_Data, nom_Data, montant_Data). Le mode « tous » (InputBox modale) n'est pas testable ici.
+''(dte_Data, cde_Data, nom_Data, montant_Data). Mode « tous » (T02, T03) : l'InputBox modale (FInputBox de gb.form)
+''est renseignée ou annulée par un Timer du module (technique TresorTest).
 
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
   TestKit.Desc("T01EditionAjout", "Mode ajout : seules les écritures L_ajou, nombre, total, société, règlement, lignes")
+  TestKit.Desc("T02EditionTous", "Mode tous, numéro « B42 » saisi dans l'InputBox (Timer) : « Bordereau n° », supprimée exclue")
+  TestKit.Desc("T03SansNumero", "Mode tous, InputBox annulée (Timer) : pas de ligne « Bordereau n° »")
   TestKit.Desc("T04MultiSociete", "Deux sociétés, société courante 02 : raison sociale de la première ligne (A01 figée)")
 
 End
+
+Private $hTimer As Timer
+Private $sNumero As String
+Private $sVu As String
 
 Public Sub _Setup()
 
@@ -135,5 +142,65 @@ Public Sub T04MultiSociete()
   Endif
   TestKit.Check("T04/societe_courante", Start.Societe)
   Textes("T04", hEd)
+
+End
+
+Public Sub _Inp_Timer()
+  ''Réponse à l'InputBox : numéro $sNumero puis OK, ou Annuler si $sNumero est vide.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FInputBox" Then
+      $hTimer.Enabled = False
+      $sVu = hW.Title
+      If $sNumero Then
+        hC = hW.Controls["txtValue"]
+        hC.Text = $sNumero
+        hC = hW.Controls["btnOK"]
+      Else
+        hC = hW.Controls["btnCancel"]
+      Endif
+      hC.Value = True
+      Return
+    Endif
+  Next
+
+End
+
+Private Sub EditionTous(sPre As String, sNumero As String)
+
+  Dim hEd As EdReg
+  Dim r As Result
+
+  TestKit.OuvreBase()
+  r = Utils.db.Exec("SELECT * FROM Fiches_Reglements WHERE code = &1", "05")
+  $sNumero = sNumero
+  $sVu = ""
+  $hTimer = New Timer As "_Inp"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try hEd = New EdReg(Liste(), EdReg.tous, r)
+  $hTimer.Enabled = False
+  TestKit.Check(sPre & "/inputbox", $sVu)
+  If Error Then
+    TestKit.Check(sPre & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Textes(sPre, hEd)
+  Lignes(sPre, hEd, 3)
+
+End
+
+Public Sub T02EditionTous()
+
+  EditionTous("T02", "B42")
+
+End
+
+Public Sub T03SansNumero()
+
+  EditionTous("T03", "")
 
 End

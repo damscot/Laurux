@@ -1,0 +1,26 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:00' AND dtmaj = '1'
+SELECT * FROM Fiches_Lcr 
+select * from Fiches_Lcr where banque = 0  and ecartee = 0 and bordereau = 0 order by date, 1
+SELECT * FROM Fiches_Banques 
+select * from Fiches_Lcr where lind = '1'
+UPdate  Fiches_Lcr  SET code = '1001', nom = 'CLIENT UN', date = '2018-05-02 00:00:00', datech = '2018-06-30 00:00:00', montant = '100,00', ecartee = '1', banque = '2' where lind = 1
+select * from Fiches_Lcr where banque = 0  and ecartee = 0 and bordereau = 0 order by date, 1
+SELECT * FROM Fiches_Banques 

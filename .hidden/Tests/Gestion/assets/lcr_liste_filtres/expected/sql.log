@@ -1,0 +1,32 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by date
+select * from Fiches_Lcr where acceptee = 1 and banque = 0  and bordereau = 0 order by date
+select * from Fiches_Lcr where ecartee = 1  and banque = 0  and bordereau = 0 order by date
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by date
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = NULL and coll <> 1
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by code
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by nom
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by date
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by datech
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by numfac
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by montant
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by acceptee
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by ecartee

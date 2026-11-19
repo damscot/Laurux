@@ -1,0 +1,24 @@
+{
+ "id": "ECARTS-T02",
+ "classe": "Ecarts",
+ "objet": "Aucune ligne comptée",
+ "description": "Jeu ecarts_shared/inv_non_compte (inventaire généré sans saisie) ; Imprimer. Attendu : message « Aucun article pour cette demande » (Entrée) ; aucun PDF.",
+ "dataset": "ecarts_shared/inv_non_compte",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

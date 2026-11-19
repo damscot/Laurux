@@ -1,0 +1,29 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by date
+select * from Fiches_Traites
+Insert into  Fiches_Lcr (code, nom, date, datech, numfac, montant, acceptee, ecartee, banque, codeentree, bordereau) value ('1001', 'CLIENT UN', '2018-06-10 00:00:00', '2018-08-10 00:00:00', 'F0101', '150,00', 1, 0, 0, '0', '0')
+Insert into  Fiches_Lcr (code, nom, date, datech, numfac, montant, acceptee, ecartee, banque, codeentree, bordereau) value ('1004', 'CLIENT QUATRE', '2018-06-11 00:00:00', '2018-08-11 00:00:00', 'F0102', '99,90', 0, 0, 0, '0', '0')
+SELECT * FROM Fiches_Comptes  WHERE compte_cc = NULL and coll <> 1
+SELECT * FROM Fiches_Traites 
+SELECT * FROM Fiches_Cli where cli_code = '1001'
+SELECT * FROM Fiches_Cli where cli_code = '1004'
+TRUNCATE Fiches_Traites
+select * from Fiches_Lcr where banque = 0  and bordereau <> 1 order by date

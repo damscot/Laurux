@@ -1,0 +1,371 @@
+' Gambas test file
+
+''Tests gb.test de Ouverture (.hidden/reference/.src/Caisse/Ouverture.class/test.md).
+''Valeurs attendues : assets/OuvertureTest/expected.txt, produites dans le clone de référence.
+''Jeu Caisse/cmenu_shared/caisse_base : le poste des caisses 1, 2, 3 (« postetest ») est remplacé par System.Host (nom
+''aléatoire du conteneur, d'où le gb.test plutôt qu'un rejeu de Cmenu › Connexion caisse). La fenêtre est instanciée
+''sans être affichée ; les ComboBox sont posées par Index (qui déclenche leur _Click). Les boîtes Message.*
+''sont relevées et validées (premier bouton) par un Timer du module (technique TresorTest._Multi_Timer).
+''Verrous ~/Caisse<n>.lock écrits dans le HOME de test (jetable).
+
+Private $hTimer As Timer
+Private $sVu As String
+Private $hVue As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Listes", "Listes Caissiere (vendeurs) et Combobox1 (caisses du poste seulement) à l'ouverture")
+  TestKit.Desc("T02ChoixCaisse", "Choix de la caisse 1 : fond et date de fermeture affichés ; ligne vide : message d'erreur (A03)")
+  TestKit.Desc("T03Connexion", "Connexion caisse 1 / vendeur 1 (choixtouches 0) puis caisse 2 (choixtouches -1) : base, verrou, Ncai, $tcai")
+  TestKit.Desc("T04Refus", "Mot de passe vide, faux, vendeur vide (A05), caisse vide : messages, base inchangée")
+  TestKit.Desc("T05CaisseDejaConnectee", "Verrou ~/Caisse1.lock présent : « déjà connectée », base et Ncai inchangés")
+  TestKit.Desc("T06VendeurOccupe", "Verrou ~/Caisse2.lock du vendeur 1 : avertissement TestCai, base inchangée")
+  TestKit.Desc("T07CodesDeuxCar", "Caisse 10 et vendeur 12 : caisse 1 mise à jour, verrou Caisse1 (A01, A02 figées)")
+  TestKit.Desc("T08ToucheBouton", "button1_KeyPress (toute touche sur Connecter) : tentative de connexion (A04 figée)")
+  TestKit.Desc("T09ClavierVirtuel", "tactile = -1 : mot de passe vide → Clavier ; A, B, 1, 2 cliqués ; Connecter : connexion, clavier toujours affiché (A07)")
+  TestKit.Desc("T11Rvdr", "Rvdr : caisse avec vendeur, caisse sans vendeur, caisse absente")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "OuvertureTest")
+  TestKit.OuvreBase("cmenu_shared/caisse_base")
+  Utils.db.Exec("UPDATE " & Cbase.Table("TabCaisses") & " SET poste = &1 WHERE poste = &2", System.Host, "postetest")
+  EffaceVerrous()
+  Start.LocalSettings["/Soc01/caisse/Ncai"] = Null
+  Start.LocalSettings["/Soc01/caisse/choixtouches"] = 0
+  Start.LocalSettings["/Soc01/caisse/tactile"] = 0
+  Start.$tcai = Null
+
+End
+
+Public Sub _Teardown()
+
+  EffaceVerrous()
+
+End
+
+Public Sub _Multi_Timer()
+  ''Chaque nouvelle boîte FMessage : texte relevé, premier bouton cliqué (clic différé : boîte mémorisée).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub Boites()
+
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Multi"
+  $hTimer.Delay = 200
+  $hTimer.Enabled = True
+
+End
+
+Private Sub Vu() As String
+
+  Dim s As String
+
+  $hTimer.Enabled = False
+  s = $sVu
+  $sVu = ""
+  If s = "" Then s = "<aucune boîte>"
+  Return s
+
+End
+
+Private Sub EffaceVerrous()
+
+  Dim C As Integer
+
+  For C = 1 To 10
+    Try Kill User.Home & "/Caisse" & C & ".lock"
+  Next
+
+End
+
+Private Sub Verrou(n As Integer) As String
+
+  If Not Exist(User.Home & "/Caisse" & n & ".lock") Then Return "<absent>"
+  Return Replace(File.Load(User.Home & "/Caisse" & n & ".lock"), "\n", "|")
+
+End
+
+Private Sub Caisses() As String
+
+  Dim r As Result
+  Dim s As String
+
+  r = Utils.db.Exec("SELECT code, connecte, vdr_code, fndc FROM " & Cbase.Table("TabCaisses") & " ORDER BY code")
+  If Not r.Available Then Return "<vide>"
+  Repeat
+    s &= r!code & ":" & r!connecte & ":" & r!vdr_code & ":" & r!fndc & " "
+  Until r.MoveNext()
+  Return Trim(s)
+
+End
+
+Private Sub Liste(hC As Object) As String
+
+  Dim i As Integer
+  Dim s As String
+
+  For i = 0 To hC.Count - 1
+    s &= "[" & hC[i].Text & "]"
+  Next
+  Return s
+
+End
+
+Private Sub Ouvre() As Ouverture
+
+  Dim hF As Ouverture
+
+  Try hF = New Ouverture
+  If Error Then
+    TestKit.Check("ouverture", "ERREUR: " & Error.Text & " " & Error.Where)
+    Return Null
+  Endif
+  Return hF
+
+End
+
+Private Sub Pose(hF As Ouverture, sNom As String, sTexte As String)
+  ''Sélectionne l'élément de texte sTexte de la ComboBox sNom : l'affectation d'Index déclenche son gestionnaire _Click.
+
+  Dim hC As Object
+  Dim i As Integer
+
+  hC = hF.Controls[sNom]
+  For i = 0 To hC.Count - 1
+    If hC[i].Text = sTexte Then
+      hC.Index = i
+      Break
+    Endif
+  Next
+
+End
+
+Private Sub Txt(hF As Ouverture, sNom As String) As String
+
+  Dim hC As Object
+
+  hC = hF.Controls[sNom]
+  Return hC.Text
+
+End
+
+Private Sub Ferme(hF As Ouverture)
+
+  If Object.IsValid(hF) Then Try hF.Close()
+
+End
+
+Public Sub T01Listes()
+  ''OUVERTURE-T01 : listes à l'ouverture (caisse 10 d'un autre poste exclue).
+
+  Dim hF As Ouverture
+  Dim hC As Object
+
+  Boites()
+  hF = Ouvre()
+  TestKit.Check("T01/boites", Vu())
+  If Not Object.IsValid(hF) Then Return
+  hC = hF.Controls["Caissiere"]
+  TestKit.Check("T01/caissiere", Liste(hC))
+  hC = hF.Controls["ComboBox1"]
+  TestKit.Check("T01/combobox1", Liste(hC))
+  Ferme(hF)
+
+End
+
+Public Sub T02ChoixCaisse()
+  ''OUVERTURE-T02 : choix de la caisse 1 (fond, date de fermeture) puis de la ligne vide (A03).
+
+  Dim hF As Ouverture
+
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  Boites()
+  Pose(hF, "ComboBox1", "1 Caisse un")
+  TestKit.Check("T02/caisse1_fndc", Txt(hF, "Fndc"))
+  TestKit.Check("T02/caisse1_date", Txt(hF, "TextLabel1"))
+  TestKit.Check("T02/caisse1_boites", Vu())
+  Boites()
+  Pose(hF, "ComboBox1", "  ")
+  TestKit.Check("T02/vide_boites", Vu())
+  TestKit.Check("T02/vide_fndc", Txt(hF, "Fndc"))
+  Ferme(hF)
+
+End
+
+Private Sub Connecte(sCaisse As String, sVendeur As String, sMdp As String, Optional bTouche As Boolean) As String
+  ''Pose caisse, vendeur, mot de passe puis Connecter (ou button1_KeyPress) ; renvoie les boîtes vues.
+
+  Dim hF As Ouverture
+
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return "<pas de fenêtre>"
+  Boites()
+  Pose(hF, "ComboBox1", sCaisse)
+  Pose(hF, "Caissiere", sVendeur)
+  hF.Mdp.Text = sMdp
+  If bTouche Then
+    hF.button1_KeyPress()
+  Else
+    hF.Button1_Click()
+  Endif
+  Wait 0.5
+  Ferme(hF)
+  Return Vu()
+
+End
+
+Private Sub Etat(sCle As String)
+
+  TestKit.Check(sCle & "_caisses", Caisses())
+  TestKit.Check(sCle & "_ncai", Start.LocalSettings["/Soc01/caisse/Ncai"])
+  TestKit.Check(sCle & "_tcai", Start.$tcai)
+  TestKit.Check(sCle & "_verrou1", Verrou(1))
+  TestKit.Check(sCle & "_verrou2", Verrou(2))
+
+End
+
+Public Sub T03Connexion()
+  ''OUVERTURE-T03 : connexion réussie, choixtouches 0 (caisse 1) puis -1 (caisse 2, verrous effacés entre les deux).
+
+  Start.LocalSettings["/Soc01/caisse/choixtouches"] = 0
+  TestKit.Check("T03/c1_boites", Connecte("1 Caisse un", "1 ALICE", "abc1"))
+  Etat("T03/c1")
+  EffaceVerrous()
+  Start.LocalSettings["/Soc01/caisse/choixtouches"] = -1
+  TestKit.Check("T03/c2_boites", Connecte("2 Caisse deux", "1 ALICE", "abc1"))
+  Etat("T03/c2")
+
+End
+
+Public Sub T04Refus()
+  ''OUVERTURE-T04 : refus de connexion (mot de passe vide, faux, vendeur vide, caisse vide) ; base inchangée.
+
+  TestKit.Check("T04/mdp_vide", Connecte("1 Caisse un", "1 ALICE", ""))
+  TestKit.Check("T04/mdp_faux", Connecte("1 Caisse un", "1 ALICE", "zzzz"))
+  TestKit.Check("T04/vendeur_vide", Connecte("1 Caisse un", "", "abc1"))
+  TestKit.Check("T04/caisse_vide", Connecte("  ", "1 ALICE", "abc1"))
+  Etat("T04/etat")
+
+End
+
+Public Sub T05CaisseDejaConnectee()
+  ''OUVERTURE-T05 : verrou ~/Caisse1.lock présent.
+
+  File.Save(User.Home & "/Caisse1.lock", "1 ALICEO\n")
+  TestKit.Check("T05/boites", Connecte("1 Caisse un", "1 ALICE", "abc1"))
+  Etat("T05/etat")
+
+End
+
+Public Sub T06VendeurOccupe()
+  ''OUVERTURE-T06 : vendeur 1 déjà connecté sur la caisse 2 (verrou), connexion sur la caisse 1.
+
+  File.Save(User.Home & "/Caisse2.lock", "1 ALICEO\n")
+  TestKit.Check("T06/boites", Connecte("1 Caisse un", "1 ALICE", "abc1"))
+  Etat("T06/etat")
+
+End
+
+Public Sub T07CodesDeuxCar()
+  ''OUVERTURE-T07 : caisse 10 (mise au poste) et vendeur 12 : Left$(…, 1) retient la caisse 1 (A01, A02 figées).
+
+  Utils.db.Exec("UPDATE " & Cbase.Table("TabCaisses") & " SET poste = &1 WHERE code = &2", System.Host, "10")
+  TestKit.Check("T07/boites", Connecte("10 Caisse dix", "12 BRUNO", "b123"))
+  Etat("T07/etat")
+  TestKit.Check("T07/verrou10", Verrou(10))
+
+End
+
+Public Sub T08ToucheBouton()
+  ''OUVERTURE-T08 : button1_KeyPress appelle Button1_Click quelle que soit la touche (A04 figée).
+
+  TestKit.Check("T08/boites", Connecte("1 Caisse un", "1 ALICE", "abc1", True))
+  Etat("T08/etat")
+
+End
+
+Public Sub T11Rvdr()
+  ''OUVERTURE-T11 : Rvdr (caisse 3 : vendeur 1 ; caisse 1 : sans vendeur ; caisse 9 : absente).
+
+  Dim hF As Ouverture
+
+  hF = Ouvre()
+  If Not Object.IsValid(hF) Then Return
+  TestKit.Check("T11/caisse3", hF.Rvdr("3"))
+  TestKit.Check("T11/caisse1", hF.Rvdr("1"))
+  TestKit.Check("T11/caisse9", hF.Rvdr("9"))
+  Ferme(hF)
+
+End
+
+Private Sub ClavierVisible() As Object
+
+  Dim hW As Window
+
+  For Each hW In Windows
+    If Not Object.IsValid(hW) Then Continue
+    If Object.Type(hW) = "Clavier" And If hW.Visible Then Return hW
+  Next
+  Return Null
+
+End
+
+Public Sub T09ClavierVirtuel()
+  ''OUVERTURE-T09 : clavier virtuel. Clavier écrit dans l'auto-instance Ouverture.Mdp : le test utilise donc
+  ''l'auto-instance d'Ouverture. Mot de passe de ALICE remplacé par « AB12 » (le clavier n'a que des majuscules).
+  ''Connecter (Button1_Click) avec le clavier ouvert : Try Clavier.Close() vise l'auto-instance, le clavier
+  ''affiché par New Clavier reste ouvert (A07 figée).
+
+  Dim hK As Object
+  Dim hC As Object
+  Dim sTouche As String
+
+  Utils.db.Exec("UPdate " & Cbase.Table("TabVendeurs") & " SET mdp = &1 WHERE code = &2", hexdblKey.crypt("en", "AB12", "Laurux"), "1")
+  Start.LocalSettings["/Soc01/caisse/tactile"] = -1
+  Boites()
+  hC = Ouverture.Controls["ComboBox1"]
+  hC.Index = 1
+  hC = Ouverture.Controls["Caissiere"]
+  hC.Index = 1
+  Ouverture.Button1_Click()
+  TestKit.Check("T09/mdp_vide_boites", Vu())
+  hK = ClavierVisible()
+  TestKit.Check("T09/clavier_ouvert", Not IsNull(hK))
+  If IsNull(hK) Then Return
+  For Each sTouche In ["A", "B", "c1", "c2"]
+    Object.Raise(hK.Controls[sTouche], "Click")
+  Next
+  TestKit.Check("T09/mdp_saisi", Ouverture.Mdp.Text)
+  Boites()
+  Ouverture.Button1_Click()
+  TestKit.Check("T09/connexion_boites", Vu())
+  Etat("T09/etat")
+  TestKit.Check("T09/clavier_toujours_affiche", Not IsNull(ClavierVisible()))
+  Try ClavierVisible().Close()
+
+End

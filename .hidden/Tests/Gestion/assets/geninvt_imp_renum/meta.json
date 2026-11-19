@@ -1,0 +1,23 @@
+{
+ "id": "GENINVT-T10",
+ "objet": "Impression avec renumérotation",
+ "classe": "GeninvT",
+ "description": "Jeu invt_genere (lignes 003, 001, 002) : tri Désignation, Imprimer ; tri Code article, Imprimer. Attendu : inv_nlig renumérotés selon le dernier tri (001=1, 002=2, 003=3 ; GENINVT-A01 figée) ; texte des deux PDF dans edition.txt (stock théorique imprimé).",
+ "dataset": "geninvt_shared/invt_genere",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

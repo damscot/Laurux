@@ -1,0 +1,21 @@
+{
+ "id": "SAISIEINVT-T15",
+ "objet": "Saisie d'une ligne dont l'article est supprimé",
+ "classe": "SaisieInvT",
+ "description": "Jeu invt_sans_002 : saisie de la ligne 3 (002 supprimé) : Nseq_LostFocus lit Fiches_Art sans Available (SAISIEINVT-A04 figée, SaisieInvT.class:179) : erreur relevée (code de sortie figé).",
+ "dataset": "saisieinvt_shared/invt_sans_002",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "compare_sql_log": "ordered",
+ "code_sortie": 125,
+ "xfail": "erreur fatale « Result is not available » (SaisieinvT.Nseq_LostFocus.179 depuis Rcpt_KeyPress), boîte d'erreur Gambas",
+ "xfail_attendu": "message « article absent », aucune mise à jour (A04)"
+}

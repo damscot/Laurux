@@ -1,6 +1,7 @@
 ' Gambas test file
 
-''Tests de EcrAuto (.hidden/reference/.src/Compta/Utils/EcrAuto.class/test.md, ECRAUTO-T01, T03-T05, T06, T10, T11).
+''Tests de EcrAuto (.hidden/reference/.src/Compta/Utils/EcrAuto.class/test.md, ECRAUTO-T01, T03-T08, T10, T11).
+''T07, T08 : vente par ObjFac (jeu Gestion/objfac_shared/facturation_base), boîtes Message.Error répondues par un Timer.
 ''Instanciation directe avec un VarEcr construit dans le test, base Laurux01 (Fiches_Mvt vide, numecriture = 0).
 ''Valeurs attendues : assets/EcrAutoTest/expected.txt (clone de référence).
 
@@ -13,6 +14,9 @@ Public Sub _Desc()
   TestKit.Desc("T03TresoLettrage", "Facture 411001 puis règlement Treso 512000/411001 avec Tlettrage : numlot reporté, lignes lettrées")
   TestKit.Desc("T04Regularisation", "Règlement inférieur de 0,01 à la facture, ecart = 0.05 : écriture de régularisation sur jrnod (A02 figée)")
   TestKit.Desc("T10Impression", "Impression/FinImp avant (numecr = 0, Provisoire) puis après l'écriture : libellés du Report")
+  TestKit.Desc("T07VenteObjFac", "Vente par ObjFac.ecriturecompt (BL B10001, client LCR acceptée) : numecriture2, dnfac, libellé, Fiches_Traites")
+  TestKit.Desc("T08FacnumSuivant", "dnfac sur un numéro de facture existant : « N° suivant » (Timer) → numéro suivant, écriture passée")
+  TestKit.Desc("T08bFacnumAnnuler", "Deux numéros existants : « N° suivant » puis « Annuler » (Timer) → abandon, compteurs consommés (A03 figée)")
   TestKit.Desc("T11Ged", "/Soc01/FactcheminC renseigné : Docs_Ged, tags = comptes, PDF présent")
 
 End
@@ -362,5 +366,112 @@ Public Sub T11Ged()
   Repeat
     TestKit.Check("T11/tag_" & rResult.Index, rResult!tag)
   Until rResult.MoveNext()
+
+End
+
+Private $hTimer As Timer
+Private $hBox As Window
+Private $sVu As String
+Private $aRep As String[]
+
+Public Sub _Box_Timer()
+  ''Boîte Message (FMessage) : relève son texte et clique le bouton suivant de $aRep (sinon le premier) ; une boîte
+  ''n'est traitée qu'une fois.
+
+  Dim hW As Window
+  Dim hC As Object
+  Dim sRep As String
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And hW <> $hBox Then
+      $hBox = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      If $aRep.Count Then sRep = $aRep.Extract(0, 1)[0]
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If Not sRep Or Replace(Object.GetProperty(hC, "Text"), "&", "") = sRep Then
+            $sVu &= "[" & Replace(Object.GetProperty(hC, "Text"), "&", "") & "] "
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub VenteObjFac(sCle As String, aRep As String[])
+
+  Dim hObj As ObjFac
+  Dim bErr As Boolean
+  Dim rResult As Result
+  Dim sTxt As String
+
+  $sVu = ""
+  $aRep = aRep
+  $hTimer = New Timer As "_Box"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  hObj = New ObjFac("B10001", ObjFac.facture, LDate(2018, 6, 15))
+  hObj.calcul()
+  Try bErr = hObj.ecriturecompt()
+  TestKit.Check(sCle & "/retour", IIf(Error, "ERREUR: " & Error.Text & " " & Error.Where, bErr))
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/messages", $sVu)
+  TestKit.Check(sCle & "/objet", "numfac=" & hObj.numfac & " journal=" & hObj.journal & " numeroecr=" & hObj.numeroecr & " numerodef=" & hObj.numerodef)
+  Utils.db.Exec("UNLOCK TABLES")
+  rResult = Utils.db.Exec("SELECT numecriture, numecriture2, dnfac FROM Fiches_Parametres")
+  TestKit.Check(sCle & "/compteurs", rResult!numecriture & ":" & rResult!numecriture2 & ":" & rResult!dnfac)
+  rResult = Utils.db.Exec("SELECT numfac, imp, reg FROM Fiches_Bl WHERE numbl = 'B10001'")
+  TestKit.Check(sCle & "/bl", rResult!numfac & ":" & rResult!imp & ":" & rResult!reg)
+  rResult = Utils.db.Exec("SELECT * FROM Fiches_Mvt ORDER BY compte, lind")
+  If rResult.Available Then
+    Repeat
+      sTxt &= rResult!jour & ":" & rResult!numero & ":" & rResult!numerodef & ":" & rResult!compte & ":" & rResult!libelle & ":" & rResult!montantd & ":" & rResult!montantc & ":" & rResult!numdoc & " | "
+    Until rResult.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/mvt", "n=" & rResult.Count & " " & sTxt)
+  sTxt = ""
+  rResult = Utils.db.Exec("SELECT code, nom, numfac, montant, datech, date, acceptee, ecartee FROM Fiches_Traites ORDER BY lind")
+  If rResult.Available Then
+    Repeat
+      sTxt &= rResult!code & ":" & rResult!nom & ":" & rResult!numfac & ":" & rResult!montant & ":" & rResult!datech & ":" & rResult!date & ":" & rResult!acceptee & ":" & rResult!ecartee & " | "
+    Until rResult.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/traites", "n=" & rResult.Count & " " & sTxt)
+
+End
+
+Public Sub T07VenteObjFac()
+  ''ECRAUTO-T07 : client 411801 réglé par un mode « LCR acceptée » (créé ici), BL B10001 facturé par ObjFac.
+
+  Dim aRep As New String[]
+
+  TestKit.OuvreBase("Gestion/objfac_shared/facturation_base")
+  Utils.db.Exec("INSERT INTO Fiches_Reglements (code, libel, journal, cptint, bordereaux, lcr, caisse, decaissement, regroup) VALUES ('99', 'LCR acceptee', '50', NULL, 0, &1, 0, 0, 1)", Mreglement.lcr_acc)
+  Utils.db.Exec("UPDATE Fiches_Cli SET cli_reg = '99' WHERE cli_code = 411801")
+  VenteObjFac("T07", aRep)
+
+End
+
+Public Sub T08FacnumSuivant()
+  ''ECRAUTO-T08 : le prochain numéro (2018000001) existe déjà en Fiches_HistoFac ; « N° suivant ».
+
+  TestKit.OuvreBase("Gestion/objfac_shared/facturation_base")
+  Utils.db.Exec("UPDATE Fiches_HistoFac SET numfac = '2018000001' WHERE numfac = 'F00020'")
+  VenteObjFac("T08", ["N° suivant"])
+
+End
+
+Public Sub T08bFacnumAnnuler()
+  ''ECRAUTO-T08 : 2018000001 (Fiches_HistoFac) et 2018000002 (Fiches_Bl) existent ; « N° suivant » puis « Annuler ».
+
+  TestKit.OuvreBase("Gestion/objfac_shared/facturation_base")
+  Utils.db.Exec("UPDATE Fiches_HistoFac SET numfac = '2018000001' WHERE numfac = 'F00020'")
+  Utils.db.Exec("UPDATE Fiches_Bl SET numfac = '2018000002' WHERE numbl = 'B10008'")
+  VenteObjFac("T08b", ["N° suivant", "Annuler"])
 
 End

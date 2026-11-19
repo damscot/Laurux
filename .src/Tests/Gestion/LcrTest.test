@@ -1,0 +1,81 @@
+' Gambas test file
+
+''Tests de Lcr ouvrant TriCpt en ShowModal (.hidden/reference/.src/Gestion/Lcr/Lcr.class/test.md, LCR-T10).
+''Les autres tests de Lcr sont des scénarios rejoués (assets lcr_*). Un Timer du module agit pendant la boucle
+''modale : il retrouve la fenêtre TriCpt (Windows) et simule le choix d'un compte (Bsel = True puis
+''ColTri_MajSel(code)) ou la ferme sans choix. Lcr est instanciée sans être affichée.
+''Valeurs attendues : assets/LcrTest/expected.txt, produites dans le clone de référence.
+
+Private $hTimer As Timer
+Private $sChoix As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T10RechercheCompte", "Button7 : choix du client 411001 dans TriCpt (code et nom remplis), puis réouverture fermée sans choix")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "LcrTest")
+  TestKit.OuvreBase()
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Soc" & Start.Societe & "/Coul_fen"] = -1
+
+End
+
+' Programme l'action de l'utilisateur dans TriCpt : code choisi, ou "" pour fermer sans choix.
+Private Sub Programme(sChoix As String)
+
+  $sChoix = sChoix
+  $hTimer = New Timer As "_Choix"
+  $hTimer.Delay = 500
+  $hTimer.Enabled = True
+
+End
+
+Public Sub _Choix_Timer()
+
+  Dim hWin As Window
+
+  For Each hWin In Windows
+    If Object.Type(hWin) <> "TriCpt" Then Continue
+    $hTimer.Enabled = False
+    If $sChoix Then
+      Object.SetProperty(hWin, "Bsel", True)
+      Object.Call(hWin, "ColTri_MajSel", [$sChoix])
+    Else
+      hWin.Close()
+    Endif
+    Return
+  Next
+
+End
+
+Public Sub T10RechercheCompte()
+
+  Dim hF As New Lcr
+  Dim sNom As String
+
+  Programme("411001")
+  Try hF.Button7_Click()
+  TestKit.Check("T10/choix/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T10/choix/Bsel", hF.Bsel)
+  For Each sNom In ["Code", "Nom"]
+    TestKit.Check("T10/choix/" & sNom, Object.GetProperty(hF.Controls[sNom], "Text"))
+  Next
+  Object.SetProperty(hF.Controls["Code"], "Text", "")
+  Object.SetProperty(hF.Controls["Nom"], "Text", "")
+  hF.Bsel = False
+  Programme("")
+  Try hF.Button7_Click()
+  TestKit.Check("T10/annule/erreur", IIf(Error, Error.Text, "<aucune>"))
+  TestKit.Check("T10/annule/Bsel", hF.Bsel)
+  TestKit.Check("T10/annule/Code", Object.GetProperty(hF.Controls["Code"], "Text"))
+  TestKit.Check("T10/annule/Nom", Object.GetProperty(hF.Controls["Nom"], "Text"))
+  Object.Lock(hF)
+
+End

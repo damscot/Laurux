@@ -1,0 +1,5 @@
+ALTER DATABASE Laurux01 DEFAULT COLLATE utf8mb4_unicode_ci
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET NAMES 'utf8mb4'
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * From Fiches_Touches where left(touche,1) = 'A' and cai = '1' order by touche

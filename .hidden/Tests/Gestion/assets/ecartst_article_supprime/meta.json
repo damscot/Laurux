@@ -1,0 +1,24 @@
+{
+ "id": "ECARTST-T05",
+ "classe": "EcartsT",
+ "objet": "Article supprimé",
+ "description": "Jeu ecartst_shared/invt_compte_supprime (ligne comptée portant l'article 999 absent de Fiches_Art) ; Imprimer. Attendu : erreur non gérée sur rarts!art_design (code 125, comportement actuel figé).",
+ "dataset": "ecartst_shared/invt_compte_supprime",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

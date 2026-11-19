@@ -1,0 +1,191 @@
+' Gambas test file
+
+''Tests de Einvmat (.hidden/reference/.src/Gestion/option/Einvmat.class/test.md, EINVMAT-T01 à T05).
+''Valeurs attendues : assets/EinvmatTest/expected.txt, produites dans le clone de référence.
+''Le rapport (gb.report) est construit sans impression à partir d'une Collection de Declaration (structure publique de
+''Caleditcmat, ce que lui passe Caleditcmat.Edit) ; chaque méthode <champ>_Data(i) est appelée pour chaque ligne et on
+''relève Data, puis les textes des ReportLabel (pdftotext ne rend rien sur une édition gb.report).
+''Jeu visucmat_shared/cmat_base (lecture seule : régies 01 Vins tranquilles et 02 Alcools, arrêté 05.2018).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DeclarationAcquitte", "Régies 01 et 02, juin 2018 : en-tête société, exercice, une ligne par régie, totaux")
+  TestKit.Desc("T02FormatageVolumes", "Volumes de fin 199,996 l et 0,5 l : découpage hl / l / cl (A01 figée)")
+  TestKit.Desc("T03VolumeNegatif", "Volume de fin -150 l (sorties > stock + entrées) : ligne imprimée (A03 figée)")
+  TestKit.Desc("T04MultiSocietes", "Deux sociétés, session sur la 02 : société imprimée (A02 figée)")
+  TestKit.Desc("T05Convers", "convers par les champs vae*dp : 0 ; 0,5 ; 99,994 ; 100 ; 199,996 ; -150 × h / l / c")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "EinvmatTest")
+  TestKit.OuvreBase("visucmat_shared/cmat_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Function Dcl(fDp As Float, fEn As Float, fSo As Float, fApDp As Float, fApEn As Float, fApSo As Float) As Object
+  ''Les structures publiques de Caleditcmat ne sont pas nommables hors de la classe : création par Object.New.
+
+  Dim hD As Object
+
+  Class.Load("Caleditcmat")
+  hD = Object.New("Declaration")
+  hD.totvol = Object.New("Stk")
+  hD.totvol.vae = Object.New("Volume")
+  hD.totvol.vap = Object.New("Volume")
+  hD.totvol.vae.vdp = fDp
+  hD.totvol.vae.ven = fEn
+  hD.totvol.vae.vso = fSo
+  hD.totvol.vae.vfp = fDp + fEn - fSo
+  hD.totvol.vap.vdp = fApDp
+  hD.totvol.vap.ven = fApEn
+  hD.totvol.vap.vso = fApSo
+  hD.totvol.vap.vfp = fApDp + fApEn - fApSo
+  Return hD
+
+End
+
+Private Sub Textes(hObj As Object, aRes As String[])
+
+  Dim hChild As Object
+  Dim cChildren As Object
+
+  If Object.Type(hObj) = "ReportLabel" Then aRes.Add(Object.GetProperty(hObj, "Text"))
+  Try cChildren = Object.GetProperty(hObj, "Children")
+  If Error Then Return
+  If Not cChildren Then Return
+  For Each hChild In cChildren
+    Textes(hChild, aRes)
+  Next
+
+End
+
+Private Sub Parcours(hObj As Object, aData As Object[])
+  ''Les contrôles du rapport sont privés : on repère par parcours de Children ceux qui ont une propriété Data.
+
+  Dim hChild As Object
+  Dim cChildren As Object
+  Dim v As Variant
+
+  Try v = Object.GetProperty(hObj, "Data")
+  If Not Error Then aData.Add(hObj)
+  Try cChildren = Object.GetProperty(hObj, "Children")
+  If Error Then Return
+  If Not cChildren Then Return
+  For Each hChild In cChildren
+    Parcours(hChild, aData)
+  Next
+
+End
+
+Private Function Ligne(hR As Object, aData As Object[], i As Integer) As String
+  ''Appelle toutes les méthodes <champ>_Data(i) puis relève Data des champs dans l'ordre de l'arbre.
+
+  Dim sSym As String
+  Dim aRes As New String[]
+  Dim hObj As Object
+
+  For Each sSym In Class.Load("Einvmat").Symbols
+    If Right(sSym, 5) <> "_Data" Then Continue
+    Try Object.Call(hR, sSym, [i])
+    If Error Then aRes.Add(Left(sSym, -5) & "=ERREUR: " & Error.Text)
+  Next
+  For Each hObj In aData
+    aRes.Add("[" & CStr(Object.GetProperty(hObj, "Data")) & "]")
+  Next
+  Return aRes.Join(" ")
+
+End
+
+Private Sub Edition(sCle As String, cTabl As Collection, Optional sMois As String = "06", Optional sAnne As String = "2018")
+
+  Dim hR As Object
+  Dim aRes As New String[]
+  Dim aData As New Object[]
+  Dim sDate As String
+  Dim i As Integer
+
+  Try hR = New Einvmat(cTabl, sMois, sAnne, False)
+  If Error Then
+    TestKit.Check(sCle & "/new", "ERREUR: " & Error.Text)
+    Return
+  Endif
+  Parcours(hR, aData)
+  TestKit.Check(sCle & "/nb_champs_data", aData.Count)
+  For i = 0 To cTabl.Count - 1
+    TestKit.Check(sCle & "/ligne" & CStr(i), Ligne(hR, aData, i))
+  Next
+  Textes(hR, aRes)
+  sDate = Format(Now, "dd/mm/yyyy")
+  For i = 0 To aRes.Max
+    If aRes[i] = sDate Then aRes[i] = "<date du jour>"
+  Next
+  TestKit.Check(sCle & "/textes", aRes.Join(" | "))
+  TestKit.Check(sCle & "/busy", Application.Busy)
+
+End
+
+Public Sub T01DeclarationAcquitte()
+
+  Dim cTabl As New Collection
+
+  cTabl.Add(Dcl(120.5, 30.25, 12.75, 14.46, 3.63, 1.53), "01")
+  cTabl.Add(Dcl(250, 8.4, 3.7, 100, 3.36, 1.63), "02")
+  Edition("T01", cTabl)
+
+End
+
+Public Sub T02FormatageVolumes()
+
+  Dim cTabl As New Collection
+
+  cTabl.Add(Dcl(199.996, 0, 0, 0, 0, 0), "01")
+  cTabl.Add(Dcl(0.5, 0, 0, 0, 0, 0), "02")
+  Edition("T02", cTabl)
+
+End
+
+Public Sub T03VolumeNegatif()
+
+  Dim cTabl As New Collection
+
+  cTabl.Add(Dcl(20, 30, 200, 2, 3, 20), "01")
+  Edition("T03", cTabl)
+
+End
+
+Public Sub T04MultiSocietes()
+
+  Dim cTabl As New Collection
+
+  Utils.db.Exec("INSERT INTO Fiches_Societes (cd_sc, type_sc, int_sc, adr1_sc, ident) VALUES ('02', 'SARL', 'Seconde', '2 rue B', 'FR02')")
+  Start.Societe = "02"
+  cTabl.Add(Dcl(10, 0, 0, 1, 0, 0), "01")
+  Edition("T04", cTabl)
+  Start.Societe = "01"
+
+End
+
+Public Sub T05Convers()
+  ''Ligne 0 seule (stock de début = volume testé) : les trois premiers champs vae*dp portent h / l / c.
+
+  Dim cTabl As Collection
+  Dim hR As Object
+  Dim fVol As Float
+  Dim aData As Object[]
+
+  For Each fVol In [0.0, 0.5, 99.994, 100.0, 199.996, -150.0]
+    cTabl = New Collection
+    cTabl.Add(Dcl(fVol, 0, 0, 0, 0, 0), "01")
+    hR = New Einvmat(cTabl, "06", "2018", False)
+    aData = New Object[]
+    Parcours(hR, aData)
+    TestKit.Check("T05/" & CStr(fVol), Ligne(hR, aData, 0))
+  Next
+
+End

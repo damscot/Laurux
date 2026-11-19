@@ -1,0 +1,20 @@
+{
+ "id": "LCR-T07",
+ "objet": "Import des traites, purge refusée puis réimport",
+ "classe": "Lcr",
+ "description": "Importer, Message.Info (Entrée), purge refusée (bouton 1 « Non », Entrée), Importer de nouveau, Info, « Non » : traites importées deux fois (LCR-A02 figée).",
+ "dataset": "Gestion/bordrx_shared/lcr_chaine",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,88 @@
+' Gambas test file
+
+''Tests de Ttourne (.hidden/reference/.src/Gestion/option/Ttourne.class/test.md, TTOURNE-T10).
+''Écran instancié sans affichage (jeu assets/TtourneTest/tournees_documents : tournées + BL, BL d'entretien et factures
+''archivées portant une tournée) ; onglet Statistiques (Gridvi type « T ») choisi, bouton Calcul cliqué ; grille relevée.
+''Valeurs attendues : assets/TtourneTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T10Statistiques", "Onglet Statistiques, Calcul sur T1 (premier code) puis sur T2 (Suivant) : cellules de la grille comparative")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "TtourneTest")
+  TestKit.OuvreBase("tournees_documents")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+
+End
+
+Private Sub Cherche(hCont As Object, sType As String, Optional sTexte As String) As Object
+
+  Dim hC As Object
+  Dim hR As Object
+
+  For Each hC In hCont.Children
+    If Object.Type(hC) = sType Then
+      If Not sTexte Then Return hC
+      If Object.GetProperty(hC, "Text") = sTexte Then Return hC
+    Endif
+    If hC Is Container Then
+      hR = Cherche(hC, sType, sTexte)
+      If hR Then Return hR
+    Endif
+  Next
+  Return Null
+
+End
+
+Private Sub Grille(sCle As String, hForm As Object)
+
+  Dim hTab, hBtn, hGrd As Object
+  Dim i, j As Integer
+  Dim sTxt As String
+
+  hTab = hForm.Controls["TabStrip1"]
+  For i = 0 To hTab.Count - 1
+    hTab.Index = i
+    If hTab.Current.Text = "Statistiques" Then Break
+  Next
+  TestKit.Check(sCle & "/onglet", hTab.Index & ":" & hTab.Current.Text & " code=" & Object.GetProperty(hForm.Controls["Textnum"], "Text"))
+  hBtn = Cherche(hTab, "Button", "Calcul")
+  hGrd = Cherche(hTab, "GridView")
+  If Not hBtn Or Not hGrd Then
+    TestKit.Check(sCle & "/grille", "<introuvable>")
+    Return
+  Endif
+  Object.Raise(hBtn, "Click")
+  For j = 0 To hGrd.Columns.Count - 1
+    sTxt &= hGrd.Columns[j].Text & ";"
+  Next
+  TestKit.Check(sCle & "/entetes", sTxt)
+  For i = 0 To hGrd.Rows.Count - 1
+    sTxt = hGrd.Rows[i].Text & ":"
+    For j = 0 To hGrd.Columns.Count - 1
+      sTxt &= hGrd[i, j].Text & ";"
+    Next
+    TestKit.Check(sCle & "/ligne" & Format(i, "00"), sTxt)
+  Next
+
+End
+
+Public Sub T10Statistiques()
+
+  Dim hForm As Object
+
+  hForm = New Ttourne
+  hForm.form_Open()
+  Grille("T10/T1", hForm)
+  hForm.bar1_suivant()
+  Grille("T10/T2", hForm)
+  Object.Lock(hForm)
+
+End

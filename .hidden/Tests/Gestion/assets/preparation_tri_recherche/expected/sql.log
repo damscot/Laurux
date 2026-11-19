@@ -1,0 +1,51 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Lcr 
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by date 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by date 
+SELECT * FROM Fiches_Banques 
+SELECT * FROM Fiches_Banques where banques_code = '1'
+SELECT * FROM Fiches_Banques where banques_code = '2'
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by code 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by code 
+SELECT * FROM Fiches_Banques where banques_code = '1'
+SELECT * FROM Fiches_Banques where banques_code = '2'
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by nom 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by nom 
+SELECT * FROM Fiches_Banques where banques_code = '2'
+SELECT * FROM Fiches_Banques where banques_code = '1'
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by date 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by date 
+SELECT * FROM Fiches_Banques where banques_code = '1'
+SELECT * FROM Fiches_Banques where banques_code = '2'
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by numfac 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by numfac 
+SELECT * FROM Fiches_Banques where banques_code = '1'
+SELECT * FROM Fiches_Banques where banques_code = '2'
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by CAST(montant As DECIMAL(12, 2)) 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by CAST(montant As DECIMAL(12, 2)) 
+SELECT * FROM Fiches_Banques where banques_code = '2'
+SELECT * FROM Fiches_Banques where banques_code = '1'
+select * from Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by datech 
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque <> 0 and ecartee <> 1 and bordereau = 0 order by datech 
+SELECT * FROM Fiches_Banques where banques_code = '1'
+SELECT * FROM Fiches_Banques where banques_code = '2'
+select * from Fiches_Lcr  where banque is not null and datech like  "%%-06-30%" and bordereau = 0 or banque = 0 and ecartee <> 1 and datech like  "%%-06-30%" and bordereau = 0 order by datech, 1
+SELECT Count(*) as nb  FROM Fiches_Lcr  where banque is not null and datech like  "%%-06-30%" and bordereau = 0 or banque = 0 and ecartee <> 1 and datech like  "%%-06-30%" and bordereau = 0 order by datech, 1

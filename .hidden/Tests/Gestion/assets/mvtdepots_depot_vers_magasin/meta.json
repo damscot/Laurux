@@ -1,0 +1,20 @@
+{
+ "id": "MVTDEPOTS-T02",
+ "objet": "Transfert dépôt vers magasin",
+ "classe": "MvtDepots",
+ "description": "Départ 02 (stock 5 de 001), arrivée 01, article 001 (recherche par db.Exec), qté 2, Valider. Attendu : art_qte 10 -> 12 ; ligne (01, 001, 2) créée ; ligne de stock 02 supprimée après mise à jour (MVTDEPOTS-A01 figée) ; 2 lignes Sdepots.",
+ "dataset": "mvtdepots_shared/stock",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Depots": "-1"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

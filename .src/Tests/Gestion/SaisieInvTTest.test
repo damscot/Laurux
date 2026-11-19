@@ -1,0 +1,154 @@
+' Gambas test file
+
+''Tests de SaisieInvT (.hidden/reference/.src/Gestion/Stock/Inventaires/Tournant/SaisieInvT.class/test.md,
+''SAISIEINVT-T01, T03 code-barres, T07, T08). La grille Colinv n'est lisible qu'à l'écran et le rappel d'une ligne exige un double-clic
+''(non rejoué) : l'écran est instancié sans affichage, RadioButton1/2_Click et Colinv_Activate sont appelés
+''directement, la correction passe par Valigne (ce que fait Btn_Click pour le bouton Valider). Jeu :
+''saisieinvt_shared/invt (lignes 1 = 003 non compté, 2 = 001 compté 12, 3 = 002 non compté).
+''Valeurs attendues : assets/SaisieInvTTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01Affichage", "Ouverture : lignes saisies ; RadioButton2 : non saisies ; RadioButton1 : retour")
+  TestKit.Desc("T07RappelCorrection", "Rappel de la ligne 2 (Colinv_Activate) puis correction à 8 par Valigne")
+  TestKit.Desc("T03CodeBarre", "Saisie « *3000000000003 » (Fiches_CdBarre → 003) puis « *002 » (repli sur art_code) : Cart_LostFocus, Valigne")
+  TestKit.Desc("T08RappelAbandon", "Rappel de la ligne 2 puis fermeture : comptage remis à 0 (A01 figée)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "SaisieInvTTest")
+  TestKit.OuvreBase("saisieinvt_shared/invt")
+
+End
+
+Private Sub Grille(hForm As Object, sCle As String)
+
+  Dim hCol As Object
+  Dim sTxt As String
+
+  hCol = hForm.Controls["Colinv"]
+  TestKit.Check(sCle & "/lignes", hCol.Count)
+  sTxt = ""
+  If hCol.MoveFirst() = False Then
+    Repeat
+      sTxt &= hCol.Item[0] & ":" & hCol.Item[1] & ":" & hCol.Item[2] & ":" & hCol.Item[3] & ":" & hCol.Item[4] & ":" & hCol.Item[5] & " "
+    Until hCol.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/contenu", Trim(sTxt))
+
+End
+
+Private Sub Table(sCle As String)
+
+  Dim rInv As Result
+  Dim sTxt As String
+
+  rInv = Utils.db.Exec("SELECT inv_nlig, inv_code, inv_qtecomptee, inv_comptee FROM Fiches_InvT ORDER BY lind")
+  If rInv.Available Then
+    Repeat
+      sTxt &= rInv!inv_nlig & ":" & rInv!inv_code & ":" & rInv!inv_qtecomptee & ":" & rInv!inv_comptee & " "
+    Until rInv.MoveNext()
+  Endif
+  TestKit.Check(sCle & "/table", Trim(sTxt))
+
+End
+
+Private Sub Champ(hForm As Object, sNom As String, sCle As String)
+
+  Dim hCtrl As Object
+
+  hCtrl = hForm.Controls[sNom]
+  TestKit.Check(sCle & "/" & sNom, hCtrl.Text)
+
+End
+
+Private Sub Rappel(hForm As Object, sNlig As String)
+
+  Dim hCol As Object
+
+  hCol = hForm.Controls["Colinv"]
+  hCol[sNlig].Selected = True
+  hCol.MoveTo(sNlig)
+  hForm.Colinv_Activate()
+
+End
+
+Public Sub T01Affichage()
+
+  Dim hForm As Object
+
+  hForm = New SaisieInvT
+  Grille(hForm, "T01/ouverture")
+  hForm.RadioButton2_Click()
+  Grille(hForm, "T01/non_saisies")
+  hForm.RadioButton1_Click()
+  Grille(hForm, "T01/saisies")
+  Table("T01")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T07RappelCorrection()
+
+  Dim hForm As Object
+  Dim hCtrl As Object
+
+  hForm = New SaisieInvT
+  Rappel(hForm, "2")
+  Champ(hForm, "Nseq", "T07/rappel")
+  Champ(hForm, "Cart", "T07/rappel")
+  Champ(hForm, "Qtecomptee", "T07/rappel")
+  Grille(hForm, "T07/rappel")
+  Table("T07/rappel")
+  hCtrl = hForm.Controls["Qtecomptee"]
+  hCtrl.Text = "8"
+  hForm.Valigne()
+  Grille(hForm, "T07/correction")
+  Table("T07/correction")
+  Object.Lock(hForm)
+
+End
+
+Public Sub T08RappelAbandon()
+
+  Dim hForm As Object
+
+  hForm = New SaisieInvT
+  Rappel(hForm, "2")
+  Object.Lock(hForm)
+  Table("T08/abandon")
+
+End
+
+Public Sub T03CodeBarre()
+
+  Dim hForm As Object
+  Dim hCtrl As Object
+
+  ' Code-barres de 003 ajouté au jeu partagé pour ce seul test
+  Utils.db.Exec("INSERT INTO Fiches_CdBarre (codep, codeb) VALUES (&1, &2)", "003", "3000000000003")
+  hForm = New SaisieInvT
+  hForm.Ca_Click()
+  hCtrl = hForm.Controls["Cart"]
+  hCtrl.Text = "*3000000000003"
+  hForm.Cart_LostFocus()
+  Champ(hForm, "Cart", "T03/cbarre")
+  Champ(hForm, "Nseq", "T03/cbarre")
+  hCtrl = hForm.Controls["Qtecomptee"]
+  hCtrl.Text = "4"
+  hForm.Valigne()
+  hCtrl = hForm.Controls["Cart"]
+  hCtrl.Text = "*002"
+  hForm.Cart_LostFocus()
+  Champ(hForm, "Cart", "T03/art_code")
+  Champ(hForm, "Nseq", "T03/art_code")
+  hCtrl = hForm.Controls["Qtecomptee"]
+  hCtrl.Text = "5"
+  hForm.Valigne()
+  Table("T03")
+  Object.Lock(hForm)
+
+End

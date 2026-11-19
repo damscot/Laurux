@@ -1,0 +1,29 @@
+{
+ "id": "CMENU-T07",
+ "objet": "Déconnexion acceptée",
+ "classe": "Cmenu",
+ "description": "Mode PDV, jeu caisse_connectee (caisse 1 connectée par le vendeur 1, verrou ~/Caisse1.lock déposé), Ncai = \"1;1 \" : Quitter (Button2), « Oui » (Entrée), Message.Info (Entrée) : connecte = 0, vdr_code = '', dtefm renseigné, verrou supprimé, Ncai vide.",
+ "dataset": "cmenu_shared/caisse_connectee",
+ "date": "2018-06-15 10:00:00",
+ "args": [
+  "-p"
+ ],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/Ncai": "1;1 "
+ },
+ "entrees": {
+  "cmenu_shared/Caisse1.lock": "~/Caisse1.lock"
+ },
+ "fichiers": [
+  "@Laurux.conf",
+  "Caisse1.lock"
+ ],
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

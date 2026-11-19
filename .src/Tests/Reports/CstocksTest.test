@@ -5,6 +5,10 @@
 ''(une clé par ligne non vide). La date du jour et User.Name sont remplacés par <date> et <utilisateur>.
 ''Valeurs attendues : assets/CstocksTest/expected.txt, produites dans le clone de référence. Pas de base.
 
+Private $hTimer As Timer
+Private $sVu As String
+Private $hVue As Window
+
 Public Sub _Desc()
   ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
 
@@ -13,6 +17,9 @@ Public Sub _Desc()
   TestKit.Desc("T03Ecarts", "Level1NS/Level2NS/Level3NS puis Level1E/Level2E/Level3E (écarts positifs et négatifs)")
   TestKit.Desc("T04Depots", "Level1D/Level2D, Level3D/Level4D (/Soc01/Taxe = TVA), Level1M/Level2M")
   TestKit.Desc("T05Pagination", "3 × (Entete + BasPage) : Page 1/3 à 3/3")
+  TestKit.Desc("T07EditionsInventaire", "Éditions réelles de fin d'exercice : Geninv (feuille), Edinv, Ednsaisis, Ecarts sur un inventaire partiel")
+  TestKit.Desc("T07cEditionsDepots", "Éditions réelles des dépôts : ImpDepots (dépôt 02, chiffrée) et Edsdepots (entrées et sorties)")
+  TestKit.Desc("T07bEditionsTournant", "Éditions réelles de l'inventaire tournant : GeninvT (feuille), EdinvT, EdnsaisisT, EcartsT")
 
 End
 
@@ -141,5 +148,142 @@ Public Sub T05Pagination()
     pdf.BasPage()
   Next
   Verifie("T05", pdf)
+
+End
+
+Public Sub _Boite_Timer()
+  ''Boîte Message.* imprévue pendant une édition : texte relevé, premier bouton cliqué.
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+' Édition réelle d'un écran appelant (visualiseur neutralisé) : méthode d'impression appelée, texte du PDF produit
+' (~/tmp/<fichier>) vérifié ligne à ligne comme les autres tests ; boîtes Message.* relevées.
+Private Sub Edition(sCle As String, hF As Object, sMethode As String, sFichier As String)
+
+  Dim sFic As String = User.Home &/ "tmp" &/ sFichier
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = "true"
+  Try Mkdir User.Home &/ "tmp"
+  Try Kill sFic
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Boite"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+  Try Object.Call(hF, sMethode)
+  If Error Then TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+  Wait 0.5
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/messages", $sVu)
+  Object.Lock(hF)
+  If Not Exist(sFic) Then
+    TestKit.Check(sCle & "/pdf", "<absent>")
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd.mm.yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  sTxt = Replace(sTxt, "\f", "<saut de page>\n")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check(sCle & "/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check(sCle & "/lignes", n)
+
+End
+
+Public Sub T07EditionsInventaire()
+  ''CSTOCKS-T07 (fin d'exercice) : jeu Gestion/validinv_shared/inv_fin_partiel (5 lignes, 3 comptées) ; feuille de
+  ''comptage de Geninv (Button3_Click, Level1G/Level2G), inventaire valorisé par famille d'Edinv("F") (Level1, Entetefam,
+  ''Level2, Level3fam, Level3), non saisis d'Ednsaisis et écarts d'Ecarts (Button1_Click).
+
+  Dim hG As Geninv
+  Dim hE As Edinv
+  Dim hN As Ednsaisis
+  Dim hC As Ecarts
+
+  TestKit.OuvreBase("Gestion/validinv_shared/inv_fin_partiel")
+  hG = New Geninv
+  Object.SetProperty(hG.Controls["Dte"], "Text", "15/06/2018")
+  Edition("T07/geninv", hG, "Button3_Click", "Inventaire.pdf")
+  hE = New Edinv("F")
+  Edition("T07/edinv", hE, "Button1_Click", "Inventaire.pdf")
+  hN = New Ednsaisis
+  Edition("T07/ednsaisis", hN, "Button1_Click", "Nsaisis.pdf")
+  hC = New Ecarts
+  Edition("T07/ecarts", hC, "Button1_Click", "Ecarts.pdf")
+
+End
+
+Public Sub T07bEditionsTournant()
+  ''CSTOCKS-T07 (inventaire tournant) : jeu Gestion/validinvt_shared/invt_partiel ; feuille de GeninvT (Button3_Click),
+  ''EdinvT, EdnsaisisT et EcartsT (Button1_Click).
+
+  Dim hG As GeninvT
+  Dim hE As EdinvT
+  Dim hN As EdnsaisisT
+  Dim hC As EcartsT
+
+  TestKit.OuvreBase("Gestion/validinvt_shared/invt_partiel")
+  ' Clé de couleur lue par GeninvT._New, absente de Laurux-test.conf
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  hG = New GeninvT
+  Edition("T07b/geninvt", hG, "Button3_Click", "Inventaire.pdf")
+  hE = New EdinvT
+  Edition("T07b/edinvt", hE, "Button1_Click", "InventaireT.pdf")
+  hN = New EdnsaisisT
+  Edition("T07b/ednsaisist", hN, "Button1_Click", "NsaisisT.pdf")
+  hC = New EcartsT
+  Edition("T07b/ecartst", hC, "Button1_Click", "EcartsT.pdf")
+
+End
+
+Public Sub T07cEditionsDepots()
+  ''CSTOCKS-T07 (dépôts) : ImpDepots sur le jeu Gestion/impdepots_shared/impdepots_trois (dépôt 02 saisi, Cman, Button2_Click,
+  ''Level1D/Level2D) puis Edsdepots sur Gestion/sdepots_shared/sdepots_stock (période 01.01.2014 au 15.06.2018, sans
+  ''effacement, Button2_Click, Level1M/Level2M).
+
+  Dim hI As ImpDepots
+  Dim hS As Edsdepots
+  Dim hC As Object
+
+  TestKit.OuvreBase("Gestion/impdepots_shared/impdepots_trois")
+  Start.LocalSettings["/Soc01/Depots"] = "-1"
+  hI = New ImpDepots
+  hC = hI.Controls["Code"]
+  hC.Text = "02"
+  hI.Cman()
+  Edition("T07c/impdepots", hI, "Button2_Click", "Depots.pdf")
+  TestKit.OuvreBase("Gestion/sdepots_shared/sdepots_stock")
+  hS = New Edsdepots
+  hC = hS.Controls["Date1"]
+  hC.Text = "01.01.2014"
+  hC = hS.Controls["Date2"]
+  hC.Text = "15.06.2018"
+  Edition("T07c/edsdepots", hS, "Button2_Click", "RegulDep.pdf")
 
 End

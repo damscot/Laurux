@@ -1,0 +1,28 @@
+{
+ "id": "EDINV-T01",
+ "classe": "Edinv",
+ "objet": "Fin d'exercice, familles sur 2 niveaux",
+ "description": "Jeu validinv_shared/inv_fin_partiel ; /Soc01/ipr = [1,2] (familles 0 > 01, 02, 03) ; menu 85 ; Imprimer. Attendu : texte du PDF, lignes comptées par famille, sous-totaux remontés aux parents, total.",
+ "dataset": "validinv_shared/inv_fin_partiel",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'",
+  "/Soc01/ipr": [
+   1,
+   2
+  ]
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

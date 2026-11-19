@@ -1,0 +1,15 @@
+{
+ "id": "FACTUREFMA-T07",
+ "objet": "Client divers abonné",
+ "classe": "FacturefmA",
+ "description": "Jeu client_divers (edition_abonnements + client divers abonné 411916, cli_div = 1) ; facturation périodique (Menu299, /Faca = 0), Traitement, Imprimer, OK (OptFac), Éditer : ObjFac.calcul lit la colonne nom de la table de travail Bl, absente de celle créée par FacturefmA (A04) : erreur fatale « Query failed: Unknown column 'nom' in 'WHERE' » (DB_Connection.Exec ← ObjFac.calcul.481 ← ObjFacB.editefm.636) figée : code 125.",
+ "dataset": "client_divers",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Faca": 0
+ },
+ "code_sortie": 125
+}

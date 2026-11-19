@@ -1,0 +1,24 @@
+{
+ "id": "EDINV-T06",
+ "classe": "Edinv",
+ "objet": "Décimales",
+ "description": "Jeu ecarts_shared/inv_decimales (art_dec et art_nbd 0/2/3, PA à 3 décimales) ; menu 85 ; Imprimer. Attendu : formats et valeurs du texte du PDF.",
+ "dataset": "ecarts_shared/inv_decimales",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

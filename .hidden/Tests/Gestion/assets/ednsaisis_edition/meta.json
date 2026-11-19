@@ -1,0 +1,24 @@
+{
+ "id": "EDNSAISIS-T01",
+ "classe": "Ednsaisis",
+ "objet": "Édition nominale des non saisis",
+ "description": "Jeu validinv_shared/inv_fin_partiel (lignes comptées et non comptées) ; Imprimer. Attendu : texte du PDF avec les seules lignes non comptées, valeurs PA/PMP, totaux.",
+ "dataset": "validinv_shared/inv_fin_partiel",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "id": "SAISIEINVT-T13",
+ "objet": "Import, fichier absent",
+ "classe": "SaisieInvT",
+ "description": "Pas de ~/Portable/inventaire.txt : Importer. Erreur non gérée (Eof sur un fichier non ouvert, SAISIEINVT-A09 figée).",
+ "dataset": "saisieinvt_shared/invt",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "fichiers": [
+  "tmp/Inv.txt"
+ ],
+ "code_sortie": 125,
+ "xfail": "erreur non gérée : Eof(hFil) sur le fichier non ouvert (Try Open, Import_Portable), boîte d'erreur Gambas fatale",
+ "xfail_attendu": "message « fichier absent », aucune mise à jour (A09)"
+}

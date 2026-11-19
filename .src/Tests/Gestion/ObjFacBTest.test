@@ -1,0 +1,667 @@
+' Gambas test file
+
+''Tests d'ObjFacB (.hidden/reference/.src/Gestion/option/ObjFacB.class/test.md, OBJFACB-T01 à T18).
+''Valeurs attendues : assets/ObjFacBTest/expected.txt, produites dans le clone de référence.
+''Jeu : objfacb_shared/bois_bl (options bois/pp de modfichier_shared/options_bois_pp + régie 03 bière,
+''consignes P/C, client 411901, BL B00101 boisson non édité, B00102 déconsigne seule, B00103 sans droit,
+''B00104 facture F00104 éditée avec ligne de régie).
+''Décision utilisateur du 2026-11-18 : hors des 10 classes à revue manuelle, tests implémentés sans validation individuelle.
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CalculSansOption", "calcul du BL B00101 en option N puis P : totaux, lignes, tva, ecrit ; borientation faux")
+  TestKit.Desc("T02Orientation", "option B : borientation de B00101 (droits), B00102 (déconsigne seule), B00103 (rien)")
+  TestKit.Desc("T03CalculBoissonBl", "option B, BL B00101 non édité : aimprimer, consigne, droit, secu, ascise, volumes, totaux, tva, ecrit")
+  TestKit.Desc("T04CalculBoissonEdite", "option B, facture F00104 éditée (lignes de régie existantes)")
+  TestKit.Desc("T05Deconsignes", "option B, BL B00102 : decons, nbdecons, deconsigne")
+  TestKit.Desc("T04bCalculArchive", "option B, facture F00105 archivée par transblfac puis relue en mode archive")
+  TestKit.Desc("T06TvaDroits", "option B, F00105 : régie suspendue de TVA absente des lignes (droit seul), puis droit + sécu (A03)")
+  TestKit.Desc("T07CumulMilliers", "option B, B00101 : consignes totalisant 1 234,56 (A11)")
+  TestKit.Desc("T08ComptmatFacture", "comptmat de F00105 (boisson, vignette) et de F00106 (sans alcool, A02) : Fiches_ligregie, nvign")
+  TestKit.Desc("T09ComptmatMagasin", "comptmat magasin après archivage de F00105 (avec alcool) et F00107 (option N : sans écriture)")
+  TestKit.Desc("T10Poids", "poid d'un BL, d'une facture, d'une archive, en fin de mois et en magasin")
+  TestKit.Desc("T11Archivage", "transblfac option N de F00105 ; F00106 déjà archivée (Message.Warning, Ok par Timer)")
+  TestKit.Desc("T13Editef", "editef option B : F00105 (écriture déséquilibrée, abandon), F00106 sans alcool (écritures, PDF), réédition de F00104 (imp = 1)")
+  TestKit.Desc("T14Editebl", "editebl : BL B00101 (PDF, dte_ligbl) ; chemin PDF en échec (testchem, A04 : Application.Busy)")
+  TestKit.Desc("T16Mail", "mail du BL B00101 par Thunderbird factice (texte prédéfini : Non) ; courriel vide (A07) : messages, appel tracé, choix")
+  TestKit.Desc("T17Visualisation", "visualisation d'un BL et d'une facture (PDF par CmdVis) ; verifdat d'une facture hors période (ClotFac)")
+  TestKit.Desc("T18Performance", "Performance : calcul (option B) d'un BL boisson de 300 lignes (durée relevée par le runner)")
+  TestKit.Desc("T12ArchivageOptions", "transblfac option B (consignes, déconsignes), option T, total en lettres (TD), dépôt de sortie (A01)")
+
+End
+
+Private $hTimer As Timer
+Private $sVu As String
+Private $hDerniere As Window
+Private $cFen As Collection
+Private $sBouton As String
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "ObjFacBTest")
+  TestKit.OuvreBase("objfacb_shared/bois_bl")
+
+End
+
+Private Sub Options(sOpt As String)
+
+  Start.LocalSettings["/Soc" & Start.Societe & "/bois"] = (sOpt = "B" Or sOpt = "T")
+  Start.LocalSettings["/Soc" & Start.Societe & "/pp"] = (sOpt = "P" Or sOpt = "T")
+
+End
+
+Private Function Ouvre(sT As String, sNum As String, iChoix As Integer) As ObjFacB
+
+  Dim hO As ObjFacB
+
+  Try hO = New ObjFacB(sNum, iChoix, New LDate("15/06/2018"))
+  If Error Then
+    TestKit.Check(sT & "/new", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    Return Null
+  Endif
+  Return hO
+
+End
+
+Private Sub Calcule(sT As String, hO As ObjFacB)
+
+  Try hO.calcul()
+  If Error Then TestKit.Check(sT & "/calcul", "ERREUR: " & Error.Text & " @ " & Error.Where)
+
+End
+
+Private Sub Totaux(sT As String, hO As ObjFacB)
+
+  Dim hL As Object
+  Dim hV As Object
+  Dim hE As VarEcr
+
+  TestKit.Check(sT & "/numbl", hO.numbl)
+  TestKit.Check(sT & "/numfac", hO.numfac)
+  TestKit.Check(sT & "/montart", hO.montart)
+  TestKit.Check(sT & "/montmo", hO.montmo)
+  TestKit.Check(sT & "/montht", hO.montht)
+  TestKit.Check(sT & "/monttva", hO.monttva)
+  TestKit.Check(sT & "/montttc", hO.montttc)
+  If Object.IsValid(hO.ligne) Then
+    For Each hL In hO.ligne
+      TestKit.Check(sT & "/ligne/" & hO.ligne.Key, hL.Index & "|" & hL.code & "|" & hL.type & "|" & hL.qte & "|" & hL.puht & "|" & hL.neht & "|" & hL.nettc & "|" & hL.tx)
+    Next
+  Endif
+  If Object.IsValid(hO.tva) Then
+    For Each hV In hO.tva
+      TestKit.Check(sT & "/tva/" & hO.tva.Key, hV.num & "|" & hV.taux & "|" & hV.totht & "|" & hV.tottva & "|" & hV.tottc)
+    Next
+  Endif
+  If Object.IsValid(hO.ecrit) Then
+    For Each hE In hO.ecrit
+      TestKit.Check(sT & "/ecrit/" & hO.ecrit.Key, hE.compte & "|" & hE.intitul & "|" & hE.montantd & "|" & hE.montantc)
+    Next
+  Endif
+
+End
+
+Private Sub Boisson(sT As String, hO As ObjFacB)
+
+  Dim vL As Variant
+  Dim i As Integer
+
+  Try TestKit.Check(sT & "/borientation", hO.borientation())
+  If Error Then TestKit.Check(sT & "/borientation", "ERREUR: " & Error.Text)
+  If Object.IsValid(hO.aimprimer) Then
+    For Each vL In hO.aimprimer
+      TestKit.Check(sT & "/aimprimer/" & hO.aimprimer.Key, vL.Join("|"))
+    Next
+  Else
+    TestKit.Check(sT & "/aimprimer", "Null")
+  Endif
+  TestKit.Check(sT & "/consigne", hO.consigne)
+  TestKit.Check(sT & "/deconsigne", hO.deconsigne)
+  TestKit.Check(sT & "/droit", hO.droit)
+  TestKit.Check(sT & "/secu", hO.secu)
+  TestKit.Check(sT & "/ascise", hO.ascise)
+  TestKit.Check(sT & "/totht", hO.totht)
+  TestKit.Check(sT & "/totvolume", hO.totvolume)
+  TestKit.Check(sT & "/totap", hO.totap)
+  TestKit.Check(sT & "/nbdecons", hO.nbdecons)
+  If Not IsNull(hO.decons) Then
+    For i = 0 To hO.decons.Max
+      TestKit.Check(sT & "/decons/" & i, hO.decons[i].Join("|"))
+    Next
+  Endif
+
+End
+
+Public Sub T01CalculSansOption()
+
+  Dim hO As ObjFacB
+
+  Options("N")
+  hO = Ouvre("T01/N", "B00101", ObjFac.bl)
+  If Not hO Then Return
+  Calcule("T01/N", hO)
+  Totaux("T01/N", hO)
+  TestKit.Check("T01/N/borientation", hO.borientation())
+  TestKit.Check("T01/N/aimprimer", Object.IsValid(hO.aimprimer))
+  Options("P")
+  hO = Ouvre("T01/P", "B00101", ObjFac.bl)
+  If Not hO Then Return
+  Calcule("T01/P", hO)
+  Totaux("T01/P", hO)
+  TestKit.Check("T01/P/borientation", hO.borientation())
+
+End
+
+Public Sub T02Orientation()
+
+  Dim hO As ObjFacB
+  Dim sNum As String
+
+  Options("B")
+  For Each sNum In ["B00101", "B00102", "B00103"]
+    hO = Ouvre("T02/" & sNum, sNum, ObjFac.bl)
+    If Not hO Then Continue
+    Calcule("T02/" & sNum, hO)
+    Try TestKit.Check("T02/" & sNum & "/borientation", hO.borientation())
+    If Error Then TestKit.Check("T02/" & sNum & "/borientation", "ERREUR: " & Error.Text)
+  Next
+
+End
+
+Public Sub T03CalculBoissonBl()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  hO = Ouvre("T03", "B00101", ObjFac.bl)
+  If Not hO Then Return
+  Calcule("T03", hO)
+  Totaux("T03", hO)
+  Boisson("T03", hO)
+
+End
+
+Public Sub T04CalculBoissonEdite()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  hO = Ouvre("T04", "F00104", ObjFac.facture)
+  If Not hO Then Return
+  Calcule("T04", hO)
+  Totaux("T04", hO)
+  Boisson("T04", hO)
+
+End
+
+Public Sub T05Deconsignes()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  hO = Ouvre("T05", "B00102", ObjFac.bl)
+  If Not hO Then Return
+  Calcule("T05", hO)
+  Totaux("T05", hO)
+  Boisson("T05", hO)
+
+End
+
+Public Sub T10Poids()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  hO = Ouvre("T10/bl", "B00101", ObjFac.bl)
+  If hO Then TestKit.Check("T10/bl", hO.poid())
+  hO = Ouvre("T10/facture", "F00104", ObjFac.facture)
+  If hO Then TestKit.Check("T10/facture", hO.poid())
+  Options("N")
+  Archive1("T10/transfert", "F00105")
+  hO = Ouvre("T10/archive", "F00105", ObjFac.archive)
+  If hO Then TestKit.Check("T10/archive", hO.poid())
+  hO = Ouvre("T10/magasin", "B00101", ObjFac.magasin)
+  If hO Then TestKit.Check("T10/magasin", hO.poid())
+  hO = Ouvre("T10/finmois", "", ObjFac.finmois)
+  If hO Then TestKit.Check("T10/finmois", hO.poid())
+
+End
+
+Public Sub _Rep_Timer()
+  ''Pendant une boîte Message (FMessage) : relève son texte et clique le bouton $sBouton, sinon le 1er (technique TresorTest) ;
+  ''le Timer reste actif (plusieurs boîtes successives), la dernière boîte traitée est mémorisée.
+
+  Dim hW As Window
+  Dim hC, hB As Object
+
+  For Each hW In Windows
+    If hW = $hDerniere Then Continue
+    If Object.Type(hW) = "FMessage" Or InStr(Object.Type(hW), "Message") Then
+      If Not hW.Visible Then Continue
+      $hDerniere = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      hB = Null
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If Not hB Then hB = hC
+          If $sBouton And If Replace(Object.GetProperty(hC, "Text"), "&", "") = $sBouton Then
+            hB = hC
+            Break
+          Endif
+        Endif
+      Next
+      If hB Then
+        $sVu &= "[" & Replace(Object.GetProperty(hB, "Text"), "&", "") & "] "
+        hB.Value = True
+        Return
+      Endif
+    Else If hW.Visible And Not $cFen.Exist(Object.Type(hW)) Then
+      $cFen.Add(True, Object.Type(hW))
+      $sVu &= "[fenêtre " & Object.Type(hW) & "] "
+      If Object.Type(hW) = "Window" Or InStr(Object.Type(hW), "SaiReg") Then hW.Close()
+    Endif
+  Next
+
+End
+
+Private Sub Table(sT As String, sSql As String)
+
+  Dim r As Result
+  Dim hF As ResultField
+  Dim sL As String
+  Dim n As Integer
+
+  Try r = Utils.db.Exec(sSql)
+  If Error Then
+    TestKit.Check(sT, "ERREUR: " & Error.Text)
+    Return
+  Endif
+  TestKit.Check(sT & "/count", r.Count)
+  If Not r.Available Then Return
+  Repeat
+    sL = ""
+    For Each hF In r.Fields
+      sL &= hF.Name & "=" & r[hF.Name] & ";"
+    Next
+    TestKit.Check(sT & "/" & n, sL)
+    Inc n
+  Until r.MoveNext()
+
+End
+
+Private Sub Archive(sT As String, sNum As String)
+
+  Table(sT & "/histofac", "SELECT numfac,cdclifac,nmclifac,datefac,totfac,totfacttc,numerobl,gestfac FROM Fiches_HistoFac WHERE numfac = '" & sNum & "'")
+  Table(sT & "/histoligfac", "SELECT num_ligfac,numlig_ligfac,code_ligfac,qte_ligfac,netht_ligfac,tx_ligfac,mtx_ligfac,typel_ligfac,com_ligfac,numbl_ligfac,dtligbl_ligfac FROM Fiches_HistoLigfac WHERE num_ligfac = '" & sNum & "' ORDER BY numlig_ligfac")
+  Table(sT & "/bl", "SELECT numbl FROM Fiches_Bl WHERE numfac = '" & sNum & "'")
+  Table(sT & "/ligcons", "SELECT num,numlig,type,codecons,nb,montant FROM Fiches_ligcons ORDER BY code")
+  Table(sT & "/ligregie", "SELECT dtmouv,num,numlig,type,codeart,coderegie,qte,volume,degres,volumeap,montdr,txtvadr,montss,txtvass,vignette,cloture,volumess FROM Fiches_ligregie ORDER BY code")
+
+End
+
+Private Function Archive1(sT As String, sNum As String) As ObjFacB
+
+  Dim hO As ObjFacB
+
+  hO = Ouvre(sT, sNum, ObjFac.facture)
+  If Not hO Then Return Null
+  Calcule(sT, hO)
+  Try hO.transblfac()
+  If Error Then
+    TestKit.Check(sT & "/transblfac", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    ' l'erreur sort de transblfac entre Begin et Commit : on annule la transaction restée ouverte
+    Try Utils.db.Rollback()
+    TestKit.Check(sT & "/rollback", If(Error, "ERREUR: " & Error.Text, "ok"))
+  Endif
+  Return hO
+
+End
+
+Public Sub T04bCalculArchive()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  Archive1("T04b/transfert", "F00105")
+  hO = Ouvre("T04b", "F00105", ObjFac.archive)
+  If Not hO Then Return
+  Calcule("T04b", hO)
+  Totaux("T04b", hO)
+  Boisson("T04b", hO)
+
+End
+
+Public Sub T06TvaDroits()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  hO = Ouvre("T06/droit_seul", "F00105", ObjFac.facture)
+  If hO Then
+    Calcule("T06/droit_seul", hO)
+    Totaux("T06/droit_seul", hO)
+    TestKit.Check("T06/droit_seul/droit", hO.droit)
+  Endif
+  Utils.db.Exec("UPDATE Fiches_regie SET suspendu = 0 WHERE code = '01'")
+  Utils.db.Exec("UPDATE Fiches_regie SET suspendu = 1 WHERE code = '02'")
+  hO = Ouvre("T06/droit_secu", "F00105", ObjFac.facture)
+  If hO Then
+    Calcule("T06/droit_secu", hO)
+    Totaux("T06/droit_secu", hO)
+    TestKit.Check("T06/droit_secu/droit", hO.droit)
+    TestKit.Check("T06/droit_secu/secu", hO.secu)
+  Endif
+
+End
+
+Public Sub T07CumulMilliers()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  Utils.db.Exec("UPDATE Fiches_ligcons SET montant = 1000.00 WHERE num = 'B00101' AND codecons = '01'")
+  Utils.db.Exec("UPDATE Fiches_ligcons SET montant = 234.56 WHERE num = 'B00101' AND codecons = '03'")
+  hO = Ouvre("T07", "B00101", ObjFac.bl)
+  If Not hO Then Return
+  Calcule("T07", hO)
+  TestKit.Check("T07/consigne", hO.consigne)
+  TestKit.Check("T07/totht", hO.totht)
+  TestKit.Check("T07/montht", hO.montht)
+  TestKit.Check("T07/montttc", hO.montttc)
+
+End
+
+Public Sub T08ComptmatFacture()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  hO = Ouvre("T08/F00105", "F00105", ObjFac.facture)
+  If hO Then
+    Calcule("T08/F00105", hO)
+    Try hO.comptmat()
+    If Error Then TestKit.Check("T08/F00105/comptmat", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Endif
+  Table("T08/F00105/ligregie", "SELECT dtmouv,num,numlig,type,codeart,coderegie,qte,volume,degres,volumeap,montdr,txtvadr,montss,txtvass,vignette,cloture,volumess FROM Fiches_ligregie ORDER BY code")
+  Table("T08/F00105/nvign", "SELECT nvign FROM Fiches_Parametres")
+  hO = Ouvre("T08/F00106", "F00106", ObjFac.facture)
+  If hO Then
+    Calcule("T08/F00106", hO)
+    Try hO.comptmat()
+    If Error Then TestKit.Check("T08/F00106/comptmat", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    ' A02 : sortie sans Commit ; un Rollback ici dit si une transaction restait ouverte
+    Try Utils.db.Rollback()
+    TestKit.Check("T08/F00106/rollback", If(Error, "ERREUR: " & Error.Text, "ok"))
+  Endif
+  Table("T08/F00106/ligregie", "SELECT num,numlig,codeart FROM Fiches_ligregie ORDER BY code")
+
+End
+
+Public Sub T09ComptmatMagasin()
+
+  Dim hO As ObjFacB
+
+  Options("N")
+  Archive1("T09/transfert105", "F00105")
+  Archive1("T09/transfert107", "F00107")
+  Options("B")
+  hO = New ObjFacB
+  Try hO.comptmat("F00105", True)
+  If Error Then TestKit.Check("T09/F00105/comptmat", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Table("T09/F00105/ligregie", "SELECT dtmouv,num,numlig,type,codeart,coderegie,qte,volume,degres,volumeap,montdr,txtvadr,montss,txtvass,vignette,cloture,volumess FROM Fiches_ligregie ORDER BY code")
+  Table("T09/nvign", "SELECT nvign FROM Fiches_Parametres")
+  Utils.db.Exec("UPDATE Fiches_Art SET art_dra = NULL WHERE art_code = '001'")
+  hO = New ObjFacB
+  Try hO.comptmat("F00107", True)
+  If Error Then TestKit.Check("T09/F00107/comptmat", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Try Utils.db.Rollback()
+  TestKit.Check("T09/F00107/rollback", If(Error, "ERREUR: " & Error.Text, "ok"))
+  Table("T09/F00107/ligregie", "SELECT num,numlig,codeart FROM Fiches_ligregie WHERE num = 'F00107'")
+
+End
+
+Public Sub T11Archivage()
+
+  Dim hO As ObjFacB
+
+  Options("N")
+  Archive1("T11/F00105", "F00105")
+  Archive("T11/F00105", "F00105")
+  Table("T11/F00105/ligbl", "SELECT num_ligbl FROM Fiches_Ligbl WHERE num_ligbl = 'B00105'")
+  Boite()
+  Archive1("T11/F00106", "F00106")
+  $hTimer.Enabled = False
+  TestKit.Check("T11/F00106/message", $sVu)
+  Table("T11/F00106/bl", "SELECT numbl FROM Fiches_Bl WHERE numfac = 'F00106'")
+  Table("T11/F00106/histoligfac", "SELECT num_ligfac FROM Fiches_HistoLigfac WHERE num_ligfac = 'F00106'")
+
+End
+
+Public Sub T12ArchivageOptions()
+
+  Options("B")
+  Archive1("T12/B", "F00105")
+  Archive("T12/B", "F00105")
+  Options("T")
+  Start.LocalSettings["/Soc" & Start.Societe & "/Totstring"] = True
+  Archive1("T12/T", "F00104")
+  Archive("T12/T", "F00104")
+  Options("N")
+  Start.LocalSettings["/Soc" & Start.Societe & "/Totstring"] = False
+  Archive1("T12/cdep", "F00107")
+  Archive("T12/cdep", "F00107")
+  Table("T12/cdep/sdepots", "SELECT code,cart,type,qte,com FROM Fiches_Sdepots")
+
+End
+
+Public Sub T18Performance()
+  ''Durée relevée par le runner (non comparée) : BL B00199 de 300 lignes (articles 001, 002, 003 en alternance,
+  ''une consigne par ligne d'article 001) construit dans le test, puis calcul en option B.
+
+  Dim hO As ObjFacB
+  Dim i As Integer
+  Dim sArt, sLig As String
+  Dim aTx As String[] = ["2.10", "7.00", "20.00"]
+
+  Utils.db.Exec("INSERT INTO Fiches_Bl (numbl, type, cdclibl, nmclibl, datebl, numfac, imp, gestbl) VALUES ('B00199', 'B', '411901', 'DURAND', '2018-06-12 00:00:00', '', 0, 0)")
+  Utils.db.Begin()
+  For i = 1 To 300
+    sArt = Format((i - 1) Mod 3 + 1, "000")
+    sLig = Format(i, "0000")
+    Utils.db.Exec("INSERT INTO Fiches_Ligbl (num_ligbl, numlig_ligbl, code_ligbl, libel_ligbl, pu_ligbl, qte_ligbl, brut_ligbl, rem_ligbl, netht_ligbl, tx_ligbl, mtx_ligfac, nettc_ligbl, dec_ligbl, typel_ligbl, dte_ligbl) VALUES ('B00199', &1, &2, 'Ligne', '10', '2', '20', '0', '20', &3, &4, '20', '2', 'A', '2018-06-12 00:00:00')", sLig, sArt, CStr((i - 1) Mod 3 + 1), aTx[(i - 1) Mod 3])
+    If sArt = "001" Then Utils.db.Exec("INSERT INTO Fiches_ligcons (num, numlig, type, codecons, nb, montant, envaleur, bloc) VALUES ('B00199', &1, 'B', '01', 2, 0.40, 1, '')", "B00199" & sLig)
+  Next
+  Utils.db.Commit()
+  Options("B")
+  hO = Ouvre("T18", "B00199", ObjFac.bl)
+  If Not hO Then Return
+  Calcule("T18", hO)
+  TestKit.Check("T18/lignes", hO.ligne.Count)
+  TestKit.Check("T18/montht", hO.montht)
+  TestKit.Check("T18/montttc", hO.montttc)
+  TestKit.Check("T18/consigne", hO.consigne)
+  TestKit.Check("T18/droit", hO.droit)
+  TestKit.Check("T18/secu", hO.secu)
+  TestKit.Check("T18/ascise", hO.ascise)
+  TestKit.Check("T18/totvolume", hO.totvolume)
+
+End
+
+Private Sub Pdf(sT As String)
+  ''Fichiers produits : ~/tmp/Facture.pdf (édition gb.report : texte non extractible par pdftotext, seule sa
+  ''présence est relevée) et copies de ~/Impressions ; les fichiers sont supprimés après relevé.
+
+  Dim sF As String
+
+  TestKit.Check(sT & "/pdf", Exist(User.Home &/ "tmp/Facture.pdf"))
+  Try Kill User.Home &/ "tmp/Facture.pdf"
+  If Exist(User.Home &/ "Impressions") Then
+    For Each sF In Dir(User.Home &/ "Impressions").Sort()
+      TestKit.Check(sT & "/impressions", sF)
+      Try Kill User.Home &/ "Impressions" &/ sF
+    Next
+  Endif
+
+End
+
+Private Sub Boite()
+
+  $sVu = ""
+  $hDerniere = Null
+  $cFen = New Collection
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Private Sub FinBoite(sT As String)
+
+  $hTimer.Enabled = False
+  TestKit.Check(sT & "/message", $sVu)
+
+End
+
+Public Sub T13Editef()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  Boite()
+  hO = Ouvre("T13/F00105", "F00105", ObjFac.facture)
+  If hO Then
+    hO.nbexplemplaire = 0
+    Try TestKit.Check("T13/F00105/editef", hO.editef())
+    If Error Then TestKit.Check("T13/F00105/editef", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    TestKit.Check("T13/F00105/busy", Application.Busy)
+  Endif
+  FinBoite("T13/F00105")
+  Pdf("T13/F00105")
+  Table("T13/F00105/bl", "SELECT numbl,numfac,imp,dtefac,ech FROM Fiches_Bl WHERE numbl = 'B00105'")
+  Table("T13/F00105/mvt", "SELECT jour,compte,libelle,montantd,montantc,numdoc,dte,dateech FROM Fiches_Mvt WHERE numdoc = 'F00105' ORDER BY compte")
+  Table("T13/F00105/ligregie", "SELECT num,numlig,type,codeart,coderegie,qte,montdr,montss,vignette FROM Fiches_ligregie ORDER BY code")
+  Table("T13/F00105/ged", "SELECT COUNT(*) AS n FROM Docs_Ged")
+  Boite()
+  hO = Ouvre("T13/F00106", "F00106", ObjFac.facture)
+  If hO Then
+    hO.nbexplemplaire = 0
+    Try TestKit.Check("T13/F00106/editef", hO.editef())
+    If Error Then TestKit.Check("T13/F00106/editef", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Endif
+  FinBoite("T13/F00106")
+  Pdf("T13/F00106")
+  Table("T13/F00106/bl", "SELECT numbl,numfac,imp,reg,dtefac,ech FROM Fiches_Bl WHERE numbl = 'B00106'")
+  Table("T13/F00106/mvt", "SELECT jour,compte,libelle,montantd,montantc,numdoc,dte FROM Fiches_Mvt WHERE libelle LIKE 'FACTURE%' ORDER BY compte")
+  Boite()
+  hO = Ouvre("T13/F00104", "F00104", ObjFac.facture)
+  If hO Then
+    hO.nbexplemplaire = 0
+    Try TestKit.Check("T13/F00104/editef", hO.editef())
+    If Error Then TestKit.Check("T13/F00104/editef", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Endif
+  FinBoite("T13/F00104")
+  Pdf("T13/F00104")
+  Table("T13/F00104/ligregie", "SELECT COUNT(*) AS n FROM Fiches_ligregie")
+
+End
+
+Public Sub T14Editebl()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  Boite()
+  hO = Ouvre("T14/bl", "B00101", ObjFac.bl)
+  If hO Then
+    hO.nbexplemplaire = 0
+    Try TestKit.Check("T14/bl/editebl", hO.editebl())
+    If Error Then TestKit.Check("T14/bl/editebl", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    TestKit.Check("T14/bl/busy", Application.Busy)
+  Endif
+  FinBoite("T14/bl")
+  Pdf("T14/bl")
+  Table("T14/bl/ligbl", "SELECT numlig_ligbl,dte_ligbl FROM Fiches_Ligbl WHERE num_ligbl = 'B00101' ORDER BY numlig_ligbl")
+  ' copie PDF demandée par la fiche client (cli_copie) vers un chemin impossible à créer
+  Utils.db.Exec("UPDATE Fiches_Cli SET cli_copie = 1 WHERE cli_code = 411901")
+  Start.LocalSettings["/Soc" & Start.Societe & "/Factchemin"] = "/proc/laurux_interdit"
+  Boite()
+  hO = Ouvre("T14/chemin", "B00101", ObjFac.bl)
+  If hO Then
+    hO.nbexplemplaire = 0
+    Try TestKit.Check("T14/chemin/editebl", hO.editebl())
+    If Error Then TestKit.Check("T14/chemin/editebl", "ERREUR: " & Error.Text & " @ " & Error.Where)
+    TestKit.Check("T14/chemin/busy", Application.Busy)
+  Endif
+  FinBoite("T14/chemin")
+
+End
+
+Public Sub T17Visualisation()
+
+  Dim hO As ObjFacB
+
+  Options("B")
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "true"
+  hO = Ouvre("T17/bl", "B00101", ObjFac.bl)
+  If hO Then
+    Try hO.visualisation()
+    If Error Then TestKit.Check("T17/bl/visualisation", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Endif
+  Pdf("T17/bl")
+  hO = Ouvre("T17/facture", "F00104", ObjFac.facture)
+  If hO Then
+    Try hO.visualisation()
+    If Error Then TestKit.Check("T17/facture/visualisation", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Endif
+  Pdf("T17/facture")
+  ' Période de facturation close : dtepec 06.2018, document daté de mars 2018
+  Boite()
+  Try hO = New ObjFacB("F00105", ObjFac.facture, New LDate("15/03/2018"))
+  If Not Error Then
+    hO.nbexplemplaire = 0
+    Try TestKit.Check("T17/hors_periode/editef", hO.editef())
+    If Error Then TestKit.Check("T17/hors_periode/editef", "ERREUR: " & Error.Text & " @ " & Error.Where)
+  Endif
+  FinBoite("T17/hors_periode")
+  Table("T17/hors_periode/bl", "SELECT numbl,numfac,imp FROM Fiches_Bl WHERE numbl = 'B00105'")
+
+End
+
+Public Sub T16Mail()
+
+  Dim hO As ObjFacB
+  Dim sTrace As String = Temp$() & ".trace"
+  Dim sCas As String
+  Dim i As Integer
+
+  If InStr(Application.Env["PATH"], "Framework/bin") = 0 Then Application.Env["PATH"] = Application.Path &/ ".src/Tests/Framework/bin" & ":" & Application.Env["PATH"]
+  Application.Env["LAURUX_FACTICE_TRACE"] = sTrace
+  Start.LocalSettings["/Soc" & Start.Societe & "/Prgmail"] = "Thunderbird"
+  Options("B")
+  For Each sCas In ["DURAND|client@laurux-test.fr", ""]
+    Boite()
+    $sBouton = "Non"
+    hO = Ouvre("T16/" & i, "B00101", ObjFac.bl)
+    If hO Then
+      hO.nbexplemplaire = 1
+      Try hO.mail(sCas)
+      If Error Then TestKit.Check("T16/" & i & "/mail", "ERREUR: " & Error.Text & " @ " & Error.Where)
+      TestKit.Check("T16/" & i & "/choix", hO.choix)
+      TestKit.Check("T16/" & i & "/nbexpl", hO.nbexplemplaire)
+    Endif
+    FinBoite("T16/" & i)
+    $sBouton = ""
+    Wait 0.5
+    If Exist(sTrace) Then
+      TestKit.Check("T16/" & i & "/appel", Replace(RTrim(File.Load(sTrace)), User.Home, "~"))
+      Kill sTrace
+    Else
+      TestKit.Check("T16/" & i & "/appel", "<aucun appel>")
+    Endif
+    Inc i
+  Next
+
+End

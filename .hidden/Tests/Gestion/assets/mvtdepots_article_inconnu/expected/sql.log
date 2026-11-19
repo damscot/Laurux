@@ -1,0 +1,38 @@
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))
+SELECT * FROM Fiches_Societes where cd_sc = '01'
+SELECT * FROM Fiches_Parametres 
+SET NAMES latin1 COLLATE latin1_swedish_ci
+SELECT * from  Fiches_Societes
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SELECT * from  Fiches_Parametres
+SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+SELECT * FROM Fiches_Parametres
+SELECT * FROM Fiches_Promo where datedeb = '2018-06-15'
+SELECT * FROM Fiches_Promo where datefin = '2018-06-15'
+SELECT * FROM Fiches_TarTemp WHERE date <= '2018-06-15 10:00:01' AND dtmaj = '1'
+SELECT * FROM Fiches_Depots where code = '01'
+SELECT * FROM Fiches_Depots where code = '01'
+SELECT * FROM Fiches_Art where art_code = '999'
+SELECT * FROM Fiches_Art where art_cfour = '999'
+LOCK TABLES Fiches_Art WRITE
+select * from Fiches_Art where art_code = '999'
+UNLOCK TABLES
+LOCK TABLES Fiches_StkDepots WRITE
+select * from Fiches_StkDepots where codea = '999' and coded = '02'
+INSERT INTO Fiches_StkDepots(codea,coded,qte) VALUES ('999', '02', 2)
+UNLOCK TABLES
+LOCK TABLES Fiches_StkDepots WRITE
+select * from Fiches_StkDepots where codea = '999' and coded = '01'
+INSERT INTO Fiches_StkDepots(codea,coded,qte) VALUES ('999', '01', -2)
+UNLOCK TABLES
+LOCK TABLES Fiches_Sdepots WRITE
+INSERT INTO Fiches_Sdepots(code, cart, date, type, qte, com) VALUES ('01', '999', '20180615', 'S', 2, 'Mvt du dépôt 01 vers dépôt 02')
+INSERT INTO Fiches_Sdepots(code, cart, date, type, qte, com) VALUES ('02', '999', '20180615', 'E', 2, 'Mvt du dépôt 01 vers dépôt 02')
+UNLOCK TABLES

@@ -1,0 +1,135 @@
+' Gambas test file
+
+''Tests de TriFacture (.hidden/reference/.src/Affichages/TriFacture.class/test.md, TRIFACTURE-T01 à T04).
+''L'écran est ouvert par la caisse (Caisse.Button30_click, revue manuelle) : il est instancié ici comme la caisse
+''le fait (New TriFacture(Null, TriFacture.BonFacNonPaye, Null, ticket, New LTrans)), sans affichage, et piloté par
+''ses gestionnaires Public (TriGen_MajSel, CB1, SelectAllFil/DeSelectAllFil, TriGen_Raz, Form_Close). L'écriture de
+''numtick dans Fiches_Bl reste faite par la caisse (non testée ici). Jeu Affichages/trifac2_shared/documents
+''(lecture seule), BL 000510 et 000520 rattachés au ticket T0001 dans le test. Valeurs attendues :
+''assets/TriFactureTest/expected.txt (clone de référence).
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01SelectionReglement", "Sélection de 3 documents (TriGen_MajSel), fermeture : LTrans.List, compteur, totaux HT/TTC")
+  TestKit.Desc("T02RepriseSelection", "Ticket ayant 2 BL rattachés : sélection initiale, désélection d'un BL, fermeture")
+  TestKit.Desc("T03FiltreType", "CB1 sur chaque type, SelectAllFil puis DeSelectAllFil : compteur, sélection conservée hors filtre")
+  TestKit.Desc("T04Raz", "TriGen_Raz puis fermeture : LTrans.List vide")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Affichages", "TriFactureTest")
+  TestKit.OuvreBase("trifac2_shared/documents")
+  Utils.db.Exec("UPdate " & Cbase.Table("TabBl") & " SET numtick = &1 WHERE numbl IN ('000510', '000520')", "T0001")
+
+End
+
+Private Function Liste() As String
+  ''LTrans.List (Variant[]) en texte.
+
+  Dim v As Variant
+  Dim s As String
+
+  For Each v In LTrans.List
+    s &= CStr(v) & ","
+  Next
+  Return s
+
+End
+
+Private Sub Etat(sPre As String, hF As TriFacture)
+
+  Dim hC As Object
+
+  hC = hF.Controls["Selcnt"]
+  TestKit.Check(sPre & "/compteur", hC.Value)
+  hC = hF.Controls["TotHT"]
+  TestKit.Check(sPre & "/totht", hC.Text)
+  hC = hF.Controls["TotTTC"]
+  TestKit.Check(sPre & "/totttc", hC.Text)
+
+End
+
+Private Sub Clique(hF As TriFacture, sNum As String)
+
+  hF.Bsel = True
+  hF.TriGen_MajSel(sNum)
+
+End
+
+Private Sub Ferme(sPre As String, hF As TriFacture)
+
+  hF.Form_Close()
+  Object.Lock(hF)
+  TestKit.Check(sPre & "/ltrans", Liste())
+
+End
+
+Public Sub T01SelectionReglement()
+
+  Dim hF As TriFacture
+
+  hF = New TriFacture(Null, TriFacture.BonFacNonPaye, Null, "T0002", New LTrans)
+  Etat("T01/initial", hF)
+  TestKit.Check("T01/ltrans_initial", Liste())
+  Clique(hF, "000540")
+  Clique(hF, "000550")
+  Clique(hF, "000512")
+  Etat("T01/selection", hF)
+  Ferme("T01", hF)
+
+End
+
+Public Sub T02RepriseSelection()
+
+  Dim hF As TriFacture
+
+  hF = New TriFacture(Null, TriFacture.BonFacNonPaye, Null, "T0001", New LTrans)
+  Etat("T02/initial", hF)
+  TestKit.Check("T02/ltrans_initial", Liste())
+  Clique(hF, "000520")
+  Etat("T02/apres", hF)
+  Ferme("T02", hF)
+
+End
+
+Public Sub T03FiltreType()
+
+  Dim hF As TriFacture
+  Dim hC As Object
+  Dim i As Integer
+
+  hF = New TriFacture(Null, TriFacture.BonFacNonPaye, Null, "T0001", New LTrans)
+  hC = hF.Controls["CB1"]
+  For i = 0 To hC.Count - 1
+    hC.Index = i
+    hF.CB1_Click()
+    hF.SelectAllFil_Click()
+    Etat("T03/type" & i & "/tout", hF)
+    hF.DeSelectAllFil_Click()
+    Etat("T03/type" & i & "/aucun", hF)
+  Next
+  hC.Index = 4
+  hF.CB1_Click()
+  hF.SelectAllFil_Click()
+  hC.Index = 5
+  hF.CB1_Click()
+  hF.DeSelectAllFil_Click()
+  Etat("T03/bons_conserves", hF)
+  Ferme("T03", hF)
+
+End
+
+Public Sub T04Raz()
+
+  Dim hF As TriFacture
+
+  hF = New TriFacture(Null, TriFacture.BonFacNonPaye, Null, "T0001", New LTrans)
+  Etat("T04/initial", hF)
+  hF.TriGen_Raz()
+  Etat("T04/raz", hF)
+  Ferme("T04", hF)
+
+End

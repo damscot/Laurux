@@ -1,0 +1,23 @@
+{
+ "id": "CMENU-T01",
+ "objet": "Ouverture en mode -p (MySQL)",
+ "classe": "Cmenu",
+ "description": "Mode PDV, jeu caisse_base : Cmenu ouvert (seul SQL : ALTER DATABASE, SET NAMES, SELECT société ; dump inchangé) ; seul événement : libellé « CTRL + F1 = Documentation » (Label1 → Doc.Open, xdg-open factice tracé dans @outils.trace).",
+ "dataset": "cmenu_shared/caisse_base",
+ "date": "2018-06-15 10:00:00",
+ "args": [
+  "-p"
+ ],
+ "societe": "01",
+ "timeout": 20,
+ "fichiers": [
+  "@outils.trace"
+ ],
+ "compare_sql_log": "ordered",
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

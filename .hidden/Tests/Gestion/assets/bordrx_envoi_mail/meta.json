@@ -1,0 +1,26 @@
+{
+ "id": "BORDRX-T06",
+ "objet": "Banque avec mail",
+ "classe": "Bordrx",
+ "description": "Bordereau 4 (banque 4 avec mail) : Envoyer (Button3) : fichier ~/LCR014 écrit, etat = 1, puis Gen_Bordereau(2) s'arrête sur l'erreur fatale « Unknown symbol 'Prog_Editeur' in class 'Impression' » (Bordrx.class:383, A01 figée, code 125) : aucun mail (aucun appel d'outil).",
+ "dataset": "bordrx_shared/lcr_chaine",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Fichiers": "{home}",
+  "/Soc01/Prgmail": "Thunderbird"
+ },
+ "fichiers": [
+  "LCR014",
+  "@outils.trace"
+ ],
+ "code_sortie": 125,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

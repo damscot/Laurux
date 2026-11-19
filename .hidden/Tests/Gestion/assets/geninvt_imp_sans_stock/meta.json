@@ -1,0 +1,23 @@
+{
+ "id": "GENINVT-T11",
+ "objet": "Impression sans stock théorique",
+ "classe": "GeninvT",
+ "description": "Jeu invt_genere : case « Impression du stock theorique » décochée, tri Casier (défaut), Imprimer. Attendu : colonne quantité vide dans le PDF (edition.txt) ; inv_nlig renumérotés par inv_casier.",
+ "dataset": "geninvt_shared/invt_genere",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ },
+ "conf": {
+  "/Soc01/caisse/CmdVis": "sh -c 'pdftotext -layout \"$0\" - >> {home}/edition.txt'"
+ },
+ "fichiers": [
+  "edition.txt"
+ ]
+}

@@ -1,0 +1,101 @@
+' Gambas test file
+
+''Tests gb.test de Cmenu (.hidden/reference/.src/Caisse/Cmenu.class/test.md, T03 et T04) : « Connexion caisse »
+''exige des caisses dont le poste est System.Host (nom aléatoire du conteneur), que seul un gb.test peut poser.
+''Jeu Caisse/cmenu_shared/caisse_base (poste « postetest » remplacé par System.Host). Cmenu est instancié sans être
+''affiché ; les boîtes Message.* et la fenêtre Ouverture (ShowModal) sont relevées et fermées par un Timer du module
+''(techniques TresorTest et MaterielModalTest). Les autres tests de Cmenu sont des rejeux (assets cmenu_*).
+
+Private $hTimer As Timer
+Private $sVu As String
+Private $hVue As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T03ClientCaisseAbsent", "Caisses au poste mais Fiches_ClientCaisse vide : « client caisse » ; Ouverture non ouverte")
+  TestKit.Desc("T04ConnexionOuverte", "Caisses au poste et client caisse : Ouverture ouverte (ShowModal), listes relevées")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Caisse", "CmenuTest")
+  TestKit.OuvreBase("cmenu_shared/caisse_base")
+  Utils.db.Exec("UPDATE " & Cbase.Table("TabCaisses") & " SET poste = &1 WHERE poste = &2", System.Host, "postetest")
+  Start.LocalSettings["/Soc01/caisse/Ncai"] = Null
+
+End
+
+Public Sub _Box_Timer()
+  ''Boîte FMessage : texte relevé, premier bouton cliqué. Fenêtre Ouverture : listes relevées, fenêtre fermée.
+
+  Dim hW As Window
+  Dim hC As Object
+  Dim i As Integer
+
+  For Each hW In Windows
+    If hW = $hVue Then Continue
+    If Object.Type(hW) = "FMessage" Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Object.GetProperty(hC, "Text") & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Else If Object.Type(hW) = "Ouverture" And If hW.Visible Then
+      $hVue = hW
+      $sVu &= "Ouverture : "
+      hC = hW.Controls["ComboBox1"]
+      For i = 0 To hC.Count - 1
+        $sVu &= "[" & hC[i].Text & "]"
+      Next
+      $sVu &= " / "
+      hW.Close()
+      Return
+    Endif
+  Next
+
+End
+
+Private Sub Lance() As String
+
+  Dim hF As Cmenu
+  Dim s As String
+
+  $sVu = ""
+  $hVue = Null
+  Try hF = New Cmenu
+  If Error Then Return "ERREUR: " & Error.Text & " " & Error.Where
+  $hTimer = New Timer As "_Box"
+  $hTimer.Delay = 200
+  $hTimer.Enabled = True
+  hF.Button1_Click()
+  Wait 0.5
+  $hTimer.Enabled = False
+  s = $sVu
+  If s = "" Then s = "<aucune fenêtre>"
+  Object.Lock(hF)
+  Return s
+
+End
+
+Public Sub T03ClientCaisseAbsent()
+  ''CMENU-T03 (2e cas) : caisses au poste, Fiches_ClientCaisse vidée : Message.Warning, Ouverture non ouverte.
+  ''Le 1er cas (aucune caisse au poste) est le rejeu cmenu_connexion_sans_caisse.
+
+  Utils.db.Exec("DELETE FROM Fiches_ClientCaisse")
+  TestKit.Check("T03/client_absent", Lance())
+
+End
+
+Public Sub T04ConnexionOuverte()
+  ''CMENU-T04 : caisses au poste et client caisse présent : Ouverture (ShowModal) ouverte ; suite : OuvertureTest.
+
+  TestKit.Check("T04/connexion", Lance())
+
+End

@@ -1,0 +1,329 @@
+' Gambas test file
+
+''Tests de Stockmvt (.hidden/reference/.src/Gestion/Stockmvt.class/test.md, STOCKMVT-T01 à T08).
+''Valeurs attendues : assets/StockmvtTest/expected.txt, produites dans le clone de référence.
+''Écran instancié sans affichage (New Stockmvt) ; critères posés par Controls[...] puis Buttrait_Click appelé ; la grille
+''est relevée en appelant GridView1_Data(ligne, 0) puis en lisant les cellules ; totaux par les Label sortie/entre/ca/marge.
+''Boîtes Message.* (erreur SQL de DB_Connection.Exec, question de l'export CSV) : un Timer du module relève leur texte
+''et clique le bouton $sBouton (ou le premier bouton). Jeu stockmvt_shared/stock_base (BL, BL entretien, factures archivées, réception,
+''mouvements exceptionnels, produit composé, ticket ; articles 001/002, familles 01/02).
+
+Private $hTimer As Timer
+Private $sBouton As String
+Private $sVu As String
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01DetailArticle", "Article 001, toutes sources, entrées et sorties, détail, C.A. et marge : grille et totaux")
+  TestKit.Desc("T02RegroupementFamilles", "Deux familles, Checkart coché / non × jour / mois / année : grilles et totaux")
+  TestKit.Desc("T03MarqueCentrale", "Marque puis centrale saisies, factures archivées : grille ou erreur (A01)")
+  TestKit.Desc("T04ClientFournisseur", "Client seul ; fournisseur seul ; fournisseur + stock de départ (A02)")
+  TestKit.Desc("T05EntreesSorties", "Entrées puis sorties, stock de départ et théorique valorisés PMP puis prix d'achat")
+  TestKit.Desc("T06FamillesVides", "Familles sans nœud sélectionné : SQL invalide figé (UTILS-A02)")
+  TestKit.Desc("T07EditionPdf", "Après T01 : Butedit_Click, ~/tmp/stockmvt.pdf produit et son texte")
+  TestKit.Desc("T11Performance", "Jeu stock_performance (1 000 lignes de vente générées) : toutes sources, regroupement mensuel par famille, détail")
+  TestKit.Desc("T08ExportCsv", "Export CSV après le détail (réponse Non) puis après un regroupement mensuel (A04)")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "StockmvtTest")
+  TestKit.OuvreBase("stockmvt_shared/stock_base")
+  Start.LocalSettings["/Coul/Znaff"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Focus"] = "background: 16777215;"
+  Start.LocalSettings["/Coul/Znss"] = "background: 16777215;"
+  Start.LocalSettings["/Soc" & Start.Societe & "/caisse/CmdVis"] = "true"
+  Try Mkdir User.Home & "/tmp"
+
+End
+
+Public Sub _Rep_Timer()
+  ''Boîte Message : relève son texte et clique $sBouton (premier bouton si $sBouton est vide).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" Or InStr(Object.Type(hW), "Message") Then
+      If Not hW.Visible Then Continue
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= Left(Object.GetProperty(hC, "Text"), 200) & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If $sBouton = "" Or Replace(Object.GetProperty(hC, "Text"), "&", "") = $sBouton Then
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Sub Reponse(Optional sBouton As String)
+
+  $sBouton = sBouton
+  $sVu = ""
+  If $hTimer Then $hTimer.Enabled = False
+  $hTimer = New Timer As "_Rep"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Private Function Ouvre() As Object
+
+  Dim hF As Object
+
+  hF = New Stockmvt
+  Object.SetProperty(hF.Controls["Textdtinf"], "Text", "01.01.2018")
+  Object.SetProperty(hF.Controls["Textdtsup"], "Text", "31.12.2018")
+  Return hF
+
+End
+
+Private Sub Pose(hF As Object, aNoms As String[], Optional vValeur As Variant = True)
+
+  Dim sN As String
+
+  For Each sN In aNoms
+    Object.SetProperty(hF.Controls[sN], "Value", vValeur)
+  Next
+
+End
+
+Private Sub Sources(hF As Object)
+
+  Pose(hF, ["Checkbl", "Checkfac", "Checkblm", "Checkfacm", "Checkfo", "Checkmvte", "Checkprd", "Checktck"])
+
+End
+
+Private Sub Traite(sCle As String, hF As Object, Optional bTrie As Boolean)
+  ''bTrie : lignes triées avant comparaison (ORDER BY dte,code non total : ordre des ex aequo non déterministe).
+
+  Dim hG As Object
+  Dim aLig As New String[]
+  Dim aCel As String[]
+  Dim r, c As Integer
+
+  Reponse()
+  Try hF.Buttrait_Click()
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  Wait 0.1
+  $hTimer.Enabled = False
+  If $sVu Then TestKit.Check(sCle & "/message", $sVu)
+  hG = hF.Controls["GridView1"]
+  TestKit.Check(sCle & "/lignes", hG.Rows.Count)
+  aCel = New String[]
+  For c = 0 To hG.Columns.Count - 1
+    aCel.Add(hG.Columns[c].Text)
+  Next
+  TestKit.Check(sCle & "/colonnes", aCel.Join("|"))
+  For r = 0 To hG.Rows.Count - 1
+    Try hF.GridView1_Data(r, 0)
+    If Error Then
+      aLig.Add("ERREUR: " & Error.Text)
+      Continue
+    Endif
+    aCel = New String[]
+    For c = 0 To hG.Columns.Count - 1
+      aCel.Add(hG[r, c].Text)
+    Next
+    aLig.Add(aCel.Join("|"))
+  Next
+  If bTrie Then aLig.Sort()
+  ' le stock théorique est daté du jour (Now) : date masquée
+  TestKit.Check(sCle & "/grille", Replace(aLig.Join(" ; "), Format(Now, "dd.mm.yyyy"), "<date du jour>"))
+  TestKit.Check(sCle & "/totaux", "sorties " & Object.GetProperty(hF.Controls["sortie"], "Text") & " entrées " & Object.GetProperty(hF.Controls["entre"], "Text") & " ca " & Object.GetProperty(hF.Controls["ca"], "Text") & " marge " & Object.GetProperty(hF.Controls["marge"], "Text"))
+
+End
+
+Private Function Detail001() As Object
+
+  Dim hF As Object
+
+  hF = Ouvre()
+  Pose(hF, ["Radioart", "Radiotouta", "Radiodetail", "Checkca", "Checkmarge"])
+  Object.SetProperty(hF.Controls["textart"], "Text", "001")
+  Sources(hF)
+  Return hF
+
+End
+
+Public Sub T01DetailArticle()
+
+  Traite("T01", Detail001())
+
+End
+
+Private Sub Familles(hF As Object, iNb As Integer)
+  ''Sélectionne les iNb premiers nœuds de TreeView1 (aucun si 0).
+
+  Dim hT As Object
+  Dim i As Integer
+
+  hT = hF.Controls["TreeView1"]
+  hT.MoveFirst
+  Repeat
+    hT[hT.Item.Key].Selected = (i < iNb)
+    Inc i
+  Until hT.MoveNext()
+
+End
+
+Public Sub T02RegroupementFamilles()
+
+  Dim hF As Object
+  Dim bArt As Boolean
+  Dim sR As String
+
+  For Each bArt In [True, False]
+    For Each sR In ["Radiojour", "Radiomens", "Radioanuel"]
+      hF = Ouvre()
+      Pose(hF, ["Radiofam", "Radiotouta", sR, "Checkca"])
+      Pose(hF, ["Checkart"], bArt)
+      Sources(hF)
+      Familles(hF, 2)
+      Traite("T02/" & IIf(bArt, "art_", "fam_") & sR, hF, True)
+    Next
+  Next
+
+End
+
+Public Sub T03MarqueCentrale()
+
+  Dim hF As Object
+
+  hF = Detail001()
+  Object.SetProperty(hF.Controls["textmarque"], "Text", "M1")
+  Traite("T03/marque", hF)
+  hF = Detail001()
+  Object.SetProperty(hF.Controls["Textcentach"], "Text", "C1")
+  Traite("T03/centrale", hF)
+
+End
+
+Public Sub T04ClientFournisseur()
+
+  Dim hF As Object
+
+  hF = Detail001()
+  Object.SetProperty(hF.Controls["Textclient"], "Text", "411003")
+  Traite("T04/client", hF)
+  hF = Detail001()
+  Object.SetProperty(hF.Controls["Textfour"], "Text", "401001")
+  Traite("T04/fournisseur", hF)
+  hF = Detail001()
+  Object.SetProperty(hF.Controls["Textfour"], "Text", "401001")
+  Pose(hF, ["Checksdp"])
+  Traite("T04/fournisseur_stock_depart", hF)
+
+End
+
+Public Sub T05EntreesSorties()
+
+  Dim hF As Object
+  Dim sSens, sVal As String
+
+  For Each sSens In ["Radioentre", "Radiosortie"]
+    For Each sVal In ["pmp", "achat"]
+      hF = Detail001()
+      Pose(hF, [sSens, "Checksdp", "Checkstth"])
+      If sVal = "pmp" Then
+        Pose(hF, ["Radiodeptmp", "Radiothepmp"])
+      Else
+        Pose(hF, ["RadioButton2", "RadioButton4"])
+      Endif
+      Traite("T05/" & sSens & "_" & sVal, hF)
+    Next
+  Next
+
+End
+
+Public Sub T06FamillesVides()
+
+  Dim hF As Object
+
+  hF = Ouvre()
+  Pose(hF, ["Radiofam", "Radiotouta", "Radiodetail"])
+  Sources(hF)
+  Familles(hF, 0)
+  Traite("T06", hF)
+
+End
+
+Public Sub T07EditionPdf()
+
+  Dim hF As Object
+  Dim sTxt As String
+
+  hF = Detail001()
+  Traite("T07/traitement", hF)
+  Try hF.Butedit_Click()
+  If Error Then TestKit.Check("T07/erreur", Error.Text)
+  TestKit.Check("T07/pdf_produit", Exist(User.Home & "/tmp/stockmvt.pdf"))
+  If Exist(User.Home & "/tmp/stockmvt.pdf") Then
+    Exec ["pdftotext", "-layout", User.Home & "/tmp/stockmvt.pdf", "-"] To sTxt
+    sTxt = Replace(sTxt, Format(Now, "dd/mm/yyyy"), "<date du jour>")
+    TestKit.Check("T07/texte", Trim(sTxt))
+  Endif
+
+End
+
+Private Sub Export(sCle As String, hF As Object)
+
+  Reponse("Non")
+  Try hF.Butexp_Click()
+  If Error Then TestKit.Check(sCle & "/erreur", Error.Text)
+  Wait 0.1
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/message", $sVu)
+  If Exist(User.Home & "/tmp/Stockmvt.csv") Then
+    TestKit.Check(sCle & "/csv", File.Load(User.Home & "/tmp/Stockmvt.csv"))
+    Kill User.Home & "/tmp/Stockmvt.csv"
+  Else
+    TestKit.Check(sCle & "/csv", "<absent>")
+  Endif
+
+End
+
+Public Sub T08ExportCsv()
+
+  Dim hF As Object
+
+  hF = Detail001()
+  Traite("T08/detail", hF)
+  Export("T08/detail", hF)
+  hF = Ouvre()
+  Pose(hF, ["Radioart", "Radiotouta", "Radiomens", "Checkca"])
+  Object.SetProperty(hF.Controls["textart"], "Text", "001")
+  Sources(hF)
+  Traite("T08/mensuel", hF)
+  Export("T08/mensuel", hF)
+
+End
+
+
+Public Sub T11Performance()
+  ''Jeu stockmvt_shared/stock_performance (gen_stockmvt_perf.py) : on mesure le code Gambas et le format des requêtes ;
+  ''la durée n'est pas comparée (limite du test : 20 s).
+
+  Dim hF As Object
+
+  TestKit.OuvreBase("stockmvt_shared/stock_performance")
+  hF = Ouvre()
+  Pose(hF, ["Radiofam", "Radiotouta", "Radiomens", "Checkca", "Checkmarge", "Checkart"])
+  Sources(hF)
+  Familles(hF, 3)
+  Traite("T11/mensuel", hF, True)
+  hF = Ouvre()
+  Pose(hF, ["Radiofam", "Radiotouta", "Radiodetail", "Checkca"])
+  Sources(hF)
+  Familles(hF, 3)
+  Traite("T11/detail", hF, True)
+
+End

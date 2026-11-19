@@ -1,0 +1,415 @@
+' Gambas test file
+
+''Tests de Geninv (.hidden/reference/.src/Gestion/Stock/Inventaires/Fin-annee/Geninv.class/test.md, GENINV-T01 à T15).
+''Prévus en replay, écrits en gb.test : l'écran est instancié sans être affiché, les boutons radio, la case Stkt et la
+''date (TextReg Dte) sont posés, puis gen_Inv (génération seule) ou button1_Click / Button3_Click sont appelés
+''directement. Les boîtes Message.* sont relevées et répondues par un Timer du module (technique TresorTest).
+''Jeux : assets/geninv_shared/ (articles croisés, aucun stocké, stocks particuliers, 45 articles, article supprimé) et
+''validinv_shared/inv_fin_compte (inventaire existant compté, lecture seule). Valeurs attendues :
+''assets/GeninvTest/expected.txt (clone de référence).
+
+Private $hTimer As Timer
+Private $aBoutons As New String[]
+Private $sVu As String
+Private $hVue As Window
+
+Public Sub _Desc()
+  ''Descriptions des tests du module (./Laurux -T list) ; ignoré par gb.test.
+
+  TestKit.Desc("T01CasierCode", "gen_Inv, tri Casiers + Code, date du jour : Fiches_Inv dans l'ordre art_casier, art_code")
+  TestKit.Desc("T02FamilleCode", "gen_Inv, tri Familles + Code : ordre art_fam, art_code")
+  TestKit.Desc("T03FournisseurCode", "gen_Inv, tri Fournisseurs + Code : ordre art_four, art_code")
+  TestKit.Desc("T04CasierDesign", "gen_Inv, tri Casiers + Désignation : ordre art_casier, art_design")
+  TestKit.Desc("T05FamilleDesign", "gen_Inv, tri Familles + Désignation : ordre art_fam, art_design")
+  TestKit.Desc("T06FournisseurDesign", "gen_Inv, tri Fournisseurs + Désignation : ordre art_four, art_design")
+  TestKit.Desc("T07RegenerationOui", "Inventaire compté existant, Traitement, « Oui » : table recréée, comptages perdus")
+  TestKit.Desc("T08RegenerationNon", "Inventaire compté existant, Traitement, « Non » : Fiches_Inv inchangée")
+  TestKit.Desc("T09PremiereGeneration", "Fiches_Inv absente, backtrace activé : erreur SQL affichée puis génération par le Catch")
+  TestKit.Desc("T09bPremiereSansBacktrace", "Fiches_Inv absente, backtrace désactivé : génération par le Catch sans boîte d'erreur")
+  TestKit.Desc("T10AucunArticle", "Aucun article stocké : table créée vide, message « Aucun article »")
+  TestKit.Desc("T11StocksParticuliers", "art_qte Null, négatif, 3 décimales : inv_qtestock 0 / négatif / arrondi")
+  TestKit.Desc("T12DateSaisie", "Date d'inventaire 31/12/2018 saisie : inv_date = 2018-12-31")
+  TestKit.Desc("T13FeuilleComptage", "Button3_Click après génération, stock théorique coché puis décoché : texte du PDF")
+  TestKit.Desc("T14ImpressionErreurs", "Button3_Click sans Fiches_Inv puis avec un article supprimé : « Veuillez générer »")
+  TestKit.Desc("T15Pagination", "45 articles stockés : feuille de comptage sur plusieurs pages, en-têtes répétés")
+
+End
+
+Public Sub _Setup()
+
+  TestKit.Begin("Gestion", "GeninvTest")
+
+End
+
+Public Sub _Multi_Timer()
+  ''Chaque nouvelle boîte FMessage : texte relevé, bouton suivant de $aBoutons cliqué (premier bouton si la liste est
+  ''épuisée) ; la dernière boîte traitée est mémorisée (clic différé : elle reste visible au tick suivant).
+
+  Dim hW As Window
+  Dim hC As Object
+
+  For Each hW In Windows
+    If Object.Type(hW) = "FMessage" And If hW <> $hVue Then
+      $hVue = hW
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Label" Or Object.Type(hC) = "TextLabel" Then $sVu &= PremiereLigne(Object.GetProperty(hC, "Text")) & " / "
+      Next
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          If $aBoutons.Count = 0 Then
+            $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+            hC.Value = True
+            Return
+          Endif
+          If Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) = $aBoutons[0] Then
+            $sVu &= "[" & $aBoutons[0] & "] / "
+            $aBoutons.Remove(0)
+            hC.Value = True
+            Return
+          Endif
+        Endif
+      Next
+      ' Bouton attendu absent (boîte imprévue) : premier bouton, texte relevé
+      For Each hC In hW.Controls
+        If Object.Type(hC) = "Button" Then
+          $sVu &= "[" & Trim(Replace(Object.GetProperty(hC, "Text"), "&", "")) & "] / "
+          hC.Value = True
+          Return
+        Endif
+      Next
+    Endif
+  Next
+
+End
+
+Private Function PremiereLigne(sTexte As String) As String
+  ''Texte d'une boîte sans la backtrace d'une erreur SQL (numéros de ligne du module de test).
+
+  Dim i As Integer = InStr(sTexte, " ---- Backtrace")
+
+  If i = 0 Then Return sTexte
+  Return Left(sTexte, i - 1) & "<backtrace>"
+
+End
+
+Private Sub Reponses(aBoutons As String[])
+
+  $aBoutons = aBoutons
+  $sVu = ""
+  $hVue = Null
+  $hTimer = New Timer As "_Multi"
+  $hTimer.Delay = 300
+  $hTimer.Enabled = True
+
+End
+
+Private Sub FinReponses(sCle As String)
+
+  $hTimer.Enabled = False
+  TestKit.Check(sCle & "/messages", $sVu)
+
+End
+
+Private Function Fiche(Optional sDate As String, Optional sTri1 As String, Optional sTri2 As String) As Geninv
+  ''Écran instancié sans affichage ; date (TextReg Dte) et boutons radio posés.
+
+  Dim hF As Geninv
+  Dim hC As Object
+
+  hF = New Geninv
+  If sDate Then
+    hC = hF.Controls["Dte"]
+    hC.Text = sDate
+  Endif
+  If sTri1 Then Object.SetProperty(hF.Controls[sTri1], "Value", True)
+  If sTri2 Then Object.SetProperty(hF.Controls[sTri2], "Value", True)
+  Return hF
+
+End
+
+Private Sub Inventaire(sCle As String, Optional bDateDuJour As Boolean)
+  ''Lignes de Fiches_Inv dans l'ordre des numéros de ligne.
+
+  Dim r As Result
+  Dim sDate As String
+
+  Try r = Utils.db.Exec("SELECT * FROM Fiches_Inv ORDER BY inv_nlig + 0")
+  If Error Then
+    TestKit.Check(sCle & "/table", "<absente>")
+    Return
+  Endif
+  TestKit.Check(sCle & "/lignes", r.Count)
+  If Not r.Available Then Return
+  Repeat
+    sDate = Format(r!inv_date, "yyyy-mm-dd")
+    If bDateDuJour And If sDate = Format(Now, "yyyy-mm-dd") Then sDate = "<date du jour>"
+    TestKit.Check(sCle & "/" & r!inv_nlig, r!inv_code & " | " & r!inv_qtestock & " | " & r!inv_qtecomptee & " | " & sDate & " | " & r!inv_comptee & " | " & r!inv_valid & " | " & r!inv_design & " | " & r!inv_casier)
+  Until r.MoveNext()
+
+End
+
+Private Sub Genere(sCle As String, Optional sTri1 As String, Optional sTri2 As String)
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_articles")
+  hF = Fiche("15/06/2018", sTri1, sTri2)
+  Reponses([])
+  Try hF.gen_Inv()
+  If Error Then TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+  FinReponses(sCle)
+  Inventaire(sCle)
+  Object.Lock(hF)
+
+End
+
+Private Sub Feuille(hF As Geninv, sCle As String)
+  ''Button3_Click (visualiseur neutralisé) puis texte de ~/tmp/Inventaire.pdf (pdftotext -layout), date du jour masquée.
+
+  Dim sFic As String = User.Home &/ "tmp/Inventaire.pdf"
+  Dim sTxt As String
+  Dim aL As String[]
+  Dim i As Integer
+
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = "true"
+  Try Kill sFic
+  Reponses([])
+  Try hF.Button3_Click()
+  If Error Then TestKit.Check(sCle & "/erreur", "ERREUR: " & Error.Text)
+  Wait 0.5
+  FinReponses(sCle)
+  If Not Exist(sFic) Then
+    TestKit.Check(sCle & "/pdf", "<absent>")
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  aL = Split(sTxt, "\n")
+  TestKit.Check(sCle & "/pdf_lignes", aL.Count)
+  For i = 0 To aL.Max
+    TestKit.Check(sCle & "/pdf" & Format(i, "000"), Replace(Replace(RTrim(aL[i]), Format(Now, "dd/mm/yyyy"), "<date du jour>"), "demandée par " & User.Name, "demandée par <utilisateur>"))
+  Next
+
+End
+
+Public Sub T01CasierCode()
+  ''GENINV-T01 : tri par défaut (Casiers + Code article), date du jour par défaut.
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_articles")
+  hF = Fiche()
+  Reponses([])
+  Try hF.gen_Inv()
+  If Error Then TestKit.Check("T01/erreur", "ERREUR: " & Error.Text)
+  FinReponses("T01")
+  Inventaire("T01", True)
+  Object.Lock(hF)
+
+End
+
+Public Sub T02FamilleCode()
+  ''GENINV-T02 : Familles + Code article.
+
+  Genere("T02", "Fm")
+
+End
+
+Public Sub T03FournisseurCode()
+  ''GENINV-T03 : Fournisseurs + Code article.
+
+  Genere("T03", "Fr")
+
+End
+
+Public Sub T04CasierDesign()
+  ''GENINV-T04 : Casiers + Désignation.
+
+  Genere("T04", "Ds")
+
+End
+
+Public Sub T05FamilleDesign()
+  ''GENINV-T05 : Familles + Désignation.
+
+  Genere("T05", "Fm", "Ds")
+
+End
+
+Public Sub T06FournisseurDesign()
+  ''GENINV-T06 : Fournisseurs + Désignation.
+
+  Genere("T06", "Fr", "Ds")
+
+End
+
+Public Sub T07RegenerationOui()
+  ''GENINV-T07 : inventaire existant compté (jeu validinv_shared/inv_fin_compte), Traitement, « Oui » puis « Ok » :
+  ''Fiches_Inv recréée depuis Fiches_Art, comptages perdus ; la question annonce un inventaire « non validé »
+  ''(inv_valid jamais écrit, GENINV-A02).
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("validinv_shared/inv_fin_compte")
+  Inventaire("T07/avant")
+  hF = Fiche("15/06/2018")
+  Reponses(["Oui", "Ok"])
+  Try hF.button1_Click()
+  If Error Then TestKit.Check("T07/erreur", "ERREUR: " & Error.Text)
+  FinReponses("T07")
+  Inventaire("T07/apres")
+  Object.Lock(hF)
+
+End
+
+Public Sub T08RegenerationNon()
+  ''GENINV-T08 : inventaire existant compté, Traitement, « Non » : Fiches_Inv inchangée.
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("validinv_shared/inv_fin_compte")
+  hF = Fiche("15/06/2018")
+  Reponses(["Non"])
+  Try hF.button1_Click()
+  If Error Then TestKit.Check("T08/erreur", "ERREUR: " & Error.Text)
+  FinReponses("T08")
+  Inventaire("T08")
+  Object.Lock(hF)
+
+End
+
+Public Sub T09PremiereGeneration()
+  ''GENINV-T09 : Fiches_Inv absente, backtrace activé : le SELECT inv_valid échoue (boîte « Erreur de Requete SQL »,
+  ''première ligne relevée), la génération se fait par le Catch de button1_Click (GENINV-A03, figé).
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_articles")
+  Utils.db.Backtrace(True)
+  hF = Fiche("15/06/2018")
+  Reponses([])
+  Try hF.button1_Click()
+  If Error Then TestKit.Check("T09/erreur", "ERREUR: " & Error.Text)
+  Utils.db.Backtrace(False)
+  FinReponses("T09")
+  Inventaire("T09")
+  Object.Lock(hF)
+
+End
+
+Public Sub T09bPremiereSansBacktrace()
+  ''GENINV-T09 (suite) : Fiches_Inv absente, backtrace désactivé : aucune boîte d'erreur, génération par le Catch.
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_articles")
+  Utils.db.Backtrace(False)
+  hF = Fiche("15/06/2018")
+  Reponses([])
+  Try hF.button1_Click()
+  If Error Then TestKit.Check("T09b/erreur", "ERREUR: " & Error.Text)
+  FinReponses("T09b")
+  Inventaire("T09b")
+  Object.Lock(hF)
+
+End
+
+Public Sub T10AucunArticle()
+  ''GENINV-T10 : aucun article stocké (jeu inv_gen_vide) : table créée vide, « Aucun article pour cette demande ».
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_vide")
+  hF = Fiche("15/06/2018")
+  Reponses([])
+  Try hF.gen_Inv()
+  If Error Then TestKit.Check("T10/erreur", "ERREUR: " & Error.Text)
+  FinReponses("T10")
+  Inventaire("T10")
+  Object.Lock(hF)
+
+End
+
+Public Sub T11StocksParticuliers()
+  ''GENINV-T11 : art_qte Null (001), négatif (002), trois décimales (003) ; le cas « vide » n'est pas représentable
+  ''(colonne double).
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_stocks")
+  hF = Fiche("15/06/2018")
+  Reponses([])
+  Try hF.gen_Inv()
+  If Error Then TestKit.Check("T11/erreur", "ERREUR: " & Error.Text)
+  FinReponses("T11")
+  Inventaire("T11")
+  Object.Lock(hF)
+
+End
+
+Public Sub T12DateSaisie()
+  ''GENINV-T12 : date de fin d'exercice saisie (31/12/2018) : inv_date = 2018-12-31.
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_articles")
+  hF = Fiche("31/12/2018")
+  Reponses([])
+  Try hF.gen_Inv()
+  If Error Then TestKit.Check("T12/erreur", "ERREUR: " & Error.Text)
+  FinReponses("T12")
+  Inventaire("T12")
+  Object.Lock(hF)
+
+End
+
+Public Sub T13FeuilleComptage()
+  ''GENINV-T13 : génération (tri par défaut) puis feuille de comptage, stock théorique coché puis décoché ; ordre
+  ''des lignes lu sans ORDER BY (GENINV-A01, figé).
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_articles")
+  hF = Fiche("15/06/2018")
+  Reponses([])
+  hF.gen_Inv()
+  FinReponses("T13/gen")
+  Object.SetProperty(hF.Controls["Stkt"], "Value", CheckBox.True)
+  Feuille(hF, "T13/stock")
+  Object.SetProperty(hF.Controls["Stkt"], "Value", CheckBox.False)
+  Feuille(hF, "T13/sans_stock")
+  Object.Lock(hF)
+
+End
+
+Public Sub T14ImpressionErreurs()
+  ''GENINV-T14 : feuille demandée sans Fiches_Inv, puis avec un article supprimé de Fiches_Art après la génération
+  ''(rarts lu sans Available, GENINV-A04) : « Veuillez génerer votre inventaire » dans les deux cas (figé).
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_articles")
+  hF = Fiche("15/06/2018")
+  Feuille(hF, "T14/absente")
+  Object.Lock(hF)
+  TestKit.OuvreBase("geninv_shared/inv_gen_supprime")
+  hF = Fiche("15/06/2018")
+  Feuille(hF, "T14/supprime")
+  Object.Lock(hF)
+
+End
+
+Public Sub T15Pagination()
+  ''GENINV-T15 : 45 articles stockés (jeu inv_gen_nombreux) : changement de page à 288 mm, en-têtes répétés.
+
+  Dim hF As Geninv
+
+  TestKit.OuvreBase("geninv_shared/inv_gen_nombreux")
+  hF = Fiche("15/06/2018")
+  Reponses([])
+  hF.gen_Inv()
+  FinReponses("T15/gen")
+  Inventaire("T15")
+  Feuille(hF, "T15/feuille")
+  Object.Lock(hF)
+
+End

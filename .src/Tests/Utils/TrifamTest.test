@@ -1,6 +1,6 @@
 ' Gambas test file
 
-''Tests de Trifam (.hidden/reference/.src/Utils/Trifam.class/test.md, TRIFAM-T01 à T05 et T08).
+''Tests de Trifam (.hidden/reference/.src/Utils/Trifam.class/test.md, TRIFAM-T01 à T05, T07 et T08).
 ''Jeux de données : .hidden/Tests/Utils/assets/TrifamTest/trifam_familles.sql, trifam_perf.sql.
 ''ipr est fixé en mémoire (Start.LocalSettings["/Soc01/ipr"]) avant New Trifam("1").
 ''Parcours : un nœud puis ses fils ; les fils sont retrouvés depuis « enfant » (dernier fils) en remontant
@@ -17,6 +17,7 @@ Public Sub _Desc()
   TestKit.Desc("T03Liens", "Liens")
   TestKit.Desc("T04SousTotaux", "Sous-totaux")
   TestKit.Desc("T05CodesLimites", "Codes limites")
+  TestKit.Desc("T07EditionInventaire", "Edinv(\"F\") sur un inventaire compté, ipr = [1, 2] : arbre des familles et sous-totaux dans le PDF")
   TestKit.Desc("T08Performance", "Performance")
 
 End
@@ -204,5 +205,43 @@ Public Sub T08Performance()
   $iNoeuds = 0
   Parcours(Arbre([2, 4, 6], "trifam_perf"), 0, Null)
   TestKit.Check("T08/noeuds", $iNoeuds)
+
+End
+
+Public Sub T07EditionInventaire()
+  ''TRIFAM-T07 : édition d'inventaire Edinv("F") (New Trifam("1") puis parcours récursif, sous-totaux soustotpa /
+  ''soustotpmp par famille et par niveau) sur le jeu Gestion/validinv_shared/inv_fin_compte (5 lignes comptées, familles
+  ''01 à 03), ipr = [1, 2] ; Button1_Click, visualiseur neutralisé, texte de ~/tmp/Inventaire.pdf (pdftotext -layout),
+  ''date du jour et utilisateur masqués.
+
+  Dim hE As Edinv
+  Dim sFic As String = User.Home &/ "tmp/Inventaire.pdf"
+  Dim sTxt As String
+  Dim sLig As String
+  Dim n As Integer
+
+  TestKit.OuvreBase("Gestion/validinv_shared/inv_fin_compte")
+  Start.LocalSettings["/Soc" & Start.Societe & "/ipr"] = [1, 2]
+  Start.LocalSettings["/Soc01/caisse/CmdVis"] = "true"
+  Try Mkdir User.Home &/ "tmp"
+  Try Kill sFic
+  hE = New Edinv("F")
+  Try hE.Button1_Click()
+  If Error Then TestKit.Check("T07/erreur", "ERREUR: " & Error.Text)
+  Object.Lock(hE)
+  If Not Exist(sFic) Then
+    TestKit.Check("T07/pdf", "<absent>")
+    Return
+  Endif
+  Shell "pdftotext -layout " & Shell$(sFic) & " -" To sTxt
+  sTxt = Replace(sTxt, Format$(Date(Now), "dd/mm/yyyy"), "<date>")
+  sTxt = Replace(sTxt, User.Name, "<utilisateur>")
+  For Each sLig In Split(sTxt, "\n")
+    sLig = RTrim(sLig)
+    If sLig = "" Then Continue
+    Inc n
+    TestKit.Check("T07/l" & Format$(n, "00"), sLig)
+  Next
+  TestKit.Check("T07/lignes", n)
 
 End

@@ -1,0 +1,20 @@
+{
+ "id": "MVTDEPOTS-T04",
+ "objet": "Article introuvable",
+ "classe": "MvtDepots",
+ "description": "Départ 01, arrivée 02, article 999 : « Cette réfèrence n'existe pas » (Entrée) ; qté 2, Valider. Attendu : transfert exécuté quand même (MVTDEPOTS-A04 figée) : lignes StkDepots (02, 999, 2) et (01, 999, -2), 2 lignes Sdepots ; Fiches_Art inchangée.",
+ "dataset": "mvtdepots_shared/stock",
+ "date": "2018-06-15 10:00:00",
+ "args": [],
+ "societe": "01",
+ "timeout": 20,
+ "conf": {
+  "/Soc01/Depots": "-1"
+ },
+ "cadence": {
+  "frappe": 50,
+  "focus": 100,
+  "traitement": 1000,
+  "fenetre": 1000
+ }
+}

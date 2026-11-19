@@ -1,0 +1,232 @@
+T01/booleens	recap=T ttc= entete=T reserve= pied=T ligne2= colon=T stock= blrecap=T poids= breg=T saisreg= doclet=T coupon= nblfac=T affref= autoent=T franctva= mdepo=T pxsdec= libdev=T adrlogo= lgo=T gmateriel= cheque=T joinfac= joinsms=T affclient= intcheque=T intcarte=T sms=T
+T01/textes	treg=Texte de reglement treserve= tpied=2 libtaxe=TVA-T libsire=SIRET-T txtlibdev=Bas de devis txtvldev=Valable 30 jours pdfchemin=/tmp/laurux-test/factures condvent=/tmp/laurux-test/cgv.txt pdf=/tmp/laurux-test/joint.pdf
+T01/base	devise=Euros journal=70 choix=1 dtmouv=T blchif=T simpcond=
+T01/inverses	recap= ttc=T reserve=T breg= treg= saisreg= libdev= txtlibdev= libtaxe=Tva libsire=Siret sms= tab=B10001
+T02/bl:B10001	numbl=B10001 numfac= tab= choix=1
+T02/bl:B10007	numbl=B10007 numfac= tab=M choix=1
+T02/facture:F00010	numbl=B10008 numfac=F00010 tab= choix=2
+T02/bl:XXXXXX	numbl= numfac= tab= choix=1
+T02/archive:F00020	numbl= numfac=F00020 tab= choix=3
+T02/archive:F00030	numbl= numfac=F00030 tab=M choix=3
+T02/archive:F99999	numbl= numfac=F99999 tab= choix=3
+T02/finmois:	numbl= numfac= tab= choix=8
+T02/finmois:M	numbl= numfac= tab=M choix=8
+T03/standard/evenements	nombre(3) echeance(31.07.2018) modreg(05)
+T03/standard/exemplaires	3
+T03/standard/adrfac	SARL MARTIN Jean|1 rue Haute|Bat A|75001|PARIS|France
+T03/standard/autoent	False
+T03/standard/sauvpdf	False
+T03/standard/tsaisreg	Règlement par Chèque au 31.07.2018
+T03/standard/dteech	31.07.2018
+T03/autoentrepreneur/evenements	nombre(1) fttc(T) echeance(15.06.2018) modreg(01)
+T03/autoentrepreneur/exemplaires	1
+T03/autoentrepreneur/adrfac	 PETIT Paul|1 rue Haute|Bat A|69001|LYON|France
+T03/autoentrepreneur/autoent	True
+T03/autoentrepreneur/sauvpdf	False
+T03/autoentrepreneur/tsaisreg	Règlement à réception de facture par Espèces
+T03/autoentrepreneur/dteech	15.06.2018
+T03/reglement_inconnu/evenements	nombre(2) echeance(15.06.2018) modreg(ZZ)
+T03/reglement_inconnu/exemplaires	2
+T03/reglement_inconnu/adrfac	SA DUPONT |1 rue Haute|Bat A|13001|MARSEILLE|France
+T03/reglement_inconnu/autoent	False
+T03/reglement_inconnu/sauvpdf	True
+T03/reglement_inconnu/tsaisreg	Règlement à réception de facture par ZZ
+T03/reglement_inconnu/dteech	15.06.2018
+T03/acquitte/evenements	nombre(2) echeance(15.06.2018) modreg(05)
+T03/acquitte/exemplaires	2
+T03/acquitte/adrfac	 LEROY Luc|1 rue Haute|Bat A|44000|NANTES|France
+T03/acquitte/autoent	False
+T03/acquitte/sauvpdf	False
+T03/acquitte/tsaisreg	Facture acquittée par Chèque le 15.06.2018
+T03/acquitte/dteech	15.06.2018
+T03/breg/evenements	nombre(3) echeance(31.07.2018) modreg(05)
+T03/breg/exemplaires	3
+T03/breg/adrfac	SARL MARTIN Jean|1 rue Haute|Bat A|75001|PARIS|France
+T03/breg/autoent	False
+T03/breg/sauvpdf	False
+T03/breg/tsaisreg	Texte de reglement des preferences
+T03/breg/dteech	31.07.2018
+T03/inexistant/erreur	ERREUR: Client 999999 innexistant
+T04/bl/erreur	<aucune>
+T04/bl/doc	numbl=B10001 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T04/bl/montants	ht=61 tva=9.52 ttc=70.52 art=33 mo=28 remart=2 remmo=0 gestion=0
+T04/bl/ligne	0001:A:0:003:produit 20.00:0::2:10:12,00:20,00:24,00:10:18,00:21,60:3 | 0002:A:1:001:Produit 2.10:0::3:5:5,11:15,00:15,32: :15,00:15,32:1 | 0003:M:2:01:Mo T1:0::1:28:33,60:28,00:33,60: :28,00:33,60:3
+T04/bl/tva	1:1:2.10:15:15.32:0.32 | 3:3:20.00:46:55.2:9.2
+T04/bl/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:70.52:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:0.32::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:9.2::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:15::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:18::15.06.2018:31.07.2018
+T04/bl/eco	tee=1.5 tea=0.6
+T05/sans_ligne2/erreur	<aucune>
+T05/sans_ligne2/doc	numbl=B10002 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T05/sans_ligne2/montants	ht=40 tva=2.8 ttc=42.8 art=40 mo=0 remart=0 remmo=0 gestion=0
+T05/sans_ligne2/ligne	0001:C:-1::Commentaire ligne 1::::::::::: | 0002:C:-1::Commentaire ligne 2::::::::::: | 0003:C:-1::Commentaire ligne 3::::::::::: | 0004:A:1:002:Produit 7.00:0::2:20:21,40:40,00:42,80: :40,00:42,80:2 | 0005:O:2:001:Composant 1::::::::::: | 0006:T:3::Seconde ligne article::::::::::: | 0007:R:-1::Reserve unique::::::::::: | 0008:E:5::Dont 1 Euros eco-participation::::::::::: | 0009:D:6::Dont 2,5 Euros droits::::::::::: | 0010:P:7::Dont 0,3 Euros consigne:::::::::::
+T05/sans_ligne2/tva	2:2:7.00:40:42.8:2.8
+T05/sans_ligne2/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:42.8:0::15.06.2018:31.07.2018 | 445720:445720:Tva sur ventes 5.50:FACTURE MARTIN:0:2.8::15.06.2018:31.07.2018 | 707010:707010:Ventes marchandises 7.00:FACTURE MARTIN:0:40::15.06.2018:31.07.2018
+T05/sans_ligne2/eco	tee=0 tea=0
+T05/avec_ligne2/erreur	<aucune>
+T05/avec_ligne2/doc	numbl=B10002 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T05/avec_ligne2/montants	ht=40 tva=2.8 ttc=42.8 art=40 mo=0 remart=0 remmo=0 gestion=0
+T05/avec_ligne2/ligne	0001:C:-1::Commentaire ligne 1::::::::::: | 0002:C:-1::Commentaire ligne 2::::::::::: | 0003:C:-1::Commentaire ligne 3::::::::::: | 0004:A:1:002:Produit 7.00:0::2:20:21,40:40,00:42,80: :40,00:42,80:2 | 0005:O:2:001:Composant 1::::::::::: | 0006:R:-1::Reserve unique::::::::::: | 0007:E:5::Dont 1 Euros eco-participation::::::::::: | 0008:D:6::Dont 2,5 Euros droits::::::::::: | 0009:P:7::Dont 0,3 Euros consigne:::::::::::
+T05/avec_ligne2/tva	2:2:7.00:40:42.8:2.8
+T05/avec_ligne2/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:42.8:0::15.06.2018:31.07.2018 | 445720:445720:Tva sur ventes 5.50:FACTURE MARTIN:0:2.8::15.06.2018:31.07.2018 | 707010:707010:Ventes marchandises 7.00:FACTURE MARTIN:0:40::15.06.2018:31.07.2018
+T05/avec_ligne2/eco	tee=0 tea=0
+T06/frais/erreur	<aucune>
+T06/frais/doc	numbl=B10003 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T06/frais/montants	ht=15 tva=3 ttc=18 art=10 mo=0 remart=0 remmo=0 gestion=5
+T06/frais/ligne	0001:A:0:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T06/frais/tva	3:3:20.00:15:18:3
+T06/frais/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:18:0::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:3::15.06.2018:31.07.2018 | 706110:706110:Prestations services 20.00:FACTURE MARTIN:0:5::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:10::15.06.2018:31.07.2018
+T06/frais/eco	tee=0 tea=0
+T06/exonere/erreur	<aucune>
+T06/exonere/doc	numbl=B10004 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T06/exonere/montants	ht=15 tva=1 ttc=16 art=10 mo=0 remart=0 remmo=0 gestion=5
+T06/exonere/ligne	0001:A:0:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T06/exonere/tva	3:3:20.00:5:6:1
+T06/exonere/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:16:0::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:1::15.06.2018:31.07.2018 | 706110:706110:Prestations services 20.00:FACTURE MARTIN:0:5::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:10::15.06.2018:31.07.2018
+T06/exonere/eco	tee=0 tea=0
+T06/autoentrepreneur/erreur	<aucune>
+T06/autoentrepreneur/doc	numbl=B10005 numfac= numcli=411802 tab= dtedoc=15.06.2018 dteech=15.06.2018
+T06/autoentrepreneur/montants	ht=15 tva=1 ttc=16 art=10 mo=0 remart=0 remmo=0 gestion=5
+T06/autoentrepreneur/ligne	0001:A:0:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T06/autoentrepreneur/tva	3:3:20.00:5:6:1
+T06/autoentrepreneur/ecrit	411802:411802: PETIT Paul:FACTURE PETIT:16:0::15.06.2018:15.06.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE PETIT:0:1::15.06.2018:15.06.2018 | 706110:706110:Prestations services 20.00:FACTURE PETIT:0:5::15.06.2018:15.06.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE PETIT:0:10::15.06.2018:15.06.2018
+T06/autoentrepreneur/eco	tee=0 tea=0
+T06/exonere_autoentrepreneur/erreur	<aucune>
+T06/exonere_autoentrepreneur/doc	numbl=B10010 numfac= numcli=411802 tab= dtedoc=15.06.2018 dteech=15.06.2018
+T06/exonere_autoentrepreneur/montants	ht=15 tva=0 ttc=15 art=10 mo=0 remart=0 remmo=0 gestion=5
+T06/exonere_autoentrepreneur/ligne	0001:A:0:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T06/exonere_autoentrepreneur/tva	<Null>
+T06/exonere_autoentrepreneur/ecrit	411802:411802: PETIT Paul:FACTURE PETIT:15:0::15.06.2018:15.06.2018 | 706110:706110:Prestations services 20.00:FACTURE PETIT:0:5::15.06.2018:15.06.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE PETIT:0:10::15.06.2018:15.06.2018
+T06/exonere_autoentrepreneur/eco	tee=0 tea=0
+T06/frais_ttc/erreur	<aucune>
+T06/frais_ttc/doc	numbl=B10003 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T06/frais_ttc/montants	ht=15 tva=3 ttc=18 art=12 mo=0 remart=0 remmo=0 gestion=6
+T06/frais_ttc/ligne	0001:A:0:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T06/frais_ttc/tva	3:3:20.00:15:18:3
+T06/frais_ttc/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:18:0::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:3::15.06.2018:31.07.2018 | 706110:706110:Prestations services 20.00:FACTURE MARTIN:0:5::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:10::15.06.2018:31.07.2018
+T06/frais_ttc/eco	tee=0 tea=0
+T07/avoir/erreur	<aucune>
+T07/avoir/doc	numbl=B10006 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T07/avoir/montants	ht=-10 tva=-2 ttc=-12 art=-10 mo=0 remart=0 remmo=0 gestion=0
+T07/avoir/ligne	0001:A:0:003:produit 20.00:0::-1:10:12,00:-10,00:-12,00: :-10,00:-12,00:3
+T07/avoir/tva	3:3:20.00:-10:-12:-2
+T07/avoir/ecrit	411801:411801:SARL MARTIN Jean:AVOIR MARTIN:0:12::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:AVOIR MARTIN:2:0::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:AVOIR MARTIN:10:0::15.06.2018:31.07.2018
+T07/avoir/eco	tee=0 tea=0
+T07/lettres/erreur	<aucune>
+T07/lettres/doc	numbl=B10001 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T07/lettres/montants	ht=61 tva=9.52 ttc=70.52 art=33 mo=28 remart=2 remmo=0 gestion=0
+T07/lettres/ligne	0001:A:0:003:produit 20.00:0::2:10:12,00:20,00:24,00:10:18,00:21,60:3 | 0002:A:1:001:Produit 2.10:0::3:5:5,11:15,00:15,32: :15,00:15,32:1 | 0003:M:2:01:Mo T1:0::1:28:33,60:28,00:33,60: :28,00:33,60:3 | 0004:TD:-1::Total document : soixante dix Euros et cinquante deux centime:::::::::::
+T07/lettres/tva	1:1:2.10:15:15.32:0.32 | 3:3:20.00:46:55.2:9.2
+T07/lettres/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:70.52:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:0.32::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:9.2::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:15::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:18::15.06.2018:31.07.2018
+T07/lettres/eco	tee=1.5 tea=0.6
+T08/histofac/erreur	<aucune>
+T08/histofac/doc	numbl= numfac=F00020 numcli=411801 tab= dtedoc=10.03.2017 dteech=30.04.2017
+T08/histofac/montants	ht=20 tva=4 ttc=24 art=20 mo=0 remart=0 remmo=0 gestion=0
+T08/histofac/ligne	0001:A:0:003:produit 20.00:0::2:10:12,00:20,00:24,00: :20,00:24,00:3
+T08/histofac/tva	3:3:20.00:20:24:4
+T08/histofac/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:24:0:F00020:10.03.2017:30.04.2017 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:4:F00020:10.03.2017:30.04.2017 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:20:F00020:10.03.2017:30.04.2017
+T08/histofac/eco	tee=0 tea=0
+T08/histofacm/erreur	<aucune>
+T08/histofacm/doc	numbl= numfac=F00030 numcli=411801 tab=M dtedoc=10.05.2017 dteech=30.06.2017
+T08/histofacm/montants	ht=28 tva=5.6 ttc=33.6 art=0 mo=28 remart=0 remmo=0 gestion=0
+T08/histofacm/ligne	0001:M:0:01:Mo T1:0::1:28:33,60:28,00:33,60: :28,00:33,60:3
+T08/histofacm/tva	3:3:20.00:28:33.6:5.6
+T08/histofacm/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:33.6:0:F00030:10.05.2017:30.06.2017 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:5.6:F00030:10.05.2017:30.06.2017 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28:F00030:10.05.2017:30.06.2017
+T08/histofacm/eco	tee=0 tea=0
+T09/nblfac/erreur	<aucune>
+T09/nblfac/doc	dteech=31.07.2018 tsaisreg=Règlement par Chèque au 31.07.2018
+T09/nblfac/montants	ht=76 tva=12.52 ttc=88.52 art=43 mo=28 remart=2 remmo=0 gestion=5
+T09/nblfac/ligne	0001:C:-1::Bon n° B10001 du 10.06.2018::::::::::: | 0002:A:0:003:produit 20.00:0::2:10:12,00:20,00:24,00:10:18,00:21,60:3 | 0003:A:1:001:Produit 2.10:0::3:5:5,11:15,00:15,32: :15,00:15,32:1 | 0004:M:2:01:Mo T1:0::1:28:33,60:28,00:33,60: :28,00:33,60:3 | 0005:C:-1::Bon n° B10003 du 12.06.2018::::::::::: | 0006:A:3:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T09/nblfac/tva	1:1:2.10:15:15.32:0.32 | 3:3:20.00:61:73.2:12.2
+T09/nblfac/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:88.52:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:0.32::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:12.2::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 706110:706110:Prestations services 20.00:FACTURE MARTIN:0:5::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:15::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:28::15.06.2018:31.07.2018
+T09/nblfac/eco	tee=1.5 tea=0.6
+T09/sans_nblfac/erreur	<aucune>
+T09/sans_nblfac/doc	dteech=31.07.2018 tsaisreg=Règlement par Chèque au 31.07.2018
+T09/sans_nblfac/montants	ht=76 tva=12.52 ttc=88.52 art=43 mo=28 remart=2 remmo=0 gestion=5
+T09/sans_nblfac/ligne	0001:A:0:003:produit 20.00:0::2:10:12,00:20,00:24,00:10:18,00:21,60:3 | 0002:A:1:001:Produit 2.10:0::3:5:5,11:15,00:15,32: :15,00:15,32:1 | 0003:M:2:01:Mo T1:0::1:28:33,60:28,00:33,60: :28,00:33,60:3 | 0004:A:3:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T09/sans_nblfac/tva	1:1:2.10:15:15.32:0.32 | 3:3:20.00:61:73.2:12.2
+T09/sans_nblfac/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:88.52:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:0.32::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:12.2::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 706110:706110:Prestations services 20.00:FACTURE MARTIN:0:5::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:15::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:28::15.06.2018:31.07.2018
+T09/sans_nblfac/eco	tee=1.5 tea=0.6
+T09/divers/erreur	<aucune>
+T09/divers/doc	dteech=15.06.2018 tsaisreg=Règlement à réception de facture par 
+T09/divers/montants	ht=10 tva=2 ttc=12 art=10 mo=0 remart=0 remmo=0 gestion=0
+T09/divers/ligne	0001:A:0:003:produit 20.00:0::1:10:12,00:10,00:12,00: :10,00:12,00:3
+T09/divers/tva	3:3:20.00:10:12:2
+T09/divers/ecrit	411001:411001: CLIENT X :FACTURE CLIENT X:12:0::15.06.2018:15.06.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE CLIENT X:0:2::15.06.2018:15.06.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE CLIENT X:0:10::15.06.2018:15.06.2018
+T09/divers/eco	tee=0 tea=0
+T10/ht/erreur	<aucune>
+T10/ht/doc	numbl=B10001 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T10/ht/montants	ht=61 tva=9.52 ttc=70.52 art=33 mo=28 remart=2 remmo=0 gestion=0
+T10/ht/ligne	0001:A:0:003:produit 20.00:0::2:10:12,00:20,00:24,00:10:18,00:21,60:3 | 0002:A:1:001:Produit 2.10:0::3:5:5,11:15,00:15,32: :15,00:15,32:1 | 0003:M:2:01:Mo T1:0::1:28:33,60:28,00:33,60: :28,00:33,60:3
+T10/ht/tva	1:1:2.10:15:15.32:0.32 | 3:3:20.00:46:55.2:9.2
+T10/ht/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:70.52:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:0.32::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:9.2::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:15::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:18::15.06.2018:31.07.2018
+T10/ht/eco	tee=1.5 tea=0.6
+T10/ttc/erreur	<aucune>
+T10/ttc/doc	numbl=B10001 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T10/ttc/montants	ht=61 tva=9.52 ttc=70.52 art=36.92 mo=33.6 remart=2 remmo=0 gestion=0
+T10/ttc/ligne	0001:A:0:003:produit 20.00:0::2:10:12,00:20,00:24,00:10:18,00:21,60:3 | 0002:A:1:001:Produit 2.10:0::3:5:5,11:15,00:15,32: :15,00:15,32:1 | 0003:M:2:01:Mo T1:0::1:28:33,60:28,00:33,60: :28,00:33,60:3
+T10/ttc/tva	1:1:2.10:15:15.32:0.32 | 3:3:20.00:46:55.2:9.2
+T10/ttc/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:70.52:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:0.32::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:9.2::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:15::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:18::15.06.2018:31.07.2018
+T10/ttc/eco	tee=0 tea=0
+T10/pxsdec/erreur	<aucune>
+T10/pxsdec/doc	numbl=B10001 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T10/pxsdec/montants	ht=61 tva=9.52 ttc=70.52 art=33 mo=28 remart=2 remmo=0 gestion=0
+T10/pxsdec/ligne	0001:A:0:003:produit 20.00:0::2:10,00:12,00:20:24,00:10:18:21,60:3 | 0002:A:1:001:Produit 2.10:0::3:5,00:5,11:15:15,32: :15:15,32:1 | 0003:M:2:01:Mo T1:0::1:28,00:33,60:28:33,60: :28:33,60:3
+T10/pxsdec/tva	1:1:2.10:15:15.32:0.32 | 3:3:20.00:46:55.2:9.2
+T10/pxsdec/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:70.52:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:0.32::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:9.2::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:15::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:18::15.06.2018:31.07.2018
+T10/pxsdec/eco	tee=1.5 tea=0.6
+T10/remise_simpcond/erreur	<aucune>
+T10/remise_simpcond/montants	ht=94 tva=6.99 ttc=100.99 art=66 mo=28 remart=0 remmo=0 gestion=0
+T10/remise_simpcond/ligne	0001:A:0:003:produit 20.00:0:Kg:2:0,00:0,00:0,00:0,00::0,00:0,00:3 | 0002:A:1:001:Produit 2.10:0:Kg:3:22,00:22,46:66,00:67,39::66,00:67,39:1 | 0003:M:2:01:Mo T1:0: :1:28,00:33,60:28,00:33,60::28,00:33,60:3
+T10/remise_simpcond/tva	1:1:2.10:66:67.39:1.39 | 3:3:20.00:28:33.6:5.6
+T10/remise_simpcond/ecrit	411801:411801:SARL MARTIN Jean:FACTURE MARTIN:100.99:0::15.06.2018:31.07.2018 | 445710:445710:Tva sur ventes 2.10:FACTURE MARTIN:0:1.39::15.06.2018:31.07.2018 | 445730:445730:Tva sur ventes 19.60:FACTURE MARTIN:0:5.6::15.06.2018:31.07.2018 | 706100:706100:Ventes MO:FACTURE MARTIN:0:28::15.06.2018:31.07.2018 | 707000:707000:Ventes marchandises 2.10:FACTURE MARTIN:0:66::15.06.2018:31.07.2018 | 707020:707020:Ventes marchandises 20.00:FACTURE MARTIN:0:0::15.06.2018:31.07.2018
+T10/remise_simpcond/eco	tee=1.5 tea=0.6
+T11/client1	remart=2 remmo=0 ht=61
+T11/client2	remart=3 remmo=0 ht=14
+T12/facture/retour	False
+T12/facture/messages	<Null>
+T12/facture/objet	numfac=2018000001 journal=70 numeroecr=1 numerodef=1
+T12/facture/bl	2018000001:T:Gestion:06/14/2018 23:00:00:07/30/2018 23:00:00
+T12/facture/suivis	B10001:2018000001:06/14/2018 23:00:00
+T12/facture/mvt	n=7 70:1:411000:SARL MARTIN Jean:FACTURE MARTIN:70.52:0.00:2018000001:06/14/2018 23:00:00:07/30/2018 23:00:00 | 70:1:411801:SARL MARTIN Jean:FACTURE MARTIN:70.52:0.00:2018000001:06/14/2018 23:00:00:07/30/2018 23:00:00 | 70:1:445710:Tva sur ventes 2.10:FACTURE MARTIN:0.00:0.32:2018000001:06/14/2018 23:00:00:07/30/2018 23:00:00 | 70:1:445730:Tva sur ventes 19.60:FACTURE MARTIN:0.00:9.20:2018000001:06/14/2018 23:00:00:07/30/2018 23:00:00 | 70:1:706100:Ventes MO:FACTURE MARTIN:0.00:28.00:2018000001:06/14/2018 23:00:00:07/30/2018 23:00:00 | 70:1:707000:Ventes marchandises 2.10:FACTURE MARTIN:0.00:15.00:2018000001:06/14/2018 23:00:00:07/30/2018 23:00:00 | 70:1:707020:Ventes marchandises 20.00:FACTURE MARTIN:0.00:18.00:2018000001:06/14/2018 23:00:00:07/30/2018 23:00:00 | 
+T12c/sans_compte/retour	True
+T12c/sans_compte/messages	 / Le compte 411803 n'existe pas<br>Impossible de finir l'écriture 1 / [OK]  / Une erreur est survenue lors de l'écriture : 1 / [OK] 
+T12c/sans_compte/objet	numfac= journal=70 numeroecr=0 numerodef=0
+T12c/sans_compte/bl	::::
+T12c/sans_compte/mvt	n=3 70:1:445730:Tva sur ventes 19.60:FACTURE DUPONT:0.00:3.00:2018000001:06/14/2018 23:00:00:06/14/2018 23:00:00 | 70:1:706110:Prestations services 20.00:FACTURE DUPONT:0.00:5.00:2018000001:06/14/2018 23:00:00:06/14/2018 23:00:00 | 70:1:707020:Ventes marchandises 20.00:FACTURE DUPONT:0.00:10.00:2018000001:06/14/2018 23:00:00:06/14/2018 23:00:00 | 
+T12b/ticket/retour	True
+T12b/ticket/messages	 / Document en attente de moulinage ...<br> le BL B10009 est noté règlé par le ticket 0000012 / [OK] 
+T12b/ticket/objet	numfac= journal=70 numeroecr=0 numerodef=0
+T12b/ticket/bl	::::
+T12b/ticket/mvt	n=0 
+T13/FactType2Orig	-1= 0= 1=BL 2=Facture 3=Archive 4=Commande 5=Proforma 6=Devis 7=Atelier 8=FinMois 9=Abonnement 10=Magasin 11= 99=
+T13/Orig2FactType	BL=ERREUR: Unknown symbol 'Text' in class 'gb' Facture=ERREUR: Unknown symbol 'Text' in class 'gb' facture=ERREUR: Unknown symbol 'Text' in class 'gb' Archive=ERREUR: Unknown symbol 'Text' in class 'gb' Magasin=ERREUR: Unknown symbol 'Text' in class 'gb' x=ERREUR: Unknown symbol 'Text' in class 'gb' =ERREUR: Unknown symbol 'Text' in class 'gb'
+T15/sans_echeance/retour	True
+T15/sans_echeance/messages	 / Attention ! Vous devez mettre une date d'échéance / [Ok] 
+T15/sans_echeance/dte_ligbl	1:A: 2:A: 3:M:
+T15/periode_close/retour	True
+T15/periode_close/messages	 / Cette période de facturation est clôturée : Impossible de valider ce mouvement / [OK] 
+T15/periode_close/dte_ligbl	1:A: 2:A: 3:M:
+T15/dtmouv/retour	False
+T15/dtmouv/messages	<Null>
+T15/dtmouv/dte_ligbl	1:A:06/14/2018 23:00:00 2:A:06/14/2018 23:00:00 3:M:
+T15/sans_dtmouv/retour	False
+T15/sans_dtmouv/messages	<Null>
+T15/sans_dtmouv/dte_ligbl	1:A: 2:A: 3:M:
+T15/entretien/retour	False
+T15/entretien/messages	<Null>
+T15/entretien/dte_ligbl	1:M: 2:A:
+T16/lignes	500
+T16/montants	ht=5005 tva=1001 ttc=6006 art=5000
+T05b/article_inexistant/erreur	ERREUR: Result is not available ObjFac.calc.679
+T05b/article_inexistant/doc	numbl=B10003 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T05b/article_inexistant/montants	ht=0 tva=0 ttc=0 art=0 mo=0 remart=0 remmo=0 gestion=0
+T05b/article_inexistant/ligne	<Null>
+T05b/article_inexistant/tva	<Null>
+T05b/article_inexistant/ecrit	<Null>
+T05b/article_inexistant/eco	tee=0 tea=0
+T05b/taux_null/erreur	ERREUR: Type mismatch: wanted Number, got Null instead ObjFac.calc.675
+T05b/taux_null/doc	numbl=B10004 numfac= numcli=411801 tab= dtedoc=15.06.2018 dteech=31.07.2018
+T05b/taux_null/montants	ht=0 tva=0 ttc=0 art=0 mo=0 remart=0 remmo=0 gestion=0
+T05b/taux_null/ligne	<Null>
+T05b/taux_null/tva	<Null>
+T05b/taux_null/ecrit	<Null>
+T05b/taux_null/eco	tee=0 tea=0
